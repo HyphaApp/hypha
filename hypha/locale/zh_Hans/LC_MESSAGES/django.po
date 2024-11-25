@@ -1,0 +1,5359 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-04 14:45+0000\n"
+"PO-Revision-Date: 2024-07-11 01:42+0000\n"
+"Last-Translator: 复予 <clonewith@qq.com>\n"
+"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
+"hypha/hypha-core/zh_Hans/>\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.7-dev\n"
+
+#: hypha/apply/activity/adapters/activity_feed.py:20
+#, python-brace-format
+msgid "Submitted {source.title} for {source.page.title}"
+msgstr "为 {source.page.title} 提交了 {source.title}"
+
+#: hypha/apply/activity/adapters/activity_feed.py:21
+#: hypha/apply/activity/adapters/activity_feed.py:22
+msgid "Edited"
+msgstr "编辑了"
+
+#: hypha/apply/activity/adapters/activity_feed.py:23
+#: hypha/apply/activity/adapters/activity_feed.py:37
+#, python-brace-format
+msgid "Lead changed from {old_lead} to {source.lead}"
+msgstr "领导人已由 {old_lead} 变为 {source.lead}"
+
+#: hypha/apply/activity/adapters/activity_feed.py:24
+#, python-brace-format
+msgid "Batch Lead changed to {new_lead}"
+msgstr "批次领导人已更改为 {new_lead}"
+
+#: hypha/apply/activity/adapters/activity_feed.py:25
+#, python-brace-format
+msgid "Sent a determination. Outcome: {determination.clean_outcome}"
+msgstr "发送了决策。结果：{determination.clean_outcome}"
+
+#: hypha/apply/activity/adapters/activity_feed.py:27
+msgid "Invited to submit a proposal"
+msgstr "邀请提交提案"
+
+#: hypha/apply/activity/adapters/activity_feed.py:31
+msgid "Submitted a review"
+msgstr "提交了审核"
+
+#: hypha/apply/activity/adapters/activity_feed.py:32
+msgid "Opened the submission while still sealed"
+msgstr "在提交被锁定时将其打开"
+
+#: hypha/apply/activity/adapters/activity_feed.py:34
+#, python-brace-format
+msgid ""
+"{user} {opinion.opinion_display}s with {opinion.review.author}s review of "
+"{source}"
+msgstr ""
+"{user} 对 {opinion.review.author} 向 {source} 的审核持{opinion."
+"opinion_display}意见"
+
+#: hypha/apply/activity/adapters/activity_feed.py:35
+msgid "Created"
+msgstr ""
+
+#: hypha/apply/activity/adapters/activity_feed.py:36
+#, python-brace-format
+msgid "Progressed from {old_stage} to {source.status_display}"
+msgstr ""
+
+#: hypha/apply/activity/adapters/activity_feed.py:38
+msgid "Requested approval"
+msgstr "请求了批准"
+
+#: hypha/apply/activity/adapters/activity_feed.py:39
+#: hypha/apply/determinations/options.py:12
+msgid "Approved"
+msgstr "批准"
+
+#: hypha/apply/activity/adapters/activity_feed.py:40
+#, python-brace-format
+msgid "Requested changes for acceptance: \"{comment}\""
+msgstr "请求了待接受更改：“{comment}”"
+
+#: hypha/apply/activity/adapters/activity_feed.py:41
+#, python-brace-format
+msgid "Uploaded a {contract.state} contract"
+msgstr "上传了一个 {contract.state} 的合同"
+
+#: hypha/apply/activity/adapters/activity_feed.py:42
+msgid "Approved contract"
+msgstr "批准了合同"
+
+#: hypha/apply/activity/adapters/activity_feed.py:44
+msgid "Invoice created"
+msgstr ""
+
+#: hypha/apply/activity/adapters/activity_feed.py:45
+msgid "Submitted a report"
+msgstr "提交了报告"
+
+#: hypha/apply/activity/adapters/activity_feed.py:78
+msgid "Reviewers updated."
+msgstr "审核人已更新。"
+
+#: hypha/apply/activity/adapters/activity_feed.py:80
+#: hypha/apply/activity/adapters/activity_feed.py:158
+#: hypha/apply/activity/adapters/slack.py:172
+msgid "Added:"
+msgstr "添加了："
+
+#: hypha/apply/activity/adapters/activity_feed.py:84
+#: hypha/apply/activity/adapters/activity_feed.py:162
+#: hypha/apply/activity/adapters/slack.py:176
+msgid "Removed:"
+msgstr "移除了："
+
+#: hypha/apply/activity/adapters/activity_feed.py:90
+msgid "Batch Reviewers Updated."
+msgstr "批次审核人已更新。"
+
+#: hypha/apply/activity/adapters/activity_feed.py:93
+#, python-brace-format
+msgid "{user} as {name}."
+msgstr "{user} 作为 {name}。"
+
+#: hypha/apply/activity/adapters/activity_feed.py:110
+#, python-brace-format
+msgid "Successfully deleted submissions: {title}"
+msgstr "成功删除了提交：{title}"
+
+#: hypha/apply/activity/adapters/activity_feed.py:116
+#, python-brace-format
+msgid "Progressed from {old_display} to {new_display}"
+msgstr "由 {old_display} 进展到 {new_display}"
+
+#: hypha/apply/activity/adapters/activity_feed.py:156
+msgid "Partners updated."
+msgstr "合作者已更新。"
+
+#: hypha/apply/activity/adapters/activity_feed.py:170
+#, python-brace-format
+msgid ""
+"Updated reporting frequency. New schedule is: {new_schedule} starting on "
+"{schedule_start}"
+msgstr "更新了报告频率。新计划：从 {schedule_start} 开始的 {new_schedule}"
+
+#: hypha/apply/activity/adapters/activity_feed.py:180
+#, python-brace-format
+msgid "Updated Invoice status to: {status}."
+msgstr ""
+
+#: hypha/apply/activity/adapters/activity_feed.py:218
+#, python-brace-format
+msgid "Screening decision from {old_status} to {new_status}"
+msgstr "审查决定由 {old_status} 变为 {new_status}"
+
+#: hypha/apply/activity/adapters/django_messages.py:17
+msgid "Successfully uploaded document"
+msgstr ""
+
+#: hypha/apply/activity/adapters/django_messages.py:18
+msgid "Successfully removed document"
+msgstr "文档删除成功"
+
+#: hypha/apply/activity/adapters/django_messages.py:21
+msgid "Reminder created"
+msgstr "提醒已创建"
+
+#: hypha/apply/activity/adapters/django_messages.py:22
+msgid "Reminder deleted"
+msgstr "提醒已删除"
+
+#: hypha/apply/activity/adapters/django_messages.py:27
+#: hypha/apply/activity/adapters/slack.py:197
+#, python-brace-format
+msgid "{user} as {name},"
+msgstr "{user} 作为 {name}，"
+
+#: hypha/apply/activity/adapters/django_messages.py:33
+#, python-brace-format
+msgid "Batch reviewers added: {reviewers_text} to "
+msgstr "批次审核人添加了：{reviewers_text} 到 "
+
+#: hypha/apply/activity/adapters/django_messages.py:38
+#, python-brace-format
+msgid ""
+"Successfully updated reporting frequency. They will now report "
+"{new_schedule} starting on {schedule_start}"
+msgstr "成功更新了报告频率。他们现在会从 {schedule_start} 开始，{new_schedule} "
+"进行报告"
+
+#: hypha/apply/activity/adapters/django_messages.py:42
+#, python-brace-format
+msgid "Successfully skipped a Report for {start_date} to {end_date}"
+msgstr "成功跳过从 {start_date} 到 {end_date} 期间的报告"
+
+#: hypha/apply/activity/adapters/django_messages.py:44
+#, python-brace-format
+msgid "Successfully unskipped a Report for {start_date} to {end_date}"
+msgstr "成功取消跳过从 {start_date} 到 {end_date} 期间的报告"
+
+#: hypha/apply/activity/adapters/django_messages.py:63
+#, python-brace-format
+msgid "Successfully determined as {outcome}: "
+msgstr "成功决策为 {outcome}： "
+
+#: hypha/apply/activity/adapters/emails.py:51
+#, python-brace-format
+msgid "Application ready to review: {source.title}"
+msgstr "申请已准备好审核：{source.title}"
+
+#: hypha/apply/activity/adapters/emails.py:58
+msgid "Multiple applications are now ready for your review"
+msgstr "多个申请已准备好接受您的审核"
+
+#: hypha/apply/activity/adapters/emails.py:61
+#, python-brace-format
+msgid "Reminder: Application ready to review: {source.title}"
+msgstr "提醒：申请已准备好审核：{source.title}"
+
+#: hypha/apply/activity/adapters/emails.py:66
+#, python-brace-format
+msgid "Your application to {org_long_name}: {source.title}"
+msgstr "您给 {org_long_name} 的项目：{source.title}"
+
+#: hypha/apply/activity/adapters/emails.py:69
+#, python-brace-format
+msgid "Your {org_long_name} Project: {source.title}"
+msgstr "您的 {org_long_name} 项目：{source.title}"
+
+#: hypha/apply/activity/adapters/slack.py:31
+#, python-brace-format
+msgid ""
+"A new submission has been submitted for {source.page.title}: <{link}|{source."
+"title}>"
+msgstr ""
+
+#: hypha/apply/activity/adapters/slack.py:32
+#, python-brace-format
+msgid ""
+"The lead of <{link}|{source.title}> has been updated from {old_lead} to "
+"{source.lead} by {user}"
+msgstr "{user} 更改了 <{link}|{source.title}> 的领导人，从 {old_lead} 到 {source."
+"lead}"
+
+#: hypha/apply/activity/adapters/slack.py:34
+#, python-brace-format
+msgid ""
+"A new {comment.visibility} comment has been posted on <{link}|{source.title}"
+"> by {user}"
+msgstr "{user} 在 <{link}|{source.title}> 上发布了新的{comment.visibility}评论"
+
+#: hypha/apply/activity/adapters/slack.py:35
+#: hypha/apply/activity/adapters/slack.py:36
+#, python-brace-format
+msgid "{user} has edited <{link}|{source.title}>"
+msgstr "{user} 编辑了 <{link}|{source.title}>"
+
+#: hypha/apply/activity/adapters/slack.py:39
+#, python-brace-format
+msgid "{user} has updated the partners on <{link}|{source.title}>"
+msgstr "{user} 更新了 <{link}|{source.title}>"
+
+#: hypha/apply/activity/adapters/slack.py:40
+#, python-brace-format
+msgid ""
+"{user} has updated the status of <{link}|{source.title}>: {old_phase."
+"display_name} → {source.phase}"
+msgstr ""
+"{user} 更新了 <{link}|{source.title}> 的状态：{old_phase.display_name} → "
+"{source.phase}"
+
+#: hypha/apply/activity/adapters/slack.py:44
+#, python-brace-format
+msgid "A proposal has been submitted for review: <{link}|{source.title}>"
+msgstr "有提案已被提交待审核：<{link}|{source.title}>"
+
+#: hypha/apply/activity/adapters/slack.py:45
+#, python-brace-format
+msgid ""
+"<{link}|{source.title}> by {source.user} has been invited to submit a "
+"proposal"
+msgstr "{source.user} 的 <{link}|{source.title}> 被邀请提交提案"
+
+#: hypha/apply/activity/adapters/slack.py:46
+#, python-brace-format
+msgid ""
+"{user} has submitted a review for <{link}|{source.title}>. Outcome: {review."
+"outcome},  Score: {review.get_score_display}"
+msgstr ""
+"{user} 提交了对 <{link}|{source.title}> 的审核。结果：{review.outcome}，  "
+"得分：{review.get_score_display}"
+
+#: hypha/apply/activity/adapters/slack.py:48
+#, python-brace-format
+msgid "{user} has opened the sealed submission: <{link}|{source.title}>"
+msgstr "{user} 打开了锁定的提交：<{link}|{source.title}>"
+
+#: hypha/apply/activity/adapters/slack.py:49
+#, python-brace-format
+msgid ""
+"{user} {opinion.opinion_display}s with {opinion.review.author}s review of "
+"<{link}|{source.title}>"
+msgstr ""
+"{user} 对 {opinion.review.author} 在 <{link}|{source.title}> 的审核持{opinion"
+".opinion_display}态度"
+
+#: hypha/apply/activity/adapters/slack.py:51
+#, python-brace-format
+msgid "{user} has deleted {source.title}"
+msgstr "{user} 删除了 {source.title}"
+
+#: hypha/apply/activity/adapters/slack.py:52
+#, python-brace-format
+msgid "{user} has deleted {review.author} review for <{link}|{source.title}>"
+msgstr "{user} 删除了 {review.author} 对 <{link}|{source.title}> 的审核"
+
+#: hypha/apply/activity/adapters/slack.py:53
+#, python-brace-format
+msgid "{user} has created a Project: <{link}|{source.title}>"
+msgstr "{user} 创建了项目：<{link}|{source.title}>"
+
+#: hypha/apply/activity/adapters/slack.py:54
+#, python-brace-format
+msgid ""
+"The lead of project <{link}|{source.title}> has been updated from {old_lead} "
+"to {source.lead} by {user}"
+msgstr "{user} 更新了项目 <{link}|{source.title}> 的领导人：从 {old_lead} 到 {source."
+"lead}"
+
+#: hypha/apply/activity/adapters/slack.py:55
+#, python-brace-format
+msgid "{user} has edited {review.author} review for <{link}|{source.title}>"
+msgstr "{user} 编辑了 {review.author} 对 <{link}|{source.title}> 的审核"
+
+#: hypha/apply/activity/adapters/slack.py:56
+#, python-brace-format
+msgid "{user} has requested approval on project <{link}|{source.title}>"
+msgstr "{user} 请求对项目 <{link}|{source.title}> 的批准"
+
+#: hypha/apply/activity/adapters/slack.py:57
+#, python-brace-format
+msgid ""
+"Project Approval Form is open for the final approval: <{link}|{source.title}>"
+msgstr ""
+
+#: hypha/apply/activity/adapters/slack.py:58
+#, python-brace-format
+msgid "{user} has approved project <{link}|{source.title}>"
+msgstr "{user} 批准了项目 <{link}|{source.title}>"
+
+#: hypha/apply/activity/adapters/slack.py:59
+#, python-brace-format
+msgid ""
+"{user} has requested changes for project acceptance on <{link}|{source.title}"
+">"
+msgstr "{user} 请求了 <{link}|{source.title}> 更改，以便项目被接受"
+
+#: hypha/apply/activity/adapters/slack.py:60
+#, python-brace-format
+msgid "{user} has uploaded a contract for <{link}|{source.title}>"
+msgstr "{user} 为 <{link}|{source.title}> 上传了合同"
+
+#: hypha/apply/activity/adapters/slack.py:61
+#, python-brace-format
+msgid "{user} has approved contract for <{link}|{source.title}>"
+msgstr "{user} 批准了 <{link}|{source.title}> 的合同"
+
+#: hypha/apply/activity/adapters/slack.py:62
+#, python-brace-format
+msgid "{user} has created invoice for <{link}|{source.title}>"
+msgstr "{user} 为 <{link}|{source.title}> 创建了发票"
+
+#: hypha/apply/activity/adapters/slack.py:63
+#, python-brace-format
+msgid ""
+"{user} has changed the status of <{link_related}|invoice> on <{link}|{source."
+"title}> to {invoice.status_display}"
+msgstr ""
+"{user} 更改了 <{link}|{source.title}> 的<{link_related}|发票>状态到 {invoice."
+"status_display}"
+
+#: hypha/apply/activity/adapters/slack.py:64
+#, python-brace-format
+msgid "{user} has deleted invoice from <{link}|{source.title}>"
+msgstr "{user} 从 <{link}|{source.title}> 删除了发票"
+
+#: hypha/apply/activity/adapters/slack.py:65
+#, python-brace-format
+msgid "{user} has updated invoice for <{link}|{source.title}>"
+msgstr "{user} 更新了 <{link}|{source.title}> 的发票"
+
+#: hypha/apply/activity/adapters/slack.py:66
+#, python-brace-format
+msgid "{user} has submitted a report for <{link}|{source.title}>"
+msgstr "{user} 为 <{link}|{source.title}> 提交了报告"
+
+#: hypha/apply/activity/adapters/slack.py:166
+#, python-brace-format
+msgid "{user} has updated the reviewers on <{link}|{title}>"
+msgstr "{user} 更新了 <{link}|{title}> 的审核者"
+
+#: hypha/apply/activity/adapters/slack.py:185
+#, python-brace-format
+msgid "{user} has batch changed lead to {new_lead} on: {submissions_text}"
+msgstr "{user} 将领导人批量更改为 {new_lead} 于：{submissions_text}"
+
+#: hypha/apply/activity/adapters/slack.py:203
+#, python-brace-format
+msgid ""
+"{user} has batch added {reviewers_text} as reviewers on: {submissions_text}"
+msgstr "{user} 将 {reviewers_text} 批量添加为审核者于：{submissions_text}"
+
+#: hypha/apply/activity/adapters/slack.py:223
+#, python-brace-format
+msgid "{user} has transitioned the following submissions: {submissions_links}"
+msgstr "{user} 转换了以下提交：{submissions_links}"
+
+#: hypha/apply/activity/adapters/slack.py:233
+#, python-brace-format
+msgid ""
+"A determination for <{link}|{submission_title}> was sent by email. Outcome: "
+"{determination_outcome}"
+msgstr "<{link}|{submission_title}> "
+"的决策已通过电子邮件发送。结果：{determination_outcome}"
+
+#: hypha/apply/activity/adapters/slack.py:240
+#, python-brace-format
+msgid ""
+"A determination for <{link}|{submission_title}> was saved without sending an "
+"email. Outcome: {determination_outcome}"
+msgstr "<{link}|{submission_title}> "
+"的决策在未发送电子邮件时已保存。结果：{determination_outcome}"
+
+#: hypha/apply/activity/adapters/slack.py:256
+#, python-brace-format
+msgid "Determinations of {outcome} was sent for: {submissions_links}"
+msgstr "已发送对于以下提交的 {outcome} 决策：{submissions_links}"
+
+#: hypha/apply/activity/adapters/slack.py:265
+#, python-brace-format
+msgid "{user} has deleted submissions: {title}"
+msgstr "{user} 删除了提交：{title}"
+
+#: hypha/apply/activity/adapters/slack.py:279
+#, python-brace-format
+msgid ""
+"<{link}|{title}> is ready for review. The following are assigned as "
+"reviewers: {reviewers}"
+msgstr "<{link}|{title}> 可供审核。下列用户被分配审核：{reviewers}"
+
+#: hypha/apply/activity/adapters/utils.py:25
+#, python-brace-format
+msgid " as {role}"
+msgstr " 作为 {role}"
+
+#: hypha/apply/activity/filters.py:13
+msgid "Today"
+msgstr "今天"
+
+#: hypha/apply/activity/filters.py:14
+msgid "Yesterday"
+msgstr "昨天"
+
+#: hypha/apply/activity/filters.py:15
+msgid "Past 7 days"
+msgstr "过去 7 天"
+
+#: hypha/apply/activity/filters.py:16
+msgid "This month"
+msgstr "这个月"
+
+#: hypha/apply/activity/templates/activity/include/action_list.html:5
+msgid "There are no actions."
+msgstr "没有操作。"
+
+#: hypha/apply/activity/templates/activity/include/comment_form.html:5
+#: hypha/apply/determinations/templates/determinations/base_determination_form.html:50
+#: hypha/apply/funds/views.py:953 hypha/apply/funds/workflow.py:200
+#: hypha/apply/funds/workflow.py:228 hypha/apply/funds/workflow.py:271
+#: hypha/apply/funds/workflow.py:327 hypha/apply/funds/workflow.py:353
+#: hypha/apply/funds/workflow.py:391 hypha/apply/funds/workflow.py:429
+#: hypha/apply/funds/workflow.py:482 hypha/apply/funds/workflow.py:510
+#: hypha/apply/funds/workflow.py:570 hypha/apply/funds/workflow.py:608
+#: hypha/apply/funds/workflow.py:661 hypha/apply/funds/workflow.py:688
+#: hypha/apply/funds/workflow.py:730 hypha/apply/funds/workflow.py:777
+#: hypha/apply/funds/workflow.py:803 hypha/apply/funds/workflow.py:844
+#: hypha/apply/funds/workflow.py:883
+#: hypha/apply/projects/templates/application_projects/report_form.html:46
+#: hypha/apply/projects/templates/application_projects/report_form.html:66
+#: hypha/apply/projects/templates/application_projects/vendor_form.html:27
+#: hypha/apply/projects/views/project.py:728
+#: hypha/apply/review/templates/review/review_edit_form.html:42
+#: hypha/apply/review/templates/review/review_form.html:43
+#: hypha/apply/users/templates/users/email_change/confirm_password.html:35
+msgid "Submit"
+msgstr "提交"
+
+#: hypha/apply/activity/templates/activity/include/listing_base.html:15
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:38
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:59
+#: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:46
+#: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:64
+#: hypha/apply/determinations/templates/determinations/determination_detail.html:25
+#: hypha/apply/funds/templates/funds/admin/widgets/read_only.html:2
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:81
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:32
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:81
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:34
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:58
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:59
+#: hypha/apply/projects/templates/application_projects/invoice_form.html:4
+#: hypha/apply/projects/templates/application_projects/report_detail.html:59
+#: hypha/apply/projects/templates/application_projects/vendor_detail.html:23
+#: hypha/apply/review/templates/review/review_detail.html:41
+msgid "Edit"
+msgstr "编辑"
+
+#: hypha/apply/activity/templates/activity/include/listing_base.html:21
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:71
+#: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:34
+msgid "Last edited"
+msgstr "上次编辑于"
+
+#: hypha/apply/activity/templates/activity/include/listing_base.html:33
+msgid "updated"
+msgstr "更新于"
+
+#: hypha/apply/activity/templates/activity/include/notifications_dropdown.html:4
+#: hypha/apply/activity/templates/activity/include/notifications_dropdown.html:8
+#: hypha/apply/activity/templates/activity/notifications.html:8
+msgid "Notifications"
+msgstr "通知"
+
+#: hypha/apply/activity/templates/activity/include/notifications_dropdown.html:13
+#: hypha/apply/activity/templates/activity/notifications.html:41
+msgid "made a comment"
+msgstr "留下了评论"
+
+#: hypha/apply/activity/templates/activity/include/notifications_dropdown.html:17
+msgid "Show All"
+msgstr "显示所有"
+
+#: hypha/apply/activity/templates/activity/notifications.html:11
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:79
+#: hypha/apply/users/templates/wagtailusers/users/results.html:38
+msgid "Filter"
+msgstr "筛选"
+
+#: hypha/apply/activity/templates/activity/notifications.html:18
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:39
+#: hypha/apply/projects/templates/application_projects/project_detail.html:62
+msgid "Communications"
+msgstr "交流"
+
+#: hypha/apply/activity/templates/activity/notifications.html:22
+#: hypha/apply/projects/templates/application_projects/project_detail.html:66
+msgid "Activity Feed"
+msgstr "活动订阅"
+
+#: hypha/apply/activity/templates/messages/email/applicant_base.html:4
+#, python-format
+msgid "Dear %(name)s,"
+msgstr "亲爱的 %(name)s，"
+
+#: hypha/apply/activity/templates/messages/email/applicant_base.html:6
+msgid "Link to your application"
+msgstr "到您申请的链接"
+
+#: hypha/apply/activity/templates/messages/email/applicant_base.html:7
+#: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:9
+#: hypha/apply/activity/templates/messages/email/submission_confirmation.html:8
+msgid "If you have any questions, please submit them here"
+msgstr "若您有任何问题，请在这里提交"
+
+#: hypha/apply/activity/templates/messages/email/applicant_base.html:9
+msgid "See our guide for more information"
+msgstr "阅读我们的指南以获得更多信息"
+
+#: hypha/apply/activity/templates/messages/email/applicant_base.html:11
+#: hypha/apply/activity/templates/messages/email/comment.html:9
+#: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:13
+#, python-format
+msgid ""
+"If you have any issues accessing the submission system or other general "
+"inquiries, please email us at %(ORG_EMAIL)s"
+msgstr "如果您在访问提交系统时有问题，或有其他一般问题，请用 %(ORG_EMAIL)s "
+"向我们发送电子邮件"
+
+#: hypha/apply/activity/templates/messages/email/base.html:2
+#: hypha/apply/users/templates/users/activation/email.txt:2
+#: hypha/apply/users/templates/users/email_change/confirm_email.txt:2
+#, python-format
+msgid "Dear %(user)s,"
+msgstr "亲爱的 %(user)s，"
+
+#: hypha/apply/activity/templates/messages/email/base.html:8
+#, python-format
+msgid ""
+"Kind Regards,\n"
+"The %(ORG_SHORT_NAME)s Team"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/batch_ready_to_review.html:4
+#: hypha/apply/activity/templates/messages/email/ready_to_review.html:4
+msgid "Dear Reviewer,"
+msgstr "亲爱的审核人，"
+
+#: hypha/apply/activity/templates/messages/email/batch_ready_to_review.html:7
+msgid "New applications have been added to your review list."
+msgstr "新申请已添加到您的审核列表。"
+
+#: hypha/apply/activity/templates/messages/email/batch_ready_to_review.html:10
+#: hypha/apply/activity/templates/messages/email/contract_uploaded.html:7
+#: hypha/apply/activity/templates/messages/email/invoice_status_updated.html:16
+#: hypha/apply/activity/templates/messages/email/invoice_updated.html:9
+#: hypha/apply/activity/templates/messages/email/partners_update_applicant.html:9
+#: hypha/apply/activity/templates/messages/email/partners_update_partner.html:9
+#: hypha/apply/activity/templates/messages/email/ready_to_review.html:8
+#: hypha/apply/activity/templates/messages/email/report_frequency.html:12
+#: hypha/apply/activity/templates/messages/email/report_skipped.html:12
+#: hypha/apply/activity/templates/messages/email/sent_to_compliance.html:9
+#: hypha/apply/funds/templates/funds/includes/revision_diff_table.html:7
+msgid "Title"
+msgstr "标题"
+
+#: hypha/apply/activity/templates/messages/email/batch_ready_to_review.html:11
+#: hypha/apply/activity/templates/messages/email/contract_uploaded.html:8
+#: hypha/apply/activity/templates/messages/email/invoice_updated.html:10
+#: hypha/apply/activity/templates/messages/email/partners_update_applicant.html:10
+#: hypha/apply/activity/templates/messages/email/partners_update_partner.html:10
+#: hypha/apply/activity/templates/messages/email/ready_to_review.html:15
+#: hypha/apply/activity/templates/messages/email/report_frequency.html:13
+#: hypha/apply/activity/templates/messages/email/report_skipped.html:13
+#: hypha/apply/activity/templates/messages/email/report_submitted.html:10
+#: hypha/apply/activity/templates/messages/email/sent_to_compliance.html:10
+#: hypha/apply/activity/templates/messages/email/vendor_setup_needed.html:10
+#: hypha/apply/activity/templates/messages/email/vendor_updated.html:8
+msgid "Link"
+msgstr "链接"
+
+#: hypha/apply/activity/templates/messages/email/comment.html:4
+#, python-format
+msgid "There has been a new comment on \"%(title)s\" by %(user)s."
+msgstr "%(user)s 在“%(title)s”发布了新评论。"
+
+#: hypha/apply/activity/templates/messages/email/comment.html:6
+msgid "Read the full comment here"
+msgstr "在此查看完整评论"
+
+#: hypha/apply/activity/templates/messages/email/contract_uploaded.html:5
+msgid "A new contract has been added to your Project"
+msgstr "新合同已添加到您的项目"
+
+#: hypha/apply/activity/templates/messages/email/contract_uploaded.html:11
+msgid ""
+"This contract has already been signed and there is no action for you to take."
+msgstr "此合同已被签订，您无需采取操作。"
+
+#: hypha/apply/activity/templates/messages/email/contract_uploaded.html:13
+#, python-format
+msgid ""
+"Please review the contract and sign it before reuploading it to your Project "
+"page for the %(ORG_SHORT_NAME)s Team to approve."
+msgstr "请核对合同信息，在签名后上传到您的项目页面，以供 %(ORG_SHORT_NAME)s "
+"团队批准。"
+
+#: hypha/apply/activity/templates/messages/email/determination.html:4
+msgid "Your application has been reviewed and the outcome is"
+msgstr "您的申请已被审核，结果为"
+
+#: hypha/apply/activity/templates/messages/email/determination.html:8
+msgid "Read the full determination here"
+msgstr "在此阅读完整决策"
+
+#: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:4
+#, python-format
+msgid ""
+"We’ve reviewed your Concept note and think it could be a good fit for "
+"%(ORG_SHORT_NAME)s funding. We would like to invite you to submit a Proposal "
+"with more details about your project. You will receive a second email "
+"linking to a determination message with detailed feedback."
+msgstr ""
+"我们审核了您的概念备注，觉得很适合 %(ORG_SHORT_NAME)s 资助。我们想邀请您提交"
+"一份提案，叙述更多项目相关的信息。您将会收到第二封邮件，其中包含带有详尽反馈"
+"的决策消息链接。"
+
+#: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:6
+#, python-format
+msgid ""
+"Please review our Proposal Guide at %(ORG_GUIDE_URL)s to learn more about "
+"the information we’d like to see. In the proposal please also address the "
+"feedback we provided in the concept note determination."
+msgstr "请在 %(ORG_GUIDE_URL)s 查看我们的提案指南，了解我们想要看到的东西。在提案中也"
+"请处理我们在概念备注决议中提供的反馈。"
+
+#: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:8
+msgid "Here is the link to start creating your proposal"
+msgstr "这里是用于创建您的提案的链接"
+
+#: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:11
+msgid ""
+"The system will allow you to save a draft of your proposal as you work on "
+"it. When you feel it is ready for our review, please click the “Submit” "
+"button and we’ll know to take a look at it. We’ll reply to you with feedback "
+"on your Proposal as quickly as possible."
+msgstr "在你撰写提案时，系统会让您保存一份草稿。当您认为准备好接受审核时，请点击“提交"
+"”按钮，我们会看一看。我们会尽快向您回复关于提案的反馈。"
+
+#: hypha/apply/activity/templates/messages/email/invoice_status_updated.html:5
+#: hypha/apply/activity/templates/messages/email/invoice_updated.html:6
+#, python-format
+msgid ""
+"An %(ORG_SHORT_NAME)s staff member has updated your invoice for %(title)s "
+"for period %(date_from)s to %(date_to)s."
+msgstr "%(ORG_SHORT_NAME)s 员工更新了您对 %(title)s 从 %(date_from)s 到 %(date_to)s "
+"的发票。"
+
+#: hypha/apply/activity/templates/messages/email/invoice_status_updated.html:7
+#: hypha/apply/activity/templates/messages/email/invoice_updated.html:7
+#, python-format
+msgid "It is now %(status)s."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/invoice_status_updated.html:10
+msgid "The staff member left this comment"
+msgstr "职员留下了此评论"
+
+#: hypha/apply/activity/templates/messages/email/invoice_status_updated.html:15
+msgid "Invoice Link"
+msgstr "发票链接"
+
+#: hypha/apply/activity/templates/messages/email/invoice_status_updated.html:17
+msgid "Project Link"
+msgstr "项目链接"
+
+#: hypha/apply/activity/templates/messages/email/partners_update_applicant.html:5
+msgid "New partner(s) has been added to your submission."
+msgstr "新合伙人已添加到您的提交。"
+
+#: hypha/apply/activity/templates/messages/email/partners_update_partner.html:4
+msgid "Dear Partner,"
+msgstr "亲爱的合作者，"
+
+#: hypha/apply/activity/templates/messages/email/partners_update_partner.html:7
+msgid "You have been added as a partner the following submission."
+msgstr "您已作为合伙人被添加到如下提交。"
+
+#: hypha/apply/activity/templates/messages/email/ready_to_review.html:6
+msgid "This application is awaiting your review."
+msgstr "此申请正等待您的审核。"
+
+#: hypha/apply/activity/templates/messages/email/ready_to_review.html:10
+msgid "Reminder Title"
+msgstr "提醒标题"
+
+#: hypha/apply/activity/templates/messages/email/ready_to_review.html:13
+msgid "Reminder Description"
+msgstr "提醒描述"
+
+#: hypha/apply/activity/templates/messages/email/report_frequency.html:6
+#, python-format
+msgid ""
+"An %(ORG_SHORT_NAME)s staff member has changed the reporting frequency of "
+"%(title)s."
+msgstr "%(ORG_SHORT_NAME)s 员工更改了 %(title)s 的报告频率。"
+
+#: hypha/apply/activity/templates/messages/email/report_frequency.html:8
+msgid "The new schedule is"
+msgstr "新计划是"
+
+#: hypha/apply/activity/templates/messages/email/report_frequency.html:10
+msgid "The next report is due"
+msgstr "下一次报告预定于"
+
+#: hypha/apply/activity/templates/messages/email/report_notify.html:6
+#, python-format
+msgid "A report is due for %(title)s on %(end_date)s."
+msgstr "%(title)s 有报告将于 %(end_date)s 截止。"
+
+#: hypha/apply/activity/templates/messages/email/report_notify.html:8
+msgid "More information can be found on the project page:"
+msgstr "可在项目页面获取更多信息："
+
+#: hypha/apply/activity/templates/messages/email/report_skipped.html:6
+#, python-format
+msgid "An %(ORG_SHORT_NAME)s staff member has marked a report as "
+msgstr "%(ORG_SHORT_NAME)s 员工已将报告标记为 "
+
+#: hypha/apply/activity/templates/messages/email/report_skipped.html:6
+msgid "no longer required"
+msgstr "不再需要"
+
+#: hypha/apply/activity/templates/messages/email/report_skipped.html:6
+msgid "required"
+msgstr "需要"
+
+#: hypha/apply/activity/templates/messages/email/report_skipped.html:6
+#, python-format
+msgid " for %(title)s for period %(start_date)s to %(end_date)s."
+msgstr " 为 %(start_date)s 到 %(end_date)s 阶段的 %(title)s。"
+
+#: hypha/apply/activity/templates/messages/email/report_skipped.html:9
+msgid ""
+"This report was previously not required. Please ensure you now complete the "
+"report."
+msgstr "此报告过去未被需要。请确定您现已完成了报告。"
+
+#: hypha/apply/activity/templates/messages/email/report_submitted.html:5
+#, python-format
+msgid ""
+"An %(ORG_SHORT_NAME)s staff member has submitted a report for %(title)s for "
+"period %(start_date)s to %(end_date)s."
+msgstr ""
+"%(ORG_SHORT_NAME)s 员工提交了 %(title)s 的 %(start_date)s 到 %(end_date)s "
+"阶段报告。"
+
+#: hypha/apply/activity/templates/messages/email/report_submitted.html:7
+msgid "You can review the report here"
+msgstr "您可以在这里审核报告"
+
+#: hypha/apply/activity/templates/messages/email/report_submitted.html:9
+#: hypha/apply/activity/templates/messages/email/vendor_setup_needed.html:9
+#: hypha/apply/activity/templates/messages/email/vendor_updated.html:7
+#: hypha/apply/funds/templates/funds/includes/project_block.html:3
+msgid "Project"
+msgstr "项目"
+
+#: hypha/apply/activity/templates/messages/email/sent_to_compliance.html:7
+msgid "A Project is awaiting your review."
+msgstr "有项目正等待您的审核。"
+
+#: hypha/apply/activity/templates/messages/email/sent_to_compliance.html:11
+msgid "Original Submission"
+msgstr "原始提交"
+
+#: hypha/apply/activity/templates/messages/email/sent_to_compliance.html:13
+#, python-format
+msgid "Please contact %(lead)s - %(email)s if you have any questions."
+msgstr "如有问题，请联系 %(lead)s - %(email)s。"
+
+#: hypha/apply/activity/templates/messages/email/submission_confirmation.html:4
+#, python-format
+msgid ""
+"We appreciate your %(title)s application submission to the %(ORG_LONG_NAME)s."
+msgstr "我们很感谢您对 %(ORG_LONG_NAME)s 的 %(title)s 申请提交。"
+
+#: hypha/apply/activity/templates/messages/email/submission_confirmation.html:6
+msgid ""
+"Please note that it is not submitted for review because it's still in draft."
+msgstr "请注意，由于仍处于草稿阶段，此申请还未提交供审核。"
+
+#: hypha/apply/activity/templates/messages/email/submission_confirmation.html:6
+msgid "You can access the draft at"
+msgstr "您可以在以下位置访问草稿"
+
+#: hypha/apply/activity/templates/messages/email/submission_confirmation.html:6
+msgid "We will review and reply to your submission as quickly as possible."
+msgstr "我们会尽快审核并回复您的提交。"
+
+#: hypha/apply/activity/templates/messages/email/submission_confirmation.html:10
+#, python-format
+msgid ""
+"If you have issues accessing the submission system or general inquiries, "
+"please email us at %(ORG_EMAIL)s."
+msgstr "如果您在访问提交系统时遇到问题，或者想询问一般问题，请用 %(ORG_EMAIL)s "
+"联系我们。"
+
+#: hypha/apply/activity/templates/messages/email/submission_confirmation.html:12
+#, python-format
+msgid ""
+"For more information about our support options, review process, and "
+"selection criteria, please visit our website at %(ORG_URL)s."
+msgstr "对于更多有关支持选项、审核流程、选择原则的信息，请登陆我们的网站 "
+"%(ORG_URL)s。"
+
+#: hypha/apply/activity/templates/messages/email/submission_confirmation.html:16
+msgid "Project name"
+msgstr "项目名称"
+
+#: hypha/apply/activity/templates/messages/email/submission_confirmation.html:17
+msgid "Contact name"
+msgstr "联系人名称"
+
+#: hypha/apply/activity/templates/messages/email/submission_confirmation.html:18
+msgid "Contact email"
+msgstr "联系人电子邮箱"
+
+#: hypha/apply/activity/templates/messages/email/submission_edit.html:5
+msgid "Your submission has been edited by a member of staff."
+msgstr "您的提交已被成员或工作人员编辑。"
+
+#: hypha/apply/activity/templates/messages/email/transition.html:4
+#, python-format
+msgid ""
+"Your application is now in \"%(new_status)s\" status (progressed from "
+"\"%(old_status)s\")."
+msgstr "您的申请目前处于“%(new_status)s”状态（曾是“%(old_status)s”）。"
+
+#: hypha/apply/activity/templates/messages/email/transition.html:6
+msgid "Please submit any questions related to your application here"
+msgstr "请在这里提交与您的申请有关的任何问题"
+
+#: hypha/apply/activity/templates/messages/email/vendor_setup_needed.html:5
+#, python-format
+msgid "A Project has been created for your submission on %(ORG_SHORT_NAME)s."
+msgstr "已为您的提交在 %(ORG_SHORT_NAME)s 创建了新项目。"
+
+#: hypha/apply/activity/templates/messages/email/vendor_setup_needed.html:7
+msgid ""
+"Next step is to complete Contracting Information by visiting project detail "
+"page."
+msgstr "下一步是登陆项目详情页面，完善合同信息。"
+
+#: hypha/apply/activity/templates/messages/email/vendor_setup_needed.html:11
+#: hypha/apply/funds/tables.py:485
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:133
+msgid "Submission"
+msgstr "提交"
+
+#: hypha/apply/activity/templates/messages/email/vendor_updated.html:5
+#, python-format
+msgid "Contracting Information has been updated on %(title)s."
+msgstr "合同信息已于 %(title)s 更新。"
+
+#: hypha/apply/api/v1/determination/utils.py:25
+#: hypha/apply/determinations/forms.py:108
+#: hypha/apply/determinations/views.py:93
+msgid "-- No determination selected -- "
+msgstr "-- 未选择决策 -- "
+
+#: hypha/apply/api/v1/filters.py:23 hypha/apply/funds/tables.py:416
+#: hypha/apply/users/templates/wagtailusers/users/list.html:49
+msgid "Active"
+msgstr "活跃"
+
+#: hypha/apply/api/v1/filters.py:24
+msgid "Submit date"
+msgstr "提交日期"
+
+#: hypha/apply/api/v1/filters.py:26
+msgid "fund"
+msgstr "基金"
+
+#: hypha/apply/api/v1/filters.py:32
+msgid "No Screening"
+msgstr "无审查"
+
+#: hypha/apply/api/v1/filters.py:43 hypha/apply/funds/tables.py:262
+msgid "Category"
+msgstr "类别"
+
+#: hypha/apply/api/v1/projects/serializers.py:29
+msgid "Not found"
+msgstr "未找到"
+
+#: hypha/apply/api/v1/projects/views.py:50
+msgid "Not Found"
+msgstr "未找到"
+
+#: hypha/apply/api/v1/projects/views.py:56
+msgid "Invoice Already has this deliverable"
+msgstr "发票已包含此交付产品"
+
+#: hypha/apply/api/v1/projects/views.py:59
+msgid "Required quantity is more than available"
+msgstr "所需数额超出可用值"
+
+#: hypha/apply/categories/blocks.py:34 hypha/apply/funds/blocks.py:30
+#: hypha/apply/funds/blocks.py:53 hypha/apply/funds/blocks.py:102
+#: hypha/apply/stream_forms/blocks.py:36
+msgid "Label"
+msgstr "标签"
+
+#: hypha/apply/categories/blocks.py:36
+msgid "Leave blank to use the default Category label"
+msgstr "留空以使用默认分类标签"
+
+#: hypha/apply/categories/blocks.py:39 hypha/apply/funds/blocks.py:31
+#: hypha/apply/funds/blocks.py:54 hypha/apply/funds/blocks.py:103
+#: hypha/apply/stream_forms/blocks.py:37
+msgid "Help text"
+msgstr "帮助文本"
+
+#: hypha/apply/categories/blocks.py:41
+msgid "Leave blank to use the default Category help text"
+msgstr "留空以使用默认的“类别”帮助文本"
+
+#: hypha/apply/categories/blocks.py:44
+msgid "Multi select"
+msgstr "多选"
+
+#: hypha/apply/categories/models.py:32 hypha/apply/categories/models.py:60
+msgid "Make available to filter on dashboard"
+msgstr "使其可在仪表板上进行筛选"
+
+#: hypha/apply/categories/models.py:40 hypha/apply/categories/models.py:85
+msgid "Options"
+msgstr "设置"
+
+#: hypha/apply/categories/models.py:53
+msgid "Keep the name short, ideally one word."
+msgstr "请保持名称简短，最好只用一个词。"
+
+#: hypha/apply/categories/models.py:56
+msgid "Archived"
+msgstr "已归档"
+
+#: hypha/apply/categories/models.py:57
+msgid "Archived terms can be viewed but not set on content."
+msgstr "已归档术语可被查看，但无法在内容中设置。"
+
+#: hypha/apply/categories/models.py:63
+msgid "Make available to applicants"
+msgstr "设为对申请人可用"
+
+#: hypha/apply/categories/templates/categories/admin/includes/meta_term_list_header.html:9
+msgid "archived"
+msgstr "已归档"
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:5
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:11
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:5
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:11
+#: hypha/apply/dashboard/templates/dashboard/contracting_dashboard.html:5
+#: hypha/apply/dashboard/templates/dashboard/contracting_dashboard.html:11
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:9
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:15
+#: hypha/apply/dashboard/templates/dashboard/finance_dashboard.html:5
+#: hypha/apply/dashboard/templates/dashboard/finance_dashboard.html:11
+#: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:5
+#: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:11
+#: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:9
+#: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:15
+msgid "Dashboard"
+msgstr "仪表板"
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:12
+msgid "An overview of active and past submissions and projects"
+msgstr "概览活动与既往的提交与项目"
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:15
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:15
+msgid "Submit a new application"
+msgstr "提交新申请"
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:16
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:16
+msgid "Apply now for our open rounds"
+msgstr "现在申请参与我们的公开选拔"
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:17
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:17
+#: hypha/apply/home/templates/apply_home/includes/apply_listing.html:29
+#: hypha/templates/includes/apply_button.html:2
+msgid "Apply"
+msgstr "申请"
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:23
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:44
+#: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:31
+#: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:49
+msgid "Your active submissions"
+msgstr "您的活动提交"
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:29
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:50
+#: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:37
+#: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:55
+#: hypha/apply/funds/tables.py:71
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:70
+#: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:33
+#: hypha/apply/funds/templates/funds/includes/revision_diff_table.html:4
+#: hypha/apply/projects/models/payment.py:31 hypha/apply/projects/tables.py:23
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:15
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:24
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:60
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:69
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:63
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:74
+msgid "Submitted"
+msgstr "已提交"
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:29
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:50
+#: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:37
+#: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:55
+#: hypha/apply/determinations/templates/determinations/includes/applicant_determination_block.html:9
+#: hypha/apply/determinations/templates/determinations/includes/determination_block.html:9
+#: hypha/apply/funds/templates/funds/applicationrevision_list.html:19
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:70
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:71
+#: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:33
+#: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:34
+#: hypha/apply/funds/templates/funds/tables/table.html:30
+#: hypha/apply/review/templates/review/review_detail.html:11
+msgid "by"
+msgstr "由"
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:36
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:57
+#: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:44
+#: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:62
+msgid "Start your"
+msgstr "开始您的"
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:36
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:57
+#: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:44
+#: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:62
+msgid "application"
+msgstr "申请"
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:44
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:65
+#: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:52
+msgid "No active submissions"
+msgstr "无活跃提交"
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:50
+msgid "Your active projects"
+msgstr ""
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:57
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:71
+#: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:58
+#: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:75
+msgid "Submission history"
+msgstr "提交历史"
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:64
+msgid "Project history"
+msgstr "项目历史"
+
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:12
+msgid "An overview of active and past submissions"
+msgstr "活跃与既往提交总览"
+
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:26
+msgid "Community review submissions"
+msgstr "社区审核提交"
+
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:32
+#: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:26
+msgid "No submissions"
+msgstr "无提交"
+
+#: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:38
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:108
+#: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:35
+msgid "Your previous reviews"
+msgstr "您的既往审核"
+
+#: hypha/apply/dashboard/templates/dashboard/contracting_dashboard.html:14
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:19
+#: hypha/apply/dashboard/templates/dashboard/finance_dashboard.html:14
+msgid "Apply admin"
+msgstr "申请管理"
+
+#: hypha/apply/dashboard/templates/dashboard/contracting_dashboard.html:22
+#: hypha/apply/dashboard/templates/dashboard/finance_dashboard.html:31
+msgid "PAF awaiting approval"
+msgstr ""
+
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:32
+msgid "Submissions waiting for your review"
+msgstr "等待您审核的提交"
+
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:34
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:41
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:49
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:57
+#: hypha/apply/funds/templates/funds/includes/round-block-listing.html:23
+#: hypha/apply/funds/templates/funds/includes/status-block.html:10
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:28
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:72
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:78
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:17
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:19
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:41
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:66
+msgid "View"
+msgstr "查看"
+
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:39
+msgid "Live projects under your management"
+msgstr "您管理的活动项目"
+
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:47
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:94
+msgid "Projects awaiting approval"
+msgstr "等待批准的项目"
+
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:55
+msgid "Requests for invoices requiring your attention"
+msgstr "需要您注意的发票请求"
+
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:79
+msgid "Your projects"
+msgstr "您的项目"
+
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:85
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:114
+#: hypha/apply/dashboard/templates/dashboard/includes/flagged.html:12
+#: hypha/apply/dashboard/templates/dashboard/includes/waiting-for-review.html:13
+#: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:41
+#: hypha/apply/funds/templates/funds/includes/round-block-listing.html:27
+#: hypha/apply/funds/templates/funds/submissions_overview.html:50
+#: hypha/apply/funds/templates/funds/submissions_overview.html:60
+#: hypha/apply/projects/templates/application_projects/overview.html:38
+#: hypha/apply/projects/templates/application_projects/overview.html:52
+#: hypha/apply/projects/templates/application_projects/overview.html:67
+msgid "Show all"
+msgstr "显示所有"
+
+#: hypha/apply/dashboard/templates/dashboard/dashboard.html:101
+#: hypha/apply/dashboard/templates/dashboard/finance_dashboard.html:21
+msgid "Active Invoices"
+msgstr "活跃发票"
+
+#: hypha/apply/dashboard/templates/dashboard/finance_dashboard.html:25
+msgid "No Active Invoices"
+msgstr "无活跃发票"
+
+#: hypha/apply/dashboard/templates/dashboard/includes/flagged.html:5
+#: hypha/apply/funds/templates/funds/submissions_user_flagged.html:6
+msgid "Your Flagged Submissions"
+msgstr "您的已标记提交"
+
+#: hypha/apply/dashboard/templates/dashboard/includes/waiting-for-review.html:5
+msgid "Waiting for your review"
+msgstr ""
+
+#: hypha/apply/dashboard/templates/dashboard/includes/waiting-for-review.html:19
+msgid "Nice! You're all caught up."
+msgstr ""
+
+#: hypha/apply/dashboard/templates/dashboard/includes/waiting-for-review.html:20
+msgid "Find new applications to review"
+msgstr "寻找新的待审核申请"
+
+#: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:20
+msgid "You are the partner of these submissions"
+msgstr "您是这些提交的合作者"
+
+#: hypha/apply/determinations/blocks.py:65
+msgid "Send Notice"
+msgstr "发送通知"
+
+#: hypha/apply/determinations/blocks.py:76
+#: hypha/apply/determinations/blocks.py:77
+#: hypha/apply/determinations/blocks.py:78
+#: hypha/apply/determinations/blocks.py:79
+#: hypha/apply/determinations/blocks.py:80 hypha/apply/funds/blocks.py:194
+#: hypha/apply/review/blocks.py:160 hypha/apply/review/blocks.py:161
+#: hypha/apply/review/blocks.py:162 hypha/apply/review/blocks.py:163
+#: hypha/apply/review/blocks.py:164 hypha/apply/review/blocks.py:165
+#: hypha/apply/review/blocks.py:166 hypha/apply/stream_forms/blocks.py:468
+#: hypha/apply/stream_forms/blocks.py:469
+#: hypha/apply/stream_forms/blocks.py:470
+#: hypha/apply/stream_forms/blocks.py:471
+#: hypha/apply/stream_forms/blocks.py:472
+#: hypha/apply/stream_forms/blocks.py:473
+#: hypha/apply/stream_forms/blocks.py:474
+#: hypha/apply/stream_forms/blocks.py:475
+#: hypha/apply/stream_forms/blocks.py:476
+#: hypha/apply/stream_forms/blocks.py:477
+#: hypha/apply/stream_forms/blocks.py:478
+#: hypha/apply/stream_forms/blocks.py:479
+#: hypha/apply/stream_forms/blocks.py:480
+#: hypha/apply/stream_forms/blocks.py:481 hypha/apply/utils/blocks.py:76
+#: hypha/apply/utils/blocks.py:77
+msgid "Fields"
+msgstr "领域"
+
+#: hypha/apply/determinations/blocks.py:78
+msgid "Section text/header"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:172
+#: hypha/apply/determinations/forms.py:253
+#: hypha/apply/determinations/forms.py:515
+#: hypha/apply/determinations/models.py:105
+#: hypha/apply/determinations/templates/determinations/determination_detail.html:12
+#: hypha/apply/determinations/templates/determinations/determination_detail.html:20
+msgid "Determination"
+msgstr "决策"
+
+#: hypha/apply/determinations/forms.py:178
+#: hypha/apply/determinations/forms.py:259
+#: hypha/apply/determinations/models.py:106
+#: hypha/apply/determinations/templates/determinations/determination_detail.html:33
+msgid "Determination message"
+msgstr "决策消息"
+
+#: hypha/apply/determinations/forms.py:185
+msgid "Goals and principles"
+msgstr "目标与原则"
+
+#: hypha/apply/determinations/forms.py:205
+msgid "Technical merit"
+msgstr "技术价值"
+
+#: hypha/apply/determinations/forms.py:220
+msgid "Reasonable, realistic and sustainable"
+msgstr "合理、现实与可持续"
+
+#: hypha/apply/determinations/forms.py:234
+msgid "Other comments"
+msgstr "其他留言"
+
+#: hypha/apply/determinations/forms.py:267
+msgid "Positive aspects"
+msgstr "积极方面"
+
+#: hypha/apply/determinations/forms.py:273
+msgid "Concerns"
+msgstr "疑虑"
+
+#: hypha/apply/determinations/forms.py:279
+msgid "Items that must be addressed"
+msgstr "必须处理的项目"
+
+#: hypha/apply/determinations/forms.py:285
+msgid "Project overview questions and comments"
+msgstr "项目概况问题与评论"
+
+#: hypha/apply/determinations/forms.py:288
+msgid "Objectives questions and comments"
+msgstr "目标问题与评论"
+
+#: hypha/apply/determinations/forms.py:291
+msgid "Methods and strategy questions and comments"
+msgstr "方法与策略问题与评论"
+
+#: hypha/apply/determinations/forms.py:294
+msgid "Technical feasibility questions and comments"
+msgstr "技术可行性问题与评论"
+
+#: hypha/apply/determinations/forms.py:297
+msgid "Alternative analysis - \"red teaming\" questions and comments"
+msgstr "备用分析 - “Red Teaming”问题与评论"
+
+#: hypha/apply/determinations/forms.py:300
+msgid "Usability questions and comments"
+msgstr "可用性问题与评论"
+
+#: hypha/apply/determinations/forms.py:303
+msgid "Sustainability questions and comments"
+msgstr "可持续性问题与评论"
+
+#: hypha/apply/determinations/forms.py:306
+msgid "Collaboration questions and comments"
+msgstr "合作问题与评论"
+
+#: hypha/apply/determinations/forms.py:309
+msgid "Cost realism questions and comments"
+msgstr "花销现实性问题与评论"
+
+#: hypha/apply/determinations/forms.py:312
+msgid "Qualifications questions and comments"
+msgstr "审核问题与评论"
+
+#: hypha/apply/determinations/forms.py:315
+msgid "Evaluation questions and comments"
+msgstr "评估问题与评论"
+
+#: hypha/apply/determinations/forms.py:319
+msgid "Rationale and appropriateness questions and comments"
+msgstr "原理与合理性问题与评论"
+
+#: hypha/apply/determinations/forms.py:359
+#: hypha/apply/determinations/views.py:363
+msgid "-- No proposal form selected -- "
+msgstr "-- 未选择提案表单 -- "
+
+#: hypha/apply/determinations/forms.py:361
+#: hypha/apply/determinations/views.py:365
+msgid "Proposal Form"
+msgstr "提案表单"
+
+#: hypha/apply/determinations/forms.py:363
+#: hypha/apply/determinations/views.py:367
+msgid "Select the proposal form to use for proposal stage."
+msgstr "选择提案阶段使用的提案表单。"
+
+#: hypha/apply/determinations/models.py:113
+#: hypha/apply/determinations/templates/determinations/includes/determination_block.html:7
+#: hypha/apply/funds/workflow.py:205 hypha/apply/funds/workflow.py:332
+#: hypha/apply/funds/workflow.py:487 hypha/apply/funds/workflow.py:666
+#: hypha/apply/review/models.py:161
+msgid "Draft"
+msgstr "草稿"
+
+#: hypha/apply/determinations/models.py:114
+#: hypha/apply/projects/models/vendor.py:49 hypha/apply/review/models.py:162
+msgid "Creation time"
+msgstr "创建时间"
+
+#: hypha/apply/determinations/models.py:115
+#: hypha/apply/projects/models/vendor.py:50 hypha/apply/review/models.py:163
+msgid "Update time"
+msgstr "更新时间"
+
+#: hypha/apply/determinations/models.py:116
+msgid "Send message to applicant"
+msgstr "向申请者发送消息"
+
+#: hypha/apply/determinations/models.py:236
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:22
+msgid "Request"
+msgstr "请求"
+
+#: hypha/apply/determinations/models.py:237
+msgid "Concept note"
+msgstr "概念备注"
+
+#: hypha/apply/determinations/models.py:238
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:13
+#: hypha/apply/projects/templates/application_projects/project_detail.html:169
+msgid "Proposal"
+msgstr "提案"
+
+#: hypha/apply/determinations/models.py:358
+msgid "Concept form"
+msgstr "概念表单"
+
+#: hypha/apply/determinations/models.py:359
+msgid "Proposal form"
+msgstr "提案表单"
+
+#: hypha/apply/determinations/options.py:10 hypha/apply/funds/workflow.py:315
+#: hypha/apply/funds/workflow.py:469 hypha/apply/funds/workflow.py:648
+#: hypha/apply/funds/workflow.py:769 hypha/apply/funds/workflow.py:923
+#: hypha/apply/funds/workflow.py:1155
+msgid "Dismissed"
+msgstr "已驳回"
+
+#: hypha/apply/determinations/options.py:11
+msgid "More information requested"
+msgstr "需要更多信息"
+
+#: hypha/apply/determinations/templates/determinations/base_determination_form.html:3
+msgid "Edit a Determination"
+msgstr "编辑决策"
+
+#: hypha/apply/determinations/templates/determinations/base_determination_form.html:3
+#: hypha/apply/determinations/templates/determinations/determination_form.html:7
+msgid "draft"
+msgstr "草稿"
+
+#: hypha/apply/determinations/templates/determinations/base_determination_form.html:3
+msgid "Create a Determination"
+msgstr "创建决策"
+
+#: hypha/apply/determinations/templates/determinations/base_determination_form.html:9
+msgid "Update Determination draft"
+msgstr "更新决策"
+
+#: hypha/apply/determinations/templates/determinations/base_determination_form.html:9
+#: hypha/apply/determinations/templates/determinations/determination_form.html:7
+msgid "Create Determination"
+msgstr "创建决策"
+
+#: hypha/apply/determinations/templates/determinations/base_determination_form.html:10
+#: hypha/apply/determinations/templates/determinations/determination_detail.html:14
+#: hypha/apply/determinations/templates/determinations/determination_form.html:8
+#: hypha/apply/funds/templates/funds/applicationrevision_list.html:9
+#: hypha/apply/funds/templates/funds/revisions_compare.html:8
+#: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:12
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:12
+#: hypha/apply/projects/templates/application_projects/invoice_form.html:9
+#: hypha/apply/review/templates/review/review_detail.html:11
+#: hypha/apply/review/templates/review/review_edit_form.html:8
+#: hypha/apply/review/templates/review/review_form.html:8
+#: hypha/apply/review/templates/review/review_list.html:13
+msgid "For"
+msgstr "为"
+
+#: hypha/apply/determinations/templates/determinations/base_determination_form.html:48
+#: hypha/apply/funds/templates/funds/application_base.html:67
+#: hypha/apply/funds/templates/funds/applicationsubmission_form.html:36
+#: hypha/apply/funds/views.py:954
+#: hypha/apply/projects/templates/application_projects/project_approval_form.html:38
+#: hypha/apply/review/templates/review/review_edit_form.html:40
+#: hypha/apply/review/templates/review/review_form.html:41
+msgid "Save draft"
+msgstr "保存草稿"
+
+#: hypha/apply/determinations/templates/determinations/batch_determination_form.html:12
+msgid "Add Batch Determination"
+msgstr "添加批量决策"
+
+#: hypha/apply/determinations/templates/determinations/batch_determination_form.html:20
+msgid "Determining"
+msgstr "决策"
+
+#: hypha/apply/determinations/templates/determinations/batch_determination_form.html:20
+msgid "submission"
+msgstr "提交"
+
+#: hypha/apply/determinations/templates/determinations/batch_determination_form.html:20
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:111
+msgid "as"
+msgstr "作为"
+
+#: hypha/apply/determinations/templates/determinations/batch_determination_form.html:21
+#: hypha/apply/funds/templates/funds/includes/batch_delete_submission_form.html:8
+#: hypha/apply/funds/templates/funds/includes/batch_progress_form.html:6
+#: hypha/apply/funds/templates/funds/includes/batch_update_lead_form.html:7
+#: hypha/apply/funds/templates/funds/includes/batch_update_reviewer_form.html:7
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:8
+msgid "Show"
+msgstr "显示"
+
+#: hypha/apply/determinations/templates/determinations/batch_determination_form.html:37
+msgid "Send"
+msgstr "发送"
+
+#: hypha/apply/determinations/templates/determinations/determination_detail.html:4
+msgid "Determination for"
+msgstr "决策目标"
+
+#: hypha/apply/determinations/templates/determinations/determination_detail.html:10
+#: hypha/apply/review/templates/review/review_detail.html:8
+msgid "Back to submission"
+msgstr ""
+
+#: hypha/apply/determinations/templates/determinations/determination_detail.html:12
+msgid "DRAFT"
+msgstr "草稿"
+
+#: hypha/apply/determinations/templates/determinations/determination_form.html:7
+msgid "Edit Determination"
+msgstr ""
+
+#: hypha/apply/determinations/templates/determinations/includes/applicant_determination_block.html:3
+#: hypha/apply/determinations/templates/determinations/includes/determination_block.html:3
+msgid "Determinations"
+msgstr "决策"
+
+#: hypha/apply/determinations/templates/determinations/includes/applicant_determination_block.html:12
+#: hypha/apply/determinations/templates/determinations/includes/determination_block.html:12
+msgid "Awaiting determination"
+msgstr "等待决策"
+
+#: hypha/apply/determinations/templates/determinations/includes/batch_determination_confirmation.html:3
+#: hypha/apply/determinations/templates/determinations/includes/batch_determination_confirmation.html:9
+msgid "Send determination"
+msgstr "发送决策"
+
+#: hypha/apply/determinations/templates/determinations/includes/batch_determination_confirmation.html:5
+#, python-format
+msgid ""
+"This determination message will be emailed to %(count)s applicants and "
+"<strong>cannot be undone.</strong>"
+msgstr "这条决策消息将会通过电子邮件发送给 %(count)s "
+"位申请者，且<strong>无法撤销。</strong>"
+
+#: hypha/apply/determinations/templates/determinations/includes/batch_determination_confirmation.html:6
+msgid "Do you wish to contiune?"
+msgstr "您希望继续吗？"
+
+#: hypha/apply/determinations/templates/determinations/includes/batch_determination_confirmation.html:10
+msgid "Not yet"
+msgstr "现在不要"
+
+#: hypha/apply/determinations/templates/determinations/includes/determination_button.html:8
+msgid "Update draft"
+msgstr "更新草稿"
+
+#: hypha/apply/determinations/templates/determinations/includes/determination_button.html:11
+msgid "Add determination"
+msgstr "添加决策"
+
+#: hypha/apply/determinations/views.py:248
+#, python-brace-format
+msgid ""
+"A determination already exists for the following submissions and they have "
+"been excluded: {submissions}"
+msgstr "以下提交拥有决策，已被排除：{submissions}"
+
+#: hypha/apply/determinations/views.py:284
+msgid "You do not have permission to create that determination."
+msgstr "您没有创建决策的权限。"
+
+#: hypha/apply/determinations/views.py:287
+msgid "A final determination has already been submitted."
+msgstr "已有最终决策提交。"
+
+#: hypha/apply/determinations/views.py:295
+msgid "There is a draft determination you do not have permission to edit."
+msgstr "存在草稿决策，且您无权编辑。"
+
+#: hypha/apply/determinations/views.py:436
+#, python-brace-format
+msgid ""
+"A determination of \"{current}\" exists but you tried to progress as "
+"\"{target}\""
+msgstr "已存在“{current}”的决策，但您试图作为“{target}”进行"
+
+#: hypha/apply/flags/templates/flags/flags.html:3
+msgid "Flags"
+msgstr "标记"
+
+#: hypha/apply/flags/templates/flags/flags.html:5
+msgid "Flag"
+msgstr "标记"
+
+#: hypha/apply/flags/templates/flags/flags.html:8
+msgid "Staff flag"
+msgstr "员工标记"
+
+#: hypha/apply/funds/admin_helpers.py:26
+msgid "Fund or RFP"
+msgstr "基金或 RFP"
+
+#: hypha/apply/funds/admin_helpers.py:67
+msgid "Funds & RFP"
+msgstr "基金 & RFP"
+
+#: hypha/apply/funds/admin_helpers.py:68
+msgid "Rounds and Sealed Rounds"
+msgstr "轮次与已锁定轮次"
+
+#: hypha/apply/funds/admin_helpers.py:69 hypha/public/home/models.py:131
+#: hypha/public/home/models.py:136
+msgid "Labs"
+msgstr "实验室"
+
+#: hypha/apply/funds/admin_helpers.py:86 hypha/apply/funds/tables.py:417
+#: hypha/apply/funds/templates/funds/includes/round-block-listing.html:13
+#: hypha/apply/funds/templates/funds/includes/round-block.html:7
+msgid "Open"
+msgstr "开启中"
+
+#: hypha/apply/funds/admin_helpers.py:87
+#: hypha/apply/funds/templates/funds/includes/round-block.html:6
+#: hypha/templates/includes/relatedcontent_card.html:11
+msgid "Closed"
+msgstr "已关闭"
+
+#: hypha/apply/funds/admin_views.py:67
+#, python-brace-format
+msgid "Page '{0}' and {1} subpages copied."
+msgstr "已复制页面“{0}”与 {1} 个子页面。"
+
+#: hypha/apply/funds/admin_views.py:72
+#, python-brace-format
+msgid "Page '{0}' copied."
+msgstr "已复制页面“{0}”。"
+
+#: hypha/apply/funds/blocks.py:30
+msgid "What is the title of your application?"
+msgstr "您申请的标题是？"
+
+#: hypha/apply/funds/blocks.py:31
+msgid "This project name can be changed if a full proposal is requested."
+msgstr "如果需要完整提案，则可更改项目名。"
+
+#: hypha/apply/funds/blocks.py:34
+msgid "Application title"
+msgstr "申请标题"
+
+#: hypha/apply/funds/blocks.py:44
+msgid "Requested amount"
+msgstr "请求数目"
+
+#: hypha/apply/funds/blocks.py:53
+msgid "What email address should we use to contact you?"
+msgstr "我们应该用哪个电子邮箱地址联系您？"
+
+#: hypha/apply/funds/blocks.py:55
+msgid ""
+"We will use this email address to communicate with you about your proposal."
+msgstr "我们会用此电子邮箱地址与您沟通提案相关事宜。"
+
+#: hypha/apply/funds/blocks.py:71
+#: hypha/apply/funds/templates/funds/includes/rendered_answers.html:29
+#: hypha/apply/funds/templates/funds/includes/revision_diff_table.html:17
+#: hypha/apply/projects/models/vendor.py:20
+#: hypha/apply/projects/models/vendor.py:57
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:61
+msgid "Address"
+msgstr "地址"
+
+#: hypha/apply/funds/blocks.py:102
+msgid "What is your name?"
+msgstr "您的名字是？"
+
+#: hypha/apply/funds/blocks.py:104
+msgid "We will use this name when we communicate with you about your proposal."
+msgstr "当与您沟通提案相关事宜时，我们会使用此名字。"
+
+#: hypha/apply/funds/blocks.py:107 hypha/apply/users/models.py:110
+msgid "Full name"
+msgstr "全名"
+
+#: hypha/apply/funds/blocks.py:193 hypha/apply/stream_forms/blocks.py:466
+#: hypha/apply/stream_forms/blocks.py:467
+#: hypha/apply/stream_forms/blocks.py:482
+#: hypha/apply/stream_forms/blocks.py:483 hypha/apply/utils/blocks.py:84
+msgid "Custom"
+msgstr "自定义"
+
+#: hypha/apply/funds/forms.py:61 hypha/apply/funds/forms.py:80
+msgid "Take action"
+msgstr "进行操作"
+
+#: hypha/apply/funds/forms.py:143 hypha/apply/projects/forms/project.py:191
+#, python-brace-format
+msgid "Update lead from {lead} to"
+msgstr "将领导人由 {lead} 更新到"
+
+#: hypha/apply/funds/forms.py:148
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:25
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:27
+#: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:20
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:50
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:32
+#: hypha/apply/funds/templates/funds/submission_sealed.html:14
+#: hypha/apply/funds/templates/funds/submissions_by_round.html:12
+#: hypha/apply/projects/filters.py:28 hypha/apply/projects/filters.py:42
+#: hypha/apply/projects/tables.py:45
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:98
+#: hypha/apply/projects/templates/application_projects/project_detail.html:33
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:24
+msgid "Lead"
+msgstr "领导人"
+
+#: hypha/apply/funds/forms.py:200 hypha/apply/funds/forms.py:332
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:119
+msgid "External Reviewers"
+msgstr "外部审核人"
+
+#: hypha/apply/funds/forms.py:278
+msgid "Can't unassign, just change, because review already submitted"
+msgstr "无法取消分派，只能更改，因为审核已被提交"
+
+#: hypha/apply/funds/forms.py:283 hypha/apply/funds/forms.py:377
+msgid "Users cannot be assigned to multiple roles."
+msgstr "用户无法分配到多个角色。"
+
+#: hypha/apply/funds/forms.py:364
+msgid "Only Lead can change the External Reviewers"
+msgstr ""
+
+#: hypha/apply/funds/forms.py:367
+msgid ""
+"External Reviewers cannot be selected because of the application workflow"
+msgstr ""
+
+#: hypha/apply/funds/forms.py:426
+msgid "-- No reviewer selected --"
+msgstr ""
+
+#: hypha/apply/funds/forms.py:428
+#, python-brace-format
+msgid "{role_name} Reviewer"
+msgstr "{role_name} 审核人"
+
+#: hypha/apply/funds/forms.py:443
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:49
+msgid "Partners"
+msgstr "合作者"
+
+#: hypha/apply/funds/forms.py:504
+msgid "Meta terms"
+msgstr "元条款"
+
+#: hypha/apply/funds/forms.py:507
+msgid "Meta terms are hierarchical in nature."
+msgstr "元条款本身具有层次。"
+
+#: hypha/apply/funds/models/__init__.py:17 hypha/apply/funds/tables.py:74
+#: hypha/apply/projects/tables.py:44 hypha/apply/projects/tables.py:69
+msgid "Fund"
+msgstr "基金"
+
+#: hypha/apply/funds/models/__init__.py:24
+msgid "RFP"
+msgstr "RFP"
+
+#: hypha/apply/funds/models/__init__.py:41
+msgid "Lab"
+msgstr "实验室"
+
+#: hypha/apply/funds/models/applications.py:77
+#: hypha/apply/funds/models/applications.py:431
+msgid "Link to the apply guide."
+msgstr "指向申请指南的链接。"
+
+#: hypha/apply/funds/models/applications.py:79
+msgid ""
+"The slack #channel for notifications. If left empty, notifications will go "
+"to the default channel."
+msgstr "接收通知的 Slack #频道。如果留空，通知会发送到默认频道。"
+
+#: hypha/apply/funds/models/applications.py:120
+#: hypha/apply/funds/models/applications.py:215
+#: hypha/apply/funds/models/applications.py:446
+msgid "Content"
+msgstr "内容"
+
+#: hypha/apply/funds/models/applications.py:122
+#: hypha/apply/funds/models/applications.py:216
+#: hypha/apply/funds/models/applications.py:448
+msgid "Promote"
+msgstr "推广"
+
+#: hypha/apply/funds/models/applications.py:169
+msgid "When no end date is provided the round will remain open indefinitely."
+msgstr "若没有提供结束日期，此轮次将永久保持开启。"
+
+#: hypha/apply/funds/models/applications.py:180
+msgid "Dates"
+msgstr "日期"
+
+#: hypha/apply/funds/models/applications.py:184
+#: hypha/apply/funds/models/utils.py:53
+msgid "Workflow"
+msgstr "工作流"
+
+#: hypha/apply/funds/models/applications.py:185
+#: hypha/apply/funds/models/applications.py:192
+#: hypha/apply/funds/models/applications.py:198
+#: hypha/apply/funds/models/applications.py:203
+#: hypha/apply/funds/models/applications.py:209
+msgid "Copied from the fund."
+msgstr "已从基金复制。"
+
+#: hypha/apply/funds/models/applications.py:191
+#: hypha/apply/funds/models/utils.py:119
+msgid "Application forms"
+msgstr "申请表单"
+
+#: hypha/apply/funds/models/applications.py:197
+msgid "Internal Review Form"
+msgstr "内部审核表单"
+
+#: hypha/apply/funds/models/applications.py:204
+msgid "External Review Form"
+msgstr "外部审核表单"
+
+#: hypha/apply/funds/models/applications.py:210
+msgid "Determination Form"
+msgstr "决策表单"
+
+#: hypha/apply/funds/models/applications.py:433
+msgid "The slack #channel for notifications."
+msgstr "接收通知的 Slack #频道。"
+
+#: hypha/apply/funds/models/reviewer_role.py:19
+msgid "The order this role should appear in the Update Reviewers form."
+msgstr "在“更新审核者”表单中，此角色应出现的位置。"
+
+#: hypha/apply/funds/models/reviewer_role.py:63
+msgid "Submissions for which reviewers should have access to"
+msgstr "审核者应可访问的提交"
+
+#: hypha/apply/funds/models/reviewer_role.py:69
+msgid "Submissions states for which reviewers should have access to"
+msgstr "审核者应可访问的提交状态"
+
+#: hypha/apply/funds/models/reviewer_role.py:75
+msgid "Submissions outcomes for which reviewers should have access to"
+msgstr "审核者应可访问的提交结果"
+
+#: hypha/apply/funds/models/reviewer_role.py:79
+msgid "Submissions for which reviewer is assigned to"
+msgstr "审核者被分配的提交"
+
+#: hypha/apply/funds/models/reviewer_role.py:83
+msgid "Use the above configured variables to filter out submissions"
+msgstr "使用上面的已配置变量来筛选提交"
+
+#: hypha/apply/funds/models/screening.py:10
+msgid "Yes/No"
+msgstr "是/否"
+
+#: hypha/apply/funds/models/screening.py:11
+msgid "Tick mark for Yes otherwise No."
+msgstr "勾选表示“是”，否则是“否”。"
+
+#: hypha/apply/funds/models/screening.py:14
+msgid "Default Yes/No"
+msgstr "默认是/否"
+
+#: hypha/apply/funds/models/screening.py:15
+msgid "Only one Yes and No screening decision can be set as default."
+msgstr "只能将一个“是/否”审查决定设置为默认。"
+
+#: hypha/apply/funds/models/submissions.py:485
+msgid "submit time"
+msgstr "提交时间"
+
+#: hypha/apply/funds/models/utils.py:120
+msgid "Internal Review Forms"
+msgstr "内部审核表单"
+
+#: hypha/apply/funds/models/utils.py:123
+msgid "External Review Forms"
+msgstr "外部审核表单"
+
+#: hypha/apply/funds/models/utils.py:126
+msgid "Determination Forms"
+msgstr "决策表单"
+
+#: hypha/apply/funds/models/utils.py:127
+msgid "Project Approval Form"
+msgstr "项目批准表单"
+
+#: hypha/apply/funds/models/utils.py:140
+msgid "Additional text for the application confirmation message."
+msgstr "申请确认消息的附加文本。"
+
+#: hypha/apply/funds/models/utils.py:156 hypha/apply/funds/models/utils.py:160
+msgid "Confirmation email"
+msgstr "确认邮件"
+
+#: hypha/apply/funds/tables.py:72
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:27
+#: hypha/apply/projects/filters.py:27 hypha/apply/projects/filters.py:43
+#: hypha/apply/projects/tables.py:68
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:17
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:26
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:62
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:71
+#: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:20
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:19
+#: hypha/apply/users/templates/wagtailusers/users/list.html:24
+#: hypha/public/partner/tables.py:51 hypha/public/partner/tables.py:97
+msgid "Status"
+msgstr "状态"
+
+#: hypha/apply/funds/tables.py:73
+msgid "Type"
+msgstr "类型"
+
+#: hypha/apply/funds/tables.py:75
+msgid "Comments"
+msgstr "评论"
+
+#: hypha/apply/funds/tables.py:76
+#: hypha/apply/funds/templates/funds/tables/table.html:22
+#: hypha/apply/review/templates/review/review_detail.html:11
+msgid "Last updated"
+msgstr "上次更新于"
+
+#: hypha/apply/funds/tables.py:89
+msgid "No submissions available"
+msgstr "无可用提交"
+
+#: hypha/apply/funds/tables.py:135 hypha/apply/funds/tables.py:259
+msgid "Screening"
+msgstr "审查"
+
+#: hypha/apply/funds/tables.py:169
+#: hypha/apply/users/templates/wagtailusers/users/list.html:22
+msgid "Role"
+msgstr "角色"
+
+#: hypha/apply/funds/tables.py:244
+msgid "Statuses"
+msgstr "状态"
+
+#: hypha/apply/funds/tables.py:256 hypha/apply/funds/tables.py:322
+#: hypha/apply/funds/tables.py:414 hypha/apply/funds/tables.py:448
+#: hypha/apply/projects/filters.py:26 hypha/apply/projects/filters.py:41
+#: hypha/public/home/models.py:124
+msgid "Funds"
+msgstr "基金"
+
+#: hypha/apply/funds/tables.py:257 hypha/apply/funds/tables.py:321
+#: hypha/apply/funds/tables.py:453
+#: hypha/apply/funds/templates/funds/rounds.html:5
+#: hypha/apply/funds/templates/funds/rounds.html:16
+msgid "Rounds"
+msgstr "轮次"
+
+#: hypha/apply/funds/tables.py:258 hypha/apply/funds/tables.py:415
+msgid "Leads"
+msgstr "领导人"
+
+#: hypha/apply/funds/tables.py:259
+msgid "No Status"
+msgstr "无状态"
+
+#: hypha/apply/funds/tables.py:260 hypha/apply/funds/tables.py:443
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:48
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:37
+msgid "Reviewers"
+msgstr "审核人"
+
+#: hypha/apply/funds/tables.py:265
+msgid "Terms"
+msgstr "条款"
+
+#: hypha/apply/funds/tables.py:348
+#: hypha/apply/funds/templates/funds/includes/round-block-listing.html:20
+msgid "Determined"
+msgstr "已决策"
+
+#: hypha/apply/funds/tables.py:468
+msgid "Reviewer"
+msgstr "审核人"
+
+#: hypha/apply/funds/tables.py:481 hypha/apply/funds/tables.py:496
+msgid "No reviews available"
+msgstr "无可用审核"
+
+#: hypha/apply/funds/tables.py:500
+msgid "Staff"
+msgstr "员工"
+
+#: hypha/apply/funds/tables.py:508
+msgid "No staff available"
+msgstr "无可用员工"
+
+#: hypha/apply/funds/templates/funds/admin/parent_chooser.html:17
+msgid "Choose a Fund"
+msgstr "选择基金"
+
+#: hypha/apply/funds/templates/funds/admin/parent_chooser.html:18
+msgid ""
+"Rounds must be associated with a Fund or RFP. What are you creating a new "
+"Round for?"
+msgstr "轮次必须与基金或 RFP 相关联。您创建新轮次的目的是？"
+
+#: hypha/apply/funds/templates/funds/admin/parent_chooser.html:26
+#: hypha/apply/projects/templates/application_projects/includes/report_line.html:40
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:35
+#: hypha/templates/password_required.html:26
+msgid "Continue"
+msgstr "继续"
+
+#: hypha/apply/funds/templates/funds/application_base.html:12
+msgid ""
+"There were some errors with your form. Please amend the fields highlighted "
+"below"
+msgstr "您的表单中有错误。请修正下方高亮的字段"
+
+#: hypha/apply/funds/templates/funds/application_base.html:27
+#: hypha/apply/home/templates/apply_home/includes/apply_listing.html:11
+#: hypha/public/funds/templates/public_funds/includes/fund_apply_cta.html:8
+#: hypha/templates/includes/relatedcontent_card.html:9
+msgid "Next deadline"
+msgstr "下个截止时间"
+
+#: hypha/apply/funds/templates/funds/application_base.html:32
+#, python-format
+msgid ""
+"Sorry this %(page|verbose_name)s is not accepting applications at the moment"
+msgstr "抱歉，这个 %(page|verbose_name)s 目前未在接收申请"
+
+#: hypha/apply/funds/templates/funds/application_base.html:36
+#: hypha/public/funds/templates/public_funds/includes/fund_apply_cta.html:20
+msgid "Application guide"
+msgstr "申请指南"
+
+#: hypha/apply/funds/templates/funds/application_base.html:66
+msgid "Submit for review"
+msgstr "提交供审核"
+
+#: hypha/apply/funds/templates/funds/application_base.html:69
+msgid "You must have Javascript enabled to use this form."
+msgstr "您必须启用 Javascript 以使用此表单。"
+
+#: hypha/apply/funds/templates/funds/application_base_landing.html:8
+msgid "Your application is saved as a draft."
+msgstr "您的申请已被保存为草稿。"
+
+#: hypha/apply/funds/templates/funds/application_base_landing.html:10
+#, python-format
+msgid "Thank you for your submission to the %(ORG_LONG_NAME)s."
+msgstr "感谢您给 %(ORG_LONG_NAME)s 的提交。"
+
+#: hypha/apply/funds/templates/funds/application_base_landing.html:14
+msgid ""
+"Please note that it is not submitted for review. You can complete your "
+"application by following the log-in details emailed to you."
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/application_base_landing.html:16
+msgid ""
+"An e-mail with more information has been sent to the address you entered."
+msgstr "已向您输入的地址发送了一封电子邮件，其中包含更多信息。"
+
+#: hypha/apply/funds/templates/funds/application_base_landing.html:18
+#, python-format
+msgid ""
+"If you do not receive an e-mail within 15 minutes please check your\n"
+"spam folder and contact %(email)s for further assistance."
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/applicationrevision_list.html:3
+#, python-format
+msgid "Revisions for %(title)s"
+msgstr "%(title)s 的修订"
+
+#: hypha/apply/funds/templates/funds/applicationrevision_list.html:8
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:55
+msgid "Revisions"
+msgstr "修订"
+
+#: hypha/apply/funds/templates/funds/applicationrevision_list.html:21
+#: hypha/apply/projects/templates/application_projects/includes/report_line.html:5
+msgid "current"
+msgstr "当前"
+
+#: hypha/apply/funds/templates/funds/applicationrevision_list.html:25
+#: hypha/apply/funds/templates/funds/revisions_compare.html:3
+#: hypha/apply/review/templates/review/review_detail.html:50
+msgid "Compare"
+msgstr "操作"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_admin_detail.html:10
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:2
+#: hypha/apply/funds/templates/funds/includes/generic_primary_actions.html:5
+#: hypha/apply/projects/templates/application_projects/project_detail.html:116
+#: hypha/apply/projects/templates/application_projects/project_detail.html:121
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:143
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:147
+msgid "Actions to take"
+msgstr "待执行操作"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_admin_detail.html:40
+#: hypha/apply/funds/templates/funds/applicationsubmission_community_detail.html:6
+#: hypha/apply/funds/templates/funds/applicationsubmission_reviewer_detail.html:10
+msgid "Reviews & assignees"
+msgstr "审核人 & 被分配者"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_admin_detail.html:47
+msgid "View all"
+msgstr "查看所有"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_confirm_delete.html:4
+#: hypha/apply/funds/templates/funds/applicationsubmission_confirm_delete.html:9
+#: hypha/apply/funds/templates/funds/reminder_confirm_delete.html:4
+#: hypha/apply/funds/templates/funds/reminder_confirm_delete.html:9
+#: hypha/apply/review/templates/review/review_confirm_delete.html:4
+#: hypha/apply/review/templates/review/review_confirm_delete.html:9
+msgid "Deleting"
+msgstr "删除"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_confirm_delete.html:17
+#, python-format
+msgid "Are you sure you want to delete \"%(object)s\"?"
+msgstr "您确定要删除“%(object)s”吗？"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_confirm_delete.html:18
+msgid ""
+"All content related to this submission will also be deleted. This includes "
+"reviews, determinations and comments."
+msgstr "所有此提交相关内容也会被删除。这包括审核、决策与评论。"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_confirm_delete.html:19
+#: hypha/apply/funds/templates/funds/includes/create_project_form.html:6
+#: hypha/apply/funds/templates/funds/reminder_confirm_delete.html:18
+#: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:28
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:46
+#: hypha/apply/review/templates/review/review_confirm_delete.html:18
+msgid "Confirm"
+msgstr "确定"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:8
+msgid "This submission is sealed"
+msgstr "此提交已被锁定"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:35
+msgid "Submission details"
+msgstr "提交详情"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:43
+msgid "Activity feed"
+msgstr "活动订阅"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:47
+msgid "View message log"
+msgstr "查看消息日志"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:63
+msgid "Congratulations!"
+msgstr "恭喜！"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:64
+#, python-format
+msgid "Your %(stage)s application has been accepted."
+msgstr "您的 %(stage)s 申请已被通过。"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:65
+#, python-format
+msgid "Start your %(stage)s application."
+msgstr "开始您的 %(stage)s 申请。"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:75
+#: hypha/apply/funds/templates/funds/includes/batch_delete_submission_form.html:14
+#: hypha/apply/funds/templates/funds/includes/delegated_form_base.html:33
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:42
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:39
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:65
+#: hypha/apply/review/templates/review/review_detail.html:33
+msgid "Delete"
+msgstr "删除"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:126
+msgid "Related submissions"
+msgstr "相关提交"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:128
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:132
+msgid "View linked"
+msgstr "查看已链接"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:137
+msgid "Past Submissions"
+msgstr "既往提交"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_form.html:3
+#: hypha/apply/funds/templates/funds/applicationsubmission_form.html:7
+#: hypha/apply/projects/templates/application_projects/invoice_form.html:8
+#: hypha/apply/projects/templates/application_projects/project_approval_form.html:3
+#: hypha/apply/projects/templates/application_projects/project_approval_form.html:7
+#: hypha/apply/projects/templates/application_projects/project_form.html:5
+#: hypha/apply/projects/templates/application_projects/project_form.html:10
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:9
+msgid "Editing"
+msgstr "编辑"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:13
+#: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:9
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:9
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:18
+#: hypha/apply/projects/templates/application_projects/report_detail.html:10
+#: hypha/apply/projects/templates/application_projects/report_form.html:14
+#: hypha/apply/projects/templates/application_projects/vendor_detail.html:10
+msgid "Back to project"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:26
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:30
+msgid "Download PDF"
+msgstr "下载 PDF"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:37
+#: hypha/apply/funds/templates/funds/includes/rendered_answers.html:2
+#: hypha/apply/funds/templates/funds/includes/revision_diff_table.html:3
+msgid "Proposal Information"
+msgstr "提案信息"
+
+#: hypha/apply/funds/templates/funds/grouped_application_list.html:15
+msgid "List of Submissions summary"
+msgstr "提交概要列表"
+
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:11
+#: hypha/apply/funds/templates/funds/includes/create_project_form.html:3
+msgid "Create Project"
+msgstr "创建项目"
+
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:17
+#: hypha/apply/funds/templates/funds/includes/screening_form.html:4
+msgid "Screen application"
+msgstr "审核申请"
+
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:21
+msgid "Complete draft determination"
+msgstr "完成草稿决策"
+
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:26
+#: hypha/apply/funds/templates/funds/includes/generic_primary_actions.html:8
+msgid "Complete draft review"
+msgstr "完成草稿审核"
+
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:30
+msgid "Assign reviewers"
+msgstr "分配审核人"
+
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:37
+#: hypha/apply/funds/templates/funds/includes/generic_primary_actions.html:15
+msgid "View determination"
+msgstr "查看决策"
+
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:42
+#: hypha/apply/funds/templates/funds/includes/progress_form.html:4
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:37
+msgid "Update status"
+msgstr "更新状态"
+
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:45
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:92
+msgid "Assign"
+msgstr "分配"
+
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:54
+msgid "More actions"
+msgstr "更多操作"
+
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:57
+#: hypha/apply/funds/templates/funds/includes/meta_terms_block.html:3
+msgid "Meta Terms"
+msgstr "元条款"
+
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:59
+#: hypha/apply/funds/templates/funds/includes/create_reminder_form.html:3
+msgid "Create Reminder"
+msgstr "创建提醒"
+
+#: hypha/apply/funds/templates/funds/includes/batch_delete_submission_form.html:3
+msgid "Delete Submissions"
+msgstr "删除提交"
+
+#: hypha/apply/funds/templates/funds/includes/batch_delete_submission_form.html:4
+msgid "Are you sure you want to delete selected submissions?"
+msgstr "您确定要删除所选提交吗？"
+
+#: hypha/apply/funds/templates/funds/includes/batch_delete_submission_form.html:12
+msgid ""
+"All content related to these submissions will also be deleted. This includes "
+"reviews, determinations and comments"
+msgstr "所有提交相关的内容也会被删除。这包括审核、决策与评论"
+
+#: hypha/apply/funds/templates/funds/includes/batch_progress_form.html:3
+#: hypha/apply/projects/templates/application_projects/invoice_admin_detail.html:35
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:84
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:155
+msgid "Update Status"
+msgstr "更新状态"
+
+#: hypha/apply/funds/templates/funds/includes/batch_progress_form.html:9
+#: hypha/apply/funds/templates/funds/includes/batch_update_lead_form.html:11
+#: hypha/apply/funds/templates/funds/includes/batch_update_reviewer_form.html:11
+#: hypha/apply/funds/templates/funds/includes/update_lead_form.html:4
+#: hypha/apply/funds/templates/funds/includes/update_meta_terms_form.html:4
+#: hypha/apply/funds/templates/funds/includes/update_partner_form.html:4
+#: hypha/apply/funds/templates/funds/includes/update_reviewer_form.html:4
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:29
+msgid "Update"
+msgstr "更新"
+
+#: hypha/apply/funds/templates/funds/includes/batch_update_lead_form.html:3
+msgid "Update Lead"
+msgstr "更新领导人"
+
+#: hypha/apply/funds/templates/funds/includes/batch_update_reviewer_form.html:3
+msgid "Add Reviewers"
+msgstr "添加审核人"
+
+#: hypha/apply/funds/templates/funds/includes/create_project_form.html:4
+msgid ""
+"This will create a new project. The Applicant will be notified only after a "
+"lead has been set for the project."
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/includes/create_project_form.html:5
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:36
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:45
+msgid "This cannot be undone."
+msgstr "此操作无法撤销。"
+
+#: hypha/apply/funds/templates/funds/includes/create_reminder_form.html:4
+#: hypha/apply/projects/templates/application_projects/invoice_form.html:4
+#: hypha/apply/projects/templates/application_projects/invoice_form.html:8
+msgid "Create"
+msgstr "创建"
+
+#: hypha/apply/funds/templates/funds/includes/delegated_form_base.html:28
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:72
+msgid "Close"
+msgstr "关闭"
+
+#: hypha/apply/funds/templates/funds/includes/delegated_form_base.html:29
+#: hypha/apply/projects/templates/application_projects/includes/report_line.html:41
+#: hypha/apply/projects/templates/application_projects/project_form.html:30
+#: hypha/apply/projects/templates/application_projects/report_form.html:55
+#: hypha/apply/projects/templates/application_projects/report_form.html:65
+#: hypha/apply/users/templates/two_factor/_wizard_actions.html:14
+msgid "Cancel"
+msgstr "取消"
+
+#: hypha/apply/funds/templates/funds/includes/meta_terms_block.html:9
+msgid ""
+"None. Meta terms can be added to a submission using Meta terms button at top."
+msgstr "无。可以用顶部的“元条款”按钮将其添加到提交。"
+
+#: hypha/apply/funds/templates/funds/includes/no_round_block_dashboard.html:5
+#, python-format
+msgid "You have no %(type)s rounds or labs assigned to you."
+msgstr "没有分配给您的 %(type)s 轮次或实验室。"
+
+#: hypha/apply/funds/templates/funds/includes/progress_form.html:5
+#: hypha/apply/projects/templates/application_projects/invoice_admin_detail.html:34
+msgid "Current status"
+msgstr "当前状态"
+
+#: hypha/apply/funds/templates/funds/includes/progress_form.html:6
+#: hypha/apply/funds/workflow.py:759
+msgid "Progress"
+msgstr "进度"
+
+#: hypha/apply/funds/templates/funds/includes/reminders_block.html:3
+msgid "Reminders"
+msgstr "提醒"
+
+#: hypha/apply/funds/templates/funds/includes/reminders_block.html:15
+msgid "untitled reminder"
+msgstr "未命名提醒"
+
+#: hypha/apply/funds/templates/funds/includes/reminders_block.html:27
+msgid "No reminders yet."
+msgstr "还没有提醒。"
+
+#: hypha/apply/funds/templates/funds/includes/rendered_answers.html:6
+#: hypha/apply/funds/templates/funds/includes/revision_diff_table.html:13
+msgid "Requested Funding"
+msgstr "已请求基金"
+
+#: hypha/apply/funds/templates/funds/includes/rendered_answers.html:13
+#: hypha/apply/funds/templates/funds/includes/revision_diff_table.html:15
+msgid "Project Duration"
+msgstr "项目时长"
+
+#: hypha/apply/funds/templates/funds/includes/rendered_answers.html:19
+#: hypha/apply/funds/templates/funds/includes/revision_diff_table.html:9
+msgid "Legal Name"
+msgstr "法定名称"
+
+#: hypha/apply/funds/templates/funds/includes/rendered_answers.html:20
+msgid "Edit account"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/includes/rendered_answers.html:24
+#: hypha/apply/funds/templates/funds/includes/revision_diff_table.html:11
+#: hypha/apply/projects/templates/application_projects/project_detail.html:87
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:56
+msgid "E-mail"
+msgstr "电子邮件"
+
+#: hypha/apply/funds/templates/funds/includes/review_sidebar.html:10
+msgid "No staff reviewers yet"
+msgstr "还没有员工审核人"
+
+#: hypha/apply/funds/templates/funds/includes/review_sidebar.html:27
+msgid "All Assigned Reviewers"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/includes/round-block-listing.html:33
+msgid "There are no"
+msgstr "没有"
+
+#: hypha/apply/funds/templates/funds/includes/round-block-listing.html:33
+msgid "rounds"
+msgstr "轮次"
+
+#: hypha/apply/funds/templates/funds/includes/screening_form.html:5
+msgid "Current decisions"
+msgstr "当前决定"
+
+#: hypha/apply/funds/templates/funds/includes/screening_form.html:6
+msgid "Screen"
+msgstr "审核"
+
+#: hypha/apply/funds/templates/funds/includes/screening_status_block.html:4
+msgid "Screening decision"
+msgstr "审核决定"
+
+#: hypha/apply/funds/templates/funds/includes/screening_status_block.html:36
+msgid "Screening options"
+msgstr "审核设置"
+
+#: hypha/apply/funds/templates/funds/includes/status-block.html:4
+msgid "By status"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/includes/submission_stats.html:4
+msgid "Amounts"
+msgstr "数目"
+
+#: hypha/apply/funds/templates/funds/includes/submission_stats.html:6
+#: hypha/apply/funds/templates/funds/includes/submission_stats.html:13
+msgid "Applied"
+msgstr "已申请"
+
+#: hypha/apply/funds/templates/funds/includes/submission_stats.html:6
+#: hypha/apply/funds/templates/funds/includes/submission_stats.html:13
+#: hypha/apply/funds/workflow.py:300 hypha/apply/funds/workflow.py:454
+#: hypha/apply/funds/workflow.py:633 hypha/apply/funds/workflow.py:908
+#: hypha/apply/funds/workflow.py:1151
+msgid "Accepted"
+msgstr "已通过"
+
+#: hypha/apply/funds/templates/funds/includes/submission_stats.html:11
+#: hypha/apply/funds/templates/funds/submissions.html:5
+#: hypha/apply/funds/templates/funds/submissions_overview.html:4
+#: hypha/apply/funds/templates/funds/submissions_overview.html:11
+msgid "Submissions"
+msgstr "提交"
+
+#: hypha/apply/funds/templates/funds/includes/submission_stats.html:13
+msgid "Pending"
+msgstr "等待中"
+
+#: hypha/apply/funds/templates/funds/includes/submission_stats.html:18
+#: hypha/apply/funds/templates/funds/reviewer_leaderboard.html:5
+#: hypha/apply/funds/templates/funds/reviewer_leaderboard_detail.html:5
+#: hypha/apply/funds/templates/funds/submissions_overview.html:23
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:104
+#: hypha/apply/review/templates/review/review_list.html:4
+#: hypha/apply/review/templates/review/review_list.html:12
+msgid "Reviews"
+msgstr "审核"
+
+#: hypha/apply/funds/templates/funds/includes/submission_stats.html:20
+msgid "All"
+msgstr "所有"
+
+#: hypha/apply/funds/templates/funds/includes/submission_stats.html:20
+msgid "You"
+msgstr "您"
+
+#: hypha/apply/funds/templates/funds/includes/submission_stats.html:20
+msgid "Your avg. score"
+msgstr "您的平均分数"
+
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:8
+msgid "items"
+msgstr "项目"
+
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:18
+msgid "Selected"
+msgstr "已选中"
+
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:51
+msgid "Filters"
+msgstr "筛选器"
+
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:56
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:60
+msgid "Search"
+msgstr "搜索"
+
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:59
+msgid "submissions"
+msgstr "提交"
+
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:60
+msgid "Search input"
+msgstr "搜索输入"
+
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:70
+msgid "Clear"
+msgstr "清空"
+
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:71
+msgid "Filter by"
+msgstr "筛选条件"
+
+#: hypha/apply/funds/templates/funds/includes/update_lead_form.html:3
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:28
+msgid "Assign Lead"
+msgstr "分配领导人"
+
+#: hypha/apply/funds/templates/funds/includes/update_meta_terms_form.html:3
+msgid "Update Meta Terms"
+msgstr "更新元条款"
+
+#: hypha/apply/funds/templates/funds/includes/update_partner_form.html:3
+msgid "Update Partners"
+msgstr "更新"
+
+#: hypha/apply/funds/templates/funds/includes/update_reviewer_form.html:3
+msgid "Update Reviewers"
+msgstr "更新审核人"
+
+#: hypha/apply/funds/templates/funds/reminder_confirm_delete.html:17
+#, python-format
+msgid ">Are you sure you want to delete \"%(object)s\"?"
+msgstr ">您确定要删除“%(object)s”吗？"
+
+#: hypha/apply/funds/templates/funds/reviewer_leaderboard.html:12
+msgid "Reviewer leaderboard"
+msgstr "审核人排行榜"
+
+#: hypha/apply/funds/templates/funds/reviewer_leaderboard.html:13
+#: hypha/apply/funds/templates/funds/reviewer_leaderboard_detail.html:13
+msgid "Track and explore the reviews"
+msgstr "跟踪并探索审核"
+
+#: hypha/apply/funds/templates/funds/reviewer_leaderboard.html:24
+msgid "All reviewers"
+msgstr "所有审核人"
+
+#: hypha/apply/funds/templates/funds/reviewer_leaderboard_detail.html:12
+#, python-format
+msgid "Reviews by %(object)s"
+msgstr "%(object)s 的审核"
+
+#: hypha/apply/funds/templates/funds/revisions_compare.html:7
+msgid "Comparing revisions"
+msgstr "比较修订"
+
+#: hypha/apply/funds/templates/funds/revisions_compare.html:9
+msgid "Back to revisions"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/rounds.html:17
+msgid "Explore current and past rounds"
+msgstr "探索当前与既往轮次"
+
+#: hypha/apply/funds/templates/funds/staff_assignments.html:5
+#: hypha/apply/funds/templates/funds/staff_assignments.html:12
+#: hypha/apply/funds/templates/funds/submissions_overview.html:20
+msgid "Staff assignments"
+msgstr "员工分配"
+
+#: hypha/apply/funds/templates/funds/staff_assignments.html:13
+msgid "Track and explore the staff assignments"
+msgstr "跟踪并探索员工分配"
+
+#: hypha/apply/funds/templates/funds/submission_sealed.html:4
+msgid "Sealed"
+msgstr "已锁定"
+
+#: hypha/apply/funds/templates/funds/submission_sealed.html:20
+msgid "This application is sealed until the round is closed"
+msgstr "此申请已被锁定，直到轮次关闭"
+
+#: hypha/apply/funds/templates/funds/submission_sealed.html:21
+msgid "The round ends on"
+msgstr "轮次结束于"
+
+#: hypha/apply/funds/templates/funds/submission_sealed.html:22
+msgid "Go back"
+msgstr "返回"
+
+#: hypha/apply/funds/templates/funds/submission_sealed.html:24
+msgid ""
+"As an admin you are allowed to access the application. However, this action "
+"will be recorded."
+msgstr "作为管理员，您可以访问申请。但此操作会被记录。"
+
+#: hypha/apply/funds/templates/funds/submission_sealed.html:27
+msgid "View application"
+msgstr "查看申请"
+
+#: hypha/apply/funds/templates/funds/submissions.html:11
+#: hypha/apply/funds/templates/funds/submissions_overview.html:45
+msgid "All Submissions"
+msgstr "所有提交"
+
+#: hypha/apply/funds/templates/funds/submissions_awaiting_review.html:5
+msgid "Awaiting Review"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/submissions_awaiting_review.html:11
+msgid "Waiting for your Review"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/submissions_overview.html:12
+msgid "Track and explore recent submissions"
+msgstr "跟踪并探索近期提交"
+
+#: hypha/apply/funds/templates/funds/submissions_overview.html:26
+msgid "Results"
+msgstr "结果"
+
+#: hypha/apply/funds/templates/funds/submissions_overview.html:56
+#: hypha/apply/funds/templates/funds/submissions_staff_flagged.html:6
+msgid "Staff Flagged Submissions"
+msgstr "员工标记的提交"
+
+#: hypha/apply/funds/templates/funds/submissions_result.html:3
+#: hypha/apply/funds/templates/funds/submissions_result.html:10
+msgid "Submissions results"
+msgstr "提交结果"
+
+#: hypha/apply/funds/templates/funds/submissions_result.html:11
+msgid "Track and explore the results"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/submissions_result.html:22
+msgid "Summary"
+msgstr "概要"
+
+#: hypha/apply/funds/templates/funds/submissions_result.html:26
+msgid "Filter submissions to calculate values"
+msgstr "筛选要计算数值的提交"
+
+#: hypha/apply/funds/templates/funds/submissions_result.html:29
+msgid "Number of submission"
+msgstr "提交数"
+
+#: hypha/apply/funds/templates/funds/submissions_result.html:30
+msgid "Average value"
+msgstr "平均值"
+
+#: hypha/apply/funds/templates/funds/submissions_result.html:31
+msgid "Total value"
+msgstr "总数值"
+
+#: hypha/apply/funds/templates/funds/submissions_result.html:34
+msgid "Some submissions lack values and are not included."
+msgstr "一些提交缺少数值，未包括在内。"
+
+#: hypha/apply/funds/templates/funds/submissions_search.html:6
+msgid "Search results"
+msgstr "搜索结果"
+
+#: hypha/apply/funds/templates/funds/submissions_search.html:8
+#, python-format
+msgid "There are %(count)s results for: %(search_term)s"
+msgstr "有 %(count)s 个结果符合：%(search_term)s"
+
+#: hypha/apply/funds/templates/funds/tables/table.html:21
+msgid "Applicant"
+msgstr "申请者"
+
+#: hypha/apply/funds/templates/funds/tables/table.html:23
+msgid "Screening decisions"
+msgstr "审核决定"
+
+#: hypha/apply/funds/templates/funds/tables/table.html:24
+msgid "Review outcomes"
+msgstr "审核结果"
+
+#: hypha/apply/funds/templates/funds/tables/table.html:37
+msgid "Awaiting"
+msgstr "等待中"
+
+#: hypha/apply/funds/templates/funds/tables/table.html:95
+msgid "Linked"
+msgstr "已链接"
+
+#: hypha/apply/funds/templates/funds/tables/table.html:129
+#: hypha/public/partner/templates/partner/table.html:42
+#: hypha/templates/includes/pagination.html:6
+msgid "previous"
+msgstr "上一页"
+
+#: hypha/apply/funds/templates/funds/tables/table.html:136
+msgid "Page"
+msgstr "页面"
+
+#: hypha/apply/funds/templates/funds/tables/table.html:143
+#: hypha/apply/projects/templates/application_projects/includes/report_line.html:5
+#: hypha/public/partner/templates/partner/table.html:56
+#: hypha/templates/includes/pagination.html:14
+msgid "next"
+msgstr "下一页"
+
+#: hypha/apply/funds/views.py:236 hypha/apply/funds/views.py:268
+#: hypha/apply/funds/views.py:289 hypha/apply/projects/views/project.py:387
+msgid "Sorry something went wrong"
+msgstr "抱歉，出了些问题"
+
+#: hypha/apply/funds/views.py:332
+msgid "Failed to update: "
+msgstr "更新失败： "
+
+#: hypha/apply/funds/views.py:528 hypha/apply/funds/views.py:531
+msgid "No Round or Lab found matching the query"
+msgstr "没有找到轮次或实验室匹配搜索"
+
+#: hypha/apply/funds/views.py:554
+msgid "No statuses match the requested value"
+msgstr "没有匹配请求值的状态"
+
+#: hypha/apply/funds/views.py:1044
+msgid "Submission saved successfully"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:213 hypha/apply/funds/workflow.py:257
+#: hypha/apply/funds/workflow.py:340 hypha/apply/funds/workflow.py:378
+#: hypha/apply/funds/workflow.py:415 hypha/apply/funds/workflow.py:495
+#: hypha/apply/funds/workflow.py:557 hypha/apply/funds/workflow.py:594
+#: hypha/apply/funds/workflow.py:674 hypha/apply/funds/workflow.py:717
+#: hypha/apply/funds/workflow.py:790 hypha/apply/funds/workflow.py:831
+#: hypha/apply/funds/workflow.py:869
+msgid "Request More Information"
+msgstr "请求更多信息"
+
+#: hypha/apply/funds/workflow.py:214 hypha/apply/funds/workflow.py:341
+#: hypha/apply/funds/workflow.py:497 hypha/apply/funds/workflow.py:675
+#: hypha/apply/funds/workflow.py:791
+msgid "Open Review"
+msgstr "开启审核"
+
+#: hypha/apply/funds/workflow.py:215 hypha/apply/funds/workflow.py:232
+#: hypha/apply/funds/workflow.py:258 hypha/apply/funds/workflow.py:275
+#: hypha/apply/funds/workflow.py:342 hypha/apply/funds/workflow.py:380
+#: hypha/apply/funds/workflow.py:416 hypha/apply/funds/workflow.py:499
+#: hypha/apply/funds/workflow.py:559 hypha/apply/funds/workflow.py:595
+msgid "Ready For Determination"
+msgstr "准备接受决策"
+
+#: hypha/apply/funds/workflow.py:216 hypha/apply/funds/workflow.py:233
+#: hypha/apply/funds/workflow.py:260 hypha/apply/funds/workflow.py:276
+#: hypha/apply/funds/workflow.py:289 hypha/apply/funds/workflow.py:418
+#: hypha/apply/funds/workflow.py:443 hypha/apply/funds/workflow.py:597
+#: hypha/apply/funds/workflow.py:622 hypha/apply/funds/workflow.py:872
+#: hypha/apply/funds/workflow.py:897
+msgid "Accept but additional info required"
+msgstr "已批准，但需要额外信息"
+
+#: hypha/apply/funds/workflow.py:217 hypha/apply/funds/workflow.py:234
+#: hypha/apply/funds/workflow.py:261 hypha/apply/funds/workflow.py:277
+#: hypha/apply/funds/workflow.py:290 hypha/apply/funds/workflow.py:307
+#: hypha/apply/funds/workflow.py:419 hypha/apply/funds/workflow.py:444
+#: hypha/apply/funds/workflow.py:461 hypha/apply/funds/workflow.py:598
+#: hypha/apply/funds/workflow.py:623 hypha/apply/funds/workflow.py:640
+#: hypha/apply/funds/workflow.py:873 hypha/apply/funds/workflow.py:898
+#: hypha/apply/funds/workflow.py:915
+#: hypha/cookieconsent/templates/includes/banner.html:12
+msgid "Accept"
+msgstr "批准"
+
+#: hypha/apply/funds/workflow.py:218 hypha/apply/funds/workflow.py:235
+#: hypha/apply/funds/workflow.py:262 hypha/apply/funds/workflow.py:278
+#: hypha/apply/funds/workflow.py:291 hypha/apply/funds/workflow.py:343
+#: hypha/apply/funds/workflow.py:382 hypha/apply/funds/workflow.py:420
+#: hypha/apply/funds/workflow.py:445 hypha/apply/funds/workflow.py:500
+#: hypha/apply/funds/workflow.py:522 hypha/apply/funds/workflow.py:535
+#: hypha/apply/funds/workflow.py:546 hypha/apply/funds/workflow.py:561
+#: hypha/apply/funds/workflow.py:599 hypha/apply/funds/workflow.py:624
+#: hypha/apply/funds/workflow.py:678 hypha/apply/funds/workflow.py:692
+#: hypha/apply/funds/workflow.py:721 hypha/apply/funds/workflow.py:746
+#: hypha/apply/funds/workflow.py:780 hypha/apply/funds/workflow.py:794
+#: hypha/apply/funds/workflow.py:809 hypha/apply/funds/workflow.py:835
+#: hypha/apply/funds/workflow.py:874 hypha/apply/funds/workflow.py:899
+msgid "Dismiss"
+msgstr "驳回"
+
+#: hypha/apply/funds/workflow.py:220 hypha/apply/funds/workflow.py:345
+#: hypha/apply/funds/workflow.py:502 hypha/apply/funds/workflow.py:680
+msgid "Need screening"
+msgstr "需要审查"
+
+#: hypha/apply/funds/workflow.py:221 hypha/apply/funds/workflow.py:346
+#: hypha/apply/funds/workflow.py:503
+msgid "Application Received"
+msgstr "已收到申请"
+
+#: hypha/apply/funds/workflow.py:237 hypha/apply/funds/workflow.py:280
+#: hypha/apply/funds/workflow.py:358 hypha/apply/funds/workflow.py:396
+#: hypha/apply/funds/workflow.py:434 hypha/apply/funds/workflow.py:515
+#: hypha/apply/funds/workflow.py:575 hypha/apply/funds/workflow.py:613
+#: hypha/apply/funds/workflow.py:696 hypha/apply/funds/workflow.py:736
+#: hypha/apply/funds/workflow.py:811 hypha/apply/funds/workflow.py:850
+#: hypha/apply/funds/workflow.py:888
+msgid "More information required"
+msgstr "需要更多信息"
+
+#: hypha/apply/funds/workflow.py:245 hypha/apply/funds/workflow.py:366
+#: hypha/apply/funds/workflow.py:404 hypha/apply/funds/workflow.py:533
+#: hypha/apply/funds/workflow.py:544 hypha/apply/funds/workflow.py:583
+#: hypha/apply/funds/workflow.py:704 hypha/apply/funds/workflow.py:819
+#: hypha/apply/funds/workflow.py:858
+msgid "Close Review"
+msgstr "关闭审核"
+
+#: hypha/apply/funds/workflow.py:246 hypha/apply/funds/workflow.py:367
+#: hypha/apply/funds/workflow.py:521 hypha/apply/funds/workflow.py:534
+#: hypha/apply/funds/workflow.py:705
+msgid "Need screening (revert)"
+msgstr "需要审查（回复）"
+
+#: hypha/apply/funds/workflow.py:248 hypha/apply/funds/workflow.py:369
+#: hypha/apply/funds/workflow.py:537 hypha/apply/funds/workflow.py:708
+#: hypha/apply/funds/workflow.py:822 hypha/apply/funds/workflow.py:1127
+msgid "Internal Review"
+msgstr "内部审核"
+
+#: hypha/apply/funds/workflow.py:249 hypha/apply/funds/workflow.py:370
+#: hypha/apply/funds/workflow.py:538 hypha/apply/funds/workflow.py:549
+#: hypha/apply/funds/workflow.py:709 hypha/apply/funds/workflow.py:823
+#, python-brace-format
+msgid "{org_short_name} Review"
+msgstr "{org_short_name} 审核"
+
+#: hypha/apply/funds/workflow.py:259 hypha/apply/funds/workflow.py:719
+msgid "Open Review (revert)"
+msgstr "开启审核（回复）"
+
+#: hypha/apply/funds/workflow.py:264 hypha/apply/funds/workflow.py:384
+#: hypha/apply/funds/workflow.py:422 hypha/apply/funds/workflow.py:563
+#: hypha/apply/funds/workflow.py:601 hypha/apply/funds/workflow.py:723
+#: hypha/apply/funds/workflow.py:837 hypha/apply/funds/workflow.py:876
+msgid "Ready For Discussion"
+msgstr "准备接受讨论"
+
+#: hypha/apply/funds/workflow.py:288 hypha/apply/funds/workflow.py:308
+#: hypha/apply/funds/workflow.py:405 hypha/apply/funds/workflow.py:442
+#: hypha/apply/funds/workflow.py:462 hypha/apply/funds/workflow.py:584
+#: hypha/apply/funds/workflow.py:621 hypha/apply/funds/workflow.py:641
+#: hypha/apply/funds/workflow.py:744 hypha/apply/funds/workflow.py:859
+#: hypha/apply/funds/workflow.py:896 hypha/apply/funds/workflow.py:916
+msgid "Ready For Discussion (revert)"
+msgstr "准备接受讨论（回复）"
+
+#: hypha/apply/funds/workflow.py:293 hypha/apply/funds/workflow.py:447
+#: hypha/apply/funds/workflow.py:626 hypha/apply/funds/workflow.py:1147
+msgid "Ready for Determination"
+msgstr "准备接受决策"
+
+#: hypha/apply/funds/workflow.py:301 hypha/apply/funds/workflow.py:455
+#: hypha/apply/funds/workflow.py:634
+msgid "Application Outcome"
+msgstr "申请结果"
+
+#: hypha/apply/funds/workflow.py:310 hypha/apply/funds/workflow.py:464
+#: hypha/apply/funds/workflow.py:643 hypha/apply/funds/workflow.py:918
+msgid "Accepted but additional info required"
+msgstr "已批准，但需要额外信息"
+
+#: hypha/apply/funds/workflow.py:379 hypha/apply/funds/workflow.py:558
+#: hypha/apply/funds/workflow.py:778 hypha/apply/funds/workflow.py:792
+#: hypha/apply/funds/workflow.py:807 hypha/apply/funds/workflow.py:832
+#: hypha/apply/funds/workflow.py:848
+msgid "Open External Review"
+msgstr "开启外部审核"
+
+#: hypha/apply/funds/workflow.py:381 hypha/apply/funds/workflow.py:545
+#: hypha/apply/funds/workflow.py:560 hypha/apply/funds/workflow.py:834
+msgid "Open Internal Review (revert)"
+msgstr "开启内部审核（回复）"
+
+#: hypha/apply/funds/workflow.py:407 hypha/apply/funds/workflow.py:586
+#: hypha/apply/funds/workflow.py:861 hypha/apply/funds/workflow.py:1143
+msgid "External Review"
+msgstr "外部审核"
+
+#: hypha/apply/funds/workflow.py:417 hypha/apply/funds/workflow.py:596
+#: hypha/apply/funds/workflow.py:871
+msgid "Open External Review (revert)"
+msgstr "开启外部审核（回复）"
+
+#: hypha/apply/funds/workflow.py:498 hypha/apply/funds/workflow.py:532
+msgid "Open Community Review"
+msgstr "开启社区审核"
+
+#: hypha/apply/funds/workflow.py:548
+msgid "Community Review"
+msgstr "社区审核"
+
+#: hypha/apply/funds/workflow.py:676 hypha/apply/funds/workflow.py:694
+#: hypha/apply/funds/workflow.py:718
+msgid "Ready For Preliminary Determination"
+msgstr "已准备好初步决策"
+
+#: hypha/apply/funds/workflow.py:677 hypha/apply/funds/workflow.py:693
+#: hypha/apply/funds/workflow.py:706 hypha/apply/funds/workflow.py:720
+#: hypha/apply/funds/workflow.py:734 hypha/apply/funds/workflow.py:745
+msgid "Invite to Proposal"
+msgstr "邀请到提案"
+
+#: hypha/apply/funds/workflow.py:681
+msgid "Concept Note Received"
+msgstr "已收到概念备注"
+
+#: hypha/apply/funds/workflow.py:748
+msgid "Ready for Preliminary Determination"
+msgstr "已准备好初步决策"
+
+#: hypha/apply/funds/workflow.py:755
+msgid "Concept Accepted"
+msgstr "概念已批准"
+
+#: hypha/apply/funds/workflow.py:756
+msgid "Preliminary Determination"
+msgstr "预备提案"
+
+#: hypha/apply/funds/workflow.py:779 hypha/apply/funds/workflow.py:793
+#: hypha/apply/funds/workflow.py:808 hypha/apply/funds/workflow.py:833
+#: hypha/apply/funds/workflow.py:870
+msgid "Ready For Final Determination"
+msgstr "准备接受最终决策"
+
+#: hypha/apply/funds/workflow.py:782 hypha/apply/funds/workflow.py:1139
+msgid "Invited for Proposal"
+msgstr "已被邀请提案"
+
+#: hypha/apply/funds/workflow.py:796
+msgid "Proposal Received"
+msgstr "已收到提案"
+
+#: hypha/apply/funds/workflow.py:820
+msgid "Proposal Received (revert)"
+msgstr "已收到提案（回复）"
+
+#: hypha/apply/funds/workflow.py:901
+msgid "Ready for Final Determination"
+msgstr "准备接受最终决策"
+
+#: hypha/apply/funds/workflow.py:909
+msgid "Final Determination"
+msgstr "最终决策"
+
+#: hypha/apply/funds/workflow.py:1123
+msgid "Received"
+msgstr "已收到"
+
+#: hypha/apply/funds/workflow.py:1131
+msgid "Ready for Discussion"
+msgstr "准备接受讨论"
+
+#: hypha/apply/funds/workflow.py:1135
+msgid "More Information Requested"
+msgstr "需要更多信息"
+
+#: hypha/apply/middleware.py:18
+msgid ""
+"The object you are trying to delete is used somewhere. Please remove any "
+"usages and try again!."
+msgstr "您试图删除的对象正在别处被使用。请移除使用内容并重试。"
+
+#: hypha/apply/projects/filters.py:83
+msgid "Reporting Period"
+msgstr "报告间隔"
+
+#: hypha/apply/projects/forms/payment.py:75
+msgid "Required checks on this invoice need to be compeleted for approval."
+msgstr ""
+
+#: hypha/apply/projects/forms/payment.py:92
+msgid "The invoice must be a PDF."
+msgstr "发票必须是 PDF 文件。"
+
+#: hypha/apply/projects/forms/payment.py:96
+msgid ""
+"Files that are related to the invoice. They could be xls, microsoft office "
+"documents, open office documents, pdfs, txt files."
+msgstr "发票相关的文件。可以是 XLS 表格、Microsoft Office 文档、Open Office 文档、"
+"PDF 与 TXT 文件。"
+
+#: hypha/apply/projects/forms/payment.py:115
+msgid "Invoice File"
+msgstr "发票文件"
+
+#: hypha/apply/projects/forms/payment.py:166
+msgid "File not found on submission"
+msgstr "提交时未找到文件"
+
+#: hypha/apply/projects/forms/project.py:33
+msgid "Something changed before your approval please re-review"
+msgstr "您批准前已有新更改，请重新审核"
+
+#: hypha/apply/projects/forms/project.py:37
+msgid "The contract you were trying to approve has already been approved"
+msgstr "您试图批准的合同已被批准"
+
+#: hypha/apply/projects/forms/project.py:40
+msgid "You can only approve a signed contract"
+msgstr "您只能批准已签名的合同"
+
+#: hypha/apply/projects/forms/project.py:152
+msgid "A Project can only be sent for Approval when Committed."
+msgstr ""
+
+#: hypha/apply/projects/forms/project.py:175
+msgid "File Name"
+msgstr ""
+
+#: hypha/apply/projects/forms/report.py:16
+msgid "This section of the report will be shared with the broader community."
+msgstr "报告的此部分会与更广泛的社区分享。"
+
+#: hypha/apply/projects/forms/report.py:19
+msgid "This section of the report will be shared with staff only."
+msgstr "报告的此部分仅会与员工分享。"
+
+#: hypha/apply/projects/forms/report.py:52
+msgid "Must include either public or private content when submitting a report."
+msgstr "提交报告时必须包含公开或私人内容。"
+
+#: hypha/apply/projects/forms/report.py:106
+msgid "No."
+msgstr ""
+
+#: hypha/apply/projects/forms/report.py:127
+msgid "Cannot start a schedule before the current reporting period"
+msgstr ""
+
+#: hypha/apply/projects/forms/report.py:133
+msgid "Cannot start a schedule in the past"
+msgstr ""
+
+#: hypha/apply/projects/forms/report.py:139
+msgid "Cannot start a schedule beyond the end date"
+msgstr ""
+
+#: hypha/apply/projects/forms/vendor.py:50
+#: hypha/apply/projects/models/vendor.py:46
+msgid "Yes, the account belongs to the organisation above"
+msgstr "是的，此账户属于上述组织"
+
+#: hypha/apply/projects/forms/vendor.py:51
+#: hypha/apply/projects/models/vendor.py:47
+msgid "No, it is a personal bank account"
+msgstr "不，这是私人银行账户"
+
+#: hypha/apply/projects/forms/vendor.py:106 hypha/apply/review/options.py:23
+msgid "No"
+msgstr "否"
+
+#: hypha/apply/projects/forms/vendor.py:106 hypha/apply/review/options.py:25
+msgid "Yes"
+msgstr "是"
+
+#: hypha/apply/projects/models/payment.py:32
+msgid "Resubmitted"
+msgstr "已重新提交"
+
+#: hypha/apply/projects/models/payment.py:33
+msgid "Changes Requested by Staff"
+msgstr ""
+
+#: hypha/apply/projects/models/payment.py:34
+msgid "Changes Requested by Finance 1"
+msgstr ""
+
+#: hypha/apply/projects/models/payment.py:35
+msgid "Changes Requested by Finance 2"
+msgstr ""
+
+#: hypha/apply/projects/models/payment.py:36
+msgid "Approved by Staff"
+msgstr ""
+
+#: hypha/apply/projects/models/payment.py:37
+msgid "Approved by Finance 1"
+msgstr ""
+
+#: hypha/apply/projects/models/payment.py:38
+msgid "Approved by Finance 2"
+msgstr ""
+
+#: hypha/apply/projects/models/payment.py:39
+msgid "Paid"
+msgstr "已付款"
+
+#: hypha/apply/projects/models/payment.py:40
+msgid "Converted"
+msgstr ""
+
+#: hypha/apply/projects/models/payment.py:41
+msgid "Declined"
+msgstr "已拒绝"
+
+#: hypha/apply/projects/models/payment.py:108
+msgid "Quantity Selected on an Invoice"
+msgstr "发票选择的数额"
+
+#: hypha/apply/projects/models/payment.py:133
+msgid "Message"
+msgstr "消息"
+
+#: hypha/apply/projects/models/payment.py:152
+#, python-brace-format
+msgid "Invoice requested for {project}"
+msgstr "已为 {project} 请求发票"
+
+#: hypha/apply/projects/models/project.py:60
+msgid "Committed"
+msgstr ""
+
+#: hypha/apply/projects/models/project.py:61
+msgid "Waiting for Approval"
+msgstr ""
+
+#: hypha/apply/projects/models/project.py:62
+msgid "Contracting"
+msgstr "签订合同中"
+
+#: hypha/apply/projects/models/project.py:63
+msgid "In Progress"
+msgstr ""
+
+#: hypha/apply/projects/models/project.py:64
+msgid "Closing"
+msgstr "关闭"
+
+#: hypha/apply/projects/models/project.py:65
+msgid "Complete"
+msgstr "完成"
+
+#: hypha/apply/projects/models/project.py:150
+msgid "Proposed Start Date"
+msgstr "提议开始日期"
+
+#: hypha/apply/projects/models/project.py:151
+msgid "Proposed End Date"
+msgstr "提议结束日期"
+
+#: hypha/apply/projects/models/project.py:276
+msgid "Proposed End Date must be after Proposed Start Date"
+msgstr "提议的结束日期必须晚于开始日期"
+
+#: hypha/apply/projects/models/project.py:427
+msgid "PAF Reviewers Roles"
+msgstr "PAF 审核人角色"
+
+#: hypha/apply/projects/models/project.py:441
+#, python-brace-format
+msgid "Approval of {project} by {user}"
+msgstr "{user} 批准了 {project}"
+
+#: hypha/apply/projects/models/project.py:463
+#: hypha/apply/projects/templates/application_projects/project_detail.html:193
+msgid "Signed"
+msgstr ""
+
+#: hypha/apply/projects/models/project.py:463
+#: hypha/apply/projects/templates/application_projects/project_detail.html:204
+msgid "Unsigned"
+msgstr "未签名"
+
+#: hypha/apply/projects/models/project.py:466
+#, python-brace-format
+msgid "Contract for {project} ({state})"
+msgstr "{project}（{state}）的合同"
+
+#: hypha/apply/projects/models/project.py:480
+#, python-brace-format
+msgid "Project file: {title}"
+msgstr "项目档案：{title}"
+
+#: hypha/apply/projects/models/report.py:183
+msgid "week"
+msgstr "周"
+
+#: hypha/apply/projects/models/report.py:184
+msgid "month"
+msgstr "月"
+
+#: hypha/apply/projects/models/report.py:186
+msgid "Weeks"
+msgstr "周"
+
+#: hypha/apply/projects/models/report.py:187
+msgid "Months"
+msgstr "月"
+
+#: hypha/apply/projects/models/report.py:200
+msgid "last day"
+msgstr "一天前"
+
+#: hypha/apply/projects/models/report.py:204
+#, python-brace-format
+msgid "Monthly on the {day} of the month"
+msgstr ""
+
+#: hypha/apply/projects/models/report.py:205
+#, python-brace-format
+msgid "Every {occurrence} months on the {day} of the month"
+msgstr ""
+
+#: hypha/apply/projects/models/report.py:210
+#, python-brace-format
+msgid "Every week on {weekday}"
+msgstr ""
+
+#: hypha/apply/projects/models/report.py:211
+#, python-brace-format
+msgid "Every {occurrence} weeks on {weekday}"
+msgstr "在每 {occurrence} 周的 {weekday}"
+
+#: hypha/apply/projects/tables.py:16
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:16
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:25
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:61
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:70
+#: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:22
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:21
+msgid "Invoice Number"
+msgstr "发票号"
+
+#: hypha/apply/projects/tables.py:20
+msgid "Project Name"
+msgstr "项目名称"
+
+#: hypha/apply/projects/tables.py:70
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:5
+msgid "Reporting"
+msgstr "报告"
+
+#: hypha/apply/projects/tables.py:72
+msgid "End Date"
+msgstr "结束日期"
+
+#: hypha/apply/projects/tables.py:73
+#, python-brace-format
+msgid "Fund Allocation ({currency})"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/filters/widgets/date_range_input_widget.html:5
+#: hypha/apply/projects/templates/application_projects/includes/report_line.html:9
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:25
+#: hypha/apply/projects/templates/application_projects/report_detail.html:21
+#: hypha/apply/projects/templates/application_projects/report_form.html:28
+msgid "to"
+msgstr "到"
+
+#: hypha/apply/projects/templates/application_projects/includes/deliverables_block.html:5
+msgid "Choose deliverables"
+msgstr "选择交付产品"
+
+#: hypha/apply/projects/templates/application_projects/includes/deliverables_block.html:9
+msgid "Invoice Covers Deliverables"
+msgstr "发票包含的交付产品"
+
+#: hypha/apply/projects/templates/application_projects/includes/deliverables_block.html:17
+msgid "Available to invoice:"
+msgstr "可开设发票："
+
+#: hypha/apply/projects/templates/application_projects/includes/deliverables_block.html:21
+msgid "Quantity:"
+msgstr "数目："
+
+#: hypha/apply/projects/templates/application_projects/includes/deliverables_block.html:29
+msgid "Deliverables"
+msgstr "可交付产品"
+
+#: hypha/apply/projects/templates/application_projects/includes/deliverables_block.html:35
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:125
+msgid "Remove"
+msgstr "移除"
+
+#: hypha/apply/projects/templates/application_projects/includes/deliverables_block.html:41
+msgid "Total:"
+msgstr "总计："
+
+#: hypha/apply/projects/templates/application_projects/includes/invoice_block.html:4
+msgid "Contract number"
+msgstr "合同号"
+
+#: hypha/apply/projects/templates/application_projects/includes/invoice_block.html:8
+msgid "Pay to"
+msgstr "付款到"
+
+#: hypha/apply/projects/templates/application_projects/includes/invoice_block.html:12
+msgid "Some details"
+msgstr "一些详情"
+
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:5
+#: hypha/apply/projects/templates/application_projects/invoice_list.html:6
+msgid "Invoices"
+msgstr "发票"
+
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:8
+#: hypha/apply/projects/templates/application_projects/project_detail.html:155
+msgid "Add Invoice"
+msgstr "添加发票"
+
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:46
+msgid "No active Invoices."
+msgstr "无活跃发票。"
+
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:54
+msgid "Show rejected"
+msgstr "显示已拒绝"
+
+#: hypha/apply/projects/templates/application_projects/includes/report_line.html:5
+msgid "The"
+msgstr "此"
+
+#: hypha/apply/projects/templates/application_projects/includes/report_line.html:5
+msgid "reporting period is"
+msgstr "报告间隔为"
+
+#: hypha/apply/projects/templates/application_projects/includes/report_line.html:7
+msgid "A report is due for the period"
+msgstr "此阶段应提交报告"
+
+#: hypha/apply/projects/templates/application_projects/includes/report_line.html:21
+msgid "Continue Editing"
+msgstr "继续编辑"
+
+#: hypha/apply/projects/templates/application_projects/includes/report_line.html:21
+msgid "Add Report"
+msgstr "添加报告"
+
+#: hypha/apply/projects/templates/application_projects/includes/report_line.html:27
+msgid "Skip"
+msgstr "跳过"
+
+#: hypha/apply/projects/templates/application_projects/includes/report_line.html:31
+msgid "Skip report"
+msgstr "跳过报告"
+
+#: hypha/apply/projects/templates/application_projects/includes/report_line.html:33
+msgid "You're skipping the report for"
+msgstr "您将跳过报告"
+
+#: hypha/apply/projects/templates/application_projects/includes/report_line.html:34
+msgid ""
+"This will result in a gap in reporting for the project. You can undo this at "
+"any time."
+msgstr "这将导致项目报告中的空白。您可随时撤销此操作。"
+
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:9
+msgid "Report frequency"
+msgstr "报告频率"
+
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:13
+msgid "Change"
+msgstr "更改"
+
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:18
+msgid "Change reporting frequency"
+msgstr "更改报告频率"
+
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:21
+msgid "Next report will be due in"
+msgstr "下一次报告预定于"
+
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:23
+msgid "and the report period will be"
+msgstr "报告间隔为"
+
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:27
+msgid "and then every"
+msgstr "及在此之后每"
+
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:30
+msgid "after until the project end date"
+msgstr "直至项目终止日期"
+
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:34
+msgid "Schedule reports every"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:56
+msgid "Past reports"
+msgstr "既往报告"
+
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:62
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:71
+msgid "Period End"
+msgstr "阶段结束"
+
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:87
+msgid "Unskip"
+msgstr "取消跳过"
+
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:95
+msgid "No reports submitted"
+msgstr "没有已提交报告"
+
+#: hypha/apply/projects/templates/application_projects/includes/reports.html:102
+#: hypha/templates/blocks/more_block.html:5
+msgid "Show more"
+msgstr "显示更多"
+
+#: hypha/apply/projects/templates/application_projects/includes/required_checks_block.html:5
+msgid "Required Checks"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/includes/required_checks_block.html:8
+msgid "Make sure valid OFAC and SAM check, and W8/W9 are on file"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/includes/required_checks_block.html:13
+msgid "Valid OFAC, SAM, W8/W9 on file"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/includes/required_checks_block.html:17
+msgid "Link to SAM/OFAC/W8/W9:"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/includes/required_checks_block.html:21
+#: hypha/apply/projects/templates/application_projects/invoice_form.html:28
+#: hypha/apply/projects/templates/application_projects/project_form.html:34
+#: hypha/apply/projects/templates/application_projects/report_form.html:45
+#: hypha/apply/projects/templates/application_projects/report_form.html:56
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:70
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:98
+msgid "Save"
+msgstr "保存"
+
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:6
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:77
+msgid "Supporting documents"
+msgstr "支持文档"
+
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:20
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:115
+msgid "Download"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:28
+#: hypha/apply/projects/templates/application_projects/project_detail.html:171
+#: hypha/apply/projects/views/vendor.py:250
+msgid "Contracting Information"
+msgstr "合同信息"
+
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:36
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:60
+msgid "Fill in"
+msgstr "填写"
+
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:52
+msgid "Approval Form"
+msgstr "批准表单"
+
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:86
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:89
+msgid "Choose file"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:91
+msgid "Upload new"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:96
+msgid "Every project should include the following documents"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:143
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:67
+msgid "Submit for Approval"
+msgstr "提交以批准"
+
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:150
+msgid "Select a document"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:152
+msgid "Copy"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:157
+msgid "Upload a new document"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:159
+#: hypha/apply/projects/templates/application_projects/project_detail.html:140
+#: hypha/apply/templates/forms/includes/field.html:8
+msgid "Upload"
+msgstr "上传"
+
+#: hypha/apply/projects/templates/application_projects/invoice_admin_detail.html:29
+msgid "Update Invoice Status"
+msgstr "更新发票状态"
+
+#: hypha/apply/projects/templates/application_projects/invoice_admin_detail.html:33
+msgid "Update Invoice status"
+msgstr "更新发票状态"
+
+#: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:4
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:4
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:11
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:26
+#: hypha/apply/projects/templates/application_projects/invoice_form.html:4
+#: hypha/apply/projects/templates/application_projects/invoice_form.html:8
+msgid "Invoice"
+msgstr "发票"
+
+#: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:11
+msgid "Delete Invoice"
+msgstr "删除发票"
+
+#: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:21
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:20
+msgid "Vendor"
+msgstr "供应商"
+
+#: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:27
+msgid "Are you sure you want to delete this invoice for"
+msgstr "您确定要删除此发票为"
+
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:31
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:131
+msgid "Supporting Documents"
+msgstr "支持文档"
+
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:50
+msgid ""
+"Only editable when 'Submitted' or you have been requested to make changes"
+msgstr "仅在“已提交”或您被请求更改时才可编辑"
+
+#: hypha/apply/projects/templates/application_projects/invoice_list.html:13
+msgid "All Invoices"
+msgstr "所有发票"
+
+#: hypha/apply/projects/templates/application_projects/invoice_list.html:21
+msgid "invoices"
+msgstr "发票"
+
+#: hypha/apply/projects/templates/application_projects/invoice_list.html:25
+msgid "No Invoices available"
+msgstr "无可用发票"
+
+#: hypha/apply/projects/templates/application_projects/overview.html:6
+#: hypha/apply/projects/templates/application_projects/overview.html:18
+#: hypha/apply/projects/templates/application_projects/overview.html:32
+#: hypha/apply/projects/templates/application_projects/project_list.html:6
+msgid "Projects"
+msgstr "项目"
+
+#: hypha/apply/projects/templates/application_projects/overview.html:19
+msgid "Track and explore recent projects"
+msgstr "跟踪与探索最近项目"
+
+#: hypha/apply/projects/templates/application_projects/overview.html:46
+msgid "Project Invoices"
+msgstr "项目发票"
+
+#: hypha/apply/projects/templates/application_projects/overview.html:61
+#: hypha/apply/projects/templates/application_projects/report_list.html:6
+msgid "Reports"
+msgstr "报告"
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:7
+msgid "Request Approval"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:10
+msgid "Are you sure you're ready to submit?"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:12
+msgid "This project is missing the following documents"
+msgstr "此项目缺失如下文档"
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:19
+msgid "Submit anyway"
+msgstr "依然提交"
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:34
+msgid "Update Final Approval Status"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:35
+msgid ""
+"This will move the project into contracting and notify the compliance team."
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:43
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:127
+msgid "Approve Contract"
+msgstr "批准合同"
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:44
+msgid ""
+"You confirm that the uploaded contract is acceptable for commencing the "
+"project."
+msgstr "您确定上传的合同可用于启动项目。"
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:56
+msgid "A lead must be assigned"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:58
+msgid "Project approval form must be completed"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:60
+msgid "Currently awaiting approval"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:76
+msgid "Update Project Status"
+msgstr "更新项目状态"
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:80
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:82
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:151
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:153
+msgid "Update PAF Status"
+msgstr "更新 PAF 状态"
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:83
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:154
+msgid "Project's current status"
+msgstr "项目当前状态"
+
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:111
+msgid "Approved By"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_applicant_detail.html:8
+msgid "Your project is not editable at this point."
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_applicant_detail.html:10
+msgid "We are awaiting a lead to be assigned."
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_applicant_detail.html:12
+msgid "It is currently under review by a staff member."
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_approval_form.html:50
+msgid "Approval form not configured. Please add an approval form in the"
+msgstr "未配置好批准表单，请在如下位置添加"
+
+#: hypha/apply/projects/templates/application_projects/project_approval_form.html:51
+msgid "fund settings"
+msgstr "基金设置"
+
+#: hypha/apply/projects/templates/application_projects/project_detail.html:58
+msgid "Details"
+msgstr "详情"
+
+#: hypha/apply/projects/templates/application_projects/project_detail.html:79
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:37
+msgid "Project Information"
+msgstr "项目信息"
+
+#: hypha/apply/projects/templates/application_projects/project_detail.html:82
+msgid "Contractor"
+msgstr "合约"
+
+#: hypha/apply/projects/templates/application_projects/project_detail.html:129
+msgid "Fill in Contracting Info"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_detail.html:136
+msgid "Upload Signed Contract"
+msgstr "上传已签名合同"
+
+#: hypha/apply/projects/templates/application_projects/project_detail.html:138
+msgid "Upload Contract"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_detail.html:148
+msgid "Upload contract"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_detail.html:167
+msgid "Supporting Information"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_detail.html:174
+msgid "Approval form"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_detail.html:185
+msgid "Contracts"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_detail.html:214
+msgid "Approved by"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_detail.html:221
+msgid "Corrections or amendments to your contract?"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_list.html:13
+msgid "All Projects"
+msgstr "所有项目"
+
+#: hypha/apply/projects/templates/application_projects/project_list.html:24
+msgid "No Projects Available."
+msgstr "无可用项目。"
+
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:41
+msgid "Proposed start date"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:46
+msgid "Project Proposed end date"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:51
+msgid "Legal name"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:66
+msgid "Phone"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:71
+msgid "Value"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:77
+msgid "Sent to Compliance"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:91
+msgid "Approvals"
+msgstr "批准"
+
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:93
+msgid "Approver"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:99
+#: hypha/apply/review/templates/review/review_detail.html:10
+msgid "Review"
+msgstr "审核"
+
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:101
+msgid "Submission lead"
+msgstr "提交领导人"
+
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:105
+msgid "Staff Reviewers"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:117
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:127
+msgid "No reviews"
+msgstr "无审核"
+
+#: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:150
+msgid "Edit PAF"
+msgstr "编辑 PAF"
+
+#: hypha/apply/projects/templates/application_projects/report_detail.html:4
+msgid "Report"
+msgstr "报告"
+
+#: hypha/apply/projects/templates/application_projects/report_detail.html:13
+msgid "View report"
+msgstr "查看报告"
+
+#: hypha/apply/projects/templates/application_projects/report_detail.html:21
+msgid "This report is for the period"
+msgstr "此报告针对阶段"
+
+#: hypha/apply/projects/templates/application_projects/report_detail.html:26
+msgid "Report Skipped"
+msgstr "已跳过报告"
+
+#: hypha/apply/projects/templates/application_projects/report_detail.html:28
+msgid "Public Report"
+msgstr "公开报告"
+
+#: hypha/apply/projects/templates/application_projects/report_detail.html:33
+msgid "Private Report"
+msgstr "私密报告"
+
+#: hypha/apply/projects/templates/application_projects/report_detail.html:39
+msgid "Attachements"
+msgstr "附件"
+
+#: hypha/apply/projects/templates/application_projects/report_detail.html:66
+msgid "View previous report"
+msgstr "查看上一个报告"
+
+#: hypha/apply/projects/templates/application_projects/report_detail.html:73
+msgid "View next report"
+msgstr "查看下一个报告"
+
+#: hypha/apply/projects/templates/application_projects/report_form.html:9
+msgid "Edit Report"
+msgstr "编辑报告"
+
+#: hypha/apply/projects/templates/application_projects/report_form.html:17
+msgid "Submit a report"
+msgstr "提交报告"
+
+#: hypha/apply/projects/templates/application_projects/report_form.html:28
+msgid "You are reporting for the period running from"
+msgstr "您正为如下阶段进行报告"
+
+#: hypha/apply/projects/templates/application_projects/report_form.html:50
+msgid "Save report"
+msgstr "保存报告"
+
+#: hypha/apply/projects/templates/application_projects/report_form.html:52
+msgid ""
+"Saving a draft means this report will be visible to you and staff from your "
+"project page."
+msgstr "保存草稿后，此报告将对您与项目页面人员可见。"
+
+#: hypha/apply/projects/templates/application_projects/report_form.html:62
+msgid "Submit report"
+msgstr "提交报告"
+
+#: hypha/apply/projects/templates/application_projects/report_form.html:63
+msgid "Are you sure you want to submit your report?"
+msgstr "您确定要提交报告吗？"
+
+#: hypha/apply/projects/templates/application_projects/report_list.html:12
+msgid "Submitted Reports"
+msgstr "已提交报告"
+
+#: hypha/apply/projects/templates/application_projects/report_list.html:22
+msgid "No Reports Available."
+msgstr "无可用报告。"
+
+#: hypha/apply/projects/templates/application_projects/vendor_detail.html:4
+#: hypha/apply/projects/templates/application_projects/vendor_detail.html:12
+msgid "Contracting Information for"
+msgstr "合同信息为"
+
+#: hypha/apply/projects/templates/application_projects/vendor_detail.html:18
+msgid "Last Updated"
+msgstr "上次更新于"
+
+#: hypha/apply/projects/templates/application_projects/vendor_form.html:4
+#: hypha/apply/projects/templates/application_projects/vendor_form.html:8
+msgid "Update Contracting Information"
+msgstr "更新合同信息"
+
+#: hypha/apply/projects/templates/application_projects/vendor_form.html:27
+msgid "Save and continue"
+msgstr "保存并继续"
+
+#: hypha/apply/projects/templates/application_projects/vendor_success.html:4
+#: hypha/apply/projects/templates/application_projects/vendor_success.html:8
+msgid "Contractor Setup Completed"
+msgstr "合约配置完成"
+
+#: hypha/apply/projects/templates/application_projects/vendor_success.html:12
+msgid "Thank you for submitting your information."
+msgstr "感谢您提交信息。"
+
+#: hypha/apply/projects/templates/application_projects/vendor_success.html:13
+msgid ""
+"Your {{ ORG_SHORT_NAME }} Programme Manager will be in touch with you if "
+"there are any issues."
+msgstr "若有任何问题，您的 {{ ORG_SHORT_NAME }} 项目管理员会与您联系。"
+
+#: hypha/apply/projects/templates/application_projects/vendor_success.html:14
+msgid "What will happen next?"
+msgstr "接下来会发生什么？"
+
+#: hypha/apply/projects/templates/application_projects/vendor_success.html:15
+msgid "We will use this information to create the contract for your project."
+msgstr "我们会使用此信息为您的项目创建合同。"
+
+#: hypha/apply/projects/templates/application_projects/vendor_success.html:16
+msgid "Once this has happened, we will send you a message with your contract."
+msgstr "此事发生后，我们会向您发送消息，并附上合同。"
+
+#: hypha/apply/projects/templates/application_projects/vendor_success.html:17
+msgid "We'll ask you to read it, and if everything is OK, you can sign it."
+msgstr "我们会让您阅读合同，如果一切正确，您就可以签订了。"
+
+#: hypha/apply/projects/templates/application_projects/vendor_success.html:18
+msgid "Visit Project Detail Page"
+msgstr "访问项目详情页"
+
+#: hypha/apply/projects/views/payment.py:55
+#: hypha/apply/projects/views/payment.py:209
+#, python-brace-format
+msgid "<p>Invoice status updated to: {status}.</p>"
+msgstr "<p>发票状态已更新至：{status}。</p>"
+
+#: hypha/apply/projects/views/payment.py:155
+msgid "<p>Invoice created.</p>"
+msgstr ""
+
+#: hypha/apply/projects/views/project.py:159
+#, python-brace-format
+msgid ""
+"<p>{user} request changes the Project and update status to {project_status}."
+"</p>"
+msgstr ""
+
+#: hypha/apply/projects/views/project.py:194
+#, python-brace-format
+msgid ""
+"<p>{user} approved the Project and update status to {project_status}.</p>"
+msgstr ""
+
+#: hypha/apply/projects/views/project.py:488
+#, python-brace-format
+msgid "<p>{role} has updated PAF status to {paf_status}.</p>"
+msgstr "<p>{role} 已将 PAF 状态更新至 {paf_status}。</p>"
+
+#: hypha/apply/projects/views/project.py:733
+msgid "You are not allowed to edit the project at this time"
+msgstr "您无法在此时编辑项目"
+
+#: hypha/apply/projects/views/vendor.py:259
+msgid "Bank Account Information"
+msgstr "银行账户信息"
+
+#: hypha/apply/projects/views/vendor.py:268
+msgid "(Optional) Extra Information for Accepting Payments"
+msgstr "（可选）接收支付的额外信息"
+
+#: hypha/apply/projects/views/vendor.py:273
+msgid "Intermediary Bank Account Information"
+msgstr "中间人银行账户信息"
+
+#: hypha/apply/projects/views/vendor.py:282
+msgid "Account Holder National Identity Document Information"
+msgstr "账户持有人身份证件信息"
+
+#: hypha/apply/review/blocks.py:34
+#: hypha/apply/review/templates/review/review_detail.html:23
+msgid "Score"
+msgstr "分数"
+
+#: hypha/apply/review/blocks.py:162
+msgid "Paragraph"
+msgstr "段落"
+
+#: hypha/apply/review/models.py:159
+#: hypha/apply/review/templates/review/review_detail.html:19
+msgid "Recommendation"
+msgstr "推荐"
+
+#: hypha/apply/review/models.py:164
+msgid "Visibility"
+msgstr "可见性"
+
+#: hypha/apply/review/options.py:6
+msgid "0. Need more info"
+msgstr "0. 需要更多信息"
+
+#: hypha/apply/review/options.py:7
+msgid "1. Poor"
+msgstr "1. 不好"
+
+#: hypha/apply/review/options.py:8
+msgid "2. Not so good"
+msgstr "2. 不是很好"
+
+#: hypha/apply/review/options.py:9
+msgid "3. Is o.k."
+msgstr "3. 还行。"
+
+#: hypha/apply/review/options.py:10
+msgid "4. Good"
+msgstr "4. 好"
+
+#: hypha/apply/review/options.py:11
+msgid "5. Excellent"
+msgstr "5. 优秀"
+
+#: hypha/apply/review/options.py:12
+msgid "n/a - choose not to answer"
+msgstr "n/a - 选择不回答"
+
+#: hypha/apply/review/options.py:24
+msgid "Maybe"
+msgstr "也许"
+
+#: hypha/apply/review/options.py:32
+msgid "Agree"
+msgstr "同意"
+
+#: hypha/apply/review/options.py:33
+msgid "Disagree"
+msgstr "不统一"
+
+#: hypha/apply/review/options.py:40
+msgid "Visible only to staff."
+msgstr "仅对员工可见。"
+
+#: hypha/apply/review/options.py:41
+msgid "Visible to other reviewers and staff."
+msgstr "对其他审核人与员工可见。"
+
+#: hypha/apply/review/options.py:45
+msgid "Private"
+msgstr "私密"
+
+#: hypha/apply/review/options.py:46
+msgid "Reviewers and Staff"
+msgstr "审核人与员工"
+
+#: hypha/apply/review/templates/review/includes/review_button.html:8
+msgid "Add a review"
+msgstr "添加审核"
+
+#: hypha/apply/review/templates/review/review_confirm_delete.html:17
+msgid "Are you sure you want to delete"
+msgstr "您确定要删除"
+
+#: hypha/apply/review/templates/review/review_detail.html:3
+msgid "Review for"
+msgstr "审核对"
+
+#: hypha/apply/review/templates/review/review_detail.html:11
+msgid "at"
+msgstr "与"
+
+#: hypha/apply/review/templates/review/review_detail.html:48
+msgid "Review was not against the latest version"
+msgstr "审核目标不是最新版本"
+
+#: hypha/apply/review/templates/review/review_detail.html:68
+msgid ""
+"An opinion is a replacement for a review. You will no longer be able to "
+"submit a review for this application."
+msgstr "意见是审核的平替。您无法再向此申请提交审核。"
+
+#: hypha/apply/review/templates/review/review_form.html:46
+msgid "You have already posted a review for this submission"
+msgstr "您已为此提交发布审核"
+
+#: hypha/apply/review/views.py:86
+msgid "Edit Review"
+msgstr "编辑审核"
+
+#: hypha/apply/review/views.py:151
+msgid "Update Review draft"
+msgstr "更新审核草稿"
+
+#: hypha/apply/review/views.py:151
+msgid "Create Review"
+msgstr "创建审核"
+
+#: hypha/apply/stream_forms/blocks.py:38
+msgid "Help link"
+msgstr "帮助链接"
+
+#: hypha/apply/stream_forms/blocks.py:115
+#: hypha/apply/stream_forms/blocks.py:216
+msgid "Required"
+msgstr "必需"
+
+#: hypha/apply/stream_forms/blocks.py:119
+msgid "Email"
+msgstr "电子邮箱"
+
+#: hypha/apply/stream_forms/blocks.py:120
+msgid "URL"
+msgstr "URL"
+
+#: hypha/apply/stream_forms/blocks.py:125
+msgid "Format"
+msgstr "格式"
+
+#: hypha/apply/stream_forms/blocks.py:126
+#: hypha/apply/stream_forms/blocks.py:155
+#: hypha/apply/stream_forms/blocks.py:169
+msgid "Default value"
+msgstr "默认值"
+
+#: hypha/apply/stream_forms/blocks.py:129
+msgid "Text field (single line)"
+msgstr "文本字段（单行）"
+
+#: hypha/apply/stream_forms/blocks.py:147
+msgid "Max number of inputs"
+msgstr "最大输入数"
+
+#: hypha/apply/stream_forms/blocks.py:148
+msgid "Add new item"
+msgstr "添加新项目"
+
+#: hypha/apply/stream_forms/blocks.py:151
+msgid "Text field (single line) (multiple inputs)"
+msgstr "文本字段（单行）（多个输入）"
+
+#: hypha/apply/stream_forms/blocks.py:156
+msgid "Word limit"
+msgstr "字数限制"
+
+#: hypha/apply/stream_forms/blocks.py:161
+msgid "Text field (multi line)"
+msgstr "文本字段（多行）"
+
+#: hypha/apply/stream_forms/blocks.py:174
+msgid "Number field"
+msgstr "数字字段"
+
+#: hypha/apply/stream_forms/blocks.py:186
+msgid "Checkbox field"
+msgstr "复选框字段"
+
+#: hypha/apply/stream_forms/blocks.py:197
+#: hypha/apply/stream_forms/blocks.py:218
+msgid "Choice"
+msgstr "选择"
+
+#: hypha/apply/stream_forms/blocks.py:203
+msgid "Radio buttons"
+msgstr "单选按钮"
+
+#: hypha/apply/stream_forms/blocks.py:230
+msgid "Group fields"
+msgstr "组合字段"
+
+#: hypha/apply/stream_forms/blocks.py:264
+msgid "Dropdown field"
+msgstr "下拉框字段"
+
+#: hypha/apply/stream_forms/blocks.py:274
+msgid "Checkbox"
+msgstr "复选框"
+
+#: hypha/apply/stream_forms/blocks.py:280
+msgid "Multiple checkboxes field"
+msgstr "多复选框字段"
+
+#: hypha/apply/stream_forms/blocks.py:320
+msgid "Date field"
+msgstr "日期字段"
+
+#: hypha/apply/stream_forms/blocks.py:342
+msgid "Time field"
+msgstr "时间字段"
+
+#: hypha/apply/stream_forms/blocks.py:375
+msgid "Date+time field"
+msgstr "日期+时间字段"
+
+#: hypha/apply/stream_forms/blocks.py:407
+msgid "Image field"
+msgstr "图像字段"
+
+#: hypha/apply/stream_forms/blocks.py:419
+msgid "File field"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:433
+msgid "Multiple File field"
+msgstr "多文件字段"
+
+#: hypha/apply/stream_forms/blocks.py:466
+msgid "Section text"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:467
+msgid "Section header"
+msgstr "页眉"
+
+#: hypha/apply/stream_forms/blocks.py:486 hypha/public/forms/models.py:70
+msgid "Form fields"
+msgstr "表单字段"
+
+#: hypha/apply/stream_forms/models.py:67
+msgid ""
+"You are logged in so this information is fetched from your user account."
+msgstr "您已登录，此信息是从您的账户获取的。"
+
+#: hypha/apply/templates/forms/includes/field.html:35
+msgid "See help guide for more information."
+msgstr "查看帮助指南获取更多信息。"
+
+#: hypha/apply/templates/forms/includes/form_errors.html:5
+msgid ""
+"There were some errors with your form. Please amend the fields highlighted "
+"below."
+msgstr "您的表单中有错误。请修正下方高亮的字段。"
+
+#: hypha/apply/users/admin_views.py:71 hypha/apply/users/admin_views.py:96
+msgid "Search users"
+msgstr "搜索用户"
+
+#: hypha/apply/users/forms.py:60
+msgid ""
+"You are registered using OAuth, please contact an admin if you need to "
+"change your email address."
+msgstr "您是使用 OAuth 注册的，若要更改电子邮件地址，请联系管理员。"
+
+#: hypha/apply/users/forms.py:78
+msgid "Only includes active, non-superusers"
+msgstr "只包括活跃、非超级用户的用户"
+
+#: hypha/apply/users/forms.py:87
+#: hypha/apply/users/templates/users/account.html:34
+#: hypha/apply/users/templates/users/activation/email.txt:13
+msgid "Password"
+msgstr "密码"
+
+#: hypha/apply/users/forms.py:88
+msgid "Email change requires you to put password."
+msgstr "更改电子邮箱需要您输入密码。"
+
+#: hypha/apply/users/forms.py:101 hypha/apply/users/forms.py:130
+msgid "Incorrect password. Please try again."
+msgstr "密码不正确。请重试。"
+
+#: hypha/apply/users/forms.py:117
+msgid "Please type your password to confirm"
+msgstr "请输入密码以确认"
+
+#: hypha/apply/users/models.py:109
+msgid "email address"
+msgstr "电子邮箱地址"
+
+#: hypha/apply/users/models.py:112
+msgid "Slack name"
+msgstr "Slack 名称"
+
+#: hypha/apply/users/models.py:114
+msgid "This is the name we should \"@mention\" when sending notifications"
+msgstr "这是我们在发送通知时，应当“@提及”的名称"
+
+#: hypha/apply/users/templates/two_factor/_base.html:7
+#: hypha/apply/users/templates/two_factor/_base_focus.html:7
+#: hypha/apply/users/templates/users/account.html:9
+msgid "Welcome"
+msgstr "欢迎"
+
+#: hypha/apply/users/templates/two_factor/_base.html:9
+#: hypha/apply/users/templates/two_factor/_base_focus.html:9
+#: hypha/apply/users/templates/users/account.html:11
+msgid "Go to my dashboard"
+msgstr "转到我的仪表板"
+
+#: hypha/apply/users/templates/two_factor/_wizard_actions.html:4
+#: hypha/apply/users/templates/users/login.html:5
+#: hypha/apply/users/templates/users/login.html:6
+#: hypha/apply/users/templates/users/login.html:41
+msgid "Login"
+msgstr "登录"
+
+#: hypha/apply/users/templates/two_factor/_wizard_actions.html:6
+#: hypha/apply/users/templates/two_factor/profile/profile.html:64
+msgid "Enable Two-Factor Authentication"
+msgstr "启用双重认证"
+
+#: hypha/apply/users/templates/two_factor/_wizard_actions.html:8
+msgid "Next"
+msgstr "下一步"
+
+#: hypha/apply/users/templates/two_factor/admin/disable.html:7
+msgid "Disabling 2FA"
+msgstr "禁用 2FA"
+
+#: hypha/apply/users/templates/two_factor/admin/disable.html:15
+msgid ""
+"Are you sure you want to disable the Two Factor Authentication for this "
+"user? Please type your password to confirm."
+msgstr "您确定要为此用户禁用双重认证吗？请输入您的密码进行确认。"
+
+#: hypha/apply/users/templates/two_factor/admin/disable.html:23
+#: hypha/apply/users/templates/users/account.html:41
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:77
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:79
+msgid "Disable 2FA"
+msgstr "禁用 2FA"
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens.html:6
+#: hypha/apply/users/templates/two_factor/core/backup_tokens_password.html:6
+#: hypha/apply/users/templates/two_factor/profile/disable.html:6
+#: hypha/apply/users/templates/two_factor/profile/profile.html:6
+msgid "Back to account"
+msgstr "返回账户"
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens.html:7
+#: hypha/apply/users/templates/two_factor/core/backup_tokens_password.html:7
+msgid "Backup Codes"
+msgstr "备份代码"
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens.html:8
+msgid ""
+"These codes should be kept in a safe, private place for when you need them. "
+"When they are used up, you can generate a new set of backup codes."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens.html:18
+msgid ""
+"You should now download, or print these codes,\n"
+"        and keep them somewhere safe."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens.html:21
+msgid "Regenerate Codes"
+msgstr "重新生成代码"
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens.html:23
+msgid "Save Codes"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens.html:26
+msgid "You don't have any backup codes yet."
+msgstr "您还没有备份代码。"
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens.html:28
+msgid "Generate Codes"
+msgstr "生成代码"
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens_password.html:8
+msgid ""
+"If you loose your smartphone, or your Authenticator app is not available, "
+"you can use a backup code along with your username and password to login "
+"until you recover your smartphone. Each backup code can be used only once. </"
+"br> </br> These codes should be kept in a secure, private place for when you "
+"need them. When they are used up, you can generate a new set of backup codes."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens_password.html:27
+#: hypha/apply/users/templates/two_factor/profile/disable.html:22
+#: hypha/apply/users/templates/users/change_password.html:20
+#: hypha/apply/users/templates/users/email_change/confirm_password.html:21
+#: hypha/apply/users/templates/users/password_reset/confirm.html:20
+msgid "<li>Please correct the error below.</li>"
+msgid_plural "<li>Please correct the errors below.</li>"
+msgstr[0] "<li>请修正以下错误。</li>"
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens_password.html:41
+#: hypha/apply/users/templates/two_factor/core/setup_complete.html:13
+#: hypha/apply/users/templates/two_factor/core/setup_complete.html:20
+#: hypha/apply/users/templates/two_factor/profile/profile.html:52
+msgid "Show Codes"
+msgstr "显示代码"
+
+#: hypha/apply/users/templates/two_factor/core/setup.html:5
+#: hypha/apply/users/templates/users/account.html:37
+msgid "Two-Factor Authentication (2FA)"
+msgstr "双重认证 (2FA)"
+
+#: hypha/apply/users/templates/two_factor/core/setup.html:7
+msgid "You are about to take your account security to the next level."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/setup.html:9
+msgid ""
+"To start using 2FA, you need to install an Authenticator app on your "
+"smartphone or computer. With Safari on Apple devices you can also use a "
+"built in system."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/setup.html:10
+msgid ""
+"Install the app you choose then continue to Enable Two-Factor Authentication."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/setup.html:12
+msgid "Please select which authentication method you would like to use."
+msgstr "请选择您想使用的认证方式。"
+
+#: hypha/apply/users/templates/two_factor/core/setup.html:15
+msgid ""
+"To start using a token generator, please use your smartphone to scan the QR "
+"code below. For example, use Google Authenticator. Then, enter the token "
+"generated by the app."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/setup.html:21
+msgid "Advanced"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/setup.html:22
+msgid "For advanced users, here is the otpauth url in string format."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/setup.html:26
+msgid ""
+"Please enter the phone number you wish to receive the text messages on. This "
+"number will be validated in the next step."
+msgstr "请输入接收短信的手机号码。下一步将对此号码进行验证。"
+
+#: hypha/apply/users/templates/two_factor/core/setup.html:30
+msgid ""
+"Please enter the phone number you wish to be called on. This number will be "
+"validated in the next step."
+msgstr "请输入接收电话的手机号码。下一步将对此号码进行验证。"
+
+#: hypha/apply/users/templates/two_factor/core/setup.html:35
+#: hypha/apply/users/templates/users/login.html:14
+msgid "We are calling your phone right now, please enter the digits you hear."
+msgstr "我们正拨打您的手机，请输入您听到的数字。"
+
+#: hypha/apply/users/templates/two_factor/core/setup.html:38
+#: hypha/apply/users/templates/users/login.html:17
+msgid "We sent you a text message, please enter the tokens we sent."
+msgstr "我们向您发送了一条短信，请输入收到的验证码。"
+
+#: hypha/apply/users/templates/two_factor/core/setup.html:42
+msgid ""
+"We've encountered an issue with the selected authentication method. Please "
+"go back and verify that you entered your information correctly, try again, "
+"or use a different authentication method instead. If the issue persists, "
+"contact the site administrator."
+msgstr "我们在使用所选认证方式时遇到了问题。请返回确认您输入的信息正确，然后重试，或"
+"者使用不同的认证方式。如果问题依然存在，请联系网站管理员。"
+
+#: hypha/apply/users/templates/two_factor/core/setup.html:49
+msgid ""
+"To identify and verify your YubiKey, please insert a token in the field "
+"below. Your YubiKey will be linked to your account."
+msgstr "要识别并验证您的 YubiKey，请在下列字段输入令牌。您的 YubiKey 将与账户关联。"
+
+#: hypha/apply/users/templates/two_factor/core/setup_complete.html:5
+msgid "Two-Factor Authentication(2FA)"
+msgstr "双重认证 (2FA)"
+
+#: hypha/apply/users/templates/two_factor/core/setup_complete.html:7
+msgid "Congratulations, you've successfully enabled two-factor authentication."
+msgstr "恭喜，您已成功启用双重认证。"
+
+#: hypha/apply/users/templates/two_factor/core/setup_complete.html:9
+msgid ""
+"We strongly recommend you to save the backup codes. To get the backup codes "
+"you can continue to Show Codes."
+msgstr "我们强烈推荐您将这些备用代码保存下来。要获取代码，您可以点击“显示代码”。"
+
+#: hypha/apply/users/templates/two_factor/core/setup_complete.html:14
+msgid "Back to Account"
+msgstr "返回账户"
+
+#: hypha/apply/users/templates/two_factor/core/setup_complete.html:16
+msgid ""
+"However, it might happen that you don't have access to your primary token "
+"device. To enable account recovery, add a phone number."
+msgstr "然而，您无法访问主令牌设备时也会发生此情况。请添加手机号码以启用账户恢复。"
+
+#: hypha/apply/users/templates/two_factor/core/setup_complete.html:22
+#: hypha/apply/users/templates/two_factor/profile/profile.html:38
+msgid "Add Phone Number"
+msgstr "添加手机号码"
+
+#: hypha/apply/users/templates/two_factor/core/two_factor_required.html:7
+msgid "Permission Denied"
+msgstr "权限被拒绝"
+
+#: hypha/apply/users/templates/two_factor/core/two_factor_required.html:9
+msgid ""
+"The page you requested, enforces users to verify using two-factor "
+"authentication for security reasons. You need to set up these security "
+"features in order to access this page. Without setting up these security "
+"features, You can only access the account(Profile section) or can logout "
+"from the system."
+msgstr ""
+"出于安全原因，您请求访问的页面强制用户使用双重认证进行验证。您需要配置这些安"
+"全功能才能访问此页面。如果不配置，您只能访问账户（“个人资料”部分）或者登出系"
+"统。"
+
+#: hypha/apply/users/templates/two_factor/core/two_factor_required.html:14
+msgid ""
+"Two-factor authentication is not already set up for your account. Set up two-"
+"factor authentication for enhanced account security."
+msgstr "您的账户尚未配置双重认证。请配置双重认证以增强账户安全性。"
+
+#: hypha/apply/users/templates/two_factor/core/two_factor_required.html:20
+msgid "Set up Two-Factor Authentication (2FA)"
+msgstr "配置双重认证 (2FA)"
+
+#: hypha/apply/users/templates/two_factor/profile/disable.html:7
+#: hypha/apply/users/templates/two_factor/profile/disable.html:36
+msgid "Disable Two-factor Authentication"
+msgstr "禁用双重认证"
+
+#: hypha/apply/users/templates/two_factor/profile/disable.html:8
+msgid ""
+"Disabling Two-factor authentication weakens your account security. We "
+"recommend reenabling it when you can."
+msgstr "禁用双重认证会降低您账户的安全性。我们推荐条件允许时重新将其启用。"
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:9
+msgid "Two-Factor Authentication"
+msgstr "双重认证"
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:13
+msgid "Tokens will be generated by your token generator."
+msgstr "您的令牌生成器会生成令牌。"
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:15
+#, python-format
+msgid "Primary method: %(primary)s"
+msgstr "主要方法：%(primary)s"
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:17
+msgid "Tokens will be generated by your YubiKey."
+msgstr "您的 YubiKey 会生成令牌。"
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:21
+msgid "Backup Phone Numbers"
+msgstr "备用手机号码"
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:22
+msgid ""
+"If your primary method is not available, we are able to send backup tokens "
+"to the phone numbers listed below."
+msgstr "如果主要认证方式不可用，我们可以向下面列出的手机号码发送备用令牌。"
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:29
+msgid "Are you sure?"
+msgstr "您确定吗？"
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:32
+msgid "Unregister"
+msgstr "注销"
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:41
+msgid "Backup Tokens"
+msgstr "备用令牌"
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:43
+msgid ""
+"If you don't have any device with you, you can access your account using "
+"backup tokens."
+msgstr "如果您身边没有其他设备，您可以用备用令牌访问您的账户。"
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:45
+#, python-format
+msgid "You have only one backup token remaining."
+msgid_plural "You have %(counter)s backup tokens remaining."
+msgstr[0] "您还剩下 %(counter)s 个备用令牌。"
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:54
+#: hypha/apply/users/templates/two_factor/profile/profile.html:58
+msgid "Disable Two-Factor Authentication"
+msgstr "禁用双重认证"
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:55
+msgid ""
+"However we strongly discourage you to do so, you can also disable two-factor "
+"authentication for your account."
+msgstr "我们强烈不建议您这么做，但您仍可为您的账户禁用双重认证。"
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:60
+msgid ""
+"Two-factor authentication is not enabled for your account. Enable two-factor "
+"authentication for enhanced account security."
+msgstr "您的账户未启用双重认证。请启用双重认证以增强账户安全性。"
+
+#: hypha/apply/users/templates/users/account.html:4
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:22
+msgid "Account"
+msgstr "账户"
+
+#: hypha/apply/users/templates/users/account.html:19
+msgid "Profile"
+msgstr "个人资料"
+
+#: hypha/apply/users/templates/users/account.html:25
+msgid "Update Profile"
+msgstr "更新个人资料"
+
+#: hypha/apply/users/templates/users/account.html:33
+msgid "Account Security"
+msgstr "账户安全"
+
+#: hypha/apply/users/templates/users/account.html:35
+msgid "Update password"
+msgstr "更新密码"
+
+#: hypha/apply/users/templates/users/account.html:40
+msgid "Show backup codes"
+msgstr ""
+
+#: hypha/apply/users/templates/users/account.html:44
+msgid "Enable 2FA"
+msgstr "启用双重验证"
+
+#: hypha/apply/users/templates/users/account.html:52
+#: hypha/apply/users/templates/users/account.html:59
+msgid "Become"
+msgstr "成为"
+
+#: hypha/apply/users/templates/users/activation/email.txt:4
+#, python-format
+msgid ""
+"Activate your account on the %(org_long_name)s web site by clicking this "
+"link or copying and pasting it to your browser:"
+msgstr "点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(org_long_name)s "
+"网站的账户："
+
+#: hypha/apply/users/templates/users/activation/email.txt:8
+#, python-format
+msgid ""
+"This link can be used only once and will lead you to a page where you can "
+"set your password. It will remain active for %(timeout_days)s days, so "
+"please set your password as soon as possible."
+msgstr "此链接仅可使用一次，会将您带到密码设置页面。链接在 %(timeout_days)s "
+"天内有效，因此请您尽快设置密码。"
+
+#: hypha/apply/users/templates/users/activation/email.txt:10
+msgid "After setting your password, you will be able to log in at"
+msgstr "在设置密码后，您将能登录于"
+
+#: hypha/apply/users/templates/users/activation/email.txt:10
+msgid "in the future using"
+msgstr "日后，使用"
+
+#: hypha/apply/users/templates/users/activation/email.txt:12
+#: hypha/apply/users/templates/wagtailusers/users/list.html:15
+msgid "Username"
+msgstr "用户名"
+
+#: hypha/apply/users/templates/users/activation/email.txt:13
+msgid "Your chosen password"
+msgstr "您选用的密码"
+
+#: hypha/apply/users/templates/users/activation/email.txt:15
+#, python-format
+msgid ""
+"If you do not complete the activation process within %(timeout_days)s days "
+"you can use the password reset form at"
+msgstr "如果您没有在 %(timeout_days)s "
+"天内完成激活流程，则可以使用如下地址的密码重置表单"
+
+#: hypha/apply/users/templates/users/activation/email.txt:17
+#: hypha/apply/users/templates/users/email_change/confirm_email.txt:10
+#, python-format
+msgid ""
+"Kind Regards,\n"
+"The %(org_short_name)s Team"
+msgstr ""
+"谨致问候，\n"
+"%(org_short_name)s 团队"
+
+#: hypha/apply/users/templates/users/activation/invalid.html:4
+msgid "Invalid activation"
+msgstr "激活无效"
+
+#: hypha/apply/users/templates/users/activation/invalid.html:5
+msgid "Invalid activation URL"
+msgstr "激活 URL 无效"
+
+#: hypha/apply/users/templates/users/activation/invalid.html:10
+msgid "Two possible reasons:"
+msgstr "有两个可能原因："
+
+#: hypha/apply/users/templates/users/activation/invalid.html:12
+msgid "The activation link has expired."
+msgstr "激活链接已过期。"
+
+#: hypha/apply/users/templates/users/activation/invalid.html:13
+msgid "The account has already been activated."
+msgstr "账户已被激活。"
+
+#: hypha/apply/users/templates/users/activation/invalid.html:16
+#, python-format
+msgid ""
+"First try to <a href=\"%(password_reset)s\">reset your password</a>. If that "
+"fails please contact %(ORG_SHORT_NAME)s at"
+msgstr ""
+"请先尝试 <a href=\"%(password_reset)s\">重置密码</a>。如果失败了，"
+"请用以下地址联系 %(ORG_SHORT_NAME)s"
+
+#: hypha/apply/users/templates/users/change_password.html:4
+#: hypha/apply/users/templates/users/change_password.html:5
+msgid "Set a password"
+msgstr ""
+
+#: hypha/apply/users/templates/users/change_password.html:34
+#: hypha/apply/users/templates/users/password_reset/complete.html:4
+#: hypha/apply/users/templates/users/password_reset/confirm.html:34
+#: hypha/apply/users/templates/users/password_reset/done.html:5
+#: hypha/apply/users/templates/users/password_reset/form.html:5
+#: hypha/apply/users/templates/users/password_reset/form.html:6
+msgid "Reset password"
+msgstr "重置密码"
+
+#: hypha/apply/users/templates/users/email_change/confirm_email.txt:4
+#, python-format
+msgid ""
+"Request to change email of your account on the %(org_long_name)s web site "
+"has been accepted. Confirm your email by clicking this link or copying and "
+"pasting it to your browser:"
+msgstr "您在 %(org_long_name)s 网站账户的电子邮箱更改请求已被批准。请点击此链接确认邮"
+"箱，或者将其复制并粘贴到浏览器中："
+
+#: hypha/apply/users/templates/users/email_change/confirm_email.txt:8
+#, python-format
+msgid ""
+"This link will only remain active for %(timeout_days)s days and will lead "
+"you to profile page after verification."
+msgstr "此链接仅在 %(timeout_days)s 天内有效，验证后会将您带到个人资料页面。"
+
+#: hypha/apply/users/templates/users/email_change/confirm_password.html:4
+#: hypha/apply/users/templates/users/email_change/confirm_password.html:5
+#: hypha/apply/users/views.py:119
+msgid "Enter Password"
+msgstr "输入密码"
+
+#: hypha/apply/users/templates/users/email_change/done.html:4
+#: hypha/apply/users/templates/users/password_reset/done.html:4
+msgid "Check your email"
+msgstr "检查您的邮箱"
+
+#: hypha/apply/users/templates/users/email_change/done.html:5
+#: hypha/apply/users/views.py:165
+msgid "Verify Email"
+msgstr "验证邮箱"
+
+#: hypha/apply/users/templates/users/email_change/done.html:9
+msgid ""
+"To start using the new email, please click on the confirmation link that has "
+"been sent to you on your new email."
+msgstr "要开始使用新电子邮箱，请点击发送到您新邮箱的确认链接。"
+
+#: hypha/apply/users/templates/users/email_change/invalid_link.html:4
+msgid "Invalid Confirmation"
+msgstr "确认无效"
+
+#: hypha/apply/users/templates/users/email_change/invalid_link.html:5
+msgid "Invalid Confirmation URL"
+msgstr "确认 URL 无效"
+
+#: hypha/apply/users/templates/users/email_change/invalid_link.html:9
+msgid "Possible reason:"
+msgstr "可能原因："
+
+#: hypha/apply/users/templates/users/email_change/invalid_link.html:11
+msgid "The confirmation link has expired."
+msgstr "确认链接已过期。"
+
+#: hypha/apply/users/templates/users/email_change/invalid_link.html:14
+#, python-format
+msgid ""
+"Try again to change email from accounts page. If that fails please contact "
+"%(ORG_SHORT_NAME)s at"
+msgstr "请从账户页面再次尝试更改电子邮箱。如果依然失败，请用以下地址联系 "
+"%(ORG_SHORT_NAME)s"
+
+#: hypha/apply/users/templates/users/login.html:11
+msgid "Enter your credentials."
+msgstr ""
+
+#: hypha/apply/users/templates/users/login.html:20
+msgid "Please enter the tokens generated by your token generator."
+msgstr ""
+
+#: hypha/apply/users/templates/users/login.html:24
+msgid ""
+"Use this form for entering backup tokens for logging in. These tokens have "
+"been generated for you to print and keep safe. Please enter one of these "
+"backup tokens to login to your account."
+msgstr ""
+
+#: hypha/apply/users/templates/users/login.html:39
+msgid "Forgot your password?"
+msgstr "忘记密码？"
+
+#: hypha/apply/users/templates/users/login.html:49
+msgid "Or, alternatively, use one of your backup phones:"
+msgstr "或者也可以使用您的备用手机号码："
+
+#: hypha/apply/users/templates/users/login.html:59
+msgid "As a last resort, you can use a backup token:"
+msgstr ""
+
+#: hypha/apply/users/templates/users/login.html:62
+msgid "Use Backup Token"
+msgstr ""
+
+#: hypha/apply/users/templates/users/login.html:74
+#, python-format
+msgid "Log in with your %(ORG_SHORT_NAME)s email"
+msgstr "用您的 %(ORG_SHORT_NAME)s 电子邮箱登录"
+
+#: hypha/apply/users/templates/users/oauth.html:9
+msgid "Providers"
+msgstr "提供者"
+
+#: hypha/apply/users/templates/users/oauth.html:18
+msgid "Disconnect"
+msgstr "断开连接"
+
+#: hypha/apply/users/templates/users/oauth.html:29
+msgid "Available providers"
+msgstr "可用提供者"
+
+#: hypha/apply/users/templates/users/password_reset/complete.html:5
+msgid "Password change successful"
+msgstr "密码更改成功"
+
+#: hypha/apply/users/templates/users/password_reset/complete.html:10
+msgid "Log in"
+msgstr "登录"
+
+#: hypha/apply/users/templates/users/password_reset/confirm.html:8
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr "请再次输入新密码，这样我们可以验证您输入正确。"
+
+#: hypha/apply/users/templates/users/password_reset/confirm.html:37
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr "密码重置链接无效，可能因为已经被使用。  请重新请求密码重置。"
+
+#: hypha/apply/users/templates/users/password_reset/done.html:9
+msgid "A link to reset your password has been emailed to you."
+msgstr ""
+
+#: hypha/apply/users/templates/users/password_reset/email.txt:2
+msgid "Please follow the link below to reset your password:"
+msgstr "请使用以下链接重置您的密码："
+
+#: hypha/apply/users/templates/users/password_reset/email.txt:7
+msgid "Your username (in case you've forgotten):"
+msgstr ""
+
+#: hypha/apply/users/templates/users/password_reset/form.html:21
+msgid ""
+"Forgot or want to change your password? Please enter your user account's "
+"email address and we will send you a password reset link."
+msgstr ""
+
+#: hypha/apply/users/templates/users/password_reset/form.html:26
+msgid "Send password reset email"
+msgstr ""
+
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:24
+msgid "Roles"
+msgstr "角色"
+
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:72
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:100
+msgid "Delete user"
+msgstr "删除用户"
+
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:79
+msgid "This account do not have 2FA enabled."
+msgstr "此账户未启用双重认证。"
+
+#: hypha/apply/users/templates/wagtailusers/users/index.html:3
+#: hypha/apply/users/templates/wagtailusers/users/index.html:28
+msgid "Users"
+msgstr ""
+
+#: hypha/apply/users/templates/wagtailusers/users/index.html:29
+msgid "Add a user"
+msgstr ""
+
+#: hypha/apply/users/templates/wagtailusers/users/index.html:38
+msgid "Select all users in listing"
+msgstr ""
+
+#: hypha/apply/users/templates/wagtailusers/users/list.html:7
+#: hypha/public/people/models.py:179
+msgid "Name"
+msgstr "名称"
+
+#: hypha/apply/users/templates/wagtailusers/users/list.html:31
+msgid "Last Login"
+msgstr ""
+
+#: hypha/apply/users/templates/wagtailusers/users/list.html:48
+msgid "Admin"
+msgstr ""
+
+#: hypha/apply/users/templates/wagtailusers/users/list.html:49
+msgid "Inactive"
+msgstr ""
+
+#: hypha/apply/users/templates/wagtailusers/users/list.html:50
+#, python-format
+msgid "%(time_period)s ago"
+msgstr ""
+
+#: hypha/apply/users/templates/wagtailusers/users/results.html:6
+#, python-format
+msgid "There is %(user_count)s user"
+msgid_plural "There are %(user_count)s users"
+msgstr[0] ""
+msgstr[1] ""
+
+#: hypha/apply/users/templates/wagtailusers/users/results.html:21
+#, python-format
+msgid "Sorry, no users match \"<em>%(query_string)s</em>\""
+msgstr "抱歉，没有用户匹配“<em>%(query_string)s</em>”"
+
+#: hypha/apply/users/templates/wagtailusers/users/results.html:28
+#, python-format
+msgid ""
+"The %(group_name)s group has no users configured. Why not <a href="
+"\"%(wagtailusers_add_url)s\">add some</a>?"
+msgstr ""
+"%(group_name)s 分组没有已配置的用户。为何不<a href=\"%(wagtailusers_add_url)"
+"s\">添加一些</a>？"
+
+#: hypha/apply/users/templates/wagtailusers/users/results.html:31
+#, python-format
+msgid ""
+"There are no users configured. Why not <a href=\"%(wagtailusers_add_url)s"
+"\">add some</a>?"
+msgstr "没有已配置的用户。为何不<a href=\"%(wagtailusers_add_url)s\">添加一些</a>？"
+
+#: hypha/apply/users/templates/wagtailusers/users/results.html:45
+msgid "Apply filters"
+msgstr "应用筛选器"
+
+#: hypha/apply/users/views.py:150
+msgid "Password Page timed out. Try changing the email again."
+msgstr "密码页面超时。请试试重新修改电子邮箱。"
+
+#: hypha/apply/users/views.py:171
+msgid "Hijack feature is not enabled."
+msgstr "未启用劫持功能。"
+
+#: hypha/apply/users/views.py:203
+#, python-brace-format
+msgid "Your email has been successfully updated to {email}!"
+msgstr "您的电子邮箱已成功更新为 {email}！"
+
+#: hypha/apply/utils/blocks.py:49
+msgid "Rich text field"
+msgstr "富文本字段"
+
+#: hypha/apply/utils/blocks.py:64
+msgid "Markdown text field"
+msgstr "Markdown 文本字段"
+
+#: hypha/apply/utils/blocks.py:83
+msgid " Required"
+msgstr " 必需"
+
+#: hypha/apply/utils/models.py:25
+msgid "Page size of downloadable Project and Submission PDFs"
+msgstr "可下载的项目与提交 PDF 文件的页面大小"
+
+#: hypha/apply/utils/views.py:260
+#, python-brace-format
+msgid "Page '{0}' can't be deleted because is in use in '{1}'."
+msgstr "无法删除页面“{0}”，因为“{1}”正在使用它。"
+
+#: hypha/cookieconsent/templates/includes/banner.html:11
+msgid "Decline tracking cookies."
+msgstr "拒绝跟踪 Cookies。"
+
+#: hypha/cookieconsent/templates/includes/banner.html:11
+msgid "Decline"
+msgstr "拒绝"
+
+#: hypha/cookieconsent/templates/includes/banner.html:12
+msgid "Accept tracking cookies."
+msgstr "接受跟踪 Cookies。"
+
+#: hypha/public/forms/models.py:31
+msgid "field type"
+msgstr "字段类型"
+
+#: hypha/public/funds/models.py:55 hypha/public/funds/models.py:169
+#: hypha/public/news/models.py:113 hypha/public/standardpages/models.py:31
+msgid "Related pages"
+msgstr "相关页面"
+
+#: hypha/public/funds/models.py:149
+msgid "External link"
+msgstr "外部链接"
+
+#: hypha/public/funds/models.py:150
+msgid "Text to display on the button for external links"
+msgstr "外部链接按钮显示的文本"
+
+#: hypha/public/funds/models.py:167
+msgid "Link for lab application"
+msgstr "实验室申请链接"
+
+#: hypha/public/funds/models.py:189 hypha/public/funds/models.py:190
+msgid "Cannot link to both a Lab page and external link"
+msgstr "无法同时链接到实验室页面与外部链接"
+
+#: hypha/public/funds/models.py:195 hypha/public/funds/models.py:196
+msgid "Please provide a way for applicants to apply"
+msgstr "请提供申请者的申请方式"
+
+#: hypha/public/funds/models.py:201
+msgid "Cannot customise the text for internal lab pages, leave blank"
+msgstr "无法自定义内部实验室页面的文字，请留空"
+
+#: hypha/public/funds/models.py:206
+msgid "Please provide some text for the link button"
+msgstr "请提供链接按钮文本"
+
+#: hypha/public/funds/templates/public_funds/includes/fund_apply_cta.html:16
+msgid "Apply for this"
+msgstr "申请此项"
+
+#: hypha/public/funds/templates/public_funds/includes/fund_apply_cta.html:25
+msgid "CLOSED"
+msgstr "已关闭"
+
+#: hypha/public/home/blocks.py:8
+msgid "The first word will be bold"
+msgstr "第一个单词会以粗体显示"
+
+#: hypha/public/home/models.py:106
+msgid "Introduction"
+msgstr "介绍"
+
+#: hypha/public/home/models.py:111
+msgid "News"
+msgstr "新闻"
+
+#: hypha/public/home/models.py:117
+msgid "Our Work"
+msgstr "我们的工作"
+
+#: hypha/public/home/models.py:121
+msgid "Promoted Funds"
+msgstr "推广基金"
+
+#: hypha/public/home/models.py:128
+msgid "Promoted Labs"
+msgstr "推广实验室"
+
+#: hypha/public/home/models.py:135
+msgid "Promoted RFPs"
+msgstr "推广 RFP"
+
+#: hypha/public/mailchimp/forms.py:6
+msgid "Email Address"
+msgstr "电子邮箱地址"
+
+#: hypha/public/mailchimp/forms.py:7
+msgid "First Name"
+msgstr "名"
+
+#: hypha/public/mailchimp/forms.py:8
+msgid "Last Name"
+msgstr "姓"
+
+#: hypha/public/mailchimp/models.py:16
+msgid "The title of the newsletter signup form."
+msgstr "新闻快报注册表单的标题。"
+
+#: hypha/public/mailchimp/templates/mailchimp/newsletter_signup.html:17
+msgid "Sign up"
+msgstr "注册"
+
+#: hypha/public/mailchimp/views.py:77
+msgid "Sorry, there were errors with your form."
+msgstr "抱歉，您的表单中有错误。"
+
+#: hypha/public/mailchimp/views.py:82
+msgid "Sorry, there has been an problem. Please try again later."
+msgstr "抱歉，出现了问题。请稍后再试。"
+
+#: hypha/public/mailchimp/views.py:89
+msgid "Thank you for subscribing"
+msgstr "感谢订阅"
+
+#: hypha/public/navigation/models.py:11
+msgid "Leave blank to use the page's own title"
+msgstr "留空以使用页面标题"
+
+#: hypha/public/navigation/models.py:22
+msgid "Main site navigation"
+msgstr "主网站导航"
+
+#: hypha/public/news/blocks.py:10
+msgid ""
+"Please enter only table id from embed code. Table widget code creates "
+"automatically."
+msgstr "请只输入嵌入代码中的表格编号。将自动编写表格部件代码。"
+
+#: hypha/public/news/models.py:93
+msgid ""
+"Use this field to override the date that the news item appears to have been "
+"published."
+msgstr "使用此字段覆盖已发布新闻项目的日期。"
+
+#: hypha/public/news/models.py:108
+msgid "Authors"
+msgstr "作者"
+
+#: hypha/public/news/models.py:111
+msgid "News types"
+msgstr "新闻类型"
+
+#: hypha/public/news/models.py:112
+msgid "Mentioned project"
+msgstr "提及的项目"
+
+#: hypha/public/news/models.py:171
+msgid "The title of the main news feed."
+msgstr "主新闻订阅源的标题。"
+
+#: hypha/public/news/models.py:172
+msgid "The description of the main news feed."
+msgstr "主新闻订阅源的描述。"
+
+#: hypha/public/news/models.py:175
+#, python-brace-format
+msgid ""
+"The title of the news feed by type. Use {news_type} to insert the type name."
+msgstr "含类型的新闻源标题。用 {news_type} 插入类型名称。"
+
+#: hypha/public/news/models.py:177
+#, python-brace-format
+msgid ""
+"The description of the news feed by type. Use {news_type} to insert the type "
+"name."
+msgstr "含类型的新闻源描述。用 {news_type} 插入类型名称。"
+
+#: hypha/public/partner/models.py:48
+msgid "Partner Page"
+msgstr "合作者页面"
+
+#: hypha/public/partner/models.py:119
+msgid "Investment Category Settings"
+msgstr "投资分类设置"
+
+#: hypha/public/partner/models.py:123
+msgid "Select the categories that should be used in investments."
+msgstr "选择投资应使用的分类。"
+
+#: hypha/public/partner/models.py:197
+msgid "Use format: <YYYY>"
+msgstr "使用格式：<YYYY>"
+
+#: hypha/public/partner/models.py:203 hypha/public/partner/tables.py:47
+#, python-brace-format
+msgid "Amount Committed ({currency})"
+msgstr "贡献数目（{currency}）"
+
+#: hypha/public/partner/tables.py:21
+msgid "Years"
+msgstr "年数"
+
+#: hypha/public/partner/tables.py:55
+msgid "Items per page"
+msgstr "每页项目"
+
+#: hypha/public/partner/tables.py:56
+msgid "Per page"
+msgstr "每页"
+
+#: hypha/public/partner/tables.py:95
+msgid "Partner"
+msgstr "合作者"
+
+#: hypha/public/partner/tables.py:96
+msgid "Year"
+msgstr "年"
+
+#: hypha/public/partner/tables.py:98
+msgid "Amount Committed"
+msgstr "贡献数目"
+
+#: hypha/public/partner/tables.py:111
+msgid "No investments available"
+msgstr "无可用投资"
+
+#: hypha/public/people/models.py:96
+msgid "Other"
+msgstr "其他"
+
+#: hypha/public/people/models.py:183
+msgid "Social accounts"
+msgstr "社交账号"
+
+#: hypha/public/people/models.py:187
+msgid "Other Contact Methods"
+msgstr "其他联系方式"
+
+#: hypha/public/people/models.py:188
+msgid "Contact information"
+msgstr "联系人信息"
+
+#: hypha/public/people/models.py:189
+msgid "Person types"
+msgstr "个人类型"
+
+#: hypha/public/people/models.py:192
+msgid "Funds Reviewed"
+msgstr "已审核资金"
+
+#: hypha/public/projects/models.py:127
+msgid "Contact Details"
+msgstr "联系人详情"
+
+#: hypha/public/projects/models.py:129
+msgid "Related Projects"
+msgstr "相关项目"
+
+#: hypha/public/projects/models.py:132
+msgid "Categories"
+msgstr "分类"
+
+#: hypha/public/utils/models.py:123
+msgid ""
+"Choose the image you wish to be displayed when this page appears in listings"
+msgstr "选择页面在列表中显示的图像"
+
+#: hypha/public/utils/models.py:125
+msgid "Override the page title used when this page appears in listings"
+msgstr "当此页面出现在列表中时，覆盖页面标题"
+
+#: hypha/public/utils/models.py:126
+msgid ""
+"The text summary used when this page appears in listings. It's also used as "
+"the description for search engines if the 'Search description' field above "
+"is not defined."
+msgstr "此页面在列表中显示时使用的文本概要。当上面的“搜索描述”未设置时，也会用作搜索"
+"引擎的描述。"
+
+#: hypha/public/utils/models.py:204
+msgid "Your Twitter username without the @, e.g. katyperry"
+msgstr "您的 Twitter 用户名（没有@），例如 katyperry"
+
+#: hypha/public/utils/models.py:209
+msgid "Your Facebook app ID."
+msgstr "您的 Facebook 应用 ID。"
+
+#: hypha/public/utils/models.py:214
+msgid "Default sharing text to use if social text has not been set on a page."
+msgstr "当页面未设置社交媒体文本时，默认的分享文本。"
+
+#: hypha/public/utils/models.py:220
+msgid "Site name, used by Open Graph."
+msgstr "网站名称，由 Open Graph 使用。"
+
+#: hypha/public/utils/models.py:235
+msgid "Default site logo"
+msgstr "默认网站标识"
+
+#: hypha/public/utils/models.py:244
+msgid "Mobil site logo (if not set default will be used)"
+msgstr "移动网站标识（若未设置，则会使用默认）"
+
+#: hypha/public/utils/models.py:250
+msgid ""
+"Link for the site logo, e.g. \"https://www.example.org/\". If not set, "
+"defaults to page with slug set to \"home\"."
+msgstr "网站标识（logo）的链接，例如“https://www.example.org/”。如果没有设置，"
+"则默认是 Slug 为“home”的页面。"
+
+#: hypha/public/utils/models.py:256
+msgid "This will be added to the footer, html tags is allowed."
+msgstr "会将此添加到页脚，允许使用 HTML 标签。"
+
+#: hypha/public/utils/models.py:315
+msgid "In months"
+msgstr "在数个月内"
+
+#: hypha/public/utils/models.py:341
+msgid "Funding"
+msgstr "资金"
+
+#: hypha/templates/base-apply.html:107 hypha/templates/base-apply.html:119
+msgid "Log out"
+msgstr "注销"
+
+#: hypha/templates/blocks/apply_link_block.html:4
+msgid "Apply for the"
+msgstr "申请"
+
+#: hypha/templates/includes/message_item.html:7
+msgid "Ok"
+msgstr "好的"
+
+#: hypha/templates/includes/relatedcontent.html:2
+msgid "You might also like…"
+msgstr "您可能也想…"
+
+#: hypha/templates/includes/share.html:4
+msgid "Share"
+msgstr "分享"
+
+#: hypha/templates/includes/share.html:8
+msgid "Share on Twitter"
+msgstr "在 Twitter 上分享"
+
+#: hypha/templates/includes/share.html:14
+msgid "Share on LinkedIn"
+msgstr "在领英上分享"
+
+#: hypha/templates/includes/share.html:21
+msgid "Share on Facebook"
+msgstr "在 Facebook 上分享"
+
+#: hypha/templates/password_required.html:4
+#: hypha/templates/password_required.html:9
+msgid "Password required"
+msgstr "需要密码"
+
+#: hypha/templates/password_required.html:11
+msgid "Please enter the password to proceed."
+msgstr "请输入密码以继续。"
