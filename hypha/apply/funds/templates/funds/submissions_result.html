@@ -72,7 +72,7 @@
         <section class="wrapper wrapper--bottom-space" aria-labelledby="submission-value-total">
             <h3 id="submission-value-total">{% trans "Submission value totals" %}</h3>
 
-            {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term filter_action=filter_action use_batch_actions=False filter_classes="filters-open" %}
+            {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term filter_action=filter_action filter_classes="filters-open" %}
 
             <div class="prose max-w-none grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4 lg:gap-8">
                 <section class='border shadow p-4 flex flex-col gap-4' aria-labelledby="submissions-count-heading">

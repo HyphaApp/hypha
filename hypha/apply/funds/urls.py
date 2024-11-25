@@ -21,10 +21,8 @@ from .views import (
     SubmissionDetailSimplifiedView,
     SubmissionDetailView,
     SubmissionEditView,
-    SubmissionListView,
     SubmissionPrivateMediaView,
     SubmissionResultView,
-    SubmissionsByStatus,
     SubmissionSealedView,
     TranslateSubmissionView,
     UpdateLeadView,
@@ -93,7 +91,6 @@ submission_urls = (
         ),
         path("success/<int:pk>/", submission_success, name="success"),
         path("all/", submissions_all, name="list"),
-        path("all/old/", SubmissionListView.as_view(), name="list-old"),
         path(
             "statuses/",
             get_applications_status_counts,
@@ -280,7 +277,6 @@ submission_urls = (
             "", include("hypha.apply.determinations.urls", namespace="determinations")
         ),
         path("", include("hypha.apply.flags.urls", namespace="flags")),
-        path("<slug:status>/", SubmissionsByStatus.as_view(), name="status"),
     ],
     "submissions",
 )

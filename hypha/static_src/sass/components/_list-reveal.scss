@@ -4,6 +4,7 @@
 
 .list-reveal {
     $root: &;
+    padding-bottom: 16px;
 
     &--determination {
         background-color: variables.$color--white;
@@ -27,7 +28,7 @@
             font-weight: variables.$weight--semibold;
             display: flex;
             justify-content: space-between;
-            margin: 0 -24px;
+            margin: 0 -16px;
         }
 
         &--determination {
