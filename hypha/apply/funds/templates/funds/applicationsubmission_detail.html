@@ -123,7 +123,7 @@
                                     {% display_submission_author True %}
                                 </strong>
                             </span>
-                            <div class="flex gap-4 justify-end flex-1 items-center">
+                            <div class="flex gap-4 justify-end flex-1 items-center no-print">
                                 {% can "delete_submission" object as can_delete_submission %}
                                 {% if can_delete_submission %}
                                     <a

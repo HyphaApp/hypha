@@ -20,7 +20,7 @@
             {% endif %}
         {% endblock %}
 
-        <div class="flex gap-2">
+        <div class="flex gap-2 no-print">
             {% if request.user.is_authenticated and request.user.is_apply_staff %}
                 {% include "includes/menu-notifications.html" %}
             {% endif %}
