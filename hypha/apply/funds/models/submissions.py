@@ -286,7 +286,7 @@ def transition_id(target, phase):
 class AddTransitions(models.base.ModelBase):
     def __new__(cls, name, bases, attrs, **kwargs):
         for workflow in WORKFLOWS.values():
-            for phase, data in workflow.items():
+            for phase_name, data in workflow.items():
                 for transition_name, action in data.transitions.items():
                     method_name = transition_id(transition_name, data)
                     permission_name = method_name + "_permission"
@@ -305,10 +305,11 @@ class AddTransitions(models.base.ModelBase):
                     # Wrap with transition decorator
                     transition_func = transition(
                         attrs["status"],
-                        source=phase,
+                        source=phase_name,
                         target=transition_name,
                         permission=permission_func,
                         conditions=conditions,
+                        custom=action.get("custom", {}),
                     )(transition_state)
 
                     # Attach to new class

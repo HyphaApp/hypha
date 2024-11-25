@@ -140,6 +140,9 @@ class Phase:
                 transition["permissions"] = action.get(
                     "permissions", default_permissions
                 )
+                if "custom" in action:
+                    transition["custom"] = action["custom"]
+
             self.transitions[transition_target] = transition
 
     def __str__(self):
@@ -249,6 +252,7 @@ SingleStageDefinition = [
                     "display": _("Submit"),
                     "permissions": {UserPermissions.APPLICANT},
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
             },
             "display": _("Draft"),
@@ -282,6 +286,7 @@ SingleStageDefinition = [
                         UserPermissions.ADMIN,
                     },
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
                 "determination": _("Ready For Determination"),
                 "almost": _("Accept but additional info required"),
@@ -332,6 +337,7 @@ SingleStageDefinition = [
                         UserPermissions.ADMIN,
                     },
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
                 "determination": _("Ready For Determination"),
                 "almost": _("Accept but additional info required"),
@@ -388,6 +394,7 @@ SingleStageExternalDefinition = [
                     "display": _("Submit"),
                     "permissions": {UserPermissions.APPLICANT},
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
             },
             "display": _("Draft"),
@@ -419,6 +426,7 @@ SingleStageExternalDefinition = [
                         UserPermissions.ADMIN,
                     },
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
             },
             "display": _("More information required"),
@@ -464,6 +472,7 @@ SingleStageExternalDefinition = [
                         UserPermissions.ADMIN,
                     },
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
             },
             "display": _("More information required"),
@@ -507,6 +516,7 @@ SingleStageExternalDefinition = [
                         UserPermissions.ADMIN,
                     },
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
             },
             "display": _("More information required"),
@@ -564,6 +574,7 @@ SingleStageCommunityDefinition = [
                     "display": _("Submit"),
                     "permissions": {UserPermissions.APPLICANT},
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
             },
             "display": _("Draft"),
@@ -597,6 +608,7 @@ SingleStageCommunityDefinition = [
                         UserPermissions.ADMIN,
                     },
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
             },
             "display": _("More information required"),
@@ -666,6 +678,7 @@ SingleStageCommunityDefinition = [
                         UserPermissions.ADMIN,
                     },
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
             },
             "display": _("More information required"),
@@ -709,6 +722,7 @@ SingleStageCommunityDefinition = [
                         UserPermissions.ADMIN,
                     },
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
             },
             "display": _("More information required"),
@@ -766,6 +780,7 @@ DoubleStageDefinition = [
                     "display": _("Submit"),
                     "permissions": {UserPermissions.APPLICANT},
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
             },
             "display": _("Draft"),
@@ -798,6 +813,7 @@ DoubleStageDefinition = [
                         UserPermissions.ADMIN,
                     },
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
                 "concept_rejected": _("Dismiss"),
                 "invited_to_proposal": _("Invite to Proposal"),
@@ -847,6 +863,7 @@ DoubleStageDefinition = [
                         UserPermissions.ADMIN,
                     },
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
                 "invited_to_proposal": _("Invite to Proposal"),
             },
@@ -899,6 +916,7 @@ DoubleStageDefinition = [
                     "display": _("Submit"),
                     "permissions": {UserPermissions.APPLICANT},
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
                 "external_review": _("Open External Review"),
                 "proposal_determination": _("Ready For Final Determination"),
@@ -933,6 +951,7 @@ DoubleStageDefinition = [
                         UserPermissions.ADMIN,
                     },
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
                 "external_review": _("Open External Review"),
                 "proposal_determination": _("Ready For Final Determination"),
@@ -981,6 +1000,7 @@ DoubleStageDefinition = [
                         UserPermissions.ADMIN,
                     },
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
                 "external_review": _("Open External Review"),
             },
@@ -1025,6 +1045,7 @@ DoubleStageDefinition = [
                         UserPermissions.ADMIN,
                     },
                     "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
                 },
             },
             "display": _("More information required"),
@@ -1071,12 +1092,20 @@ DoubleStageDefinition = [
 
 
 def unpack_phases(phases):
-    for step, step_data in enumerate(phases):
-        for name, phase_data in step_data.items():
-            yield step, name, phase_data
+    """Unpack a list of phases into a generator of step, name, phase_data."""
+    return (
+        (step, name, phase_data)
+        for step, step_data in enumerate(phases)
+        for name, phase_data in step_data.items()
+    )
 
 
 def phase_data(phases):
+    """Convert a list of phases into a dictionary of Phase objects.
+
+    Adds the step number to the phase data. The step number is the index of the
+    phase in the list of phases.
+    """
     return {
         phase_name: Phase(phase_name, step=step, **phase_data)
         for step, phase_name, phase_data in unpack_phases(phases)

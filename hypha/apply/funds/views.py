@@ -1373,13 +1373,6 @@ class BaseSubmissionEditView(UpdateView):
 
     model = ApplicationSubmission
 
-    @property
-    def transitions(self):
-        transitions = self.object.get_available_user_status_transitions(
-            self.request.user
-        )
-        return {transition.name: transition for transition in transitions}
-
     def render_preview(self, request: HttpRequest, form: BaseModelForm) -> HttpResponse:
         """Gets a rendered preview of a form
 
@@ -1440,6 +1433,25 @@ class BaseSubmissionEditView(UpdateView):
             return assigned_fund.open_round
         return False
 
+    def get_on_submit_transition(self, user):
+        """Gets the transition that should be triggered when a form is submitted.
+
+        Checks all available status transitions for the current user and returns the first
+        one that has trigger_on_submit=True in its custom settings.
+
+        Returns:
+            dict: The transition configuration dictionary with trigger_on_submit=True,
+                or None if no matching transition is found.
+        """
+        return next(
+            (
+                t
+                for t in self.object.get_available_user_status_transitions(user)
+                if t.custom.get("trigger_on_submit", False)
+            ),
+            None,
+        )
+
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         """Handle the form returned from a `SubmissionEditView`.
 
@@ -1492,19 +1504,18 @@ class BaseSubmissionEditView(UpdateView):
                 related=revision,
             )
 
-        action = set(self.request.POST.keys()) & set(self.transitions.keys())
-        try:
-            transition = self.transitions[action.pop()]
-        except KeyError:
-            pass
-        else:
-            self.object.perform_transition(
-                transition.target,
-                self.request.user,
-                request=self.request,
-                notify=not (revision or submitting_proposal)
-                or self.object.status == DRAFT_STATE,  # Use the other notification
-            )
+        if "submit" in self.request.POST:
+            if transition := self.get_on_submit_transition(self.request.user):
+                notify = (
+                    not (revision or submitting_proposal)
+                    or self.object.status == DRAFT_STATE,
+                )
+                self.object.perform_transition(
+                    transition.target,
+                    self.request.user,
+                    request=self.request,
+                    notify=notify,  # Use the other notification
+                )
 
         # Required for django-file-form: delete temporary files for the new files
         # uploaded while edit.
