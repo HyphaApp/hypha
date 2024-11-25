@@ -5,6 +5,7 @@ Hypha project base settings.
 import os
 
 import dj_database_url
+import djp
 from environs import Env
 
 from .django import *  # noqa
@@ -623,3 +624,6 @@ if SENTRY_DSN:
         debug=SENTRY_DEBUG,
         integrations=[DjangoIntegration()],
     )
+
+# Load settings from any djp plugins.
+djp.settings(globals())

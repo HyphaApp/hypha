@@ -1,3 +1,4 @@
+import djp
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path, re_path
@@ -104,6 +105,8 @@ urlpatterns += [
     path("", include(wagtail_urls)),
 ]
 
+# Load urls from any djp plugins.
+urlpatterns += djp.urlpatterns()
 
 if settings.DEBUG:
     import debug_toolbar
