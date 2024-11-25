@@ -1,0 +1,28 @@
+{% load i18n %}
+{% modal_title %}{% trans "Update Invoices Status" %}{% endmodal_title %}
+
+<div class="p-4">
+    <div class="list-reveal" x-data="{ show: false }">
+        <div class="list-reveal__item list-reveal__item--meta" aria-live="polite">
+            <span class="batch-title-count">{{ invoices|length }} {% trans " invoices selected" %}</span>
+            <a href="#" class="list-reveal__link js-toggle-batch-list" @click="show=!show" x-text="show ? 'Hide' : 'Show'"></a>
+        </div>
+        {% for invoice in invoices %}
+            <a href="{{ invoice.get_absolute_url }}" x-show="show" class="list-reveal__item" target="_blank" rel="noopener noreferrer" title="{{ invoice.invoice_number }}">
+                {{ invoice.invoice_number }}
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="" width="16" height="16" class="inline align-text-bottom w-4 h-4">
+                    <path d="M6.22 8.72a.75.75 0 0 0 1.06 1.06l5.22-5.22v1.69a.75.75 0 0 0 1.5 0v-3.5a.75.75 0 0 0-.75-.75h-3.5a.75.75 0 0 0 0 1.5h1.69L6.22 8.72Z"></path>
+                    <path d="M3.5 6.75c0-.69.56-1.25 1.25-1.25H7A.75.75 0 0 0 7 4H4.75A2.75 2.75 0 0 0 2 6.75v4.5A2.75 2.75 0 0 0 4.75 14h4.5A2.75 2.75 0 0 0 12 11.25V9a.75.75 0 0 0-1.5 0v2.25c0 .69-.56 1.25-1.25 1.25h-4.5c-.69 0-1.25-.56-1.25-1.25v-4.5Z"></path>
+                </svg>
+            </a>
+        {% endfor %}
+    </div>
+    {% trans "Update status" as update %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=update %}
+</div>
+
+<script>
+    document.addEventListener("htmx:afterRequest", (event) => {
+        document.getElementById("js-invoices-id").value = "{% for invoice in invoices %}{{ invoice.id }}{% if not forloop.last %},{% endif %}{% endfor %}";
+    });
+</script>

@@ -22,7 +22,6 @@ from .models import (
 from .permissions import can_change_external_reviewers
 from .utils import model_form_initial, render_icon
 from .widgets import MetaTermSelect2Widget, Select2MultiCheckboxesWidget
-from .workflow import get_action_mapping
 
 
 class ApplicationSubmissionModelForm(forms.ModelForm):
@@ -76,34 +75,6 @@ class ProgressSubmissionForm(ApplicationSubmissionModelForm):
         action_field.choices = choices
 
 
-class BatchProgressSubmissionForm(forms.Form):
-    action = forms.ChoiceField(label=_("Take action"))
-    submissions = forms.CharField(
-        widget=forms.HiddenInput(attrs={"class": "js-submissions-id"})
-    )
-
-    def __init__(self, *args, round=None, **kwargs):
-        self.user = kwargs.pop("user")
-        super().__init__(*args, **kwargs)
-        workflow = round and round.workflow
-        self.action_mapping = get_action_mapping(workflow)
-        choices = [
-            (action, detail["display"])
-            for action, detail in self.action_mapping.items()
-        ]
-        self.fields["action"].choices = choices
-
-    def clean_submissions(self):
-        value = self.cleaned_data["submissions"]
-        submission_ids = [int(submission) for submission in value.split(",")]
-        return ApplicationSubmission.objects.filter(id__in=submission_ids)
-
-    def clean_action(self):
-        value = self.cleaned_data["action"]
-        action = self.action_mapping[value]["transitions"]
-        return action
-
-
 class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):
     class Meta:
         model = ApplicationSubmission
@@ -114,59 +85,6 @@ class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):
         lead_field = self.fields["lead"]
         lead_field.label = _("New lead")
         lead_field.queryset = lead_field.queryset.exclude(id=self.instance.lead.id)
-
-
-class BatchUpdateSubmissionLeadForm(forms.Form):
-    lead = forms.ChoiceField(label=_("Lead"))
-    submissions = forms.CharField(
-        widget=forms.HiddenInput(attrs={"class": "js-submissions-id"})
-    )
-
-    def __init__(self, *args, round=None, **kwargs):
-        self.user = kwargs.pop("user")
-        super().__init__(*args, **kwargs)
-        self.fields["lead"].choices = [
-            (staff.id, staff) for staff in User.objects.staff()
-        ]
-
-    def clean_lead(self):
-        value = self.cleaned_data["lead"]
-        return User.objects.get(id=value)
-
-    def clean_submissions(self):
-        value = self.cleaned_data["submissions"]
-        submission_ids = [int(submission) for submission in value.split(",")]
-        return ApplicationSubmission.objects.filter(id__in=submission_ids)
-
-
-class BatchDeleteSubmissionForm(forms.Form):
-    submissions = forms.CharField(
-        widget=forms.HiddenInput(attrs={"class": "js-submissions-id"})
-    )
-
-    def __init__(self, *args, round=None, **kwargs):
-        self.user = kwargs.pop("user")
-        super().__init__(*args, **kwargs)
-
-    def clean_submissions(self):
-        value = self.cleaned_data["submissions"]
-        submission_ids = [int(submission) for submission in value.split(",")]
-        return ApplicationSubmission.objects.filter(id__in=submission_ids)
-
-
-class BatchArchiveSubmissionForm(forms.Form):
-    submissions = forms.CharField(
-        widget=forms.HiddenInput(attrs={"class": "js-submissions-id"})
-    )
-
-    def __init__(self, *args, round=None, **kwargs):
-        self.user = kwargs.pop("user")
-        super().__init__(*args, **kwargs)
-
-    def clean_submissions(self):
-        value = self.cleaned_data["submissions"]
-        submission_ids = [int(submission) for submission in value.split(",")]
-        return ApplicationSubmission.objects.filter(id__in=submission_ids)
 
 
 class UpdateReviewersForm(ApplicationSubmissionModelForm):
