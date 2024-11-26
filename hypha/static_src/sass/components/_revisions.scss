@@ -1,12 +1,5 @@
 @use "../abstracts/variables";
 
-.revision-diff-table {
-    td {
-        vertical-align: top;
-        word-break: break-word;
-    }
-}
-
 .diff {
     &__deleted {
         background-color: variables.$color--light-pink;

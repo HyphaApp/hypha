@@ -1,6 +1,6 @@
 {% load i18n %}
 <div class="wrapper wrapper--bottom-space">
-    <section class="section">
+    <section>
         <ul class="status-block">
             {% for status, data in status_counts.items %}
                 <a class="status-block__item {% if data.is_active %}status-block__item--active{% endif %}" href="{{ data.url }}">
