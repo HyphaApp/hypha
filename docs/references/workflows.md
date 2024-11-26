@@ -11,9 +11,10 @@ Each workflow offers different statuses (e.g. External Review, Ready for Determi
 ## What are the 4 workflows?
 
 1. [Request](#request)
-2. [Request with external review](#request-with-external-review)
-3. [Request with community review](#request-with-community-review)
-4. [Concept and Proposal](#concept-and-proposal)
+2. [Request with same time review](#request-with-same-time-review) (new in v5.20.0)
+3. [Request with external review](#request-with-external-review)
+4. [Request with community review](#request-with-community-review)
+5. [Concept and Proposal](#concept-and-proposal)
 
 All workflows begin with applicant drafting, revising and submitting an application (`DRAFT_STATE`) — only transition available is to `INITIAL_STATE`, upon applicant taking the action to submit their application/request.
 
@@ -39,6 +40,25 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 - Accepted, but additional info is needed (`almost`) — opens editing permissions to applicant again to revise their application to provide the information requested by the reviewers, admin, or staff positions.
 - Accepted (`accepted`) — application accepted. Staff can still edit this submission.
 - Rejected (`rejected`) — application rejected. Permissions removed from all roles.
+
+### 👳 Request with same time review
+
+This workflow is a single stage process with an advisory council review or external review stage -- includes functionalties for external reviewers like advisory board members to access applications and submit reviews.
+
+It is very simlar to the "Request with external review" workflow, see below, but the internal and external review step happens at the same step.
+
+Beware if you opt to customise the "Reviewer Settings" (in Wagtail admin). Only the "All states" option in the "State" setting will work with this workflow.
+
+Once an application is submitted (`INITIAL_STATE`) — it can transition into the following:
+
+- A request for more information (`same_more_info`) — opens editing permissions to applicant again to revise their application to provide the information requested by the screeners.
+- Open review (`same_internal_review`) — can transition only between closing review period (`same_post_review_discussion`) and reverting back to the internal screening phase.
+  - `same_post_review_discussion` — after review is closed, you can request more information (`same_post_review_more_info`), ready for determination (`same_determination`), revert back to opening the review (`same_internal_review`), or reject (`same_rejected`)
+  - `same_post_review_more_info` — opens editing permissions to applicant again to revise their application to provide the information requested by the screeners.
+- Ready for determination (`same_determination`) — can revert back to discussion (“Ready For Discussion (revert)” — `same_post_review_discussion`) , or accept with additional info needed (`same_almost`), accept (`same_accepted`) or reject (`same_rejected`)
+- Accepted, but additional info is needed (`same_almost`) — opens editing permissions to applicant again to revise their application to provide the information requested by the reviewers, admin, or staff positions.
+- Accepted (`same_accepted`) — application accepted. Staff can still edit this submission.
+- Rejected (`same_rejected`) — application rejected. Permissions removed from all roles.
 
 ### 👳 Request with external review
 
