@@ -212,18 +212,16 @@ class ReportConfigFactory(factory.django.DjangoModelFactory):
         )
 
 
-class ReportVersionDataFactory(FormDataFactory):
+class ReportDataFactory(FormDataFactory):
     field_factory = NonFileFormFieldsBlockFactory
 
 
 class ReportVersionFactory(factory.django.DjangoModelFactory):
     report = factory.SubFactory("hypha.apply.projects.tests.factories.ReportFactory")
     submitted = factory.LazyFunction(timezone.now)
-    form_fields = NonFileFormFieldsBlockFactory
-    # TODO: is it better to keep the following link between form_data and form_fields or to remove it?
     form_data = factory.SubFactory(
-        ReportVersionDataFactory,
-        form_fields=factory.SelfAttribute("..form_fields"),
+        ReportDataFactory,
+        form_fields=factory.SelfAttribute("..report.form_fields"),
     )
     draft = True
 
@@ -247,6 +245,12 @@ class ReportVersionFactory(factory.django.DjangoModelFactory):
 class ReportFactory(factory.django.DjangoModelFactory):
     project = factory.SubFactory(
         "hypha.apply.projects.tests.factories.ApprovedProjectFactory"
+    )
+    form_fields = NonFileFormFieldsBlockFactory
+    # TODO: is it better to keep the following link between form_data and form_fields or to remove it?
+    form_data = factory.SubFactory(
+        ReportDataFactory,
+        form_fields=factory.SelfAttribute("..form_fields"),
     )
     end_date = factory.LazyFunction(timezone.now)
 
