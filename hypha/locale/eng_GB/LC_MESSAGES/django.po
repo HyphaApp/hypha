@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 14:22+0000\n"
-"PO-Revision-Date: 2024-02-22 07:43+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2024-11-27 08:00+0000\n"
+"Last-Translator: Fredrik Jonsson <fredrik@combonet.se>\n"
 "Language-Team: English (United Kingdom) <https://hosted.weblate.org/projects/"
 "hypha/hypha-core/en_GB/>\n"
 "Language: eng_GB\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.5-dev\n"
+"X-Generator: Weblate 5.9-dev\n"
 
 #: hypha/apply/activity/messaging.py:53
 #, python-brace-format
@@ -27,11 +27,11 @@ msgstr ""
 #: hypha/apply/activity/messaging.py:242
 #, python-brace-format
 msgid "Submitted {source.title} for {source.page.title}"
-msgstr "Подтверждено {source.title} для {source.page.title}"
+msgstr ""
 
 #: hypha/apply/activity/messaging.py:243 hypha/apply/activity/messaging.py:244
 msgid "Edited"
-msgstr "Изменено"
+msgstr ""
 
 #: hypha/apply/activity/messaging.py:245 hypha/apply/activity/messaging.py:259
 #, python-brace-format
