@@ -42,44 +42,44 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
 
     @transaction.atomic
     def save(self, commit=True, form_fields=dict):
-        is_draft = "save" in self.data
-        version = ReportVersion.objects.create(
-            report=self.instance,
-            form_fields=form_fields,
-            # Save a ReportVersion first then edit/update the form_data below.
-            form_data={},
-            submitted=timezone.now(),
-            draft=is_draft,
-            author=self.user,
-        )
+        self.instance.form_fields = form_fields
+        instance = super().save(commit)
         # We need to save the fields first, not attempt to save form_data on first save, then update the form_data next.
         # Otherwise, we don't get access to the generator method "question_field_ids" which we use to prevent temp file
         # fields from getting into the saved form_data.
         # Inspired by ProjectForm.save and ProjectSOWForm.save but enhanced to support multi-answer fields.
-        version.form_data = {
+        instance.form_data = {
             field: self.cleaned_data["form_data"][field]
             for field in self.cleaned_data["form_data"]
             # Where do we get question_field_ids? On the version, but only when it exists, thus the create-then-update.
             # The split-on-underscore supports the use of multi-answer fields such as MultiInputCharFieldBlock.
-            if field.split("_")[0] in version.question_field_ids
+            if field.split("_")[0] in instance.question_field_ids
         }
-
         # In case there are stream form file fields, process those here.
+        instance.process_file_data(self.cleaned_data["form_data"])
+
+        is_draft = "save" in self.data
+        version = ReportVersion.objects.create(
+            report=instance,
+            # Save a ReportVersion first then edit/update the form_data below.
+            form_data=instance.form_data,
+            submitted=timezone.now(),
+            draft=is_draft,
+            author=self.user,
+        )
         version.process_file_data(self.cleaned_data["form_data"])
-        # Because ReportVersion is a separate entity from Project, super().save will not save ReportVersion: save here.
         version.save()
 
         if is_draft:
-            self.instance.draft = version
+            instance.draft = version
         else:
             # If this is the first submission of the report we track that as the
             # submitted date of the report
-            if not self.instance.submitted:
-                self.instance.submitted = version.submitted
-            self.instance.current = version
-            self.instance.draft = None
-
-        instance = super().save(commit)
+            if not instance.submitted:
+                instance.submitted = version.submitted
+            instance.current = version
+            instance.draft = None
+        instance.save()
         return instance
 
 
