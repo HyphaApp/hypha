@@ -1482,7 +1482,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
         report = ReportFactory(
             is_submitted=True,
             project__status=INVOICING_AND_REPORTING,
-            version__form_fields=json.dumps(FORM_FIELDS),
+            form_fields=json.dumps(FORM_FIELDS),
         )
         ApplicationBaseProjectReportForm.objects.get_or_create(
             application_id=report.project.submission.page.specific.id,
@@ -1506,9 +1506,9 @@ class TestStaffSubmitReport(BaseViewTestCase):
         version = ReportVersionFactory(
             report__project__status=INVOICING_AND_REPORTING,
             submitted=yesterday,
-            form_fields=json.dumps(FORM_FIELDS),
         )
         report = version.report
+        report.form_fields = json.dumps(FORM_FIELDS)
         ApplicationBaseProjectReportForm.objects.get_or_create(
             application_id=report.project.submission.page.specific.id,
             form_id=self.report_form_id,
