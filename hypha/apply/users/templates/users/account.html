@@ -35,8 +35,8 @@
         </span>
     {% endadminbar %}
 
-    <div class="profile">
-        <div class="profile__column">
+    <div class="flex flex-col gap-8 justify-between my-8 md:flex-row md:divide-x">
+        <div class="flex-1">
             <h2 class="text-2xl">{% trans "Profile" %}</h2>
 
             <form action="" method="post" class="form">
@@ -51,7 +51,7 @@
         </div>
 
 
-        <div class="profile__column">
+        <div class="flex-1 md:ps-8">
             <h2 class="text-2xl">{% trans "Account Security" %}</h2>
 
             {% if show_change_password %}
@@ -87,7 +87,7 @@
 
 
         {% if swappable_form %}
-            <div class="profile__column">
+            <div class="flex-1 md:ps-8">
                 {% if swappable_form %}
                     <h2 class="text-2xl">{% trans "Become" %}:</h2>
                     <form action="{% url 'hijack-become' %}" method="post" class="form">

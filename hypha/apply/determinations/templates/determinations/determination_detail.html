@@ -17,8 +17,7 @@
     {% endadminbar %}
 
     <div class="flex justify-between pt-2 mb-2 mt-2 max-w-[50em] border-b">
-
-        <h5 class="determination-outcome mb-4">
+        <h5>
             {% trans "Determination" %}: {{ determination.get_outcome_display }}
         </h5>
         {% if request.user.is_apply_staff %}

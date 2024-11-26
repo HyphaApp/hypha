@@ -9,17 +9,17 @@
     {% endadminbar %}
 
     <div class="wrapper wrapper--medium">
-        <ul class="revision">
+        <ul class="my-8 border border-slate-300">
             {% for revision in object_list %}
-                <li class="revision__item">
-                    <p class="revision__meta">
-                        <span class="revision__date">{{ revision.timestamp|date:"Y-m-d H:i e"}} </span>
+                <li class="flex flex-col justify-between p-4 border-b border-dashed first:bg-sky-blue last:border-0 md:flex-row">
+                    <p class="m-0">
+                        <span class="font-semibold">{{ revision.timestamp|date:"Y-m-d H:i e"}} </span>
                         {% trans "by" %} {{ revision.author }}
                         {% if forloop.first %}
-                            <span class="revision__current">- {% trans "current" %}</span>
+                            <span class="font-semibold">({% trans "current" %})</span>
                         {% endif %}
                         {% if revision.is_draft %}
-                            <span class="revision__draft">(<span class="text-red-600">{% trans "draft" %}</span>)</span
+                            <span class="font-semibold">(<span class="text-red-600">{% trans "draft" %}</span>)</span
                         {% endif %}
                     </p>
                     {% if not forloop.first %}

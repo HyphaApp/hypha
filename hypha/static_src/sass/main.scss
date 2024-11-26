@@ -19,10 +19,8 @@
 @use "components/actions-bar";
 @use "components/card";
 @use "components/cookieconsent";
-@use "components/comment";
 @use "components/button";
 @use "components/editor";
-@use "components/error-bar";
 @use "components/feed";
 @use "components/filters";
 @use "components/hypha-grid";
@@ -31,14 +29,12 @@
 @use "components/list-reveal";
 @use "components/modal";
 @use "components/rich-text";
-@use "components/section";
 @use "components/sidebar";
 @use "components/tabs";
 @use "components/status-bar";
 @use "components/form";
 @use "components/nav";
 @use "components/pagination";
-@use "components/profile";
 @use "components/projects-table";
 @use "components/responsive-table";
 @use "components/reviews-list";
@@ -49,7 +45,6 @@
 @use "components/simplified";
 @use "components/status-block";
 @use "components/submission-meta";
-@use "components/revision";
 @use "components/table";
 @use "components/tooltip";
 @use "components/traffic-light";
@@ -58,11 +53,9 @@
 @use "components/messages";
 @use "components/stat-block";
 @use "components/docs-block";
-@use "components/funding-block";
 @use "components/data-block";
 @use "components/invoice-block";
 @use "components/two-factor";
-@use "components/determination";
 @use "components/activity-notifications";
 @use "components/dropdown";
 @use "components/dashboard-table";
