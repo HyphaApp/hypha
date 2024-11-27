@@ -457,6 +457,11 @@ SingleStageSameDefinition = [
                 "same_internal_review": _("Open Review"),
                 "same_determination": _("Ready For Determination"),
                 "same_rejected": _("Dismiss"),
+                "same_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Need screening"),
             "public": _("Application Received"),
@@ -476,6 +481,11 @@ SingleStageSameDefinition = [
                     "method": "create_revision",
                     "custom": {"trigger_on_submit": True},
                 },
+                "same_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("More information required"),
             "stage": RequestSame,
@@ -486,6 +496,11 @@ SingleStageSameDefinition = [
         "same_internal_review": {
             "transitions": {
                 "same_post_review_discussion": _("Close Review"),
+                "same_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
                 INITIAL_STATE: _("Need screening (revert)"),
             },
             "display": _("Review"),
@@ -503,6 +518,11 @@ SingleStageSameDefinition = [
                 "same_determination": _("Ready For Determination"),
                 "same_internal_review": _("Open Review (revert)"),
                 "same_rejected": _("Dismiss"),
+                "same_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready For Discussion"),
             "stage": RequestSame,
@@ -521,6 +541,11 @@ SingleStageSameDefinition = [
                     "method": "create_revision",
                     "custom": {"trigger_on_submit": True},
                 },
+                "same_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("More information required"),
             "stage": RequestSame,
@@ -534,6 +559,11 @@ SingleStageSameDefinition = [
                 "same_almost": _("Accept but additional info required"),
                 "same_accepted": _("Accept"),
                 "same_rejected": _("Dismiss"),
+                "same_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready for Determination"),
             "permissions": hidden_from_applicant_permissions,
@@ -551,6 +581,11 @@ SingleStageSameDefinition = [
             "transitions": {
                 "same_accepted": _("Accept"),
                 "same_post_review_discussion": _("Ready For Discussion (revert)"),
+                "same_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Accepted but additional info required"),
             "stage": RequestSame,
@@ -558,6 +593,11 @@ SingleStageSameDefinition = [
         },
         "same_rejected": {
             "display": _("Dismissed"),
+            "stage": RequestSame,
+            "permissions": no_permissions,
+        },
+        "same_withdrawn": {
+            "display": _("Withdraw"),
             "stage": RequestSame,
             "permissions": no_permissions,
         },
