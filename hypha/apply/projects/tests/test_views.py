@@ -82,9 +82,9 @@ class TestUpdateLeadView(BaseViewTestCase):
 
         new_lead = self.user_factory()
         response = self.post_page(
-            project, {"form-submitted-lead_form": "", "lead": new_lead.id}
+            project, {"lead": new_lead.id}, view_name="lead_update"
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 204)
 
         project.refresh_from_db()
         self.assertEqual(project.lead, new_lead)
@@ -94,9 +94,11 @@ class TestUpdateLeadView(BaseViewTestCase):
 
         new_lead = self.user_factory()
         response = self.post_page(
-            project, {"form-submitted-lead_form": "", "lead": new_lead.id}
+            project,
+            {"lead": new_lead.id},
+            view_name="lead_update",
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 204)
 
         project.refresh_from_db()
         self.assertEqual(project.lead, new_lead)
@@ -300,7 +302,7 @@ class TestApplicantProjectDetailView(BaseProjectDetailTestCase):
     def test_applicant_can_see_lead(self):
         lead = StaffFactory()
         project = ProjectFactory(user=self.user, lead=lead)
-        response = self.get_page(project)
+        response = self.get_page(project, view_name="project_lead")
         self.assertContains(response, str(lead))
 
 
@@ -1014,10 +1016,10 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.post_page(
             invoice,
             {
-                "form-submitted-change_invoice_status": "",
                 "status": CHANGES_REQUESTED_BY_STAFF,
                 "comment": "this is a comment",
             },
+            view_name="invoice-update",
         )
         self.assertEqual(response.status_code, 204)
         self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
@@ -1030,10 +1032,10 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.post_page(
             invoice,
             {
-                "form-submitted-change_invoice_status": "",
                 "status": CHANGES_REQUESTED_BY_STAFF,
                 "comment": "this is a comment",
             },
+            view_name="invoice-update",
         )
         self.assertEqual(response.status_code, 204)
         self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
@@ -1054,10 +1056,10 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.post_page(
             invoice,
             {
-                "form-submitted-change_invoice_status": "",
                 "status": DECLINED,
                 "comment": "this is a comment",
             },
+            view_name="invoice-update",
         )
         self.assertEqual(response.status_code, 204)
         self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
@@ -1104,10 +1106,10 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.post_page(
             invoice,
             {
-                "form-submitted-change_invoice_status": "",
                 "status": CHANGES_REQUESTED_BY_STAFF,
                 "comment": "this is a comment",
             },
+            view_name="invoice-update",
         )
         self.assertEqual(response.status_code, 204)
         self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
