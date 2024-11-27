@@ -96,8 +96,6 @@ class FinanceInvoiceTable(BaseInvoiceTable):
         }
 
     def render_vendor_name(self, record):
-        if record.project.vendor:
-            return record.project.vendor
         return record.project.user
 
 

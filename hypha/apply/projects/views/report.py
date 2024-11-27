@@ -235,7 +235,7 @@ class ReportSkipView(SingleObjectMixin, View):
                 source=report.project,
                 related=report,
             )
-        return redirect(report.project.get_absolute_url())
+        return HttpResponseClientRefresh()
 
 
 @method_decorator(staff_required, name="dispatch")

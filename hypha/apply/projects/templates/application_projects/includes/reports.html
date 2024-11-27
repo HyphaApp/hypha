@@ -80,10 +80,7 @@
                                     {% endif %}
                                 {% else %}
                                     {% if can_update_project_reports %}
-                                        <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn data-block__action-link">{% trans "Unskip" %}</button>
-                                        </form>
+                                        <button type="button" class="btn data-block__action-link" hx-post="{% url "apply:projects:reports:skip" pk=report.pk %}">{% trans "Unskip" %}</button>
                                     {% endif %}
                                 {% endif %}
                             </td>
