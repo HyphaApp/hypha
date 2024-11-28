@@ -137,9 +137,9 @@ class AdminInvoiceListTable(BaseInvoiceTable):
     class Meta:
         fields = [
             "selected",
+            "invoice_number",
             "invoice_date",
             "requested_at",
-            "invoice_number",
             "status",
             "project",
         ]
