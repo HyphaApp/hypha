@@ -207,22 +207,6 @@ class BaseAdminSubmissionsTable(SubmissionsTable):
             )
 
 
-class AdminSubmissionsTable(BaseAdminSubmissionsTable):
-    """Adds admin only columns to the submissions table"""
-
-    selected = LabeledCheckboxColumn(
-        accessor=A("pk"),
-        attrs={
-            "input": {"class": "js-batch-select"},
-            "th__input": {"class": "js-batch-select-all"},
-        },
-    )
-
-    class Meta(BaseAdminSubmissionsTable.Meta):
-        fields = ("selected", *BaseAdminSubmissionsTable.Meta.fields)
-        sequence = fields
-
-
 class SummarySubmissionsTable(BaseAdminSubmissionsTable):
     class Meta(BaseAdminSubmissionsTable.Meta):
         orderable = False
