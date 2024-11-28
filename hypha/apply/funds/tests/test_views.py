@@ -64,7 +64,7 @@ def prepare_form_data(submission, **kwargs):
 
 
 def check_form_fields_equality(form_fields_1, form_fields_2):
-    for form_field_1, form_field_2 in zip(form_fields_1, form_fields_2):
+    for form_field_1, form_field_2 in zip(form_fields_1, form_fields_2, strict=False):
         if form_field_1.block != form_field_2.block:  # The block types must be the same
             return False
 
@@ -72,7 +72,7 @@ def check_form_fields_equality(form_fields_1, form_fields_2):
         if isinstance(form_field_1.value, wagtail.blocks.StructValue):
             # Iterate through both StructValue fields and compare their key-value pairs
             for (key_1, field_value_1), (key_2, field_value_2) in zip(
-                form_field_1.value.items(), form_field_2.value.items()
+                form_field_1.value.items(), form_field_2.value.items(), strict=False
             ):
                 if key_1 != key_2:  # Keys (field_labels, etc.) must match
                     return False
@@ -86,7 +86,7 @@ def check_form_fields_equality(form_fields_1, form_fields_2):
                     # If the values are ListValues (e.g., multiple choice), compare their individual elements
                     if isinstance(field_value_1, wagtail.blocks.list_block.ListValue):
                         for item_value_1, item_value_2 in zip(
-                            field_value_1, field_value_2
+                            field_value_1, field_value_2, strict=False
                         ):
                             if item_value_1 != item_value_2:
                                 return False
