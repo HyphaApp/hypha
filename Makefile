@@ -81,7 +81,7 @@ download-esm-modules:  ## Download ECMAScript modules for the project
 
 .cache/py-packages: requirements/dev.txt requirements/docs.txt  ## Install Python packages for development and documentation
 	@mkdir -p $$(dirname $@)
-	$(PIP) install -r requirements/dev.txt -r requirements/docs.txt
+	$(PIP) install --no-deps -r requirements/dev.txt -r requirements/docs.txt
 	@touch $@
 
 

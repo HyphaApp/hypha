@@ -102,7 +102,7 @@ Inside your activated virtual environment you will use plain `python` and `pip` 
 Next, install the required packages using:
 
 ```shell
-python3 -m pip install -r requirements.txt
+python3 -m pip install --no-deps -r requirements.txt
 ```
 
 If utilizing application machine translations, install the required dependencies:
