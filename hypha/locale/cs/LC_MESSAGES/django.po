@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-09 10:44+0000\n"
-"PO-Revision-Date: 2024-11-18 01:00+0000\n"
+"PO-Revision-Date: 2024-11-29 18:55+0000\n"
 "Last-Translator: Jiří Podhorecký <j.podhorecky@volny.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "cs/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
 "X-Generator: Weblate 5.9-dev\n"
 
 #: hypha/apply/activity/messaging.py:39
@@ -71,12 +71,12 @@ msgstr ""
 
 #: hypha/apply/activity/messaging.py:243
 msgid "Created"
-msgstr ""
+msgstr "Vytvořeno"
 
 #: hypha/apply/activity/messaging.py:244
 #, python-brace-format
 msgid "Progressed from {old_stage} to {source.status_display}"
-msgstr ""
+msgstr "Postoupilo z {old_stage} do {source.status_display}"
 
 #: hypha/apply/activity/messaging.py:246
 msgid "Requested approval"
@@ -104,11 +104,11 @@ msgstr "Schválená smlouva"
 #: hypha/apply/activity/messaging.py:251
 #, python-brace-format
 msgid "Updated Invoice status to: {invoice.status_display}"
-msgstr ""
+msgstr "Stav faktury byl aktualizován na: {invoice.status_display}"
 
 #: hypha/apply/activity/messaging.py:252
 msgid "Invoice created"
-msgstr ""
+msgstr "Faktura vytvořena"
 
 #: hypha/apply/activity/messaging.py:253
 msgid "Submitted a report"
@@ -163,7 +163,7 @@ msgstr ""
 #: hypha/apply/activity/messaging.py:405
 #, python-brace-format
 msgid "Screening status from {old_status} to {new_status}"
-msgstr ""
+msgstr "Stav prověřování od {old_status} do {new_status}"
 
 #: hypha/apply/activity/messaging.py:412
 #, python-brace-format
@@ -171,6 +171,7 @@ msgid ""
 "A new submission has been submitted for {source.page.title}: <{link}|{source."
 "title}>"
 msgstr ""
+"Pro {source.page.title} byl odeslán nový příspěvek: <{link}|{source.title}>"
 
 #: hypha/apply/activity/messaging.py:413
 #, python-brace-format
@@ -241,6 +242,8 @@ msgid ""
 "{user} {opinion.opinion_display}s with {opinion.review.author}s review of "
 "{source.title}"
 msgstr ""
+"{user} {opinion.opinion_display} s hodnocením {opinion.review.author} na "
+"{source.title}"
 
 #: hypha/apply/activity/messaging.py:432
 #, python-brace-format
@@ -250,12 +253,12 @@ msgstr "{user} smazal {source.title}"
 #: hypha/apply/activity/messaging.py:433
 #, python-brace-format
 msgid "{user} has deleted {review.author} review for <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} smazal hodnocení {review.author} pro <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:434
 #, python-brace-format
 msgid "{user} has created a Project: <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} vytvořil projekt: <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:435
 #, python-brace-format
@@ -269,17 +272,17 @@ msgstr ""
 #: hypha/apply/activity/messaging.py:436
 #, python-brace-format
 msgid "{user} has edited {review.author} review for <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} upravil {review.author} recenzi pro <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:437
 #, python-brace-format
 msgid "{user} has requested approval on project <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} požádal o schválení projektu <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:438
 #, python-brace-format
 msgid "{user} has approved project <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} schválil projekt <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:439
 #, python-brace-format
@@ -287,21 +290,22 @@ msgid ""
 "{user} has requested changes for project acceptance on <{link}|{source.title}"
 ">."
 msgstr ""
+"{user} požádal o změny pro přijetí projektu dne <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:440
 #, python-brace-format
 msgid "{user} has uploaded a contract for <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} nahrál smlouvu pro <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:441
 #, python-brace-format
 msgid "{user} has approved contract for <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} schválil smlouvu pro <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:442
 #, python-brace-format
 msgid "{user} has created invoice for <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} vytvořil fakturu pro <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:443
 #, python-brace-format
@@ -309,16 +313,18 @@ msgid ""
 "{user} has changed the status of <{link_related}|invoice> on <{link}|{source."
 "title}> to {invoice.status_display}."
 msgstr ""
+"{user} změnil stav <{link_related}|invoice> na <{link}|{source.title}> na "
+"{invoice.status_display}."
 
 #: hypha/apply/activity/messaging.py:444
 #, python-brace-format
 msgid "{user} has deleted invoice from <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} smazal fakturu z <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:445
 #, python-brace-format
 msgid "{user} has updated invoice for <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} aktualizoval fakturu za <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:446
 #, python-brace-format
