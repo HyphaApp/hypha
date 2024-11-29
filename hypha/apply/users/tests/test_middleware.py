@@ -2,6 +2,7 @@ from django.conf import settings
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.users.tests.factories import UserFactory
 
 from ..middleware import TWO_FACTOR_EXEMPTED_PATH_PREFIXES
@@ -37,5 +38,8 @@ class TestTwoFactorAuthenticationMiddleware(TestCase):
         self.client.force_login(user)
 
         for path in TWO_FACTOR_EXEMPTED_PATH_PREFIXES:
+            if "success" in path:
+                submission = ApplicationSubmissionFactory()
+                path = str(path) + f"{submission.id}/"
             response = self.client.get(path, follow=True)
             self.assertEqual(response.status_code, 200)
