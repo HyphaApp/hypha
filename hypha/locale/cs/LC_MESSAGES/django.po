@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-09 10:44+0000\n"
-"PO-Revision-Date: 2024-11-29 18:55+0000\n"
+"PO-Revision-Date: 2024-11-29 21:04+0000\n"
 "Last-Translator: Jiří Podhorecký <j.podhorecky@volny.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "cs/>\n"
@@ -329,12 +329,12 @@ msgstr "{user} aktualizoval fakturu za <{link}|{source.title}>."
 #: hypha/apply/activity/messaging.py:446
 #, python-brace-format
 msgid "{user} has submitted a report for <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} odeslal zprávu pro <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:510
 #, python-brace-format
 msgid "{user} has updated the reviewers on <{link}|{title}>."
-msgstr ""
+msgstr "{user} aktualizoval hodnotitele na <{link}|{title}>."
 
 #: hypha/apply/activity/messaging.py:526
 #, python-brace-format
@@ -421,7 +421,7 @@ msgstr "Vaše {org_long_name} Projekt: {source.title}"
 
 #: hypha/apply/activity/messaging.py:963
 msgid "Successfully uploaded document"
-msgstr ""
+msgstr "Dokument byl úspěšně nahrán"
 
 #: hypha/apply/activity/messaging.py:964
 msgid "Successfully removed document"
@@ -496,7 +496,7 @@ msgstr "Pokud máte nějaké dotazy, napište je sem"
 #: hypha/apply/activity/templates/messages/email/applicant_base.html:10
 #: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:12
 msgid "Link to our guide"
-msgstr ""
+msgstr "Odkaz na našeho průvodce"
 
 #: hypha/apply/activity/templates/messages/email/applicant_base.html:12
 #: hypha/apply/activity/templates/messages/email/comment.html:9
@@ -643,7 +643,7 @@ msgstr ""
 #: hypha/apply/activity/templates/messages/email/invoice_updated.html:7
 #, python-format
 msgid "It is now %(status)s."
-msgstr ""
+msgstr "Nyní je %(status)s."
 
 #: hypha/apply/activity/templates/messages/email/invoice_status_updated.html:9
 msgid "The staff member left this comment"
@@ -760,7 +760,7 @@ msgstr "V případě dotazů kontaktujte %(lead)s - %(email)s."
 #, python-format
 msgid ""
 "Your application has been progressed from %(old_status)s to %(new_status)s."
-msgstr ""
+msgstr "Vaše žádost byla posunuta z %(old_status)s do %(new_status)s."
 
 #: hypha/apply/activity/templates/messages/email/vendor_setup_needed.html:5
 #, python-format
@@ -986,7 +986,7 @@ msgstr "Žádná aktivní podání"
 
 #: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:50
 msgid "Your active projects"
-msgstr ""
+msgstr "Vaše aktivní projekty"
 
 #: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:57
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:71
@@ -1088,11 +1088,11 @@ msgstr "Vaše podání s příznakem"
 
 #: hypha/apply/dashboard/templates/dashboard/includes/waiting-for-review.html:5
 msgid "Waiting for your review"
-msgstr ""
+msgstr "Čekání na vaše hodnocení"
 
 #: hypha/apply/dashboard/templates/dashboard/includes/waiting-for-review.html:19
 msgid "Nice! You're all caught up."
-msgstr ""
+msgstr "Pěkné! Všichni jste se chytili."
 
 #: hypha/apply/dashboard/templates/dashboard/includes/waiting-for-review.html:20
 msgid "Find new applications to review"
@@ -1135,7 +1135,7 @@ msgstr "Pole"
 
 #: hypha/apply/determinations/blocks.py:65
 msgid "Section text/header"
-msgstr ""
+msgstr "Text/záhlaví sekce"
 
 #: hypha/apply/determinations/forms.py:170
 #: hypha/apply/determinations/forms.py:251
@@ -1395,7 +1395,7 @@ msgstr "Rozhodnutí pro"
 #: hypha/apply/determinations/templates/determinations/determination_detail.html:10
 #: hypha/apply/review/templates/review/review_detail.html:8
 msgid "Back to submission"
-msgstr ""
+msgstr "Zpět k podání"
 
 #: hypha/apply/determinations/templates/determinations/determination_detail.html:12
 msgid "DRAFT"
@@ -1403,7 +1403,7 @@ msgstr "NÁVRH"
 
 #: hypha/apply/determinations/templates/determinations/determination_form.html:7
 msgid "Edit Determination"
-msgstr ""
+msgstr "Upravit určení"
 
 #: hypha/apply/determinations/templates/determinations/includes/applicant_determination_block.html:3
 #: hypha/apply/determinations/templates/determinations/includes/determination_block.html:3
@@ -1590,7 +1590,7 @@ msgstr "Uživatelé nemohou být přiřazeni k více rolím."
 
 #: hypha/apply/funds/forms.py:364
 msgid "-- No reviewer selected --"
-msgstr ""
+msgstr "-- Nevybrán žádný hodnotitel--"
 
 #: hypha/apply/funds/forms.py:366
 #, python-brace-format
@@ -1714,15 +1714,15 @@ msgstr "Výchozí hodnota Ano/Ne"
 
 #: hypha/apply/funds/models/screening.py:15
 msgid "Only one Yes and No screening status can be set as default."
-msgstr ""
+msgstr "Jako výchozí lze nastavit pouze jeden stav prověřování Ano a Ne."
 
 #: hypha/apply/funds/models/utils.py:118
 msgid "Forms"
-msgstr ""
+msgstr "Formuláře"
 
 #: hypha/apply/funds/models/utils.py:119
 msgid "Review Forms"
-msgstr ""
+msgstr "Formuláře hodnocení"
 
 #: hypha/apply/funds/models/utils.py:120
 msgid "Determination Forms"
@@ -1894,6 +1894,8 @@ msgid ""
 "Please note that it is not submitted for review. You can complete your "
 "application by following the log-in details emailed to you."
 msgstr ""
+"Upozorňujeme, že není odeslán k hodnocení. Přihlášku můžete dokončit podle "
+"přihlašovacích údajů, které vám byly zaslány e-mailem."
 
 #: hypha/apply/funds/templates/funds/application_base_landing.html:16
 msgid ""
@@ -1906,6 +1908,8 @@ msgid ""
 "If you do not receive an e-mail within 15 minutes please check your\n"
 "spam folder and contact %(email)s for further assistance."
 msgstr ""
+"Pokud neobdržíte e-mail do 15 minut, zkontrolujte prosím \n"
+"složku se spamem a kontaktujte %(email)s pro další pomoc."
 
 #: hypha/apply/funds/templates/funds/applicationrevision_list.html:3
 #, python-format
@@ -2035,7 +2039,7 @@ msgstr "Úpravy"
 #: hypha/apply/projects/templates/application_projects/report_form.html:14
 #: hypha/apply/projects/templates/application_projects/vendor_detail.html:10
 msgid "Back to project"
-msgstr ""
+msgstr "Zpět k projektu"
 
 #: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:26
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:25
@@ -2059,6 +2063,12 @@ msgid ""
 "find more information about our support options, review process and "
 "selection criteria on our website."
 msgstr ""
+"Oceňujeme vaši přihlášku %(title)s, kterou jste odeslali do %(ORG_LONG_NAME)"
+"s. Váš příspěvek zkontrolujeme a odpovíme na něj co nejrychleji.\n"
+"\n"
+"Naše odpověď bude obsahovat další kroky pro vaši aplikaci %(title)s. Více "
+"informací o našich možnostech podpory, procesu kontroly a výběrových "
+"kritériích naleznete na našich webových stránkách."
 
 #: hypha/apply/funds/templates/funds/email/confirmation.html:10
 msgid "Project name"
