@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-09 10:44+0000\n"
-"PO-Revision-Date: 2024-11-29 21:04+0000\n"
+"PO-Revision-Date: 2024-11-29 21:13+0000\n"
 "Last-Translator: Jiří Podhorecký <j.podhorecky@volny.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "cs/>\n"
@@ -2110,7 +2110,7 @@ msgstr "Úplný návrh rozhodnutí"
 #: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:26
 #: hypha/apply/funds/templates/funds/includes/generic_primary_actions.html:8
 msgid "Complete draft review"
-msgstr ""
+msgstr "Dokončete návrh hodnocení"
 
 #: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:30
 msgid "Assign reviewers"
@@ -2183,7 +2183,7 @@ msgstr "Přidat hodnotitele"
 
 #: hypha/apply/funds/templates/funds/includes/create_project_form.html:4
 msgid "This will create a new project and notify the Applicant."
-msgstr ""
+msgstr "Tím vytvoříte nový projekt a informujete žadatele."
 
 #: hypha/apply/funds/templates/funds/includes/create_project_form.html:5
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:36
@@ -2256,7 +2256,7 @@ msgstr "Právní název"
 
 #: hypha/apply/funds/templates/funds/includes/rendered_answers.html:18
 msgid "Edit account"
-msgstr ""
+msgstr "Upravit účet"
 
 #: hypha/apply/funds/templates/funds/includes/rendered_answers.html:22
 #: hypha/apply/funds/templates/funds/includes/revision_diff_table.html:11
@@ -2271,7 +2271,7 @@ msgstr "Zatím žádní hodnotitelé z týmu zaměstnanců"
 
 #: hypha/apply/funds/templates/funds/includes/review_sidebar.html:27
 msgid "All Assigned Advisors"
-msgstr ""
+msgstr "Všichni přidělení poradci"
 
 #: hypha/apply/funds/templates/funds/includes/round-block-listing.html:33
 msgid "There are no"
@@ -2283,15 +2283,15 @@ msgstr "kola"
 
 #: hypha/apply/funds/templates/funds/includes/screening_form.html:5
 msgid "Current statuses"
-msgstr ""
+msgstr "Aktuální stavy"
 
 #: hypha/apply/funds/templates/funds/includes/screening_form.html:6
 msgid "Screen"
-msgstr ""
+msgstr "Obrazovka"
 
 #: hypha/apply/funds/templates/funds/includes/screening_status_block.html:4
 msgid "Screening status"
-msgstr ""
+msgstr "Stav prověřování"
 
 #: hypha/apply/funds/templates/funds/includes/screening_status_block.html:36
 msgid "Screening options<"
@@ -2299,7 +2299,7 @@ msgstr ""
 
 #: hypha/apply/funds/templates/funds/includes/status-block.html:4
 msgid "By status"
-msgstr ""
+msgstr "Podle stavu"
 
 #: hypha/apply/funds/templates/funds/includes/submission_stats.html:4
 msgid "Amounts"
@@ -2425,7 +2425,7 @@ msgstr "Porovnávání revizí"
 
 #: hypha/apply/funds/templates/funds/revisions_compare.html:9
 msgid "Back to revisions"
-msgstr ""
+msgstr "Zpět k revizím"
 
 #: hypha/apply/funds/templates/funds/rounds.html:17
 msgid "Explore current and past rounds"
