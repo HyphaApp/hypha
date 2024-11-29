@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-09 10:44+0000\n"
-"PO-Revision-Date: 2024-11-29 22:26+0000\n"
+"PO-Revision-Date: 2024-11-29 23:27+0000\n"
 "Last-Translator: Jiří Podhorecký <j.podhorecky@volny.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "cs/>\n"
@@ -3496,23 +3496,23 @@ msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:65
 msgid "Project approval form must be completed"
-msgstr ""
+msgstr "Musí být vyplněn formulář schválení projektu"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:67
 msgid "Currently awaiting approval"
-msgstr ""
+msgstr "V současné době čeká na schválení"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:91
 msgid "Request changes"
-msgstr ""
+msgstr "Vyžádejte si změny"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:117
 msgid "Approved By"
-msgstr ""
+msgstr "Schváleno od"
 
 #: hypha/apply/projects/templates/application_projects/project_applicant_detail.html:8
 msgid "Your project is not editable at this point."
-msgstr ""
+msgstr "Váš projekt v tuto chvíli nelze upravovat."
 
 #: hypha/apply/projects/templates/application_projects/project_applicant_detail.html:10
 msgid "We are awaiting a lead to be assigned."
@@ -3520,7 +3520,7 @@ msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/project_applicant_detail.html:12
 msgid "It is currently under review by a staff member."
-msgstr ""
+msgstr "V současné době je hodnocen zaměstnancem."
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:58
 msgid "Details"
@@ -3538,7 +3538,7 @@ msgstr "Informace o projektu"
 #: hypha/apply/projects/templates/application_projects/project_detail.html:82
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:35
 msgid "Proposed start date"
-msgstr ""
+msgstr "Navrhované datum zahájení"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:87
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:40
