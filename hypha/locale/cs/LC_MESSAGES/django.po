@@ -220,7 +220,8 @@ msgstr "Návrh byl předložen k přezkoumání: <{link}|{source.title}>"
 msgid ""
 "<{link}|{source.title}> by {source.user} has been invited to submit a "
 "proposal"
-msgstr "<{link}|{source.title}> od {source.user} byl vyzván k předložení návrhu"
+msgstr ""
+"<{link}|{source.title}> od {source.user} byl vyzván k předložení návrhu"
 
 #: hypha/apply/activity/messaging.py:427
 #, python-brace-format
@@ -228,8 +229,8 @@ msgid ""
 "{user} has submitted a review for <{link}|{source.title}>. Outcome: {review."
 "outcome},  Score: {review.get_score_display}"
 msgstr ""
-"{user} odeslal recenzi na <{link}|{source.title}>. Výsledek: {review.outcome}"
-", Score: {review.get_score_display}"
+"{user} odeslal recenzi na <{link}|{source.title}>. Výsledek: {review."
+"outcome}, Score: {review.get_score_display}"
 
 #: hypha/apply/activity/messaging.py:429
 #, python-brace-format
@@ -1482,8 +1483,8 @@ msgid ""
 "A determination of \"{current}\" exists but you tried to progress as "
 "\"{target}\""
 msgstr ""
-"Rozhodnutí o \"{current}\" existuje, ale pokusili jste se postoupit jako \""
-"{target}\""
+"Rozhodnutí o \"{current}\" existuje, ale pokusili jste se postoupit jako "
+"\"{target}\""
 
 #: hypha/apply/flags/templates/flags/flags.html:3
 msgid "Flags"
@@ -1592,7 +1593,8 @@ msgstr "Hodnotitelé"
 
 #: hypha/apply/funds/forms.py:260
 msgid "Can't unassign, just change, because review already submitted"
-msgstr "Nelze zrušit přiřazení, pouze změnit, protože recenze již byla odeslána"
+msgstr ""
+"Nelze zrušit přiřazení, pouze změnit, protože recenze již byla odeslána"
 
 #: hypha/apply/funds/forms.py:265 hypha/apply/funds/forms.py:338
 msgid "Users cannot be assigned to multiple roles."
@@ -2073,8 +2075,9 @@ msgid ""
 "find more information about our support options, review process and "
 "selection criteria on our website."
 msgstr ""
-"Oceňujeme vaši přihlášku %(title)s, kterou jste odeslali do %(ORG_LONG_NAME)"
-"s. Váš příspěvek zkontrolujeme a odpovíme na něj co nejrychleji.\n"
+"Oceňujeme vaši přihlášku %(title)s, kterou jste odeslali do "
+"%(ORG_LONG_NAME)s. Váš příspěvek zkontrolujeme a odpovíme na něj co "
+"nejrychleji.\n"
 "\n"
 "Naše odpověď bude obsahovat další kroky pro vaši aplikaci %(title)s. Více "
 "informací o našich možnostech podpory, procesu kontroly a výběrových "
