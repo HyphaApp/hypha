@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-09 10:44+0000\n"
-"PO-Revision-Date: 2024-11-29 23:27+0000\n"
+"PO-Revision-Date: 2024-11-30 06:05+0000\n"
 "Last-Translator: Jiří Podhorecký <j.podhorecky@volny.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "cs/>\n"
@@ -3472,12 +3472,12 @@ msgstr ""
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:37
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:84
 msgid "Approve"
-msgstr ""
+msgstr "Schválit"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:42
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:43
 msgid "Request Changes"
-msgstr ""
+msgstr "Vyžádat změny"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:49
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:133
@@ -3543,26 +3543,26 @@ msgstr "Navrhované datum zahájení"
 #: hypha/apply/projects/templates/application_projects/project_detail.html:87
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:40
 msgid "Project Proposed end date"
-msgstr ""
+msgstr "Navrhované datum ukončení projektu"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:92
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:45
 msgid "Legal name"
-msgstr ""
+msgstr "Právní název"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:115
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:60
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:120
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:65
 msgid "Value"
-msgstr ""
+msgstr "Hodnota"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:158
 msgid "Fill in Contracting Info"
-msgstr ""
+msgstr "Vyplňte informace o smlouvě"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:165
 msgid "Upload Signed Contract"
@@ -3570,27 +3570,27 @@ msgstr "Nahrát podepsanou smlouvu"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:167
 msgid "Upload Contract"
-msgstr ""
+msgstr "Nahrát smlouvu"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:177
 msgid "Upload contract"
-msgstr ""
+msgstr "Nahrát smlouvu"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:196
 msgid "Supporting Information"
-msgstr ""
+msgstr "Doprovodné informace"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:203
 msgid "Approval form"
-msgstr ""
+msgstr "Schvalovací formulář"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:214
 msgid "Contracts"
-msgstr ""
+msgstr "Smlouvy"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:243
 msgid "Approved by"
-msgstr ""
+msgstr "Schváleno od"
 
 #: hypha/apply/projects/templates/application_projects/project_list.html:13
 msgid "All Projects"
@@ -3602,7 +3602,7 @@ msgstr "Nejsou k dispozici žádné projekty."
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:71
 msgid "Sent to Compliance"
-msgstr ""
+msgstr "Odesláno na Compliance"
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:85
 msgid "Approvals"
@@ -3610,7 +3610,7 @@ msgstr "Schválení"
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:87
 msgid "Approver"
-msgstr ""
+msgstr "Schvalovatel"
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:93
 msgid "Review"
@@ -3622,7 +3622,7 @@ msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:99
 msgid "Staff Reviewers"
-msgstr ""
+msgstr "Hodnotitelé z řad zaměstnanců"
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:111
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:121
@@ -3699,20 +3699,20 @@ msgstr "Odeslat zprávu"
 
 #: hypha/apply/projects/templates/application_projects/report_form.html:63
 msgid "Are you sure you want to submit your report?"
-msgstr ""
+msgstr "Opravdu chcete zprávu odeslat?"
 
 #: hypha/apply/projects/templates/application_projects/report_list.html:12
 msgid "Submitted Reports"
-msgstr ""
+msgstr "Podané zprávy"
 
 #: hypha/apply/projects/templates/application_projects/report_list.html:22
 msgid "No Reports Available."
-msgstr ""
+msgstr "Žádné zprávy nejsou k dispozici."
 
 #: hypha/apply/projects/templates/application_projects/vendor_detail.html:4
 #: hypha/apply/projects/templates/application_projects/vendor_detail.html:12
 msgid "Contracting Information for"
-msgstr ""
+msgstr "Informace o uzavírání smluv pro"
 
 #: hypha/apply/projects/templates/application_projects/vendor_detail.html:18
 msgid "Last Updated"
@@ -3721,55 +3721,59 @@ msgstr ""
 #: hypha/apply/projects/templates/application_projects/vendor_form.html:4
 #: hypha/apply/projects/templates/application_projects/vendor_form.html:8
 msgid "Update Contracting Information"
-msgstr ""
+msgstr "Aktualizace informací o smlouvách"
 
 #: hypha/apply/projects/templates/application_projects/vendor_form.html:27
 msgid "Save and continue"
-msgstr ""
+msgstr "Uložit a pokračovat"
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:4
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:8
 msgid "Contractor Setup Completed"
-msgstr ""
+msgstr "Nastavení smluvního partnera dokončeno"
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:12
 msgid "Thank you for submitting your information."
-msgstr ""
+msgstr "Děkujeme vám za zaslání informací."
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:13
 msgid ""
 "Your {{ ORG_SHORT_NAME }} Programme Manager will be in touch with you if "
 "there are any issues."
 msgstr ""
+"V případě jakýchkoli problémů vaší organizace {{ ORG_SHORT_NAME }} se s vámi "
+"spojí vedoucí programu."
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:14
 msgid "What will happen next?"
-msgstr ""
+msgstr "Co bude dál?"
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:15
 msgid "We will use this information to create the contract for your project."
-msgstr ""
+msgstr "Tyto informace použijeme k vytvoření smlouvy pro váš projekt."
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:16
 msgid "Once this has happened, we will send you a message with your contract."
-msgstr ""
+msgstr "Jakmile se tak stane, zašleme vám zprávu s vaší smlouvou."
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:17
 msgid "We'll ask you to read it, and if everything is OK, you can sign it."
 msgstr ""
+"Požádáme vás, abyste si ji přečetli, a pokud je vše v pořádku, můžete ji "
+"podepsat."
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:18
 msgid "Visit Project Detail Page"
-msgstr ""
+msgstr "Navštivte stránku s detaily projektu"
 
 #: hypha/apply/projects/views/project.py:589
 #: hypha/apply/projects/views/project.py:636
 msgid "You are not allowed to edit the project at this time"
-msgstr ""
+msgstr "V tuto chvíli nemůžete projekt upravovat"
 
 #: hypha/apply/projects/views/vendor.py:259
 msgid "Bank Account Information"
-msgstr ""
+msgstr "Informace o bankovním účtu"
 
 #: hypha/apply/projects/views/vendor.py:268
 msgid "(Optional) Extra Information for Accepting Payments"
