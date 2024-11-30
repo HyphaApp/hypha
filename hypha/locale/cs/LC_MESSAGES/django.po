@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-09 10:44+0000\n"
-"PO-Revision-Date: 2024-11-30 14:44+0000\n"
+"PO-Revision-Date: 2024-12-01 18:00+0000\n"
 "Last-Translator: Jiří Podhorecký <j.podhorecky@volny.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "cs/>\n"
@@ -1581,7 +1581,7 @@ msgstr "Aktualizace vedení z {lead} na"
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:104
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:19
 msgid "Lead"
-msgstr ""
+msgstr "Vedoucí"
 
 #: hypha/apply/funds/forms.py:195 hypha/apply/funds/tables.py:259
 #: hypha/apply/funds/tables.py:443
@@ -1808,7 +1808,7 @@ msgstr "Fondy"
 
 #: hypha/apply/funds/tables.py:258 hypha/apply/funds/tables.py:415
 msgid "Leads"
-msgstr ""
+msgstr "Vedoucí pracovníci"
 
 #: hypha/apply/funds/tables.py:260
 msgid "No Status"
@@ -2111,7 +2111,7 @@ msgstr "Vytvořit projekt"
 #: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:17
 #: hypha/apply/funds/templates/funds/includes/screening_form.html:4
 msgid "Screen application"
-msgstr ""
+msgstr "Kontrola žádosti"
 
 #: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:21
 msgid "Complete draft determination"
@@ -2305,7 +2305,7 @@ msgstr "Stav prověřování"
 
 #: hypha/apply/funds/templates/funds/includes/screening_status_block.html:36
 msgid "Screening options<"
-msgstr ""
+msgstr "Možnosti kontroly"
 
 #: hypha/apply/funds/templates/funds/includes/status-block.html:4
 msgid "By status"
@@ -2542,7 +2542,7 @@ msgstr "Žadatel"
 
 #: hypha/apply/funds/templates/funds/tables/table.html:23
 msgid "Screening statuses"
-msgstr ""
+msgstr "Stavy kontroly"
 
 #: hypha/apply/funds/templates/funds/tables/table.html:24
 msgid "Review outcomes"
@@ -2625,7 +2625,7 @@ msgstr "Připraveno k rozhodnutí"
 #: hypha/apply/funds/workflow.py:622 hypha/apply/funds/workflow.py:872
 #: hypha/apply/funds/workflow.py:897
 msgid "Accept but additional info required"
-msgstr "Přijato, ale jsou požadovány další informace"
+msgstr "Přijmout, ale jsou požadovány další informace"
 
 #: hypha/apply/funds/workflow.py:217 hypha/apply/funds/workflow.py:234
 #: hypha/apply/funds/workflow.py:261 hypha/apply/funds/workflow.py:277
@@ -3492,7 +3492,7 @@ msgstr "Potvrzujete, že nahraná smlouva je přijatelná pro zahájení projekt
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:63
 msgid "A lead must be assigned"
-msgstr ""
+msgstr "Vedoucí musí být přidělen"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:65
 msgid "Project approval form must be completed"
@@ -3516,7 +3516,7 @@ msgstr "Váš projekt v tuto chvíli nelze upravovat."
 
 #: hypha/apply/projects/templates/application_projects/project_applicant_detail.html:10
 msgid "We are awaiting a lead to be assigned."
-msgstr ""
+msgstr "Čekáme na přidělení vedoucího."
 
 #: hypha/apply/projects/templates/application_projects/project_applicant_detail.html:12
 msgid "It is currently under review by a staff member."
@@ -3618,7 +3618,7 @@ msgstr "Hodnocení"
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:95
 msgid "Submission lead"
-msgstr ""
+msgstr "Vedoucí podání"
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:99
 msgid "Staff Reviewers"
@@ -4086,12 +4086,12 @@ msgstr "Další"
 #: hypha/apply/users/templates/two_factor/core/backup_tokens.html:6
 #: hypha/apply/users/templates/two_factor/profile/disable.html:6
 msgid "Back"
-msgstr ""
+msgstr "Zpět"
 
 #: hypha/apply/users/templates/two_factor/core/backup_tokens.html:7
 #: hypha/apply/users/templates/two_factor/profile/profile.html:41
 msgid "Backup Tokens"
-msgstr ""
+msgstr "Záložní tokeny"
 
 #: hypha/apply/users/templates/two_factor/core/backup_tokens.html:8
 msgid ""
@@ -4101,77 +4101,88 @@ msgid ""
 "      can generate a new set of backup tokens. Only the backup tokens shown\n"
 "      below will be valid."
 msgstr ""
+"Záložní tokeny lze použít v případě, že primární a záložní \n"
+"telefonní číslo nejsou k dispozici. Níže uvedené záložní tokeny lze použít \n"
+"pro ověření přihlášení. Pokud jste vyčerpali všechny záložní tokeny, \n"
+"můžete si vygenerovat novou sadu záložních tokenů. Platné budou pouze \n"
+"záložní tokeny uvedené níže."
 
 #: hypha/apply/users/templates/two_factor/core/backup_tokens.html:20
 msgid "Print these tokens and keep them somewhere safe."
-msgstr ""
+msgstr "Vytiskněte si tyto tokeny a uložte je na bezpečném místě."
 
 #: hypha/apply/users/templates/two_factor/core/backup_tokens.html:22
 msgid "You don't have any backup codes yet."
-msgstr ""
+msgstr "Zatím nemáte žádné záložní kódy."
 
 #: hypha/apply/users/templates/two_factor/core/backup_tokens.html:26
 msgid "Generate Tokens"
-msgstr ""
+msgstr "Generování tokenů"
 
 #: hypha/apply/users/templates/two_factor/profile/disable.html:7
 msgid "Disable Two-factor Authentication"
-msgstr ""
+msgstr "Vypnout dvoufaktorové ověřování"
 
 #: hypha/apply/users/templates/two_factor/profile/disable.html:8
 msgid ""
 "You are about to disable two-factor authentication. This\n"
 "    weakens your account security, are you sure?"
 msgstr ""
+"Chystáte se vypnout dvoufaktorové ověřování. Tato stránka\n"
+"    oslabí zabezpečení vašeho účtu, jste si jisti?"
 
 #: hypha/apply/users/templates/two_factor/profile/disable.html:14
 msgid "Disable"
-msgstr ""
+msgstr "Vypnout"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:6
 msgid "Back to account"
-msgstr ""
+msgstr "Zpět na účet"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:9
 msgid "Two-Factor Authentication"
-msgstr ""
+msgstr "Dvoufaktorové ověřování"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:13
 msgid "Tokens will be generated by your token generator."
-msgstr ""
+msgstr "Tokeny budou vygenerovány generátorem tokenů."
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:15
 #, python-format
 msgid "Primary method: %(primary)s"
-msgstr ""
+msgstr "Primární metoda: %(primary)s"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:17
 msgid "Tokens will be generated by your YubiKey."
-msgstr ""
+msgstr "Tokeny budou generovány pomocí vašeho klíče YubiKey."
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:21
 msgid "Backup Phone Numbers"
-msgstr ""
+msgstr "Záložní telefonní čísla"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:22
 msgid ""
 "If your primary method is not available, we are able to\n"
 "        send backup tokens to the phone numbers listed below."
 msgstr ""
+"Pokud váš primární způsob není k dispozici, jsme schopni.\n"
+"        zaslat záložní tokeny na níže uvedená telefonní čísla."
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:32
 msgid "Unregister"
-msgstr ""
+msgstr "Zrušení registrace"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:38
 msgid "Add Phone Number"
-msgstr ""
+msgstr "Přidat telefonní číslo"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:43
 msgid ""
 "If you don't have any device with you, you can access\n"
 "        your account using backup tokens."
 msgstr ""
+"Pokud u sebe nemáte žádné zařízení, můžete přistupovat\n"
+"        k účtu pomocí záložních tokenů."
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:45
 #, python-format
@@ -4184,22 +4195,34 @@ msgid_plural ""
 "        You have %(counter)s backup tokens remaining.\n"
 "      "
 msgstr[0] ""
+"\n"
+"        Zbývá vám pouze jeden záložní token.\n"
+"      "
 msgstr[1] ""
+"\n"
+"        Zbývají vám %(counter)s záložní žetony.\n"
+"      "
+msgstr[2] ""
+"\n"
+"        Zbývá vám %(counter)s záložních žetonů.\n"
+"      "
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:52
 msgid "Show Codes"
-msgstr ""
+msgstr "Zobrazit kódy"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:54
 #: hypha/apply/users/templates/two_factor/profile/profile.html:58
 msgid "Disable Two-Factor Authentication"
-msgstr ""
+msgstr "Vypnout dvoufaktorové ověřování"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:55
 msgid ""
 "However we strongly discourage you to do so, you can\n"
 "      also disable two-factor authentication for your account."
 msgstr ""
+"Přestože vám to důrazně nedoporučujeme, můžete\n"
+"      také vypnout dvoufaktorové ověřování svého účtu."
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:60
 msgid ""
@@ -4207,35 +4230,38 @@ msgid ""
 "      account. Enable two-factor authentication for enhanced account\n"
 "      security."
 msgstr ""
+"Pro váš účet není povoleno dvoufaktorové \n"
+"ověřování. Povolte dvoufaktorové ověřování pro lepší \n"
+"zabezpečení účtu."
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:64
 msgid "Enable Two-Factor Authentication"
-msgstr ""
+msgstr "Povolit dvoufaktorové ověřování"
 
 #: hypha/apply/users/templates/users/account.html:25
 msgid "Update Profile"
-msgstr ""
+msgstr "Aktualizovat profil"
 
 #: hypha/apply/users/templates/users/account.html:31
 msgid "Change password"
-msgstr ""
+msgstr "Změnit heslo"
 
 #: hypha/apply/users/templates/users/account.html:32
 msgid "Update password"
-msgstr ""
+msgstr "Aktualizovat heslo"
 
 #: hypha/apply/users/templates/users/account.html:34
 msgid "Account security"
-msgstr ""
+msgstr "Zabezpečení účtu"
 
 #: hypha/apply/users/templates/users/account.html:35
 msgid "Two-factor authentication settings"
-msgstr ""
+msgstr "Nastavení dvoufaktorového ověřování"
 
 #: hypha/apply/users/templates/users/account.html:41
 #: hypha/apply/users/templates/users/account.html:48
 msgid "Become"
-msgstr ""
+msgstr "Staňte se"
 
 #: hypha/apply/users/templates/users/activation/email.txt:7
 #, python-format
@@ -4243,6 +4269,8 @@ msgid ""
 "An account on the %(ORG_LONG_NAME)s web site has been created. Activate your "
 "account by clicking this link or copying and pasting it to your browser:"
 msgstr ""
+"Byl vytvořen účet na webové stránce %(ORG_LONG_NAME)s. Aktivujte svůj účet "
+"kliknutím na tento odkaz nebo jeho zkopírováním a vložením do prohlížeče:"
 
 #: hypha/apply/users/templates/users/activation/email.txt:11
 #, python-format
@@ -4251,27 +4279,30 @@ msgid ""
 "set your password. It will remain active for %(timeout_days)s days, so do it "
 "now."
 msgstr ""
+"Tento odkaz lze použít pouze jednou a povede vás na stránku, kde si můžete "
+"nastavit heslo. Zůstane aktivní po dobu %(timeout_days)s dní, takže to "
+"udělejte hned."
 
 #: hypha/apply/users/templates/users/activation/email.txt:13
 msgid "After setting your password, you will be able to log in at"
-msgstr ""
+msgstr "Po nastavení hesla se budete moci přihlásit na adrese"
 
 #: hypha/apply/users/templates/users/activation/email.txt:13
 msgid "in the future using"
-msgstr ""
+msgstr "v budoucnu pomocí"
 
 #: hypha/apply/users/templates/users/activation/email.txt:15
 #: hypha/apply/users/templates/wagtailusers/users/list.html:14
 msgid "Username"
-msgstr ""
+msgstr "Uživatelské jméno"
 
 #: hypha/apply/users/templates/users/activation/email.txt:16
 msgid "Password"
-msgstr ""
+msgstr "Heslo"
 
 #: hypha/apply/users/templates/users/activation/email.txt:16
 msgid "Your chosen password"
-msgstr ""
+msgstr "Vámi zvolené heslo"
 
 #: hypha/apply/users/templates/users/activation/email.txt:18
 #, python-format
@@ -4279,6 +4310,8 @@ msgid ""
 "If you do not complete the activation process within %(timeout_days)s days "
 "you can use the password reset form at"
 msgstr ""
+"Pokud proces aktivace nedokončíte do %(timeout_days)s dnů, můžete použít "
+"formulář pro obnovení hesla na adrese"
 
 #: hypha/apply/users/templates/users/activation/email.txt:20
 #, python-format
@@ -4290,26 +4323,32 @@ msgid ""
 "%(ORG_LONG_NAME)s\n"
 "%(root_url)s"
 msgstr ""
+"S laskavým pozdravem,\n"
+"Tým %(ORG_SHORT_NAME)s\n"
+"\n"
+"-- \n"
+"%(ORG_LONG_NAME)s\n"
+"%(root_url)s"
 
 #: hypha/apply/users/templates/users/activation/invalid.html:4
 msgid "Invalid activation"
-msgstr ""
+msgstr "Neplatná aktivace"
 
 #: hypha/apply/users/templates/users/activation/invalid.html:5
 msgid "Invalid activation URL"
-msgstr ""
+msgstr "Neplatná aktivační adresa URL"
 
 #: hypha/apply/users/templates/users/activation/invalid.html:10
 msgid "Two possible reasons:"
-msgstr ""
+msgstr "Dva možné důvody:"
 
 #: hypha/apply/users/templates/users/activation/invalid.html:12
 msgid "The activation link has expired."
-msgstr ""
+msgstr "Platnost aktivačního odkazu vypršela."
 
 #: hypha/apply/users/templates/users/activation/invalid.html:13
 msgid "The account has already been activated."
-msgstr ""
+msgstr "Účet již byl aktivován."
 
 #: hypha/apply/users/templates/users/activation/invalid.html:16
 #, python-format
@@ -4317,11 +4356,13 @@ msgid ""
 "First try to <a href=\"%(password_reset)s\">reset your password</a>. If that "
 "fails please contact %(ORG_SHORT_NAME)s at"
 msgstr ""
+"Nejprve zkuste <a href=\"%(password_reset)s\">obnovit heslo</a>. Pokud se to "
+"nepodaří, kontaktujte %(ORG_SHORT_NAME)s na"
 
 #: hypha/apply/users/templates/users/change_password.html:4
 #: hypha/apply/users/templates/users/change_password.html:5
 msgid "Set a password"
-msgstr ""
+msgstr "Nastavit heslo"
 
 #: hypha/apply/users/templates/users/change_password.html:20
 #: hypha/apply/users/templates/users/password_reset/confirm.html:20
@@ -4334,7 +4375,17 @@ msgid_plural ""
 "                <li>Please correct the errors below.</li>\n"
 "                "
 msgstr[0] ""
+"\n"
+"                <li>Prosím, opravte níže uvedenou chybu.</li>\n"
+"                "
 msgstr[1] ""
+"\n"
+"                <li>Prosím, opravte níže uvedené chyby.</li>\n"
+"                "
+msgstr[2] ""
+"\n"
+"                <li>Prosím, opravte níže uvedené chyby.</li>\n"
+"                "
 
 #: hypha/apply/users/templates/users/change_password.html:34
 #: hypha/apply/users/templates/users/password_reset/complete.html:4
@@ -4344,29 +4395,35 @@ msgstr[1] ""
 #: hypha/apply/users/templates/users/password_reset/form.html:6
 #: hypha/apply/users/templates/users/password_reset/form.html:25
 msgid "Reset password"
-msgstr ""
+msgstr "Obnovit heslo"
 
 #: hypha/apply/users/templates/users/login.html:11
 msgid "Enter your credentials."
-msgstr ""
+msgstr "Zadejte své přihlašovací údaje."
 
 #: hypha/apply/users/templates/users/login.html:14
 msgid ""
 "We are calling your phone right now, please enter the\n"
 "                digits you hear."
 msgstr ""
+"Právě voláme na váš telefon, zadejte prosím číslice, \n"
+"které uslyšíte."
 
 #: hypha/apply/users/templates/users/login.html:17
 msgid ""
 "We sent you a text message, please enter the tokens we\n"
 "                sent."
 msgstr ""
+"Poslali jsme vám textovou zprávu, zadejte prosím tokeny, které jsme vám \n"
+"poslali."
 
 #: hypha/apply/users/templates/users/login.html:20
 msgid ""
 "Please enter the tokens generated by your token\n"
 "                generator."
 msgstr ""
+"Zadejte tokeny vygenerované generátorem \n"
+"tokenů."
 
 #: hypha/apply/users/templates/users/login.html:24
 msgid ""
@@ -4375,276 +4432,289 @@ msgid ""
 "Please\n"
 "            enter one of these backup tokens to login to your account."
 msgstr ""
+"Tento formulář slouží k zadávání záložních tokenů pro přihlášení.\n"
+"            Tyto tokeny byly vygenerovány, abyste si je mohli vytisknout a "
+"uschovat. \n"
+"Zadejte prosím jeden z těchto záložních tokenů pro přihlášení k účtu."
 
 #: hypha/apply/users/templates/users/login.html:38
 msgid "Forgot your password?"
-msgstr ""
+msgstr "Zapomněli jste heslo?"
 
 #: hypha/apply/users/templates/users/login.html:39
 msgid "Login"
-msgstr ""
+msgstr "Přihlášení"
 
 #: hypha/apply/users/templates/users/login.html:47
 msgid "Or, alternatively, use one of your backup phones:"
-msgstr ""
+msgstr "Případně použijte některý ze záložních telefonů:"
 
 #: hypha/apply/users/templates/users/login.html:57
 msgid "As a last resort, you can use a backup token:"
-msgstr ""
+msgstr "V krajním případě můžete použít záložní token:"
 
 #: hypha/apply/users/templates/users/login.html:60
 msgid "Use Backup Token"
-msgstr ""
+msgstr "Použití záložního tokenu"
 
 #: hypha/apply/users/templates/users/login.html:72
 #, python-format
 msgid "Log in with your %(ORG_SHORT_NAME)s email"
-msgstr ""
+msgstr "Přihlaste se pomocí e-mailu %(ORG_SHORT_NAME)s"
 
 #: hypha/apply/users/templates/users/oauth.html:9
 msgid "Providers"
-msgstr ""
+msgstr "Poskytovatelé"
 
 #: hypha/apply/users/templates/users/oauth.html:18
 msgid "Disconnect"
-msgstr ""
+msgstr "Odpojit"
 
 #: hypha/apply/users/templates/users/oauth.html:29
 msgid "Available providers"
-msgstr ""
+msgstr "Dostupní poskytovatelé"
 
 #: hypha/apply/users/templates/users/password_reset/complete.html:5
 msgid "Password change successful"
-msgstr ""
+msgstr "Změna hesla byla úspěšná"
 
 #: hypha/apply/users/templates/users/password_reset/complete.html:10
 msgid "Log in"
-msgstr ""
+msgstr "Přihlášení"
 
 #: hypha/apply/users/templates/users/password_reset/confirm.html:8
 msgid ""
 "Please enter your new password twice so we can verify you typed it in "
 "correctly."
 msgstr ""
+"Zadejte prosím své nové heslo dvakrát, abychom mohli ověřit, že jste ho "
+"zadali správně."
 
 #: hypha/apply/users/templates/users/password_reset/confirm.html:37
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
 "used.  Please request a new password reset."
 msgstr ""
+"Odkaz na obnovení hesla byl neplatný, pravděpodobně proto, že již byl "
+"použit.  Požádejte o nové obnovení hesla."
 
 #: hypha/apply/users/templates/users/password_reset/done.html:4
 msgid "Check your email"
-msgstr ""
+msgstr "Zkontrolujte svůj e-mail"
 
 #: hypha/apply/users/templates/users/password_reset/done.html:9
 msgid "A link to reset your password has been emailed to you."
-msgstr ""
+msgstr "Odkaz na obnovení hesla vám byl zaslán e-mailem."
 
 #: hypha/apply/users/templates/users/password_reset/email.txt:2
 msgid "Please follow the link below to reset your password:"
-msgstr ""
+msgstr "Heslo obnovíte pomocí níže uvedeného odkazu:"
 
 #: hypha/apply/users/templates/users/password_reset/email.txt:6
 msgid "Your username (in case you've forgotten):"
-msgstr ""
+msgstr "Vaše uživatelské jméno (pro případ, že jste ho zapomněli):"
 
 #: hypha/apply/users/templates/wagtailusers/users/list.html:6
 #: hypha/public/people/models.py:180
 msgid "Name"
-msgstr ""
+msgstr "Jméno"
 
 #: hypha/apply/users/templates/wagtailusers/users/list.html:45
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #: hypha/apply/users/templates/wagtailusers/users/list.html:46
 msgid "Inactive"
-msgstr ""
+msgstr "Neaktivní"
 
 #: hypha/apply/utils/blocks.py:39
 msgid "Rich text field"
-msgstr ""
+msgstr "Textové pole"
 
 #: hypha/apply/utils/blocks.py:54
 msgid "Markdown text field"
-msgstr ""
+msgstr "Textové pole Markdown"
 
 #: hypha/apply/utils/blocks.py:73
 msgid " Required"
-msgstr ""
+msgstr " Vyžadováno"
 
 #: hypha/apply/utils/models.py:25
 msgid "Page size of downloadable Project and Submission PDFs"
-msgstr ""
+msgstr "Velikost stránek stažitelných souborů PDF projektu a podání"
 
 #: hypha/apply/utils/views.py:254
 #, python-brace-format
 msgid "Page '{0}' can't be deleted because is in use in '{1}'."
-msgstr ""
+msgstr "Stránku '{0}' nelze odstranit, protože se používá v '{1}'."
 
 #: hypha/cookieconsent/templates/includes/banner.html:11
 msgid "Decline tracking cookies."
-msgstr ""
+msgstr "Odmítnout sledovací soubory cookie."
 
 #: hypha/cookieconsent/templates/includes/banner.html:11
 msgid "Decline"
-msgstr ""
+msgstr "Odmítnout"
 
 #: hypha/cookieconsent/templates/includes/banner.html:12
 msgid "Accept tracking cookies."
-msgstr ""
+msgstr "Přijmout sledovací soubory cookie."
 
 #: hypha/public/forms/models.py:36
 msgid "field type"
-msgstr ""
+msgstr "typ pole"
 
 #: hypha/public/funds/models.py:57 hypha/public/funds/models.py:171
 #: hypha/public/news/models.py:115 hypha/public/standardpages/models.py:31
 msgid "Related pages"
-msgstr ""
+msgstr "Související stránky"
 
 #: hypha/public/funds/models.py:151
 msgid "External link"
-msgstr ""
+msgstr "Externí odkaz"
 
 #: hypha/public/funds/models.py:152
 msgid "Text to display on the button for external links"
-msgstr ""
+msgstr "Text, který se zobrazí na tlačítku pro externí odkazy"
 
 #: hypha/public/funds/models.py:169
 msgid "Link for lab application"
-msgstr ""
+msgstr "Odkaz na přihlášku do lab"
 
 #: hypha/public/funds/models.py:191 hypha/public/funds/models.py:192
 msgid "Cannot link to both a Lab page and external link"
-msgstr ""
+msgstr "Nelze odkazovat na stránku laboratoře i na externí odkaz"
 
 #: hypha/public/funds/models.py:197 hypha/public/funds/models.py:198
 msgid "Please provide a way for applicants to apply"
-msgstr ""
+msgstr "Uveďte způsob, jakým mohou žadatelé podávat žádosti"
 
 #: hypha/public/funds/models.py:203
 msgid "Cannot customise the text for internal lab pages, leave blank"
 msgstr ""
+"Nelze přizpůsobit text interních stránek laboratoře, ponechte jej prázdný"
 
 #: hypha/public/funds/models.py:208
 msgid "Please provide some text for the link button"
-msgstr ""
+msgstr "Uveďte prosím nějaký text pro tlačítko odkazu"
 
 #: hypha/public/funds/templates/public_funds/includes/fund_apply_cta.html:16
 msgid "Apply for this"
-msgstr ""
+msgstr "Požádat o toto"
 
 #: hypha/public/funds/templates/public_funds/includes/fund_apply_cta.html:25
 msgid "CLOSED"
-msgstr ""
+msgstr "ZAVŘENO"
 
 #: hypha/public/home/blocks.py:8
 msgid "The first word will be bold"
-msgstr ""
+msgstr "První slovo bude tučně"
 
 #: hypha/public/home/models.py:107
 msgid "Introduction"
-msgstr ""
+msgstr "Úvod"
 
 #: hypha/public/home/models.py:112
 msgid "News"
-msgstr ""
+msgstr "Novinky"
 
 #: hypha/public/home/models.py:118
 msgid "Our Work"
-msgstr ""
+msgstr "Naše práce"
 
 #: hypha/public/home/models.py:122
 msgid "Promoted Funds"
-msgstr ""
+msgstr "Podporované fondy"
 
 #: hypha/public/home/models.py:129
 msgid "Promoted Labs"
-msgstr ""
+msgstr "Propagované laboratoře"
 
 #: hypha/public/home/models.py:136
 msgid "Promoted RFPs"
-msgstr ""
+msgstr "Propagované RFP"
 
 #: hypha/public/mailchimp/forms.py:6
 msgid "Email Address"
-msgstr ""
+msgstr "E-mailová adresa"
 
 #: hypha/public/mailchimp/forms.py:7
 msgid "First Name"
-msgstr ""
+msgstr "Jméno"
 
 #: hypha/public/mailchimp/forms.py:8
 msgid "Last Name"
-msgstr ""
+msgstr "Příjmení"
 
 #: hypha/public/mailchimp/models.py:16
 msgid "The title of the newsletter signup form."
-msgstr ""
+msgstr "Název formuláře pro přihlášení k odběru newsletteru."
 
 #: hypha/public/mailchimp/templates/mailchimp/newsletter_signup.html:17
 msgid "Sign up"
-msgstr ""
+msgstr "Zaregistrujte se"
 
 #: hypha/public/mailchimp/views.py:69
 msgid "Sorry, there were errors with your form."
-msgstr ""
+msgstr "Omlouváme se, ve vašem formuláři se vyskytly chyby."
 
 #: hypha/public/mailchimp/views.py:72
 msgid "Sorry, there has been an problem. Please try again later."
-msgstr ""
+msgstr "Omlouváme se, došlo k problému. Zkuste to prosím později."
 
 #: hypha/public/mailchimp/views.py:78
 msgid "Thank you for subscribing"
-msgstr ""
+msgstr "Děkujeme za přihlášení k odběru"
 
 #: hypha/public/navigation/models.py:11
 msgid "Leave blank to use the page's own title"
-msgstr ""
+msgstr "Pro použití vlastního názvu stránky ponechte prázdné místo"
 
 #: hypha/public/navigation/models.py:22
 msgid "Main site navigation"
-msgstr ""
+msgstr "Hlavní navigace webu"
 
 #: hypha/public/news/blocks.py:10
 msgid ""
 "Please enter only table id from embed code. Table widget code creates "
 "automatically."
 msgstr ""
+"Zadejte prosím pouze ID tabulky z vloženého kódu. Kód widgetu tabulky se "
+"vytvoří automaticky."
 
 #: hypha/public/news/models.py:98
 msgid ""
 "Use this field to override the date that the news item appears to have been "
 "published."
 msgstr ""
+"Toto pole slouží k přepsání data, kdy se zdá, že byla novinka zveřejněna."
 
 #: hypha/public/news/models.py:110
 msgid "Authors"
-msgstr ""
+msgstr "Autoři"
 
 #: hypha/public/news/models.py:113
 msgid "News types"
-msgstr ""
+msgstr "Typy novinek"
 
 #: hypha/public/news/models.py:114
 msgid "Mentioned project"
-msgstr ""
+msgstr "Zmíněný projekt"
 
 #: hypha/public/news/models.py:173
 msgid "The title of the main news feed."
-msgstr ""
+msgstr "Název hlavního informačního kanálu."
 
 #: hypha/public/news/models.py:174
 msgid "The description of the main news feed."
-msgstr ""
+msgstr "Popis hlavního informačního kanálu."
 
 #: hypha/public/news/models.py:177
 #, python-brace-format
 msgid ""
 "The title of the news feed by type. Use {news_type} to insert the type name."
 msgstr ""
+"Název kanálu zpráv podle typu.Pro vložení názvu typu použijte {news_type}."
 
 #: hypha/public/news/models.py:179
 #, python-brace-format
@@ -4652,100 +4722,105 @@ msgid ""
 "The description of the news feed by type. Use {news_type} to insert the type "
 "name."
 msgstr ""
+"Popis kanálu zpráv podle typu. Pro vložení názvu typu použijte {news_type}."
 
 #: hypha/public/partner/models.py:49
 msgid "Partner Page"
-msgstr ""
+msgstr "Partnerská stránka"
 
 #: hypha/public/partner/models.py:120
 msgid "Investment Category Settings"
-msgstr ""
+msgstr "Nastavení investiční kategorie"
 
 #: hypha/public/partner/models.py:124
 msgid "Select the categories that should be used in investments."
-msgstr ""
+msgstr "Vyberte kategorie, které by měly být použity v investicích."
 
 #: hypha/public/partner/models.py:198
 msgid "Use format: <YYYY>"
-msgstr ""
+msgstr "Použijte formát: <RRRR>"
 
 #: hypha/public/partner/models.py:204 hypha/public/partner/tables.py:47
 #, python-brace-format
 msgid "Amount Committed ({currency})"
-msgstr ""
+msgstr "Přislíbená částka ({currency})"
 
 #: hypha/public/partner/tables.py:21
 msgid "Years"
-msgstr ""
+msgstr "Roky"
 
 #: hypha/public/partner/tables.py:55
 msgid "Items per page"
-msgstr ""
+msgstr "Položek na stránku"
 
 #: hypha/public/partner/tables.py:56
 msgid "Per page"
-msgstr ""
+msgstr "Na stránku"
 
 #: hypha/public/partner/tables.py:95
 msgid "Partner"
-msgstr ""
+msgstr "Partner"
 
 #: hypha/public/partner/tables.py:96
 msgid "Year"
-msgstr ""
+msgstr "Rok"
 
 #: hypha/public/partner/tables.py:98
 msgid "Amount Committed"
-msgstr ""
+msgstr "Přijatá částka"
 
 #: hypha/public/partner/tables.py:111
 msgid "No investments available"
-msgstr ""
+msgstr "Žádné dostupné investice"
 
 #: hypha/public/people/models.py:97
 msgid "Other"
-msgstr ""
+msgstr "Jiný"
 
 #: hypha/public/people/models.py:184
 msgid "Social accounts"
-msgstr ""
+msgstr "Sociální účty"
 
 #: hypha/public/people/models.py:188
 msgid "Other Contact Methods"
-msgstr ""
+msgstr "Další způsoby kontaktu"
 
 #: hypha/public/people/models.py:189
 msgid "Contact information"
-msgstr ""
+msgstr "Kontaktní informace"
 
 #: hypha/public/people/models.py:190
 msgid "Person types"
-msgstr ""
+msgstr "Typy osob"
 
 #: hypha/public/people/models.py:193
 msgid "Funds Reviewed"
-msgstr ""
+msgstr "Přezkoumané fondy"
 
 #: hypha/public/projects/models.py:129
 msgid "Contact Details"
-msgstr ""
+msgstr "Kontaktní údaje"
 
 #: hypha/public/projects/models.py:131
 msgid "Related Projects"
-msgstr ""
+msgstr "Související projekty"
 
 #: hypha/public/projects/models.py:134
 msgid "Categories"
-msgstr ""
+msgstr "Kategorie"
 
 #: hypha/public/utils/models.py:125
 msgid ""
 "Choose the image you wish to be displayed when this page appears in listings"
 msgstr ""
+"Vyberte obrázek, který se má zobrazit, když se tato stránka zobrazí ve "
+"výpisech"
 
 #: hypha/public/utils/models.py:127
 msgid "Override the page title used when this page appears in listings"
 msgstr ""
+"Přepsání názvu stránky, který se použije, když se tato stránka zobrazí ve "
+"výpisech"
 
 #: hypha/public/utils/models.py:128
 msgid ""
@@ -4753,86 +4828,93 @@ msgid ""
 "the description for search engines if the 'Search description' field above "
 "is not defined."
 msgstr ""
+"Textové shrnutí použité při zobrazení této stránky ve výpisech. Používá se "
+"také jako popis pro vyhledávače, pokud není definováno pole \"Popis pro "
+"vyhledávání\" výše."
 
 #: hypha/public/utils/models.py:205
 msgid "Your Twitter username without the @, e.g. katyperry"
-msgstr ""
+msgstr "Vaše uživatelské jméno na Twitteru bez @, např. katyperry"
 
 #: hypha/public/utils/models.py:210
 msgid "Your Facebook app ID."
-msgstr ""
+msgstr "ID aplikace Facebook."
 
 #: hypha/public/utils/models.py:215
 msgid "Default sharing text to use if social text has not been set on a page."
 msgstr ""
+"Výchozí text pro sdílení, který se použije, pokud na stránce nebyl nastaven "
+"text pro sociální sítě."
 
 #: hypha/public/utils/models.py:221
 msgid "Site name, used by Open Graph."
-msgstr ""
+msgstr "Název webu používaný službou Open Graph."
 
 #: hypha/public/utils/models.py:236
 msgid "Default site logo"
-msgstr ""
+msgstr "Výchozí logo webu"
 
 #: hypha/public/utils/models.py:245
 msgid "Mobil site logo (if not set default will be used)"
-msgstr ""
+msgstr "Mobilní logo webu (pokud není nastaveno, použije se výchozí)"
 
 #: hypha/public/utils/models.py:251
 msgid ""
 "Link for the site logo, e.g. \"https://www.example.org/\". If not set, "
 "defaults to page with slug set to \"home\"."
 msgstr ""
+"Odkaz na logo webu, např. \"https://www.example.org/\".Pokud není nastaveno, "
+"výchozí hodnota je stránka se slugem nastaveným na \"home\"."
 
 #: hypha/public/utils/models.py:257
 msgid "This will be added to the footer, html tags is allowed."
-msgstr ""
+msgstr "Toto bude přidáno do patičky, html značky jsou povoleny."
 
 #: hypha/public/utils/models.py:316
 msgid "In months"
-msgstr ""
+msgstr "V měsících"
 
 #: hypha/public/utils/models.py:342
 msgid "Funding"
-msgstr ""
+msgstr "Financování"
 
 #: hypha/templates/base-apply.html:107 hypha/templates/base-apply.html:116
 msgid "Log out"
-msgstr ""
+msgstr "Odhlášení"
 
 #: hypha/templates/blocks/apply_link_block.html:4
 msgid "Apply for the"
-msgstr ""
+msgstr "Požádejte o"
 
 #: hypha/templates/includes/message_item.html:7
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: hypha/templates/includes/relatedcontent.html:2
 msgid "You might also like…"
-msgstr ""
+msgstr "Mohlo by vás také zajímat…"
 
 #: hypha/templates/includes/share.html:4
 msgid "Share"
-msgstr ""
+msgstr "Sdílet"
 
 #: hypha/templates/includes/share.html:8
 msgid "Share on Twitter"
-msgstr ""
+msgstr "Sdílet na Twitteru"
 
 #: hypha/templates/includes/share.html:14
 msgid "Share on LinkedIn"
-msgstr ""
+msgstr "Sdílet na LinkedIn"
 
 #: hypha/templates/includes/share.html:21
 msgid "Share on Facebook"
-msgstr ""
+msgstr "Sdílet na Facebooku"
 
 #: hypha/templates/password_required.html:4
 #: hypha/templates/password_required.html:9
 msgid "Password required"
-msgstr ""
+msgstr "Vyžadováno heslo"
 
 #: hypha/templates/password_required.html:11
 msgid "Please enter the password to proceed."
-msgstr ""
+msgstr "Pro pokračování zadejte heslo."
