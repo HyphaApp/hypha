@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-09 10:44+0000\n"
-"PO-Revision-Date: 2024-11-30 06:05+0000\n"
+"PO-Revision-Date: 2024-11-30 08:53+0000\n"
 "Last-Translator: Jiří Podhorecký <j.podhorecky@volny.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "cs/>\n"
@@ -3777,61 +3777,61 @@ msgstr "Informace o bankovním účtu"
 
 #: hypha/apply/projects/views/vendor.py:268
 msgid "(Optional) Extra Information for Accepting Payments"
-msgstr ""
+msgstr "(Volitelné) Další informace pro přijímání plateb"
 
 #: hypha/apply/projects/views/vendor.py:273
 msgid "Intermediary Bank Account Information"
-msgstr ""
+msgstr "Informace o zprostředkovatelském bankovním účtu"
 
 #: hypha/apply/projects/views/vendor.py:282
 msgid "Account Holder National Identity Document Information"
-msgstr ""
+msgstr "Informace o dokladu totožnosti držitele účtu"
 
 #: hypha/apply/review/blocks.py:34
 #: hypha/apply/review/templates/review/review_detail.html:23
 msgid "Score"
-msgstr ""
+msgstr "Skóre"
 
 #: hypha/apply/review/blocks.py:162
 msgid "Paragraph"
-msgstr ""
+msgstr "Paragraf"
 
 #: hypha/apply/review/models.py:160
 #: hypha/apply/review/templates/review/review_detail.html:19
 msgid "Recommendation"
-msgstr ""
+msgstr "Doporučení"
 
 #: hypha/apply/review/models.py:165
 msgid "Visibility"
-msgstr ""
+msgstr "Viditelnost"
 
 #: hypha/apply/review/options.py:6
 msgid "0. Need more info"
-msgstr ""
+msgstr "0. Je třeba více informací"
 
 #: hypha/apply/review/options.py:7
 msgid "1. Poor"
-msgstr ""
+msgstr "1. Slabé"
 
 #: hypha/apply/review/options.py:8
 msgid "2. Not so good"
-msgstr ""
+msgstr "2. Ne tak dobré"
 
 #: hypha/apply/review/options.py:9
 msgid "3. Is o.k."
-msgstr ""
+msgstr "3. Je o.k."
 
 #: hypha/apply/review/options.py:10
 msgid "4. Good"
-msgstr ""
+msgstr "4. Dobré"
 
 #: hypha/apply/review/options.py:11
 msgid "5. Excellent"
-msgstr ""
+msgstr "5. Vynikající"
 
 #: hypha/apply/review/options.py:12
 msgid "n/a - choose not to answer"
-msgstr ""
+msgstr "n/a - rozhodl se neodpovídat"
 
 #: hypha/apply/review/options.py:24
 msgid "Maybe"
