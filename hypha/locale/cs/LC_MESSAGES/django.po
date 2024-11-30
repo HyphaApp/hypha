@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-09 10:44+0000\n"
-"PO-Revision-Date: 2024-11-30 08:53+0000\n"
+"PO-Revision-Date: 2024-11-30 14:44+0000\n"
 "Last-Translator: Jiří Podhorecký <j.podhorecky@volny.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "cs/>\n"
@@ -3716,7 +3716,7 @@ msgstr "Informace o uzavírání smluv pro"
 
 #: hypha/apply/projects/templates/application_projects/vendor_detail.html:18
 msgid "Last Updated"
-msgstr ""
+msgstr "Poslední aktualizace"
 
 #: hypha/apply/projects/templates/application_projects/vendor_form.html:4
 #: hypha/apply/projects/templates/application_projects/vendor_form.html:8
@@ -3835,249 +3835,253 @@ msgstr "n/a - rozhodl se neodpovídat"
 
 #: hypha/apply/review/options.py:24
 msgid "Maybe"
-msgstr ""
+msgstr "Možná"
 
 #: hypha/apply/review/options.py:32
 msgid "Agree"
-msgstr ""
+msgstr "Souhlasím"
 
 #: hypha/apply/review/options.py:33
 msgid "Disagree"
-msgstr ""
+msgstr "Nesouhlasím"
 
 #: hypha/apply/review/options.py:40
 msgid "Visible only to staff."
-msgstr ""
+msgstr "Viditelné pouze pro zaměstnance."
 
 #: hypha/apply/review/options.py:41
 msgid "Visible to other reviewers and staff."
-msgstr ""
+msgstr "Viditelné pro ostatní hodnotitele a zaměstnance."
 
 #: hypha/apply/review/options.py:45
 msgid "Private"
-msgstr ""
+msgstr "Soukromé"
 
 #: hypha/apply/review/options.py:46
 msgid "Reviewers and Staff"
-msgstr ""
+msgstr "Hodnotitelé a zaměstnanci"
 
 #: hypha/apply/review/templates/review/includes/review_button.html:8
 msgid "Add a review"
-msgstr ""
+msgstr "Přidat hodnocení"
 
 #: hypha/apply/review/templates/review/review_confirm_delete.html:17
 msgid "Are you sure you want to delete"
-msgstr ""
+msgstr "Opravdu chcete odstranit"
 
 #: hypha/apply/review/templates/review/review_detail.html:3
 msgid "Review for"
-msgstr ""
+msgstr "Hodnocení pro"
 
 #: hypha/apply/review/templates/review/review_detail.html:11
 msgid "at"
-msgstr ""
+msgstr "v"
 
 #: hypha/apply/review/templates/review/review_detail.html:48
 msgid "Review was not against the latest version"
-msgstr ""
+msgstr "Hodnocení nebylo proti nejnovější verzi"
 
 #: hypha/apply/review/templates/review/review_detail.html:68
 msgid ""
 "An opinion is a replacement for a review. You will no longer be able to "
 "submit a review for this application."
 msgstr ""
+"Názor nahrazuje hodnocení. K této žádosti již nebudete moci podat hodnocení."
 
 #: hypha/apply/review/templates/review/review_form.html:46
 msgid "You have already posted a review for this submission"
-msgstr ""
+msgstr "Již jste odeslali hodnocení tohoto podání"
 
 #: hypha/apply/review/views.py:78
 msgid "Edit Review"
-msgstr ""
+msgstr "Upravit hodnocení"
 
 #: hypha/apply/review/views.py:143
 msgid "Update Review draft"
-msgstr ""
+msgstr "Aktualizace návrhu hodnocení"
 
 #: hypha/apply/review/views.py:143
 msgid "Create Review"
-msgstr ""
+msgstr "Vytvořit hodnocení"
 
 #: hypha/apply/stream_forms/blocks.py:37
 msgid "Help text"
-msgstr ""
+msgstr "Text nápovědy"
 
 #: hypha/apply/stream_forms/blocks.py:38
 msgid "Help link"
-msgstr ""
+msgstr "Odkaz na nápovědu"
 
 #: hypha/apply/stream_forms/blocks.py:115
 #: hypha/apply/stream_forms/blocks.py:216
 msgid "Required"
-msgstr ""
+msgstr "Vyžadováno"
 
 #: hypha/apply/stream_forms/blocks.py:119
 msgid "Email"
-msgstr ""
+msgstr "E-mail"
 
 #: hypha/apply/stream_forms/blocks.py:120
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: hypha/apply/stream_forms/blocks.py:125
 msgid "Format"
-msgstr ""
+msgstr "Formát"
 
 #: hypha/apply/stream_forms/blocks.py:126
 #: hypha/apply/stream_forms/blocks.py:155
 #: hypha/apply/stream_forms/blocks.py:169
 msgid "Default value"
-msgstr ""
+msgstr "Výchozí hodnota"
 
 #: hypha/apply/stream_forms/blocks.py:129
 msgid "Text field (single line)"
-msgstr ""
+msgstr "Textové pole (jednořádkové)"
 
 #: hypha/apply/stream_forms/blocks.py:147
 msgid "Max number of inputs"
-msgstr ""
+msgstr "Maximální počet vstupů"
 
 #: hypha/apply/stream_forms/blocks.py:148
 msgid "Add new item"
-msgstr ""
+msgstr "Přidat novou položku"
 
 #: hypha/apply/stream_forms/blocks.py:151
 msgid "Text field (single line) (multiple inputs)"
-msgstr ""
+msgstr "Textové pole (jednořádkové) (více vstupů)"
 
 #: hypha/apply/stream_forms/blocks.py:156
 msgid "Word limit"
-msgstr ""
+msgstr "Omezení počtu slov"
 
 #: hypha/apply/stream_forms/blocks.py:161
 msgid "Text field (multi line)"
-msgstr ""
+msgstr "Textové pole (víceřádkové)"
 
 #: hypha/apply/stream_forms/blocks.py:174
 msgid "Number field"
-msgstr ""
+msgstr "Číselné pole"
 
 #: hypha/apply/stream_forms/blocks.py:186
 msgid "Checkbox field"
-msgstr ""
+msgstr "Zaškrtávací pole"
 
 #: hypha/apply/stream_forms/blocks.py:197
 #: hypha/apply/stream_forms/blocks.py:218
 msgid "Choice"
-msgstr ""
+msgstr "Volba"
 
 #: hypha/apply/stream_forms/blocks.py:203
 msgid "Radio buttons"
-msgstr ""
+msgstr "Rádiová tlačítka"
 
 #: hypha/apply/stream_forms/blocks.py:230
 msgid "Group fields"
-msgstr ""
+msgstr "Skupinová pole"
 
 #: hypha/apply/stream_forms/blocks.py:264
 msgid "Dropdown field"
-msgstr ""
+msgstr "Rozbalovací pole"
 
 #: hypha/apply/stream_forms/blocks.py:274
 msgid "Checkbox"
-msgstr ""
+msgstr "Zaškrtávací políčko"
 
 #: hypha/apply/stream_forms/blocks.py:280
 msgid "Multiple checkboxes field"
-msgstr ""
+msgstr "Pole s více zaškrtávacími políčky"
 
 #: hypha/apply/stream_forms/blocks.py:320
 msgid "Date field"
-msgstr ""
+msgstr "Pole s datem"
 
 #: hypha/apply/stream_forms/blocks.py:342
 msgid "Time field"
-msgstr ""
+msgstr "Pole času"
 
 #: hypha/apply/stream_forms/blocks.py:375
 msgid "Date+time field"
-msgstr ""
+msgstr "Pole Datum+čas"
 
 #: hypha/apply/stream_forms/blocks.py:407
 msgid "Image field"
-msgstr ""
+msgstr "Obrázkové pole"
 
 #: hypha/apply/stream_forms/blocks.py:419
 msgid "File field"
-msgstr ""
+msgstr "Souborové pole"
 
 #: hypha/apply/stream_forms/blocks.py:432
 msgid "Multiple File field"
-msgstr ""
+msgstr "Pole pro více souborů"
 
 #: hypha/apply/stream_forms/blocks.py:465
 msgid "Section text"
-msgstr ""
+msgstr "Text oddílu"
 
 #: hypha/apply/stream_forms/blocks.py:466
 msgid "Section header"
-msgstr ""
+msgstr "Záhlaví sekce"
 
 #: hypha/apply/stream_forms/blocks.py:485 hypha/public/forms/models.py:62
 msgid "Form fields"
-msgstr ""
+msgstr "Pole formuláře"
 
 #: hypha/apply/templates/forms/includes/form_errors.html:5
 msgid ""
 "There were some errors with your form. Please amend the fields highlighted "
 "below."
 msgstr ""
+"Ve vašem formuláři se vyskytly chyby. Níže zvýrazněná pole prosím opravte."
 
 #: hypha/apply/users/admin_views.py:34 hypha/apply/users/admin_views.py:59
 msgid "Search users"
-msgstr ""
+msgstr "Hledat uživatele"
 
 #: hypha/apply/users/forms.py:60
 msgid ""
 "You are registered using OAuth, please contact an admin if you need to "
 "change your email address."
 msgstr ""
+"Jste zaregistrováni pomocí OAuth, pokud potřebujete změnit e-mailovou "
+"adresu, kontaktujte prosím správce."
 
 #: hypha/apply/users/forms.py:78
 msgid "Only includes active, non-superusers"
-msgstr ""
+msgstr "Zahrnuje pouze aktivní uživatele, kteří nejsou superuživateli"
 
 #: hypha/apply/users/models.py:102
 msgid "email address"
-msgstr ""
+msgstr "e-mailová adresa"
 
 #: hypha/apply/users/models.py:103
 msgid "Full name"
-msgstr ""
+msgstr "Celé jméno"
 
 #: hypha/apply/users/models.py:105
 msgid "Slack name"
-msgstr ""
+msgstr "Uživatelské jméno na Slack"
 
 #: hypha/apply/users/models.py:107
 msgid "This is the name we should \"@mention\" when sending notifications"
-msgstr ""
+msgstr "Toto je jméno, které bychom měli \"@mention\" při odesílání oznámení"
 
 #: hypha/apply/users/templates/two_factor/_base.html:7
 #: hypha/apply/users/templates/two_factor/_base_focus.html:7
 #: hypha/apply/users/templates/users/account.html:9
 msgid "Welcome"
-msgstr ""
+msgstr "Vítejte"
 
 #: hypha/apply/users/templates/two_factor/_base.html:9
 #: hypha/apply/users/templates/two_factor/_base_focus.html:9
 #: hypha/apply/users/templates/users/account.html:11
 msgid "Go to my dashboard"
-msgstr ""
+msgstr "Přejít na můj ovládací panel"
 
 #: hypha/apply/users/templates/two_factor/_wizard_actions.html:3
 msgid "Next"
-msgstr ""
+msgstr "Další"
 
 #: hypha/apply/users/templates/two_factor/core/backup_tokens.html:6
 #: hypha/apply/users/templates/two_factor/profile/disable.html:6
