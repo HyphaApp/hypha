@@ -112,7 +112,11 @@ If applicants should be forced to preview their application before submitting
 
 ----
 
-Set the allowed file extension for all uploads fields.
+### Allow Withdrawing of Submissions
+
+    ENABLE_SUBMISSION_WITHDRAWAL = env.bool('ENABLE_SUBMISSION_WITHDRAWAL', False)
+
+### Set the allowed file extension for all uploads fields.
 
     FILE_ALLOWED_EXTENSIONS = ['doc', 'docx', 'odp', 'ods', 'odt', 'pdf', 'ppt', 'pptx', 'rtf', 'txt', 'xls', 'xlsx']
     FILE_ACCEPT_ATTR_VALUE = ', '.join(['.' + ext for ext in FILE_ALLOWED_EXTENSIONS])
