@@ -70,7 +70,7 @@ download-esm-modules:  ## Download ECMAScript modules for the project
 
 .cache/tandem:  ## Install tandem, a tool for running multiple commands in parallel
 	@mkdir -p $$(dirname $@)
-	@curl -fsSL https://raw.githubusercontent.com/rosszurowski/tandem/main/install.sh | bash -s -- --dest="$$(dirname $@)"
+	@curl -fsSL https://raw.githubusercontent.com/rosszurowski/tandem/524b1e0379efca55bcf9ad2a9fe5453a117eb0a4/install.sh | bash -s -- --dest="$$(dirname $@)"
 
 
 .cache/dev-build-fe: .cache/npm-packages $(shell find hypha/static_src)  ## Build frontend resources for development
