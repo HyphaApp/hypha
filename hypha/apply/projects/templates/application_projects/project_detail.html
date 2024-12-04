@@ -86,8 +86,11 @@
 
             <div class="tabs js-tabs">
                 <div class="tabs__container">
-                    <a class="tab__item" href="#details" data-tab="tab-1">
-                        {% trans "Project" %}
+                    <a
+                        class="tab__item js-tabs-off"
+                        href="{{ project.submission.get_absolute_url }}"
+                    >
+                        {% trans "Application" %}
                     </a>
 
                     <a class="tab__item"
@@ -97,11 +100,8 @@
                         {% trans "Conversations" %} ({{ comments_count }})
                     </a>
 
-                    <a
-                        class="tab__item js-tabs-off"
-                        href="{{ project.submission.get_absolute_url }}"
-                    >
-                        {% trans "Application" %}
+                    <a class="tab__item" href="#details" data-tab="tab-1">
+                        {% trans "Project" %}
                     </a>
                 </div>
             </div>
