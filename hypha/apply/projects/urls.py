@@ -235,7 +235,8 @@ urlpatterns = [
         include(
             (
                 [
-                    path("", ReportListView.as_view(), name="all"),
+                    path("", ReportListView.as_view(), name="submitted"),
+                    path("all/", ReportingView.as_view(), name="all"),
                     path(
                         "<int:pk>/",
                         include(
@@ -256,5 +257,4 @@ urlpatterns = [
             )
         ),
     ),
-    path("reporting/", ReportingView.as_view(), name="reporting"),
 ]

@@ -9,7 +9,10 @@
 
     {% adminbar %}
         {% slot header %}{% trans "Submitted Reports" %} ({{ table.rows|length }}){% endslot %}
-        {% slot sub_heading %}{% trans "View and filter all Submitted Reports" %}{% endslot %}
+        {% slot sub_heading %}
+            {% trans "View and filter all Submitted Reports" %} •
+            <a href="{% url 'apply:projects:reports:all' %}" class="text-blue-300 hover:underline">View all reports</a>
+        {% endslot %}
     {% endadminbar %}
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
