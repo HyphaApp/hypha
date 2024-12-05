@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-09 10:44+0000\n"
-"PO-Revision-Date: 2024-11-18 01:00+0000\n"
+"PO-Revision-Date: 2024-12-01 18:00+0000\n"
 "Last-Translator: Jiří Podhorecký <j.podhorecky@volny.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "cs/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
 "X-Generator: Weblate 5.9-dev\n"
 
 #: hypha/apply/activity/messaging.py:39
@@ -71,12 +71,12 @@ msgstr ""
 
 #: hypha/apply/activity/messaging.py:243
 msgid "Created"
-msgstr ""
+msgstr "Vytvořeno"
 
 #: hypha/apply/activity/messaging.py:244
 #, python-brace-format
 msgid "Progressed from {old_stage} to {source.status_display}"
-msgstr ""
+msgstr "Postoupilo z {old_stage} do {source.status_display}"
 
 #: hypha/apply/activity/messaging.py:246
 msgid "Requested approval"
@@ -104,11 +104,11 @@ msgstr "Schválená smlouva"
 #: hypha/apply/activity/messaging.py:251
 #, python-brace-format
 msgid "Updated Invoice status to: {invoice.status_display}"
-msgstr ""
+msgstr "Stav faktury byl aktualizován na: {invoice.status_display}"
 
 #: hypha/apply/activity/messaging.py:252
 msgid "Invoice created"
-msgstr ""
+msgstr "Faktura vytvořena"
 
 #: hypha/apply/activity/messaging.py:253
 msgid "Submitted a report"
@@ -163,7 +163,7 @@ msgstr ""
 #: hypha/apply/activity/messaging.py:405
 #, python-brace-format
 msgid "Screening status from {old_status} to {new_status}"
-msgstr ""
+msgstr "Stav prověřování od {old_status} do {new_status}"
 
 #: hypha/apply/activity/messaging.py:412
 #, python-brace-format
@@ -171,6 +171,7 @@ msgid ""
 "A new submission has been submitted for {source.page.title}: <{link}|{source."
 "title}>"
 msgstr ""
+"Pro {source.page.title} byl odeslán nový příspěvek: <{link}|{source.title}>"
 
 #: hypha/apply/activity/messaging.py:413
 #, python-brace-format
@@ -219,7 +220,8 @@ msgstr "Návrh byl předložen k přezkoumání: <{link}|{source.title}>"
 msgid ""
 "<{link}|{source.title}> by {source.user} has been invited to submit a "
 "proposal"
-msgstr "<{link}|{source.title}> od {source.user} byl vyzván k předložení návrhu"
+msgstr ""
+"<{link}|{source.title}> od {source.user} byl vyzván k předložení návrhu"
 
 #: hypha/apply/activity/messaging.py:427
 #, python-brace-format
@@ -227,8 +229,8 @@ msgid ""
 "{user} has submitted a review for <{link}|{source.title}>. Outcome: {review."
 "outcome},  Score: {review.get_score_display}"
 msgstr ""
-"{user} odeslal recenzi na <{link}|{source.title}>. Výsledek: {review.outcome}"
-", Score: {review.get_score_display}"
+"{user} odeslal recenzi na <{link}|{source.title}>. Výsledek: {review."
+"outcome}, Score: {review.get_score_display}"
 
 #: hypha/apply/activity/messaging.py:429
 #, python-brace-format
@@ -241,6 +243,8 @@ msgid ""
 "{user} {opinion.opinion_display}s with {opinion.review.author}s review of "
 "{source.title}"
 msgstr ""
+"{user} {opinion.opinion_display} s hodnocením {opinion.review.author} na "
+"{source.title}"
 
 #: hypha/apply/activity/messaging.py:432
 #, python-brace-format
@@ -250,12 +254,12 @@ msgstr "{user} smazal {source.title}"
 #: hypha/apply/activity/messaging.py:433
 #, python-brace-format
 msgid "{user} has deleted {review.author} review for <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} smazal hodnocení {review.author} pro <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:434
 #, python-brace-format
 msgid "{user} has created a Project: <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} vytvořil projekt: <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:435
 #, python-brace-format
@@ -269,17 +273,17 @@ msgstr ""
 #: hypha/apply/activity/messaging.py:436
 #, python-brace-format
 msgid "{user} has edited {review.author} review for <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} upravil {review.author} recenzi pro <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:437
 #, python-brace-format
 msgid "{user} has requested approval on project <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} požádal o schválení projektu <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:438
 #, python-brace-format
 msgid "{user} has approved project <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} schválil projekt <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:439
 #, python-brace-format
@@ -287,21 +291,22 @@ msgid ""
 "{user} has requested changes for project acceptance on <{link}|{source.title}"
 ">."
 msgstr ""
+"{user} požádal o změny pro přijetí projektu dne <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:440
 #, python-brace-format
 msgid "{user} has uploaded a contract for <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} nahrál smlouvu pro <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:441
 #, python-brace-format
 msgid "{user} has approved contract for <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} schválil smlouvu pro <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:442
 #, python-brace-format
 msgid "{user} has created invoice for <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} vytvořil fakturu pro <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:443
 #, python-brace-format
@@ -309,26 +314,28 @@ msgid ""
 "{user} has changed the status of <{link_related}|invoice> on <{link}|{source."
 "title}> to {invoice.status_display}."
 msgstr ""
+"{user} změnil stav <{link_related}|invoice> na <{link}|{source.title}> na "
+"{invoice.status_display}."
 
 #: hypha/apply/activity/messaging.py:444
 #, python-brace-format
 msgid "{user} has deleted invoice from <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} smazal fakturu z <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:445
 #, python-brace-format
 msgid "{user} has updated invoice for <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} aktualizoval fakturu za <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:446
 #, python-brace-format
 msgid "{user} has submitted a report for <{link}|{source.title}>."
-msgstr ""
+msgstr "{user} odeslal zprávu pro <{link}|{source.title}>."
 
 #: hypha/apply/activity/messaging.py:510
 #, python-brace-format
 msgid "{user} has updated the reviewers on <{link}|{title}>."
-msgstr ""
+msgstr "{user} aktualizoval hodnotitele na <{link}|{title}>."
 
 #: hypha/apply/activity/messaging.py:526
 #, python-brace-format
@@ -415,7 +422,7 @@ msgstr "Vaše {org_long_name} Projekt: {source.title}"
 
 #: hypha/apply/activity/messaging.py:963
 msgid "Successfully uploaded document"
-msgstr ""
+msgstr "Dokument byl úspěšně nahrán"
 
 #: hypha/apply/activity/messaging.py:964
 msgid "Successfully removed document"
@@ -490,7 +497,7 @@ msgstr "Pokud máte nějaké dotazy, napište je sem"
 #: hypha/apply/activity/templates/messages/email/applicant_base.html:10
 #: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:12
 msgid "Link to our guide"
-msgstr ""
+msgstr "Odkaz na našeho průvodce"
 
 #: hypha/apply/activity/templates/messages/email/applicant_base.html:12
 #: hypha/apply/activity/templates/messages/email/comment.html:9
@@ -519,6 +526,12 @@ msgid ""
 "%(ORG_LONG_NAME)s\n"
 "%(PUBLIC_SITE.root_url)s"
 msgstr ""
+"s pozdravem\n"
+"Tým %(ORG_SHORT_NAME)s\n"
+"\n"
+"--\n"
+"%(ORG_LONG_NAME)s\n"
+"%(PUBLIC_SITE.root_url)s"
 
 #: hypha/apply/activity/templates/messages/email/batch_ready_to_review.html:4
 #: hypha/apply/activity/templates/messages/email/ready_to_review.html:4
@@ -606,6 +619,10 @@ msgid ""
 "with more details about your project. You will receive a second email "
 "linking to a determination message with detailed feedback."
 msgstr ""
+"Zkontrolovali jsme vaši koncepční poznámku a myslíme si, že by mohla být "
+"vhodná pro financování %(ORG_SHORT_NAME)s. Rádi bychom vás pozvali k "
+"předložení návrhu s podrobnějšími informacemi o vašem projektu. Obdržíte "
+"druhý e-mail s odkazem na zprávu o rozhodnutí s podrobnou zpětnou vazbou."
 
 #: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:6
 msgid ""
@@ -637,7 +654,7 @@ msgstr ""
 #: hypha/apply/activity/templates/messages/email/invoice_updated.html:7
 #, python-format
 msgid "It is now %(status)s."
-msgstr ""
+msgstr "Nyní je %(status)s."
 
 #: hypha/apply/activity/templates/messages/email/invoice_status_updated.html:9
 msgid "The staff member left this comment"
@@ -754,7 +771,7 @@ msgstr "V případě dotazů kontaktujte %(lead)s - %(email)s."
 #, python-format
 msgid ""
 "Your application has been progressed from %(old_status)s to %(new_status)s."
-msgstr ""
+msgstr "Vaše žádost byla posunuta z %(old_status)s do %(new_status)s."
 
 #: hypha/apply/activity/templates/messages/email/vendor_setup_needed.html:5
 #, python-format
@@ -980,7 +997,7 @@ msgstr "Žádná aktivní podání"
 
 #: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:50
 msgid "Your active projects"
-msgstr ""
+msgstr "Vaše aktivní projekty"
 
 #: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:57
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:71
@@ -1082,11 +1099,11 @@ msgstr "Vaše podání s příznakem"
 
 #: hypha/apply/dashboard/templates/dashboard/includes/waiting-for-review.html:5
 msgid "Waiting for your review"
-msgstr ""
+msgstr "Čekání na vaše hodnocení"
 
 #: hypha/apply/dashboard/templates/dashboard/includes/waiting-for-review.html:19
 msgid "Nice! You're all caught up."
-msgstr ""
+msgstr "Pěkné! Všichni jste se chytili."
 
 #: hypha/apply/dashboard/templates/dashboard/includes/waiting-for-review.html:20
 msgid "Find new applications to review"
@@ -1129,7 +1146,7 @@ msgstr "Pole"
 
 #: hypha/apply/determinations/blocks.py:65
 msgid "Section text/header"
-msgstr ""
+msgstr "Text/záhlaví sekce"
 
 #: hypha/apply/determinations/forms.py:170
 #: hypha/apply/determinations/forms.py:251
@@ -1389,7 +1406,7 @@ msgstr "Rozhodnutí pro"
 #: hypha/apply/determinations/templates/determinations/determination_detail.html:10
 #: hypha/apply/review/templates/review/review_detail.html:8
 msgid "Back to submission"
-msgstr ""
+msgstr "Zpět k podání"
 
 #: hypha/apply/determinations/templates/determinations/determination_detail.html:12
 msgid "DRAFT"
@@ -1397,7 +1414,7 @@ msgstr "NÁVRH"
 
 #: hypha/apply/determinations/templates/determinations/determination_form.html:7
 msgid "Edit Determination"
-msgstr ""
+msgstr "Upravit určení"
 
 #: hypha/apply/determinations/templates/determinations/includes/applicant_determination_block.html:3
 #: hypha/apply/determinations/templates/determinations/includes/determination_block.html:3
@@ -1466,8 +1483,8 @@ msgid ""
 "A determination of \"{current}\" exists but you tried to progress as "
 "\"{target}\""
 msgstr ""
-"Rozhodnutí o \"{current}\" existuje, ale pokusili jste se postoupit jako \""
-"{target}\""
+"Rozhodnutí o \"{current}\" existuje, ale pokusili jste se postoupit jako "
+"\"{target}\""
 
 #: hypha/apply/flags/templates/flags/flags.html:3
 msgid "Flags"
@@ -1565,7 +1582,7 @@ msgstr "Aktualizace vedení z {lead} na"
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:104
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:19
 msgid "Lead"
-msgstr ""
+msgstr "Vedoucí"
 
 #: hypha/apply/funds/forms.py:195 hypha/apply/funds/tables.py:259
 #: hypha/apply/funds/tables.py:443
@@ -1576,7 +1593,8 @@ msgstr "Hodnotitelé"
 
 #: hypha/apply/funds/forms.py:260
 msgid "Can't unassign, just change, because review already submitted"
-msgstr "Nelze zrušit přiřazení, pouze změnit, protože recenze již byla odeslána"
+msgstr ""
+"Nelze zrušit přiřazení, pouze změnit, protože recenze již byla odeslána"
 
 #: hypha/apply/funds/forms.py:265 hypha/apply/funds/forms.py:338
 msgid "Users cannot be assigned to multiple roles."
@@ -1584,7 +1602,7 @@ msgstr "Uživatelé nemohou být přiřazeni k více rolím."
 
 #: hypha/apply/funds/forms.py:364
 msgid "-- No reviewer selected --"
-msgstr ""
+msgstr "-- Nevybrán žádný hodnotitel--"
 
 #: hypha/apply/funds/forms.py:366
 #, python-brace-format
@@ -1708,15 +1726,15 @@ msgstr "Výchozí hodnota Ano/Ne"
 
 #: hypha/apply/funds/models/screening.py:15
 msgid "Only one Yes and No screening status can be set as default."
-msgstr ""
+msgstr "Jako výchozí lze nastavit pouze jeden stav prověřování Ano a Ne."
 
 #: hypha/apply/funds/models/utils.py:118
 msgid "Forms"
-msgstr ""
+msgstr "Formuláře"
 
 #: hypha/apply/funds/models/utils.py:119
 msgid "Review Forms"
-msgstr ""
+msgstr "Formuláře hodnocení"
 
 #: hypha/apply/funds/models/utils.py:120
 msgid "Determination Forms"
@@ -1792,7 +1810,7 @@ msgstr "Fondy"
 
 #: hypha/apply/funds/tables.py:258 hypha/apply/funds/tables.py:415
 msgid "Leads"
-msgstr ""
+msgstr "Vedoucí pracovníci"
 
 #: hypha/apply/funds/tables.py:260
 msgid "No Status"
@@ -1888,6 +1906,8 @@ msgid ""
 "Please note that it is not submitted for review. You can complete your "
 "application by following the log-in details emailed to you."
 msgstr ""
+"Upozorňujeme, že není odeslán k hodnocení. Přihlášku můžete dokončit podle "
+"přihlašovacích údajů, které vám byly zaslány e-mailem."
 
 #: hypha/apply/funds/templates/funds/application_base_landing.html:16
 msgid ""
@@ -1900,6 +1920,8 @@ msgid ""
 "If you do not receive an e-mail within 15 minutes please check your\n"
 "spam folder and contact %(email)s for further assistance."
 msgstr ""
+"Pokud neobdržíte e-mail do 15 minut, zkontrolujte prosím \n"
+"složku se spamem a kontaktujte %(email)s pro další pomoc."
 
 #: hypha/apply/funds/templates/funds/applicationrevision_list.html:3
 #, python-format
@@ -2029,7 +2051,7 @@ msgstr "Úpravy"
 #: hypha/apply/projects/templates/application_projects/report_form.html:14
 #: hypha/apply/projects/templates/application_projects/vendor_detail.html:10
 msgid "Back to project"
-msgstr ""
+msgstr "Zpět k projektu"
 
 #: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:26
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:25
@@ -2053,6 +2075,13 @@ msgid ""
 "find more information about our support options, review process and "
 "selection criteria on our website."
 msgstr ""
+"Oceňujeme vaši přihlášku %(title)s, kterou jste odeslali do "
+"%(ORG_LONG_NAME)s. Váš příspěvek zkontrolujeme a odpovíme na něj co "
+"nejrychleji.\n"
+"\n"
+"Naše odpověď bude obsahovat další kroky pro vaši aplikaci %(title)s. Více "
+"informací o našich možnostech podpory, procesu kontroly a výběrových "
+"kritériích naleznete na našich webových stránkách."
 
 #: hypha/apply/funds/templates/funds/email/confirmation.html:10
 msgid "Project name"
@@ -2085,7 +2114,7 @@ msgstr "Vytvořit projekt"
 #: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:17
 #: hypha/apply/funds/templates/funds/includes/screening_form.html:4
 msgid "Screen application"
-msgstr ""
+msgstr "Kontrola žádosti"
 
 #: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:21
 msgid "Complete draft determination"
@@ -2094,7 +2123,7 @@ msgstr "Úplný návrh rozhodnutí"
 #: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:26
 #: hypha/apply/funds/templates/funds/includes/generic_primary_actions.html:8
 msgid "Complete draft review"
-msgstr ""
+msgstr "Dokončete návrh hodnocení"
 
 #: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:30
 msgid "Assign reviewers"
@@ -2167,7 +2196,7 @@ msgstr "Přidat hodnotitele"
 
 #: hypha/apply/funds/templates/funds/includes/create_project_form.html:4
 msgid "This will create a new project and notify the Applicant."
-msgstr ""
+msgstr "Tím vytvoříte nový projekt a informujete žadatele."
 
 #: hypha/apply/funds/templates/funds/includes/create_project_form.html:5
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:36
@@ -2240,7 +2269,7 @@ msgstr "Právní název"
 
 #: hypha/apply/funds/templates/funds/includes/rendered_answers.html:18
 msgid "Edit account"
-msgstr ""
+msgstr "Upravit účet"
 
 #: hypha/apply/funds/templates/funds/includes/rendered_answers.html:22
 #: hypha/apply/funds/templates/funds/includes/revision_diff_table.html:11
@@ -2255,7 +2284,7 @@ msgstr "Zatím žádní hodnotitelé z týmu zaměstnanců"
 
 #: hypha/apply/funds/templates/funds/includes/review_sidebar.html:27
 msgid "All Assigned Advisors"
-msgstr ""
+msgstr "Všichni přidělení poradci"
 
 #: hypha/apply/funds/templates/funds/includes/round-block-listing.html:33
 msgid "There are no"
@@ -2267,23 +2296,23 @@ msgstr "kola"
 
 #: hypha/apply/funds/templates/funds/includes/screening_form.html:5
 msgid "Current statuses"
-msgstr ""
+msgstr "Aktuální stavy"
 
 #: hypha/apply/funds/templates/funds/includes/screening_form.html:6
 msgid "Screen"
-msgstr ""
+msgstr "Obrazovka"
 
 #: hypha/apply/funds/templates/funds/includes/screening_status_block.html:4
 msgid "Screening status"
-msgstr ""
+msgstr "Stav prověřování"
 
 #: hypha/apply/funds/templates/funds/includes/screening_status_block.html:36
 msgid "Screening options<"
-msgstr ""
+msgstr "Možnosti kontroly"
 
 #: hypha/apply/funds/templates/funds/includes/status-block.html:4
 msgid "By status"
-msgstr ""
+msgstr "Podle stavu"
 
 #: hypha/apply/funds/templates/funds/includes/submission_stats.html:4
 msgid "Amounts"
@@ -2409,7 +2438,7 @@ msgstr "Porovnávání revizí"
 
 #: hypha/apply/funds/templates/funds/revisions_compare.html:9
 msgid "Back to revisions"
-msgstr ""
+msgstr "Zpět k revizím"
 
 #: hypha/apply/funds/templates/funds/rounds.html:17
 msgid "Explore current and past rounds"
@@ -2475,7 +2504,7 @@ msgstr "Výsledky podání"
 
 #: hypha/apply/funds/templates/funds/submissions_result.html:11
 msgid "Track and explore the results"
-msgstr ""
+msgstr "Sledujte a prozkoumávejte výsledky"
 
 #: hypha/apply/funds/templates/funds/submissions_result.html:22
 msgid "Summary"
@@ -2516,7 +2545,7 @@ msgstr "Žadatel"
 
 #: hypha/apply/funds/templates/funds/tables/table.html:23
 msgid "Screening statuses"
-msgstr ""
+msgstr "Stavy kontroly"
 
 #: hypha/apply/funds/templates/funds/tables/table.html:24
 msgid "Review outcomes"
@@ -2528,7 +2557,7 @@ msgstr "Čekající"
 
 #: hypha/apply/funds/templates/funds/tables/table.html:96
 msgid "Linked"
-msgstr ""
+msgstr "Propojeno"
 
 #: hypha/apply/funds/templates/funds/tables/table.html:130
 #: hypha/public/partner/templates/partner/table.html:42
@@ -2566,7 +2595,7 @@ msgstr "Žádné stavy neodpovídají požadované hodnotě"
 
 #: hypha/apply/funds/views.py:1024
 msgid "Submission saved successfully"
-msgstr ""
+msgstr "Podání bylo úspěšně uloženo"
 
 #: hypha/apply/funds/workflow.py:213 hypha/apply/funds/workflow.py:257
 #: hypha/apply/funds/workflow.py:340 hypha/apply/funds/workflow.py:378
@@ -2599,7 +2628,7 @@ msgstr "Připraveno k rozhodnutí"
 #: hypha/apply/funds/workflow.py:622 hypha/apply/funds/workflow.py:872
 #: hypha/apply/funds/workflow.py:897
 msgid "Accept but additional info required"
-msgstr "Přijato, ale jsou požadovány další informace"
+msgstr "Přijmout, ale jsou požadovány další informace"
 
 #: hypha/apply/funds/workflow.py:217 hypha/apply/funds/workflow.py:234
 #: hypha/apply/funds/workflow.py:261 hypha/apply/funds/workflow.py:277
@@ -2820,11 +2849,11 @@ msgstr "Vykazované období"
 
 #: hypha/apply/projects/forms/payment.py:63
 msgid "You can only set a value when moving to the Paid status."
-msgstr ""
+msgstr "Hodnotu můžete nastavit pouze při přechodu do stavu Zaplaceno."
 
 #: hypha/apply/projects/forms/payment.py:86
 msgid "Date From must be before Date To"
-msgstr ""
+msgstr "Datum od musí být před datem do"
 
 #: hypha/apply/projects/forms/payment.py:95
 msgid ""
@@ -2856,19 +2885,19 @@ msgstr "Schválit můžete pouze podepsanou smlouvu"
 
 #: hypha/apply/projects/forms/project.py:75
 msgid "Cannot approve for a different user"
-msgstr ""
+msgstr "Nelze schválit pro jiného uživatele"
 
 #: hypha/apply/projects/forms/project.py:143
 msgid "A Project can only be sent for Approval when Committed."
-msgstr ""
+msgstr "Projekt lze odeslat ke schválení pouze tehdy, je-li potvrzen."
 
 #: hypha/apply/projects/forms/project.py:146
 msgid "A Project can only be sent for Approval once"
-msgstr ""
+msgstr "Projekt lze odeslat ke schválení pouze jednou"
 
 #: hypha/apply/projects/forms/project.py:173
 msgid "File Name"
-msgstr ""
+msgstr "Název souboru"
 
 #: hypha/apply/projects/forms/report.py:16
 msgid "This section of the report will be shared with the broader community."
@@ -2884,19 +2913,19 @@ msgstr "Při odesílání zprávy musíte uvést buď veřejný, nebo soukromý 
 
 #: hypha/apply/projects/forms/report.py:106
 msgid "No."
-msgstr ""
+msgstr "Ne."
 
 #: hypha/apply/projects/forms/report.py:127
 msgid "Cannot start a schedule before the current reporting period"
-msgstr ""
+msgstr "Nelze spustit plán před aktuálním obdobím hodnocení"
 
 #: hypha/apply/projects/forms/report.py:133
 msgid "Cannot start a schedule in the past"
-msgstr ""
+msgstr "Nelze spustit plán v minulosti"
 
 #: hypha/apply/projects/forms/report.py:139
 msgid "Cannot start a schedule beyond the end date"
-msgstr ""
+msgstr "Plán nelze spustit po datu ukončení"
 
 #: hypha/apply/projects/forms/vendor.py:49
 #: hypha/apply/projects/models/vendor.py:46
@@ -2918,11 +2947,11 @@ msgstr "Ano"
 
 #: hypha/apply/projects/models/payment.py:22
 msgid "Changes Requested"
-msgstr ""
+msgstr "Požadované změny"
 
 #: hypha/apply/projects/models/payment.py:23
 msgid "Under Review"
-msgstr ""
+msgstr "Probíhá hodnocení"
 
 #: hypha/apply/projects/models/payment.py:24
 msgid "Paid"
@@ -2947,7 +2976,7 @@ msgstr "Faktura požadovaná za {project}"
 
 #: hypha/apply/projects/models/project.py:51
 msgid "Committed"
-msgstr ""
+msgstr "Předložený"
 
 #: hypha/apply/projects/models/project.py:52
 msgid "Contracting"
@@ -2955,7 +2984,7 @@ msgstr "Uzavírání smluv"
 
 #: hypha/apply/projects/models/project.py:53
 msgid "In Progress"
-msgstr ""
+msgstr "Probíhá"
 
 #: hypha/apply/projects/models/project.py:54
 msgid "Closing"
@@ -2985,7 +3014,7 @@ msgstr "Schválení {project} od {user}"
 #: hypha/apply/projects/models/project.py:414
 #: hypha/apply/projects/templates/application_projects/project_detail.html:222
 msgid "Signed"
-msgstr ""
+msgstr "Podepsaný"
 
 #: hypha/apply/projects/models/project.py:414
 #: hypha/apply/projects/templates/application_projects/project_detail.html:233
@@ -3025,17 +3054,17 @@ msgstr "poslední den"
 #: hypha/apply/projects/models/report.py:204
 #, python-brace-format
 msgid "Monthly on the {day} of the month"
-msgstr ""
+msgstr "Měsíčně v {day} v měsíci"
 
 #: hypha/apply/projects/models/report.py:205
 #, python-brace-format
 msgid "Every {occurrence} months on the {day} of the month"
-msgstr ""
+msgstr "Každých {occurrence} měsíců v {day} v měsíci"
 
 #: hypha/apply/projects/models/report.py:210
 #, python-brace-format
 msgid "Every week on {weekday}"
-msgstr ""
+msgstr "Každý týden v {weekday}"
 
 #: hypha/apply/projects/models/report.py:211
 #, python-brace-format
@@ -3044,16 +3073,16 @@ msgstr "Každý {occurrence} týden v {weekday}"
 
 #: hypha/apply/projects/tables.py:16
 msgid "Invoice reference"
-msgstr ""
+msgstr "Odkaz na fakturu"
 
 #: hypha/apply/projects/tables.py:22
 #, python-brace-format
 msgid "Value ({currency})"
-msgstr ""
+msgstr "Hodnota ({currency})"
 
 #: hypha/apply/projects/tables.py:29
 msgid "Period Start"
-msgstr ""
+msgstr "Začátek období"
 
 #: hypha/apply/projects/tables.py:30
 #: hypha/apply/projects/templates/application_projects/includes/reports.html:62
@@ -3073,7 +3102,7 @@ msgstr "Datum ukončení"
 #: hypha/apply/projects/tables.py:84
 #, python-brace-format
 msgid "Fund Allocation ({currency})"
-msgstr ""
+msgstr "Alokace prostředků ({currency})"
 
 #: hypha/apply/projects/templates/application_projects/filters/widgets/date_range_input_widget.html:5
 #: hypha/apply/projects/templates/application_projects/includes/report_line.html:9
@@ -3110,15 +3139,15 @@ msgstr "Celkem:"
 
 #: hypha/apply/projects/templates/application_projects/includes/funding_block.html:4
 msgid "Fund total"
-msgstr ""
+msgstr "Celkem prostředků"
 
 #: hypha/apply/projects/templates/application_projects/includes/funding_block.html:8
 msgid "Total paid"
-msgstr ""
+msgstr "Zaplaceno celkem"
 
 #: hypha/apply/projects/templates/application_projects/includes/funding_block.html:13
 msgid "Awaiting payment"
-msgstr ""
+msgstr "Čekání na platbu"
 
 #: hypha/apply/projects/templates/application_projects/includes/invoice_block.html:4
 msgid "Contract number"
@@ -3147,17 +3176,17 @@ msgstr "Přidat fakturu"
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:62
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:70
 msgid "Amount"
-msgstr ""
+msgstr "Částka"
 
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:17
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:27
 msgid "From"
-msgstr ""
+msgstr "Od"
 
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:18
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:28
 msgid "To"
-msgstr ""
+msgstr "Komu"
 
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:48
 msgid "No active Invoices."
@@ -3221,11 +3250,11 @@ msgstr "Změna frekvence podávání zpráv"
 
 #: hypha/apply/projects/templates/application_projects/includes/reports.html:21
 msgid "Next report will be due in"
-msgstr ""
+msgstr "Další zpráva bude vydána za"
 
 #: hypha/apply/projects/templates/application_projects/includes/reports.html:23
 msgid "and the report period will be"
-msgstr ""
+msgstr "a vykazované období bude"
 
 #: hypha/apply/projects/templates/application_projects/includes/reports.html:27
 msgid "and then every"
@@ -3237,7 +3266,7 @@ msgstr "dokud projekt neskončí"
 
 #: hypha/apply/projects/templates/application_projects/includes/reports.html:34
 msgid "Schedule reports every"
-msgstr ""
+msgstr "Naplánujte zprávy každý"
 
 #: hypha/apply/projects/templates/application_projects/includes/reports.html:56
 msgid "Past reports"
@@ -3264,7 +3293,7 @@ msgstr "Podpůrné dokumenty"
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:18
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:113
 msgid "Download"
-msgstr ""
+msgstr "Stahování"
 
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:26
 #: hypha/apply/projects/templates/application_projects/project_detail.html:200
@@ -3284,15 +3313,15 @@ msgstr "Schvalovací formulář"
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:84
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:87
 msgid "Choose file"
-msgstr ""
+msgstr "Vyberte soubor"
 
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:89
 msgid "Upload new"
-msgstr ""
+msgstr "Nahrát nový"
 
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:94
 msgid "Every project should include the following documents"
-msgstr ""
+msgstr "Každý projekt by měl obsahovat následující dokumenty"
 
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:141
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:74
@@ -3301,15 +3330,15 @@ msgstr "Předložit ke schválení"
 
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:148
 msgid "Select a document"
-msgstr ""
+msgstr "Vyberte dokument"
 
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:150
 msgid "Copy"
-msgstr ""
+msgstr "Kopírovat"
 
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:155
 msgid "Upload a new document"
-msgstr ""
+msgstr "Nahrát nový dokument"
 
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:157
 #: hypha/apply/projects/templates/application_projects/project_detail.html:169
@@ -3318,15 +3347,15 @@ msgstr "Nahrát"
 
 #: hypha/apply/projects/templates/application_projects/invoice_admin_detail.html:18
 msgid "Cannot change from 'Paid' or 'Declined' state"
-msgstr ""
+msgstr "Nelze změnit ze stavu „Zaplaceno“ nebo „Odmítnuto“"
 
 #: hypha/apply/projects/templates/application_projects/invoice_admin_detail.html:23
 msgid "Change Status"
-msgstr ""
+msgstr "Změnit stav"
 
 #: hypha/apply/projects/templates/application_projects/invoice_admin_detail.html:27
 msgid "Change status"
-msgstr ""
+msgstr "Změnit stav"
 
 #: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:4
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:4
@@ -3354,12 +3383,12 @@ msgstr "Číslo faktury"
 #: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:23
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:22
 msgid "Period of Performance"
-msgstr ""
+msgstr "Období plnění"
 
 #: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:24
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:23
 msgid "Total"
-msgstr ""
+msgstr "Celkem"
 
 #: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:29
 msgid "Are you sure you want to delete this invoice for"
@@ -3418,11 +3447,11 @@ msgstr "Zprávy"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:7
 msgid "Request Approval"
-msgstr ""
+msgstr "Žádost o schválení"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:10
 msgid "Are you sure you're ready to submit?"
-msgstr ""
+msgstr "Opravdu jste připraveni odeslat?"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:12
 msgid "This project is missing the following documents"
@@ -3434,22 +3463,24 @@ msgstr "Přesto odeslat"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:34
 msgid "Add Approval"
-msgstr ""
+msgstr "Přidat schválení"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:35
 msgid ""
 "This will move the project into contracting and notify the compliance team."
 msgstr ""
+"Tím se projekt přesune do smluvního vztahu a upozorní tým pro dodržování "
+"předpisů."
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:37
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:84
 msgid "Approve"
-msgstr ""
+msgstr "Schválit"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:42
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:43
 msgid "Request Changes"
-msgstr ""
+msgstr "Vyžádat změny"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:49
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:133
@@ -3464,35 +3495,35 @@ msgstr "Potvrzujete, že nahraná smlouva je přijatelná pro zahájení projekt
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:63
 msgid "A lead must be assigned"
-msgstr ""
+msgstr "Vedoucí musí být přidělen"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:65
 msgid "Project approval form must be completed"
-msgstr ""
+msgstr "Musí být vyplněn formulář schválení projektu"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:67
 msgid "Currently awaiting approval"
-msgstr ""
+msgstr "V současné době čeká na schválení"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:91
 msgid "Request changes"
-msgstr ""
+msgstr "Vyžádejte si změny"
 
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:117
 msgid "Approved By"
-msgstr ""
+msgstr "Schváleno od"
 
 #: hypha/apply/projects/templates/application_projects/project_applicant_detail.html:8
 msgid "Your project is not editable at this point."
-msgstr ""
+msgstr "Váš projekt v tuto chvíli nelze upravovat."
 
 #: hypha/apply/projects/templates/application_projects/project_applicant_detail.html:10
 msgid "We are awaiting a lead to be assigned."
-msgstr ""
+msgstr "Čekáme na přidělení vedoucího."
 
 #: hypha/apply/projects/templates/application_projects/project_applicant_detail.html:12
 msgid "It is currently under review by a staff member."
-msgstr ""
+msgstr "V současné době je hodnocen zaměstnancem."
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:58
 msgid "Details"
@@ -3510,31 +3541,31 @@ msgstr "Informace o projektu"
 #: hypha/apply/projects/templates/application_projects/project_detail.html:82
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:35
 msgid "Proposed start date"
-msgstr ""
+msgstr "Navrhované datum zahájení"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:87
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:40
 msgid "Project Proposed end date"
-msgstr ""
+msgstr "Navrhované datum ukončení projektu"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:92
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:45
 msgid "Legal name"
-msgstr ""
+msgstr "Právní název"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:115
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:60
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:120
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:65
 msgid "Value"
-msgstr ""
+msgstr "Hodnota"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:158
 msgid "Fill in Contracting Info"
-msgstr ""
+msgstr "Vyplňte informace o smlouvě"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:165
 msgid "Upload Signed Contract"
@@ -3542,27 +3573,27 @@ msgstr "Nahrát podepsanou smlouvu"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:167
 msgid "Upload Contract"
-msgstr ""
+msgstr "Nahrát smlouvu"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:177
 msgid "Upload contract"
-msgstr ""
+msgstr "Nahrát smlouvu"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:196
 msgid "Supporting Information"
-msgstr ""
+msgstr "Doprovodné informace"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:203
 msgid "Approval form"
-msgstr ""
+msgstr "Schvalovací formulář"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:214
 msgid "Contracts"
-msgstr ""
+msgstr "Smlouvy"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:243
 msgid "Approved by"
-msgstr ""
+msgstr "Schváleno od"
 
 #: hypha/apply/projects/templates/application_projects/project_list.html:13
 msgid "All Projects"
@@ -3574,7 +3605,7 @@ msgstr "Nejsou k dispozici žádné projekty."
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:71
 msgid "Sent to Compliance"
-msgstr ""
+msgstr "Odesláno na Compliance"
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:85
 msgid "Approvals"
@@ -3582,7 +3613,7 @@ msgstr "Schválení"
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:87
 msgid "Approver"
-msgstr ""
+msgstr "Schvalovatel"
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:93
 msgid "Review"
@@ -3590,11 +3621,11 @@ msgstr "Hodnocení"
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:95
 msgid "Submission lead"
-msgstr ""
+msgstr "Vedoucí podání"
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:99
 msgid "Staff Reviewers"
-msgstr ""
+msgstr "Hodnotitelé z řad zaměstnanců"
 
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:111
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:121
@@ -3671,391 +3702,399 @@ msgstr "Odeslat zprávu"
 
 #: hypha/apply/projects/templates/application_projects/report_form.html:63
 msgid "Are you sure you want to submit your report?"
-msgstr ""
+msgstr "Opravdu chcete zprávu odeslat?"
 
 #: hypha/apply/projects/templates/application_projects/report_list.html:12
 msgid "Submitted Reports"
-msgstr ""
+msgstr "Podané zprávy"
 
 #: hypha/apply/projects/templates/application_projects/report_list.html:22
 msgid "No Reports Available."
-msgstr ""
+msgstr "Žádné zprávy nejsou k dispozici."
 
 #: hypha/apply/projects/templates/application_projects/vendor_detail.html:4
 #: hypha/apply/projects/templates/application_projects/vendor_detail.html:12
 msgid "Contracting Information for"
-msgstr ""
+msgstr "Informace o uzavírání smluv pro"
 
 #: hypha/apply/projects/templates/application_projects/vendor_detail.html:18
 msgid "Last Updated"
-msgstr ""
+msgstr "Poslední aktualizace"
 
 #: hypha/apply/projects/templates/application_projects/vendor_form.html:4
 #: hypha/apply/projects/templates/application_projects/vendor_form.html:8
 msgid "Update Contracting Information"
-msgstr ""
+msgstr "Aktualizace informací o smlouvách"
 
 #: hypha/apply/projects/templates/application_projects/vendor_form.html:27
 msgid "Save and continue"
-msgstr ""
+msgstr "Uložit a pokračovat"
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:4
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:8
 msgid "Contractor Setup Completed"
-msgstr ""
+msgstr "Nastavení smluvního partnera dokončeno"
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:12
 msgid "Thank you for submitting your information."
-msgstr ""
+msgstr "Děkujeme vám za zaslání informací."
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:13
 msgid ""
 "Your {{ ORG_SHORT_NAME }} Programme Manager will be in touch with you if "
 "there are any issues."
 msgstr ""
+"V případě jakýchkoli problémů vaší organizace {{ ORG_SHORT_NAME }} se s vámi "
+"spojí vedoucí programu."
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:14
 msgid "What will happen next?"
-msgstr ""
+msgstr "Co bude dál?"
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:15
 msgid "We will use this information to create the contract for your project."
-msgstr ""
+msgstr "Tyto informace použijeme k vytvoření smlouvy pro váš projekt."
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:16
 msgid "Once this has happened, we will send you a message with your contract."
-msgstr ""
+msgstr "Jakmile se tak stane, zašleme vám zprávu s vaší smlouvou."
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:17
 msgid "We'll ask you to read it, and if everything is OK, you can sign it."
 msgstr ""
+"Požádáme vás, abyste si ji přečetli, a pokud je vše v pořádku, můžete ji "
+"podepsat."
 
 #: hypha/apply/projects/templates/application_projects/vendor_success.html:18
 msgid "Visit Project Detail Page"
-msgstr ""
+msgstr "Navštivte stránku s detaily projektu"
 
 #: hypha/apply/projects/views/project.py:589
 #: hypha/apply/projects/views/project.py:636
 msgid "You are not allowed to edit the project at this time"
-msgstr ""
+msgstr "V tuto chvíli nemůžete projekt upravovat"
 
 #: hypha/apply/projects/views/vendor.py:259
 msgid "Bank Account Information"
-msgstr ""
+msgstr "Informace o bankovním účtu"
 
 #: hypha/apply/projects/views/vendor.py:268
 msgid "(Optional) Extra Information for Accepting Payments"
-msgstr ""
+msgstr "(Volitelné) Další informace pro přijímání plateb"
 
 #: hypha/apply/projects/views/vendor.py:273
 msgid "Intermediary Bank Account Information"
-msgstr ""
+msgstr "Informace o zprostředkovatelském bankovním účtu"
 
 #: hypha/apply/projects/views/vendor.py:282
 msgid "Account Holder National Identity Document Information"
-msgstr ""
+msgstr "Informace o dokladu totožnosti držitele účtu"
 
 #: hypha/apply/review/blocks.py:34
 #: hypha/apply/review/templates/review/review_detail.html:23
 msgid "Score"
-msgstr ""
+msgstr "Skóre"
 
 #: hypha/apply/review/blocks.py:162
 msgid "Paragraph"
-msgstr ""
+msgstr "Paragraf"
 
 #: hypha/apply/review/models.py:160
 #: hypha/apply/review/templates/review/review_detail.html:19
 msgid "Recommendation"
-msgstr ""
+msgstr "Doporučení"
 
 #: hypha/apply/review/models.py:165
 msgid "Visibility"
-msgstr ""
+msgstr "Viditelnost"
 
 #: hypha/apply/review/options.py:6
 msgid "0. Need more info"
-msgstr ""
+msgstr "0. Je třeba více informací"
 
 #: hypha/apply/review/options.py:7
 msgid "1. Poor"
-msgstr ""
+msgstr "1. Slabé"
 
 #: hypha/apply/review/options.py:8
 msgid "2. Not so good"
-msgstr ""
+msgstr "2. Ne tak dobré"
 
 #: hypha/apply/review/options.py:9
 msgid "3. Is o.k."
-msgstr ""
+msgstr "3. Je o.k."
 
 #: hypha/apply/review/options.py:10
 msgid "4. Good"
-msgstr ""
+msgstr "4. Dobré"
 
 #: hypha/apply/review/options.py:11
 msgid "5. Excellent"
-msgstr ""
+msgstr "5. Vynikající"
 
 #: hypha/apply/review/options.py:12
 msgid "n/a - choose not to answer"
-msgstr ""
+msgstr "n/a - rozhodl se neodpovídat"
 
 #: hypha/apply/review/options.py:24
 msgid "Maybe"
-msgstr ""
+msgstr "Možná"
 
 #: hypha/apply/review/options.py:32
 msgid "Agree"
-msgstr ""
+msgstr "Souhlasím"
 
 #: hypha/apply/review/options.py:33
 msgid "Disagree"
-msgstr ""
+msgstr "Nesouhlasím"
 
 #: hypha/apply/review/options.py:40
 msgid "Visible only to staff."
-msgstr ""
+msgstr "Viditelné pouze pro zaměstnance."
 
 #: hypha/apply/review/options.py:41
 msgid "Visible to other reviewers and staff."
-msgstr ""
+msgstr "Viditelné pro ostatní hodnotitele a zaměstnance."
 
 #: hypha/apply/review/options.py:45
 msgid "Private"
-msgstr ""
+msgstr "Soukromé"
 
 #: hypha/apply/review/options.py:46
 msgid "Reviewers and Staff"
-msgstr ""
+msgstr "Hodnotitelé a zaměstnanci"
 
 #: hypha/apply/review/templates/review/includes/review_button.html:8
 msgid "Add a review"
-msgstr ""
+msgstr "Přidat hodnocení"
 
 #: hypha/apply/review/templates/review/review_confirm_delete.html:17
 msgid "Are you sure you want to delete"
-msgstr ""
+msgstr "Opravdu chcete odstranit"
 
 #: hypha/apply/review/templates/review/review_detail.html:3
 msgid "Review for"
-msgstr ""
+msgstr "Hodnocení pro"
 
 #: hypha/apply/review/templates/review/review_detail.html:11
 msgid "at"
-msgstr ""
+msgstr "v"
 
 #: hypha/apply/review/templates/review/review_detail.html:48
 msgid "Review was not against the latest version"
-msgstr ""
+msgstr "Hodnocení nebylo proti nejnovější verzi"
 
 #: hypha/apply/review/templates/review/review_detail.html:68
 msgid ""
 "An opinion is a replacement for a review. You will no longer be able to "
 "submit a review for this application."
 msgstr ""
+"Názor nahrazuje hodnocení. K této žádosti již nebudete moci podat hodnocení."
 
 #: hypha/apply/review/templates/review/review_form.html:46
 msgid "You have already posted a review for this submission"
-msgstr ""
+msgstr "Již jste odeslali hodnocení tohoto podání"
 
 #: hypha/apply/review/views.py:78
 msgid "Edit Review"
-msgstr ""
+msgstr "Upravit hodnocení"
 
 #: hypha/apply/review/views.py:143
 msgid "Update Review draft"
-msgstr ""
+msgstr "Aktualizace návrhu hodnocení"
 
 #: hypha/apply/review/views.py:143
 msgid "Create Review"
-msgstr ""
+msgstr "Vytvořit hodnocení"
 
 #: hypha/apply/stream_forms/blocks.py:37
 msgid "Help text"
-msgstr ""
+msgstr "Text nápovědy"
 
 #: hypha/apply/stream_forms/blocks.py:38
 msgid "Help link"
-msgstr ""
+msgstr "Odkaz na nápovědu"
 
 #: hypha/apply/stream_forms/blocks.py:115
 #: hypha/apply/stream_forms/blocks.py:216
 msgid "Required"
-msgstr ""
+msgstr "Vyžadováno"
 
 #: hypha/apply/stream_forms/blocks.py:119
 msgid "Email"
-msgstr ""
+msgstr "E-mail"
 
 #: hypha/apply/stream_forms/blocks.py:120
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: hypha/apply/stream_forms/blocks.py:125
 msgid "Format"
-msgstr ""
+msgstr "Formát"
 
 #: hypha/apply/stream_forms/blocks.py:126
 #: hypha/apply/stream_forms/blocks.py:155
 #: hypha/apply/stream_forms/blocks.py:169
 msgid "Default value"
-msgstr ""
+msgstr "Výchozí hodnota"
 
 #: hypha/apply/stream_forms/blocks.py:129
 msgid "Text field (single line)"
-msgstr ""
+msgstr "Textové pole (jednořádkové)"
 
 #: hypha/apply/stream_forms/blocks.py:147
 msgid "Max number of inputs"
-msgstr ""
+msgstr "Maximální počet vstupů"
 
 #: hypha/apply/stream_forms/blocks.py:148
 msgid "Add new item"
-msgstr ""
+msgstr "Přidat novou položku"
 
 #: hypha/apply/stream_forms/blocks.py:151
 msgid "Text field (single line) (multiple inputs)"
-msgstr ""
+msgstr "Textové pole (jednořádkové) (více vstupů)"
 
 #: hypha/apply/stream_forms/blocks.py:156
 msgid "Word limit"
-msgstr ""
+msgstr "Omezení počtu slov"
 
 #: hypha/apply/stream_forms/blocks.py:161
 msgid "Text field (multi line)"
-msgstr ""
+msgstr "Textové pole (víceřádkové)"
 
 #: hypha/apply/stream_forms/blocks.py:174
 msgid "Number field"
-msgstr ""
+msgstr "Číselné pole"
 
 #: hypha/apply/stream_forms/blocks.py:186
 msgid "Checkbox field"
-msgstr ""
+msgstr "Zaškrtávací pole"
 
 #: hypha/apply/stream_forms/blocks.py:197
 #: hypha/apply/stream_forms/blocks.py:218
 msgid "Choice"
-msgstr ""
+msgstr "Volba"
 
 #: hypha/apply/stream_forms/blocks.py:203
 msgid "Radio buttons"
-msgstr ""
+msgstr "Rádiová tlačítka"
 
 #: hypha/apply/stream_forms/blocks.py:230
 msgid "Group fields"
-msgstr ""
+msgstr "Skupinová pole"
 
 #: hypha/apply/stream_forms/blocks.py:264
 msgid "Dropdown field"
-msgstr ""
+msgstr "Rozbalovací pole"
 
 #: hypha/apply/stream_forms/blocks.py:274
 msgid "Checkbox"
-msgstr ""
+msgstr "Zaškrtávací políčko"
 
 #: hypha/apply/stream_forms/blocks.py:280
 msgid "Multiple checkboxes field"
-msgstr ""
+msgstr "Pole s více zaškrtávacími políčky"
 
 #: hypha/apply/stream_forms/blocks.py:320
 msgid "Date field"
-msgstr ""
+msgstr "Pole s datem"
 
 #: hypha/apply/stream_forms/blocks.py:342
 msgid "Time field"
-msgstr ""
+msgstr "Pole času"
 
 #: hypha/apply/stream_forms/blocks.py:375
 msgid "Date+time field"
-msgstr ""
+msgstr "Pole Datum+čas"
 
 #: hypha/apply/stream_forms/blocks.py:407
 msgid "Image field"
-msgstr ""
+msgstr "Obrázkové pole"
 
 #: hypha/apply/stream_forms/blocks.py:419
 msgid "File field"
-msgstr ""
+msgstr "Souborové pole"
 
 #: hypha/apply/stream_forms/blocks.py:432
 msgid "Multiple File field"
-msgstr ""
+msgstr "Pole pro více souborů"
 
 #: hypha/apply/stream_forms/blocks.py:465
 msgid "Section text"
-msgstr ""
+msgstr "Text oddílu"
 
 #: hypha/apply/stream_forms/blocks.py:466
 msgid "Section header"
-msgstr ""
+msgstr "Záhlaví sekce"
 
 #: hypha/apply/stream_forms/blocks.py:485 hypha/public/forms/models.py:62
 msgid "Form fields"
-msgstr ""
+msgstr "Pole formuláře"
 
 #: hypha/apply/templates/forms/includes/form_errors.html:5
 msgid ""
 "There were some errors with your form. Please amend the fields highlighted "
 "below."
 msgstr ""
+"Ve vašem formuláři se vyskytly chyby. Níže zvýrazněná pole prosím opravte."
 
 #: hypha/apply/users/admin_views.py:34 hypha/apply/users/admin_views.py:59
 msgid "Search users"
-msgstr ""
+msgstr "Hledat uživatele"
 
 #: hypha/apply/users/forms.py:60
 msgid ""
 "You are registered using OAuth, please contact an admin if you need to "
 "change your email address."
 msgstr ""
+"Jste zaregistrováni pomocí OAuth, pokud potřebujete změnit e-mailovou "
+"adresu, kontaktujte prosím správce."
 
 #: hypha/apply/users/forms.py:78
 msgid "Only includes active, non-superusers"
-msgstr ""
+msgstr "Zahrnuje pouze aktivní uživatele, kteří nejsou superuživateli"
 
 #: hypha/apply/users/models.py:102
 msgid "email address"
-msgstr ""
+msgstr "e-mailová adresa"
 
 #: hypha/apply/users/models.py:103
 msgid "Full name"
-msgstr ""
+msgstr "Celé jméno"
 
 #: hypha/apply/users/models.py:105
 msgid "Slack name"
-msgstr ""
+msgstr "Uživatelské jméno na Slack"
 
 #: hypha/apply/users/models.py:107
 msgid "This is the name we should \"@mention\" when sending notifications"
-msgstr ""
+msgstr "Toto je jméno, které bychom měli \"@mention\" při odesílání oznámení"
 
 #: hypha/apply/users/templates/two_factor/_base.html:7
 #: hypha/apply/users/templates/two_factor/_base_focus.html:7
 #: hypha/apply/users/templates/users/account.html:9
 msgid "Welcome"
-msgstr ""
+msgstr "Vítejte"
 
 #: hypha/apply/users/templates/two_factor/_base.html:9
 #: hypha/apply/users/templates/two_factor/_base_focus.html:9
 #: hypha/apply/users/templates/users/account.html:11
 msgid "Go to my dashboard"
-msgstr ""
+msgstr "Přejít na můj ovládací panel"
 
 #: hypha/apply/users/templates/two_factor/_wizard_actions.html:3
 msgid "Next"
-msgstr ""
+msgstr "Další"
 
 #: hypha/apply/users/templates/two_factor/core/backup_tokens.html:6
 #: hypha/apply/users/templates/two_factor/profile/disable.html:6
 msgid "Back"
-msgstr ""
+msgstr "Zpět"
 
 #: hypha/apply/users/templates/two_factor/core/backup_tokens.html:7
 #: hypha/apply/users/templates/two_factor/profile/profile.html:41
 msgid "Backup Tokens"
-msgstr ""
+msgstr "Záložní tokeny"
 
 #: hypha/apply/users/templates/two_factor/core/backup_tokens.html:8
 msgid ""
@@ -4065,77 +4104,88 @@ msgid ""
 "      can generate a new set of backup tokens. Only the backup tokens shown\n"
 "      below will be valid."
 msgstr ""
+"Záložní tokeny lze použít v případě, že primární a záložní \n"
+"telefonní číslo nejsou k dispozici. Níže uvedené záložní tokeny lze použít \n"
+"pro ověření přihlášení. Pokud jste vyčerpali všechny záložní tokeny, \n"
+"můžete si vygenerovat novou sadu záložních tokenů. Platné budou pouze \n"
+"záložní tokeny uvedené níže."
 
 #: hypha/apply/users/templates/two_factor/core/backup_tokens.html:20
 msgid "Print these tokens and keep them somewhere safe."
-msgstr ""
+msgstr "Vytiskněte si tyto tokeny a uložte je na bezpečném místě."
 
 #: hypha/apply/users/templates/two_factor/core/backup_tokens.html:22
 msgid "You don't have any backup codes yet."
-msgstr ""
+msgstr "Zatím nemáte žádné záložní kódy."
 
 #: hypha/apply/users/templates/two_factor/core/backup_tokens.html:26
 msgid "Generate Tokens"
-msgstr ""
+msgstr "Generování tokenů"
 
 #: hypha/apply/users/templates/two_factor/profile/disable.html:7
 msgid "Disable Two-factor Authentication"
-msgstr ""
+msgstr "Vypnout dvoufaktorové ověřování"
 
 #: hypha/apply/users/templates/two_factor/profile/disable.html:8
 msgid ""
 "You are about to disable two-factor authentication. This\n"
 "    weakens your account security, are you sure?"
 msgstr ""
+"Chystáte se vypnout dvoufaktorové ověřování. Tato stránka\n"
+"    oslabí zabezpečení vašeho účtu, jste si jisti?"
 
 #: hypha/apply/users/templates/two_factor/profile/disable.html:14
 msgid "Disable"
-msgstr ""
+msgstr "Vypnout"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:6
 msgid "Back to account"
-msgstr ""
+msgstr "Zpět na účet"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:9
 msgid "Two-Factor Authentication"
-msgstr ""
+msgstr "Dvoufaktorové ověřování"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:13
 msgid "Tokens will be generated by your token generator."
-msgstr ""
+msgstr "Tokeny budou vygenerovány generátorem tokenů."
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:15
 #, python-format
 msgid "Primary method: %(primary)s"
-msgstr ""
+msgstr "Primární metoda: %(primary)s"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:17
 msgid "Tokens will be generated by your YubiKey."
-msgstr ""
+msgstr "Tokeny budou generovány pomocí vašeho klíče YubiKey."
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:21
 msgid "Backup Phone Numbers"
-msgstr ""
+msgstr "Záložní telefonní čísla"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:22
 msgid ""
 "If your primary method is not available, we are able to\n"
 "        send backup tokens to the phone numbers listed below."
 msgstr ""
+"Pokud váš primární způsob není k dispozici, jsme schopni.\n"
+"        zaslat záložní tokeny na níže uvedená telefonní čísla."
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:32
 msgid "Unregister"
-msgstr ""
+msgstr "Zrušení registrace"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:38
 msgid "Add Phone Number"
-msgstr ""
+msgstr "Přidat telefonní číslo"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:43
 msgid ""
 "If you don't have any device with you, you can access\n"
 "        your account using backup tokens."
 msgstr ""
+"Pokud u sebe nemáte žádné zařízení, můžete přistupovat\n"
+"        k účtu pomocí záložních tokenů."
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:45
 #, python-format
@@ -4148,22 +4198,34 @@ msgid_plural ""
 "        You have %(counter)s backup tokens remaining.\n"
 "      "
 msgstr[0] ""
+"\n"
+"        Zbývá vám pouze jeden záložní token.\n"
+"      "
 msgstr[1] ""
+"\n"
+"        Zbývají vám %(counter)s záložní žetony.\n"
+"      "
+msgstr[2] ""
+"\n"
+"        Zbývá vám %(counter)s záložních žetonů.\n"
+"      "
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:52
 msgid "Show Codes"
-msgstr ""
+msgstr "Zobrazit kódy"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:54
 #: hypha/apply/users/templates/two_factor/profile/profile.html:58
 msgid "Disable Two-Factor Authentication"
-msgstr ""
+msgstr "Vypnout dvoufaktorové ověřování"
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:55
 msgid ""
 "However we strongly discourage you to do so, you can\n"
 "      also disable two-factor authentication for your account."
 msgstr ""
+"Přestože vám to důrazně nedoporučujeme, můžete\n"
+"      také vypnout dvoufaktorové ověřování svého účtu."
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:60
 msgid ""
@@ -4171,35 +4233,38 @@ msgid ""
 "      account. Enable two-factor authentication for enhanced account\n"
 "      security."
 msgstr ""
+"Pro váš účet není povoleno dvoufaktorové \n"
+"ověřování. Povolte dvoufaktorové ověřování pro lepší \n"
+"zabezpečení účtu."
 
 #: hypha/apply/users/templates/two_factor/profile/profile.html:64
 msgid "Enable Two-Factor Authentication"
-msgstr ""
+msgstr "Povolit dvoufaktorové ověřování"
 
 #: hypha/apply/users/templates/users/account.html:25
 msgid "Update Profile"
-msgstr ""
+msgstr "Aktualizovat profil"
 
 #: hypha/apply/users/templates/users/account.html:31
 msgid "Change password"
-msgstr ""
+msgstr "Změnit heslo"
 
 #: hypha/apply/users/templates/users/account.html:32
 msgid "Update password"
-msgstr ""
+msgstr "Aktualizovat heslo"
 
 #: hypha/apply/users/templates/users/account.html:34
 msgid "Account security"
-msgstr ""
+msgstr "Zabezpečení účtu"
 
 #: hypha/apply/users/templates/users/account.html:35
 msgid "Two-factor authentication settings"
-msgstr ""
+msgstr "Nastavení dvoufaktorového ověřování"
 
 #: hypha/apply/users/templates/users/account.html:41
 #: hypha/apply/users/templates/users/account.html:48
 msgid "Become"
-msgstr ""
+msgstr "Staňte se"
 
 #: hypha/apply/users/templates/users/activation/email.txt:7
 #, python-format
@@ -4207,6 +4272,8 @@ msgid ""
 "An account on the %(ORG_LONG_NAME)s web site has been created. Activate your "
 "account by clicking this link or copying and pasting it to your browser:"
 msgstr ""
+"Byl vytvořen účet na webové stránce %(ORG_LONG_NAME)s. Aktivujte svůj účet "
+"kliknutím na tento odkaz nebo jeho zkopírováním a vložením do prohlížeče:"
 
 #: hypha/apply/users/templates/users/activation/email.txt:11
 #, python-format
@@ -4215,27 +4282,30 @@ msgid ""
 "set your password. It will remain active for %(timeout_days)s days, so do it "
 "now."
 msgstr ""
+"Tento odkaz lze použít pouze jednou a povede vás na stránku, kde si můžete "
+"nastavit heslo. Zůstane aktivní po dobu %(timeout_days)s dní, takže to "
+"udělejte hned."
 
 #: hypha/apply/users/templates/users/activation/email.txt:13
 msgid "After setting your password, you will be able to log in at"
-msgstr ""
+msgstr "Po nastavení hesla se budete moci přihlásit na adrese"
 
 #: hypha/apply/users/templates/users/activation/email.txt:13
 msgid "in the future using"
-msgstr ""
+msgstr "v budoucnu pomocí"
 
 #: hypha/apply/users/templates/users/activation/email.txt:15
 #: hypha/apply/users/templates/wagtailusers/users/list.html:14
 msgid "Username"
-msgstr ""
+msgstr "Uživatelské jméno"
 
 #: hypha/apply/users/templates/users/activation/email.txt:16
 msgid "Password"
-msgstr ""
+msgstr "Heslo"
 
 #: hypha/apply/users/templates/users/activation/email.txt:16
 msgid "Your chosen password"
-msgstr ""
+msgstr "Vámi zvolené heslo"
 
 #: hypha/apply/users/templates/users/activation/email.txt:18
 #, python-format
@@ -4243,6 +4313,8 @@ msgid ""
 "If you do not complete the activation process within %(timeout_days)s days "
 "you can use the password reset form at"
 msgstr ""
+"Pokud proces aktivace nedokončíte do %(timeout_days)s dnů, můžete použít "
+"formulář pro obnovení hesla na adrese"
 
 #: hypha/apply/users/templates/users/activation/email.txt:20
 #, python-format
@@ -4254,26 +4326,32 @@ msgid ""
 "%(ORG_LONG_NAME)s\n"
 "%(root_url)s"
 msgstr ""
+"S laskavým pozdravem,\n"
+"Tým %(ORG_SHORT_NAME)s\n"
+"\n"
+"-- \n"
+"%(ORG_LONG_NAME)s\n"
+"%(root_url)s"
 
 #: hypha/apply/users/templates/users/activation/invalid.html:4
 msgid "Invalid activation"
-msgstr ""
+msgstr "Neplatná aktivace"
 
 #: hypha/apply/users/templates/users/activation/invalid.html:5
 msgid "Invalid activation URL"
-msgstr ""
+msgstr "Neplatná aktivační adresa URL"
 
 #: hypha/apply/users/templates/users/activation/invalid.html:10
 msgid "Two possible reasons:"
-msgstr ""
+msgstr "Dva možné důvody:"
 
 #: hypha/apply/users/templates/users/activation/invalid.html:12
 msgid "The activation link has expired."
-msgstr ""
+msgstr "Platnost aktivačního odkazu vypršela."
 
 #: hypha/apply/users/templates/users/activation/invalid.html:13
 msgid "The account has already been activated."
-msgstr ""
+msgstr "Účet již byl aktivován."
 
 #: hypha/apply/users/templates/users/activation/invalid.html:16
 #, python-format
@@ -4281,11 +4359,13 @@ msgid ""
 "First try to <a href=\"%(password_reset)s\">reset your password</a>. If that "
 "fails please contact %(ORG_SHORT_NAME)s at"
 msgstr ""
+"Nejprve zkuste <a href=\"%(password_reset)s\">obnovit heslo</a>. Pokud se to "
+"nepodaří, kontaktujte %(ORG_SHORT_NAME)s na"
 
 #: hypha/apply/users/templates/users/change_password.html:4
 #: hypha/apply/users/templates/users/change_password.html:5
 msgid "Set a password"
-msgstr ""
+msgstr "Nastavit heslo"
 
 #: hypha/apply/users/templates/users/change_password.html:20
 #: hypha/apply/users/templates/users/password_reset/confirm.html:20
@@ -4298,7 +4378,17 @@ msgid_plural ""
 "                <li>Please correct the errors below.</li>\n"
 "                "
 msgstr[0] ""
+"\n"
+"                <li>Prosím, opravte níže uvedenou chybu.</li>\n"
+"                "
 msgstr[1] ""
+"\n"
+"                <li>Prosím, opravte níže uvedené chyby.</li>\n"
+"                "
+msgstr[2] ""
+"\n"
+"                <li>Prosím, opravte níže uvedené chyby.</li>\n"
+"                "
 
 #: hypha/apply/users/templates/users/change_password.html:34
 #: hypha/apply/users/templates/users/password_reset/complete.html:4
@@ -4308,29 +4398,35 @@ msgstr[1] ""
 #: hypha/apply/users/templates/users/password_reset/form.html:6
 #: hypha/apply/users/templates/users/password_reset/form.html:25
 msgid "Reset password"
-msgstr ""
+msgstr "Obnovit heslo"
 
 #: hypha/apply/users/templates/users/login.html:11
 msgid "Enter your credentials."
-msgstr ""
+msgstr "Zadejte své přihlašovací údaje."
 
 #: hypha/apply/users/templates/users/login.html:14
 msgid ""
 "We are calling your phone right now, please enter the\n"
 "                digits you hear."
 msgstr ""
+"Právě voláme na váš telefon, zadejte prosím číslice, \n"
+"které uslyšíte."
 
 #: hypha/apply/users/templates/users/login.html:17
 msgid ""
 "We sent you a text message, please enter the tokens we\n"
 "                sent."
 msgstr ""
+"Poslali jsme vám textovou zprávu, zadejte prosím tokeny, které jsme vám \n"
+"poslali."
 
 #: hypha/apply/users/templates/users/login.html:20
 msgid ""
 "Please enter the tokens generated by your token\n"
 "                generator."
 msgstr ""
+"Zadejte tokeny vygenerované generátorem \n"
+"tokenů."
 
 #: hypha/apply/users/templates/users/login.html:24
 msgid ""
@@ -4339,276 +4435,289 @@ msgid ""
 "Please\n"
 "            enter one of these backup tokens to login to your account."
 msgstr ""
+"Tento formulář slouží k zadávání záložních tokenů pro přihlášení.\n"
+"            Tyto tokeny byly vygenerovány, abyste si je mohli vytisknout a "
+"uschovat. \n"
+"Zadejte prosím jeden z těchto záložních tokenů pro přihlášení k účtu."
 
 #: hypha/apply/users/templates/users/login.html:38
 msgid "Forgot your password?"
-msgstr ""
+msgstr "Zapomněli jste heslo?"
 
 #: hypha/apply/users/templates/users/login.html:39
 msgid "Login"
-msgstr ""
+msgstr "Přihlášení"
 
 #: hypha/apply/users/templates/users/login.html:47
 msgid "Or, alternatively, use one of your backup phones:"
-msgstr ""
+msgstr "Případně použijte některý ze záložních telefonů:"
 
 #: hypha/apply/users/templates/users/login.html:57
 msgid "As a last resort, you can use a backup token:"
-msgstr ""
+msgstr "V krajním případě můžete použít záložní token:"
 
 #: hypha/apply/users/templates/users/login.html:60
 msgid "Use Backup Token"
-msgstr ""
+msgstr "Použití záložního tokenu"
 
 #: hypha/apply/users/templates/users/login.html:72
 #, python-format
 msgid "Log in with your %(ORG_SHORT_NAME)s email"
-msgstr ""
+msgstr "Přihlaste se pomocí e-mailu %(ORG_SHORT_NAME)s"
 
 #: hypha/apply/users/templates/users/oauth.html:9
 msgid "Providers"
-msgstr ""
+msgstr "Poskytovatelé"
 
 #: hypha/apply/users/templates/users/oauth.html:18
 msgid "Disconnect"
-msgstr ""
+msgstr "Odpojit"
 
 #: hypha/apply/users/templates/users/oauth.html:29
 msgid "Available providers"
-msgstr ""
+msgstr "Dostupní poskytovatelé"
 
 #: hypha/apply/users/templates/users/password_reset/complete.html:5
 msgid "Password change successful"
-msgstr ""
+msgstr "Změna hesla byla úspěšná"
 
 #: hypha/apply/users/templates/users/password_reset/complete.html:10
 msgid "Log in"
-msgstr ""
+msgstr "Přihlášení"
 
 #: hypha/apply/users/templates/users/password_reset/confirm.html:8
 msgid ""
 "Please enter your new password twice so we can verify you typed it in "
 "correctly."
 msgstr ""
+"Zadejte prosím své nové heslo dvakrát, abychom mohli ověřit, že jste ho "
+"zadali správně."
 
 #: hypha/apply/users/templates/users/password_reset/confirm.html:37
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
 "used.  Please request a new password reset."
 msgstr ""
+"Odkaz na obnovení hesla byl neplatný, pravděpodobně proto, že již byl "
+"použit.  Požádejte o nové obnovení hesla."
 
 #: hypha/apply/users/templates/users/password_reset/done.html:4
 msgid "Check your email"
-msgstr ""
+msgstr "Zkontrolujte svůj e-mail"
 
 #: hypha/apply/users/templates/users/password_reset/done.html:9
 msgid "A link to reset your password has been emailed to you."
-msgstr ""
+msgstr "Odkaz na obnovení hesla vám byl zaslán e-mailem."
 
 #: hypha/apply/users/templates/users/password_reset/email.txt:2
 msgid "Please follow the link below to reset your password:"
-msgstr ""
+msgstr "Heslo obnovíte pomocí níže uvedeného odkazu:"
 
 #: hypha/apply/users/templates/users/password_reset/email.txt:6
 msgid "Your username (in case you've forgotten):"
-msgstr ""
+msgstr "Vaše uživatelské jméno (pro případ, že jste ho zapomněli):"
 
 #: hypha/apply/users/templates/wagtailusers/users/list.html:6
 #: hypha/public/people/models.py:180
 msgid "Name"
-msgstr ""
+msgstr "Jméno"
 
 #: hypha/apply/users/templates/wagtailusers/users/list.html:45
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #: hypha/apply/users/templates/wagtailusers/users/list.html:46
 msgid "Inactive"
-msgstr ""
+msgstr "Neaktivní"
 
 #: hypha/apply/utils/blocks.py:39
 msgid "Rich text field"
-msgstr ""
+msgstr "Textové pole"
 
 #: hypha/apply/utils/blocks.py:54
 msgid "Markdown text field"
-msgstr ""
+msgstr "Textové pole Markdown"
 
 #: hypha/apply/utils/blocks.py:73
 msgid " Required"
-msgstr ""
+msgstr " Vyžadováno"
 
 #: hypha/apply/utils/models.py:25
 msgid "Page size of downloadable Project and Submission PDFs"
-msgstr ""
+msgstr "Velikost stránek stažitelných souborů PDF projektu a podání"
 
 #: hypha/apply/utils/views.py:254
 #, python-brace-format
 msgid "Page '{0}' can't be deleted because is in use in '{1}'."
-msgstr ""
+msgstr "Stránku '{0}' nelze odstranit, protože se používá v '{1}'."
 
 #: hypha/cookieconsent/templates/includes/banner.html:11
 msgid "Decline tracking cookies."
-msgstr ""
+msgstr "Odmítnout sledovací soubory cookie."
 
 #: hypha/cookieconsent/templates/includes/banner.html:11
 msgid "Decline"
-msgstr ""
+msgstr "Odmítnout"
 
 #: hypha/cookieconsent/templates/includes/banner.html:12
 msgid "Accept tracking cookies."
-msgstr ""
+msgstr "Přijmout sledovací soubory cookie."
 
 #: hypha/public/forms/models.py:36
 msgid "field type"
-msgstr ""
+msgstr "typ pole"
 
 #: hypha/public/funds/models.py:57 hypha/public/funds/models.py:171
 #: hypha/public/news/models.py:115 hypha/public/standardpages/models.py:31
 msgid "Related pages"
-msgstr ""
+msgstr "Související stránky"
 
 #: hypha/public/funds/models.py:151
 msgid "External link"
-msgstr ""
+msgstr "Externí odkaz"
 
 #: hypha/public/funds/models.py:152
 msgid "Text to display on the button for external links"
-msgstr ""
+msgstr "Text, který se zobrazí na tlačítku pro externí odkazy"
 
 #: hypha/public/funds/models.py:169
 msgid "Link for lab application"
-msgstr ""
+msgstr "Odkaz na přihlášku do lab"
 
 #: hypha/public/funds/models.py:191 hypha/public/funds/models.py:192
 msgid "Cannot link to both a Lab page and external link"
-msgstr ""
+msgstr "Nelze odkazovat na stránku laboratoře i na externí odkaz"
 
 #: hypha/public/funds/models.py:197 hypha/public/funds/models.py:198
 msgid "Please provide a way for applicants to apply"
-msgstr ""
+msgstr "Uveďte způsob, jakým mohou žadatelé podávat žádosti"
 
 #: hypha/public/funds/models.py:203
 msgid "Cannot customise the text for internal lab pages, leave blank"
 msgstr ""
+"Nelze přizpůsobit text interních stránek laboratoře, ponechte jej prázdný"
 
 #: hypha/public/funds/models.py:208
 msgid "Please provide some text for the link button"
-msgstr ""
+msgstr "Uveďte prosím nějaký text pro tlačítko odkazu"
 
 #: hypha/public/funds/templates/public_funds/includes/fund_apply_cta.html:16
 msgid "Apply for this"
-msgstr ""
+msgstr "Požádat o toto"
 
 #: hypha/public/funds/templates/public_funds/includes/fund_apply_cta.html:25
 msgid "CLOSED"
-msgstr ""
+msgstr "ZAVŘENO"
 
 #: hypha/public/home/blocks.py:8
 msgid "The first word will be bold"
-msgstr ""
+msgstr "První slovo bude tučně"
 
 #: hypha/public/home/models.py:107
 msgid "Introduction"
-msgstr ""
+msgstr "Úvod"
 
 #: hypha/public/home/models.py:112
 msgid "News"
-msgstr ""
+msgstr "Novinky"
 
 #: hypha/public/home/models.py:118
 msgid "Our Work"
-msgstr ""
+msgstr "Naše práce"
 
 #: hypha/public/home/models.py:122
 msgid "Promoted Funds"
-msgstr ""
+msgstr "Podporované fondy"
 
 #: hypha/public/home/models.py:129
 msgid "Promoted Labs"
-msgstr ""
+msgstr "Propagované laboratoře"
 
 #: hypha/public/home/models.py:136
 msgid "Promoted RFPs"
-msgstr ""
+msgstr "Propagované RFP"
 
 #: hypha/public/mailchimp/forms.py:6
 msgid "Email Address"
-msgstr ""
+msgstr "E-mailová adresa"
 
 #: hypha/public/mailchimp/forms.py:7
 msgid "First Name"
-msgstr ""
+msgstr "Jméno"
 
 #: hypha/public/mailchimp/forms.py:8
 msgid "Last Name"
-msgstr ""
+msgstr "Příjmení"
 
 #: hypha/public/mailchimp/models.py:16
 msgid "The title of the newsletter signup form."
-msgstr ""
+msgstr "Název formuláře pro přihlášení k odběru newsletteru."
 
 #: hypha/public/mailchimp/templates/mailchimp/newsletter_signup.html:17
 msgid "Sign up"
-msgstr ""
+msgstr "Zaregistrujte se"
 
 #: hypha/public/mailchimp/views.py:69
 msgid "Sorry, there were errors with your form."
-msgstr ""
+msgstr "Omlouváme se, ve vašem formuláři se vyskytly chyby."
 
 #: hypha/public/mailchimp/views.py:72
 msgid "Sorry, there has been an problem. Please try again later."
-msgstr ""
+msgstr "Omlouváme se, došlo k problému. Zkuste to prosím později."
 
 #: hypha/public/mailchimp/views.py:78
 msgid "Thank you for subscribing"
-msgstr ""
+msgstr "Děkujeme za přihlášení k odběru"
 
 #: hypha/public/navigation/models.py:11
 msgid "Leave blank to use the page's own title"
-msgstr ""
+msgstr "Pro použití vlastního názvu stránky ponechte prázdné místo"
 
 #: hypha/public/navigation/models.py:22
 msgid "Main site navigation"
-msgstr ""
+msgstr "Hlavní navigace webu"
 
 #: hypha/public/news/blocks.py:10
 msgid ""
 "Please enter only table id from embed code. Table widget code creates "
 "automatically."
 msgstr ""
+"Zadejte prosím pouze ID tabulky z vloženého kódu. Kód widgetu tabulky se "
+"vytvoří automaticky."
 
 #: hypha/public/news/models.py:98
 msgid ""
 "Use this field to override the date that the news item appears to have been "
 "published."
 msgstr ""
+"Toto pole slouží k přepsání data, kdy se zdá, že byla novinka zveřejněna."
 
 #: hypha/public/news/models.py:110
 msgid "Authors"
-msgstr ""
+msgstr "Autoři"
 
 #: hypha/public/news/models.py:113
 msgid "News types"
-msgstr ""
+msgstr "Typy novinek"
 
 #: hypha/public/news/models.py:114
 msgid "Mentioned project"
-msgstr ""
+msgstr "Zmíněný projekt"
 
 #: hypha/public/news/models.py:173
 msgid "The title of the main news feed."
-msgstr ""
+msgstr "Název hlavního informačního kanálu."
 
 #: hypha/public/news/models.py:174
 msgid "The description of the main news feed."
-msgstr ""
+msgstr "Popis hlavního informačního kanálu."
 
 #: hypha/public/news/models.py:177
 #, python-brace-format
 msgid ""
 "The title of the news feed by type. Use {news_type} to insert the type name."
 msgstr ""
+"Název kanálu zpráv podle typu.Pro vložení názvu typu použijte {news_type}."
 
 #: hypha/public/news/models.py:179
 #, python-brace-format
@@ -4616,100 +4725,105 @@ msgid ""
 "The description of the news feed by type. Use {news_type} to insert the type "
 "name."
 msgstr ""
+"Popis kanálu zpráv podle typu. Pro vložení názvu typu použijte {news_type}."
 
 #: hypha/public/partner/models.py:49
 msgid "Partner Page"
-msgstr ""
+msgstr "Partnerská stránka"
 
 #: hypha/public/partner/models.py:120
 msgid "Investment Category Settings"
-msgstr ""
+msgstr "Nastavení investiční kategorie"
 
 #: hypha/public/partner/models.py:124
 msgid "Select the categories that should be used in investments."
-msgstr ""
+msgstr "Vyberte kategorie, které by měly být použity v investicích."
 
 #: hypha/public/partner/models.py:198
 msgid "Use format: <YYYY>"
-msgstr ""
+msgstr "Použijte formát: <RRRR>"
 
 #: hypha/public/partner/models.py:204 hypha/public/partner/tables.py:47
 #, python-brace-format
 msgid "Amount Committed ({currency})"
-msgstr ""
+msgstr "Přislíbená částka ({currency})"
 
 #: hypha/public/partner/tables.py:21
 msgid "Years"
-msgstr ""
+msgstr "Roky"
 
 #: hypha/public/partner/tables.py:55
 msgid "Items per page"
-msgstr ""
+msgstr "Položek na stránku"
 
 #: hypha/public/partner/tables.py:56
 msgid "Per page"
-msgstr ""
+msgstr "Na stránku"
 
 #: hypha/public/partner/tables.py:95
 msgid "Partner"
-msgstr ""
+msgstr "Partner"
 
 #: hypha/public/partner/tables.py:96
 msgid "Year"
-msgstr ""
+msgstr "Rok"
 
 #: hypha/public/partner/tables.py:98
 msgid "Amount Committed"
-msgstr ""
+msgstr "Přijatá částka"
 
 #: hypha/public/partner/tables.py:111
 msgid "No investments available"
-msgstr ""
+msgstr "Žádné dostupné investice"
 
 #: hypha/public/people/models.py:97
 msgid "Other"
-msgstr ""
+msgstr "Jiný"
 
 #: hypha/public/people/models.py:184
 msgid "Social accounts"
-msgstr ""
+msgstr "Sociální účty"
 
 #: hypha/public/people/models.py:188
 msgid "Other Contact Methods"
-msgstr ""
+msgstr "Další způsoby kontaktu"
 
 #: hypha/public/people/models.py:189
 msgid "Contact information"
-msgstr ""
+msgstr "Kontaktní informace"
 
 #: hypha/public/people/models.py:190
 msgid "Person types"
-msgstr ""
+msgstr "Typy osob"
 
 #: hypha/public/people/models.py:193
 msgid "Funds Reviewed"
-msgstr ""
+msgstr "Přezkoumané fondy"
 
 #: hypha/public/projects/models.py:129
 msgid "Contact Details"
-msgstr ""
+msgstr "Kontaktní údaje"
 
 #: hypha/public/projects/models.py:131
 msgid "Related Projects"
-msgstr ""
+msgstr "Související projekty"
 
 #: hypha/public/projects/models.py:134
 msgid "Categories"
-msgstr ""
+msgstr "Kategorie"
 
 #: hypha/public/utils/models.py:125
 msgid ""
 "Choose the image you wish to be displayed when this page appears in listings"
 msgstr ""
+"Vyberte obrázek, který se má zobrazit, když se tato stránka zobrazí ve "
+"výpisech"
 
 #: hypha/public/utils/models.py:127
 msgid "Override the page title used when this page appears in listings"
 msgstr ""
+"Přepsání názvu stránky, který se použije, když se tato stránka zobrazí ve "
+"výpisech"
 
 #: hypha/public/utils/models.py:128
 msgid ""
@@ -4717,86 +4831,93 @@ msgid ""
 "the description for search engines if the 'Search description' field above "
 "is not defined."
 msgstr ""
+"Textové shrnutí použité při zobrazení této stránky ve výpisech. Používá se "
+"také jako popis pro vyhledávače, pokud není definováno pole \"Popis pro "
+"vyhledávání\" výše."
 
 #: hypha/public/utils/models.py:205
 msgid "Your Twitter username without the @, e.g. katyperry"
-msgstr ""
+msgstr "Vaše uživatelské jméno na Twitteru bez @, např. katyperry"
 
 #: hypha/public/utils/models.py:210
 msgid "Your Facebook app ID."
-msgstr ""
+msgstr "ID aplikace Facebook."
 
 #: hypha/public/utils/models.py:215
 msgid "Default sharing text to use if social text has not been set on a page."
 msgstr ""
+"Výchozí text pro sdílení, který se použije, pokud na stránce nebyl nastaven "
+"text pro sociální sítě."
 
 #: hypha/public/utils/models.py:221
 msgid "Site name, used by Open Graph."
-msgstr ""
+msgstr "Název webu používaný službou Open Graph."
 
 #: hypha/public/utils/models.py:236
 msgid "Default site logo"
-msgstr ""
+msgstr "Výchozí logo webu"
 
 #: hypha/public/utils/models.py:245
 msgid "Mobil site logo (if not set default will be used)"
-msgstr ""
+msgstr "Mobilní logo webu (pokud není nastaveno, použije se výchozí)"
 
 #: hypha/public/utils/models.py:251
 msgid ""
 "Link for the site logo, e.g. \"https://www.example.org/\". If not set, "
 "defaults to page with slug set to \"home\"."
 msgstr ""
+"Odkaz na logo webu, např. \"https://www.example.org/\".Pokud není nastaveno, "
+"výchozí hodnota je stránka se slugem nastaveným na \"home\"."
 
 #: hypha/public/utils/models.py:257
 msgid "This will be added to the footer, html tags is allowed."
-msgstr ""
+msgstr "Toto bude přidáno do patičky, html značky jsou povoleny."
 
 #: hypha/public/utils/models.py:316
 msgid "In months"
-msgstr ""
+msgstr "V měsících"
 
 #: hypha/public/utils/models.py:342
 msgid "Funding"
-msgstr ""
+msgstr "Financování"
 
 #: hypha/templates/base-apply.html:107 hypha/templates/base-apply.html:116
 msgid "Log out"
-msgstr ""
+msgstr "Odhlášení"
 
 #: hypha/templates/blocks/apply_link_block.html:4
 msgid "Apply for the"
-msgstr ""
+msgstr "Požádejte o"
 
 #: hypha/templates/includes/message_item.html:7
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: hypha/templates/includes/relatedcontent.html:2
 msgid "You might also like…"
-msgstr ""
+msgstr "Mohlo by vás také zajímat…"
 
 #: hypha/templates/includes/share.html:4
 msgid "Share"
-msgstr ""
+msgstr "Sdílet"
 
 #: hypha/templates/includes/share.html:8
 msgid "Share on Twitter"
-msgstr ""
+msgstr "Sdílet na Twitteru"
 
 #: hypha/templates/includes/share.html:14
 msgid "Share on LinkedIn"
-msgstr ""
+msgstr "Sdílet na LinkedIn"
 
 #: hypha/templates/includes/share.html:21
 msgid "Share on Facebook"
-msgstr ""
+msgstr "Sdílet na Facebooku"
 
 #: hypha/templates/password_required.html:4
 #: hypha/templates/password_required.html:9
 msgid "Password required"
-msgstr ""
+msgstr "Vyžadováno heslo"
 
 #: hypha/templates/password_required.html:11
 msgid "Please enter the password to proceed."
-msgstr ""
+msgstr "Pro pokračování zadejte heslo."
