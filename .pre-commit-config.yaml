@@ -1,4 +1,40 @@
 repos:
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    # uv version.
+    rev: 0.5.2
+    hooks:
+      - id: uv-export
+        name: uv-export requirements.txt
+        args:
+          [
+            "--frozen",
+            "--no-group",
+            "dev",
+            "--no-group",
+            "docs",
+            "-o",
+            "requirements/prod.txt",
+          ]
+      - id: uv-export
+        name: uv-export requirements/dev.txt
+        args: ["--frozen", "--group", "dev", "-o", "requirements/dev.txt"]
+      - id: uv-export
+        name: uv-export requirements/docs.txt
+        args:
+          ["--frozen", "--only-group", "docs", "-o", "requirements/docs.txt"]
+
+      # This is disabled because this doesn't export --find-links. The requirements-translate is maintained manually.
+      # - id: uv-export
+      #   name: uv-export requirements/translate.txt
+      #   args:
+      #     [
+      #       "--frozen",
+      #       "--only-group",
+      #       "translate",
+      #       "-o",
+      #       "requirements/translate.txt",
+      #     ]
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.7.0
     hooks:

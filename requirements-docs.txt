@@ -1,7 +1,0 @@
-mkdocs-material==9.5.5
-mkdocs-awesome-pages-plugin==2.9.2
-mkdocs-git-revision-date-localized-plugin==1.2.2
-mkdocs-macros-plugin==1.0.4
-mkdocstrings[python]==0.24.0
-mkdocs-gen-files==0.5.0
-griffe==0.49.0

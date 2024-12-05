@@ -29,4 +29,4 @@ jobs:
           CUSTOM_DOMAIN: docs.hypha.app
           CONFIG_FILE: mkdocs.yml
           EXTRA_PACKAGES: build-base
-          REQUIREMENTS: requirements-docs.txt
+          REQUIREMENTS: requirements/docs.txt
