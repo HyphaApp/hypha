@@ -34,7 +34,6 @@ from django_htmx.http import (
 from django_tables2 import SingleTableMixin
 from docx import Document
 from htmldocx import HtmlToDocx
-from xhtml2pdf import pisa
 
 from hypha.apply.activity.adapters.utils import get_users_for_groups
 from hypha.apply.activity.messaging import MESSAGES, messenger
@@ -64,7 +63,7 @@ from hypha.apply.users.decorators import (
     staff_required,
 )
 from hypha.apply.users.roles import CONTRACTING_GROUP_NAME
-from hypha.apply.utils.models import PDFPageSettings
+from hypha.apply.utils.pdfs import render_as_pdf
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
@@ -1849,16 +1848,11 @@ class ProjectSOWDownloadView(SingleObjectMixin, View):
         template_path = "application_projects/sow_export.html"
 
         if export_type == "pdf":
-            pdf_page_settings = PDFPageSettings.for_request(request)
-
             context["show_footer"] = True
-            context["export_date"] = datetime.date.today().strftime("%b %d, %Y")
-            context["export_user"] = request.user
-            context["pagesize"] = pdf_page_settings.download_page_size
-
-            return self.render_as_pdf(
+            return render_as_pdf(
+                request=request,
+                template_name=template_path,
                 context=context,
-                template=get_template(template_path),
                 filename=self.get_slugified_file_name(export_type),
             )
         elif export_type == "docx":
@@ -1871,19 +1865,6 @@ class ProjectSOWDownloadView(SingleObjectMixin, View):
             )
         else:
             raise Http404(f"{export_type} type not supported at the moment")
-
-    def render_as_pdf(self, context, template, filename):
-        html = template.render(context)
-        response = HttpResponse(content_type="application/pdf")
-        response["Content-Disposition"] = f"attachment; filename={filename}"
-
-        pisa_status = pisa.CreatePDF(
-            html, dest=response, encoding="utf-8", raise_exception=True
-        )
-        if pisa_status.err:
-            # :todo: needs to handle it in a better way
-            raise Http404("PDF type not supported at the moment")
-        return response
 
     def render_as_docx(self, context, template, filename):
         html = template.render(context)
@@ -1931,16 +1912,11 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
         template_path = "application_projects/paf_export.html"
 
         if export_type == "pdf":
-            pdf_page_settings = PDFPageSettings.for_request(request)
-
             context["show_footer"] = True
-            context["export_date"] = datetime.date.today().strftime("%b %d, %Y")
-            context["export_user"] = request.user
-            context["pagesize"] = pdf_page_settings.download_page_size
-
-            return self.render_as_pdf(
+            return render_as_pdf(
+                request=request,
                 context=context,
-                template=get_template(template_path),
+                template_name=template_path,
                 filename=self.get_slugified_file_name(export_type),
             )
         elif export_type == "docx":
@@ -1953,19 +1929,6 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
             )
         else:
             raise Http404(f"{export_type} type not supported at the moment")
-
-    def render_as_pdf(self, context, template, filename):
-        html = template.render(context)
-        response = HttpResponse(content_type="application/pdf")
-        response["Content-Disposition"] = f"attachment; filename={filename}"
-
-        pisa_status = pisa.CreatePDF(
-            html, dest=response, encoding="utf-8", raise_exception=True
-        )
-        if pisa_status.err:
-            # :todo: needs to handle it in a better way
-            raise Http404("PDF type not supported at the moment")
-        return response
 
     def render_as_docx(self, context, template, filename):
         html = template.render(context)
