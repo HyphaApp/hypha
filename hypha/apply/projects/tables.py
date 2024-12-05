@@ -7,6 +7,7 @@ from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_tables2.utils import A
+from heroicons.templatetags.heroicons import heroicon_outline
 
 from hypha.apply.funds.tables import LabeledCheckboxColumn
 
@@ -189,9 +190,7 @@ class BaseProjectsTable(tables.Table):
             return "Up to date"
 
         if record.report_config.has_very_late_reports():
-            display = (
-                '<svg class="icon"><use xlink:href="#exclamation-point"></use></svg>'
-            )
+            display = f"<span class='text-red-500 inline-block align-text-bottom me-1'>{heroicon_outline(name='exclamation-triangle', size=20)}</span>"
         else:
             display = ""
 
