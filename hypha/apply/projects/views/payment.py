@@ -462,7 +462,7 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
             ).visible_to(self.request.user):
                 approval_pdf_page = html_to_pdf(
                     render_to_string(
-                        "application_projects/pdf_invoce_approved_page.html",
+                        "application_projects/pdf_invoice_approved_page.html",
                         context={
                             "invoice": self.invoice,
                             "generated_at": timezone.now(),
