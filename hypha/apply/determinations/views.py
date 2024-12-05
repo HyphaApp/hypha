@@ -1,5 +1,3 @@
-from urllib import parse
-
 from django import forms
 from django.conf import settings
 from django.contrib import messages
@@ -277,8 +275,6 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
                 + action
                 + "&submissions="
                 + ",".join([str(submission.id) for submission in submissions])
-                + "&next="
-                + parse.quote_plus(request.get_full_path()),
             )
         elif set(actions) != non_determine_states:
             raise ValueError("Inconsistent states provided - please talk to an admin")
