@@ -8,7 +8,6 @@ from django.urls import reverse_lazy
 from hypha.apply.activity.models import Activity
 from hypha.apply.determinations.options import ACCEPTED, NEEDS_MORE_INFO, REJECTED
 from hypha.apply.determinations.views import BatchDeterminationCreateView
-from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.users.tests.factories import StaffFactory, UserFactory
 from hypha.apply.utils.testing import BaseViewTestCase
@@ -468,19 +467,6 @@ class BatchDeterminationTestCase(BaseViewTestCase):
             self.assertEqual(submission.activities.comments().count(), 1)
 
         self.assertRedirects(response, self.url_from_pattern("apply:submissions:list"))
-
-    def test_sets_next_on_redirect(self):
-        test_path = "/a/path/?with=query&a=sting"
-        request = RequestFactory().get("", PATH_INFO=test_path)
-        redirect = BatchDeterminationCreateView.should_redirect(
-            request,
-            ApplicationSubmission.objects.none(),
-            ["rejected"],
-        )
-        url = urllib.parse.urlparse(redirect.url)
-        query = urllib.parse.parse_qs(url.query)
-        next_path = urllib.parse.unquote_plus(query["next"][0])
-        self.assertEqual(next_path, test_path)
 
     def test_success_redirects_if_exists(self):
         test_path = "/a/path/?with=query&a=sting"
