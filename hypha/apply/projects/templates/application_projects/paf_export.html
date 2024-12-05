@@ -5,10 +5,10 @@
         <title>{{ title|default:"" }}</title>
 
         {% block style_base %}
-        {% comment %}
-            See DEFAULT_CSS in https://github.com/chrisglass/xhtml2pdf/blob/master/xhtml2pdf/default.py
-            for base style.
-        {% endcomment %}
+            {% comment %}
+                See DEFAULT_CSS in https://github.com/chrisglass/xhtml2pdf/blob/master/xhtml2pdf/default.py
+                for base style.
+            {% endcomment %}
 
             {% block layout_style %}
                 <style type="text/css">
@@ -36,7 +36,8 @@
                         }
                     }
                 </style>
-            {%endblock%}
+            {% endblock %}
+
             <style type="text/css">
                 .title {
                     text-align: center;
@@ -58,15 +59,16 @@
                     padding-right: 100px;
                 }
             </style>
+
             {% block extra_style %}{% endblock %}
+
         {% endblock %}
     </head>
     <body>
         <div>
-
-            {%block content%}
+            {% block content %}
                 <table id="page-width">
-<!--            Project details in table format -->
+                    <!-- Project details in table format -->
                     <tr>
                         <td rowspan="4" align="left" class="align-left">
                             <p class="title"> <b>{{ org_name|upper }}</b> PROJECT FORM</p>
@@ -91,18 +93,22 @@
                         </td>
                     </tr>
                 </table>
-                <br>
-<!--            PAF fields data in paragraph format-->
+
+                <hr>
+
+                <!-- PAF fields data in paragraph format -->
                 {% for field_name, field_value in paf_data.items %}
                     <p><b>{{ field_name }}</b></p>
-                    <p>{{ field_value|default:"-" }}</p>
+                    <p>{{ field_value|safe|default:"-" }}</p>
                 {% endfor %}
-<!--            SOW fields data in paragraph format-->
+
+                <!-- SOW fields data in paragraph format-->
                 {% for field_name, field_value in sow_data.items %}
                     <p><b>{{ field_name }}</b></p>
-                    <p>{{ field_value|default:"-" }}</p>
+                    <p>{{ field_value|safe|default:"-" }}</p>
                 {% endfor %}
-<!--            Approvers data in paragraph format-->
+
+                <!-- Approvers data in paragraph format-->
                 <p><b> Approvals </b></p>
                 {% if approvals %}
                     {% for approval in approvals %}
@@ -112,7 +118,8 @@
                 {% else %}
                     <p>-</p>
                 {% endif %}
-<!--            Supporting Documents with links-->
+
+                <!-- Supporting Documents with links-->
                 <p> <b>{% trans "Supporting Documents" %}</b></p>
                 {% if supporting_documents %}
                     {% for document, document_link in supporting_documents.items %}
@@ -121,11 +128,12 @@
                 {% else %}
                     <p>-</p>
                 {% endif %}
-<!--           Submission title with link-->
+
+                <!-- Submission title with link-->
                 <p><b>{% trans "Submission" %}</b></p>
                 <p><a href="{{ submission_link }}">{{ submission }}</a></p>
 
-            {%endblock%}
+            {% endblock %}
         </div>
 
         {% if show_footer %}
