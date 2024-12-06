@@ -8,7 +8,9 @@ SUBMISSION_DRAFT = "submission_draft"
 DETERMINATION_DRAFT = "determination_draft"
 REVIEW_DRAFT = "review_draft"
 PROJECT_WAITING_PAF = "project_waiting_paf"
-PROJECT_SUBMIT_PAF = "project_submit_paf"
+PROJECT_WAITING_SOW = "project_waiting_sow"
+PROJECT_SUBMIT_PF = "project_submit_pfs"
+PROJECT_SUBMIT_SOW = "project_submit_sow"
 PAF_REQUIRED_CHANGES = "paf_required_changes"
 PAF_WAITING_ASSIGNEE = "paf_waiting_assignee"
 PAF_WAITING_APPROVAL = "paf_waiting_approval"
@@ -28,7 +30,9 @@ TASKS_CODE_CHOICES = (
     (DETERMINATION_DRAFT, "Determination draft"),
     (REVIEW_DRAFT, "Review Draft"),
     (PROJECT_WAITING_PAF, "Project waiting project form"),
-    (PROJECT_SUBMIT_PAF, "Project submit project form"),
+    (PROJECT_WAITING_SOW, "Project waiting scope of work"),
+    (PROJECT_SUBMIT_PF, "Project submit project form(s)"),
+    (PROJECT_SUBMIT_SOW, "Project submit scope of work"),
     (PAF_REQUIRED_CHANGES, "Project form required changes"),
     (PAF_WAITING_ASSIGNEE, "Project form waiting assignee"),
     (PAF_WAITING_APPROVAL, "Project form waiting approval"),
@@ -87,9 +91,17 @@ template_map = {
         "url": "{link}",
         "type": _("project"),
     },
-    PROJECT_SUBMIT_PAF: {
+    PROJECT_WAITING_SOW: {
         "text": _(
-            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for project form submission'
+            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for scope of work'
+        ),
+        "icon": "dashboard-paf",
+        "url": "{link}",
+        "type": _("project"),
+    },
+    PROJECT_SUBMIT_PF: {
+        "text": _(
+            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for project(s) form submission'
         ),
         "icon": "dashboard-paf",
         "url": "{link}",
