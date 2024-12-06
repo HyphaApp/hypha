@@ -2,18 +2,14 @@
 @use "../abstracts/variables";
 
 .admin-bar {
-    position: relative;
-    inset-inline-end: 50%;
-    inset-inline-start: 50%;
-    width: 100vw;
     padding: variables.$mobile-gutter;
-    margin-inline-end: -50vw;
-    margin-inline-start: -50vw;
+    margin-inline: calc(0px - variables.$mobile-gutter);
     color: variables.$color--white;
     background-color: variables.$color--dark-grey;
 
     @include mixins.media-query(xl) {
         padding-inline: 0;
+        margin-inline: calc(50% - 50vw);
     }
 
     &__inner {
