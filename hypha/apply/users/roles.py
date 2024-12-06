@@ -79,7 +79,7 @@ class CommunityReviewer(AbstractUserRole):
 class Approver(AbstractUserRole):
     role_name = APPROVER_GROUP_NAME
     help_text = _(
-        "Can review/approve PAF, and access compliance documents. "
+        "Can review/approve project form, and access compliance documents. "
         "Must also be in group: Staff, Contracting, or Finance."
     )
 
@@ -89,7 +89,7 @@ class Approver(AbstractUserRole):
 class Finance(AbstractUserRole):
     role_name = FINANCE_GROUP_NAME
     help_text = _(
-        "Can review/approve the PAF, access documents associated with "
+        "Can review/approve the project form, access documents associated with "
         "contracting, and access invoices approved by Staff."
     )
 
@@ -99,7 +99,7 @@ class Finance(AbstractUserRole):
 class Contracting(AbstractUserRole):
     role_name = CONTRACTING_GROUP_NAME
     help_text = _(
-        "Can review/approve the PAF and access documents associated with contracting."
+        "Can review/approve the project form and access documents associated with contracting."
     )
 
     available_permissions = {}

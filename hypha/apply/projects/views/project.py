@@ -1046,13 +1046,15 @@ class ChangePAFStatusView(View):
                             break
                     else:
                         # should never be the case but still to avoid 500.
-                        raise PermissionDenied("User don't have PAF approver roles")
+                        raise PermissionDenied(
+                            "User don't have project form approver roles"
+                        )
 
             paf_status = form.cleaned_data.get("paf_status")
             comment = form.cleaned_data.get("comment", "")
 
             paf_status_update_message = _(
-                "<p>{role} has updated PAF status to {paf_status}.</p>"
+                "<p>{role} has updated project form status to {paf_status}.</p>"
             ).format(
                 role=paf_approval.paf_reviewer_role.label,
                 paf_status=get_paf_status_display(paf_status).lower(),
@@ -1128,7 +1130,7 @@ class ChangePAFStatusView(View):
 
                 messages.success(
                     self.request,
-                    _("PAF status has been updated"),
+                    _("Project form status has been updated"),
                     extra_tags=PROJECT_ACTION_MESSAGE_TAG,
                 )
             elif paf_status == APPROVE:
@@ -1184,7 +1186,7 @@ class ChangePAFStatusView(View):
                             )
                 messages.success(
                     self.request,
-                    _("PAF has been approved"),
+                    _("Project form has been approved"),
                     extra_tags=PROJECT_ACTION_MESSAGE_TAG,
                 )
 
@@ -1570,7 +1572,7 @@ class UpdatePAFApproversView(View):
 
             messages.success(
                 self.request,
-                _("PAF approvers have been updated"),
+                _("Project form approvers have been updated"),
                 extra_tags=PROJECT_ACTION_MESSAGE_TAG,
             )
             return HttpResponseClientRefresh()

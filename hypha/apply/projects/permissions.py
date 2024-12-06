@@ -79,13 +79,16 @@ def can_update_paf_approvers(user, project, **kwargs):
         return False, "Login Required"
 
     if project.status != INTERNAL_APPROVAL:
-        return False, "PAF Approvers can be updated only in Internal approval state"
+        return (
+            False,
+            "Project form approvers can be updated only in Internal approval state",
+        )
     if user == project.lead:
         return True, "Lead can update approvers in approval state"
     if not project.paf_approvals.exists():
         return (
             False,
-            "No user can update approvers without paf approval, except lead(lead can add paf approvals)",
+            "No user can update approvers without project form approval, except lead (lead can add project form approvals)",
         )
 
     request = kwargs.get("request")
@@ -99,7 +102,7 @@ def can_update_paf_approvers(user, project, **kwargs):
             ):
                 return (
                     True,
-                    "PAF Reviewer-roles users can update next approval approvers if any approvers assigned",
+                    "Project form reviewer-roles users can update next approval approvers if any approvers assigned",
                 )
         return False, "Forbidden Error"
     else:
@@ -114,7 +117,7 @@ def can_update_paf_approvers(user, project, **kwargs):
                 )
             )
         if user.id in approvers_ids:
-            return True, "PAF Reviewer-roles users can update approvers"
+            return True, "Project form reviewer-roles users can update approvers"
     return False, "Forbidden Error"
 
 
@@ -126,7 +129,10 @@ def can_update_assigned_paf_approvers(user, project, **kwargs):
     if not user.is_authenticated:
         return False, "Login Required"
     if project.status != INTERNAL_APPROVAL:
-        return False, "PAF approvers can be assigned only in Internal approval state"
+        return (
+            False,
+            "Project form approvers can be assigned only in Internal approval state",
+        )
     if not project.paf_approvals.exists():
         return False, "No user can assign approvers with paf_approvals"
 
@@ -139,7 +145,7 @@ def can_update_assigned_paf_approvers(user, project, **kwargs):
                 list(next_paf_approval.paf_reviewer_role.user_roles.all()),
                 exact_match=True,
             ):
-                return True, "PAF Reviewer-roles users can assign approvers"
+                return True, "Project form reviewer-roles users can assign approvers"
             return False, "Forbidden Error"
         return False, "Forbidden Error"
     else:
@@ -152,7 +158,7 @@ def can_update_assigned_paf_approvers(user, project, **kwargs):
                 )
             )
         if user.id in assigners_ids:
-            return True, "PAF Reviewer-roles users can assign approvers"
+            return True, "Project form reviewer-roles users can assign approvers"
     return False, "Forbidden Error"
 
 
@@ -161,9 +167,12 @@ def can_assign_paf_approvers(user, project, **kwargs):
         return False, "Login Required"
 
     if project.status != INTERNAL_APPROVAL:
-        return False, "PAF approvers can be assigned only in Internal approval state"
+        return (
+            False,
+            "Project form approvers can be assigned only in Internal approval state",
+        )
     if not project.paf_approvals.exists():
-        return False, "No user can assign approvers with paf_approvals"
+        return False, "No user can assign approvers with project form approvals"
 
     request = kwargs.get("request")
     project_settings = ProjectSettings.for_request(request)
@@ -177,7 +186,10 @@ def can_assign_paf_approvers(user, project, **kwargs):
                     list(next_paf_approval.paf_reviewer_role.user_roles.all()),
                     exact_match=True,
                 ):
-                    return True, "PAF Reviewer-roles users can assign approvers"
+                    return (
+                        True,
+                        "Project form reviewer-roles users can assign approvers",
+                    )
             return False, "Forbidden Error"
         return False, "Forbidden Error"
     else:
@@ -191,7 +203,7 @@ def can_assign_paf_approvers(user, project, **kwargs):
             )
 
         if user.id in assigners_ids:
-            return True, "PAF Reviewer-roles users can assign approvers"
+            return True, "Project form reviewer-roles users can assign approvers"
     return False, "Forbidden Error"
 
 
@@ -200,10 +212,10 @@ def can_update_paf_status(user, project, **kwargs):
         return False, "Login Required"
 
     if not project.paf_approvals.filter(approved=False).exists():
-        return False, "No PAF Approvals Exists"
+        return False, "No project form approvals exists"
 
     if project.status != INTERNAL_APPROVAL:
-        return False, "Incorrect project status to approve PAF"
+        return False, "Incorrect project status to approve project form"
 
     request = kwargs.get("request")
     if request:
@@ -219,11 +231,11 @@ def can_update_paf_status(user, project, **kwargs):
             if user.id in possible_approvers_ids:
                 return (
                     True,
-                    "Next approval group users can approve PAF(For Sequential Approvals)",
+                    "Next approval group users can approve project form (for sequential approvals)",
                 )
             return (
                 False,
-                "Only Next approval group can approve PAF(For Sequential Approvals)",
+                "Only Next approval group can approve project form (for sequential approvals)",
             )
         else:
             possible_approvers_ids = []
@@ -240,11 +252,11 @@ def can_update_paf_status(user, project, **kwargs):
             if user.id in possible_approvers_ids:
                 return (
                     True,
-                    "All approval group users can approve PAF(For Parallel Approvals)",
+                    "All approval group users can approve project form (for parallel approvals)",
                 )
             return (
                 False,
-                "Only approval group users can approve PAF(For Parallel Approvals)",
+                "Only approval group users can approve project form (for parallel approvals)",
             )
 
     return False, "Forbidden Error"
@@ -260,7 +272,10 @@ def can_update_project_status(user, project, **kwargs):
     if user.is_apply_staff or user.is_apply_staff_admin:
         if project.status == DRAFT:
             if no_pafreviewer_role():
-                return True, "Staff and Staff Admin can skip the PAF approval process"
+                return (
+                    True,
+                    "Staff and Staff Admin can skip the project form approval process",
+                )
         else:
             return True, "Staff and Staff Admin can update status"
 
@@ -359,7 +374,7 @@ def can_access_project(user, project):
         if user.id in paf_reviewer_roles_users_ids:
             return (
                 True,
-                "PAF Approvers can access the project in Draft, Approval state and after approval state",
+                "Project form approvers can access the project in Draft, Approval state and after approval state",
             )
 
     return False, "Forbidden Error"
@@ -380,9 +395,9 @@ def can_view_contract_category_documents(user, project, **kwargs):
 
 def can_edit_paf(user, project):
     if no_pafreviewer_role() and project.status != COMPLETE:
-        return True, "Paf is editable for active projects if no reviewer roles"
+        return True, "Project form is editable for active projects if no reviewer roles"
     if project.editable_by(user):
-        return True, "PAF is editable in Draft by this user"
+        return True, "Project form is editable in Draft by this user"
     return False, "You are not allowed to edit the project at this time"
 
 

@@ -203,7 +203,7 @@ class ActivityAdapter(AdapterBase):
                 ]
             )
             users_sentence = " and".join(users.rsplit(",", 1))
-            return _("PAF assigned to {}").format(users_sentence)
+            return _("Project form assigned to {}").format(users_sentence)
         return None
 
     def handle_task_removal(self, source, task, **kwargs):

@@ -27,11 +27,11 @@
             <p class="flex-grow h-px bg-mid-grey mb-0"></p>
         </div>
 
-        <p>{% trans "Please note that in "%}{% if project_settings.paf_approval_sequential %}{%trans "sequential order, approvers will approve PAF one after the other."%}{% else %}{% trans "parallel order, approvers can approve PAF anytime." %}{% endif %}</p>
+        <p>{% trans "Please note that in "%}{% if project_settings.paf_approval_sequential %}{%trans "sequential order, approvers will approve project form one after the other."%}{% else %}{% trans "parallel order, approvers can approve project form anytime." %}{% endif %}</p>
         {% url 'apply:projects:submit_project_for_approval' pk=object.id as document_submit_url %}
         {% include 'funds/includes/dialog_form_base.html' with form=form value=submit url=document_submit_url %}
     {% else %}
-        <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}
+        <p>{% trans "No project form reviewer roles has been created yet, please create these in " %}
             <a href="{% project_settings_url project_settings %}" target="_blank">{% trans " project settings" %}</a>
         </p>
     {% endif %}
