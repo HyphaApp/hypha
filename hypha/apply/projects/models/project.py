@@ -274,8 +274,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     # tracks read/write state of the Project
     is_locked = models.BooleanField(default=False)
 
-    # tracks updates to the Projects fields via the Project Application Form.
-    user_has_updated_details = models.BooleanField(default=False)
     submitted_contract_documents = models.BooleanField(
         "Submit Contracting Documents", default=False
     )
@@ -413,6 +411,21 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return False
 
     @property
+    def user_has_updated_pf_details(self) -> bool:
+        """Determines if the user has updated the Project Form"""
+        return bool(self.form_fields)
+
+    @property
+    def user_has_updated_sow_details(self) -> bool | None:
+        """Determines if the user has updated the SOW form
+
+        If there is no configured SOW, None will be returned
+        """
+        if self.submission.page.specific.sow_forms.first() and self.sow:
+            return bool(self.sow.form_data)
+        return None
+
+    @property
     def editable(self):
         if self.is_locked:
             return False
@@ -456,7 +469,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         being locked.
         """
         correct_state = self.status == DRAFT and not self.is_locked
-        return correct_state and self.user_has_updated_details
+        return correct_state and self.user_has_updated_pf_details
 
     @property
     def is_in_progress(self):

@@ -5,23 +5,21 @@
 
     {% adminbar %}
         {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ object.get_absolute_url }}">
+            <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
                 {% trans "View project page" %}
             </a>
         {% endslot %}
         {% slot header %}{% trans "Editing" %}: {{ object.title }}{% endslot %}
     {% endadminbar %}
 
-    {% if approval_form_exists %}
-
-        {% include "forms/includes/form_errors.html" with form=paf_form %}
-
+    {% if sow_form_exists %}
+        {% include "forms/includes/form_errors.html" with form=sow_form %}
         <div class="pt-8 pb-8 mx-auto mt-4 mb-12 wrapper wrapper--default-bg wrapper--sidebar ps-20 ">
             <div class="wrapper--sidebar--inner">
                 <form class="form application-form" action="" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ paf_form.media }}
-                    {% for field in paf_form %}
+                    {{ sow_form.media }}
+                    {% for field in sow_form %}
                         {% if field.field %}
                             {% if field.field.multi_input_field %}
                                 {% include "forms/includes/multi_input_field.html" %}
@@ -33,11 +31,10 @@
                         {% endif %}
                     {% endfor %}
 
-                {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
-                    {% for hidden_field in paf_form.hidden_fields %}
+
+                    {% for hidden_field in sow_form.hidden_fields %}
                         {{ hidden_field }}
                     {% endfor %}
-
                     {% trans "Save draft" as save_draft %}
                     {% for button_name, button_type, button_value in buttons %}
                         <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }}" {% if button_value == save_draft %}formnovalidate{% endif %}>{{ button_value }}</button>
@@ -46,31 +43,30 @@
             </div>
             <aside class="sidebar sidebar__project">
                 {% if submissions_attachments %}
-                <div class="sidebar__inner sidebar__inner--actions">
-                    <h5>{% trans "Proposal attachments" %}</h5>
-                    {% for file in submissions_attachments %}
-                        <p><b><a href="{{ file.url }}" target="_blank">{{ file.filename }}</a></b></p>
-                    {% endfor %}
-                </div>
+                    <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+                        <h5>{% trans "Proposal attachments" %}</h5>
+                        {% for file in submissions_attachments %}
+                            <p><b><a href="{{ file.url }}" target="_blank">{{ file.filename }}</a></b></p>
+                        {% endfor %}
+                    </div>
                 {% endif %}
             </aside>
         </div>
-
     {% else %}
         <div class="wrapper wrapper--default-bg wrapper--form wrapper--sidebar">
             <div class="wrapper--sidebar--inner">
                 <p>
-                    {% trans "Project Form not configured. Please add an project form in the" %}
+                    {% trans "Scope of work form not configured. Please add it in the" %}
                     <a href="{% url 'wagtailadmin_pages:edit' object.submission.page.id %}" target="_blank">{% trans "fund settings" %}</a>.
                 </p>
             </div>
         </div>
-
     {% endif %}
 
 {% endblock %}
 
 {% block extra_js %}
+    <script src="{% static 'js/file-uploads.js' %}"></script>
     <script src="{% static 'js/tinymce-word-count.js' %}"></script>
     <script src="{% static 'js/multi-input-fields.js' %}"></script>
     <script src="{% static 'js/application-form-links-new-window.js' %}"></script>

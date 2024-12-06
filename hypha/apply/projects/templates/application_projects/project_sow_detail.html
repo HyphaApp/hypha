@@ -24,10 +24,10 @@
     <div class="wrapper wrapper--large wrapper--tabs">
         <div class="wrapper wrapper--sidebar">
             <article class="wrapper--sidebar--inner">
-                <h4 class="mb-2">{% trans "Project scope of work (SOW)" %}</h4>
+                <h4 class="mb-2">{% trans "Scope of Work" %}</h4>
                 <div class="card card--solid">
                     {% if object.sow.output_answers %}
-                        <div class="rich-text rich-text--answers">
+                        <div class="simplified__paf_answers">
                             {{ object.sow.output_answers }}
                         </div>
                     {% endif %}

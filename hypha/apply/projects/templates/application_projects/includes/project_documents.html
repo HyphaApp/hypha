@@ -77,18 +77,18 @@
 
             <li class="docs-block__row">
                 <div class="docs-block__row-inner">
-                    {% if object.user_has_updated_details %}
+                    {% if object.user_has_updated_pf_details %}
                         {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
                     {% else %}
                         {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
                     {% endif %}
-                    <p class="docs-block__title">{% trans "Project Form" %}</p>
+                    <p class="docs-block__title">{% trans "Project form" %}</p>
                 </div>
                 <div class="docs-block__row-inner">
                     {% user_can_edit_paf object user as can_edit_paf %}
                     {% if can_edit_paf %}
-                        <a class="{% if not object.user_has_updated_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">
-                            {% if object.user_has_updated_details %}
+                        <a class="{% if not object.user_has_updated_pf_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit_pf' pk=object.pk %}">
+                            {% if object.user_has_updated_pf_details %}
                                 {% heroicon_micro "pencil-square" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                 {% trans "Edit" %}
                             {% else %}
@@ -96,7 +96,7 @@
                             {% endif %}
                         </a>
                     {% endif %}
-                    {% if object.user_has_updated_details and not user.is_applicant %}
+                    {% if object.user_has_updated_pf_details and not user.is_applicant %}
                         <a class="docs-block__icon-link" href="{% url 'apply:projects:approval' pk=project.pk %}">
                             {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                             {% trans "View" %}
@@ -104,17 +104,34 @@
                     {% endif %}
                 </div>
                 {% has_project_sow_form object as project_sow %}
-                {% if project_sow and object.user_has_updated_details and not user.is_applicant %}
-                    <ul class="mt-2 w-full ps-7">
+                {% if project_sow and not user.is_applicant %}
+                    <ul class="mt-2 w-full">
                         <li class="docs-block__document">
+                            {% if object.user_has_updated_sow_details %}
+                                {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
+                            {% else %}
+                                {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+                            {% endif %}
                             <div class="docs-block__document-inner">
-                                <p class="docs-block__document-info">{% trans "Scope of work (SOW)" %}</p>
+                                <p class="docs-block__document-info">{% trans "Scope of work" %}</p>
                             </div>
                             <div class="docs-block__document-inner__actions">
-                                <a class="docs-block__icon-link" href="{% url 'apply:projects:sow' pk=project.pk %}">
-                                    {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
-                                    {% trans "View" %}
-                                </a>
+                                {% if can_edit_paf %}
+                                    <a class="{% if not object.user_has_updated_sow_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit_sow' pk=object.pk %}">
+                                        {% if object.user_has_updated_sow_details %}
+                                            {% heroicon_micro "pencil-square" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                                            {% trans "Edit" %}
+                                        {% else %}
+                                            {% trans "Fill in" %}
+                                        {% endif %}
+                                    </a>
+                                {% endif %}
+                                {% if object.user_has_updated_sow_details %}
+                                    <a class="docs-block__icon-link" href="{% url 'apply:projects:sow' pk=project.pk %}">
+                                        {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                                        {% trans "View" %}
+                                    </a>
+                                {% endif %}
                             </div>
                         </li>
                     </ul>

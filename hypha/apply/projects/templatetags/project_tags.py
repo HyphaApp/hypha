@@ -38,7 +38,7 @@ def user_next_step_on_project(project, user, request=None):
 
     if project.status == DRAFT:
         if user.is_apply_staff:
-            if not project.user_has_updated_details:
+            if not project.user_has_updated_pf_details:
                 return {
                     "heading": _("To do"),
                     "text": _("Fill in the Project Form"),
