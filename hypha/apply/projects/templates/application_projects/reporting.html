@@ -9,7 +9,10 @@
 
     {% adminbar %}
         {% slot header %}{% trans "Reporting" %} ({{ table.rows|length }}){% endslot %}
-        {% slot sub_heading %}{% trans "View, Search and filter reporting statuses" %}{% endslot %}
+        {% slot sub_heading %}
+            {% trans "View, Search and filter reporting statuses" %} •
+            <a href="{% url 'apply:projects:reports:submitted' %}" class="text-blue-300 hover:underline">View submitted reports</a>
+        {% endslot %}
     {% endadminbar %}
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">

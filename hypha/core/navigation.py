@@ -91,12 +91,7 @@ def get_primary_navigation_items(user):
                 },
                 {
                     "title": _("Reports"),
-                    "url": reverse_lazy("apply:projects:reports:all"),
-                    "permission_method": "hypha.apply.users.decorators.is_apply_staff_or_finance",
-                },
-                {
-                    "title": _("Reporting"),
-                    "url": reverse_lazy("apply:projects:reporting"),
+                    "url": reverse_lazy("apply:projects:reports:submitted"),
                     "permission_method": "hypha.apply.users.decorators.is_apply_staff_or_finance",
                 },
             ],
