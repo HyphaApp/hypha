@@ -14,10 +14,14 @@
                         <p class="data-block__card-title">{% trans "Report frequency" %}</p>
                         <p class="data-block__card-copy">{{ object.report_config.get_frequency_display }}</p>
                         <p class="data-block__card-copy">
-                            <a data-fancybox data-src="#change-frequency" href="#" class="data-block__action-link">{% if object.report_config.disable_reporting %}{% trans "Enable" %}{% else %}{% trans "Change" %}{% endif %}</a>
+                            <a class="data-block__action-link"
+                               href="{% url 'apply:projects:report_frequency_update' pk=object.id %}"
+                               hx-get="{% url 'apply:projects:report_frequency_update' pk=object.id %}"
+                               hx-target="#htmx-modal"
+                            >
+                                {% if object.report_config.disable_reporting %}{% trans "Enable" %}{% else %}{% trans "Change" %}{% endif %}
+                            </a>
                         </p>
-                    <!-- Change report frequency modal -->
-                        {% include 'application_projects/includes/report_frequency_config.html' with form=update_frequency_form extra_classes="form--report-frequency" config=object.report_config %}
                     </div>
                 {% endif %}
                 <ul class="data-block__list">
@@ -76,10 +80,7 @@
                                     {% endif %}
                                 {% else %}
                                     {% if can_update_project_reports %}
-                                        <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn data-block__action-link">{% trans "Unskip" %}</button>
-                                        </form>
+                                        <button type="button" class="btn data-block__action-link" hx-post="{% url "apply:projects:reports:skip" pk=report.pk %}">{% trans "Unskip" %}</button>
                                     {% endif %}
                                 {% endif %}
                             </td>

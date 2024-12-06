@@ -1,4 +1,4 @@
-(function ($) {
+document.addEventListener("htmx:afterRequest", function () {
     const reportDataEl = document.getElementById("reportData");
     if (!reportDataEl) {
         return;
@@ -88,25 +88,25 @@
     }
 
     /**
-     * Set report period once start date recieves input
+     * Set report period once start date receives input
      */
     function addReportPeriodEvents() {
-        startDateInput.oninput = () => {
+        startDateInput.addEventListener("input", () => {
             setReportPeriod();
-        };
+        });
     }
 
     /**
      * Update reporting frequency as the options are changed
      */
     function addFrequencyEvents() {
-        frequencyNumberInput.oninput = () => {
+        frequencyNumberInput.addEventListener("input", () => {
             setFrequency();
-        };
+        });
 
-        frequencyPeriodSelect.onchange = () => {
+        frequencyPeriodSelect.addEventListener("change", () => {
             setFrequency();
-        };
+        });
     }
 
     /**
@@ -159,4 +159,4 @@
     }
 
     init();
-})(jQuery);
+});

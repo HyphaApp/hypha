@@ -206,7 +206,7 @@ class ChangeProjectStatusForm(forms.ModelForm):
         fields = ["status", "comment"]
         model = Project
 
-    def __init__(self, instance, user, *args, **kwargs):
+    def __init__(self, *args, instance=None, user=None, **kwargs):
         super().__init__(*args, **kwargs, instance=instance)
         status_field = self.fields["status"]
         possible_status_transitions = {
@@ -409,7 +409,7 @@ class UpdateProjectLeadForm(forms.ModelForm):
         fields = ["lead"]
         model = Project
 
-    def __init__(self, user=None, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
 
         lead_field = self.fields["lead"]
@@ -430,5 +430,5 @@ class UpdateProjectTitleForm(forms.ModelForm):
         fields = ["title"]
         model = Project
 
-    def __init__(self, user=None, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)

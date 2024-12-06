@@ -4,7 +4,6 @@
 {% block title %}{{ object.title }}{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
     {{ reviewer_form.media.css }}
 {% endblock %}
 
@@ -157,6 +156,4 @@
 
 {% block extra_js %}
     {{ block.super }}
-    <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
-    <script src="{% static 'js/fancybox-global.js' %}"></script>
 {% endblock %}

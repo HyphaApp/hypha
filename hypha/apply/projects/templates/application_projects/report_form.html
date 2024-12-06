@@ -3,7 +3,6 @@
 
 {% block extra_css %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
 {% endblock %}
 
 {% block title %}{% trans "Edit Report" %} | {{ object.project.title }}{% endblock %}
@@ -52,30 +51,8 @@
                     {% endfor %}
                     <input type="submit" id="submit-report-form-submit" name="submit" class="is-hidden" />
                     <input type="submit" id="submit-report-form-save" name="save" class="is-hidden" />
-                    <button data-fancybox data-src="#save-report" class="button button--submit button--top-space button--white" type="button">{% trans "Save draft" %}</button>
-                    <button data-fancybox data-src="#submit-report" class="button  button--submit button--top-space button--primary" type="button">{% trans "Submit" %}</button>
-
-                <!-- Save report modal -->
-                    <div class="modal" id="save-report">
-                        <h4 class="modal__project-header-bar">{% trans "Save report" %}</h4>
-                        <div class="modal__copy">
-                            <p>{% trans "Saving a draft means this report will be visible to you and staff from your project page." %}</p>
-                        </div>
-                        <div class="modal__buttons">
-                            <button data-fancybox-close class="button button--submit button--white">{% trans "Cancel" %}</button>
-                            <label class="button button--submit button--top-space button--primary" for="submit-report-form-save" tabindex="0">{% trans "Save" %}</label>
-                        </div>
-                    </div>
-
-                <!-- Submit report modal -->
-                    <div class="modal" id="submit-report">
-                        <h4 class="modal__project-header-bar">{% trans "Submit report" %}</h4>
-                        <p>{% trans "Are you sure you want to submit your report?" %}</p>
-                        <div class="modal__buttons">
-                            <button data-fancybox-close class="button button--submit button--white">{% trans "Cancel" %}</button>
-                            <label class="button button--submit button--top-space button--primary" for="submit-report-form-submit" tabindex="0">{% trans "Submit" %}</label>
-                        </div>
-                    </div>
+                    <label class="button button--submit button--top-space button--white" for="submit-report-form-save" onclick="return confirm('{% blocktrans %}Saving a draft means this report will be visible to you and staff from your project page.{% endblocktrans %}')">{% trans "Save draft" %}</label>
+                    <label class="button  button--submit button--top-space button--primary" for="submit-report-form-submit" onclick="return confirm('Are you sure you want to submit your report?')">{% trans "Submit" %}</label>
                 </form>
             </div>
         </div>
@@ -99,7 +76,5 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
-    <script src="{% static 'js/fancybox-global.js' %}"></script>
     <script src="{% static 'js/multi-input-fields.js' %}"></script>
 {% endblock %}

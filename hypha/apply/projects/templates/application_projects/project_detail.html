@@ -8,22 +8,13 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
-    <div class="admin-bar">
+    <div class="admin-bar" xmlns="http://www.w3.org/1999/html">
         <div class="admin-bar__inner">
-            <h1 class="mb-0 font-medium">{{ object.title }}
-                {% if request.user.is_apply_staff %}
-                    <a data-fancybox
-                       data-src="#update-title"
-                       class="is-active text-white hover:opacity-70 transition-opacity"
-                       href="#">
-                        {% heroicon_solid "pencil-square" class="inline ms-1 mt-2" aria_hidden=true %}
-                    </a>
-                    <div class="modal" id="update-title">
-                        <h4 class="modal__project-header-bar">{% trans "Update Title" %}</h4>
-                        {% trans "Update" as update %}
-                        {% include 'funds/includes/delegated_form_base.html' with form=title_form value=update %}
-                    </div>
-                {% endif %}
+            <h1 class="mb-0 font-medium"
+                hx-get="{% url "apply:projects:project_title" object.id %}"
+                hx-trigger="load, titleUpdated from:body"
+            >
+                <span class="inline-block bg-gray-600 rounded-md animate-pulse"></span>
             </h1>
 
             <div class="heading heading--meta text-sm mt-1 font-medium">
@@ -43,24 +34,11 @@
                 {% endif %}
 
                 {% if not HIDE_STAFF_IDENTITY or request.user.is_apply_staff %}
-                    <span>
-                        {% if request.user.is_apply_staff %}
-                            <a data-fancybox
-                               data-src="#assign-lead"
-                               class="flex items-center is-active text-white underline hover:opacity-70 transition-opacity"
-                               href="#"
-                            >
-                                {% trans "Lead" %}: {{ object.lead }}
-                                {% heroicon_micro "pencil-square" class="inline ms-1" aria_hidden=true %}
-                            </a>
-                            <div class="modal" id="assign-lead">
-                                <h4 class="modal__project-header-bar">{% trans "Assign Lead" %}</h4>
-                                {% trans "Update" as update %}
-                                {% include 'funds/includes/delegated_form_base.html' with form=lead_form value=update %}
-                            </div>
-                        {% else %}
-                            <span>{% trans "Lead" %}: {{ object.lead }}</span>
-                        {% endif %}
+                    <span
+                        hx-get="{% url "apply:projects:project_lead" object.id %}"
+                        hx-trigger="load, leadUpdated from:body"
+                    >
+                        <span class="inline-block w-24 bg-gray-600 rounded-md animate-pulse"></span>
                     </span>
                 {% endif %}
 
@@ -268,9 +246,6 @@
     </div>
 {% endblock content %}
 
-{% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
-{% endblock %}
 
 {% block extra_js %}
     <script src="{% static 'js/tabs.js' %}"></script>
@@ -278,7 +253,6 @@
     <script src="{% static 'js/toggle-payment-block.js' %}"></script>
     <script src="{% static 'js/past-reports-pagination.js' %}"></script>
     <script src="{% static 'js/report-calculator.js' %}"></script>
-    <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
     <script>
         // Scroll to hash after loading content
         document.addEventListener('htmx:afterSettle', scrollToHash);

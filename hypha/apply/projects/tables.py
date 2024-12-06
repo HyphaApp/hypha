@@ -97,8 +97,6 @@ class FinanceInvoiceTable(BaseInvoiceTable):
         }
 
     def render_vendor_name(self, record):
-        if record.project.vendor:
-            return record.project.vendor
         return record.project.user
 
 
@@ -140,9 +138,9 @@ class AdminInvoiceListTable(BaseInvoiceTable):
     class Meta:
         fields = [
             "selected",
+            "invoice_number",
             "invoice_date",
             "requested_at",
-            "invoice_number",
             "status",
             "project",
         ]

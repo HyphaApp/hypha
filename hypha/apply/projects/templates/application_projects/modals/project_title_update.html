@@ -1,0 +1,7 @@
+{% load i18n %}
+{% modal_title %}{% trans "Update Title" %}{% endmodal_title %}
+
+<div class="p-4">
+    {% url 'apply:projects:project_title_update' pk=object.id as url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=url %}
+</div>

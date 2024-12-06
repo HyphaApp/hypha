@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
 from django.db.models import Q
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
@@ -69,7 +69,6 @@ from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
 from ...funds.files import generate_private_file_path
-from ..files import get_files
 from ..filters import ProjectListFilter
 from ..forms import (
     ApproveContractForm,
@@ -79,7 +78,6 @@ from ..forms import (
     ChangeProjectStatusForm,
     ProjectForm,
     ProjectSOWForm,
-    SelectDocumentForm,
     SetPendingForm,
     SkipPAFApprovalProcessForm,
     SubmitContractDocumentsForm,
@@ -114,8 +112,7 @@ from ..utils import (
     get_placeholder_file,
     get_project_status_choices,
 )
-from ..views.payment import ChangeInvoiceStatusView
-from .report import ReportFrequencyUpdate, ReportingMixin
+from .report import ReportingMixin
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -405,111 +402,129 @@ class RemoveContractDocumentView(View):
         )
 
 
-@method_decorator(login_required, name="dispatch")
-class SelectDocumentView(DelegatedViewMixin, CreateView):
-    # todo: (no role issue) not getting used anywhere
-    form_class = SelectDocumentForm
-    context_name = "select_document_form"
-    model = PacketFile
-
-    @property
-    def should_show(self):
-        return bool(self.files)
-
-    def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
-        return super().dispatch(request, *args, **kwargs)
-
-    def form_invalid(self, form):
-        for error in form.errors:
-            messages.error(self.request, error)
-
-        return redirect(self.project)
-
-    def form_valid(self, form):
-        form.instance.project = self.project
-        form.instance.name = form.instance.document.name
-
-        response = super().form_valid(form)
-
-        messenger(
-            MESSAGES.UPLOAD_DOCUMENT,
-            request=self.request,
-            user=self.request.user,
-            source=self.project,
-        )
-
-        return response
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.pop("user")
-        kwargs.pop("instance")
-        kwargs["existing_files"] = get_files(self.get_parent_object())
-        return kwargs
-
-
 # GENERAL FORM VIEWS
 
 
 @method_decorator(staff_required, name="dispatch")
-class UpdateLeadView(DelegatedViewMixin, UpdateView):
+class UpdateLeadView(View):
     model = Project
     form_class = UpdateProjectLeadForm
-    context_name = "lead_form"
+    template_name = "application_projects/modals/lead_update.html"
 
-    def form_valid(self, form):
-        # Fetch the old lead from the database
-        old_lead = copy.copy(self.get_object().lead)
-        tasks = get_project_lead_tasks(self.get_object().lead, self.get_object())
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        return super().dispatch(request, *args, **kwargs)
 
-        response = super().form_valid(form)
-        project = form.instance
-        tasks.update(user=project.lead)
-
-        messenger(
-            MESSAGES.UPDATE_PROJECT_LEAD,
-            request=self.request,
-            user=self.request.user,
-            source=project,
-            related=old_lead or _("Unassigned"),
-        )
-
-        messages.success(
+    def get(self, *args, **kwargs):
+        form = self.form_class(instance=self.project)
+        return render(
             self.request,
-            _("Lead has been updated"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Update"),
+                "object": self.project,
+            },
         )
-        return response
+
+    def post(self, *args, **kwargs):
+        # Fetch the old lead from the database
+        old_lead = copy.copy(self.project.lead)
+        form = self.form_class(self.request.POST, instance=self.project)
+        if form.is_valid():
+            tasks = get_project_lead_tasks(self.project.lead, self.project)
+
+            form.save()
+            tasks.update(user=self.project.lead)
+
+            messenger(
+                MESSAGES.UPDATE_PROJECT_LEAD,
+                request=self.request,
+                user=self.request.user,
+                source=self.project,
+                related=old_lead or _("Unassigned"),
+            )
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {"leadUpdated": None, "showMessage": "Lead has been updated."}
+                    ),
+                },
+            )
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Update"),
+                "object": self.project,
+            },
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
 class UpdateProjectTitleView(DelegatedViewMixin, UpdateView):
     model = Project
     form_class = UpdateProjectTitleForm
-    context_name = "title_form"
+    template_name = "application_projects/modals/project_title_update.html"
 
-    def form_valid(self, form):
-        # Fetch the old lead from the database
-        old_title = copy.copy(self.get_object().title)
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        return super().dispatch(request, *args, **kwargs)
 
-        response = super().form_valid(form)
-        project = form.instance
-
-        messenger(
-            MESSAGES.UPDATE_PROJECT_TITLE,
-            request=self.request,
-            user=self.request.user,
-            source=project,
-            related=old_title,
-        )
-
-        messages.success(
+    def get(self, *args, **kwargs):
+        form = self.form_class(instance=self.project)
+        return render(
             self.request,
-            _("Title has been updated"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Update"),
+                "object": self.project,
+            },
         )
-        return response
+
+    def post(self, *args, **kwargs):
+        # Fetch the old lead from the database
+        old_title = copy.copy(self.project.title)
+
+        form = self.form_class(self.request.POST, instance=self.project)
+
+        if form.is_valid():
+            form.save()
+
+            messenger(
+                MESSAGES.UPDATE_PROJECT_TITLE,
+                request=self.request,
+                user=self.request.user,
+                source=self.project,
+                related=old_title,
+            )
+
+            messages.success(
+                self.request,
+                _("Title has been updated"),
+                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            )
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {"titleUpdated": None, "showMessage": "Title has been updated."}
+                    ),
+                },
+            )
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Update"),
+                "object": self.project,
+            },
+        )
 
 
 # CONTRACTS
@@ -1240,14 +1255,14 @@ class ChangePAFStatusView(View):
         )
 
 
-class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
+class ChangeProjectstatusView(View):
     """
     Project status can be updated manually only in 'IN PROGRESS, CLOSING and COMPLETE' state.
     """
 
     form_class = ChangeProjectStatusForm
-    context_name = "change_project_status"
     model = Project
+    template_name = "application_projects/modals/project_status_update.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
@@ -1256,37 +1271,60 @@ class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
         )
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
+    def get(self, *args, **kwargs):
+        form = self.form_class(instance=self.project)
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Update"),
+                "object": self.project,
+            },
+        )
+
+    def post(self, *args, **kwargs):
         old_stage = self.project.status
+        form = self.form_class(self.request.POST, instance=self.project)
 
-        response = super().form_valid(form)
+        if form.is_valid():
+            form.save()
 
-        comment = form.cleaned_data.get("comment", "")
+            comment = form.cleaned_data.get("comment", "")
 
-        if comment:
-            Activity.objects.create(
+            if comment:
+                Activity.objects.create(
+                    user=self.request.user,
+                    type=COMMENT,
+                    source=self.project,
+                    timestamp=timezone.now(),
+                    message=comment,
+                    visibility=ALL,
+                )
+
+            messenger(
+                MESSAGES.PROJECT_TRANSITION,
+                request=self.request,
                 user=self.request.user,
-                type=COMMENT,
-                source=self.object,
-                timestamp=timezone.now(),
-                message=comment,
-                visibility=ALL,
+                source=self.project,
+                related=old_stage,
             )
 
-        messenger(
-            MESSAGES.PROJECT_TRANSITION,
-            request=self.request,
-            user=self.request.user,
-            source=self.object,
-            related=old_stage,
-        )
-
-        messages.success(
+            messages.success(
+                self.request,
+                _("Project status has been updated"),
+                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            )
+            return HttpResponseClientRefresh()
+        return render(
             self.request,
-            _("Project status has been updated"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Update"),
+                "object": self.project,
+            },
         )
-        return response
 
 
 @method_decorator(login_required, name="dispatch")
@@ -1610,12 +1648,6 @@ class AdminProjectDetailView(
 ):
     form_views = [
         CommentFormView,
-        SelectDocumentView,
-        ReportFrequencyUpdate,
-        UpdateLeadView,
-        UpdateProjectTitleView,
-        ChangeProjectstatusView,
-        ChangeInvoiceStatusView,
     ]
     model = Project
     template_name_suffix = "_admin_detail"
@@ -1636,24 +1668,6 @@ class AdminProjectDetailView(
         project_settings = ProjectSettings.for_request(self.request)
         context["project_settings"] = project_settings
         context["paf_approvals"] = PAFApprovals.objects.filter(project=self.object)
-
-        if (
-            self.object.is_in_progress
-            and not self.object.report_config.disable_reporting
-        ):
-            # Current due report can be none for ONE_TIME,
-            # In case of ONE_TIME, either reporting is already completed(last_report exists)
-            # or there should be a current_due_report.
-            if self.object.report_config.current_due_report():
-                context["report_data"] = {
-                    "startDate": self.object.report_config.current_due_report().start_date,
-                    "projectEndDate": self.object.end_date,
-                }
-            else:
-                context["report_data"] = {
-                    "startDate": self.object.report_config.last_report().start_date,
-                    "projectEndDate": self.object.end_date,
-                }
         return context
 
 
@@ -1665,7 +1679,6 @@ class ApplicantProjectDetailView(
 ):
     form_views = [
         CommentFormView,
-        SelectDocumentView,
     ]
 
     model = Project

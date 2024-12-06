@@ -6,6 +6,7 @@ from .views import (
     CategoryTemplatePrivateMediaView,
     ChangeInvoiceStatusView,
     ChangePAFStatusView,
+    ChangeProjectstatusView,
     ContractDocumentPrivateMediaView,
     ContractPrivateMediaView,
     CreateInvoiceView,
@@ -25,6 +26,7 @@ from .views import (
     RemoveContractDocumentView,
     RemoveDocumentView,
     ReportDetailView,
+    ReportFrequencyUpdate,
     ReportingView,
     ReportListView,
     ReportPrivateMedia,
@@ -34,7 +36,9 @@ from .views import (
     SkipPAFApprovalProcessView,
     SubmitContractDocumentsView,
     UpdateAssignApproversView,
+    UpdateLeadView,
     UpdatePAFApproversView,
+    UpdateProjectTitleView,
     UploadContractDocumentView,
     UploadContractView,
     UploadDocumentView,
@@ -45,6 +49,8 @@ from .views import (
     partial_get_invoice_status,
     partial_get_invoice_status_table,
     partial_project_activities,
+    partial_project_lead,
+    partial_project_title,
     partial_supporting_documents,
 )
 
@@ -68,7 +74,20 @@ urlpatterns = [
                     partial_project_activities,
                     name="partial-activities",
                 ),
+                path("partial/lead/", partial_project_lead, name="project_lead"),
+                path("partial/title/", partial_project_title, name="project_title"),
                 path("edit/", ProjectFormEditView.as_view(), name="edit"),
+                path("lead/update/", UpdateLeadView.as_view(), name="lead_update"),
+                path(
+                    "status/update/",
+                    ChangeProjectstatusView.as_view(),
+                    name="project_status_update",
+                ),
+                path(
+                    "title/update/",
+                    UpdateProjectTitleView.as_view(),
+                    name="project_title_update",
+                ),
                 path(
                     "paf/skip/", SkipPAFApprovalProcessView.as_view(), name="paf_skip"
                 ),
@@ -173,6 +192,11 @@ urlpatterns = [
                     "sow/download/<str:export_type>/",
                     ProjectSOWDownloadView.as_view(),
                     name="download-sow",
+                ),
+                path(
+                    "frequency/update/",
+                    ReportFrequencyUpdate.as_view(),
+                    name="report_frequency_update",
                 ),
                 path("invoice/", CreateInvoiceView.as_view(), name="invoice"),
                 path(

@@ -24,25 +24,13 @@
 
         {% if request.user.is_apply_staff and report.can_submit %}
 
-            <input data-fancybox data-src="#skip-report-{{report.id}}" type="button" value="{% trans 'Skip' %}" class="btn data-block__action-link"></input>
-
-            <!-- Skip report confirmation modal -->
-            <div class="modal" id="skip-report-{{report.id}}">
-                <h4 class="modal__project-header-bar modal__project-header-bar--no-bottom-space">{% trans "Skip report" %}</h4>
-                <div class="modal__copy">
-                    <p>{% trans "You're skipping the report for" %} <b>{{report.start_date}}</b> &ndash; <b>{{report.end_date}}</b></p>
-                    <p>{% trans "This will result in a gap in reporting for the project. You can undo this at any time." %}</p>
-                </div>
-                {% if not current %}
-                    <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
-                        {% csrf_token %}
-                        <div class="modal__buttons">
-                            <button type="submit" class="button button--primary button--submit">{% trans "Continue" %}</button>
-                            <button data-fancybox-close class="button button--submit button--white">{% trans "Cancel" %}</button>
-                        </div>
-                    </form>
-                {% endif %}
-            </div>
+            <input
+                hx-post="{% url "apply:projects:reports:skip" pk=report.id %}"
+                hx-confirm="{% blocktrans %} You're skipping the report for {{ report.start_date }} - {{ report.end_date }}. This will result in a gap in reporting for the project. You can undo this at any time. {% endblocktrans %}"
+                type="submit"
+                value="{% trans 'Skip' %}"
+                class="btn data-block__action-link"
+            ></input>
 
         {% endif %}
     </div>

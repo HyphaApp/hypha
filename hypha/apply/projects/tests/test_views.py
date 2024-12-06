@@ -26,7 +26,6 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 from hypha.home.factories import ApplySiteFactory
 
 from ...funds.models.forms import ApplicationBaseProjectReportForm
-from ..files import get_files
 from ..forms import SetPendingForm
 from ..models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED, SUBMITTED
 from ..models.project import (
@@ -83,9 +82,9 @@ class TestUpdateLeadView(BaseViewTestCase):
 
         new_lead = self.user_factory()
         response = self.post_page(
-            project, {"form-submitted-lead_form": "", "lead": new_lead.id}
+            project, {"lead": new_lead.id}, view_name="lead_update"
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 204)
 
         project.refresh_from_db()
         self.assertEqual(project.lead, new_lead)
@@ -95,9 +94,11 @@ class TestUpdateLeadView(BaseViewTestCase):
 
         new_lead = self.user_factory()
         response = self.post_page(
-            project, {"form-submitted-lead_form": "", "lead": new_lead.id}
+            project,
+            {"lead": new_lead.id},
+            view_name="lead_update",
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 204)
 
         project.refresh_from_db()
         self.assertEqual(project.lead, new_lead)
@@ -301,7 +302,7 @@ class TestApplicantProjectDetailView(BaseProjectDetailTestCase):
     def test_applicant_can_see_lead(self):
         lead = StaffFactory()
         project = ProjectFactory(user=self.user, lead=lead)
-        response = self.get_page(project)
+        response = self.get_page(project, view_name="project_lead")
         self.assertContains(response, str(lead))
 
 
@@ -460,64 +461,6 @@ class TestApplicantUploadContractView(BaseViewTestCase):
 
         project.refresh_from_db()
         self.assertEqual(project.contracts.count(), contract_count)
-
-
-class TestStaffSelectDocumentView(BaseViewTestCase):
-    base_view_name = "detail"
-    url_name = "funds:projects:{}"
-    user_factory = StaffFactory
-
-    def get_kwargs(self, instance):
-        return {"pk": instance.id}
-
-    def test_can_choose(self):
-        category = DocumentCategoryFactory()
-        project = ProjectFactory()
-
-        files = get_files(project)
-
-        response = self.post_page(
-            project,
-            {
-                "form-submitted-select_document_form": "",
-                "category": category.id,
-                "document": files[0].url,
-            },
-        )
-        self.assertEqual(response.status_code, 200)
-
-        project.refresh_from_db()
-
-        self.assertEqual(project.packet_files.count(), 1)
-
-
-class TestApplicantSelectDocumentView(BaseViewTestCase):
-    base_view_name = "detail"
-    url_name = "funds:projects:{}"
-    user_factory = ApplicantFactory
-
-    def get_kwargs(self, instance):
-        return {"pk": instance.id}
-
-    def test_can_choose(self):
-        category = DocumentCategoryFactory()
-        project = ProjectFactory(user=self.user)
-
-        files = get_files(project)
-
-        response = self.post_page(
-            project,
-            {
-                "form-submitted-select_document_form": "",
-                "category": category.id,
-                "document": files[0].url,
-            },
-        )
-        self.assertEqual(response.status_code, 200)
-
-        project.refresh_from_db()
-
-        self.assertEqual(project.packet_files.count(), 1)
 
 
 class TestUploadDocumentView(BaseViewTestCase):
@@ -1073,10 +1016,10 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.post_page(
             invoice,
             {
-                "form-submitted-change_invoice_status": "",
                 "status": CHANGES_REQUESTED_BY_STAFF,
                 "comment": "this is a comment",
             },
+            view_name="invoice-update",
         )
         self.assertEqual(response.status_code, 204)
         self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
@@ -1089,10 +1032,10 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.post_page(
             invoice,
             {
-                "form-submitted-change_invoice_status": "",
                 "status": CHANGES_REQUESTED_BY_STAFF,
                 "comment": "this is a comment",
             },
+            view_name="invoice-update",
         )
         self.assertEqual(response.status_code, 204)
         self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
@@ -1113,10 +1056,10 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.post_page(
             invoice,
             {
-                "form-submitted-change_invoice_status": "",
                 "status": DECLINED,
                 "comment": "this is a comment",
             },
+            view_name="invoice-update",
         )
         self.assertEqual(response.status_code, 204)
         self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
@@ -1163,10 +1106,10 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.post_page(
             invoice,
             {
-                "form-submitted-change_invoice_status": "",
                 "status": CHANGES_REQUESTED_BY_STAFF,
                 "comment": "this is a comment",
             },
+            view_name="invoice-update",
         )
         self.assertEqual(response.status_code, 204)
         self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))

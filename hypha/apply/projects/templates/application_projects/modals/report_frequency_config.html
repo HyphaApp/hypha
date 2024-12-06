@@ -1,0 +1,76 @@
+{% load i18n static %}
+{% modal_title %}{% trans "Change reporting frequency" %}{% endmodal_title %}
+
+<div class="p-4">
+
+    {{ report_data|json_script:"reportData" }}
+    <div class="form__info-box">
+        <p>
+            {% if object.disable_reporting %}
+                {% trans "Reporting has been disabled, just save the form with appropriate report date and frequency to enable it again." %}
+            {% elif object.does_not_repeat %}
+                {% if object.last_report %}
+                    {% trans "No next report is due, One time reporting has already reported on " %}
+                    <b>{{ object.last_report.end_date }}</b>
+                {% else %}
+                    {% trans "Next report will be due on " %}
+                    <b>{{ object.schedule_start }}</b>
+                    {% trans "and it will be one-time reporting." %}
+                {% endif %}
+            {% else %}
+                {% trans "Next report will be due in" %}
+                <b class="js-next-report-due-slot"></b>
+                {% trans "and the report period will be" %}
+                <b class="js-report-period-start"></b>
+                {% trans "to" %}
+                <b class="js-report-period-end"></b>
+                {% trans "and then every" %}
+                <b class="js-frequency-number-slot"></b>
+                <b class="js-frequency-period-slot"></b>
+                {% trans "after until the project end date" %}:
+                <span class="js-project-end-slot"></span>.
+            {% endif %}
+        </p>
+    </div>
+    <form
+        class="form form--report-frequency"
+        method="post"
+        action="{{ action|default:request.path }}"
+        hx-post="{{ action|default:request.path }}"
+        hx-swap="innerHTML"
+        id="{{ form_id }}"
+        enctype="multipart/form-data"
+    >
+        {% csrf_token %}
+
+        {{ form.media }}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+
+        <div class="fields--visible">
+            {% for field in form.visible_fields %}
+                {% if field.name == 'occurrence' %}
+                    <label class="form__group form__group--report-every">{% trans 'Report every:' %}</label>
+                    <div class="form__group--schedule">
+                {% endif %}
+                {% if field.field %}
+                    {% include "forms/includes/field.html" %}
+                {% else %}
+                    {{ field }}
+                {% endif %}
+                {% if field.name == 'frequency' %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="mt-5 sm:gap-4 sm:mt-4 sm:flex sm:flex-row-reverse">
+
+            <button class="button button--top-space button--primary" type="submit" name="save" value="save">{% trans "Save" %}</button>
+            <button class="button button--top-space button--white" type="submit" name="disable-reporting" value="disable-reporting">{% trans "Disable Reporting" %}</button>
+        </div>
+    </form>
+</div>
+
+<script src="{% static 'js/report-calculator.js' %}"></script>

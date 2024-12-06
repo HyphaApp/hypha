@@ -1,0 +1,7 @@
+{% load i18n %}
+{% modal_title %}{% trans "Assign Lead" %}{% endmodal_title %}
+
+<div class="p-4">
+    {% url 'apply:projects:lead_update' object.id as url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=url %}
+</div>
