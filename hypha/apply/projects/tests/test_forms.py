@@ -215,9 +215,12 @@ class TestChangePAFStatusForm(TestCase):
         self.assertEqual(form.errors, {})
 
 
-class TestProjectForm(TestCase):
-    def test_updating_fields_sets_changed_flag(self):
+class TestProjectForms(TestCase):
+    def test_updating_pf_fields_sets_changed_flag(self):
         project = ProjectFactory()
+
+        project.form_fields = {}
+        project.save()
 
         self.assertFalse(project.user_has_updated_pf_details)
 

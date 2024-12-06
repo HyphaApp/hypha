@@ -2080,13 +2080,13 @@ class ProjectFormEditView(ProjectFormsEditView):
 
         return approval_form
 
-    def get_paf_form(self, form_class=None):
+    def get_pf_form(self, form_class=None):
         if form_class is None:
             form_class = self.get_form_class(ProjectForm)
 
-        return form_class(**self.get_paf_form_kwargs())
+        return form_class(**self.get_pf_form_kwargs())
 
-    def get_paf_form_kwargs(self):
+    def get_pf_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
         if self.approval_form:
@@ -2102,11 +2102,11 @@ class ProjectFormEditView(ProjectFormsEditView):
         kwargs["initial"].update(initial)
         return kwargs
 
-    def get_paf_form_fields(self):
+    def get_pf_form_fields(self):
         return self.object.form_fields or self.approval_form.form.form_fields
 
     def get_context_data(self, **kwargs):
-        self.paf_form = self.get_paf_form()
+        self.pf_form = self.get_pf_form()
 
         submission_attachments = []
         for _field, files in self.object.submission.extract_files().items():
@@ -2117,7 +2117,7 @@ class ProjectFormEditView(ProjectFormsEditView):
 
         ctx = {
             "approval_form_exists": True if self.approval_form else False,
-            "paf_form": self.paf_form,
+            "pf_form": self.pf_form,
             **super().get_context_data(),
             **kwargs,
         }
@@ -2126,8 +2126,8 @@ class ProjectFormEditView(ProjectFormsEditView):
 
     def get_defined_fields(self):
         approval_form = self.approval_form
-        if approval_form and not self.paf_form:
-            return self.get_paf_form_fields()
+        if approval_form and not self.pf_form:
+            return self.get_pf_form_fields()
         return self.object.get_defined_fields()
 
     def post(self, request, *args, **kwargs):
@@ -2136,15 +2136,14 @@ class ProjectFormEditView(ProjectFormsEditView):
         POST variables and then check if it's valid.
         """
 
-        self.paf_form = self.get_paf_form()
-        if self.paf_form.is_valid():
-            # paf can exist alone also, it needs to be valid
+        self.pf_form = self.get_pf_form()
+        if self.pf_form.is_valid():
             try:
-                paf_form_fields = self.get_paf_form_fields()
+                pf_form_fields = self.get_pf_form_fields()
             except AttributeError:
-                paf_form_fields = []
-            self.paf_form.save(paf_form_fields=paf_form_fields)
-            self.paf_form.delete_temporary_files()
+                pf_form_fields = []
+            self.pf_form.save(pf_form_fields=pf_form_fields)
+            self.pf_form.delete_temporary_files()
             # remove PAF addition task for staff group
             remove_tasks_for_user(
                 code=PROJECT_WAITING_PF,
@@ -2160,7 +2159,7 @@ class ProjectFormEditView(ProjectFormsEditView):
                 )
             return HttpResponseRedirect(self.get_success_url())
         else:
-            return self.form_invalid(self.paf_form)
+            return self.form_invalid(self.pf_form)
 
 
 class ProjectSOWEditView(ProjectFormEditView):
@@ -2262,8 +2261,6 @@ class ProjectSOWEditView(ProjectFormEditView):
                     )
                 return HttpResponseRedirect(self.get_success_url())
             else:
-                if not self.paf_form.is_valid():
-                    return self.form_invalid(self.paf_form)
                 return self.form_invalid(self.sow_form)
 
 
