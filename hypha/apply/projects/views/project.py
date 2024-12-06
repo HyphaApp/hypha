@@ -49,7 +49,7 @@ from hypha.apply.todo.options import (
     PROJECT_WAITING_CONTRACT_DOCUMENT,
     PROJECT_WAITING_CONTRACT_REVIEW,
     PROJECT_WAITING_INVOICE,
-    PROJECT_WAITING_PAF,
+    PROJECT_WAITING_PF,
     PROJECT_WAITING_SOW,
 )
 from hypha.apply.todo.utils import get_project_lead_tasks
@@ -2147,7 +2147,7 @@ class ProjectFormEditView(ProjectFormsEditView):
             self.paf_form.delete_temporary_files()
             # remove PAF addition task for staff group
             remove_tasks_for_user(
-                code=PROJECT_WAITING_PAF,
+                code=PROJECT_WAITING_PF,
                 user=self.object.lead,
                 related_obj=self.object,
             )

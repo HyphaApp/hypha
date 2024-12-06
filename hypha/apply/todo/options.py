@@ -7,7 +7,7 @@ from hypha.apply.activity.adapters.utils import link_to
 SUBMISSION_DRAFT = "submission_draft"
 DETERMINATION_DRAFT = "determination_draft"
 REVIEW_DRAFT = "review_draft"
-PROJECT_WAITING_PAF = "project_waiting_paf"
+PROJECT_WAITING_PF = "project_waiting_paf"
 PROJECT_WAITING_SOW = "project_waiting_sow"
 PROJECT_SUBMIT_PF = "project_submit_pfs"
 PROJECT_SUBMIT_SOW = "project_submit_sow"
@@ -29,7 +29,7 @@ TASKS_CODE_CHOICES = (
     (SUBMISSION_DRAFT, "Submission Draft"),
     (DETERMINATION_DRAFT, "Determination draft"),
     (REVIEW_DRAFT, "Review Draft"),
-    (PROJECT_WAITING_PAF, "Project waiting project form"),
+    (PROJECT_WAITING_PF, "Project waiting project form"),
     (PROJECT_WAITING_SOW, "Project waiting scope of work"),
     (PROJECT_SUBMIT_PF, "Project submit project form(s)"),
     (PROJECT_SUBMIT_SOW, "Project submit scope of work"),
@@ -83,7 +83,7 @@ template_map = {
     },
     # PROJECT actions
     # draft state (staff action)
-    PROJECT_WAITING_PAF: {
+    PROJECT_WAITING_PF: {
         "text": _(
             'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for project form'
         ),
