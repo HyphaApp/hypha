@@ -1,96 +1,17 @@
+{% extends "base-pdf.html" %}
 {% load i18n %}
 
-<html>
-    <head>
-        <title>{{ title|default:"" }}</title>
+{% block page_header %}
+    <h1 class="title">
+        {{ org_name }} (Scope of Work | <a href="{{ project_link }}">{{ title }}</a>)
+    </h1>
+{% endblock %}
 
-        {% block style_base %}
-        {% comment %}
-            See DEFAULT_CSS in https://github.com/chrisglass/xhtml2pdf/blob/master/xhtml2pdf/default.py
-            for base style.
-        {% endcomment %}
+{% block content %}
 
-            {% block layout_style %}
-                <style type="text/css">
-                    @page {
-                        size: {{ pagesize|default:"A4" }};
-                        margin-left: 2cm;
-                        margin-right: 2cm;
-                        margin-top: 1cm;
-                        margin-bottom: 2cm;
-
-                        @frame header {
-                            -pdf-frame-content: page-header;
-                            margin-top: 3cm;
-                            margin-right: 2mm;
-                            margin-bottom: 2cm;
-                            margin-left: 1.2cm;
-                        }
-
-                        @frame footer {
-                            -pdf-frame-content: page-footer;
-                            bottom: 0cm;
-                            margin-left: 1cm;
-                            margin-right: 1cm;
-                            height: 1cm;
-                        }
-                    }
-                </style>
-            {%endblock%}
-            <style type="text/css">
-                .title {
-                    text-align: center;
-                    font-size: 22px;
-                    font-weight: bold;
-                }
-                p {
-                    font-size: 16px;
-                }
-                #page-width {
-                    width: 100%;
-                    font-size: 16px;
-                }
-                .align-left {
-                    display: inline-block;
-                    padding-left: 100px;
-                }
-                .align-right {
-                    display: inline-block;
-                    padding-right: 100px;
-                }
-            </style>
-            {% block extra_style %}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        <div>
-            {%block page_header%}
-                <h1 class="title"> {{ org_name }}(Scope of Work | <a href="{{ project_link }}">{{ title }}</a>)</h1>
-            {%endblock%}
-
-            {%block content%}
-<!--            PAF fields data in paragraph format-->
-                {% for field_name, field_value in sow_data.items %}
-                    <p><b>{{ field_name }}</b></p>
-                    <p>{{ field_value|default:"-" }}</p>
-                {% endfor %}
-            {%endblock%}
-        </div>
-
-        {% if show_footer %}
-            <div id="page-footer">
-                {%block page_foot%}
-                    <table>
-                        <tr>
-                            <td>{% blocktrans %}Exported by {{ export_user }} on {{ export_date }}{% endblocktrans %}</td>
-                            <td align="right">
-                                Page: <pdf:pagenumber />
-                            </td>
-                        </tr>
-                    </table>
-                {%endblock%}
-            </div>
-        {% endif %}
-    </body>
-
-</html>
+    <!-- PAF fields data in paragraph format-->
+    {% for field_name, field_value in sow_data.items %}
+        <p><b>{{ field_name }}</b></p>
+        <p>{{ field_value|safe|default:"-" }}</p>
+    {% endfor %}
+{% endblock %}

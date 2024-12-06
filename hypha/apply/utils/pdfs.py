@@ -4,6 +4,9 @@ from itertools import cycle
 
 from bs4 import BeautifulSoup, NavigableString
 from django.core.files import File
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.utils import timezone
 from pypdf import PdfReader, PdfWriter
 from reportlab.lib import pagesizes
 from reportlab.lib.colors import Color, white
@@ -26,6 +29,8 @@ from reportlab.platypus import (
     TableStyle,
 )
 from xhtml2pdf import pisa
+
+from hypha.apply.utils.models import PDFPageSettings
 
 STYLES = {
     "Question": PS(
@@ -461,10 +466,49 @@ def html_to_pdf(html_body: str) -> BytesIO:
         BytesIO: PDF file
     """
     packet = BytesIO()
-    source_html = f"<html><body>{html_body}</body></html>"
-    pisa.CreatePDF(source_html, dest=packet, raise_exception=True, encoding="utf-8")
+    pisa.CreatePDF(html_body, dest=packet, raise_exception=True, encoding="utf-8")
     packet.seek(0)
     return packet
+
+
+def render_as_pdf(
+    template_name: str, filename: str, context: dict, request=None
+) -> HttpResponse:
+    """Convert HTML template to PDF file and return as a downloadable file.
+
+    Args:
+        template_name: Django template name to render
+        filename: Name of the output PDF file
+        context: Context dictionary for rendering template
+        request: Request object, defaults to None
+
+    Returns:
+        HttpResponse: PDF file as downloadable response
+
+    Example:
+        response = render_as_pdf(
+            template_name='my_template.html',
+            filename='my_pdf.pdf',
+            context={'title': 'My PDF'},
+            request=request
+        )
+    """
+    if "pagesize" not in context:
+        pdf_settings = PDFPageSettings.load(request_or_site=request)
+        context["pagesize"] = pdf_settings.download_page_size
+
+    context.setdefault("export_date", timezone.now())
+    context.setdefault("export_user", request.user if request else None)
+
+    html = render_to_string(
+        template_name=template_name, context=context, request=request
+    )
+    pdf = html_to_pdf(html)
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = f"attachment; filename={filename}"
+    response.write(pdf.read())
+    return response
 
 
 def merge_pdf(origin_pdf: BytesIO, input_pdf: BytesIO) -> File:
