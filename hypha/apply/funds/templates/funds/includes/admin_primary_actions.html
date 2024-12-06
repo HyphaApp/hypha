@@ -103,6 +103,12 @@
             hx-target="#htmx-modal"
         >{% trans "Create Reminder" %}</button>
 
+        <a class="button button--white button--full-width button--bottom-space"
+           href="{% url "apply:submissions:download" pk=object.pk %}"
+        >
+            {% trans "Download PDF" %}
+        </a>
+
         {% if can_archive %}
             <button class="button button--white button--full-width button--bottom-space" hx-get="{% url 'funds:submissions:archive' pk=object.pk %}" hx-target="#htmx-modal">
                 {% heroicon_outline "lock-closed" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}

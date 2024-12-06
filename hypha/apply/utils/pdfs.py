@@ -451,20 +451,6 @@ def draw_submission_content(content):
     return paragraphs
 
 
-def draw_project_content(content):
-    prepare_fonts()
-    paragraphs = []
-    for section in BeautifulSoup(content, "html5lib").find_all(
-        class_="simplified__wrapper"
-    ):
-        flowables = handle_block(
-            section, custom_style={"Heading3": "Question", "Heading5": "QuestionSmall"}
-        )
-        paragraphs.extend(flowables)
-
-    return paragraphs
-
-
 def html_to_pdf(html_body: str) -> BytesIO:
     """Convert HTML to PDF.
 

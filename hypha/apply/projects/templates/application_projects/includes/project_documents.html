@@ -77,21 +77,6 @@
 
             <li class="docs-block__row">
                 <div class="docs-block__row-inner">
-                    {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
-                    <p class="docs-block__title">{% trans "Proposal" %}</p>
-                </div>
-                <div class="docs-block__row-inner">
-                    <a class="docs-block__icon-link hover:opacity-70 transition-opacity"
-                       href="{% if user.is_applicant %}{{ project.submission.get_absolute_url }}{% else %}{% url 'apply:submissions:simplified' pk=project.submission.pk %}{% endif %}"
-                    >
-                        {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
-                        {% trans "View" %}
-                    </a>
-                </div>
-            </li>
-
-            <li class="docs-block__row">
-                <div class="docs-block__row-inner">
                     {% if object.user_has_updated_details %}
                         {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
                     {% else %}

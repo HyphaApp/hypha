@@ -10,14 +10,14 @@
     <div class="admin-bar">
         <div class="admin-bar__inner">
             {% if request.GET.ref == 'all-alt' %}
-                <a class="simplified__submissions-link"
+                <a class="admin-bar__back-link"
                    hx-boost="true"
                    href="{% url "funds:submissions:list" %}"
                 >
                     {% trans "Back to submissions" %}
                 </a>
             {% endif %}
-            <h1 class="mt-2 mb-0 font-medium">
+            <h1 class="mb-0 font-medium">
                 <span id="app-title">{{ object.title }}</span><span class="text-gray-400"> #{{ object.public_id|default:object.id }}</span>
             </h1>
             <div class="mt-1 text-sm font-medium heading heading--meta">
@@ -48,7 +48,7 @@
             <div class="tabs js-tabs">
                 <div class="tabs__container">
                     <a class="tab__item" href="#submission-details" data-tab="tab-1">
-                        {% trans "Submission details" %}
+                        {% trans "Application" %}
                     </a>
 
                     <a class="tab__item"
@@ -60,12 +60,13 @@
                         {% trans "Conversations" %} ({{ comments_count }})
                     </a>
 
-                    <a class="tab__item"
-                       href="#activity-feed"
-                       data-tab="tab-3"
-                    >
-                        {% trans "Activity feed" %}
-                    </a>
+                    {% if object.project and PROJECTS_ENABLED %}
+                        <a class="tab__item js-tabs-off"
+                           href="{% url 'apply:projects:detail' pk=object.project.id %}"
+                        >
+                            {% trans "Project" %}
+                        </a>
+                    {% endif %}
                     {# is_staff is only used for Django Admin. #}
                     {% if request.user.is_staff %}
                         <a class="tab__item tab__item--right js-tabs-off" href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}">
@@ -165,10 +166,6 @@
                     {% block sidebar_top %}
                         {% include "funds/includes/generic_primary_actions.html" %}
                     {% endblock %}
-
-                    {% if object.project and PROJECTS_ENABLED %}
-                        {% include 'funds/includes/project_block.html' %}
-                    {% endif %}
 
                     {% block screening_status %}
                     {% endblock %}
