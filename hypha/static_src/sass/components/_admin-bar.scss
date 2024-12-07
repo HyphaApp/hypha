@@ -2,6 +2,7 @@
 @use "../abstracts/variables";
 
 .admin-bar {
+    position: relative;
     padding: variables.$mobile-gutter;
     margin-inline: calc(0px - variables.$mobile-gutter);
     color: variables.$color--white;
