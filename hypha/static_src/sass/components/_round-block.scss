@@ -1,4 +1,5 @@
 @use "../abstracts/mixins";
+@use "../abstracts/variables";
 
 .round-block {
     $root: &;
@@ -9,22 +10,22 @@
 
     &__item {
         align-items: center;
-        background-color: var(--color-white);
-        border: 1px solid var(--color-light-mid-grey);
+        background-color: variables.$color--white;
+        border: 1px solid variables.$color--light-mid-grey;
         border-block-end: 0;
         padding: 25px;
         transition: background-color var(--quick-transition);
         min-height: 80px;
 
         &:last-child {
-            border-block-end: 1px solid var(--color-light-mid-grey);
+            border-block-end: 1px solid variables.$color--light-mid-grey;
         }
 
         @include mixins.media-query(lg) {
             display: flex;
 
             &:hover {
-                background-color: var(--color-light-grey);
+                background-color: variables.$color--light-grey;
             }
 
             // item spacing
@@ -37,11 +38,11 @@
         &--more {
             padding: 20px 25px;
             justify-content: center;
-            border-block-end: 1px solid var(--color-light-mid-grey);
+            border-block-end: 1px solid variables.$color--light-mid-grey;
             min-height: auto;
 
             &:hover {
-                background-color: var(--color-white);
+                background-color: variables.$color--white;
             }
 
             // show more link
@@ -67,13 +68,13 @@
 
         &:focus,
         #{$root}__item:hover & {
-            color: var(--color-primary);
+            color: variables.$color--primary;
             pointer-events: all;
         }
     }
 
     &__title {
-        color: var(--color-default);
+        color: variables.$color--default;
         font-size: var(--font-size-epsilon);
         font-weight: var(--weight-semibold);
     }
@@ -81,8 +82,8 @@
     &__not-found {
         margin: 0;
         padding: 20px;
-        background-color: var(--color-white);
-        border: 1px solid var(--color-light-mid-grey);
+        background-color: variables.$color--white;
+        border: 1px solid variables.$color--light-mid-grey;
     }
 
     @include mixins.media-query(lg) {

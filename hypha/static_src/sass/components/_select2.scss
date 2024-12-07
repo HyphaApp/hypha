@@ -1,4 +1,5 @@
 @use "../abstracts/mixins";
+@use "../abstracts/variables";
 
 // stylelint-disable selector-max-compound-selectors, selector-class-pattern
 
@@ -14,12 +15,12 @@
 
         .select2-selection--single {
             height: var(--dropdown-height);
-            border: 1px solid var(--color-mid-grey);
+            border: 1px solid variables.$color--mid-grey;
             border-radius: 0;
 
             &.is-active {
                 font-weight: var(--weight-bold);
-                border-color: var(--color-primary);
+                border-color: variables.$color--primary;
             }
 
             .select2-selection__clear {
@@ -47,7 +48,7 @@
             }
 
             .select2-selection__placeholder {
-                color: var(--color-default);
+                color: variables.$color--default;
             }
         }
     }
@@ -58,19 +59,19 @@
     &--default {
         .select2-results__option--highlighted[aria-selected] {
             // stylelint-disable-next-line declaration-no-important
-            color: var(--color-default) !important;
+            color: variables.$color--default !important;
             // stylelint-disable declaration-no-important, max-line-length
-            background-color: var(--color-light-blue-90) !important;
+            background-color: variables.$color--light-blue-90 !important;
         }
     }
 
     .select2-dropdown {
         border: 0;
-        border-block-end: 1px solid var(--color-mid-grey);
+        border-block-end: 1px solid variables.$color--mid-grey;
         border-radius: 0;
 
         @include mixins.media-query(sm) {
-            border: 1px solid var(--color-mid-grey);
+            border: 1px solid variables.$color--mid-grey;
         }
     }
 
@@ -83,17 +84,17 @@
             min-width: 20px;
             height: 20px;
             margin-inline-end: 10px;
-            background: var(--color-white);
-            border: 1px solid var(--color-mid-grey);
+            background: variables.$color--white;
+            border: 1px solid variables.$color--mid-grey;
             content: "";
         }
 
         &[aria-selected="true"] {
             &::before {
-                background: url("./../images/tick.svg") var(--color-dark-blue)
-                    center no-repeat;
+                background: url("./../images/tick.svg")
+                    variables.$color--dark-blue center no-repeat;
                 background-size: 12px;
-                border: 1px solid var(--color-dark-blue);
+                border: 1px solid variables.$color--dark-blue;
                 content: "";
             }
         }

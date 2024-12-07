@@ -1,11 +1,12 @@
 @use "../abstracts/mixins";
+@use "../abstracts/variables";
 
 .cookieconsent {
     position: fixed;
     inset-block-end: 0;
-    color: var(--color-white);
-    background-color: var(--color-dark-blue);
-    border-block-start: 4px solid var(--color-light-blue);
+    color: variables.$color--white;
+    background-color: variables.$color--dark-blue;
+    border-block-start: 4px solid variables.$color--light-blue;
     transform: translateY(100vh);
     transition: all var(--transition);
     overflow: hidden;

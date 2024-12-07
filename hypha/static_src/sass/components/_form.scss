@@ -108,17 +108,20 @@
         &--multi_file_field,
         &--single_file_field,
         &--file_field {
-            @include mixins.button(var(--color-white), var(--color-light-blue));
+            @include mixins.button(
+                variables.$color--white,
+                variables.$color--light-blue
+            );
             display: inline-block;
-            color: var(--color-light-blue);
-            border: 1px solid var(--color-mid-grey);
+            color: variables.$color--light-blue;
+            border: 1px solid variables.$color--mid-grey;
 
             &:focus {
-                color: var(--color-light-blue);
+                color: variables.$color--light-blue;
             }
 
             &:hover {
-                color: var(--color-white);
+                color: variables.$color--white;
             }
 
             max-width: 15rem;
@@ -147,28 +150,28 @@
     }
 
     &__file-drop-zone {
-        color: var(--color-mid-grey);
+        color: variables.$color--mid-grey;
         padding: 25px;
         font-size: 17px;
         font-weight: var(--weight-bold);
         text-align: center;
-        border: 2px dashed var(--color-mid-grey);
+        border: 2px dashed variables.$color--mid-grey;
         border-radius: 5px;
     }
 
     &__filters {
         #{variables.$filter-dropdown} {
             border: 0;
-            border-block-start: 1px solid var(--color-mid-grey);
+            border-block-start: 1px solid variables.$color--mid-grey;
 
             &.is-active {
                 font-weight: var(--weight-normal);
-                background-color: var(--color-light-blue-90);
-                border-color: var(--color-mid-grey);
+                background-color: variables.$color--light-blue-90;
+                border-color: variables.$color--mid-grey;
             }
 
             @include mixins.media-query(lg) {
-                border: 1px solid var(--color-mid-grey);
+                border: 1px solid variables.$color--mid-grey;
             }
         }
 
@@ -282,7 +285,7 @@
     }
 
     &__required {
-        color: var(--color-purple);
+        color: variables.$color--purple;
     }
 
     &__help {
@@ -303,7 +306,7 @@
         a {
             &:hover {
                 cursor: pointer;
-                color: var(--color-darkest-blue);
+                color: variables.$color--darkest-blue;
             }
         }
     }
@@ -312,7 +315,7 @@
         display: inline;
         width: 20px;
         height: 20px;
-        fill: var(--color-dark-grey);
+        fill: variables.$color--dark-grey;
     }
 
     &__item {
@@ -347,7 +350,7 @@
 
         select {
             option {
-                background-color: var(--color-white);
+                background-color: variables.$color--white;
             }
         }
 
@@ -369,7 +372,7 @@
         max-width: 385px;
 
         &.invalid {
-            border: 2px solid var(--color-error);
+            border: 2px solid variables.$color--error;
             outline: none;
         }
     }
@@ -385,7 +388,7 @@
         input[type="number"],
         input[type="password"],
         input[type="datetime-local"] {
-            border: 2px solid var(--color-error);
+            border: 2px solid variables.$color--error;
         }
     }
 
@@ -393,8 +396,8 @@
         max-width: 200px;
         padding: 5px;
         margin: 20px 0 0;
-        color: var(--color-white);
-        background: var(--color-error);
+        color: variables.$color--white;
+        background: variables.$color--error;
         z-index: 2;
 
         @include mixins.media-query(lg) {
@@ -408,7 +411,7 @@
                 position: absolute;
                 inset-block-start: 12px;
                 inset-inline-start: -10px;
-                border-color: transparent var(--color-error) transparent
+                border-color: transparent variables.$color--error transparent
                     transparent;
                 border-style: solid;
                 border-width: 5px 10px 5px 0;
@@ -439,7 +442,7 @@
         display: block;
         width: 100%;
         padding: 0.4em;
-        border: 1px solid var(--color-mid-grey);
+        border: 1px solid variables.$color--mid-grey;
     }
 
     .wmd-preview {
@@ -478,8 +481,8 @@
     .errorlist {
         padding: 5px;
         margin-block-end: 0.2em;
-        background: var(--color-light-pink);
-        border: 1px solid var(--color-tomato);
+        background: variables.$color--light-pink;
+        border: 1px solid variables.$color--tomato;
     }
 
     .address {
@@ -509,7 +512,7 @@
     }
 
     &__info-box {
-        background-color: var(--color-light-blue-90);
+        background-color: variables.$color--light-blue-90;
         padding: 1rem;
 
         p {
@@ -528,6 +531,6 @@
 
 @keyframes flash {
     50% {
-        background-color: var(--color-mustard);
+        background-color: variables.$color--mustard;
     }
 }

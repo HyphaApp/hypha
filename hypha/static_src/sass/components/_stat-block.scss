@@ -1,5 +1,6 @@
 @use "../base/typography";
 @use "../abstracts/mixins";
+@use "../abstracts/variables";
 
 .stat-block {
     $root: &;
@@ -11,7 +12,7 @@
     &__item {
         position: relative;
         padding: 1rem;
-        background-color: var(--color-white);
+        background-color: variables.$color--white;
         flex: 1;
         display: block;
         margin: 0 0 1rem;
@@ -36,7 +37,7 @@
         @extend %h3;
         line-height: 1;
         margin: 0;
-        color: var(--color-marine);
+        color: variables.$color--marine;
     }
 
     &__text {

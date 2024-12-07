@@ -26,10 +26,10 @@
 @mixin button($bg, $hover-bg) {
     padding: 0.5em 2rem;
     font-weight: var(--weight-bold);
-    color: var(--color-white);
+    color: variables.$color--white;
     text-align: center;
     background: $bg;
-    border: 1px solid var(--color-white);
+    border: 1px solid variables.$color--white;
     transition: color, background, border, var(--transition);
     display: flex;
     align-items: center;
@@ -124,7 +124,7 @@
             &.desc,
             &.asc {
                 position: relative;
-                color: var(--color-dark-grey);
+                color: variables.$color--dark-grey;
 
                 &::after {
                     position: absolute;

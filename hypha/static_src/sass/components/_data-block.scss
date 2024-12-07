@@ -1,13 +1,14 @@
 @use "../abstracts/mixins";
+@use "../abstracts/variables";
 
 .data-block {
     $root: &;
     margin-block-end: 1rem;
-    border: 1px solid var(--color-light-blue);
+    border: 1px solid variables.$color--light-blue;
 
     &__header {
         padding: 1rem;
-        background-color: var(--color-light-blue-90);
+        background-color: variables.$color--light-blue-90;
 
         @include mixins.media-query(sm) {
             padding: 1rem 2rem;
@@ -42,7 +43,7 @@
         #{$root}__header & {
             &:hover,
             &:focus {
-                background-color: var(--color-white);
+                background-color: variables.$color--white;
             }
         }
 
@@ -87,14 +88,14 @@
     &__table {
         thead {
             display: none;
-            border-block-start: 2px solid var(--color-light-mid-grey);
+            border-block-start: 2px solid variables.$color--light-mid-grey;
 
             @include mixins.media-query(lg) {
                 display: table-header-group;
             }
 
             th {
-                color: var(--color-mid-dark-grey);
+                color: variables.$color--mid-dark-grey;
                 padding: 10px;
 
                 @include mixins.media-query(lg) {
@@ -103,7 +104,7 @@
             }
 
             tr {
-                border-color: var(--color-light-mid-grey);
+                border-color: variables.$color--light-mid-grey;
             }
         }
 
@@ -113,7 +114,7 @@
 
         tr {
             border: 0;
-            border-block-end: 2px solid var(--color-light-grey);
+            border-block-end: 2px solid variables.$color--light-grey;
 
             &:hover {
                 box-shadow: none;
@@ -151,7 +152,7 @@
         display: inline-block;
         margin-inline-end: 1rem;
         text-decoration: underline;
-        color: var(--color-primary);
+        color: variables.$color--primary;
         word-break: normal;
         transition-property: opacity;
         transition-duration: 150ms;
@@ -185,12 +186,12 @@
         }
 
         &--remove {
-            color: var(--color-tomato);
+            color: variables.$color--tomato;
         }
     }
 
     &__list-item {
-        border-block-end: 2px solid var(--color-light-grey);
+        border-block-end: 2px solid variables.$color--light-grey;
         padding: 1rem 0;
 
         @include mixins.media-query(lg) {
@@ -241,7 +242,7 @@
             position: absolute;
             height: 2px;
             display: block;
-            background: var(--color-mid-grey);
+            background: variables.$color--mid-grey;
             inset-inline-start: -1rem;
             inset-block-end: 0;
 

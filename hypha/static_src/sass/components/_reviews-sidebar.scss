@@ -1,4 +1,5 @@
 @use "../abstracts/mixins";
+@use "../abstracts/variables";
 
 // stylelint-disable max-nesting-depth
 
@@ -10,8 +11,8 @@
     &__decision {
         position: relative;
         font-size: 14px;
-        border-block-start: 1px solid var(--color-mid-grey);
-        border-block-end: 1px solid var(--color-mid-grey);
+        border-block-start: 1px solid variables.$color--mid-grey;
+        border-block-end: 1px solid variables.$color--mid-grey;
         margin-block-end: 20px;
         padding-block-start: 10px;
     }
@@ -41,14 +42,18 @@
                     }
 
                     &::after {
-                        @include mixins.triangle(top, var(--color-white), 8px);
+                        @include mixins.triangle(
+                            top,
+                            variables.$color--white,
+                            8px
+                        );
                         inset-block-start: -21px;
                     }
 
                     &::before {
                         @include mixins.triangle(
                             top,
-                            var(--color-mid-grey),
+                            variables.$color--mid-grey,
                             8px
                         );
                     }
@@ -61,24 +66,24 @@
         }
 
         &.no-response {
-            color: var(--color-black-20);
+            color: variables.$color--black-20;
         }
 
         .yes {
-            color: var(--color-green);
+            color: variables.$color--green;
         }
 
         .maybe {
-            color: var(--color-mustard);
+            color: variables.$color--mustard;
         }
 
         .no {
-            color: var(--color-tomato);
+            color: variables.$color--tomato;
         }
     }
 
     &__no-reviews {
-        color: var(--color-mid-grey);
+        color: variables.$color--mid-grey;
     }
 
     &__name {
@@ -87,7 +92,7 @@
         align-items: center;
         overflow: hidden;
         text-overflow: ellipsis;
-        background: var(--color-white);
+        background: variables.$color--white;
 
         &:hover {
             display: inline-flex;
@@ -103,11 +108,11 @@
         position: relative;
 
         &.agree {
-            color: var(--color-green);
+            color: variables.$color--green;
         }
 
         &.disagree {
-            color: var(--color-tomato);
+            color: variables.$color--tomato;
         }
     }
 

@@ -1,4 +1,5 @@
 @use "../abstracts/mixins";
+@use "../abstracts/variables";
 
 // stylelint-disable  selector-class-pattern
 
@@ -34,8 +35,8 @@
     &__subheading {
         display: inline-block;
         padding: 5px 10px;
-        color: var(--color-white);
-        background-color: var(--color-tomato);
+        color: variables.$color--white;
+        background-color: variables.$color--tomato;
     }
 
     &__text {
@@ -49,7 +50,7 @@
         padding-block-start: var(--tooltip-margin-top);
 
         // The bar for each item.
-        border-block-start: var(--bar) solid var(--color-mid-grey);
+        border-block-start: var(--bar) solid variables.$color--mid-grey;
 
         // The dot for each item.
         &::before {
@@ -60,41 +61,41 @@
             inset-inline-start: calc(-1 * var(--dot) / 2);
             width: var(--dot);
             height: var(--dot);
-            background: var(--color-dark-grey);
-            border: calc(var(--dot) / 4) solid var(--color-mid-grey);
+            background: variables.$color--dark-grey;
+            border: calc(var(--dot) / 4) solid variables.$color--mid-grey;
             border-radius: 50%;
             content: "";
 
             #{$root}--small & {
-                background: var(--color-white);
+                background: variables.$color--white;
             }
         }
 
         &--is-current {
             &::before {
-                background: var(--color-white);
-                border-color: var(--color-tomato);
+                background: variables.$color--white;
+                border-color: variables.$color--tomato;
             }
 
             // Fill the bar all the way on accepted/declined.
             &:last-of-type {
-                border-color: var(--color-primary);
+                border-color: variables.$color--primary;
             }
         }
 
         &--is-complete {
-            border-color: var(--color-primary);
+            border-color: variables.$color--primary;
 
             &::before {
                 font-size: var(--font-size-milli);
                 font-weight: var(--weight-bold);
-                color: var(--color-white);
-                background: var(--color-primary);
-                border-color: var(--color-primary);
+                color: variables.$color--white;
+                background: variables.$color--primary;
+                border-color: variables.$color--primary;
                 content: "✓";
 
                 #{$root}--small & {
-                    background: var(--color-primary);
+                    background: variables.$color--primary;
                 }
             }
         }
@@ -125,24 +126,24 @@
         margin-inline-start: calc(-1 * var(--tooltip-width) / 2 - 5px);
         text-align: center;
         padding-block: var(--tooltip-padding);
-        color: var(--color-mid-grey);
+        color: variables.$color--mid-grey;
 
         #{$root}__item--is-complete & {
-            color: var(--color-primary);
+            color: variables.$color--primary;
         }
 
         #{$root}__item--is-current & {
             width: calc(var(--tooltip-width) + var(--tooltip-padding));
             position: relative;
-            color: var(--color-white);
-            background-color: var(--color-tomato);
+            color: variables.$color--white;
+            background-color: variables.$color--tomato;
             padding-inline: var(--tooltip-padding);
             border-radius: 0.125rem;
         }
 
         &::before {
             #{$root}__item--is-current & {
-                @include mixins.triangle(top, var(--color-tomato), 5px);
+                @include mixins.triangle(top, variables.$color--tomato, 5px);
                 position: absolute;
                 inset-block-start: calc(-1 * var(--triangle) - 2px);
                 inset-inline-start: calc(50% - var(--triangle));

@@ -1,3 +1,5 @@
+@use "../abstracts/variables";
+
 .reviews-list {
     position: relative;
     margin-block-start: 40px;
@@ -19,7 +21,7 @@
 
     &__tr {
         border-block-start: 0;
-        border-block-end: 2px solid var(--color-light-grey);
+        border-block-end: 2px solid variables.$color--light-grey;
     }
 
     &__td {
@@ -47,13 +49,13 @@
 
         &:first-child {
             width: 160px;
-            background-color: var(--color-light-mid-grey);
+            background-color: variables.$color--light-mid-grey;
         }
     }
 
     &__th--author {
         position: sticky;
         inset-block-start: 0;
-        background-color: var(--color-white);
+        background-color: variables.$color--white;
     }
 }

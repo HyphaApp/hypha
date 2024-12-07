@@ -1,4 +1,5 @@
 @use "../abstracts/mixins";
+@use "../abstracts/variables";
 
 // stylelint-disable selector-max-compound-selectors
 
@@ -32,7 +33,7 @@
             margin-inline-end: 0.3rem;
             width: 25px;
             height: 25px;
-            fill: var(--color-tomato);
+            fill: variables.$color--tomato;
         }
     }
 }
@@ -96,9 +97,9 @@
                     padding: 5px;
                     font-size: 13px;
                     font-weight: var(--weight-bold);
-                    color: var(--color-white);
+                    color: variables.$color--white;
                     text-align: center;
-                    background-color: var(--color-dark-blue);
+                    background-color: variables.$color--dark-blue;
                 }
             }
         }

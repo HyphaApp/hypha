@@ -1,5 +1,6 @@
 @use "../base/typography";
 @use "../abstracts/mixins";
+@use "../abstracts/variables";
 
 .pagination--wrapper {
     display: flex;
@@ -39,9 +40,9 @@
             width: 55px;
             height: 55px;
             font-size: 0;
-            color: var(--color-white);
-            background: var(--color-white);
-            border: 1px solid var(--color-mid-grey);
+            color: variables.$color--white;
+            background: variables.$color--white;
+            border: 1px solid variables.$color--mid-grey;
 
             &::after {
                 position: absolute;
@@ -54,7 +55,7 @@
     .previous {
         a {
             &::after {
-                @include mixins.triangle(left, var(--color-primary), 7px);
+                @include mixins.triangle(left, variables.$color--primary, 7px);
             }
         }
     }
@@ -62,7 +63,7 @@
     .next {
         a {
             &::after {
-                @include mixins.triangle(right, var(--color-primary), 7px);
+                @include mixins.triangle(right, variables.$color--primary, 7px);
             }
         }
     }

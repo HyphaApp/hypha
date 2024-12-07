@@ -1,12 +1,13 @@
 @use "../abstracts/mixins";
+@use "../abstracts/variables";
 
 .card {
     padding: 20px;
     margin-block-end: 20px;
-    border: 1px solid var(--color-mid-grey);
+    border: 1px solid variables.$color--mid-grey;
 
     &--solid {
-        background-color: var(--color-white);
+        background-color: variables.$color--white;
     }
 
     &__text {

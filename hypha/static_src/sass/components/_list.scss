@@ -1,5 +1,6 @@
 @use "../base/typography";
 @use "../abstracts/mixins";
+@use "../abstracts/variables";
 
 .list {
     $root: &;
@@ -12,8 +13,8 @@
     &--opinion {
         position: relative;
         font-size: 14px;
-        border-block-start: 1px solid var(--color-mid-grey);
-        border-block-end: 1px solid var(--color-mid-grey);
+        border-block-start: 1px solid variables.$color--mid-grey;
+        border-block-end: 1px solid variables.$color--mid-grey;
         margin: 10px 0;
         padding: 5px 0;
 
@@ -27,12 +28,16 @@
                 }
 
                 &::after {
-                    @include mixins.triangle(top, var(--color-mist), 6px);
+                    @include mixins.triangle(top, variables.$color--mist, 6px);
                     inset-block-start: -13px;
                 }
 
                 &::before {
-                    @include mixins.triangle(top, var(--color-mid-grey), 6px);
+                    @include mixins.triangle(
+                        top,
+                        variables.$color--mid-grey,
+                        6px
+                    );
                 }
             }
         }
@@ -61,7 +66,7 @@
                 position: absolute;
                 max-width: initial;
                 overflow: visible;
-                background-color: var(--color-mist);
+                background-color: variables.$color--mist;
 
                 + #{$root}__item--reviewer-outcome {
                     width: 100%;
@@ -75,11 +80,11 @@
         }
 
         &--reviewer-outcome {
-            color: var(--color-tomato);
+            color: variables.$color--tomato;
             position: relative;
 
             &.agree {
-                color: var(--color-green);
+                color: variables.$color--green;
             }
         }
     }

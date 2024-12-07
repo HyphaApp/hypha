@@ -1,4 +1,5 @@
 @use "../abstracts/mixins";
+@use "../abstracts/variables";
 
 .filters {
     display: none;
@@ -13,7 +14,7 @@
         display: block;
         width: 100%;
         height: 100vh;
-        background: var(--color-white);
+        background: variables.$color--white;
     }
 
     @include mixins.media-query(lg) {
@@ -47,7 +48,7 @@
         }
 
         > div[class^="js-"] {
-            color: var(--color-primary);
+            color: variables.$color--primary;
 
             &:hover {
                 cursor: pointer;
@@ -59,7 +60,7 @@
         appearance: none;
         -webkit-appearance: none; // stylelint-disable-line property-no-vendor-prefix
         border: 0;
-        color: var(--color-primary);
+        color: variables.$color--primary;
         background: transparent;
     }
 }

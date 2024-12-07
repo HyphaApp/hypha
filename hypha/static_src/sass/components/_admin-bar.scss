@@ -1,12 +1,13 @@
 @use "../abstracts/mixins";
+@use "../abstracts/variables";
 
 .admin-bar {
     position: relative;
     padding-inline: var(--gutters);
     padding-block: var(--spacing);
     margin-inline: var(--gutters-reverse);
-    color: var(--color-white);
-    background-color: var(--color-dark-grey);
+    color: variables.$color--white;
+    background-color: variables.$color--dark-grey;
 
     @include mixins.media-query(xl) {
         padding-inline: 0;
@@ -42,7 +43,7 @@
     &__back-link {
         display: inline-flex;
         align-items: center;
-        color: var(--color-lightest-blue);
+        color: variables.$color--lightest-blue;
         font-weight: var(--weight-bold);
 
         &::before {
