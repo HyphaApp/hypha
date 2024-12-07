@@ -13,7 +13,7 @@
     visibility: hidden;
     opacity: 0;
     pointer-events: none;
-    transition: opacity, bottom, variables.$transition;
+    transition: opacity, bottom, var(--transition);
     position: absolute;
     inset-block-end: 110%;
     margin-block-end: 5px;

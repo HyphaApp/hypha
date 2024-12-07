@@ -96,7 +96,7 @@
                     display: inline-block;
                     padding: 5px;
                     font-size: 13px;
-                    font-weight: variables.$weight--bold;
+                    font-weight: var(--weight-bold);
                     color: variables.$color--white;
                     text-align: center;
                     background-color: variables.$color--dark-blue;

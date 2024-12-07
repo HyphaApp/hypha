@@ -9,7 +9,7 @@
     background-image: none;
     border: 0;
     box-shadow: none;
-    border-radius: variables.$rounded-sm;
+    border-radius: 0.125rem;
 
     &:hover {
         cursor: pointer;
@@ -154,7 +154,7 @@
         justify-content: space-between;
         max-width: 300px;
         padding: 15px 20px;
-        font-weight: variables.$weight--normal;
+        font-weight: var(--weight-normal);
         color: variables.$color--default;
         border: 1px solid variables.$color--light-mid-grey;
         transition: none;
@@ -267,7 +267,7 @@
         padding: 3px;
         margin-block-start: 10px;
         font-size: 12px;
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
         text-align: center;
         text-transform: uppercase;
         border: 1px solid currentcolor;
@@ -301,8 +301,8 @@
         display: flex;
         color: variables.$color--default;
         align-items: center;
-        transition: opacity variables.$transition;
-        font-weight: variables.$weight--semibold;
+        transition: opacity var(--transition);
+        font-weight: var(--weight-semibold);
         position: relative;
 
         &:hover {
@@ -322,11 +322,11 @@
                 width: 200px;
                 padding: 12px;
                 font-size: 12px;
-                font-weight: variables.$weight--normal;
+                font-weight: var(--weight-normal);
                 white-space: normal;
                 background: variables.$color--light-blue;
                 opacity: 0;
-                transition: opacity variables.$transition;
+                transition: opacity var(--transition);
                 inset-block-end: 45px;
                 inset-inline-start: 50%;
                 transform: translateX(-50%);
@@ -334,7 +334,7 @@
                 text-align: left;
                 line-height: 1rem;
                 border: 1px solid variables.$color--white;
-                border-radius: variables.$rounded-sm;
+                border-radius: 0.125rem;
             }
 
             &::after {
@@ -348,7 +348,7 @@
                 inset-inline-start: 50%;
                 transform: translateX(-50%);
                 opacity: 0;
-                transition: opacity variables.$transition;
+                transition: opacity var(--transition);
                 z-index: 10;
             }
 

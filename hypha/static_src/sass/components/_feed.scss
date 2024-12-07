@@ -94,7 +94,7 @@
         margin: 0 10px 0 0;
 
         span {
-            font-weight: variables.$weight--bold;
+            font-weight: var(--weight-bold);
         }
 
         @include mixins.media-query(sm) {
@@ -110,7 +110,7 @@
             color: variables.$color--mid-dark-grey;
 
             span {
-                font-weight: variables.$weight--normal;
+                font-weight: var(--weight-normal);
             }
         }
 
@@ -118,7 +118,7 @@
             margin-inline-start: auto;
 
             span {
-                font-weight: variables.$weight--normal;
+                font-weight: var(--weight-normal);
             }
         }
 
@@ -179,7 +179,7 @@
     &__heading-status {
         padding: 3px 10px;
         font-size: map.get(variables.$font-sizes, milli);
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
         color: variables.$color--marine;
         text-align: center;
         text-transform: uppercase;

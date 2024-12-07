@@ -15,12 +15,12 @@
         width: 100% !important;
 
         .select2-selection--single {
-            height: variables.$dropdown-height;
+            height: var(--dropdown-height);
             border: 1px solid variables.$color--mid-grey;
             border-radius: 0;
 
             &.is-active {
-                font-weight: variables.$weight--bold;
+                font-weight: var(--weight-bold);
                 border-color: variables.$color--primary;
             }
 
@@ -31,12 +31,12 @@
             .select2-selection__rendered {
                 padding-inline-start: 15px;
                 padding-inline-end: 30px;
-                line-height: variables.$dropdown-height;
+                line-height: var(--dropdown-height);
             }
 
             .select2-selection__arrow {
                 inset-inline-end: 15px;
-                height: variables.$dropdown-height;
+                height: var(--dropdown-height);
                 pointer-events: none;
                 background: url("./../images/dropdown.svg") transparent
                     no-repeat 95% center;

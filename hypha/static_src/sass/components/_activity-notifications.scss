@@ -19,7 +19,7 @@
         justify-content: space-between;
 
         label {
-            font-weight: variables.$weight--semibold;
+            font-weight: var(--weight-semibold);
             padding-inline-end: 1em;
         }
 

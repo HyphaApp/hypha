@@ -52,7 +52,7 @@
         &--reviewer-name {
             max-width: 190px;
             overflow: hidden;
-            font-weight: variables.$weight--bold;
+            font-weight: var(--weight-bold);
             text-overflow: ellipsis;
             display: flex;
             align-items: center;
@@ -75,7 +75,7 @@
             }
 
             #{$root}__item--opinion & {
-                font-weight: variables.$weight--normal;
+                font-weight: var(--weight-normal);
             }
         }
 

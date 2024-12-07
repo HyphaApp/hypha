@@ -14,7 +14,7 @@
     }
 
     &__inner {
-        max-width: variables.$site-width;
+        max-width: var(--site-width);
         margin: 0 auto;
 
         &--with-button {
@@ -43,7 +43,7 @@
         display: inline-flex;
         align-items: center;
         color: variables.$color--lightest-blue;
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
 
         &::before {
             @include mixins.triangle(top, currentColor, 5px);

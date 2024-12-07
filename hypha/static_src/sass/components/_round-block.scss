@@ -50,7 +50,7 @@
             a {
                 margin: 0;
                 flex-basis: auto;
-                font-weight: variables.$weight--semibold;
+                font-weight: var(--weight-semibold);
             }
         }
     }
@@ -58,7 +58,7 @@
     &__view {
         margin: 0 0 0 auto;
         transition: color variables.$quick-transition;
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
         text-transform: uppercase;
 
         @include mixins.media-query(lg) {
@@ -77,7 +77,7 @@
     &__title {
         color: variables.$color--default;
         font-size: map.get(variables.$font-sizes, epsilon);
-        font-weight: variables.$weight--semibold;
+        font-weight: var(--weight-semibold);
     }
 
     &__not-found {

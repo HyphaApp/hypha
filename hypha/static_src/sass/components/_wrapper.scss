@@ -17,7 +17,7 @@
     }
 
     &--large {
-        max-width: variables.$site-width;
+        max-width: var(--site-width);
         margin-inline-start: auto;
         margin-inline-end: auto;
     }

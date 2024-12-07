@@ -84,7 +84,7 @@
             &.title {
                 position: relative;
                 padding-block-start: 15px;
-                font-weight: variables.$weight--bold;
+                font-weight: var(--weight-bold);
 
                 @include mixins.media-query(lg) {
                     display: flex;
@@ -102,7 +102,7 @@
                     display: inline-block;
                     padding: 5px;
                     font-size: 13px;
-                    font-weight: variables.$weight--bold;
+                    font-weight: var(--weight-bold);
                     color: variables.$color--marine;
                     text-align: center;
                     background-color: variables.$color--sky-blue;
@@ -170,7 +170,7 @@
                     position: relative;
                     display: inline-block;
                     transform: rotate(0);
-                    transition: transform variables.$transition;
+                    transition: transform var(--transition);
 
                     &:hover {
                         cursor: pointer;
@@ -237,7 +237,7 @@
 
         p {
             margin: 0;
-            font-weight: variables.$weight--bold;
+            font-weight: var(--weight-bold);
             color: variables.$color--default;
         }
 
@@ -278,7 +278,7 @@
         a {
             margin: 0;
             flex-basis: auto;
-            font-weight: variables.$weight--semibold;
+            font-weight: var(--weight-semibold);
         }
     }
 }

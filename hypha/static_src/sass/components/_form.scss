@@ -17,7 +17,7 @@
             label {
                 display: block;
                 margin-block-end: 0.5em;
-                font-weight: variables.$weight--bold;
+                font-weight: var(--weight-bold);
             }
         }
 
@@ -100,7 +100,7 @@
 
     &__question {
         display: block;
-        font-weight: variables.$weight--semibold;
+        font-weight: var(--weight-semibold);
         font-size: 1rem;
         line-height: 1.25rem;
 
@@ -154,7 +154,7 @@
         color: variables.$color--mid-grey;
         padding: 25px;
         font-size: 17px;
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
         text-align: center;
         border: 2px dashed variables.$color--mid-grey;
         border-radius: 5px;
@@ -166,7 +166,7 @@
             border-block-start: 1px solid variables.$color--mid-grey;
 
             &.is-active {
-                font-weight: variables.$weight--normal;
+                font-weight: var(--weight-normal);
                 background-color: color.adjust(
                     variables.$color--primary,
                     $alpha: -0.9
@@ -184,11 +184,11 @@
             align-items: flex-start;
             padding: 10px 0 30px;
             opacity: 0;
-            transition: opacity variables.$transition;
+            transition: opacity var(--transition);
 
             .filters-open & {
                 opacity: 1;
-                transition-delay: variables.$base-delay * 10;
+                transition-delay: 300ms;
             }
 
             .filters--dates & {
@@ -343,7 +343,7 @@
                 max-width: 100%;
 
                 select {
-                    height: variables.$dropdown-height;
+                    height: var(--dropdown-height);
                 }
             }
         }

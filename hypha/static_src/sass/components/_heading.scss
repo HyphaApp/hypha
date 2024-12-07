@@ -31,7 +31,7 @@
         display: flex;
         flex-direction: column;
         margin-block-start: 20px;
-        font-weight: variables.$weight--normal;
+        font-weight: var(--weight-normal);
         color: color.adjust(variables.$color--dark-grey, $alpha: -0.5);
 
         @include mixins.media-query(lg) {
@@ -64,7 +64,7 @@
     }
 
     &--bold {
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
     }
 
     &--activity-feed {

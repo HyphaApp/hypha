@@ -52,7 +52,7 @@
 
     &__view {
         text-transform: uppercase;
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
         transition: opacity variables.$quick-transition;
 
         @include mixins.media-query(md) {

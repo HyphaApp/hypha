@@ -15,7 +15,7 @@
         }
 
         &:first-child {
-            font-weight: variables.$weight--bold;
+            font-weight: var(--weight-bold);
         }
     }
 

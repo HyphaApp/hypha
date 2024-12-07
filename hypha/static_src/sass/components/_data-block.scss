@@ -29,7 +29,7 @@
 
     &__title {
         font-size: variables.$base-font-size-large;
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
         margin: 0 0 1rem;
 
         @include mixins.media-query(sm) {
@@ -66,7 +66,7 @@
 
         @include mixins.media-query(lg) {
             display: block;
-            font-weight: variables.$weight--bold;
+            font-weight: var(--weight-bold);
         }
     }
 
@@ -77,12 +77,12 @@
 
     &__pagination-link,
     &__rejected-link {
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
     }
 
     &__mobile-label {
         display: inline-block;
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
         white-space: pre;
 
         @include mixins.media-query(lg) {
@@ -153,7 +153,7 @@
 
     &__action-link {
         font-size: map.get(variables.$font-sizes, zeta);
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
         display: inline-block;
         margin-inline-end: 1rem;
         text-decoration: underline;
@@ -173,7 +173,7 @@
 
     &__action-icon-link {
         font-size: map.get(variables.$font-sizes, zeta);
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
         display: flex;
         align-items: center;
         margin-inline-end: 1rem;
@@ -264,6 +264,6 @@
     }
 
     &__card-title {
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
     }
 }

@@ -42,7 +42,7 @@
 
     &__text {
         font-size: map.get(variables.$font-sizes, milli);
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
     }
 
     &__item {
@@ -89,7 +89,7 @@
 
             &::before {
                 font-size: map.get(variables.$font-sizes, milli);
-                font-weight: variables.$weight--bold;
+                font-weight: var(--weight-bold);
                 color: variables.$color--white;
                 background: variables.$color--primary;
                 border-color: variables.$color--primary;
@@ -139,7 +139,7 @@
             color: variables.$color--white;
             background-color: variables.$color--tomato;
             padding-inline: var(--tooltip-padding);
-            border-radius: variables.$rounded-sm;
+            border-radius: 0.125rem;
         }
 
         &::before {

@@ -6,7 +6,7 @@
 .reviews-sidebar {
     $root: &;
     margin-block-end: 20px;
-    font-weight: variables.$weight--bold;
+    font-weight: var(--weight-bold);
 
     &__decision {
         position: relative;
@@ -30,7 +30,7 @@
 
         &--decision {
             margin-block-end: 10px;
-            font-weight: variables.$weight--semibold;
+            font-weight: var(--weight-semibold);
 
             &:first-child {
                 #{$root}__outcome {
@@ -80,10 +80,6 @@
         .no {
             color: variables.$color--tomato;
         }
-    }
-
-    &__date {
-        @include mixins.font-size(milli);
     }
 
     &__no-reviews {

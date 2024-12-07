@@ -61,6 +61,6 @@
         border-radius: 30px;
         min-width: 120px;
         text-align: center;
-        font-weight: variables.$weight--semibold;
+        font-weight: var(--weight-semibold);
     }
 }

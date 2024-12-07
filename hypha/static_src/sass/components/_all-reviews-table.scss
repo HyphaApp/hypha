@@ -29,7 +29,7 @@
                 position: relative;
                 padding-block-start: 15px;
                 padding-inline-start: 10px;
-                font-weight: variables.$weight--bold;
+                font-weight: var(--weight-bold);
 
                 @include mixins.media-query(lg) {
                     display: flex;

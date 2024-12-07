@@ -27,7 +27,7 @@
         color: variables.$color--white;
         font-size: 14px;
         opacity: 1;
-        transition: opacity, max-height, variables.$transition;
+        transition: opacity, max-height, var(--transition);
         pointer-events: all;
         max-height: 1000px;
         background: variables.$color--dark-blue;
@@ -54,7 +54,7 @@
     &__inner {
         display: flex;
         align-items: center;
-        max-width: variables.$site-width;
+        max-width: var(--site-width);
         margin: 0 auto;
     }
 
@@ -70,7 +70,7 @@
         color: variables.$color--dark-blue;
         background-color: variables.$color--white;
         display: inline-block;
-        font-weight: variables.$weight--bold;
+        font-weight: var(--weight-bold);
         padding: 2px 20px;
     }
 }
