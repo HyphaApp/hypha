@@ -15,7 +15,7 @@
         padding: 10px 20px;
         border-block-end: 1px solid variables.$color--light-mid-grey;
         background-color: variables.$color--white;
-        transition: background-color variables.$quick-transition;
+        transition: background-color variables.$transition--quick;
 
         @include mixins.media-query(lg) {
             border-block-end: 0;

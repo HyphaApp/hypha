@@ -1,9 +1,9 @@
-@use "sass:map";
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
 .tabs {
-    margin: 1.5rem 0 -20px;
+    margin-block-start: variables.$spacing;
+    margin-block-end: variables.$spacing-reverse;
 
     &__container {
         display: flex;
@@ -54,7 +54,7 @@
         }
 
         &--alt {
-            font-size: map.get(variables.$font-sizes, zeta);
+            font-size: variables.$font-size--zeta;
             font-weight: variables.$weight--semibold;
             padding: 0.5rem 1rem;
             text-transform: none;

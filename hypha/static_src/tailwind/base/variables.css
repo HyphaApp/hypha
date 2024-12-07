@@ -3,4 +3,91 @@
     --color-fg-default: #1f2328;
     --color-bg-default: #fff;
     --color-header-bg: #fff;
+
+    /* Default */
+    --color-white: #fff;
+    --color-black: #1f2328;
+    --color-light-grey: #f7f7f7;
+    --color-light-mid-grey: #e8e8e8;
+    --color-mid-grey: #cfcfcf;
+    --color-mid-dark-grey: #919191;
+    --color-dark-grey: #404041;
+
+    /* Brand */
+    --color-lightest-blue: #24aae1;
+    --color-light-blue: #1d79a8;
+    --color-light-blue-90: rgb(29 121 168 / 10%);
+    --color-lighter-blue: #7ab8d4;
+    --color-dark-blue: #0c72a0;
+    --color-darkest-blue: #3d6bdb;
+    --color-mustard: #e6ab32;
+    --color-purple: #8c0bbf;
+    --color-dark-pink: #511034;
+    --color-pink: #d02a85;
+    --color-light-pink: #ffe1df;
+    --color-light-green: #e1fae1;
+    --color-cream: #f5f7e7;
+    --color-dark-tomato: #cc1e12;
+    --color-tomato: #f05e54;
+    --color-mint: #40c2ad;
+    --color-grass: #7dc588;
+    --color-ocean: #1888b1;
+    --color-sky-blue: #e7f2f6;
+    --color-marine: #14729a;
+    --color-mist: #f3fafe;
+    --color-green: #7dc558;
+    --color-pastel-red: #f1a9a9;
+    --color-pastel-green: #afe6af;
+
+    /* Transparent */
+    --color-black-60: rgb(0 0 0 / 60%);
+    --color-black-50: rgb(0 0 0 / 50%);
+    --color-black-40: rgb(0 0 0 / 40%);
+    --color-black-20: rgb(0 0 0 / 20%);
+    --color-black-10: rgb(0 0 0 / 10%);
+    --color-white-20: rgb(255 255 255 / 20%);
+    --color-white-10: rgb(255 255 255 / 10%);
+
+    /* Assignment */
+    --color-default: var(--color-black);
+    --color-primary: var(--color-light-blue);
+    --color-error: var(--color-tomato);
+    --color-correct: var(--color-mint);
+    --color-button-disabled: var(--color-lighter-blue);
+
+    /* Font sizes */
+    --font-size-alpha: 36px;
+    --font-size-beta: 30px;
+    --font-size-gamma: 28px;
+    --font-size-delta: 24px;
+    --font-size-epsilon: 18px;
+    --font-size-zeta: 14px;
+    --font-size-milli: 12px;
+
+    /* Font weights */
+    --weight-black: 800;
+    --weight-bold: 700;
+    --weight-semibold: 600;
+    --weight-normal: 400;
+
+    /* Wrappers */
+    --site-width: 1280px;
+    --wrapper-medium: 1020px;
+    --wrapper-small: 790px;
+
+    /* Text line length */
+    --max-text-line-length: 50em;
+
+    /* Transition */
+    --transition: 0.25s ease-out;
+    --transition-quick: 0.15s ease;
+
+    /* Spacing */
+    --gutters: calc(5px + 1.5625vw);
+    --gutters-reverse: calc(0px - (5px + 1.5625vw));
+    --spacing: 1.25rem;
+    --spacing-reverse: -1.25rem;
+
+    /* Dropdown height */
+    --dropdown-height: 45px;
 }

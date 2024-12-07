@@ -15,7 +15,7 @@
     <div class="data-block__links">
         {% if report.can_submit %}
             <a
-                class="data-block__button button button--primary"
+                class="data-block__button button button--project-action"
                 href="{% url "apply:projects:reports:edit" pk=report.pk %}"
             >
                 {% if report.draft %}{% trans "Continue Editing" %}{% else %}{% trans "Add Report" %}{% endif %}
