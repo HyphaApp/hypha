@@ -1,7 +1,8 @@
 @use "../abstracts/mixins";
 
 .tabs {
-    margin: 1.5rem 0 -20px;
+    margin-block-start: var(--spacing);
+    margin-block-end: var(--spacing-reverse);
 
     &__container {
         display: flex;
