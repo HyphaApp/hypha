@@ -1,5 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 @use "../base/typography";
 
 .feed {
@@ -30,33 +29,33 @@
 
     &__label {
         margin: 0;
-        color: variables.$color--white;
+        color: var(--color-white);
         text-align: center;
 
         &--note {
-            background-color: variables.$color--error;
+            background-color: var(--color-error);
         }
 
         &--determination {
-            background-color: variables.$color--ocean;
+            background-color: var(--color-ocean);
         }
 
         &--comment,
         &--message {
-            background-color: variables.$color--grass;
+            background-color: var(--color-grass);
         }
 
         &--activity,
         &--action {
-            background-color: variables.$color--mint;
+            background-color: var(--color-mint);
         }
 
         &--submission {
-            background-color: variables.$color--green;
+            background-color: var(--color-green);
         }
 
         &--project {
-            background-color: variables.$color--mint;
+            background-color: var(--color-mint);
         }
 
         &--mobile {
@@ -106,7 +105,7 @@
 
         &--last-edited {
             margin-inline-end: 5px;
-            color: variables.$color--mid-dark-grey;
+            color: var(--color-mid-dark-grey);
 
             span {
                 font-weight: var(--weight-normal);
@@ -125,7 +124,7 @@
             width: 100%;
             margin: 5px 0 0;
             font-size: var(--font-size-milli);
-            color: variables.$color--black-50;
+            color: var(--color-black-50);
 
             @include mixins.media-query(sm) {
                 width: auto;
@@ -138,7 +137,7 @@
                     &::after {
                         @include mixins.triangle(
                             right,
-                            variables.$color--black-50,
+                            var(--color-black-50),
                             4px
                         );
                         display: inline-block;
@@ -162,7 +161,7 @@
             height: 14px;
             margin-inline-start: 10px;
             margin-block-start: 0.35em;
-            fill: variables.$color--dark-blue;
+            fill: var(--color-dark-blue);
         }
     }
 
@@ -179,10 +178,10 @@
         padding: 3px 10px;
         font-size: var(--font-size-milli);
         font-weight: var(--weight-bold);
-        color: variables.$color--marine;
+        color: var(--color-marine);
         text-align: center;
         text-transform: uppercase;
-        background-color: variables.$color--sky-blue;
+        background-color: var(--color-sky-blue);
     }
 
     &__company {
@@ -199,8 +198,8 @@
         padding: 3em 0 0.5em;
         background-image: linear-gradient(
             to bottom,
-            variables.$color--white-10,
-            variables.$color--white
+            var(--color-white-10),
+            var(--color-white)
         );
     }
 }

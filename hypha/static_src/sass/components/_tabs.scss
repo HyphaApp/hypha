@@ -1,5 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 .tabs {
     margin: 1.5rem 0 -20px;
@@ -25,7 +24,7 @@
         padding: 10px;
         font-weight: var(--weight-bold);
         hyphens: auto;
-        color: variables.$color--mid-grey;
+        color: var(--color-mid-grey);
         text-transform: uppercase;
         transition:
             color,
@@ -45,7 +44,7 @@
         }
 
         &:hover {
-            color: variables.$color--light-blue;
+            color: var(--color-light-blue);
             background-color: rgba(
                 #fff,
                 0.8
@@ -59,26 +58,26 @@
             text-transform: none;
             display: inline-block;
             border-block-end: 3px solid transparent;
-            color: variables.$color--mid-dark-grey;
+            color: var(--color-mid-dark-grey);
             width: auto;
 
             &:hover {
-                color: variables.$color--default;
+                color: var(--color-default);
             }
 
             &#{$root}--active {
                 background-color: transparent;
-                border-block-end: 3px solid variables.$color--primary;
+                border-block-end: 3px solid var(--color-primary);
 
                 &:hover {
-                    color: variables.$color--default;
+                    color: var(--color-default);
                     background-color: transparent;
                 }
             }
         }
 
         &--active {
-            color: variables.$color--default;
+            color: var(--color-default);
             cursor: default;
             background-color: var(--color-bg-default);
 

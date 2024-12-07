@@ -1,5 +1,3 @@
-@use "../abstracts/variables";
-
 .rich-text {
     margin-block-end: 2rem;
     word-break: break-word;
@@ -95,14 +93,14 @@
 
         &.word-count-warning,
         &.word-count-warning-2 {
-            background-color: variables.$color--pastel-red;
+            background-color: var(--color-pastel-red);
             font-weight: bold;
             text-shadow: none;
-            color: variables.$color--black;
+            color: var(--color-black);
         }
 
         &.word-count-warning-2 {
-            background-color: variables.$color--tomato;
+            background-color: var(--color-tomato);
         }
     }
 }

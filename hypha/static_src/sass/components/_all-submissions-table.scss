@@ -1,5 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 // stylelint-disable selector-class-pattern,selector-max-compound-selectors
 
@@ -18,7 +17,7 @@
 
         th {
             &.reviews_stats {
-                color: variables.$color--black-60;
+                color: var(--color-black-60);
 
                 div {
                     font-size: 0.75rem;
@@ -74,7 +73,7 @@
     tbody {
         tr {
             &[data-archived="True"] {
-                background-color: variables.$color--light-mid-grey;
+                background-color: var(--color-light-mid-grey);
             }
         }
 
@@ -102,9 +101,9 @@
                     padding: 5px;
                     font-size: 13px;
                     font-weight: var(--weight-bold);
-                    color: variables.$color--marine;
+                    color: var(--color-marine);
                     text-align: center;
-                    background-color: variables.$color--sky-blue;
+                    background-color: var(--color-sky-blue);
 
                     @include mixins.media-query(lg) {
                         width: 100%;
@@ -161,11 +160,7 @@
             // arrow to toggle project info - added via js
             @include mixins.media-query(lg) {
                 .arrow {
-                    @include mixins.triangle(
-                        right,
-                        variables.$color--primary,
-                        6px
-                    );
+                    @include mixins.triangle(right, var(--color-primary), 6px);
                     position: relative;
                     display: inline-block;
                     transform: rotate(0);
@@ -196,11 +191,11 @@
 
     &__parent {
         &.is-expanded {
-            background-color: variables.$color--mist;
-            border-block-end: 1px solid variables.$color--light-mid-grey;
+            background-color: var(--color-mist);
+            border-block-end: 1px solid var(--color-light-mid-grey);
 
             + #{$root}__child {
-                border-block-end: 1px solid variables.$color--light-mid-grey;
+                border-block-end: 1px solid var(--color-light-mid-grey);
             }
 
             + #{$root}__child,
@@ -216,11 +211,11 @@
 
     &__child {
         display: none;
-        color: variables.$color--mid-dark-grey;
+        color: var(--color-mid-dark-grey);
         vertical-align: top;
-        background-color: variables.$color--mist;
+        background-color: var(--color-mist);
         border: 0;
-        border-block-end: 2px solid variables.$color--light-grey;
+        border-block-end: 2px solid var(--color-light-grey);
 
         &:hover {
             box-shadow: none;
@@ -233,7 +228,7 @@
         p {
             margin: 0;
             font-weight: var(--weight-bold);
-            color: variables.$color--default;
+            color: var(--color-default);
         }
 
         .title {
@@ -263,12 +258,12 @@
     &__more {
         display: flex;
         justify-content: center;
-        background-color: variables.$color--white;
+        background-color: var(--color-white);
         padding: 20px 25px;
         min-height: auto;
-        border-block-end: 1px solid variables.$color--light-mid-grey;
-        border-inline-start: 1px solid variables.$color--light-mid-grey;
-        border-inline-end: 1px solid variables.$color--light-mid-grey;
+        border-block-end: 1px solid var(--color-light-mid-grey);
+        border-inline-start: 1px solid var(--color-light-mid-grey);
+        border-inline-end: 1px solid var(--color-light-mid-grey);
 
         a {
             margin: 0;

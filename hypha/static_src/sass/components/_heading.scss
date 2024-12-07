@@ -1,5 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 .heading {
     &--no-margin {
@@ -31,7 +30,7 @@
         flex-direction: column;
         margin-block-start: 20px;
         font-weight: var(--weight-normal);
-        color: variables.$color--black-40;
+        color: var(--color-black-40);
 
         @include mixins.media-query(lg) {
             flex-direction: row;
@@ -48,7 +47,7 @@
     }
 
     &--light-grey {
-        color: variables.$color--black-40;
+        color: var(--color-black-40);
     }
 
     &--uppercase {

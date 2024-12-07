@@ -1,5 +1,3 @@
-@use "../abstracts/variables";
-
 [data-tooltip] {
     position: relative;
     z-index: 2;
@@ -18,8 +16,8 @@
     inset-block-end: 110%;
     margin-block-end: 5px;
     padding: 7px;
-    background-color: variables.$color--dark-grey;
-    color: variables.$color--white;
+    background-color: var(--color-dark-grey);
+    color: var(--color-white);
     content: attr(data-tooltip);
     text-align: center;
     font-size: 14px;

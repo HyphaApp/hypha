@@ -1,6 +1,5 @@
 @use "../base/typography";
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 .nav {
     background-color: var(--color-bg-default);
@@ -10,12 +9,12 @@
         display: flex;
         position: relative;
         padding-block: 0.5rem;
-        color: variables.$color--default;
+        color: var(--color-default);
         transition: color var(--transition);
 
         &:focus,
         &:hover {
-            color: variables.$color--light-blue;
+            color: var(--color-light-blue);
         }
 
         @include mixins.media-query(md) {
@@ -25,7 +24,7 @@
                 inset-inline-start: 0;
                 width: 100%;
                 height: 5px;
-                background-color: variables.$color--dark-blue;
+                background-color: var(--color-dark-blue);
                 content: "";
                 opacity: 0;
                 transition: opacity 0.5s cubic-bezier(0.2, 1.4, 0.67, 1.13);

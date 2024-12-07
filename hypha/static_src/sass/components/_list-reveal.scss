@@ -1,11 +1,10 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 .list-reveal {
     $root: &;
 
     &--determination {
-        background-color: variables.$color--white;
+        background-color: var(--color-white);
         margin-block-end: var(--gutters);
 
         @include mixins.media-query(md) {
@@ -17,12 +16,12 @@
         display: block;
         font-size: var(--font-size-zeta);
         padding: 0.75em 1em;
-        border-block-end: 2px solid variables.$color--light-mid-grey;
+        border-block-end: 2px solid var(--color-light-mid-grey);
         margin: 0;
-        color: variables.$color--default;
+        color: var(--color-default);
 
         &--meta {
-            color: variables.$color--dark-blue;
+            color: var(--color-dark-blue);
             font-weight: var(--weight-semibold);
             display: flex;
             justify-content: space-between;
@@ -30,7 +29,7 @@
         }
 
         &--determination {
-            border: 1px solid variables.$color--light-mid-grey;
+            border: 1px solid var(--color-light-mid-grey);
             margin: 0;
         }
     }
@@ -40,13 +39,13 @@
         overflow: scroll;
         margin: 0 -24px var(--gutters);
         padding: 0;
-        border-block-end: 2px solid variables.$color--light-mid-grey;
-        box-shadow: inset 0 -10px 20px -10px variables.$color--mid-grey;
+        border-block-end: 2px solid var(--color-light-mid-grey);
+        box-shadow: inset 0 -10px 20px -10px var(--color-mid-grey);
         transition: max-height var(--transition);
 
         &--determination {
-            border-inline-start: 1px solid variables.$color--light-mid-grey;
-            border-inline-end: 1px solid variables.$color--light-mid-grey;
+            border-inline-start: 1px solid var(--color-light-mid-grey);
+            border-inline-end: 1px solid var(--color-light-mid-grey);
             margin: 0;
         }
 
@@ -63,7 +62,7 @@
     &__open-icon {
         width: 20px;
         height: 20px;
-        fill: variables.$color--dark-grey;
+        fill: var(--color-dark-grey);
         opacity: 0;
         transition: opacity var(--quick-transition);
         pointer-events: none;

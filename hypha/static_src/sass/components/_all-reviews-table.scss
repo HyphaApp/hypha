@@ -1,5 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 // stylelint-disable selector-max-compound-selectors
 
@@ -41,7 +40,7 @@
                 }
 
                 a {
-                    color: variables.$color--primary;
+                    color: var(--color-primary);
                 }
             }
         }

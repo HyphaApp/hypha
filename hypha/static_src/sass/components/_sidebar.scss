@@ -1,5 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 .sidebar {
     @include mixins.media-query(md) {
@@ -9,10 +8,10 @@
     &__inner {
         padding: 20px;
         margin-block-end: 20px;
-        border: 1px solid variables.$color--mid-grey;
+        border: 1px solid var(--color-mid-grey);
 
         &--light-blue {
-            background-color: variables.$color--light-blue-90;
+            background-color: var(--color-light-blue-90);
         }
 
         &--actions {
@@ -44,11 +43,11 @@
 
     &__paf-approvals {
         &--pending {
-            color: variables.$color--mid-grey;
+            color: var(--color-mid-grey);
         }
 
         &--approved {
-            color: variables.$color--black;
+            color: var(--color-black);
         }
     }
 
@@ -56,7 +55,7 @@
         position: relative;
         font-size: 12px;
         font-weight: var(--weight-bold);
-        color: variables.$color--black-40;
+        color: var(--color-black-40);
         text-transform: uppercase;
 
         &::after {
@@ -65,7 +64,7 @@
             inset-inline-end: 0;
             width: calc(100% - 60px);
             height: 1px;
-            background-color: variables.$color--black-20;
+            background-color: var(--color-black-20);
             content: "";
         }
 

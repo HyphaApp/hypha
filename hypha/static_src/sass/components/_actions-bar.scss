@@ -1,5 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 .actions-bar {
     width: 100%;
@@ -55,8 +54,8 @@
     }
 
     &__total {
-        background-color: variables.$color--light-blue;
-        color: variables.$color--white;
+        background-color: var(--color-light-blue);
+        color: var(--color-white);
         padding: 6px 16px;
         border-radius: 30px;
         min-width: 120px;

@@ -1,8 +1,6 @@
-@use "../abstracts/variables";
-
 .diff {
     &__deleted {
-        background-color: variables.$color--light-pink;
+        background-color: var(--color-light-pink);
 
         a {
             background-color: inherit;
@@ -10,7 +8,7 @@
     }
 
     &__added {
-        background-color: variables.$color--light-green;
+        background-color: var(--color-light-green);
 
         a {
             background-color: inherit;

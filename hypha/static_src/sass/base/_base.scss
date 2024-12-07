@@ -1,6 +1,3 @@
-@use "../abstracts/variables";
-
-// stylelint-disable property-no-vendor-prefix
 body {
     overflow-x: hidden;
 
@@ -16,7 +13,7 @@ svg {
 }
 
 a {
-    color: variables.$color--primary;
+    color: var(--color-primary);
     text-decoration: none;
 
     &:hover {

@@ -1,10 +1,9 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 .status-block {
     $root: &;
-    background-color: variables.$color--white;
-    border: 1px solid variables.$color--light-mid-grey;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-light-mid-grey);
 
     @include mixins.media-query(lg) {
         display: flex;
@@ -13,13 +12,13 @@
     &__item {
         display: block;
         padding: 10px 20px;
-        border-block-end: 1px solid variables.$color--light-mid-grey;
-        background-color: variables.$color--white;
+        border-block-end: 1px solid var(--color-light-mid-grey);
+        background-color: var(--color-white);
         transition: background-color var(--quick-transition);
 
         @include mixins.media-query(lg) {
             border-block-end: 0;
-            border-inline-end: 1px solid variables.$color--light-mid-grey;
+            border-inline-end: 1px solid var(--color-light-mid-grey);
             width: 100%;
             padding: 10px;
             display: flex;
@@ -36,7 +35,7 @@
         }
 
         &:hover {
-            background-color: variables.$color--light-grey;
+            background-color: var(--color-light-grey);
         }
 
         &:last-child {

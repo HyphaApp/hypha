@@ -1,5 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 .reviews-summary {
     display: none;
@@ -26,5 +25,5 @@
 }
 
 .counts-separator {
-    color: variables.$color--mid-grey;
+    color: var(--color-mid-grey);
 }

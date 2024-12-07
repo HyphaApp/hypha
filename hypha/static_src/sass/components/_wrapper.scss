@@ -1,5 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 .wrapper {
     width: 100%;
@@ -75,8 +74,8 @@
         max-width: 830px;
         padding: 10px;
         margin: 0 auto 2rem;
-        background: variables.$color--light-pink;
-        border: 1px solid variables.$color--tomato;
+        background: var(--color-light-pink);
+        border: 1px solid var(--color-tomato);
 
         .feed & {
             margin: 0 0 1rem;
@@ -190,8 +189,8 @@
     &--cta-box {
         width: 500px;
         padding: 20px;
-        color: variables.$color--default;
-        background-color: variables.$color--white;
+        color: var(--color-default);
+        background-color: var(--color-white);
     }
 
     &--applicant-dashboard {
@@ -202,8 +201,8 @@
 
     &--status-bar-outer {
         padding: 20px 0;
-        background-color: variables.$color--white;
-        border-block-end: 3px solid variables.$color--light-grey;
+        background-color: var(--color-white);
+        border-block-end: 3px solid var(--color-light-grey);
     }
 
     &--status-bar-inner {
@@ -232,7 +231,7 @@
 
     &--comments {
         margin-block-end: 1rem;
-        border-block-end: 1px solid variables.$color--mid-grey;
+        border-block-end: 1px solid var(--color-mid-grey);
 
         .helptext {
             font-size: 15px;

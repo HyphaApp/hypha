@@ -1,17 +1,15 @@
-@use "../abstracts/variables";
-
 .alert {
-    border: 2px solid variables.$color--lighter-blue;
+    border: 2px solid var(--color-lighter-blue);
     padding: 1rem;
     margin: 0 0 2rem;
-    background-color: variables.$color--light-blue-90;
+    background-color: var(--color-light-blue-90);
     display: flex;
     align-items: center;
 
     &__icon {
         width: 25px;
         height: 25px;
-        fill: variables.$color--light-blue;
+        fill: var(--color-light-blue);
         margin-inline-end: 0.8rem;
     }
 

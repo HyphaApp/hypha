@@ -1,5 +1,3 @@
-@use "../abstracts/variables";
-
 .submission-meta {
     background-color: transparent;
 
@@ -12,10 +10,10 @@
                     padding: 10px;
                     font-size: 13px;
                     font-weight: var(--weight-bold);
-                    color: variables.$color--mid-dark-grey;
+                    color: var(--color-mid-dark-grey);
                     text-align: center;
                     background-color: transparent;
-                    border: 1px solid variables.$color--mid-dark-grey;
+                    border: 1px solid var(--color-mid-dark-grey);
                 }
             }
         }
@@ -29,7 +27,7 @@
         }
 
         &--black {
-            color: variables.$color--default;
+            color: var(--color-default);
         }
 
         th,
@@ -40,7 +38,7 @@
         td {
             &.lead {
                 span {
-                    background: variables.$color--mist;
+                    background: var(--color-mist);
                 }
             }
         }

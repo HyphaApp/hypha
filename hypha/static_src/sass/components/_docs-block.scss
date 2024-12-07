@@ -1,11 +1,10 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 .docs-block {
-    border: 1px solid variables.$color--light-blue;
+    border: 1px solid var(--color-light-blue);
 
     &__header {
-        background-color: variables.$color--light-blue-90;
+        background-color: var(--color-light-blue-90);
         padding: 0.5rem 0.75rem;
         display: flex;
         justify-content: space-between;
@@ -26,7 +25,7 @@
     &__row {
         padding-block-end: 1rem;
         margin-block-end: 1rem;
-        border-block-end: 1px solid variables.$color--mid-grey;
+        border-block-end: 1px solid var(--color-mid-grey);
 
         @include mixins.media-query(md) {
             display: flex;
@@ -58,7 +57,7 @@
         }
 
         &__contract-upload-row {
-            border: 1px solid variables.$color--light-blue;
+            border: 1px solid var(--color-light-blue);
         }
     }
 
@@ -73,7 +72,7 @@
     &__icon {
         width: 20px;
         height: 20px;
-        stroke: variables.$color--mid-grey;
+        stroke: var(--color-mid-grey);
         fill: transparent;
         margin-inline-end: 0.5rem;
 
@@ -88,7 +87,7 @@
 
         &:disabled,
         &.is-disabled {
-            color: variables.$color--mid-grey;
+            color: var(--color-mid-grey);
             cursor: default;
         }
 
@@ -105,7 +104,7 @@
 
         &:disabled,
         &.is-disabled {
-            color: variables.$color--mid-grey;
+            color: var(--color-mid-grey);
             cursor: default;
         }
 

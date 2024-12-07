@@ -1,5 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 // stylelint-disable selector-max-compound-selectors
 
@@ -17,7 +16,7 @@
             // ordering - adjust alignment
             &.desc {
                 position: relative;
-                color: variables.$color--dark-grey;
+                color: var(--color-dark-grey);
 
                 &::after {
                     position: absolute;
@@ -28,7 +27,7 @@
 
             &.asc {
                 position: relative;
-                color: variables.$color--dark-grey;
+                color: var(--color-dark-grey);
 
                 &::after {
                     position: absolute;

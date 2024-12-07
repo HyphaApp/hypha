@@ -21,12 +21,9 @@
     }
 
     &--primary {
-        @include mixins.button(
-            variables.$color--light-blue,
-            variables.$color--dark-blue
-        );
+        @include mixins.button(var(--color-light-blue), var(--color-dark-blue));
         display: inline-block;
-        border: 1px solid variables.$color--light-blue;
+        border: 1px solid var(--color-light-blue);
 
         .form--filters & {
             width: 100%;
@@ -36,27 +33,21 @@
     }
 
     &--project-action {
-        @include mixins.button(
-            variables.$color--light-blue,
-            variables.$color--dark-blue
-        );
+        @include mixins.button(var(--color-light-blue), var(--color-dark-blue));
         display: inline-block;
         padding: 0.5rem 1.2rem;
 
         &--white {
-            @include mixins.button(
-                variables.$color--white,
-                variables.$color--light-blue
-            );
+            @include mixins.button(var(--color-white), var(--color-light-blue));
             display: inline-block;
-            color: variables.$color--light-blue;
-            border: 1px solid variables.$color--mid-grey;
+            color: var(--color-light-blue);
+            border: 1px solid var(--color-mid-grey);
             padding: 0.5rem 1.2rem;
 
             &:active,
             &:focus,
             &:hover {
-                color: variables.$color--white;
+                color: var(--color-white);
             }
         }
     }
@@ -69,20 +60,20 @@
     }
 
     &--transparent {
-        @include mixins.button(transparent, variables.$color--black);
-        color: variables.$color--black;
-        border: 1px solid variables.$color--black;
+        @include mixins.button(transparent, var(--color-black));
+        color: var(--color-black);
+        border: 1px solid var(--color-black);
 
         &:active,
         &:focus,
         &:hover {
-            color: variables.$color--white;
+            color: var(--color-white);
         }
     }
 
     &--mobile-standout {
-        color: variables.$color--white;
-        border-color: variables.$color--white;
+        color: var(--color-white);
+        border-color: var(--color-white);
         max-width: 250px;
         margin: 1rem auto 0;
 
@@ -92,59 +83,50 @@
     }
 
     &--cookieconsent {
-        @include mixins.button(transparent, variables.$color--white);
+        @include mixins.button(transparent, var(--color-white));
         display: inline;
 
         &:focus,
         &:hover {
-            color: variables.$color--dark-blue;
+            color: var(--color-dark-blue);
         }
     }
 
     &--secondary,
     &--white {
-        @include mixins.button(
-            variables.$color--white,
-            variables.$color--light-blue
-        );
+        @include mixins.button(var(--color-white), var(--color-light-blue));
         display: inline-block;
-        color: variables.$color--light-blue;
-        border: 1px solid variables.$color--mid-grey;
+        color: var(--color-light-blue);
+        border: 1px solid var(--color-mid-grey);
 
         &:active,
         &:focus,
         &:hover {
-            color: variables.$color--white;
+            color: var(--color-white);
         }
     }
 
     &--blue-white {
-        @include mixins.button(
-            variables.$color--white,
-            variables.$color--light-blue
-        );
+        @include mixins.button(var(--color-white), var(--color-light-blue));
         display: inline-block;
-        color: variables.$color--light-blue;
-        border: 1px solid variables.$color--light-blue;
+        color: var(--color-light-blue);
+        border: 1px solid var(--color-light-blue);
 
         &:focus {
-            color: variables.$color--light-blue;
+            color: var(--color-light-blue);
         }
 
         &:hover {
-            color: variables.$color--white;
+            color: var(--color-white);
         }
     }
 
     &-danger,
     &--warning {
-        @include mixins.button(
-            variables.$color--error,
-            variables.$color--error
-        );
+        @include mixins.button(var(--color-error), var(--color-error));
 
         &:focus {
-            background-color: variables.$color--pastel-red;
+            background-color: var(--color-pastel-red);
         }
     }
 
@@ -154,8 +136,8 @@
         max-width: 300px;
         padding: 15px 20px;
         font-weight: var(--weight-normal);
-        color: variables.$color--default;
-        border: 1px solid variables.$color--light-mid-grey;
+        color: var(--color-default);
+        border: 1px solid var(--color-light-mid-grey);
         transition: none;
         width: 100%;
 
@@ -178,7 +160,7 @@
         inset-inline-end: 10px;
 
         svg {
-            fill: variables.$color--primary;
+            fill: var(--color-primary);
             height: 24px;
         }
     }
@@ -221,10 +203,10 @@
     &--actions {
         position: relative;
         display: block;
-        background-color: variables.$color--white;
+        background-color: var(--color-white);
 
         &:active {
-            background: variables.$color--light-blue-90;
+            background: var(--color-light-blue-90);
         }
 
         &::after {
@@ -237,8 +219,8 @@
         }
 
         &.is-active {
-            color: variables.$color--dark-blue;
-            background: variables.$color--light-blue-90;
+            color: var(--color-dark-blue);
+            background: var(--color-light-blue-90);
 
             &::after {
                 inset-block-start: -12px;
@@ -278,9 +260,9 @@
 
         &:focus,
         &:hover {
-            color: variables.$color--white;
-            background-color: variables.$color--light-blue;
-            border: 1px solid variables.$color--light-blue;
+            color: var(--color-white);
+            background-color: var(--color-light-blue);
+            border: 1px solid var(--color-light-blue);
         }
     }
 
@@ -292,13 +274,13 @@
             width: 10px;
             height: 14px;
             margin-inline-start: 10px;
-            fill: variables.$color--white;
+            fill: var(--color-white);
         }
     }
 
     &--action {
         display: flex;
-        color: variables.$color--default;
+        color: var(--color-default);
         align-items: center;
         transition: opacity var(--transition);
         font-weight: var(--weight-semibold);
@@ -309,7 +291,7 @@
         }
 
         &:disabled {
-            color: variables.$color--mid-dark-grey;
+            color: var(--color-mid-dark-grey);
             cursor: not-allowed;
             pointer-events: all; // to show the tooltip on hover
 
@@ -323,25 +305,21 @@
                 font-size: 12px;
                 font-weight: var(--weight-normal);
                 white-space: normal;
-                background: variables.$color--light-blue;
+                background: var(--color-light-blue);
                 opacity: 0;
                 transition: opacity var(--transition);
                 inset-block-end: 45px;
                 inset-inline-start: 50%;
                 transform: translateX(-50%);
-                color: variables.$color--white;
+                color: var(--color-white);
                 text-align: left;
                 line-height: 1rem;
-                border: 1px solid variables.$color--white;
+                border: 1px solid var(--color-white);
                 border-radius: 0.125rem;
             }
 
             &::after {
-                @include mixins.triangle(
-                    bottom,
-                    variables.$color--primary,
-                    7px
-                );
+                @include mixins.triangle(bottom, var(--color-primary), 7px);
                 position: absolute;
                 inset-block-start: -22px;
                 inset-inline-start: 50%;
@@ -352,7 +330,7 @@
             }
 
             svg {
-                fill: variables.$color--mid-dark-grey;
+                fill: var(--color-mid-dark-grey);
             }
 
             &:hover {
@@ -372,7 +350,7 @@
         }
 
         svg {
-            fill: variables.$color--light-blue;
+            fill: var(--color-light-blue);
             width: 1em;
             height: 1em;
             margin-inline-end: 0.5rem;
@@ -381,22 +359,22 @@
     }
 
     &--link {
-        color: variables.$color--primary;
+        color: var(--color-primary);
     }
 
     &--remove {
-        color: variables.$color--tomato;
+        color: var(--color-tomato);
     }
 
     &--tooltip-disabled {
-        background-color: variables.$color--button-disabled;
-        border: 1px solid variables.$color--button-disabled;
+        background-color: var(--color-button-disabled);
+        border: 1px solid var(--color-button-disabled);
 
         &:hover,
         &:active,
         &:focus {
             cursor: default;
-            background-color: variables.$color--button-disabled;
+            background-color: var(--color-button-disabled);
         }
     }
 
@@ -406,7 +384,7 @@
 
             &::after {
                 content: "\2691";
-                color: variables.$color--tomato;
+                color: var(--color-tomato);
                 position: absolute;
                 inset-block-start: 4px;
                 padding-inline-start: 5px;
@@ -417,10 +395,7 @@
     }
 
     &--unflag {
-        @include mixins.button(
-            variables.$color--light-blue,
-            variables.$color--dark-blue
-        );
+        @include mixins.button(var(--color-light-blue), var(--color-dark-blue));
         @include mixins.button--small;
 
         /* stylelint-disable-next-line no-duplicate-selectors */
@@ -444,23 +419,20 @@
     // Two-factor
     &-info,
     &-link {
-        @include mixins.button(
-            variables.$color--light-blue,
-            variables.$color--dark-blue
-        );
+        @include mixins.button(var(--color-light-blue), var(--color-dark-blue));
         display: inline-block;
         line-height: 1.15;
     }
 
     &--like-active {
         svg {
-            fill: variables.$color--dark-blue;
+            fill: var(--color-dark-blue);
         }
     }
 
     &--dislike-active {
         svg {
-            fill: variables.$color--tomato;
+            fill: var(--color-tomato);
         }
     }
 }

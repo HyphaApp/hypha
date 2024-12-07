@@ -1,10 +1,9 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 .invoice-block {
     padding: 1rem;
     margin-block-end: 1rem;
-    border: 1px solid variables.$color--dark-blue;
+    border: 1px solid var(--color-dark-blue);
 
     @include mixins.media-query(sm) {
         display: flex;

@@ -1,5 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 .messages {
     position: fixed;
@@ -14,22 +13,22 @@
         align-items: center;
         max-width: 450px;
         margin: 0 auto;
-        color: variables.$color--black;
+        color: var(--color-black);
         pointer-events: all;
         max-height: 1000px;
-        background: variables.$color--cream;
+        background: var(--color-cream);
     }
 
     &__text {
         position: relative;
         padding: 15px 20px;
-        color: variables.$color--white;
+        color: var(--color-white);
         font-size: 14px;
         opacity: 1;
         transition: opacity, max-height, var(--transition);
         pointer-events: all;
         max-height: 1000px;
-        background: variables.$color--dark-blue;
+        background: var(--color-dark-blue);
 
         @include mixins.media-query(xl) {
             padding: 15px 30px;
@@ -37,16 +36,16 @@
 
         &--info,
         &--success {
-            background: variables.$color--dark-blue;
+            background: var(--color-dark-blue);
         }
 
         &--error,
         &--warning {
-            background: variables.$color--dark-tomato;
+            background: var(--color-dark-tomato);
         }
 
         &--debug {
-            background: variables.$color--dark-pink;
+            background: var(--color-dark-pink);
         }
     }
 
@@ -66,8 +65,8 @@
 
     &__button {
         margin-inline-start: auto;
-        color: variables.$color--dark-blue;
-        background-color: variables.$color--white;
+        color: var(--color-dark-blue);
+        background-color: var(--color-white);
         display: inline-block;
         font-weight: var(--weight-bold);
         padding: 2px 20px;
