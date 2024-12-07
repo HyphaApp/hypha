@@ -25,12 +25,12 @@
 // Button mixin
 @mixin button($bg, $hover-bg) {
     padding: 0.5em 2rem;
-    font-weight: var(--weight-bold);
+    font-weight: variables.$weight--bold;
     color: variables.$color--white;
     text-align: center;
     background: $bg;
     border: 1px solid variables.$color--white;
-    transition: color, background, border, var(--transition);
+    transition: color, background, border, variables.$transition;
     display: flex;
     align-items: center;
     justify-content: center;

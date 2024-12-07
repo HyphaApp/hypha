@@ -40,8 +40,8 @@
     }
 
     &__text {
-        font-size: var(--font-size-milli);
-        font-weight: var(--weight-bold);
+        font-size: variables.$font-size--milli;
+        font-weight: variables.$weight--bold;
     }
 
     &__item {
@@ -87,8 +87,8 @@
             border-color: variables.$color--primary;
 
             &::before {
-                font-size: var(--font-size-milli);
-                font-weight: var(--weight-bold);
+                font-size: variables.$font-size--milli;
+                font-weight: variables.$weight--bold;
                 color: variables.$color--white;
                 background: variables.$color--primary;
                 border-color: variables.$color--primary;

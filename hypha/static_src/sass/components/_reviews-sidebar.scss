@@ -6,7 +6,7 @@
 .reviews-sidebar {
     $root: &;
     margin-block-end: 20px;
-    font-weight: var(--weight-bold);
+    font-weight: variables.$weight--bold;
 
     &__decision {
         position: relative;
@@ -30,7 +30,7 @@
 
         &--decision {
             margin-block-end: 10px;
-            font-weight: var(--weight-semibold);
+            font-weight: variables.$weight--semibold;
 
             &:first-child {
                 #{$root}__outcome {

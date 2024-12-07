@@ -25,7 +25,7 @@
     }
 
     &__title {
-        font-weight: var(--weight-bold);
+        font-weight: variables.$weight--bold;
         margin: 0 0 0.2rem;
     }
 

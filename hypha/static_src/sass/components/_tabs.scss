@@ -24,7 +24,7 @@
 
         position: relative;
         padding: 10px;
-        font-weight: var(--weight-bold);
+        font-weight: variables.$weight--bold;
         hyphens: auto;
         color: variables.$color--mid-grey;
         text-transform: uppercase;
@@ -54,8 +54,8 @@
         }
 
         &--alt {
-            font-size: var(--font-size-zeta);
-            font-weight: var(--weight-semibold);
+            font-size: variables.$font-size--zeta;
+            font-weight: variables.$weight--semibold;
             padding: 0.5rem 1rem;
             text-transform: none;
             display: inline-block;

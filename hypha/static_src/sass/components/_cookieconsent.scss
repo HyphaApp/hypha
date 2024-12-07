@@ -8,7 +8,7 @@
     background-color: variables.$color--dark-blue;
     border-block-start: 4px solid variables.$color--light-blue;
     transform: translateY(100vh);
-    transition: all var(--transition);
+    transition: all variables.$transition;
     overflow: hidden;
     max-height: 37.5rem;
 
@@ -24,7 +24,7 @@
     &__content {
         width: 200%;
         margin-left: 0;
-        transition: all var(--transition);
+        transition: all variables.$transition;
     }
 
     &__content > div {

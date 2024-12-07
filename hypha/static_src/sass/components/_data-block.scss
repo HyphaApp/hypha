@@ -27,8 +27,8 @@
     }
 
     &__title {
-        font-size: var(--font-size-epsilon);
-        font-weight: var(--weight-bold);
+        font-size: variables.$font-size--epsilon;
+        font-weight: variables.$weight--bold;
         margin: 0 0 1rem;
 
         @include mixins.media-query(sm) {
@@ -61,7 +61,7 @@
 
         @include mixins.media-query(lg) {
             display: block;
-            font-weight: var(--weight-bold);
+            font-weight: variables.$weight--bold;
         }
     }
 
@@ -72,12 +72,12 @@
 
     &__pagination-link,
     &__rejected-link {
-        font-weight: var(--weight-bold);
+        font-weight: variables.$weight--bold;
     }
 
     &__mobile-label {
         display: inline-block;
-        font-weight: var(--weight-bold);
+        font-weight: variables.$weight--bold;
         white-space: pre;
 
         @include mixins.media-query(lg) {
@@ -109,7 +109,7 @@
         }
 
         tbody {
-            font-size: var(--font-size-zeta);
+            font-size: variables.$font-size--zeta;
         }
 
         tr {
@@ -147,8 +147,8 @@
     }
 
     &__action-link {
-        font-size: var(--font-size-zeta);
-        font-weight: var(--weight-bold);
+        font-size: variables.$font-size--zeta;
+        font-weight: variables.$weight--bold;
         display: inline-block;
         margin-inline-end: 1rem;
         text-decoration: underline;
@@ -167,8 +167,8 @@
     }
 
     &__action-icon-link {
-        font-size: var(--font-size-zeta);
-        font-weight: var(--weight-bold);
+        font-size: variables.$font-size--zeta;
+        font-weight: variables.$weight--bold;
         display: flex;
         align-items: center;
         margin-inline-end: 1rem;
@@ -259,6 +259,6 @@
     }
 
     &__card-title {
-        font-weight: var(--weight-bold);
+        font-weight: variables.$weight--bold;
     }
 }

@@ -20,7 +20,7 @@
     @include mixins.media-query(lg) {
         display: block;
         max-height: 0;
-        transition: max-height var(--transition);
+        transition: max-height variables.$transition;
         transition-delay: 30ms;
         pointer-events: none;
 

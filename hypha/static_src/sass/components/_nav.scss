@@ -11,7 +11,7 @@
         position: relative;
         padding-block: 0.5rem;
         color: variables.$color--default;
-        transition: color var(--transition);
+        transition: color variables.$transition;
 
         &:focus,
         &:hover {

@@ -37,14 +37,14 @@ details > summary {
 %is-invisible {
     z-index: -1;
     opacity: 0;
-    transition: opacity, z-index, var(--transition);
+    transition: opacity, z-index, variables.$transition;
 }
 
 .is-visible,
 %is-visible {
     z-index: 5;
     opacity: 1;
-    transition: opacity, z-index, var(--transition);
+    transition: opacity, z-index, variables.$transition;
 }
 
 .is-hidden,

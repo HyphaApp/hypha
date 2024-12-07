@@ -83,7 +83,7 @@
     }
 
     &__link {
-        font-weight: var(--weight-bold);
+        font-weight: variables.$weight--bold;
         margin-inline-end: 1rem;
 
         &:disabled,
@@ -98,7 +98,7 @@
     }
 
     &__icon-link {
-        font-weight: var(--weight-bold);
+        font-weight: variables.$weight--bold;
         display: flex;
         align-items: center;
         margin-inline-end: 1rem;

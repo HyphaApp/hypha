@@ -103,7 +103,7 @@
 
                 &.title {
                     a {
-                        font-weight: var(--weight-bold);
+                        font-weight: variables.$weight--bold;
                         text-decoration: underline;
                     }
                 }

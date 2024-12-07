@@ -14,7 +14,7 @@
         border: 1px solid variables.$color--light-mid-grey;
         border-block-end: 0;
         padding: 25px;
-        transition: background-color var(--quick-transition);
+        transition: background-color variables.$transition--quick;
         min-height: 80px;
 
         &:last-child {
@@ -49,15 +49,15 @@
             a {
                 margin: 0;
                 flex-basis: auto;
-                font-weight: var(--weight-semibold);
+                font-weight: variables.$weight--semibold;
             }
         }
     }
 
     &__view {
         margin: 0 0 0 auto;
-        transition: color var(--quick-transition);
-        font-weight: var(--weight-bold);
+        transition: color variables.$transition--quick;
+        font-weight: variables.$weight--bold;
         text-transform: uppercase;
 
         @include mixins.media-query(lg) {
@@ -75,8 +75,8 @@
 
     &__title {
         color: variables.$color--default;
-        font-size: var(--font-size-epsilon);
-        font-weight: var(--weight-semibold);
+        font-size: variables.$font-size--epsilon;
+        font-weight: variables.$weight--semibold;
     }
 
     &__not-found {

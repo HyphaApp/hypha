@@ -55,7 +55,7 @@
     &__separator {
         position: relative;
         font-size: 12px;
-        font-weight: var(--weight-bold);
+        font-weight: variables.$weight--bold;
         color: variables.$color--black-40;
         text-transform: uppercase;
 

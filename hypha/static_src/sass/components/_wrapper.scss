@@ -5,17 +5,17 @@
     width: 100%;
 
     &--small {
-        max-width: var(--wrapper-small);
+        max-width: variables.$wrapper--small;
         margin-inline: auto;
     }
 
     &--medium {
-        max-width: var(--wrapper-medium);
+        max-width: variables.$wrapper--medium;
         margin-inline: auto;
     }
 
     &--large {
-        max-width: var(--site-width);
+        max-width: variables.$site-width;
         margin-inline: auto;
     }
 

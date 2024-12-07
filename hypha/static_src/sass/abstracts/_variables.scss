@@ -57,32 +57,32 @@ $color--button-disabled: var(--color-button-disabled);
 
 // Font sizes
 $base-font-size: 16px;
-$font-size-alpha: var(--font-size-alpha);
-$font-size-beta: var(--font-size-beta);
-$font-size-gamma: var(--font-size-gamma);
-$font-size-delta: var(--font-size-delta);
-$font-size-epsilon: var(--font-size-epsilon);
-$font-size-zeta: var(--font-size-zeta);
-$font-size-milli: var(--font-size-milli);
+$font-size--alpha: var(--font-size-alpha);
+$font-size--beta: var(--font-size-beta);
+$font-size--gamma: var(--font-size-gamma);
+$font-size--delta: var(--font-size-delta);
+$font-size--epsilon: var(--font-size-epsilon);
+$font-size--zeta: var(--font-size-zeta);
+$font-size--milli: var(--font-size-milli);
 
 // Font weights
-$weight-black: var(--weight-black);
-$weight-bold: var(--weight-bold);
-$weight-semibold: var(--weight-semibold);
-$weight-normal: var(--weight-normal);
-$weight-light: var(--weight-light);
+$weight--black: var(--weight-black);
+$weight--bold: var(--weight-bold);
+$weight--semibold: var(--weight-semibold);
+$weight--normal: var(--weight-normal);
+$weight--light: var(--weight-light);
 
 // Wrappers
 $site-width: var(--site-width);
-$wrapper-medium: var(--wrapper-medium);
-$wrapper-small: var(--wrapper-small);
+$wrapper--medium: var(--wrapper-medium);
+$wrapper--small: var(--wrapper-small);
 
 // Text line length
 $max-text-line-length: var(--max-text-line-length);
 
 // Transition
 $transition: var(--transition);
-$quick-transition: var(--quick-transition);
+$transition--quick: var(--transition-quick);
 
 // Spacing
 $gutters: var(--gutters);

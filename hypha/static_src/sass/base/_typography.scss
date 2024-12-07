@@ -1,3 +1,5 @@
+@use "../abstracts/variables";
+
 // $TYPOGRAPHY
 
 h1,
@@ -9,7 +11,7 @@ h6,
 .heading-text {
     margin-block: 0 1rem;
     font-style: inherit;
-    font-weight: var(--weight-semibold);
+    font-weight: variables.$weight--semibold;
 }
 
 // Default sizes

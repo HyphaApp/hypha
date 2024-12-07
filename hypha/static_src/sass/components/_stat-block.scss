@@ -52,8 +52,8 @@
 
     &__view {
         text-transform: uppercase;
-        font-weight: var(--weight-bold);
-        transition: opacity var(--quick-transition);
+        font-weight: variables.$weight--bold;
+        transition: opacity variables.$transition--quick;
 
         @include mixins.media-query(md) {
             position: absolute;

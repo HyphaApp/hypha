@@ -153,7 +153,7 @@
         justify-content: space-between;
         max-width: 300px;
         padding: 15px 20px;
-        font-weight: var(--weight-normal);
+        font-weight: variables.$weight--normal;
         color: variables.$color--default;
         border: 1px solid variables.$color--light-mid-grey;
         transition: none;
@@ -266,11 +266,12 @@
         padding: 3px;
         margin-block-start: 10px;
         font-size: 12px;
-        font-weight: var(--weight-bold);
+        font-weight: variables.$weight--bold;
         text-align: center;
         text-transform: uppercase;
         border: 1px solid currentcolor;
-        transition: background-color, color, border, var(--quick-transition);
+        transition: background-color, color, border,
+            variables.$transition--quick;
 
         @include mixins.media-query(md) {
             margin-block-start: 0;
@@ -300,8 +301,8 @@
         display: flex;
         color: variables.$color--default;
         align-items: center;
-        transition: opacity var(--transition);
-        font-weight: var(--weight-semibold);
+        transition: opacity variables.$transition;
+        font-weight: variables.$weight--semibold;
         position: relative;
 
         &:hover {
@@ -321,11 +322,11 @@
                 width: 200px;
                 padding: 12px;
                 font-size: 12px;
-                font-weight: var(--weight-normal);
+                font-weight: variables.$weight--normal;
                 white-space: normal;
                 background: variables.$color--light-blue;
                 opacity: 0;
-                transition: opacity var(--transition);
+                transition: opacity variables.$transition;
                 inset-block-end: 45px;
                 inset-inline-start: 50%;
                 transform: translateX(-50%);
@@ -347,7 +348,7 @@
                 inset-inline-start: 50%;
                 transform: translateX(-50%);
                 opacity: 0;
-                transition: opacity var(--transition);
+                transition: opacity variables.$transition;
                 z-index: 10;
             }
 
@@ -410,7 +411,7 @@
                 position: absolute;
                 inset-block-start: 4px;
                 padding-inline-start: 5px;
-                font-size: var(--font-size-delta);
+                font-size: variables.$font-size--delta;
                 line-height: 1;
             }
         }
@@ -436,7 +437,7 @@
             &::after {
                 inset-block-start: 2px;
                 padding-inline-start: 3px;
-                font-size: var(--font-size-zeta);
+                font-size: variables.$font-size--zeta;
             }
         }
     }

@@ -93,7 +93,7 @@
         margin: 0 10px 0 0;
 
         span {
-            font-weight: var(--weight-bold);
+            font-weight: variables.$weight--bold;
         }
 
         @include mixins.media-query(sm) {
@@ -109,7 +109,7 @@
             color: variables.$color--mid-dark-grey;
 
             span {
-                font-weight: var(--weight-normal);
+                font-weight: variables.$weight--normal;
             }
         }
 
@@ -117,14 +117,14 @@
             margin-inline-start: auto;
 
             span {
-                font-weight: var(--weight-normal);
+                font-weight: variables.$weight--normal;
             }
         }
 
         &--progress {
             width: 100%;
             margin: 5px 0 0;
-            font-size: var(--font-size-milli);
+            font-size: variables.$font-size--milli;
             color: variables.$color--black-50;
 
             @include mixins.media-query(sm) {
@@ -177,8 +177,8 @@
 
     &__heading-status {
         padding: 3px 10px;
-        font-size: var(--font-size-milli);
-        font-weight: var(--weight-bold);
+        font-size: variables.$font-size--milli;
+        font-weight: variables.$weight--bold;
         color: variables.$color--marine;
         text-align: center;
         text-transform: uppercase;
