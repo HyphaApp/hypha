@@ -2,10 +2,9 @@
 
 .header {
     padding-inline: var(--gutters);
-    padding-block: var(--spacing);
 
     @include mixins.media-query(xl) {
-        padding: 0;
+        padding-inline: 0;
     }
 
     &__logo {

@@ -5,28 +5,24 @@
 
     &--small {
         max-width: var(--wrapper-small);
-        margin-inline-start: auto;
-        margin-inline-end: auto;
+        margin-inline: auto;
     }
 
     &--medium {
         max-width: var(--wrapper-medium);
-        margin-inline-start: auto;
-        margin-inline-end: auto;
+        margin-inline: auto;
     }
 
     &--large {
         max-width: var(--site-width);
-        margin-inline-start: auto;
-        margin-inline-end: auto;
+        margin-inline: auto;
     }
 
     &--main {
-        padding: 0 var(--gutters);
-        min-height: calc(100vh - 260px - 160px); // viewport - (header + footer)
+        padding-inline: var(--gutters);
 
         @include mixins.media-query(xl) {
-            padding: 0;
+            padding-inline: 0;
         }
     }
 
