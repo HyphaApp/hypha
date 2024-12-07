@@ -5,7 +5,7 @@
 
     &--determination {
         background-color: var(--color-white);
-        margin-block-end: var(--gutters);
+        margin-block-end: var(--spacing);
 
         @include mixins.media-query(md) {
             max-width: 70%;

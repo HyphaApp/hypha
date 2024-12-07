@@ -2,7 +2,8 @@
 
 .admin-bar {
     position: relative;
-    padding: var(--gutters);
+    padding-inline: var(--gutters);
+    padding-block: var(--spacing);
     margin-inline: var(--gutters-reverse);
     color: var(--color-white);
     background-color: var(--color-dark-grey);

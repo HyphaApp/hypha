@@ -1,7 +1,8 @@
 @use "../abstracts/mixins";
 
 .header {
-    padding: var(--gutters);
+    padding-inline: var(--gutters);
+    padding-block: var(--spacing);
     background-color: var(--color-header-bg);
     border-block-end: 1px solid rgb(136 146 171 / 10%);
 
