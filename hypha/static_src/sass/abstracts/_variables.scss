@@ -62,12 +62,6 @@
     --weight-normal: 400;
     --weight-light: 200;
 
-    // Font sizes
-    --base-font-size: 16px;
-    --base-font-size-large: 18px;
-    --base-line-height: 24px;
-    --base-line-height-large: 28px;
-
     // Wrappers
     --site-width: 1280px;
     --wrapper-medium: 1020px;
@@ -150,9 +144,6 @@ $color--button-disabled: $color--lighter-blue;
 
 // Font sizes
 $base-font-size: 16px;
-$base-font-size-large: 18px;
-$base-line-height: 24px;
-$base-line-height-large: 28px;
 $font-sizes: (
     alpha: 36px,
     beta: 30px,
@@ -162,13 +153,6 @@ $font-sizes: (
     zeta: 14px,
     milli: 12px,
 );
-
-// Wrappers
-$wrapper--medium: 1020px;
-$wrapper--small: 790px;
-
-// Text line length
-$max-text-line-length: 50em;
 
 // The custom width of 465px allow the buttons to scale with the input field
 $input-box-max-width: 465px;

@@ -28,7 +28,7 @@
     }
 
     &__title {
-        font-size: variables.$base-font-size-large;
+        font-size: map.get(variables.$font-sizes, epsilon);
         font-weight: var(--weight-bold);
         margin: 0 0 1rem;
 

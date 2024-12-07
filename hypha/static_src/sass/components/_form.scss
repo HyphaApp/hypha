@@ -447,10 +447,6 @@
         width: 100%;
         padding: 0.4em;
         border: 1px solid variables.$color--mid-grey;
-        line-height: math.div(
-            variables.$base-line-height,
-            variables.$base-font-size
-        );
     }
 
     .wmd-preview {
