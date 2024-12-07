@@ -26,7 +26,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.decorators.cache import cache_page
@@ -34,7 +33,6 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import (
     DeleteView,
     DetailView,
-    FormView,
     ListView,
     UpdateView,
 )
@@ -55,10 +53,8 @@ from hypha.apply.activity.models import Event
 from hypha.apply.activity.views import (
     ActivityContextMixin,
     CommentFormView,
-    DelegatedViewMixin,
 )
 from hypha.apply.determinations.views import (
-    BatchDeterminationCreateView,
     DeterminationCreateOrUpdateView,
 )
 from hypha.apply.projects.forms import ProjectCreateForm
@@ -75,7 +71,6 @@ from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import (
-    DelegateableListView,
     DelegateableView,
     ViewDispatcher,
 )
@@ -84,11 +79,6 @@ from . import services
 from .differ import compare
 from .files import generate_private_file_path
 from .forms import (
-    BatchArchiveSubmissionForm,
-    BatchDeleteSubmissionForm,
-    BatchProgressSubmissionForm,
-    BatchUpdateReviewersForm,
-    BatchUpdateSubmissionLeadForm,
     CreateReminderForm,
     ProgressSubmissionForm,
     UpdateMetaTermsForm,
@@ -106,37 +96,27 @@ from .models import (
     RoundsAndLabs,
 )
 from .permissions import (
-    can_access_drafts,
     can_alter_archived_submissions,
-    can_bulk_archive_submissions,
-    can_export_submissions,
-    can_view_archived_submissions,
     get_archive_view_groups,
     has_permission,
 )
 from .tables import (
-    AdminSubmissionsTable,
     ReviewerLeaderboardDetailTable,
     ReviewerLeaderboardFilter,
     ReviewerLeaderboardTable,
-    ReviewerSubmissionsTable,
     RoundsFilter,
     RoundsTable,
     StaffAssignmentsTable,
     SubmissionFilterAndSearch,
-    SubmissionReviewerFilterAndSearch,
 )
 from .utils import (
-    export_submissions_to_csv,
     format_submission_sum_value,
     is_filter_empty,
 )
 from .workflow import (
     DRAFT_STATE,
-    PHASES_MAPPING,
     STAGE_CHANGE_ACTIONS,
     active_statuses,
-    review_statuses,
 )
 
 if settings.APPLICATION_TRANSLATIONS_ENABLED:
@@ -201,299 +181,6 @@ class SubmissionStatsMixin:
         )
 
 
-class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
-    table_class = AdminSubmissionsTable
-    filterset_class = SubmissionFilterAndSearch
-    filter_action = ""
-    search_action = ""
-    paginator_class = LazyPaginator
-    table_pagination = {"per_page": 25}
-
-    excluded_fields = settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS
-
-    @property
-    def excluded(self):
-        return {"exclude": self.excluded_fields}
-
-    def get_table_kwargs(self, **kwargs):
-        return {**self.excluded, **kwargs}
-
-    def get_filterset_kwargs(self, filterset_class, **kwargs):
-        new_kwargs = super().get_filterset_kwargs(filterset_class)
-        new_kwargs.update(self.excluded)
-        new_kwargs.update(kwargs)
-        return new_kwargs
-
-    def get_queryset(self):
-        submissions = self.filterset_class._meta.model.objects.current().for_table(
-            self.request.user
-        )
-
-        if not can_access_drafts(self.request.user):
-            submissions = submissions.exclude_draft()
-
-        return submissions
-
-    def get_context_data(self, **kwargs):
-        search_term = self.request.GET.get("query")
-
-        return super().get_context_data(
-            search_term=search_term,
-            search_action=self.search_action,
-            filter_action=self.filter_action,
-            can_export=can_export_submissions(self.request.user),
-            **kwargs,
-        )
-
-    def dispatch(self, request, *args, **kwargs):
-        disp = super().dispatch(request, *args, **kwargs)
-        if "export" in request.GET and can_export_submissions(request.user):
-            csv_data = export_submissions_to_csv(self.object_list)
-            response = HttpResponse(csv_data.readlines(), content_type="text/csv")
-            response["Content-Disposition"] = "attachment; filename=submissions.csv"
-            return response
-        return disp
-
-
-@method_decorator(staff_required, name="dispatch")
-class BatchUpdateLeadView(DelegatedViewMixin, FormView):
-    form_class = BatchUpdateSubmissionLeadForm
-    context_name = "batch_lead_form"
-
-    def form_valid(self, form):
-        new_lead = form.cleaned_data["lead"]
-        submissions = form.cleaned_data["submissions"]
-        services.bulk_update_lead(
-            submissions=submissions,
-            user=self.request.user,
-            lead=new_lead,
-            request=self.request,
-        )
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(
-            self.request,
-            mark_safe(_("Sorry something went wrong") + form.errors.as_ul()),
-        )
-        return super().form_invalid(form)
-
-
-@method_decorator(staff_required, name="dispatch")
-class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
-    form_class = BatchUpdateReviewersForm
-    context_name = "batch_reviewer_form"
-
-    def form_valid(self, form):
-        submissions = form.cleaned_data["submissions"]
-        external_reviewers = form.cleaned_data["external_reviewers"]
-        assigned_roles = {
-            role: form.cleaned_data[field] for field, role in form.role_fields.items()
-        }
-        services.bulk_update_reviewers(
-            submissions=submissions,
-            external_reviewers=external_reviewers,
-            assigned_roles=assigned_roles,
-            user=self.request.user,
-            request=self.request,
-        )
-
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(
-            self.request,
-            mark_safe(_("Sorry something went wrong") + form.errors.as_ul()),
-        )
-        return super().form_invalid(form)
-
-
-@method_decorator(staff_required, name="dispatch")
-class BatchDeleteSubmissionView(DelegatedViewMixin, FormView):
-    form_class = BatchDeleteSubmissionForm
-    context_name = "batch_delete_submission_form"
-
-    def form_valid(self, form):
-        submissions = form.cleaned_data["submissions"]
-        services.bulk_delete_submissions(
-            submissions=submissions,
-            user=self.request.user,
-            request=self.request,
-        )
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(
-            self.request,
-            mark_safe(_("Sorry something went wrong") + form.errors.as_ul()),
-        )
-        return super().form_invalid(form)
-
-
-@method_decorator(staff_required, name="dispatch")
-class BatchArchiveSubmissionView(DelegatedViewMixin, FormView):
-    form_class = BatchArchiveSubmissionForm
-    context_name = "batch_archive_submission_form"
-
-    def form_valid(self, form):
-        # If a user without archive edit access is somehow able to access batch archive submissions
-        # (ie. they were looking at the submission list when permissions changed) "refresh" the page
-        if not can_alter_archived_submissions(self.request.user):
-            return HttpResponseRedirect(self.request.path)
-        submissions = form.cleaned_data["submissions"]
-        services.bulk_archive_submissions(
-            submissions=submissions,
-            user=self.request.user,
-            request=self.request,
-        )
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(
-            self.request,
-            mark_safe(_("Sorry something went wrong") + form.errors.as_ul()),
-        )
-        return super().form_invalid(form)
-
-
-@method_decorator(staff_required, name="dispatch")
-class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
-    form_class = BatchProgressSubmissionForm
-    context_name = "batch_progress_form"
-
-    def form_valid(self, form):
-        submissions = form.cleaned_data["submissions"]
-        transitions = form.cleaned_data.get("action")
-
-        try:
-            redirect = BatchDeterminationCreateView.should_redirect(
-                self.request, submissions, transitions
-            )
-        except ValueError as e:
-            messages.warning(self.request, "Could not determine: " + str(e))
-            return self.form_invalid(form)
-        else:
-            if redirect:
-                return redirect
-
-        failed = []
-        phase_changes = {}
-        for submission in submissions:
-            valid_actions = {
-                action
-                for action, _ in submission.get_actions_for_user(self.request.user)
-            }
-            old_phase = submission.phase
-            try:
-                transition = (valid_actions & set(transitions)).pop()
-                submission.perform_transition(
-                    transition,
-                    self.request.user,
-                    request=self.request,
-                    notify=False,
-                )
-            except (PermissionDenied, KeyError):
-                failed.append(submission)
-            else:
-                phase_changes[submission.id] = old_phase
-
-        if failed:
-            messages.warning(
-                self.request,
-                _("Failed to update: ")
-                + ", ".join(str(submission) for submission in failed),
-            )
-
-        succeeded_submissions = submissions.exclude(
-            id__in=[submission.id for submission in failed]
-        )
-        messenger(
-            MESSAGES.BATCH_TRANSITION,
-            user=self.request.user,
-            request=self.request,
-            sources=succeeded_submissions,
-            related=phase_changes,
-        )
-
-        ready_for_review = [phase for phase in transitions if phase in review_statuses]
-        if ready_for_review:
-            messenger(
-                MESSAGES.BATCH_READY_FOR_REVIEW,
-                user=self.request.user,
-                request=self.request,
-                sources=succeeded_submissions.filter(status__in=ready_for_review),
-            )
-
-        return super().form_valid(form)
-
-
-class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
-    table_class = ReviewerSubmissionsTable
-    filterset_class = SubmissionReviewerFilterAndSearch
-
-    def get_queryset(self):
-        """
-        If use_settings variable is set for ReviewerSettings use settings
-        parameters to filter submissions or return only reviewed_by as it
-        was by default.
-        """
-        reviewer_settings = ReviewerSettings.for_request(self.request)
-        if reviewer_settings.use_settings:
-            return (
-                super()
-                .get_queryset()
-                .for_reviewer_settings(self.request.user, reviewer_settings)
-                .order_by("-submit_time")
-            )
-        return super().get_queryset().reviewed_by(self.request.user)
-
-
-class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
-    template_name = "funds/submissions.html"
-    form_views = [
-        BatchUpdateLeadView,
-        BatchUpdateReviewersView,
-        BatchProgressSubmissionView,
-        BatchDeleteSubmissionView,
-        BatchArchiveSubmissionView,
-    ]
-
-    def get_filterset_kwargs(self, filterset_class, **kwargs):
-        new_kwargs = super().get_filterset_kwargs(filterset_class)
-        archived_kwargs = {"archived": self.request.GET.get("archived", 0)}
-        new_kwargs.update(archived_kwargs)
-        new_kwargs.update(kwargs)
-        return new_kwargs
-
-    def get_queryset(self):
-        if self.request.GET.get("archived"):
-            # if archived is in param, let archived filter handle the queryset as per its value.
-            submissions = (
-                self.filterset_class._meta.model.objects.include_archive().for_table(
-                    self.request.user
-                )
-            )
-        else:
-            submissions = self.filterset_class._meta.model.objects.current().for_table(
-                self.request.user
-            )
-
-        if not can_access_drafts(self.request.user):
-            submissions = submissions.exclude_draft()
-
-        return submissions
-
-    def get_context_data(self, **kwargs):
-        show_archive = can_view_archived_submissions(self.request.user)
-        can_archive = can_bulk_archive_submissions(self.request.user)
-
-        return super().get_context_data(
-            show_archive=show_archive,
-            can_bulk_archive=can_archive,
-            **kwargs,
-        )
-
-
 @method_decorator(staff_required, name="dispatch")
 class GroupingApplicationsListView(TemplateView):
     """
@@ -501,53 +188,6 @@ class GroupingApplicationsListView(TemplateView):
     """
 
     template_name = "funds/grouped_application_list.html"
-
-
-class SubmissionReviewerListView(BaseReviewerSubmissionsTable):
-    template_name = "funds/submissions.html"
-
-
-class SubmissionListView(ViewDispatcher):
-    admin_view = SubmissionAdminListView
-    reviewer_view = SubmissionReviewerListView
-
-
-@method_decorator(staff_required, name="dispatch")
-class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
-    template_name = "funds/submissions_by_status.html"
-    status_mapping = PHASES_MAPPING
-    form_views = [
-        BatchUpdateLeadView,
-        BatchUpdateReviewersView,
-        BatchProgressSubmissionView,
-        BatchDeleteSubmissionView,
-        BatchArchiveSubmissionView,
-    ]
-
-    def dispatch(self, request, *args, **kwargs):
-        self.status = kwargs.get("status")
-        try:
-            status_data = self.status_mapping[self.status]
-        except KeyError:
-            raise Http404(_("No statuses match the requested value")) from None
-        self.status_name = status_data["name"]
-        self.statuses = status_data["statuses"]
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_filterset_kwargs(self, filterset_class, **kwargs):
-        return super().get_filterset_kwargs(
-            filterset_class, limit_statuses=self.statuses, **kwargs
-        )
-
-    def get_queryset(self):
-        return super().get_queryset().filter(status__in=self.statuses)
-
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(
-            status=self.status_name,
-            statuses=self.statuses,
-            **kwargs,
-        )
 
 
 @method_decorator(staff_required, name="dispatch")
