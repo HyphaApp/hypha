@@ -78,7 +78,7 @@
         height: 20px;
         fill: variables.$color--dark-grey;
         opacity: 0;
-        transition: opacity variables.$quick-transition;
+        transition: opacity var(--quick-transition);
         pointer-events: none;
 
         #{$root}__list-item:hover & {

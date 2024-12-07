@@ -15,7 +15,7 @@
         border: 1px solid variables.$color--light-mid-grey;
         border-block-end: 0;
         padding: 25px;
-        transition: background-color variables.$quick-transition;
+        transition: background-color var(--quick-transition);
         min-height: 80px;
 
         &:last-child {
@@ -57,7 +57,7 @@
 
     &__view {
         margin: 0 0 0 auto;
-        transition: color variables.$quick-transition;
+        transition: color var(--quick-transition);
         font-weight: var(--weight-bold);
         text-transform: uppercase;
 

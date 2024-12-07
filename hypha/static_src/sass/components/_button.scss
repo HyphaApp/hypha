@@ -271,7 +271,7 @@
         text-align: center;
         text-transform: uppercase;
         border: 1px solid currentcolor;
-        transition: background-color, color, border, variables.$quick-transition;
+        transition: background-color, color, border, var(--quick-transition);
 
         @include mixins.media-query(md) {
             margin-block-start: 0;
