@@ -1,4 +1,3 @@
-@use "sass:color";
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
@@ -32,7 +31,7 @@
         flex-direction: column;
         margin-block-start: 20px;
         font-weight: var(--weight-normal);
-        color: color.adjust(variables.$color--dark-grey, $alpha: -0.5);
+        color: variables.$color--black-40;
 
         @include mixins.media-query(lg) {
             flex-direction: row;
@@ -49,7 +48,7 @@
     }
 
     &--light-grey {
-        color: color.adjust(variables.$color--dark-grey, $alpha: -0.5);
+        color: variables.$color--black-40;
     }
 
     &--uppercase {

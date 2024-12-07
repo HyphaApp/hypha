@@ -1,4 +1,3 @@
-@use "sass:color";
 @use "../base/base";
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
@@ -167,10 +166,7 @@
 
             &.is-active {
                 font-weight: var(--weight-normal);
-                background-color: color.adjust(
-                    variables.$color--primary,
-                    $alpha: -0.9
-                );
+                background-color: variables.$color--light-blue-90;
                 border-color: variables.$color--mid-grey;
             }
 

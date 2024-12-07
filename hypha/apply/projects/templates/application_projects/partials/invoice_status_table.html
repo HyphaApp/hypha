@@ -30,7 +30,7 @@
                 {% endif %}
                 {% can_change_status invoice user as can_change_invoice_status %}
                 {% if can_change_invoice_status %}
-                    <button class="data-block__button button button--primary" hx-get="{% url 'apply:projects:invoice-update' pk=invoice.project.pk invoice_pk=invoice.pk %}" hx-target="#htmx-modal">
+                    <button class="data-block__button button button--project-action" hx-get="{% url 'apply:projects:invoice-update' pk=invoice.project.pk invoice_pk=invoice.pk %}" hx-target="#htmx-modal">
                         {% trans "Update Status" %}
                     </button>
                 {% endif %}

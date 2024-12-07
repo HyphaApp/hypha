@@ -1,4 +1,3 @@
-@use "sass:color";
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
@@ -62,10 +61,7 @@
             // stylelint-disable-next-line declaration-no-important
             color: variables.$color--default !important;
             // stylelint-disable declaration-no-important, max-line-length
-            background-color: color.adjust(
-                variables.$color--primary,
-                $alpha: -0.9
-            ) !important;
+            background-color: variables.$color--light-blue-90 !important;
         }
     }
 
