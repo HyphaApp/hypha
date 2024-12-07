@@ -1,4 +1,6 @@
-// Most variables are set from css variables defined in _root.scss so they are easy to override.
+// Most variables are set from css variables defined in
+// tailwind/base/variables.css so they are easy to override.
+// Only variables used in media queries and calculations are defined here.
 
 // Default
 $color--white: var(--color-white);
