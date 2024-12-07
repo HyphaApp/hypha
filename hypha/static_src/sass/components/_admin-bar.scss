@@ -47,7 +47,7 @@
         font-weight: variables.$weight--bold;
 
         &::before {
-            @include mixins.triangle(top, currentColor, 5px);
+            @include mixins.triangle(top);
             margin-inline-end: 0.5rem;
             transform: rotate(-90deg);
         }
