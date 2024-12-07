@@ -2,8 +2,8 @@
 @use "../abstracts/variables";
 
 .tabs {
-    margin-block-start: var(--spacing);
-    margin-block-end: var(--spacing-reverse);
+    margin-block-start: variables.$spacing;
+    margin-block-end: variables.$spacing-reverse;
 
     &__container {
         display: flex;

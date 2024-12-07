@@ -3,9 +3,9 @@
 
 .admin-bar {
     position: relative;
-    padding-inline: var(--gutters);
-    padding-block: var(--spacing);
-    margin-inline: var(--gutters-reverse);
+    padding-inline: variables.$gutters;
+    padding-block: variables.$spacing;
+    margin-inline: variables.$gutters-reverse;
     color: variables.$color--white;
     background-color: variables.$color--dark-grey;
 

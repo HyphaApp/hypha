@@ -38,7 +38,7 @@
     &__list {
         max-height: 200px;
         overflow: scroll;
-        margin: 0 -24px var(--gutters);
+        margin: 0 -24px 1.5rem;
         padding: 0;
         border-block-end: 2px solid variables.$color--light-mid-grey;
         box-shadow: inset 0 -10px 20px -10px variables.$color--mid-grey;

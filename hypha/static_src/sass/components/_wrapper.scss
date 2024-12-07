@@ -20,7 +20,7 @@
     }
 
     &--main {
-        padding-inline: var(--gutters);
+        padding-inline: variables.$gutters;
 
         @include mixins.media-query(xl) {
             padding-inline: 0;
