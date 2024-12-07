@@ -1,4 +1,3 @@
-@use "sass:map";
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 @use "../base/typography";
@@ -125,7 +124,7 @@
         &--progress {
             width: 100%;
             margin: 5px 0 0;
-            font-size: map.get(variables.$font-sizes, milli);
+            font-size: var(--font-size-milli);
             color: variables.$color--black-50;
 
             @include mixins.media-query(sm) {
@@ -178,7 +177,7 @@
 
     &__heading-status {
         padding: 3px 10px;
-        font-size: map.get(variables.$font-sizes, milli);
+        font-size: var(--font-size-milli);
         font-weight: var(--weight-bold);
         color: variables.$color--marine;
         text-align: center;

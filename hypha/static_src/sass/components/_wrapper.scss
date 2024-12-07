@@ -23,7 +23,7 @@
     }
 
     &--main {
-        padding: 0 variables.$mobile-gutter;
+        padding: 0 var(--gutters);
         min-height: calc(100vh - 260px - 160px); // viewport - (header + footer)
 
         @include mixins.media-query(xl) {

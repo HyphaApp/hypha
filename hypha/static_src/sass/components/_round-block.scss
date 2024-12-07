@@ -1,4 +1,3 @@
-@use "sass:map";
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
@@ -76,7 +75,7 @@
 
     &__title {
         color: variables.$color--default;
-        font-size: map.get(variables.$font-sizes, epsilon);
+        font-size: var(--font-size-epsilon);
         font-weight: var(--weight-semibold);
     }
 

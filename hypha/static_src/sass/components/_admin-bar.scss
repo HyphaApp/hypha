@@ -3,8 +3,8 @@
 
 .admin-bar {
     position: relative;
-    padding: variables.$mobile-gutter;
-    margin-inline: calc(0px - variables.$mobile-gutter);
+    padding: var(--gutters);
+    margin-inline: var(--gutters-reverse);
     color: variables.$color--white;
     background-color: variables.$color--dark-grey;
 

@@ -1,4 +1,3 @@
-@use "sass:map";
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
@@ -54,7 +53,7 @@
         }
 
         &--alt {
-            font-size: map.get(variables.$font-sizes, zeta);
+            font-size: var(--font-size-zeta);
             font-weight: var(--weight-semibold);
             padding: 0.5rem 1rem;
             text-transform: none;

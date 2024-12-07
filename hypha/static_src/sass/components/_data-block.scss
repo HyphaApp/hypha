@@ -1,4 +1,3 @@
-@use "sass:map";
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
@@ -28,7 +27,7 @@
     }
 
     &__title {
-        font-size: map.get(variables.$font-sizes, epsilon);
+        font-size: var(--font-size-epsilon);
         font-weight: var(--weight-bold);
         margin: 0 0 1rem;
 
@@ -114,7 +113,7 @@
         }
 
         tbody {
-            font-size: map.get(variables.$font-sizes, zeta);
+            font-size: var(--font-size-zeta);
         }
 
         tr {
@@ -152,7 +151,7 @@
     }
 
     &__action-link {
-        font-size: map.get(variables.$font-sizes, zeta);
+        font-size: var(--font-size-zeta);
         font-weight: var(--weight-bold);
         display: inline-block;
         margin-inline-end: 1rem;
@@ -172,7 +171,7 @@
     }
 
     &__action-icon-link {
-        font-size: map.get(variables.$font-sizes, zeta);
+        font-size: var(--font-size-zeta);
         font-weight: var(--weight-bold);
         display: flex;
         align-items: center;
