@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-09 10:44+0000\n"
-"PO-Revision-Date: 2024-12-01 18:00+0000\n"
+"PO-Revision-Date: 2024-12-09 19:00+0000\n"
 "Last-Translator: Jiří Podhorecký <j.podhorecky@volny.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "cs/>\n"
@@ -1951,7 +1951,7 @@ msgstr "Posudky a přiřazení"
 
 #: hypha/apply/funds/templates/funds/applicationsubmission_admin_detail.html:47
 msgid "View all"
-msgstr "Zobrazit všechny"
+msgstr "Zobrazit vše"
 
 #: hypha/apply/funds/templates/funds/applicationsubmission_confirm_delete.html:4
 #: hypha/apply/funds/templates/funds/applicationsubmission_confirm_delete.html:9
