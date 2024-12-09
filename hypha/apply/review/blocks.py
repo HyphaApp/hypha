@@ -13,8 +13,8 @@ from hypha.apply.review.options import (
     RATE_CHOICES,
     RATE_CHOICES_DICT,
     RECOMMENDATION_CHOICES,
-    VISIBILILTY_HELP_TEXT,
     VISIBILITY,
+    VISIBILITY_HELP_TEXT,
 )
 from hypha.apply.stream_forms.blocks import (
     CharFieldBlock,
@@ -157,7 +157,7 @@ class VisibilityBlock(ReviewMustIncludeFieldBlock):
         kwargs["help_text"] = mark_safe(
             "<br>".join(
                 [
-                    VISIBILITY[choice] + ": " + VISIBILILTY_HELP_TEXT[choice]
+                    VISIBILITY[choice] + ": " + VISIBILITY_HELP_TEXT[choice]
                     for choice in VISIBILITY
                 ]
             )

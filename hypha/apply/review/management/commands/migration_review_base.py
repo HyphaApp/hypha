@@ -87,7 +87,7 @@ class MigrateCommand(BaseCommand):
         with options["source"] as json_data:
             self.data = json.load(json_data)
 
-            # A user can only submitt a single review in the new system so pick the latest one.
+            # A user can only submit a single review in the new system so pick the latest one.
             blacklist = {
                 "7574",
                 "7413",

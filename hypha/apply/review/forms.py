@@ -70,7 +70,7 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
             self.cleaned_data[self.instance.recommendation_field.id]
         )
         self.instance.is_draft = self.draft_button_name in self.data
-        # Old review forms do not have the requred visability field.
+        # Old review forms do not have the required visibility field.
         # This will set visibility to PRIVATE by default.
         try:
             self.instance.visibility = self.cleaned_data[

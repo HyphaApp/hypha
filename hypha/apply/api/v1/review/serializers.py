@@ -56,7 +56,7 @@ class SubmissionReviewSerializer(serializers.ModelSerializer):
         )
         instance.is_draft = self.validated_data.get("is_draft", False)
 
-        # Old review forms do not have the requred visability field.
+        # Old review forms do not have the required visibility field.
         # This will set visibility to PRIVATE by default.
         try:
             instance.visibility = self.validated_data[instance.visibility_field.id]
