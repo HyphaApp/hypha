@@ -32,7 +32,7 @@
                         {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
                     </div>
                 </a>
-                <div class="reviews-sidebar__date">{{ reviewer.review.created_at|date:"SHORT_DATE_FORMAT" }}</div>
+                <div class="milli">{{ reviewer.review.created_at|date:"SHORT_DATE_FORMAT" }}</div>
             </div>
         {% else %}
             <div class="reviews-sidebar__name">

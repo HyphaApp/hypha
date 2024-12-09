@@ -16,7 +16,7 @@
     function get_questions() {
         var questions_text = [];
         var i = 1;
-        questions_text.push("# " + $(".header__title").html());
+        questions_text.push("# " + $("h1:first").html());
         $(".application-form")
             .find(".form__group, .rich-text, h2, h3")
             .each(function () {

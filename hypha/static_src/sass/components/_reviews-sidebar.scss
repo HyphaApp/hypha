@@ -82,10 +82,6 @@
         }
     }
 
-    &__date {
-        @include mixins.font-size(milli);
-    }
-
     &__no-reviews {
         color: variables.$color--mid-grey;
     }
