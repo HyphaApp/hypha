@@ -21,6 +21,9 @@ from django.views.generic import (
     View,
 )
 from django_filters.views import FilterView
+from django_htmx.http import (
+    HttpResponseClientRefresh,
+)
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
@@ -491,40 +494,51 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
 class BatchUpdateInvoiceStatusView(DelegatedViewMixin, FormView):
     form_class = BatchUpdateInvoiceStatusForm
     context_name = "batch_invoice_status_form"
+    template_name = "application_projects/modals/batch_invoice_status_update.html"
 
-    def form_valid(self, form):
-        new_status = form.cleaned_data["invoice_action"]
-        invoices = form.cleaned_data["invoices"]
-        invoices_old_statuses = {invoice: invoice.status for invoice in invoices}
-        batch_update_invoices_status(
-            invoices=invoices,
-            user=self.request.user,
-            status=new_status,
+    def get(self, *args, **kwargs):
+        selected_ids = self.request.GET.getlist("selected_ids", "")
+        invoices = Invoice.objects.filter(id__in=selected_ids)
+        form = self.form_class(user=self.request.user)
+        return render(
+            self.request,
+            self.template_name,
+            context={"form": form, "invoices": invoices},
         )
 
-        # add activity feed for batch update invoice status
-        projects = Project.objects.filter(
-            id__in=[invoice.project.id for invoice in invoices]
-        )
-        messenger(
-            MESSAGES.BATCH_UPDATE_INVOICE_STATUS,
-            request=self.request,
-            user=self.request.user,
-            sources=projects,
-            related=invoices,
-        )
+    def post(self, *args, **kwargs):
+        form = self.form_class(self.request.POST, user=self.request.user)
+        if form.is_valid():
+            new_status = form.cleaned_data["invoice_action"]
+            invoices = form.cleaned_data["invoices"]
+            invoices_old_statuses = {invoice: invoice.status for invoice in invoices}
+            batch_update_invoices_status(
+                invoices=invoices,
+                user=self.request.user,
+                status=new_status,
+            )
 
-        # update tasks for selected invoices
-        for invoice, old_status in invoices_old_statuses.items():
-            handle_tasks_on_invoice_update(old_status, invoice)
-        return super().form_valid(form)
+            # add activity feed for batch update invoice status
+            projects = Project.objects.filter(
+                id__in=[invoice.project.id for invoice in invoices]
+            )
+            messenger(
+                MESSAGES.BATCH_UPDATE_INVOICE_STATUS,
+                request=self.request,
+                user=self.request.user,
+                sources=projects,
+                related=invoices,
+            )
 
-    def form_invalid(self, form):
+            # update tasks for selected invoices
+            for invoice, old_status in invoices_old_statuses.items():
+                handle_tasks_on_invoice_update(old_status, invoice)
+            return HttpResponseClientRefresh()
         messages.error(
             self.request,
             mark_safe(_("Sorry something went wrong") + form.errors.as_ul()),
         )
-        return super().form_invalid(form)
+        return HttpResponseClientRefresh()
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")
