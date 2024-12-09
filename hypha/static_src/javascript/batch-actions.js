@@ -59,12 +59,12 @@
                 // Get the base URL from the href attribute
                 const baseUrl = $(this).attr("href");
                 const url = new URL(baseUrl, window.location.origin);
-                selectedIDs.forEach(id => {
+                selectedIDs.forEach((id) => {
                     url.searchParams.append("selected_ids", id);
                 });
                 // Send the request using htmx.ajax
-                htmx.ajax('GET', url.toString(), {
-                    target: '#htmx-modal' // Optional: set the target element
+                htmx.ajax("GET", url.toString(), {
+                    target: "#htmx-modal", // Optional: set the target element
                 });
             } else {
                 alert("Please select at least one item.");
@@ -125,7 +125,9 @@
                 actions = newActions;
             } else {
                 // Filter actions to keep only items also present in newActions
-                actions = actions.filter((action) => newActions.includes(action));
+                actions = actions.filter((action) =>
+                    newActions.includes(action)
+                );
             }
         });
 
