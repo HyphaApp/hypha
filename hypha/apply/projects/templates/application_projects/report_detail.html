@@ -19,7 +19,9 @@
         <div class="wrapper--sidebar--inner">
             <div class="alert">
                 {% heroicon_outline 'exclamation-circle' stroke_width=2 size=22 class="inline me-1 stroke-dark-blue" aria_hidden=true %}
-                <p class="alert__text">{% trans "This report is for the period" %} <strong>{{ report.start_date }}</strong> {% trans "to" %} <strong>{{ report.end_date }}</strong></p>
+                <p class="alert__text">
+                    {% trans "This report is for the period" %} <strong>{{ object.start_date }}</strong> {% trans "to" %} <strong>{{ object.end_date }}</strong>
+                </p>
             </div>
 
             <div class="card card--solid">
