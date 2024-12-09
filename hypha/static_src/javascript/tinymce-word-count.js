@@ -1,4 +1,4 @@
-(function ($) {
+(function () {
     var word_count_interval;
 
     const observer_options = {
@@ -17,32 +17,30 @@
             word_count = 0;
         }
         const word_limit = parseInt(
-            $(el).parents().eq(4).attr("data-word-limit"),
+            el.closest("div[data-word-limit]").dataset.wordLimit,
             10
         );
         const percent_to_get = 20;
         const word_limit_to_show_warning =
             word_limit - (percent_to_get / 100) * word_limit;
 
-        if (word_count <= word_limit_to_show_warning) {
-            el.setAttribute("data-after-word-count", " out of " + word_limit);
+        if (el.textContent.includes("characters")) {
+            delete el.dataset.afterWordCount;
+            el.classList.remove("word-count-warning");
+            el.classList.remove("word-count-warning-2");
+        } else if (word_count <= word_limit_to_show_warning) {
+            el.dataset.afterWordCount = " out of " + word_limit;
             el.classList.remove("word-count-warning");
             el.classList.remove("word-count-warning-2");
         } else if (
             word_count > word_limit_to_show_warning &&
             word_count <= word_limit
         ) {
-            el.setAttribute(
-                "data-after-word-count",
-                " out of " + word_limit + " (Close to the limit)"
-            );
+            el.dataset.afterWordCount = " out of " + word_limit + " (Close to the limit)";
             el.classList.remove("word-count-warning-2");
             el.classList.add("word-count-warning");
         } else if (word_count > word_limit) {
-            el.setAttribute(
-                "data-after-word-count",
-                " out of " + word_limit + " (Over the limit)"
-            );
+            el.dataset.afterWordCount = " out of " + word_limit + " (Over the limit)";
             el.classList.add("word-count-warning-2");
         }
     }
@@ -72,4 +70,4 @@
     }
 
     word_count_interval = setInterval(word_count_alert, 300);
-})(jQuery);
+})();
