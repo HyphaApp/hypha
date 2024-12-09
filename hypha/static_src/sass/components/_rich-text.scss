@@ -67,12 +67,10 @@
     // to the parent element, because the table is wrapped in a div with overflow: auto
     &__table {
         overflow: auto;
-        margin-block-start: 1.25em;
-        margin-block-end: 1.25em;
+        margin-block: 1.25rem;
 
         > table {
-            margin-block-start: 0;
-            margin-block-end: 0;
+            margin-block: 0;
         }
     }
 
@@ -84,25 +82,25 @@
     }
 }
 
-.tox-statusbar {
-    &__wordcount {
-        padding-inline-start: 10px;
-        padding-inline-end: 10px;
+.tox {
+    .tox-statusbar {
+        &__wordcount {
+            padding-inline: 0.5rem;
 
-        &::after {
-            content: attr(data-after-word-count);
-        }
+            &::after {
+                content: attr(data-after-word-count);
+            }
 
-        &.word-count-warning,
-        &.word-count-warning-2 {
-            background-color: variables.$color--pastel-red;
-            font-weight: bold;
-            text-shadow: none;
-            color: variables.$color--black;
-        }
+            &.word-count-warning,
+            &.word-count-warning-2 {
+                background-color: variables.$color--pastel-red;
+                font-weight: bold;
+            }
 
-        &.word-count-warning-2 {
-            background-color: variables.$color--tomato;
+            &.word-count-warning-2 {
+                background-color: variables.$color--error;
+                color: variables.$color--white;
+            }
         }
     }
 }
