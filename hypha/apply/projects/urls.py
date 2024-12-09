@@ -3,6 +3,7 @@ from django.views.generic import RedirectView
 
 from .views import (
     ApproveContractView,
+    BatchUpdateInvoiceStatusView,
     CategoryTemplatePrivateMediaView,
     ChangeInvoiceStatusView,
     ChangePAFStatusView,
@@ -63,6 +64,11 @@ urlpatterns = [
     path("invoices/", InvoiceListView.as_view(), name="invoices"),
     path(
         "invoices/statuses/", get_invoices_status_counts, name="invoices_status_counts"
+    ),
+    path(
+        "all/bulk_invoice_status_update/",
+        BatchUpdateInvoiceStatusView.as_view(),
+        name="bulk_invoice_status_update",
     ),
     path(
         "<int:pk>/",

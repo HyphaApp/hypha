@@ -3,7 +3,6 @@
 
 {% block extra_css %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
 {% endblock %}
 
 {% block adminbar %}
@@ -30,9 +29,9 @@
 {% endblock %}
 
 {% block form_buttons %}
-    <button data-fancybox data-src="#batch-send-determination" class="button button--submit button--top-space button--primary js-batch-determine-send" type="button">{% trans "Send" %}</button>
-    {% include "determinations/includes/batch_determination_confirmation.html" with count=submissions.count %}
-    <input type="submit" value="Submit" name="submit" class="is-hidden" />
+    <button class="button button--submit button--top-space button--primary" type="submit" onclick="return confirm('{% blocktrans %}This determination message will be emailed to applicants and cannot be undone. Do you wish to contiune?{% endblocktrans %}')">
+        {% trans "Send" %}
+    </button>
 {% endblock %}
 
 {% block show_submission %}
@@ -40,7 +39,5 @@
 
 {% block extra_js %}
     {{ block.super }}
-    <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
     <script src="{% static 'js/batch-actions.js' %}"></script>
-    <script src="{% static 'js/fancybox-global.js' %}"></script>
 {% endblock %}
