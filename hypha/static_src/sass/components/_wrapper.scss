@@ -6,28 +6,24 @@
 
     &--small {
         max-width: variables.$wrapper--small;
-        margin-inline-start: auto;
-        margin-inline-end: auto;
+        margin-inline: auto;
     }
 
     &--medium {
         max-width: variables.$wrapper--medium;
-        margin-inline-start: auto;
-        margin-inline-end: auto;
+        margin-inline: auto;
     }
 
     &--large {
         max-width: variables.$site-width;
-        margin-inline-start: auto;
-        margin-inline-end: auto;
+        margin-inline: auto;
     }
 
     &--main {
-        padding: 0 variables.$mobile-gutter;
-        min-height: calc(100vh - 260px - 160px); // viewport - (header + footer)
+        padding-inline: variables.$gutters;
 
         @include mixins.media-query(xl) {
-            padding: 0;
+            padding-inline: 0;
         }
     }
 
