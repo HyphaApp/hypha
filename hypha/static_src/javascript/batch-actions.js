@@ -1,3 +1,4 @@
+/* eslint-disable max-nested-callbacks */
 (function ($) {
     const $body = $("body");
     const $checkbox = $(".js-batch-select");
@@ -91,6 +92,7 @@
 
     /**
      * Prepare the batch listing.
+     * @returns {Array} selectedIDs
      */
     function prepareBatchListing() {
         $batchTitlesList.html("");
