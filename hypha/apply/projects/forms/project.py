@@ -142,7 +142,6 @@ class ProjectForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
             if field in self.cleaned_data
         }
         self.instance.process_file_data(self.cleaned_data)
-        self.instance.user_has_updated_details = True
         return super().save(*args, **kwargs)
 
 
