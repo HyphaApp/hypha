@@ -239,7 +239,7 @@ class ReportConfig(models.Model):
     schedule_start = models.DateField(null=True)
     occurrence = models.PositiveSmallIntegerField(default=1)
     frequency = models.CharField(choices=FREQUENCY_CHOICES, default=MONTH, max_length=6)
-    disable_reporting = models.BooleanField(default=False)
+    disable_reporting = models.BooleanField(default=True)
     does_not_repeat = models.BooleanField(default=False)
 
     def get_frequency_display(self):
