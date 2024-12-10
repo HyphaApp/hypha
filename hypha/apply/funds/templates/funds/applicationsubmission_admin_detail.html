@@ -1,11 +1,6 @@
 {% extends "funds/applicationsubmission_detail.html" %}
 {% load i18n static workflow_tags review_tags determination_tags translate_tags heroicons %}
 
-{% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
-{% endblock %}
-
-
 {% block sidebar_top %}
     <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions" data-testid="sidebar-primary-actions">
         {% include "funds/includes/admin_primary_actions.html" %}
@@ -95,8 +90,6 @@
 {% block extra_js %}
     {{ comment_form.media.js }}
     {{ block.super }}
-    <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
-    <script src="{% static 'js/fancybox-global.js' %}"></script>
     <script src="{% static 'js/behaviours/collapse.js' %}"></script>
     {% if request.user|can_translate_submission %}
         <script src="{% static 'js/translate-application.js' %}"></script>
