@@ -49,6 +49,7 @@ from .factories import (
     PAFApprovalsFactory,
     PAFReviewerRoleFactory,
     ProjectFactory,
+    ReportConfigFactory,
     ReportFactory,
     ReportVersionFactory,
     SupportingDocumentFactory,
@@ -1801,7 +1802,9 @@ class TestSkipReport(BaseViewTestCase):
         self.assertFalse(report.skipped)
 
     def test_cant_skip_current_report(self):
+        config = ReportConfigFactory(disable_reporting=False)
         report = ReportFactory(
+            project=config.project,
             project__status=INVOICING_AND_REPORTING,
             end_date=timezone.now() + relativedelta(days=1),
         )
