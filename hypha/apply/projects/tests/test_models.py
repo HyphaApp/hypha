@@ -356,12 +356,12 @@ class TestReportConfig(TestCase):
         self.assertEqual(next_date, last_report + relativedelta(months=2))
 
     def test_current_due_report_gets_active_report(self):
-        config = ReportConfigFactory()
+        config = ReportConfigFactory(disable_reporting=False)
         report = ReportFactory(project=config.project)
         self.assertEqual(config.current_due_report(), report)
 
     def test_no_report_creates_report(self):
-        config = ReportConfigFactory()
+        config = ReportConfigFactory(disable_reporting=False)
         report = config.current_due_report()
         # Separate day from month for case where start date + 1 month would exceed next month
         # length (31st Oct to 30th Nov)
@@ -375,27 +375,31 @@ class TestReportConfig(TestCase):
 
     def test_no_report_creates_report_not_in_past(self):
         config = ReportConfigFactory(
-            schedule_start=self.today - relativedelta(months=3)
+            schedule_start=self.today - relativedelta(months=3), disable_reporting=False
         )
         report = config.current_due_report()
         self.assertEqual(Report.objects.count(), 1)
         self.assertEqual(report.end_date, self.today)
 
     def test_no_report_creates_report_if_current_skipped(self):
-        config = ReportConfigFactory()
+        config = ReportConfigFactory(disable_reporting=False)
         skipped_report = ReportFactory(end_date=self.today + relativedelta(days=3))
         report = config.current_due_report()
         self.assertEqual(Report.objects.count(), 2)
         self.assertNotEqual(skipped_report, report)
 
     def test_no_report_schedule_in_future_creates_report(self):
-        config = ReportConfigFactory(schedule_start=self.today + relativedelta(days=2))
+        config = ReportConfigFactory(
+            schedule_start=self.today + relativedelta(days=2), disable_reporting=False
+        )
         report = config.current_due_report()
         self.assertEqual(Report.objects.count(), 1)
         self.assertEqual(report.end_date, self.today + relativedelta(days=2))
 
     def test_past_due_report_creates_report(self):
-        config = ReportConfigFactory(schedule_start=self.today - relativedelta(days=2))
+        config = ReportConfigFactory(
+            schedule_start=self.today - relativedelta(days=2), disable_reporting=False
+        )
         ReportFactory(
             project=config.project, end_date=self.today - relativedelta(days=1)
         )
@@ -411,11 +415,13 @@ class TestReportConfig(TestCase):
         self.assertEqual(report.end_date, next_due)
 
     def test_today_schedule_gets_report_today(self):
-        config = ReportConfigFactory(schedule_start=self.today)
+        config = ReportConfigFactory(disable_reporting=False, schedule_start=self.today)
         self.assertEqual(config.current_due_report().end_date, self.today)
 
     def test_past_due_report_future_schedule_creates_report(self):
-        config = ReportConfigFactory(schedule_start=self.today + relativedelta(days=3))
+        config = ReportConfigFactory(
+            schedule_start=self.today + relativedelta(days=3), disable_reporting=False
+        )
         ReportFactory(
             project=config.project, end_date=self.today - relativedelta(days=1)
         )
