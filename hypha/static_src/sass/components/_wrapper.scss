@@ -146,6 +146,7 @@
     &--sidebar {
         display: flex;
         flex-direction: column;
+        gap: 1.5rem;
 
         @include mixins.media-query(md) {
             flex-direction: row;
@@ -157,10 +158,6 @@
 
         &--inner {
             flex: 1;
-
-            @include mixins.media-query(md) {
-                padding-inline-end: 20px;
-            }
         }
 
         .card:first-child {

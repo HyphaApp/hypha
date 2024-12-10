@@ -1,15 +1,4 @@
 (function ($) {
-    // reset mobile filters if they're open past the tablet breakpoint
-    $(window)
-        .resize(function resize() {
-            if ($(window).width() > 1024) {
-                $(".js-actions-toggle").removeClass("is-active");
-                $(".js-actions-sidebar").removeClass("is-visible");
-                $(".tr--parent.is-expanded").removeClass("is-expanded");
-            }
-        })
-        .trigger("resize");
-
     $("form")
         .filter(".form__comments")
         .submit(function (e) {
