@@ -72,7 +72,7 @@
                 </form>
             </div>
             <aside class="sidebar sidebar__project">
-                <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+                <div class="sidebar__inner sidebar__inner--actions">
                     <h5>{% trans "Proposal attachments" %}</h5>
                     {% for file in submissions_attachments %}
                         <p><b><a href="{{ file.url }}" target="_blank">{{ file.filename }}</a></b></p>

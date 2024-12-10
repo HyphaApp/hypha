@@ -1,7 +1,7 @@
 {% load i18n primaryactions_tags %}
 
 {% if request.user|should_display_primary_actions_block:object %}
-    <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}" data-testid="sidebar-primary-actions">
+    <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions" data-testid="sidebar-primary-actions">
         <h5>{% trans "Actions to take" %}</h5>
 
         {% if object.in_internal_review_phase or object.in_external_review_phase %}
