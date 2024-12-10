@@ -23,15 +23,6 @@
                 }
             }
         }
-
-        &--mobile {
-            display: none;
-
-            &.is-visible {
-                display: block;
-                border-block-start: 0;
-            }
-        }
     }
 
     &__project {

@@ -36,7 +36,7 @@
             {% user_can_take_actions object user as can_take_actions %}
             {% if can_take_actions %}
                 <aside class="sidebar sidebar__project">
-                    <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+                    <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
                         <h5>{% trans "Actions to take" %}</h5>
                         <div x-data="{ show: false }" class="dropdown">
                             <button x-on:click="show = ! show" class="button button--primary" type="button">
