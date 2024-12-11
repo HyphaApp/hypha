@@ -297,6 +297,14 @@ def can_access_supporting_documents_section(project):
 
 
 @register.simple_tag
+def user_can_upload_supporting_documents(user, project):
+    permission, _ = has_permission(
+        "upload_project_documents", user, object=project, raise_exception=False
+    )
+    return permission
+
+
+@register.simple_tag
 def show_closing_banner(project):
     if project.status in [COMPLETE, CLOSING]:
         return True
