@@ -421,7 +421,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
         If there is no configured SOW, None will be returned
         """
-        if self.submission.page.specific.sow_forms.first() and self.sow:
+        if self.submission.page.specific.sow_forms.first() and hasattr(self, "sow"):
             return bool(self.sow.form_data)
         return None
 

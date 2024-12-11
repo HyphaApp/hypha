@@ -44,7 +44,7 @@ from hypha.apply.todo.options import (
     PAF_REQUIRED_CHANGES,
     PAF_WAITING_APPROVAL,
     PAF_WAITING_ASSIGNEE,
-    PROJECT_SUBMIT_PF,
+    PROJECT_SUBMIT_PAF,
     PROJECT_WAITING_CONTRACT,
     PROJECT_WAITING_CONTRACT_DOCUMENT,
     PROJECT_WAITING_CONTRACT_REVIEW,
@@ -156,7 +156,7 @@ class SendForApprovalView(View):
 
             # remove PAF submission task for staff group
             remove_tasks_for_user(
-                code=PROJECT_SUBMIT_PF,
+                code=PROJECT_SUBMIT_PAF,
                 user=self.object.lead,
                 related_obj=self.object,
             )
@@ -825,7 +825,7 @@ class SkipPAFApprovalProcessView(UpdateView):
 
         # remove PAF submission task for staff group
         remove_tasks_for_user(
-            code=PROJECT_SUBMIT_PF,
+            code=PROJECT_SUBMIT_PAF,
             user=self.object.lead,
             related_obj=self.object,
         )
@@ -2069,7 +2069,7 @@ class ProjectFormsEditView(BaseStreamForm, UpdateView):
 
 
 class ProjectFormEditView(ProjectFormsEditView):
-    paf_form = None
+    pf_form = None
 
     template_name = "application_projects/project_approval_form.html"
 
@@ -2151,9 +2151,12 @@ class ProjectFormEditView(ProjectFormsEditView):
                 related_obj=self.object,
             )
             # add project forms submission task for staff group if SOW has been updated
-            if self.object.user_has_updated_sow_details:
+            # OR if the SOW doesn't exist (user_has_updated_sow_details == None)
+            if (
+                updated_sow := self.object.user_has_updated_sow_details
+            ) or updated_sow is None:
                 add_task_to_user(
-                    code=PROJECT_SUBMIT_PF,
+                    code=PROJECT_SUBMIT_PAF,
                     user=self.object.lead,
                     related_obj=self.object,
                 )
@@ -2255,7 +2258,7 @@ class ProjectSOWEditView(ProjectFormEditView):
                 # add project forms submission task for staff group if project form has been updated
                 if self.object.user_has_updated_pf_details:
                     add_task_to_user(
-                        code=PROJECT_SUBMIT_PF,
+                        code=PROJECT_SUBMIT_PAF,
                         user=self.object.lead,
                         related_obj=self.object,
                     )

@@ -13,15 +13,14 @@
     {% endadminbar %}
 
     {% if approval_form_exists %}
-
-        {% include "forms/includes/form_errors.html" with form=paf_form %}
+        {% include "forms/includes/form_errors.html" with form=pf_form %}
 
         <div class="pt-8 pb-8 mx-auto mt-4 mb-12 wrapper wrapper--default-bg wrapper--sidebar ps-20 ">
             <div class="wrapper--sidebar--inner">
                 <form class="form application-form" action="" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ paf_form.media }}
-                    {% for field in paf_form %}
+                    {{ pf_form.media }}
+                    {% for field in pf_form %}
                         {% if field.field %}
                             {% if field.field.multi_input_field %}
                                 {% include "forms/includes/multi_input_field.html" %}
@@ -34,7 +33,7 @@
                     {% endfor %}
 
                 {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
-                    {% for hidden_field in paf_form.hidden_fields %}
+                    {% for hidden_field in pf_form.hidden_fields %}
                         {{ hidden_field }}
                     {% endfor %}
 
