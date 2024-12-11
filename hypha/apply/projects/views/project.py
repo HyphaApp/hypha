@@ -277,7 +277,6 @@ class SendForApprovalView(View):
 
 
 # PROJECT DOCUMENTS
-@method_decorator(staff_required, name="dispatch")
 class UploadDocumentView(CreateView):
     form_class = UploadDocumentForm
     model = Project
@@ -287,6 +286,12 @@ class UploadDocumentView(CreateView):
         self.project = get_object_or_404(Project, id=kwargs.get("pk"))
         self.category = get_object_or_404(
             DocumentCategory, id=kwargs.get("category_pk")
+        )
+        permission, _ = has_permission(
+            "upload_project_documents",
+            user=request.user,
+            object=self.project,
+            raise_exception=True,
         )
         # permission check
         return super().dispatch(request, *args, **kwargs)
