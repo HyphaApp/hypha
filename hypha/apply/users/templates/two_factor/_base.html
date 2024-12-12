@@ -28,5 +28,8 @@
 
 {% block extra_js %}
     {{ block.super }}
-    <script src="{% static 'js/two-factor-focus.js' %}"></script>
+    {# Focus the 2FA field. #}
+    <script>
+        document.querySelector("#id_generator-token").focus();
+    </script>
 {% endblock %}

@@ -119,8 +119,8 @@
         </section>
     </div>
 
-    <script>
     {# Fix copy of dynamic fields label #}
+    <script>
         var labelOtpToken = document.querySelector("label[for=id_token-otp_token]");
         if(labelOtpToken){
             labelOtpToken.textContent = "{% trans 'Verification Code' %}: ";
