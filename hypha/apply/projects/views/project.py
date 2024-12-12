@@ -1899,7 +1899,7 @@ class ProjectSOWDownloadView(SingleObjectMixin, View):
 
     def get_sow_data_with_field(self, project):
         data_dict = {}
-        if project.submission.page.specific.sow_forms.exists() and project.sow:
+        if project.submission.page.specific.sow_forms.exists() and hasattr(self, "sow"):
             form_data_dict = project.sow.form_data
             for field in project.sow.form_fields.raw_data:
                 if field.get("type", None) in ["file", "multi_file"]:
@@ -2000,7 +2000,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
 
     def get_sow_data_with_field(self, project):
         data_dict = {}
-        if project.submission.page.specific.sow_forms.exists() and project.sow:
+        if project.submission.page.specific.sow_forms.exists() and hasattr(self, "sow"):
             form_data_dict = project.sow.form_data
             for field in project.sow.form_fields.raw_data:
                 if field.get("type", None) in ["file", "multi_file"]:
