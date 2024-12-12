@@ -35,8 +35,7 @@
         <!-- htmx start: installed with npm -->
         <script src="{% static 'js/vendor/htmx.min.js' %}"></script>
         <script src="{% static 'js/vendor/htmx-ext-multi-swap.min.js' %}"></script>
-        {% comment %} <script src="{% static 'js/vendor/htmx-ext-alpine-morph.min.js' %}" defer></script> {% endcomment %}
-        <script src="{% static 'js/vendor/nprogress-2.0.0.min.js' %}" defer></script>
+        <script defer src="{% static 'js/vendor/nprogress-2.0.0.min.js' %}"></script>
         <script>
             window.addEventListener('DOMContentLoaded', (event) => {
                 document.addEventListener("htmx:beforeRequest", function() { NProgress.start(); });
@@ -59,7 +58,10 @@
         <!-- htmx end -->
 
         <script src="{% static 'js/vendor/jquery.min.js' %}"></script>
-        <script src="{% static 'js/vendor/js.cookie.min.js' %}"></script>
+        <script defer src="{% static 'js/vendor/js.cookie.min.js' %}"></script>
+
+        <script defer src="{% static 'js/csrf-token-ajax.js' %}"></script>
+        <script defer src="{% static 'js/cookieconsent.js' %}"></script>
 
         <!-- alpine js start -->
         <style> [x-cloak] {display: none !important} </style>
@@ -106,8 +108,6 @@
 
         {% cookie_banner %}
 
-        <script src="{% static 'js/csrf-token-ajax.js' %}"></script>
-        <script src="{% static 'js/cookieconsent.js' %}"></script>
         <!-- Tooltips -->
         <script src="{% static 'js/tooltips/popper.min.js' %}"></script>
         <script src="{% static 'js/tooltips/tippy.min.js' %}"></script>
@@ -117,10 +117,6 @@
             });
         </script>
         <!-- Tooltips end -->
-
-        <!-- Datetime picker-->
-        <script src="{% static 'js/vendor/moment.min.js' %}"></script>
-        <script src="{% static 'js/vendor/daterangepicker.min.js' %}"></script>
 
         <!-- Placeholder for the htmx modal & toast-->
         {% include "includes/_modal-placeholder.html" %}
