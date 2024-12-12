@@ -1,19 +1,4 @@
 (function ($) {
-    $("form")
-        .filter(".form__comments")
-        .submit(function (e) {
-            var $form = $(this);
-            var formValues = $form.serialize();
-            var previousValues = $form.attr("data-django-form-submit-last");
-
-            if (previousValues === formValues) {
-                // Previously submitted - don't submit again
-                e.preventDefault();
-            } else {
-                $form.attr("data-django-form-submit-last", formValues);
-            }
-        });
-
     // Setting the CSRF token on AJAX requests.
     var csrftoken = false;
     if (typeof window.Cookies !== "undefined") {
