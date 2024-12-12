@@ -57,9 +57,12 @@
         </script>
         <!-- htmx end -->
 
+        <!-- We still need jQuery for select2, daterangepicker and a few custom scripts. -->
+        <!-- Please do not add new features that require jQuery! -->
         <script src="{% static 'js/vendor/jquery.min.js' %}"></script>
-        <script defer src="{% static 'js/vendor/js.cookie.min.js' %}"></script>
 
+        <!-- Cookie stuff -->
+        <script defer src="{% static 'js/vendor/js.cookie.min.js' %}"></script>
         <script defer src="{% static 'js/csrf-token-ajax.js' %}"></script>
         <script defer src="{% static 'js/cookieconsent.js' %}"></script>
 
