@@ -85,8 +85,8 @@
                     <p class="docs-block__title">{% trans "Project form" %}</p>
                 </div>
                 <div class="docs-block__row-inner">
-                    {% user_can_edit_paf object user as can_edit_paf %}
-                    {% if can_edit_paf %}
+                    {% user_can_edit_pfs object user as can_edit_pfs %}
+                    {% if can_edit_pfs %}
                         <a class="{% if not object.user_has_updated_pf_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit_pf' pk=object.pk %}">
                             {% if object.user_has_updated_pf_details %}
                                 {% heroicon_micro "pencil-square" class="inline me-1 w-4 h-4" aria_hidden=true %}
@@ -116,7 +116,7 @@
                                 <p class="docs-block__document-info">{% trans "Scope of work" %}</p>
                             </div>
                             <div class="docs-block__document-inner__actions">
-                                {% if can_edit_paf %}
+                                {% if can_edit_pfs %}
                                     <a class="{% if not object.user_has_updated_sow_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit_sow' pk=object.pk %}">
                                         {% if object.user_has_updated_sow_details %}
                                             {% heroicon_micro "pencil-square" class="inline me-1 w-4 h-4" aria_hidden=true %}
