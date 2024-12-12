@@ -39,6 +39,7 @@ dependencies = [
     "django-two-factor-auth~=1.17.0",
     "django-web-components~=0.2.0",
     "django~=4.2.0",
+    "django-stubs~=4.2.0",
     "djangorestframework-api-key~=3.0.0",
     "djangorestframework~=3.15.2",
     "drf-nested-routers~=0.94.1",
@@ -113,6 +114,9 @@ dependencies = [
 [tool.uv]
 default-groups = ["dev", "docs"]
 find-links = ["https://download.pytorch.org/whl/torch_stable.html"]
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = 'hypha.settings.test'
