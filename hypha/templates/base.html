@@ -36,25 +36,6 @@
         <script src="{% static 'js/vendor/htmx.min.js' %}"></script>
         <script src="{% static 'js/vendor/htmx-ext-multi-swap.min.js' %}"></script>
         <script defer src="{% static 'js/vendor/nprogress-2.0.0.min.js' %}"></script>
-        <script>
-            window.addEventListener('DOMContentLoaded', (event) => {
-                document.addEventListener("htmx:beforeRequest", function() { NProgress.start(); });
-                document.addEventListener("htmx:afterRequest", function() { NProgress.done(); });
-            });
-            {% comment %}
-            If the htmx response is either 403, 404, or 500, display the error page.
-            Please note that the error replaces the entire page, rather than displaying
-            the error response in the target element.
-            https://stackoverflow.com/a/74823597/782901
-            {% endcomment %}
-            document.addEventListener("htmx:beforeOnLoad", function (event) {
-                const xhr = event.detail.xhr
-                if (xhr.status == 500 || xhr.status == 403 || xhr.status == 404) {
-                    event.stopPropagation() // Tell htmx not to process these requests
-                    document.children[0].innerHTML = xhr.response // Swap in body of response instead
-                }
-            });
-        </script>
         <!-- htmx end -->
 
         <!-- We still need jQuery for select2, daterangepicker and a few custom scripts. -->
@@ -65,6 +46,10 @@
         <script defer src="{% static 'js/vendor/js.cookie.min.js' %}"></script>
         <script defer src="{% static 'js/csrf-token-ajax.js' %}"></script>
         <script defer src="{% static 'js/cookieconsent.js' %}"></script>
+
+        <!-- Tooltips -->
+        <script defer src="{% static 'js/tooltips/popper.min.js' %}"></script>
+        <script defer src="{% static 'js/tooltips/tippy.min.js' %}"></script>
 
         <!-- alpine.js start -->
         <style> [x-cloak] {display: none !important} </style>
@@ -111,15 +96,32 @@
 
         {% cookie_banner %}
 
-        <!-- Tooltips -->
-        <script src="{% static 'js/tooltips/popper.min.js' %}"></script>
-        <script src="{% static 'js/tooltips/tippy.min.js' %}"></script>
+        <!-- htmx progress, error handeling and tooltip loading -->
         <script>
+            window.addEventListener('DOMContentLoaded', (event) => {
+                document.addEventListener("htmx:beforeRequest", function() { NProgress.start(); });
+                document.addEventListener("htmx:afterRequest", function() { NProgress.done(); });
+            });
+
+            {% comment %}
+            If the htmx response is either 403, 404, or 500, display the error page.
+            Please note that the error replaces the entire page, rather than displaying
+            the error response in the target element.
+            https://stackoverflow.com/a/74823597/782901
+            {% endcomment %}
+            document.addEventListener("htmx:beforeOnLoad", function (event) {
+                const xhr = event.detail.xhr
+                if (xhr.status == 500 || xhr.status == 403 || xhr.status == 404) {
+                    event.stopPropagation() // Tell htmx not to process these requests
+                    document.children[0].innerHTML = xhr.response // Swap in body of response instead
+                }
+            });
+
             htmx.onLoad(function() {
                 tippy('[data-tippy-content]');
             });
         </script>
-        <!-- Tooltips end -->
+        <!-- htmx end -->
 
         <!-- Placeholder for the htmx modal & toast-->
         {% include "includes/_modal-placeholder.html" %}
