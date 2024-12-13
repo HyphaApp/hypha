@@ -1857,6 +1857,7 @@ class ProjectSOWDownloadView(SingleObjectMixin, View):
         context = {}
         context["sow_data"] = self.get_sow_data_with_field(self.object)
         context["org_name"] = settings.ORG_LONG_NAME
+        context["id"] = self.object.id
         context["title"] = self.object.title
         context["project_link"] = self.request.build_absolute_uri(
             reverse("apply:projects:detail", kwargs={"pk": self.object.id})
@@ -1977,7 +1978,6 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
 
         context["approvals"] = self.object.paf_approvals.all()
         context["paf_data"] = self.get_paf_data_with_field(self.object)
-        context["sow_data"] = self.get_sow_data_with_field(self.object)
         context["submission"] = self.object.submission
         context["submission_link"] = self.request.build_absolute_uri(
             reverse(
