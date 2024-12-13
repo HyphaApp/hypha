@@ -71,6 +71,7 @@ dependencies = [
 
 [dependency-groups]
 "dev" = [
+    "mypy>=1.13.0",
     "coverage>=7.4.4",
     "django-browser-reload>=1.16.0",
     "django-coverage-plugin>=3.1.0",
