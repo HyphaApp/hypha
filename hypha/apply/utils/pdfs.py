@@ -494,8 +494,8 @@ def render_as_pdf(
         )
     """
     if "pagesize" not in context:
-        pdf_settings = PDFPageSettings.load(request_or_site=request)
-        context["pagesize"] = pdf_settings.download_page_size
+        pdf_page_settings = PDFPageSettings.load(request_or_site=request)
+        context["pagesize"] = pdf_page_settings.download_page_size
 
     context.setdefault("export_date", timezone.now())
     context.setdefault("export_user", request.user if request else None)

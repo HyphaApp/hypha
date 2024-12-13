@@ -20,7 +20,7 @@ class PDFPageSettings(BaseGenericSetting):
 
     download_page_size = models.CharField(
         choices=PAGE_SIZES,
-        default=LEGAL,
+        default=A4,
         max_length=6,
         help_text=_("Page size of downloadable Project and Submission PDFs"),
     )

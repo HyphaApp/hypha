@@ -15,7 +15,7 @@
 
 {% with email_context=source.page.specific %}{{ email_context.confirmation_text_extra }}{% endwith %}
 
-{% trans "Project Id" %}: {{ source.public_id|default:source.id }}
+{% trans "Project ID" %}: {{ source.public_id|default:source.id }}
 {% trans "Project name" %}: {{ source.title }}
 {% trans "Contact name" %}: {{ source.user.get_full_name }}
 {% trans "Contact email" %}: {{ source.user.email }}

@@ -2,32 +2,9 @@
 {% load i18n %}
 
 {% block content %}
-    <table id="page-width">
-        <!-- Project details in table format -->
-        <tr>
-            <td rowspan="4" align="left" class="align-left">
-                <p class="title"> <b>{{ org_name|upper }}</b> PROJECT FORM</p>
-            </td>
-            <td align="right" class="align-right">
-                <b>{% trans "Project title" %}</b>
-            </td>
-        </tr>
-        <tr>
-            <td align="right" class="align-right">
-                <a href="{{ project_link }}">{{ title }}</a>
-            </td>
-        </tr>
-        <tr>
-            <td align="right" class="align-right">
-                <b>{% trans "Project ID" %}</b>
-            </td>
-        </tr>
-        <tr>
-            <td align="right" class="align-right">
-                {{ id }}
-            </td>
-        </tr>
-    </table>
+    <h1>{{ org_name }} {% trans "Project Form" %}</h1>
+    <p><b>{% trans "Project title" %}</b>: <a href="{{ project_link }}">{{ title }}</a></p>
+    <p><b>{% trans "Project ID" %}</b>: {{ id }}</p>
 
     <hr>
 
@@ -43,32 +20,65 @@
         <p>{{ field_value|safe|default:"-" }}</p>
     {% endfor %}
 
-    <!-- Approvers data in paragraph format-->
-    <p><b> Approvals </b></p>
+    <!-- Approvers data in list format -->
+    <h2>{% trans "Approvals" %}</h2>
     {% if approvals %}
-        {% for approval in approvals %}
-            <p>{{ approval.paf_reviewer_role.label }} - {% if approval.approved %} Approved {% else %} Pending{% endif %}
-                {% if approval.user %}({{ approval.user }}){% endif %}</p>
-        {% endfor %}
+        <ul>
+            {% for approval in approvals %}
+                <li>{{ approval.paf_reviewer_role.label }} - {% if approval.approved %}{% trans "Approved" %} {% else %}{% trans "Pending" %} {% endif %}
+                    {% if approval.user %}({{ approval.user }}){% endif %}</li>
+            {% endfor %}
+        </ul>
     {% else %}
-        <p>-</p>
+        <p>–</p>
     {% endif %}
 
-    <!-- Supporting Documents with links-->
-    <p>
-        <b>{% trans "Supporting Documents" %}</b>
-    </p>
+    <!-- Reviews with names and dates -->
+    <h2>{% trans "Reviews" %}</h2>
+    <p><b>{% trans "Submission lead" %}:</b> {{ submission.lead }}</p>
+
+    <p><b>{% trans "Staff reviewers" %}</b></p>
+    {% if submission.reviews.by_staff %}
+        <ul>
+            {% for review in submission.reviews.by_staff %}
+                <li>
+                    {{ review.author }}
+                    {% if review.author.role %}
+                        {% trans "as" %} {{ review.author.role }}
+                    {% endif %}
+                    - {{ review.created_at|date:"DATE_FORMAT" }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>–</p>
+    {% endif %}
+
+    <p><b>{% trans "Advisory council" %}</b></p>
+    {% if submission.reviews.by_reviewers %}
+        <ul>
+            {% for review in submission.reviews.by_reviewers %}
+                <li>{{ review.author }} - {{ review.created_at|date:"DATE_FORMAT" }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>–</p>
+    {% endif %}
+
+    <!-- Supporting Documents with links -->
+    <h2>{% trans "Supporting Documents" %}</h2>
 
     {% if supporting_documents %}
-        {% for document, document_link in supporting_documents.items %}
-            <p><a href="{{ document_link }}">{{ document }}</a></p>
-        {% endfor %}
+        <ul>
+            {% for document, document_link in supporting_documents.items %}
+                <li><a href="{{ document_link }}">{{ document }}</a></li>
+            {% endfor %}
+        </ul>
     {% else %}
-        <p>-</p>
+        <p>–</p>
     {% endif %}
 
     <!-- Submission title with link-->
-    <p><b>{% trans "Submission" %}</b></p>
+    <p><big><b>{% trans "Application" %}</b></big></p>
     <p><a href="{{ submission_link }}">{{ submission }}</a></p>
-
 {% endblock %}

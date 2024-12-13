@@ -1823,7 +1823,7 @@ class SubmissionDetailPDFView(SingleObjectMixin, View):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        pdf_page_settings = PDFPageSettings.for_request(request)
+        pdf_page_settings = PDFPageSettings.load(request_or_site=request)
         content = draw_submission_content(self.object.output_text_answers())
         pdf = make_pdf(
             title=self.object.title,
