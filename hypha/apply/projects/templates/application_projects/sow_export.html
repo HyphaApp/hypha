@@ -1,15 +1,14 @@
 {% extends "base-pdf.html" %}
 {% load i18n %}
 
-{% block page_header %}
-    <h1 class="title">
-        {{ org_name }} (Scope of Work | <a href="{{ project_link }}">{{ title }}</a>)
-    </h1>
-{% endblock %}
-
 {% block content %}
+    <h1>{{ org_name }} {% trans "Scope of Work (SOW)" %}</h1>
+    <p><b>{% trans "Project title" %}</b>: <a href="{{ project_link }}">{{ title }}</a></p>
+    <p><b>{% trans "Project ID" %}</b>: {{ id }}</p>
 
-    <!-- PAF fields data in paragraph format-->
+    <hr>
+
+    <!-- SOW fields data in paragraph format-->
     {% for field_name, field_value in sow_data.items %}
         <p><b>{{ field_name }}</b></p>
         <p>{{ field_value|safe|default:"-" }}</p>

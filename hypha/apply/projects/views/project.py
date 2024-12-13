@@ -63,6 +63,7 @@ from hypha.apply.users.decorators import (
     staff_required,
 )
 from hypha.apply.users.roles import CONTRACTING_GROUP_NAME
+from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import render_as_pdf
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
@@ -1856,6 +1857,7 @@ class ProjectSOWDownloadView(SingleObjectMixin, View):
         context = {}
         context["sow_data"] = self.get_sow_data_with_field(self.object)
         context["org_name"] = settings.ORG_LONG_NAME
+        context["id"] = self.object.id
         context["title"] = self.object.title
         context["project_link"] = self.request.build_absolute_uri(
             reverse("apply:projects:detail", kwargs={"pk": self.object.id})
@@ -1863,6 +1865,8 @@ class ProjectSOWDownloadView(SingleObjectMixin, View):
         template_path = "application_projects/sow_export.html"
 
         if export_type == "pdf":
+            pdf_page_settings = PDFPageSettings.load(request_or_site=request)
+            context["pagesize"] = pdf_page_settings.download_page_size
             context["show_footer"] = True
             return render_as_pdf(
                 request=request,
@@ -1927,6 +1931,8 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
         template_path = "application_projects/paf_export.html"
 
         if export_type == "pdf":
+            pdf_page_settings = PDFPageSettings.load(request_or_site=request)
+            context["pagesize"] = pdf_page_settings.download_page_size
             context["show_footer"] = True
             return render_as_pdf(
                 request=request,
@@ -1972,7 +1978,6 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
 
         context["approvals"] = self.object.paf_approvals.all()
         context["paf_data"] = self.get_paf_data_with_field(self.object)
-        context["sow_data"] = self.get_sow_data_with_field(self.object)
         context["submission"] = self.object.submission
         context["submission_link"] = self.request.build_absolute_uri(
             reverse(
