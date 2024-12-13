@@ -3,8 +3,9 @@
 
 .admin-bar {
     position: relative;
-    padding: variables.$mobile-gutter;
-    margin-inline: calc(0px - variables.$mobile-gutter);
+    padding-inline: variables.$gutters;
+    padding-block: variables.$spacing;
+    margin-inline: variables.$gutters-reverse;
     color: variables.$color--white;
     background-color: variables.$color--dark-grey;
 
@@ -46,7 +47,7 @@
         font-weight: variables.$weight--bold;
 
         &::before {
-            @include mixins.triangle(top, currentColor, 5px);
+            @include mixins.triangle(top);
             margin-inline-end: 0.5rem;
             transform: rotate(-90deg);
         }

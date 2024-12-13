@@ -1,5 +1,4 @@
 @use "sass:list";
-@use "sass:map";
 @use "functions";
 @use "variables";
 
@@ -20,69 +19,6 @@
                 }
             }
         }
-    }
-}
-
-//   Placeholder text
-@mixin placeholder-text {
-    &.placeholder {
-        @content;
-    }
-    &:-moz-placeholder {
-        @content;
-    }
-    &::-moz-placeholder {
-        @content;
-    }
-    &:-ms-input-placeholder {
-        @content;
-    }
-    &::-webkit-input-placeholder {
-        @content;
-    }
-}
-
-// Hide text
-@mixin hidden {
-    position: absolute;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    height: 1px;
-    width: 1px;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-// Output a rem value for the given property
-@mixin rem($property, $values) {
-    $rem: ();
-
-    @each $value in $values {
-        @if $value == 0 or $value == auto or $value == inherit {
-            $rem: list.append($rem, $value);
-        } @else {
-            $rem: list.append(
-                $rem,
-                functions.rem(functions.strip-unit($value))
-            );
-        }
-    }
-    #{$property}: $rem;
-}
-
-// Output a `font-size: [x]rem;` declaration for the given px value
-@mixin rem-font-size($font-size) {
-    @include rem(font-size, $font-size);
-}
-
-// Font sizes
-@mixin font-size($keyword) {
-    $size: map.get(variables.$font-sizes, $keyword);
-
-    @if $size == null {
-        @warn 'Font size '#{$keyword}' does not exist';
-    } @else {
-        @include rem-font-size($size);
     }
 }
 
@@ -159,7 +95,7 @@
 // @param {Direction} $direction - Triangle direction, either `top`, `right`, `bottom` or `left`
 // @param {Color} $color [currentcolor] - Triangle color
 // @param {Length} $size [1em] - Triangle size
-@mixin triangle($direction, $color: currentcolor, $size: 1em) {
+@mixin triangle($direction, $color: currentcolor, $size: 0.33rem) {
     @if not list.index(top right bottom left, $direction) {
         @error 'Direction must be either `top`, `right`, `bottom` or `left`.';
     }
@@ -203,13 +139,13 @@
 
             &.desc {
                 &::after {
-                    @include triangle(top, variables.$color--default, 5px);
+                    @include triangle(top);
                 }
             }
 
             &.asc {
                 &::after {
-                    @include triangle(bottom, variables.$color--default, 5px);
+                    @include triangle(bottom);
                 }
             }
         }

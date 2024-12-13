@@ -2,34 +2,10 @@
 @use "../abstracts/variables";
 
 .header {
-    padding: variables.$mobile-gutter;
-    background-color: var(--color-header-bg);
-    border-block-end: 1px solid rgb(136 146 171 / 10%);
-
-    @include mixins.media-query(md) {
-        padding: 0 variables.$mobile-gutter;
-    }
+    padding-inline: variables.$gutters;
 
     @include mixins.media-query(xl) {
-        padding: 0;
-    }
-
-    &--nomenu {
-        padding-block: variables.$mobile-gutter;
-    }
-
-    &__inner {
-        z-index: 10;
-        display: flex;
-        gap: 1rem;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-
-        @include mixins.media-query(md) {
-            flex-direction: row;
-        }
+        padding-inline: 0;
     }
 
     &__logo {
@@ -51,15 +27,5 @@
                 width: 215px;
             }
         }
-    }
-
-    &__buttons {
-    }
-
-    &__menus {
-        display: flex;
-        flex-grow: 1;
-        align-items: center;
-        justify-content: center;
     }
 }

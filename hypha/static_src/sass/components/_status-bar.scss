@@ -1,4 +1,3 @@
-@use "sass:map";
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
@@ -41,7 +40,7 @@
     }
 
     &__text {
-        font-size: map.get(variables.$font-sizes, milli);
+        font-size: variables.$font-size--milli;
         font-weight: variables.$weight--bold;
     }
 
@@ -88,7 +87,7 @@
             border-color: variables.$color--primary;
 
             &::before {
-                font-size: map.get(variables.$font-sizes, milli);
+                font-size: variables.$font-size--milli;
                 font-weight: variables.$weight--bold;
                 color: variables.$color--white;
                 background: variables.$color--primary;
@@ -139,7 +138,7 @@
             color: variables.$color--white;
             background-color: variables.$color--tomato;
             padding-inline: var(--tooltip-padding);
-            border-radius: variables.$rounded-sm;
+            border-radius: 0.125rem;
         }
 
         &::before {

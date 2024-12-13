@@ -1,11 +1,3 @@
-// Abstracts
-@use "abstracts/functions";
-@use "abstracts/mixins";
-@use "abstracts/variables";
-
-// Custom overrides
-@use "custom/extra";
-
 // Base
 @use "base/base";
 @use "base/typography";

@@ -1,4 +1,3 @@
-@use "sass:color";
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
@@ -210,10 +209,6 @@
             }
 
             .arrow {
-                border-right-color: color.adjust(
-                    variables.$color--dark-blue,
-                    $lightness: -10%
-                );
                 transform: rotate(90deg);
             }
         }
