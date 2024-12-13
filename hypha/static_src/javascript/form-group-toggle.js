@@ -10,7 +10,7 @@
                 }
             });
             var wrapper = document.createElement("div");
-            wrapper.classList.add(classes);
+            wrapper.className = classes;
             field_group[0].parentNode.insertBefore(wrapper, field_group[0]);
             wrapper.appendChild(field_group[0]);
         } else {
