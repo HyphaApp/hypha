@@ -10,7 +10,7 @@
             para.remove();
         }
         // Set dir="auto" so browsers sets the correct directionality (ltr/rtl).
-        para.setAttribute('dir', 'auto');
+        para.setAttribute("dir", "auto");
     });
 
     // Select all rich text answers tables.
