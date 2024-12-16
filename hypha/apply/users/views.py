@@ -143,21 +143,34 @@ class AccountView(SuccessMessageMixin, UpdateView):
         return reverse_lazy("users:account")
 
     def get_context_data(self, **kwargs):
-        if self.request.user.is_superuser and settings.HIJACK_ENABLE:
-            swappable_form = BecomeUserForm()
-        else:
-            swappable_form = None
-
         show_change_password = (
             password_management_enabled() and self.request.user.has_usable_password(),
         )
 
         return super().get_context_data(
-            swappable_form=swappable_form,
             default_device=default_device(self.request.user),
             show_change_password=show_change_password,
             **kwargs,
         )
+
+
+@login_required
+def hijack_view(request):
+    if not settings.HIJACK_ENABLE:
+        raise Http404(_("Hijack feature is not enabled."))
+
+    if not request.user.is_superuser:
+        raise PermissionDenied()
+
+    next = get_redirect_url(request, "next")
+    if request.method == "POST":
+        form = BecomeUserForm(request.POST)
+        if form.is_valid():
+            return AcquireUserView.as_view()(request)
+    else:
+        form = BecomeUserForm()
+
+    return render(request, "users/become.html", {"form": form, "next": next})
 
 
 @login_required

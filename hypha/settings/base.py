@@ -77,6 +77,7 @@ SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN = env.bool(
 # Enable staff to "hijack" (become) other users.
 # Good for testing, might not be a good idea in production.
 HIJACK_ENABLE = env.bool("HIJACK_ENABLE", False)
+HIJACK_INSERT_BEFORE = None
 
 # Organisation name and e-mail address etc., used in e-mail templates etc.
 ORG_EMAIL = env.str("ORG_EMAIL", "info@example.org")
