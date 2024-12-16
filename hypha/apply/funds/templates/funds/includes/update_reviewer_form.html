@@ -9,7 +9,6 @@
     hx-post="{{ request.path }}"
 >
     {% csrf_token %}
-    {{ form.media }}
     {% for hidden in form.hidden_fields %}
         {{ hidden }}
     {% endfor %}
