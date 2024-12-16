@@ -88,7 +88,6 @@
 {% endblock %}
 
 {% block extra_js %}
-    {{ comment_form.media.js }}
     {{ block.super }}
     <script src="{% static 'js/behaviours/collapse.js' %}"></script>
     {% if request.user|can_translate_submission %}

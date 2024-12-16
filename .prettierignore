@@ -7,6 +7,7 @@
 # Minified JavaScript files shouldn't be changed
 **/**.min.js
 **/javascript/esm/**
+**/javascript/vendor/**
 
 # Ignore all files in the static & media directory.
 static_compiled/**

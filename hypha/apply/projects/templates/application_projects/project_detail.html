@@ -8,6 +8,7 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
+    {% display_project_status object request.user as project_status %}
     <div class="admin-bar" xmlns="http://www.w3.org/1999/html">
         <div class="admin-bar__inner">
             <h1 class="mb-0 font-medium"
@@ -56,7 +57,7 @@
                 {% endfor %}
             </div>
 
-            <div class="status-bar--mobile">
+            <div class="status-bar--mobile mt-5">
                 <h6 class="status-bar__subheading">
                     {{ project_status }}
                 </h6>
@@ -87,7 +88,6 @@
     </div>
 
     {% show_closing_banner object as show_banner %}
-    {% display_project_status object request.user as project_status %}
     {% if show_banner %}
         <div class="bg-red-500 text-white font-semibold text-center p-2">
             {% blocktrans with status=project_status %} This project is in {{ status }} state. {% endblocktrans %}
@@ -144,11 +144,7 @@
                     <aside class="sidebar">
                         {% user_next_step_on_project object user request=request as next_step %}
                         {% if next_step %}
-                            {% if mobile %}
-                                <a class="js-actions-toggle button button--white button--full-width button--actions">{{ next_step.heading }}</a>
-                            {% endif %}
-
-                            <div class="bg-yellow-100 shadow js-actions-sidebar px-5 py-3 mb-8 sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+                            <div class="bg-yellow-100 shadow px-5 py-3 mb-8 sidebar__inner--actions">
                                 <h5 class="border-b pb-2 border-b-orange-200">
                                     {% heroicon_solid "sparkles" class="inline me-1 fill-orange-500 align-text-top" aria_hidden=true %}
                                     {{ next_step.heading }}
@@ -166,12 +162,7 @@
                             </div>
                         {% endif %}
                         {% if object.paf_approvals.exists and not user.is_applicant %}
-                            {% if mobile %}
-                                <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Project form approvals" %}</a>
-                            {% endif %}
-
-
-                            <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+                            <div class="sidebar__inner sidebar__inner--actions">
 
                                 <h5>{% trans "Project form approvals" %}</h5>
                                 {% for paf_approval in object.paf_approvals.all %}

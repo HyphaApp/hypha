@@ -96,7 +96,7 @@
             {% user_can_take_actions object user as can_take_actions %}
             {% if can_take_actions %}
                 <aside class="sidebar sidebar__project">
-                    <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}" data-testid="sidebar-primary-actions">
+                    <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions" data-testid="sidebar-primary-actions">
                         <h5>{% trans "Actions to take" %}</h5>
                         {% user_can_edit_paf object user as can_edit_paf %}
                         {% if can_edit_paf %}

@@ -597,6 +597,9 @@
 {% endspaceless %}{% endblock content %}
 
 {% block extra_js %}
+    <!-- Datetime picker-->
+    <script src="{% static 'js/vendor/moment.min.js' %}"></script>
+    <script src="{% static 'js/vendor/daterangepicker.min.js' %}"></script>
     <script>
         // Date Range Picker
         // ---------------------------------------------
