@@ -99,3 +99,12 @@
         </div>
     </div>
 {% endblock %}
+
+{% block extra_css %}
+    {{ swappable_form.media.css }}
+{% endblock %}
+
+{% block extra_js %}
+    {{ swappable_form.media.js }}
+{% endblock %}
+
