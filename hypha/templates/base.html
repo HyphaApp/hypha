@@ -38,10 +38,6 @@
         <script defer src="{% static 'js/vendor/nprogress-2.0.0.min.js' %}"></script>
         <!-- htmx end -->
 
-        <!-- We still need jQuery for select2, daterangepicker and a few custom scripts. -->
-        <!-- Please do not add new features that require jQuery! -->
-        <script src="{% static 'js/vendor/jquery.min.js' %}"></script>
-
         <!-- Cookieconsent -->
         <script defer src="{% static 'js/cookieconsent.js' %}"></script>
 
@@ -124,6 +120,11 @@
         <!-- Placeholder for the htmx modal & toast-->
         {% include "includes/_modal-placeholder.html" %}
         {% include "includes/_toast-placeholder.html" %}
+
+        <!-- We still need jQuery for select2, daterangepicker and a few custom scripts. -->
+        <!-- All jQuery code is loaded in "extra_js" so it should be loaded just before. -->
+        <!-- Please do not add new features that require jQuery! -->
+        <script src="{% static 'js/vendor/jquery.min.js' %}"></script>
 
         {% block extra_js %}{% endblock %}
 
