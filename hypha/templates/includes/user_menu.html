@@ -66,11 +66,42 @@
                     </a>
                 {% endif %}
             {% endif %}
+            {% if HIJACK_ENABLE and not user.is_hijacked and user.is_superuser %}
+                <a
+                    class="px-3 py-2 text-black flex items-center gap-2
+                           focus-visible:outline-dashed outline-1 transition-colors border-x
+                           hover:bg-slate-100 hover:text-dark-blue hover:font-semibold group"
+                    hx-get="{% url 'users:hijack' %}?next={{ request.path }}"
+                    hx-target="#htmx-modal"
+                    x-on:click="show = false"
+                >
+                    {% heroicon_outline "arrows-right-left" size=18 class="stroke-gray-500 inline group-hover:scale-110 group-hover:stroke-2 group-hover:stroke-dark-blue transition-transform" aria_hidden=true %}
+                    {% trans "Switch User" %}
+                </a>
+            {% endif %}
+            {% if user.is_hijacked %}
+                <form action="{% url 'hijack:release' %}"
+                      method="POST"
+                >
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+
+                    <button type="submit"
+                            class="px-3 py-2 text-black flex items-center gap-2 w-full
+                                   focus-visible:outline-dashed outline-1 transition-colors border-x
+                                   hover:bg-slate-100 hover:text-dark-blue hover:font-semibold group"
+                    >
+                        {% heroicon_outline "user-minus" size=18 class="stroke-gray-500 inline group-hover:scale-110 group-hover:stroke-2 group-hover:stroke-dark-blue transition-transform" aria_hidden=true %}
+                        {% translate 'Release User' %}
+                    </button>
+                </form>
+            {% endif %}
+            <hr />
             <a
                 href="{% url 'users:logout' %}"
                 title="Log out"
                 class="px-3 py-2 block focus-visible:outline-dashed
-                       outline-1 transition-all border-x border-t text-center font-semibold text-red-600
+                       outline-1 transition-all border-x text-center font-semibold text-red-600
                        hover:bg-red-100 hover:text-red-900 hover:font-semibold"
             >
                 {% trans "Log out" %}
