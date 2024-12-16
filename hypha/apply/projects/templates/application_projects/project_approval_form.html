@@ -45,12 +45,12 @@
             </div>
             <aside class="sidebar sidebar__project">
                 {% if submissions_attachments %}
-                <div class="sidebar__inner sidebar__inner--actions">
-                    <h5>{% trans "Proposal attachments" %}</h5>
-                    {% for file in submissions_attachments %}
-                        <p><b><a href="{{ file.url }}" target="_blank">{{ file.filename }}</a></b></p>
-                    {% endfor %}
-                </div>
+                    <div class="sidebar__inner sidebar__inner--actions">
+                        <h5>{% trans "Proposal attachments" %}</h5>
+                        {% for file in submissions_attachments %}
+                            <p><b><a href="{{ file.url }}" target="_blank">{{ file.filename }}</a></b></p>
+                        {% endfor %}
+                    </div>
                 {% endif %}
             </aside>
         </div>
