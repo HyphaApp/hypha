@@ -60,6 +60,10 @@
         <script type="module" src="{% static 'js/esm/github-relative-time-element-4-3-0.js' %}"></script>
         <script type="module" src="{% static 'js/esm/github-filter-input-element-0-1-1.js' %}"></script>
 
+        <!-- We still need jQuery for select2, daterangepicker and a few custom scripts. -->
+        <!-- Please do not add new features that require jQuery! -->
+        <script src="{% static 'js/vendor/jquery.min.js' %}"></script>
+
         {% include "includes/head_end.html" %}
     </head>
 
@@ -120,11 +124,6 @@
         <!-- Placeholder for the htmx modal & toast-->
         {% include "includes/_modal-placeholder.html" %}
         {% include "includes/_toast-placeholder.html" %}
-
-        <!-- We still need jQuery for select2, daterangepicker and a few custom scripts. -->
-        <!-- All jQuery code is loaded in "extra_js" so it should be loaded just before. -->
-        <!-- Please do not add new features that require jQuery! -->
-        <script src="{% static 'js/vendor/jquery.min.js' %}"></script>
 
         {% block extra_js %}{% endblock %}
 
