@@ -1,9 +1,16 @@
 (function () {
   const form = document.querySelector(".application-form");
+  const links = form.querySelectorAll("a");
   const button = form.querySelector("[type=submit]");
   const required = form.querySelectorAll("input[required]");
   const groups = form.querySelectorAll(".form__group");
   const errors = form.querySelectorAll(".form__error");
+
+  // Make links on application forms open in a new window/tab.
+  links.forEach(function (link) {
+    link.setAttribute("target", "_blank");
+    link.setAttribute("rel", "noopener noreferrer");
+  });
 
   // Set aria-required attribute true for required fields.
   required.forEach(function (field) {
