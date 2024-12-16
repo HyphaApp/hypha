@@ -206,9 +206,7 @@ class SelectDocumentForm(forms.ModelForm):
 
 class BatchUpdateInvoiceStatusForm(forms.Form):
     invoice_action = forms.ChoiceField(label=_("Status"))
-    invoices = forms.CharField(
-        widget=forms.HiddenInput(attrs={"class": "js-invoices-id"})
-    )
+    invoices = forms.CharField(widget=forms.HiddenInput(attrs={"id": "js-invoices-id"}))
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")

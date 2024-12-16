@@ -1,4 +1,5 @@
 from .payment import (
+    BatchUpdateInvoiceStatusView,
     ChangeInvoiceStatusView,
     CreateInvoiceView,
     DeleteInvoiceView,
@@ -71,6 +72,7 @@ __all__ = [
     "partial_contracting_documents",
     "get_invoices_status_counts",
     "get_project_status_counts",
+    "BatchUpdateInvoiceStatusView",
     "ChangeInvoiceStatusView",
     "ChangeProjectstatusView",
     "SendForApprovalView",
