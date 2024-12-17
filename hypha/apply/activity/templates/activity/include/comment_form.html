@@ -10,7 +10,6 @@
     >
         {% csrf_token %}
 
-        {{ comment_form.media }}
         {% for hidden in comment_form.hidden_fields %}
             {{ hidden }}
         {% endfor %}
