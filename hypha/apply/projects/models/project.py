@@ -1,4 +1,3 @@
-import decimal
 import logging
 
 from django import forms
@@ -475,22 +474,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def is_in_progress(self):
         return self.status == INVOICING_AND_REPORTING
 
-    @property
-    def has_deliverables(self):
-        return self.deliverables.exists()
-
-    @property
-    def program_project_id(self):
-        """
-        Program project id is used to fetch deliverables from IntAcct.
-
-        Stored in external_project_information as the first item of referenceno(PONUMBER).
-        """
-        reference_number = self.external_project_information.get("PONUMBER", None)
-        if reference_number:
-            return reference_number.split("-")[0]
-        return ""
-
 
 class ProjectSOW(BaseStreamForm, AccessFormData, models.Model):
     project = models.OneToOneField(
@@ -817,32 +800,3 @@ class ContractDocumentCategory(models.Model):
     ]
 
     base_form_class = ContractDocumentCategoryAdminForm
-
-
-class Deliverable(models.Model):
-    external_id = models.CharField(
-        max_length=30,
-        blank=True,
-        help_text="ID of this deliverable at integrated payment service.",
-    )
-    name = models.TextField()
-    available_to_invoice = models.IntegerField(default=1)
-    unit_price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        validators=[MinValueValidator(decimal.Decimal("0.01"))],
-    )
-    extra_information = models.JSONField(
-        default=dict,
-        help_text="More details of the deliverable at integrated payment service.",
-    )
-    project = models.ForeignKey(
-        Project,
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-        related_name="deliverables",
-    )
-
-    def __str__(self):
-        return self.name

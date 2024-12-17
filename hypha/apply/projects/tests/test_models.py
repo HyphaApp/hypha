@@ -28,8 +28,6 @@ from ..models.payment import (
 from ..models.project import Project
 from ..models.report import Report, ReportConfig
 from .factories import (
-    DeliverableFactory,
-    InvoiceDeliverableFactory,
     InvoiceFactory,
     ReportConfigFactory,
     ReportFactory,
@@ -138,17 +136,6 @@ class TestInvoiceModel(TestCase):
         )
         self.assertEqual(invoice.value, Decimal("2"))
 
-    def test_deliverables_total_amount(self):
-        deliverable = DeliverableFactory(unit_price=100)
-        invoice_deliverable = InvoiceDeliverableFactory(
-            deliverable=deliverable, quantity=2
-        )
-        self.assertEqual(invoice_deliverable.deliverable.unit_price, 100.00)
-
-        invoice = InvoiceFactory(status=APPROVED_BY_STAFF)
-        invoice.deliverables.add(invoice_deliverable)
-        self.assertEqual(invoice.deliverables_total_amount["total"], 200.00)
-
     def test_staff_can_change_status(self):
         statuses = [
             SUBMITTED,
@@ -212,57 +199,6 @@ class TestInvoiceModel(TestCase):
         for status in statuses:
             invoice = InvoiceFactory(status=status)
             self.assertFalse(invoice.can_user_edit(user))
-
-    def test_applicant_cant_edit_deliverables(self):
-        statuses = [
-            SUBMITTED,
-            RESUBMITTED,
-            CHANGES_REQUESTED_BY_STAFF,
-            APPROVED_BY_STAFF,
-            CHANGES_REQUESTED_BY_FINANCE,
-            APPROVED_BY_FINANCE,
-            DECLINED,
-            PAID,
-        ]
-        user = ApplicantFactory()
-        for status in statuses:
-            invoice = InvoiceFactory(status=status)
-            self.assertFalse(invoice.can_user_edit_deliverables(user))
-
-    def test_staff_can_edit_deliverables(self):
-        statuses = [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE]
-        user = StaffFactory()
-        for status in statuses:
-            invoice = InvoiceFactory(status=status)
-            self.assertTrue(invoice.can_user_edit_deliverables(user))
-
-    def test_staff_cant_edit_deliverables(self):
-        statuses = [
-            APPROVED_BY_FINANCE,
-            APPROVED_BY_STAFF,
-            CHANGES_REQUESTED_BY_STAFF,
-            DECLINED,
-            PAID,
-        ]
-        user = StaffFactory()
-        for status in statuses:
-            invoice = InvoiceFactory(status=status)
-            self.assertFalse(invoice.can_user_edit_deliverables(user))
-
-    def test_finance1_cant_edit_deliverables(self):
-        statuses = [
-            APPROVED_BY_FINANCE,
-            CHANGES_REQUESTED_BY_FINANCE,
-            CHANGES_REQUESTED_BY_STAFF,
-            DECLINED,
-            PAID,
-            SUBMITTED,
-            RESUBMITTED,
-        ]
-        user = FinanceFactory()
-        for status in statuses:
-            invoice = InvoiceFactory(status=status)
-            self.assertFalse(invoice.can_user_edit_deliverables(user))
 
 
 class TestInvoiceQueryset(TestCase):
