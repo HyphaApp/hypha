@@ -1,9 +1,6 @@
-from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from hypha.apply.funds.models import RoundsAndLabs
-
-User = get_user_model()
 
 
 class RoundLabSerializer(serializers.ModelSerializer):
