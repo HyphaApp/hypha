@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("application_projects", "0093_remove_reportversion_form_fields"),
+        ("application_projects", "0094_remove_project_user_has_updated_pf_details"),
     ]
 
     operations = [
