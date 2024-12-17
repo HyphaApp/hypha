@@ -3,10 +3,6 @@
 
 {% block title %}{{ object.title }}{% endblock %}
 
-{% block extra_css %}
-    {{ reviewer_form.media.css }}
-{% endblock %}
-
 {% block content %}
     {% adminbar %}
         {% slot back_link %}
@@ -150,7 +146,3 @@
         </div>
     </div>
 {% endblock content %}
-
-{% block extra_js %}
-    {{ block.super }}
-{% endblock %}
