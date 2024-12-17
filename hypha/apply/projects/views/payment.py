@@ -229,13 +229,12 @@ class DeleteInvoiceView(DeleteView):
 
 class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
     form_views = []
-    template_name_suffix = "_admin_detail"
+    # template_name_suffix = "_admin_detail"
 
-    def get_context_data(self, **kwargs):
-        invoice = self.get_object()
-        project = invoice.project
-        deliverables = project.deliverables.all()
-        return super().get_context_data(**kwargs, deliverables=deliverables)
+    # def get_context_data(self, **kwargs):
+    #     invoice = self.get_object()
+    #     project = invoice.project
+    #     return super().get_context_data(**kwargs)
 
 
 class InvoiceApplicantView(InvoiceAccessMixin, DelegateableView, DetailView):
