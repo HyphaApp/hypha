@@ -49,7 +49,8 @@ from hypha.apply.todo.options import (
     PROJECT_WAITING_CONTRACT_DOCUMENT,
     PROJECT_WAITING_CONTRACT_REVIEW,
     PROJECT_WAITING_INVOICE,
-    PROJECT_WAITING_PAF,
+    PROJECT_WAITING_PF,
+    PROJECT_WAITING_SOW,
 )
 from hypha.apply.todo.utils import get_project_lead_tasks
 from hypha.apply.todo.views import (
@@ -1898,7 +1899,9 @@ class ProjectSOWDownloadView(SingleObjectMixin, View):
 
     def get_sow_data_with_field(self, project):
         data_dict = {}
-        if project.submission.page.specific.sow_forms.exists() and project.sow:
+        if project.submission.page.specific.sow_forms.exists() and hasattr(
+            project, "sow"
+        ):
             form_data_dict = project.sow.form_data
             for field in project.sow.form_fields.raw_data:
                 if field.get("type", None) in ["file", "multi_file"]:
@@ -1997,24 +2000,6 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
 
         return data_dict
 
-    def get_sow_data_with_field(self, project):
-        data_dict = {}
-        if project.submission.page.specific.sow_forms.exists() and project.sow:
-            form_data_dict = project.sow.form_data
-            for field in project.sow.form_fields.raw_data:
-                if field.get("type", None) in ["file", "multi_file"]:
-                    continue
-                if field["id"] in form_data_dict.keys():
-                    if (
-                        isinstance(field["value"], dict)
-                        and "field_label" in field["value"]
-                    ):
-                        data_dict[field["value"]["field_label"]] = form_data_dict[
-                            field["id"]
-                        ]
-
-        return data_dict
-
     def get_supporting_documents(self, project):
         documents_dict = {}
         for packet_file in project.packet_files.all():
@@ -2027,13 +2012,8 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
         return documents_dict
 
 
-@method_decorator(staff_or_finance_or_contracting_required, name="dispatch")
-class ProjectFormEditView(BaseStreamForm, UpdateView):
+class ProjectFormsEditView(BaseStreamForm, UpdateView):
     model = Project
-    template_name = "application_projects/project_approval_form.html"
-    # Remember to assign paf_form first and then sow_form, else get_defined_fields method may provide unexpected results
-    paf_form = None
-    sow_form = None
 
     def buttons(self):
         yield ("submit", "primary", _("Save"))
@@ -2048,46 +2028,7 @@ class ProjectFormEditView(BaseStreamForm, UpdateView):
             messages.info(self.request, msg)
         return super().dispatch(request, *args, **kwargs)
 
-    @cached_property
-    def approval_form(self):
-        # fetching from the fund directly instead of going through round
-        approval_form = (
-            self.object.submission.page.specific.approval_forms.first()
-        )  # picking up the first one
-
-        return approval_form
-
-    @cached_property
-    def approval_sow_form(self):
-        # fetching from the fund directly instead of going through round
-        approval_sow_form = (
-            self.object.submission.page.specific.sow_forms.first()
-        )  # picking up the first one
-
-        return approval_sow_form
-
-    def get_form_class(self, form_class, draft=False, form_data=None, user=None):
-        return type(
-            "WagtailStreamForm",
-            (form_class,),
-            self.get_form_fields(draft, form_data, user),
-        )
-
-    def get_paf_form(self, form_class=None):
-        if form_class is None:
-            form_class = self.get_form_class(ProjectForm)
-        return form_class(**self.get_paf_form_kwargs())
-
-    def get_sow_form(self, form_class=None):
-        if form_class is None:
-            form_class = self.get_form_class(ProjectSOWForm)
-        return form_class(**self.get_sow_form_kwargs())
-
     def get_context_data(self, **kwargs):
-        self.paf_form = self.get_paf_form()
-        if self.approval_sow_form:
-            self.sow_form = self.get_sow_form()
-
         submission_attachments = []
         for _field, files in self.object.submission.extract_files().items():
             if isinstance(files, list):
@@ -2098,34 +2039,38 @@ class ProjectFormEditView(BaseStreamForm, UpdateView):
         return {
             "title": self.object.title,
             "buttons": self.buttons(),
-            "approval_form_exists": True if self.approval_form else False,
-            "sow_form_exists": True if self.approval_sow_form else False,
-            "paf_form": self.paf_form,
-            "sow_form": self.sow_form,
             "object": self.object,
             "submissions_attachments": submission_attachments,
             **kwargs,
         }
 
-    def get_paf_form_fields(self):
-        return self.object.form_fields or self.approval_form.form.form_fields
+    def get_form_class(self, form_class, draft=False, form_data=None, user=None):
+        return type(
+            "WagtailStreamForm",
+            (form_class,),
+            self.get_form_fields(draft, form_data, user),
+        )
 
-    def get_sow_form_fields(self):
-        if hasattr(self.object, "sow"):
-            return (
-                self.object.sow.form_fields or self.approval_sow_form.form.form_fields
-            )
-        return self.approval_sow_form.form.form_fields
 
-    def get_defined_fields(self):
-        approval_form = self.approval_form
-        if approval_form and not self.paf_form:
-            return self.get_paf_form_fields()
-        if self.approval_sow_form and self.paf_form and not self.sow_form:
-            return self.get_sow_form_fields()
-        return self.object.get_defined_fields()
+class ProjectFormEditView(ProjectFormsEditView):
+    pf_form = None
 
-    def get_paf_form_kwargs(self):
+    template_name = "application_projects/project_approval_form.html"
+
+    @cached_property
+    def approval_form(self):
+        """Fetch the project form from the fund directly instead of going through round"""
+        approval_form = self.object.submission.page.specific.approval_forms.first()
+
+        return approval_form
+
+    def get_pf_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class(ProjectForm)
+
+        return form_class(**self.get_pf_form_kwargs())
+
+    def get_pf_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
         if self.approval_form:
@@ -2140,6 +2085,112 @@ class ProjectFormEditView(BaseStreamForm, UpdateView):
             initial[field_id] = get_placeholder_file(self.object.raw_data.get(field_id))
         kwargs["initial"].update(initial)
         return kwargs
+
+    def get_pf_form_fields(self):
+        return self.object.form_fields or self.approval_form.form.form_fields
+
+    def get_context_data(self, **kwargs):
+        self.pf_form = self.get_pf_form()
+
+        submission_attachments = []
+        for _field, files in self.object.submission.extract_files().items():
+            if isinstance(files, list):
+                submission_attachments.extend(files)
+            else:
+                submission_attachments.append(files)
+
+        ctx = {
+            "approval_form_exists": True if self.approval_form else False,
+            "pf_form": self.pf_form,
+            **super().get_context_data(),
+            **kwargs,
+        }
+
+        return ctx
+
+    def get_defined_fields(self):
+        approval_form = self.approval_form
+        if approval_form and not self.pf_form:
+            return self.get_pf_form_fields()
+        return self.object.get_defined_fields()
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handle POST requests: instantiate a form instance with the passed
+        POST variables and then check if it's valid.
+        """
+
+        self.pf_form = self.get_pf_form()
+        if self.pf_form.is_valid():
+            try:
+                pf_form_fields = self.get_pf_form_fields()
+            except AttributeError:
+                pf_form_fields = []
+            self.pf_form.save(pf_form_fields=pf_form_fields)
+            self.pf_form.delete_temporary_files()
+            # remove PAF addition task for staff group
+            remove_tasks_for_user(
+                code=PROJECT_WAITING_PF,
+                user=self.object.lead,
+                related_obj=self.object,
+            )
+            # add project forms submission task for staff group if SOW has been updated
+            # OR if the SOW doesn't exist (user_has_updated_sow_details == None)
+            if (
+                updated_sow := self.object.user_has_updated_sow_details
+            ) or updated_sow is None:
+                add_task_to_user(
+                    code=PROJECT_SUBMIT_PAF,
+                    user=self.object.lead,
+                    related_obj=self.object,
+                )
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.form_invalid(self.pf_form)
+
+
+class ProjectSOWEditView(ProjectFormEditView):
+    sow_form = None
+
+    template_name = "application_projects/project_sow_form.html"
+
+    @cached_property
+    def approval_sow_form(self):
+        """Fetch the project form from the fund directly instead of going through round"""
+        approval_sow_form = self.object.submission.page.specific.sow_forms.first()
+
+        return approval_sow_form
+
+    def get_sow_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class(ProjectSOWForm)
+
+        return form_class(**self.get_sow_form_kwargs())
+
+    def get_sow_form_fields(self):
+        if hasattr(self.object, "sow"):
+            return (
+                self.object.sow.form_fields or self.approval_sow_form.form.form_fields
+            )
+        return self.approval_sow_form.form.form_fields
+
+    def get_context_data(self, **kwargs):
+        if self.approval_sow_form:
+            self.sow_form = self.get_sow_form()
+
+        submission_attachments = []
+        for _field, files in self.object.submission.extract_files().items():
+            if isinstance(files, list):
+                submission_attachments.extend(files)
+            else:
+                submission_attachments.append(files)
+
+        return {
+            "sow_form_exists": True if self.approval_sow_form else False,
+            "sow_form": self.sow_form,
+            **super().get_context_data(),
+            **kwargs,
+        }
 
     def get_sow_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -2161,71 +2212,43 @@ class ProjectFormEditView(BaseStreamForm, UpdateView):
                 kwargs["initial"].update({"project": self.object})
         return kwargs
 
+    def get_defined_fields(self):
+        if self.approval_sow_form and not self.sow_form:
+            return self.get_sow_form_fields()
+        return self.object.get_defined_fields()
+
     def post(self, request, *args, **kwargs):
         """
         Handle POST requests: instantiate a form instance with the passed
         POST variables and then check if it's valid.
         """
 
-        self.paf_form = self.get_paf_form()
         if self.approval_sow_form:
             self.sow_form = self.get_sow_form()
-            if self.paf_form.is_valid() and self.sow_form.is_valid():
-                # if both forms exists, both needs to be valid together
-                try:
-                    paf_form_fields = self.get_paf_form_fields()
-                except AttributeError:
-                    paf_form_fields = []
+            if self.sow_form.is_valid():
                 try:
                     sow_form_fields = self.get_sow_form_fields()
                 except AttributeError:
                     sow_form_fields = []
 
-                self.paf_form.save(paf_form_fields=paf_form_fields)
                 self.sow_form.save(sow_form_fields=sow_form_fields, project=self.object)
-                self.paf_form.delete_temporary_files()
                 self.sow_form.delete_temporary_files()
-                # remove PAF addition task for staff group
+                # remove SOW addition task for staff group
                 remove_tasks_for_user(
-                    code=PROJECT_WAITING_PAF,
+                    code=PROJECT_WAITING_SOW,
                     user=self.object.lead,
                     related_obj=self.object,
                 )
-                # add PAF submission task for staff group
-                add_task_to_user(
-                    code=PROJECT_SUBMIT_PAF,
-                    user=self.object.lead,
-                    related_obj=self.object,
-                )
+                # add project forms submission task for staff group if project form has been updated
+                if self.object.user_has_updated_pf_details:
+                    add_task_to_user(
+                        code=PROJECT_SUBMIT_PAF,
+                        user=self.object.lead,
+                        related_obj=self.object,
+                    )
                 return HttpResponseRedirect(self.get_success_url())
             else:
-                if not self.paf_form.is_valid():
-                    return self.form_invalid(self.paf_form)
                 return self.form_invalid(self.sow_form)
-        else:
-            if self.paf_form.is_valid():
-                # paf can exist alone also, it needs to be valid
-                try:
-                    paf_form_fields = self.get_paf_form_fields()
-                except AttributeError:
-                    paf_form_fields = []
-                self.paf_form.save(paf_form_fields=paf_form_fields)
-                self.paf_form.delete_temporary_files()
-                # remove PAF addition task for staff group
-                remove_tasks_for_user(
-                    code=PROJECT_WAITING_PAF,
-                    user=self.object.lead,
-                    related_obj=self.object,
-                )
-                # add PAF submission task for staff group
-                add_task_to_user(
-                    code=PROJECT_SUBMIT_PAF,
-                    user=self.object.lead,
-                    related_obj=self.object,
-                )
-                return HttpResponseRedirect(self.get_success_url())
-            else:
-                return self.form_invalid(self.paf_form)
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name="dispatch")

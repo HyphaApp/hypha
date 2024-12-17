@@ -143,7 +143,6 @@
     &__document {
         display: flex;
         align-items: center;
-        justify-content: space-between;
         padding-block-end: 1rem;
         flex-wrap: wrap;
 
@@ -168,6 +167,7 @@
         &__actions {
             display: flex;
             align-items: center;
+            margin-inline-start: auto;
         }
     }
 

@@ -67,7 +67,7 @@ def user_can_update_paf_status(project, user, **kwargs):
 
 
 @register.simple_tag
-def user_can_edit_paf(project, user):
+def user_can_edit_pfs(project, user):
     permission, _ = has_permission("paf_edit", user, project, raise_exception=False)
     return permission
 

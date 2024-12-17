@@ -1,6 +1,8 @@
 from django.urls import include, path
 from django.views.generic import RedirectView
 
+from hypha.apply.projects.views.project import ProjectSOWEditView
+
 from .views import (
     ApproveContractView,
     BatchUpdateInvoiceStatusView,
@@ -82,7 +84,6 @@ urlpatterns = [
                 ),
                 path("partial/lead/", partial_project_lead, name="project_lead"),
                 path("partial/title/", partial_project_title, name="project_title"),
-                path("edit/", ProjectFormEditView.as_view(), name="edit"),
                 path("lead/update/", UpdateLeadView.as_view(), name="lead_update"),
                 path(
                     "status/update/",
@@ -94,6 +95,10 @@ urlpatterns = [
                     UpdateProjectTitleView.as_view(),
                     name="project_title_update",
                 ),
+                path(
+                    "edit/project-form", ProjectFormEditView.as_view(), name="edit_pf"
+                ),
+                path("edit/project-sow", ProjectSOWEditView.as_view(), name="edit_sow"),
                 path(
                     "paf/skip/", SkipPAFApprovalProcessView.as_view(), name="paf_skip"
                 ),

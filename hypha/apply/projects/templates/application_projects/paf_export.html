@@ -14,12 +14,6 @@
         <p>{{ field_value|safe|default:"-" }}</p>
     {% endfor %}
 
-    <!-- SOW fields data in paragraph format-->
-    {% for field_name, field_value in sow_data.items %}
-        <p><b>{{ field_name }}</b></p>
-        <p>{{ field_value|safe|default:"-" }}</p>
-    {% endfor %}
-
     <!-- Approvers data in list format -->
     <h2>{% trans "Approvals" %}</h2>
     {% if approvals %}

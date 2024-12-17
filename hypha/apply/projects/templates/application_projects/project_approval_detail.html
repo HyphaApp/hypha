@@ -98,9 +98,9 @@
                 <aside class="sidebar sidebar__project">
                     <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions" data-testid="sidebar-primary-actions">
                         <h5>{% trans "Actions to take" %}</h5>
-                        {% user_can_edit_paf object user as can_edit_paf %}
-                        {% if can_edit_paf %}
-                            <a class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">{% trans "Edit PAF" %}</a>
+                        {% user_can_edit_pfs object user as can_edit_pfs %}
+                        {% if can_edit_pfs %}
+                            <a class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit_pf' pk=object.pk %}">{% trans "Edit" %}</a>
                         {% endif %}
                         <div x-data="{ show: false }" class="relative">
                             <button x-on:click="show = ! show" class="button button--bottom-space button--primary button--full-width" type="button">

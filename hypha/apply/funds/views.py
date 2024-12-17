@@ -60,7 +60,7 @@ from hypha.apply.determinations.views import (
 from hypha.apply.projects.forms import ProjectCreateForm
 from hypha.apply.review.models import Review
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
-from hypha.apply.todo.options import PROJECT_WAITING_PAF
+from hypha.apply.todo.options import PROJECT_WAITING_PF, PROJECT_WAITING_SOW
 from hypha.apply.todo.views import add_task_to_user
 from hypha.apply.users.decorators import (
     is_apply_staff,
@@ -286,10 +286,17 @@ class CreateProjectView(View):
             )
             # add task for staff to add PAF to the project
             add_task_to_user(
-                code=PROJECT_WAITING_PAF,
+                code=PROJECT_WAITING_PF,
                 user=project.lead,
                 related_obj=project,
             )
+            if self.submission.page.specific.sow_forms.first():
+                # Add SOW task if one exists on the parent
+                add_task_to_user(
+                    code=PROJECT_WAITING_SOW,
+                    user=project.lead,
+                    related_obj=project,
+                )
             return HttpResponseClientRedirect(project.get_absolute_url())
         return render(
             self.request,

@@ -3,7 +3,6 @@ import json
 from io import BytesIO
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.http import QueryDict
 from django.test import TestCase
 
 from hypha.apply.users.tests.factories import (
@@ -23,7 +22,6 @@ from ..forms.payment import (
 )
 from ..forms.project import (
     ChangePAFStatusForm,
-    ProjectForm,
     StaffUploadContractForm,
     UploadContractForm,
 )
@@ -44,7 +42,6 @@ from .factories import (
     PAFReviewerRoleFactory,
     ProjectFactory,
     SupportingDocumentFactory,
-    address_to_form_data,
 )
 
 
@@ -213,32 +210,6 @@ class TestChangePAFStatusForm(TestCase):
         )
         self.assertTrue(form.is_valid())
         self.assertEqual(form.errors, {})
-
-
-class TestProjectForm(TestCase):
-    def test_updating_fields_sets_changed_flag(self):
-        project = ProjectFactory()
-
-        self.assertFalse(project.user_has_updated_details)
-
-        # Use querydict for request.POST
-        data = QueryDict("").copy()
-
-        data.update(
-            {
-                "title": f"{project.title} test",
-                "value": project.value,
-                "proposed_start": project.proposed_start,
-                "proposed_end": project.proposed_end,
-            }
-        )
-        data.update(address_to_form_data())
-        form = ProjectForm(instance=project, data=data)
-        self.assertTrue(form.is_valid(), form.errors.as_text())
-
-        form.save()
-
-        self.assertTrue(project.user_has_updated_details)
 
 
 class TestCreateInvoiceForm(TestCase):

@@ -24,7 +24,7 @@
     <div class="wrapper wrapper--large wrapper--tabs">
         <div class="wrapper wrapper--sidebar">
             <article class="wrapper--sidebar--inner">
-                <h4 class="mb-2">{% trans "Project scope of work (SOW)" %}</h4>
+                <h4 class="mb-2">{% trans "Scope of Work" %}</h4>
                 <div class="card card--solid">
                     {% if object.sow.output_answers %}
                         <div class="rich-text rich-text--answers">
@@ -38,8 +38,12 @@
                 <aside class="sidebar sidebar__project">
                     <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
                         <h5>{% trans "Actions to take" %}</h5>
-                        <div x-data="{ show: false }" class="dropdown">
-                            <button x-on:click="show = ! show" class="button button--primary" type="button">
+                        {% user_can_edit_pfs object user as can_edit_pfs %}
+                        {% if can_edit_pfs %}
+                            <a class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit_sow' pk=object.pk %}">{% trans "Edit" %}</a>
+                        {% endif %}
+                        <div x-data="{ show: false }" class="relative">
+                            <button x-on:click="show = ! show" class="button button--bottom-space button--primary button--full-width" type="button">
                                 {% trans 'Download SOW' %}
                             </button>
                             <div x-show="show" x-transition class="dropdown__content">

@@ -135,14 +135,13 @@ class ProjectForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
         return cleaned_data
 
     def save(self, *args, **kwargs):
-        self.instance.form_fields = kwargs.pop("paf_form_fields", {})
+        self.instance.form_fields = kwargs.pop("pf_form_fields", {})
         self.instance.form_data = {
             field: self.cleaned_data[field]
             for field in self.instance.question_field_ids
             if field in self.cleaned_data
         }
         self.instance.process_file_data(self.cleaned_data)
-        self.instance.user_has_updated_details = True
         return super().save(*args, **kwargs)
 
 

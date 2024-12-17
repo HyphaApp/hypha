@@ -30,7 +30,7 @@
         position: -webkit-sticky; /* for Safari */
         position: sticky;
         align-self: flex-start;
-        inset-block-start: 0;
+        inset-block-start: 2rem;
     }
 
     &__paf-approvals {
