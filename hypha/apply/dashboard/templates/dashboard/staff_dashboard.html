@@ -2,10 +2,6 @@
 {% load render_table from django_tables2 %}
 {% load i18n static nh3_tags markdown_tags heroicons %}
 
-{% block extra_css %}
-    {{ my_reviewed.filterset.form.media.css }}
-{% endblock %}
-
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
@@ -136,9 +132,12 @@
     </div>
 {% endblock %}
 
+{% block extra_css %}
+    {{ my_reviewed.filterset.form.media.css }}
+{% endblock %}
+
 {% block extra_js %}
     {{ my_reviewed.filterset.form.media.js }}
     <script src="{% static 'js/all-submissions-table.js' %}"></script>
     <script src="{% static 'js/submission-filters.js' %}"></script>
-    <script src="{% static 'js/tabs.js' %}"></script>
 {% endblock %}
