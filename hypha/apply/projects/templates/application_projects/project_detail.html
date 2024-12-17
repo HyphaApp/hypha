@@ -237,7 +237,12 @@
 {% endblock content %}
 
 
+{% block extra_css %}
+    {{ comment_form.media.css }}
+{% endblock %}
+
 {% block extra_js %}
+    {{ comment_form.media.js }}
     <script src="{% static 'js/tabs.js' %}"></script>
     <script src="{% static 'js/past-reports-pagination.js' %}"></script>
     <script src="{% static 'js/report-calculator.js' %}"></script>
