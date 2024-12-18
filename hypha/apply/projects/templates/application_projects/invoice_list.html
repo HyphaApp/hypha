@@ -6,7 +6,6 @@
 {% block title %}{% trans "Invoices" %}{% endblock %}
 
 {% block content %}
-
     {% adminbar %}
         {% slot header %}{% trans "All Invoices" %} ({{ table.rows|length }}){% endslot %}
         {% slot sub_heading %}{% trans "View, search and filter all project invoices" %}{% endslot %}
@@ -28,7 +27,6 @@
             <p>{% trans "No Invoices available" %}</p>
         {% endif %}
     </div>
-
 {% endblock content %}
 
 {% block extra_css %}

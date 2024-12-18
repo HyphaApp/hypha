@@ -30,7 +30,6 @@
                   action="" method="post"
                   x-data="{ isFormSubmitting: false }"
                   x-on:submit="isFormSubmitting = true">
-                {{ form.media }}
                 {% csrf_token %}
                 {% for hidden in form.hidden_fields %}
                     {{ hidden }}

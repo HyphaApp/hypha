@@ -2,10 +2,6 @@
 {% load render_table from django_tables2 %}
 {% load i18n static statusbar_tags workflow_tags %}
 
-{% block extra_css %}
-    {{ filter.form.media.css }}
-{% endblock %}
-
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
@@ -88,6 +84,10 @@
         {% endif %}
     </div>
 
+{% endblock %}
+
+{% block extra_css %}
+    {{ filter.form.media.css }}
 {% endblock %}
 
 {% block extra_js %}
