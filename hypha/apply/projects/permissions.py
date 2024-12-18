@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from rolepermissions.permissions import register_object_checker
 
 from hypha.apply.activity.adapters.utils import get_users_for_groups
 from hypha.apply.users.models import User
+from hypha.apply.users.roles import Staff
 
 from .models.project import (
     CLOSING,
@@ -401,10 +403,11 @@ def can_edit_paf(user, project):
     return False, "You are not allowed to edit the project at this time"
 
 
-def can_upload_project_documents(user, project):
-    if user.is_apply_staff:
-        return True, "Staff can upload project documents"
-    return False, "Forbidden Error"
+@register_object_checker()
+def upload_project_documents(role, user, project) -> bool:
+    if role == Staff:
+        return True
+    return False
 
 
 permissions_map = {
@@ -423,5 +426,4 @@ permissions_map = {
     "project_access": can_access_project,
     "paf_edit": can_edit_paf,
     "view_contract_documents": can_view_contract_category_documents,
-    "upload_project_documents": can_upload_project_documents,
 }
