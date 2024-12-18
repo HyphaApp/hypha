@@ -1,4 +1,5 @@
 {% load i18n approval_tools project_tags heroicons %}
+{% load can from permission_tags %}
 
 <li class="docs-block__row">
     <div class="docs-block__row-inner">
@@ -36,7 +37,7 @@
                                 <p class="docs-block__document-info"><b>{{ latest_file.title }}</b> - {{ latest_file.created_at }}</p>
                             {% endif %}
                         </div>
-                        {% user_can_upload_supporting_documents user object as can_upload_documents %}
+                        {% can "upload_project_documents" object as can_upload_documents %}
                         {% if document_category in remaining_document_categories and can_upload_documents %}
                             <div class="docs-block__document-inner__actions">
                                 <a class="font-bold flex items-center me-0 hover:opacity-70 transition-opacity"
