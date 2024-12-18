@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from rolepermissions.permissions import register_object_checker
 
 from hypha.apply.activity.adapters.utils import get_users_for_groups
 from hypha.apply.users.models import User
+from hypha.apply.users.roles import Staff
 
 from .models.project import (
     CLOSING,
@@ -399,6 +401,13 @@ def can_edit_paf(user, project):
     if project.editable_by(user):
         return True, "Project form is editable in Draft by this user"
     return False, "You are not allowed to edit the project at this time"
+
+
+@register_object_checker()
+def upload_project_documents(role, user, project) -> bool:
+    if role == Staff:
+        return True
+    return False
 
 
 permissions_map = {
