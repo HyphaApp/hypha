@@ -342,8 +342,6 @@ django-phonenumber-field==8.0.0 \
 django-ratelimit==4.1.0 \
     --hash=sha256:555943b283045b917ad59f196829530d63be2a39adb72788d985b90c81ba808b \
     --hash=sha256:d047a31cf94d83ef1465d7543ca66c6fc16695559b5f8d814d1b51df15110b92
-django-referrer-policy==1.0 \
-    --hash=sha256:09e134324fa08c10efc12244a4bae7aee5defa7d332b92c603b09258c854615a
 django-role-permissions==3.2.0 \
     --hash=sha256:5a89eaa098f3da951b4633e655d5f3188f3d6ec5f0b846a8b1690d094ddc6ea6 \
     --hash=sha256:39c4237e9ed2983c0d7fa38bd7f7c4942a04daac739d5be1921efccb074a0606

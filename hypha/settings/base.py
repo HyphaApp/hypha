@@ -525,18 +525,14 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", None)
 SECURE_BROWSER_XSS_FILTER = env.bool("SECURE_BROWSER_XSS_FILTER", True)
 SECURE_CONTENT_TYPE_NOSNIFF = env.bool("SECURE_CONTENT_TYPE_NOSNIFF", True)
+SECURE_REFERRER_POLICY = env.str(
+    "SECURE_REFERRER_POLICY", "strict-origin-when-cross-origin"
+)
 
 if env.bool("COOKIE_SECURE", False):
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     ELEVATE_COOKIE_SECURE = True
-
-# Referrer-policy header settings
-# https://django-referrer-policy.readthedocs.io/en/1.0/
-
-REFERRER_POLICY = env.str(
-    "SECURE_REFERRER_POLICY", "no-referrer-when-downgrade"
-).strip()
 
 # Django Elevate settings
 # https://django-elevate.readthedocs.io/en/latest/config/index.html
