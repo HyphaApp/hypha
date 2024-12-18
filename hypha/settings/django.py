@@ -98,7 +98,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django_referrer_policy.middleware.ReferrerPolicyMiddleware",
     "django_otp.middleware.OTPMiddleware",
     "hypha.apply.users.middleware.TwoFactorAuthenticationMiddleware",
     "hijack.middleware.HijackUserMiddleware",

@@ -861,15 +861,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-referrer-policy"
-version = "1.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/e7/ee/f77e38c1e6e9e79ecabb06b7e542aff7fed6971d583d6c482e3d54dffa85/django-referrer-policy-1.0.tar.gz", hash = "sha256:09e134324fa08c10efc12244a4bae7aee5defa7d332b92c603b09258c854615a", size = 3594 }
-
-[[package]]
 name = "django-role-permissions"
 version = "3.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1376,7 +1367,6 @@ dependencies = [
     { name = "django-nh3" },
     { name = "django-pagedown" },
     { name = "django-ratelimit" },
-    { name = "django-referrer-policy" },
     { name = "django-role-permissions" },
     { name = "django-select2" },
     { name = "django-slack" },
@@ -1478,7 +1468,6 @@ requires-dist = [
     { name = "django-nh3", specifier = "~=0.1.1" },
     { name = "django-pagedown", specifier = "~=2.2.1" },
     { name = "django-ratelimit", specifier = "~=4.1.0" },
-    { name = "django-referrer-policy", specifier = "~=1.0" },
     { name = "django-role-permissions", specifier = "~=3.2.0" },
     { name = "django-select2", specifier = "~=8.2.1" },
     { name = "django-slack", specifier = "~=5.19.0" },
