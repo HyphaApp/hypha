@@ -11,7 +11,6 @@ from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.images.views.serve import ServeView
 
-from hypha.apply.api import urls as api_urls
 from hypha.apply.dashboard import urls as dashboard_urls
 from hypha.apply.users.urls import urlpatterns as user_urls
 from hypha.apply.users.views import become, oauth_complete
@@ -23,7 +22,6 @@ urlpatterns = [
     path("apply/", include("hypha.apply.funds.urls", "apply")),
     path("activity/", include("hypha.apply.activity.urls", "activity")),
     path("todo/", include("hypha.apply.todo.urls", "todo")),
-    path("api/", include(api_urls)),
     path("django-admin/", admin.site.urls),
     path(
         "admin/login/",
