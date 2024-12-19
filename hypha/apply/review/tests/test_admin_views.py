@@ -17,7 +17,7 @@ class TestCreateReviewFormView(TestCase):
             "field_label": factory.Faker("sentence").evaluate(
                 None, None, {"locale": None}
             ),
-            "help_text": factory.Faker("sentence").evaluate(
+            "field_help_text": factory.Faker("sentence").evaluate(
                 None, None, {"locale": None}
             ),
         }
