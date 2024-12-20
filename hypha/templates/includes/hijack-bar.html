@@ -1,0 +1,29 @@
+{% load i18n heroicons %}
+
+<form action="{% url 'hijack:release' %}"
+      method="POST"
+      class="bg-yellow-500 text-black px-4 py-2 border-t-4 border-warning border-stripe text-center"
+>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.path }}">
+    <span>
+
+        {% heroicon_micro "exclamation-triangle" size=18 class="inline align-text-bottom" aria_hidden=true %}
+
+        {% blocktrans trimmed with user=request.user %}
+            You are currently working on behalf of <strong class="font-bold">{{ user }}</strong>
+        {% endblocktrans %}
+        &LT;{{ request.user.email }}&GT;
+        {% for role in request.user.get_role_names %}
+            <span class="inline-block bg-gray-200 text-gray-800 text-xs font-semibold px-2 rounded-full uppercase">
+                {{ role }}
+            </span>
+        {% endfor %}
+
+
+    </span>
+
+    <button class="button button--link underline ms-2 font-semibold uppercase" type="submit">
+        {% translate 'Release' %}
+    </button>
+</form>

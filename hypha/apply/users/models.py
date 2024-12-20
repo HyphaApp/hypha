@@ -244,41 +244,39 @@ class User(AbstractUser):
 
     @cached_property
     def roles(self):
-        return list(self.groups.values_list("name", flat=True))
+        return [g.name for g in self.groups.all()]
 
     @cached_property
     def is_apply_staff(self):
-        return self.groups.filter(name=STAFF_GROUP_NAME).exists() or self.is_superuser
+        return STAFF_GROUP_NAME in self.roles or self.is_superuser
 
     @cached_property
     def is_apply_staff_admin(self):
-        return (
-            self.groups.filter(name=TEAMADMIN_GROUP_NAME).exists() or self.is_superuser
-        )
+        return TEAMADMIN_GROUP_NAME in self.roles or self.is_superuser
 
     @cached_property
     def is_reviewer(self):
-        return self.groups.filter(name=REVIEWER_GROUP_NAME).exists()
+        return REVIEWER_GROUP_NAME in self.roles
 
     @cached_property
     def is_partner(self):
-        return self.groups.filter(name=PARTNER_GROUP_NAME).exists()
+        return PARTNER_GROUP_NAME in self.roles
 
     @cached_property
     def is_community_reviewer(self):
-        return self.groups.filter(name=COMMUNITY_REVIEWER_GROUP_NAME).exists()
+        return COMMUNITY_REVIEWER_GROUP_NAME in self.roles
 
     @cached_property
     def is_applicant(self):
-        return self.groups.filter(name=APPLICANT_GROUP_NAME).exists()
+        return APPLICANT_GROUP_NAME in self.roles
 
     @cached_property
     def is_approver(self):
-        return self.groups.filter(name=APPROVER_GROUP_NAME).exists()
+        return APPROVER_GROUP_NAME in self.roles
 
     @cached_property
     def is_finance(self):
-        return self.groups.filter(name=FINANCE_GROUP_NAME).exists()
+        return FINANCE_GROUP_NAME in self.roles
 
     @cached_property
     def is_org_faculty(self):
@@ -298,14 +296,11 @@ class User(AbstractUser):
 
     @cached_property
     def is_contracting(self):
-        return self.groups.filter(name=CONTRACTING_GROUP_NAME).exists()
+        return CONTRACTING_GROUP_NAME in self.roles
 
     @cached_property
     def is_contracting_approver(self):
-        return (
-            self.groups.filter(name=CONTRACTING_GROUP_NAME).exists()
-            and self.groups.filter(name=APPROVER_GROUP_NAME).exists()
-        )
+        return self.is_contracting and self.is_approver
 
     def get_absolute_url(self):
         """Used in the activities messages to generate URL for user instances.

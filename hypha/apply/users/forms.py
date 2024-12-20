@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.template.defaultfilters import mark_safe
 from django.utils.translation import gettext_lazy as _
-from django_select2.forms import Select2Widget
 from rolepermissions import roles
 from wagtail.users.forms import UserCreationForm, UserEditForm
 
@@ -216,11 +215,32 @@ class ProfileForm(forms.ModelForm):
         return strip_html_and_nerf_urls(self.cleaned_data["full_name"])
 
 
+def get_become_user_choices():
+    """Returns list of active non-superusers with their roles as choice tuples.
+
+    Returns:
+        list: Tuples of (user_id, formatted_label) for form choices
+    """
+    active_users = (
+        User.objects.filter(is_active=True, is_superuser=False)
+        .prefetch_related("groups")
+        .order_by("last_login")
+    )
+
+    def format_user_label(user):
+        role_names = user.get_role_names()
+        if not role_names:
+            return str(user)
+        roles_text = ", ".join(map(str, role_names))
+        return f"{user} ({roles_text})"
+
+    return [(user.pk, format_user_label(user)) for user in active_users]
+
+
 class BecomeUserForm(forms.Form):
-    user_pk = forms.ModelChoiceField(
-        widget=Select2Widget,
+    user_pk = forms.ChoiceField(
         help_text=_("Only includes active, non-superusers"),
-        queryset=User.objects.filter(is_active=True, is_superuser=False),
+        choices=get_become_user_choices,
         label="",
         required=False,
     )

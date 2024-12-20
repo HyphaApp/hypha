@@ -1,7 +1,8 @@
+import pytest
 from django.forms.models import model_to_dict
 from django.test import RequestFactory, TestCase
 
-from ..forms import EmailChangePasswordForm, ProfileForm
+from ..forms import BecomeUserForm, EmailChangePasswordForm, ProfileForm
 from .factories import StaffFactory, UserFactory
 
 
@@ -113,3 +114,20 @@ class TestEmailChangePasswordForm(TestCase):
         form = EmailChangePasswordForm(self.user)
         form.save("", "", slack_name)
         self.assertEqual(self.user.slack, slack_name)
+
+
+@pytest.mark.django_db
+def test_become_user_form_query_count(django_assert_num_queries):
+    # create a three user
+    UserFactory(is_superuser=False)
+    UserFactory(is_superuser=False)
+    UserFactory(is_superuser=False)
+
+    # Enable query counting and verify only 2 queries are made
+    with django_assert_num_queries(2):
+        # This should trigger 2 queries:
+        # 1. Get active non-superusers
+        # 2. Prefetch related groups
+        form = BecomeUserForm()
+        # Access choices to trigger query execution
+        list(form.fields["user_pk"].choices)
