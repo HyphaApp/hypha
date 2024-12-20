@@ -34,6 +34,7 @@ from django_htmx.http import (
 from django_tables2 import SingleTableMixin
 from docx import Document
 from htmldocx import HtmlToDocx
+from rolepermissions.checkers import has_object_permission
 
 from hypha.apply.activity.adapters.utils import get_users_for_groups
 from hypha.apply.activity.messaging import MESSAGES, messenger
@@ -277,7 +278,6 @@ class SendForApprovalView(View):
 
 
 # PROJECT DOCUMENTS
-@method_decorator(staff_required, name="dispatch")
 class UploadDocumentView(CreateView):
     form_class = UploadDocumentForm
     model = Project
@@ -288,7 +288,11 @@ class UploadDocumentView(CreateView):
         self.category = get_object_or_404(
             DocumentCategory, id=kwargs.get("category_pk")
         )
-        # permission check
+        permission = has_object_permission(
+            "upload_project_documents", request.user, obj=self.project
+        )
+        if not permission:
+            raise PermissionDenied()
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
