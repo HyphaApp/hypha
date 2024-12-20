@@ -29,7 +29,9 @@
                         {% include "application_projects/includes/report_line.html" with report=report %}
                     {% endfor %}
                     {% with next_report=object.report_config.current_due_report %}
-                        {% include "application_projects/includes/report_line.html" with report=next_report current=True %}
+                        {% if next_report %}
+                            {% include "application_projects/includes/report_line.html" with report=next_report current=True %}
+                        {% endif %}
                     {% endwith %}
                 </ul>
             </div>
