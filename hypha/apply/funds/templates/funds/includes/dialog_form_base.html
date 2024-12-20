@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n static %}
 
 <form
     class="form {{ extra_classes }}"
@@ -40,3 +40,5 @@
         >{% trans "Cancel" %}</button>
     </div>
 </form>
+<!-- To initiate any file upload forms. -->
+<script src="{% static 'js/file-uploads.js' %}"></script>
