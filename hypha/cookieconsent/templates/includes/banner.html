@@ -1,22 +1,42 @@
 {% load i18n wagtailcore_tags %}
 
 {% if show_banner %}
-    <div class="wrapper wrapper--cookieconsent cookieconsent">
+    <div class="cookieconsent w-full z-20 py-8">
         <div class="cookieconsent__content">
             <div class="cookieconsent__brief">
                 <div>
-                    <h2 class="cookieconsent__title">{% trans settings.cookieconsent_title %}</h2>
+                    <h2 class="cookieconsent__title">
+                        {% trans settings.cookieconsent_title %}
+                    </h2>
                     <div class="cookieconsent__message rich-text">
                         {{ settings.cookieconsent_message|richtext }}
                     </div>
+
                     <div class="cookieconsent__actions">
                         {% if settings.cookieconsent_analytics %}
-                            <button class="button button--cookieconsent button--decline" title="{% trans 'Decline tracking cookies.' %}" type="button" data-consent="decline">{% trans 'Essential only' %}</button>
-                            <button class="button button--cookieconsent button--accept lg:ms-[20px]" title="{% trans 'Accept tracking cookies.' %}" type="button" data-consent="accept">{% trans 'Accept all' %}</button>
+                            <button class="button button--cookieconsent button--decline"
+                                    title="{% trans 'Decline tracking cookies.' %}"
+                                    type="button"
+                                    data-consent="decline"
+                            >{% trans 'Essential only' %}</button>
+
+                            <button class="button button--cookieconsent button--accept lg:ms-[20px]"
+                                    title="{% trans 'Accept tracking cookies.' %}"
+                                    type="button"
+                                    data-consent="accept"
+                            >{% trans 'Accept all' %}</button>
                         {% else %}
-                            <button class="button button--cookieconsent button--accept" title="{% trans 'Acknowledge use of essential cookies.' %}" data-consent="ack">{% trans 'Ok' %}</button>
+                            <button class="button button--cookieconsent button--accept"
+                                    title="{% trans 'Acknowledge use of essential cookies.' %}"
+                                    data-consent="ack"
+                            >{% trans 'Ok' %}</button>
                         {% endif %}
-                        <button class="button button--cookieconsent button--learn-more lg:ms-[20px]" title="{% trans 'Learn more about specific cookies used.' %}" show-learn-more="true">{% trans 'Learn More' %}</button>
+
+                        <button class="button button--cookieconsent button--learn-more lg:ms-[20px]"
+                                title="{% trans 'Learn more about specific cookies used.' %}"
+                                show-learn-more="true"
+                        >{% trans 'Learn More' %}</button>
+
                     </div>
                 </div>
             </div>
@@ -25,6 +45,7 @@
                     <div class="cookieconsent__statement">
                         <p>{% trans "This Website uses cookies.  Below you can select the categories of cookies to allow when you use our website and services." %}</p>
                     </div>
+
                     <div class="cookieconsent__info-wrapper">
                         <div class="cookieconsent__info">
                             <p class="font-semibold">{% trans "Essential Cookies" %}</p>
@@ -38,14 +59,32 @@
                             </div>
                         {% endif %}
                     </div>
+
                     <div class="cookieconsent__actions">
                         {% if settings.cookieconsent_analytics %}
-                            <button class="button button--cookieconsent button--decline" title="{% trans 'Decline tracking cookies.' %}" type="button" data-consent="decline">{% trans 'Essential only' %}</button>
-                            <button class="button button--cookieconsent button--accept lg:ms-[20px]" title="{% trans 'Accept tracking cookies.' %}" type="button" data-consent="accept">{% trans 'Accept all' %}</button>
+                            <button class="button button--cookieconsent button--decline"
+                                    title="{% trans 'Decline tracking cookies.' %}"
+                                    type="button"
+                                    data-consent="decline"
+                            >{% trans 'Essential only' %}</button>
+
+                            <button class="button button--cookieconsent button--accept lg:ms-[20px]"
+                                    title="{% trans 'Accept tracking cookies.' %}"
+                                    type="button"
+                                    data-consent="accept"
+                            >{% trans 'Accept all' %}</button>
                         {% else %}
-                            <button class="button button--cookieconsent button--accept" title="{% trans 'Acknowledge use of essential cookies.' %}" data-consent="ack">{% trans 'Ok' %}</button>
+                            <button class="button button--cookieconsent button--accept"
+                                    title="{% trans 'Acknowledge use of essential cookies.' %}"
+                                    data-consent="ack"
+                            >{% trans 'Ok' %}</button>
                         {% endif %}
-                        <button class="button button--cookieconsent button--learn-more lg:ms-[20px]" title="{% trans 'Return to main cookie menu.' %}" show-learn-more="false" tabindex="-1">{% trans 'Back' %}</button>
+
+                        <button class="button button--cookieconsent button--learn-more lg:ms-[20px]"
+                                title="{% trans 'Return to main cookie menu.' %}"
+                                show-learn-more="false"
+                                tabindex="-1"
+                        >{% trans 'Back' %}</button>
                     </div>
                 </div>
             </div>
