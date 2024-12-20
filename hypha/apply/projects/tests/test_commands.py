@@ -31,7 +31,9 @@ class TestNotifyReportDue(TestCase):
 
     def test_notify_report_due_in_7_days(self):
         in_a_week = timezone.now() + relativedelta(days=7)
-        ReportConfigFactory(schedule_start=in_a_week, project__in_progress=True)
+        ReportConfigFactory(
+            disable_reporting=False, schedule_start=in_a_week, project__in_progress=True
+        )
         out = StringIO()
 
         with self.settings(
