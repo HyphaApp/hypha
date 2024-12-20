@@ -216,26 +216,25 @@ class ProfileForm(forms.ModelForm):
 
 
 def get_become_user_choices():
-    """Returns list of active non-superusers with their roles as choice tuples."""
-    active_users = User.objects.filter(is_active=True, is_superuser=False)
-    choices = []
+    """Returns list of active non-superusers with their roles as choice tuples.
 
-    for user in active_users:
+    Returns:
+        list: Tuples of (user_id, formatted_label) for form choices
+    """
+    active_users = (
+        User.objects.filter(is_active=True, is_superuser=False)
+        .prefetch_related("groups")
+        .order_by("last_login")
+    )
+
+    def format_user_label(user):
         role_names = user.get_role_names()
-        if role_names:
-            roles_html = ", ".join(
-                [
-                    f'<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{str(g)}</span>'
-                    for g in role_names
-                ]
-            )
-            label = f"{user} ({roles_html})"
-        else:
-            label = str(user)
+        if not role_names:
+            return str(user)
+        roles_text = ", ".join(map(str, role_names))
+        return f"{user} ({roles_text})"
 
-        choices.append((user.pk, mark_safe(label)))
-
-    return choices
+    return [(user.pk, format_user_label(user)) for user in active_users]
 
 
 class BecomeUserForm(forms.Form):
