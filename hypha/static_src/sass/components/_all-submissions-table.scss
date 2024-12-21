@@ -1,7 +1,7 @@
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
-// stylelint-disable selector-class-pattern,selector-max-compound-selectors
+// stylelint-disable selector-class-pattern
 
 .all-submissions-table {
     @include mixins.table-ordering-styles;
@@ -177,7 +177,6 @@
                 }
             }
 
-            // stylelint-disable-next-line force-element-nesting
             > span.mobile-label {
                 display: inline-block;
                 width: 90px;

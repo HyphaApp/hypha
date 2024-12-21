@@ -1,9 +1,6 @@
 @use "../base/base";
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
-
-// stylelint-disable selector-max-compound-selectors
-
 @use "sass:math";
 
 .form {
@@ -260,7 +257,6 @@
                 }
 
                 input {
-                    // stylelint-disable-next-line max-nesting-depth
                     &:first-of-type {
                         @supports (display: grid) {
                             grid-column: 1;
@@ -455,7 +451,7 @@
     }
 
     &__comments {
-        // stylelint-disable-next-line selector-class-pattern,selector-id-pattern,selector-max-id
+        // stylelint-disable-next-line selector-class-pattern,selector-id-pattern
         ul#id_visibility {
             display: flex;
             flex-wrap: wrap;
@@ -487,7 +483,7 @@
 
     .address {
         padding: 0.4em;
-        border: 1px solid #cfcfcf8f; // stylelint-disable-line color-no-hex
+        border: 1px solid #cfcfcf8f;
         max-width: 410px;
 
         // stylelint-disable-next-line selector-class-pattern

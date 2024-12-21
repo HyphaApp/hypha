@@ -62,7 +62,6 @@
     }
 
     &--login {
-        /* stylelint-disable-next-line media-query-no-invalid */
         @media (min-width: variables.$input-box-max-width) {
             width: 20rem;
         }
