@@ -1,8 +1,6 @@
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
-// stylelint-disable selector-max-compound-selectors
-
 .all-reviews-table {
     @include mixins.table-ordering-styles;
 

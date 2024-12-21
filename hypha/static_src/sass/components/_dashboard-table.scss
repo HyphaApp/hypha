@@ -1,8 +1,6 @@
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
-// stylelint-disable selector-max-compound-selectors
-
 .paf-review-table {
     @include mixins.table-ordering-styles;
 
@@ -41,7 +39,6 @@
 
     tbody {
         td {
-            // stylelint-disable-next-line force-element-nesting
             > span.mobile-label {
                 display: inline-block;
                 width: 90px;

@@ -1,7 +1,7 @@
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
-// stylelint-disable selector-max-compound-selectors, selector-class-pattern
+// stylelint-disable selector-class-pattern
 
 .select2 {
     &-container {
@@ -10,7 +10,6 @@
 
     .select2-container--default,
     &.select2-container--default {
-        // stylelint-disable-next-line declaration-no-important
         width: 100% !important;
 
         .select2-selection--single {
@@ -58,9 +57,7 @@
 .select2-container {
     &--default {
         .select2-results__option--highlighted[aria-selected] {
-            // stylelint-disable-next-line declaration-no-important
             color: variables.$color--default !important;
-            // stylelint-disable declaration-no-important, max-line-length
             background-color: variables.$color--light-blue-90 !important;
         }
     }
