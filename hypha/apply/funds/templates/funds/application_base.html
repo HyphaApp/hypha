@@ -40,7 +40,6 @@
                 {% endif %}
                 <form class="form application-form" action="/test500/" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-
                     {% for field in form %}
                         {% if field.field %}
                             {% if field.field.multi_input_field %}
@@ -86,6 +85,7 @@
 {% endblock %}
 
 {% block extra_js %}
+    {{ form.media.js }}
     <script src="{% static 'js/application-form.js' %}"></script>
     <script src="{% static 'js/tinymce-word-count.js' %}"></script>
     <script src="{% static 'js/submission-form-copy.js' %}"></script>

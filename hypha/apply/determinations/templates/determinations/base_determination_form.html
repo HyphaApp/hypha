@@ -86,6 +86,7 @@
 {% endblock %}
 
 {% block extra_js %}
+    {{ form.media.js }}
     {{ field_blocks_ids|json_script:"block-ids" }}
     <script src="{% static 'js/determination-template.js' %}"></script>
 {% endblock %}
