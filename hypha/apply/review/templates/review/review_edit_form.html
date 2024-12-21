@@ -31,9 +31,7 @@
         </div>
 
         <form id="review-form-edit" class="form form--scoreable max-w-3xl" action="" method="post" novalidate>
-            {{ form.media }}
             {% csrf_token %}
-
             {% for hidden in form.hidden_fields %}
                 {{ hidden }}
             {% endfor %}
@@ -82,5 +80,6 @@
 {% endblock %}
 
 {% block extra_js %}
+    {{ form.media.js }}
     <script src="{% static 'js/review-form-actions.js' %}"></script>
 {% endblock %}
