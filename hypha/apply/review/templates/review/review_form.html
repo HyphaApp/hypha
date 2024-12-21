@@ -42,7 +42,6 @@
         {% if not has_submitted_review %}
             <form id="review-form-edit" class="form form--scoreable max-w-3xl flex-1" action="" method="post">
                 {% csrf_token %}
-
                 {% for hidden in form.hidden_fields %}
                     {{ hidden }}
                 {% endfor %}
@@ -102,5 +101,6 @@
 {% endblock %}
 
 {% block extra_js %}
+    {{ form.media.js }}
     <script src="{% static 'js/review-form-actions.js' %}"></script>
 {% endblock %}

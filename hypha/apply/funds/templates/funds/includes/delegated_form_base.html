@@ -1,4 +1,4 @@
-{% load i18n static %}
+{% load i18n %}
 <form
     class="form {{ extra_classes }}"
     method="post"
@@ -7,7 +7,7 @@
     {% if action %}action="{{ action }}"{% endif %}
 >
     {% csrf_token %}
-
+    {{ form.media.js }}
     {% for hidden in form.hidden_fields %}
         {{ hidden }}
     {% endfor %}
@@ -42,5 +42,3 @@
         </button>
     </div>
 </form>
-<!-- To initiate any file upload forms. -->
-<script src="{% static 'js/file-uploads.js' %}"></script>

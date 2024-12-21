@@ -14,7 +14,6 @@
         <div class="wrapper--sidebar--inner">
             <form class="form application-form" action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-
                 {% for field in form %}
                     {% if field.field %}
                         {% if field.field.multi_input_field %}
@@ -45,6 +44,7 @@
 {% endblock %}
 
 {% block extra_js %}
+    {{ form.media.js }}
     <script src="{% static 'js/application-form.js' %}"></script>
     <script src="{% static 'js/tinymce-word-count.js' %}"></script>
     <script src="{% static 'js/multi-input-fields.js' %}"></script>
