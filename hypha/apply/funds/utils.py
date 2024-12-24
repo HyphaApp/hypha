@@ -198,3 +198,22 @@ def get_copied_form_name(original_form_name: str) -> str:
     # If a copied timestamp already exists, remove it
     new_name = re.sub(name_reg, "", original_form_name)
     return f"{new_name} ({copy_str.format(copy_time=copy_time)})"
+
+
+def check_submissions_same_determination_form(submissions):
+    """
+    Checks if all the submission have same determination forms.
+
+    We can not create batch determination with submissions using two different
+    type of forms.
+    """
+
+    same_form = True
+    # check form id
+    determination_form_ids = [
+        submission.get_from_parent("determination_forms").first().id
+        for submission in submissions
+    ]
+    if any(d_id != determination_form_ids[0] for d_id in determination_form_ids):
+        same_form = False
+    return same_form
