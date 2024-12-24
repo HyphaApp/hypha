@@ -1,5 +1,4 @@
 import time
-from urllib import parse
 
 from django.conf import settings
 from django.contrib import messages
