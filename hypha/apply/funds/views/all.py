@@ -10,6 +10,7 @@ from django.core.paginator import Paginator
 from django.db import models
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect, HttpResponseClientRefresh
@@ -17,10 +18,18 @@ from wagtail.models import Page
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.categories.models import Option
-from hypha.apply.determinations.views import BatchDeterminationCreateView
+from hypha.apply.determinations.utils import (
+    has_final_determination,
+    outcome_from_actions,
+)
 from hypha.apply.funds.models.screening import ScreeningStatus
 from hypha.apply.funds.utils import export_submissions_to_csv
-from hypha.apply.funds.workflows import PHASES, get_action_mapping, review_statuses
+from hypha.apply.funds.workflow import (
+    DETERMINATION_OUTCOMES,
+    PHASES,
+    get_action_mapping,
+    review_statuses,
+)
 from hypha.apply.search.filters import apply_date_filter
 from hypha.apply.search.query_parser import parse_search_query
 from hypha.apply.users.decorators import (
@@ -37,6 +46,7 @@ from ..models import (
 from ..tables import (
     SubmissionFilter,
 )
+from .utils import check_submissions_same_determination_form
 
 User = get_user_model()
 
@@ -355,11 +365,47 @@ def bulk_update_submissions_status(request: HttpRequest) -> HttpResponse:
 
     submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
 
-    redirect: HttpResponse = BatchDeterminationCreateView.should_redirect(
-        request, submissions, transitions
-    )
-    if redirect:
-        return HttpResponseClientRedirect(redirect.url)
+    # should redirect
+    excluded = []
+    for submission in submissions:
+        if has_final_determination(submission):
+            excluded.append(submission)
+
+    non_determine_states = set(transitions) - set(DETERMINATION_OUTCOMES.keys())
+    if not any(non_determine_states):
+        if excluded:
+            messages.warning(
+                request,
+                _(
+                    "A determination already exists for the following submissions and they have been excluded: {submissions}"
+                ).format(
+                    submissions=", ".join(
+                        [submission.title_text_display for submission in excluded]
+                    ),
+                ),
+            )
+
+        submissions = submissions.exclude(
+            id__in=[submission.id for submission in excluded]
+        )
+        if not check_submissions_same_determination_form(submissions):
+            messages.error(
+                request, "Submissions expect different forms - please contact admin"
+            )
+            return HttpResponseClientRefresh()
+        action = outcome_from_actions(transitions)
+        return HttpResponseClientRedirect(
+            reverse_lazy("apply:submissions:determinations:batch")
+            + "?action="
+            + action
+            + "&submissions="
+            + ",".join([str(submission.id) for submission in submissions]),
+        )
+    elif set(transitions) != non_determine_states:
+        messages.error(
+            request, "Inconsistent states provided - please talk to an admin"
+        )
+        return HttpResponseClientRefresh()
 
     failed = []
     phase_changes = {}
