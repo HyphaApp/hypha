@@ -5,40 +5,18 @@ from django.views.generic import RedirectView
 from hypha.apply.projects import urls as projects_urls
 
 from .views import (
-    CreateProjectView,
     GroupingApplicationsListView,
-    ProgressSubmissionView,
-    ReminderCreateView,
-    ReminderDeleteView,
-    ReviewerLeaderboard,
-    ReviewerLeaderboardDetail,
-    RevisionCompareView,
-    RevisionListView,
     RoundListView,
-    StaffAssignments,
-    SubmissionDeleteView,
-    SubmissionDetailPDFView,
-    SubmissionDetailView,
-    SubmissionEditView,
     SubmissionPrivateMediaView,
-    SubmissionResultView,
-    SubmissionSealedView,
-    TranslateSubmissionView,
-    UpdateLeadView,
-    UpdateMetaTermsView,
-    UpdatePartnersView,
-    UpdateReviewersView,
-    htmx_archive_unarchive_submission,
-    reminder_list,
     submission_success,
 )
-from .views_all import (
+from .views.all import (
     bulk_archive_submissions,
     bulk_delete_submissions,
     bulk_update_submissions_status,
     submissions_all,
 )
-from .views_partials import (
+from .views.partials import (
     get_applications_status_counts,
     partial_meta_terms_card,
     partial_reviews_card,
@@ -47,7 +25,6 @@ from .views_partials import (
     partial_submission_activities,
     partial_submission_answers,
     partial_submission_lead,
-    partial_translate_answers,
     sub_menu_bulk_update_lead,
     sub_menu_bulk_update_reviewers,
     sub_menu_category_options,
@@ -58,6 +35,28 @@ from .views_partials import (
     sub_menu_rounds,
     sub_menu_update_status,
 )
+from .views.reminders import ReminderCreateView, ReminderDeleteView, reminder_list
+from .views.results import SubmissionResultView
+from .views.reviewer_leaderboard import ReviewerLeaderboard, ReviewerLeaderboardDetail
+from .views.revisions import RevisionCompareView, RevisionListView
+from .views.staff_assignments import StaffAssignments
+from .views.submission_delete import SubmissionDeleteView
+from .views.submission_detail import (
+    SubmissionDetailPDFView,
+    SubmissionDetailView,
+    SubmissionSealedView,
+)
+from .views.submission_edit import (
+    CreateProjectView,
+    ProgressSubmissionView,
+    SubmissionEditView,
+    UpdateLeadView,
+    UpdateMetaTermsView,
+    UpdatePartnersView,
+    UpdateReviewersView,
+    htmx_archive_unarchive_submission,
+)
+from .views.translate import TranslateSubmissionView, partial_translate_answers
 
 revision_urls = (
     [

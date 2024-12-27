@@ -25,6 +25,7 @@ from hypha.apply.funds.tests.factories import (
     SealedRoundFactory,
     SealedSubmissionFactory,
 )
+from hypha.apply.funds.views.submission_detail import SubmissionDetailView
 from hypha.apply.funds.workflow import INITIAL_STATE
 from hypha.apply.projects.models import Project
 from hypha.apply.projects.tests.factories import ProjectFactory
@@ -47,7 +48,6 @@ from ..models import (
     ReviewerSettings,
     ScreeningStatus,
 )
-from ..views import SubmissionDetailView
 from .factories import CustomFormFieldsFactory
 
 

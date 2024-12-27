@@ -1,16 +1,13 @@
 import functools
-import json
 from urllib.parse import parse_qs, urlparse
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
-from django.http import Http404, HttpRequest, HttpResponse, QueryDict
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils.text import slugify
-from django.utils.translation import gettext as _
 from django.views.decorators.http import require_GET, require_http_methods
 from django_htmx.http import (
     HttpResponseClientRefresh,
@@ -31,22 +28,15 @@ from hypha.apply.funds.services import annotate_review_recommendation_and_count
 from hypha.apply.review.options import REVIEWER
 from hypha.apply.users.roles import REVIEWER_GROUP_NAME
 
-if settings.APPLICATION_TRANSLATIONS_ENABLED:
-    from hypha.apply.translate.utils import (
-        get_lang_name,
-        get_translation_params,
-        translate_application_form_data,
-    )
-
-from . import services
-from .models import ApplicationSubmission, Round
-from .permissions import can_change_external_reviewers
-from .utils import (
+from .. import services
+from ..models import ApplicationSubmission, Round
+from ..permissions import can_change_external_reviewers
+from ..utils import (
     get_or_create_default_screening_statuses,
     get_statuses_as_params,
     status_and_phases_mapping,
 )
-from .workflow import PHASES_MAPPING
+from ..workflow import PHASES_MAPPING
 
 User = get_user_model()
 
@@ -524,93 +514,3 @@ def partial_screening_card(request, pk):
         "no_screening_options": no_screening_statuses,
     }
     return render(request, "funds/includes/screening_status_block.html", ctx)
-
-
-@login_required
-def partial_translate_answers(request: HttpRequest, pk: int) -> HttpResponse:
-    """Partial to translate submissions's answers
-
-    Args:
-        request: HttpRequest object
-        pk: pk of the submission to translate
-
-    """
-    if not settings.APPLICATION_TRANSLATIONS_ENABLED:
-        raise Http404
-
-    submission = get_object_or_404(ApplicationSubmission, pk=pk)
-
-    if not request.user.is_org_faculty or request.method != "GET":
-        return HttpResponse(status=204)
-
-    ctx = {"object": submission}
-
-    # The existing params that were in the URL when the request was made
-    prev_params = get_translation_params(request.headers.get("Hx-Current-Url", ""))
-    # The requested params provided in the GET request
-    params = get_translation_params(request=request)
-
-    updated_url = submission.get_absolute_url()
-
-    message = None
-
-    if params and not params[0] == params[1] and not params == prev_params:
-        from_lang, to_lang = params
-        try:
-            submission.form_data = translate_application_form_data(
-                submission, from_lang, to_lang
-            )
-
-            if current_url := request.headers.get("Hx-Current-Url"):
-                updated_params = QueryDict(urlparse(current_url).query, mutable=True)
-                updated_params["fl"] = from_lang
-                updated_params["tl"] = to_lang
-                updated_url = f"{updated_url}?{updated_params.urlencode()}"
-
-            to_lang_name = get_lang_name(to_lang)
-            from_lang_name = get_lang_name(from_lang)
-
-            message = _("Submission translated from {fl} to {tl}.").format(
-                fl=from_lang_name, tl=to_lang_name
-            )
-
-            ctx.update(
-                {
-                    "object": submission,
-                    "from_lang_name": from_lang_name,
-                    "to_lang_name": to_lang_name,
-                }
-            )
-        except ValueError:
-            # TODO: WA Error/failed message type rather than success
-            message = _("Submission translation failed. Contact your Administrator.")
-            return HttpResponse(
-                status=400,
-                headers={"HX-Trigger": json.dumps({"showMessage": {message}})},
-            )
-
-    elif params == prev_params:
-        message = _("Translation cleared.")
-
-    response = render(request, "funds/includes/rendered_answers.html", ctx)
-
-    trigger_dict = {}
-    if title := submission.form_data.get("title"):
-        trigger_dict.update(
-            {
-                "translatedSubmission": {
-                    "appTitle": title,
-                    "docTitle": submission.title_text_display,
-                }
-            }
-        )
-
-    if message:
-        trigger_dict.update({"showMessage": message})
-
-    if trigger_dict:
-        response["HX-Trigger"] = json.dumps(trigger_dict)
-
-    response["HX-Replace-Url"] = updated_url
-
-    return response
