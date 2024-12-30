@@ -8,10 +8,7 @@
     "trailingComma": "es5"
   },
   "babel": {
-    "exclude": [
-      "**/*.min.js",
-      "**/esm/*.js"
-    ],
+    "exclude": ["**/*.min.js", "**/esm/*.js"],
     "presets": [
       [
         "@babel/preset-env",
@@ -22,12 +19,7 @@
       ]
     ]
   },
-  "browserslist": [
-    "> 0.5%",
-    "last 2 versions",
-    "Firefox ESR",
-    "not dead"
-  ],
+  "browserslist": ["> 0.5%", "last 2 versions", "Firefox ESR", "not dead"],
   "devDependencies": {
     "@alpinejs/focus": "^3.14.6",
     "@babel/cli": "^7.25.9",
