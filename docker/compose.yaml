@@ -4,8 +4,8 @@ services:
   py:
     container_name: hypha-django-dev
     build:
-      context: ../..
-      dockerfile: docker/dev/Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     environment:
       - "DATABASE_URL=postgres://hypha:hypha@db:5432/hypha"
       - "DJANGO_SETTINGS_MODULE=hypha.settings.dev"
@@ -17,7 +17,7 @@ services:
     develop:
       watch:
         - action: sync
-          path: ../..
+          path: ..
           target: /opt/app
           ignore:
             - .venv/

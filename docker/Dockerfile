@@ -3,6 +3,9 @@ FROM python:3.12.7-bookworm
 # Add venv/bin to PATH.
 ENV PATH="/opt/app/.venv/bin:/usr/local/bin:$PATH"
 
+# Copy from the cache instead of linking since it's a mounted volume
+ENV UV_LINK_MODE=copy
+
 # Set work directory.
 WORKDIR /opt/app
 
@@ -18,11 +21,13 @@ COPY package*.json ./
 RUN npm install --quiet
 
 # Install python dependencies.
-COPY pyproject.toml uv.lock ./
-RUN uv sync
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync
 
 # Copy the project into the image
-COPY ../.. ./
+COPY ./ ./
 
 # Create directories.
 RUN mkdir -p ./hypha/static_compiled && mkdir -p ./hypha/media
@@ -31,4 +36,4 @@ RUN mkdir -p ./hypha/static_compiled && mkdir -p ./hypha/media
 RUN npm run dev:build
 
 # Run entrypoint.sh.
-ENTRYPOINT ["/opt/app/docker/dev/entrypoint.sh"]
+ENTRYPOINT ["/opt/app/docker/entrypoint.sh"]
