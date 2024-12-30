@@ -1,0 +1,41 @@
+name: hypha-dev
+
+services:
+  py:
+    container_name: hypha-django-dev
+    build:
+      context: ../..
+      dockerfile: docker/dev/Dockerfile
+    environment:
+      - "DATABASE_URL=postgres://hypha:hypha@db:5432/hypha"
+      - "DJANGO_SETTINGS_MODULE=hypha.settings.dev"
+      - "PYTHONDONTWRITEBYTECODE=1"
+      - "PYTHONUNBUFFERED=1"
+      - "VIRTUAL_ENV=/opt/app/.venv"
+    ports:
+      - 9001:9001
+    develop:
+      watch:
+        - action: sync
+          path: ../..
+          target: /opt/app
+          ignore:
+            - .venv/
+            - node_modules/
+            - hypha/static_compiled/
+        - action: rebuild
+          path: ./pyproject.toml
+    depends_on:
+      - db
+  db:
+    container_name: hypha-postgres-dev
+    image: postgres:14-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=hypha
+      - POSTGRES_PASSWORD=hypha
+      - POSTGRES_DB=hypha
+
+volumes:
+  postgres_data:

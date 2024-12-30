@@ -1,0 +1,40 @@
+name: hypha-prod
+
+services:
+  web:
+    container_name: hypha-nginx-prod
+    build: ./nginx
+    ports:
+      - 8080:8080
+    environment:
+      - HTTPS_METHOD=noredirect
+    restart: unless-stopped
+    depends_on:
+      - py
+  py:
+    container_name: hypha-django-prod
+    build:
+      context: ../..
+      dockerfile: docker/prod/Dockerfile
+    expose:
+      - 9001
+    environment:
+      - "DATABASE_URL=postgres://hypha:hypha@db:5432/hypha"
+      - "DJANGO_SETTINGS_MODULE=hypha.settings.production"
+      - "PYTHONDONTWRITEBYTECODE=1"
+      - "PYTHONUNBUFFERED=1"
+      - "VIRTUAL_ENV=/opt/app/.venv"
+    depends_on:
+      - db
+  db:
+    container_name: hypha-postgres-prod
+    image: postgres:14-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=hypha
+      - POSTGRES_PASSWORD=hypha
+      - POSTGRES_DB=hypha
+
+volumes:
+  postgres_data:
