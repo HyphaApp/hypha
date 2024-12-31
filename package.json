@@ -8,10 +8,7 @@
     "trailingComma": "es5"
   },
   "babel": {
-    "exclude": [
-      "**/*.min.js",
-      "**/esm/*.js"
-    ],
+    "exclude": ["**/*.min.js", "**/esm/*.js"],
     "presets": [
       [
         "@babel/preset-env",
@@ -22,33 +19,21 @@
       ]
     ]
   },
-  "browserslist": [
-    "> 0.5%",
-    "last 2 versions",
-    "Firefox ESR",
-    "not dead"
-  ],
+  "browserslist": ["> 0.5%", "last 2 versions", "Firefox ESR", "not dead"],
   "devDependencies": {
     "@alpinejs/focus": "^3.14.6",
     "@babel/cli": "^7.25.9",
     "@babel/core": "^7.25.9",
     "@babel/preset-env": "^7.25.9",
-    "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "^9.16.0",
+    "@biomejs/biome": "^1.9.4",
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.15",
     "alpinejs": "^3.14.6",
     "core-js": "^3.39.0",
     "daterangepicker": "^3.1.0",
-    "eslint": "^9.16.0",
-    "eslint-config-prettier": "^8.10.0",
-    "eslint-plugin-jsdoc": "^50.4.3",
-    "eslint-plugin-template": "^0.7.0",
-    "globals": "^15.13.0",
     "htmx.org": "^2.0.3",
     "nodemon": "^3.1.7",
     "npm-run-all2": "^7.0.1",
-    "prettier": "^3.4.1",
     "sass": "^1.81.1",
     "stylelint": "^16.11.0",
     "stylelint-config-standard": "^36.0.1",
@@ -74,9 +59,8 @@
     "dev:build:lint": "npm run lint",
     "dev:build:tailwind": "tailwindcss -i ./hypha/static_src/tailwind/main.css -o ./hypha/static_compiled/css/tailwind-output.css",
     "dev:build:images": "npm run build:images",
-    "lint:prettier": "prettier . --check",
     "lint:sass": "stylelint \"hypha/static_src/sass/**/*.scss\"",
-    "lint:js": "eslint \"hypha/static_src/javascript/**/*.js\" \"hypha/cookieconsent/static/js/**/*.js\"",
+    "lint:biome": "biome ci",
     "collectstatic": "python manage.py collectstatic --no-post-process --noinput --verbosity 0 --settings=hypha.settings.dev",
     "clean": "rm -rf ./static ./hypha/static_compiled"
   },
