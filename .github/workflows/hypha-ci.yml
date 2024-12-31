@@ -23,9 +23,6 @@ jobs:
         with:
           python-version-file: ".python-version"
 
-      # Fix for mirror-eslint pre-commit hook not able to find "globals" package
-      - run: npm install globals
-
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
 
