@@ -1,5 +1,3 @@
-DJANGO_ADDRESS = $(or $(DJANGO_SERVE_ADDRESS), 127.0.0.1)
-DJANGO_PORT = 9001
 DJANGO_SETTINGS_MODULE = hypha.settings.dev
 JS_VENDOR_DIR = ./hypha/static_src/javascript/vendor
 JS_ESM_DIR = ./hypha/static_src/javascript/esm
@@ -18,7 +16,7 @@ help: ## Show this help menu with a list of available commands and their descrip
 .PHONY: serve
 serve: .cache/tandem .cache/py-packages .cache/dev-build-fe  ## Run Django server, docs preview, and watch frontend changes
 	@.cache/tandem \
-		'python manage.py runserver_plus $(DJANGO_ADDRESS):$(DJANGO_PORT) --settings=$(DJANGO_SETTINGS_MODULE)' \
+		'python manage.py runserver_plus --settings=$(DJANGO_SETTINGS_MODULE)' \
 		'npm:watch:*' \
 		'mkdocs serve'
 

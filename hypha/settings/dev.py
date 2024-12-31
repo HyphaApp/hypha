@@ -10,13 +10,14 @@ RELOAD = True
 SECRET_KEY = "CHANGEME!!!"
 
 ALLOWED_HOSTS = [
-    "apply.localhost",
     "localhost",
     "127.0.0.1",
     "hypha.test",
 ]
 
-WAGTAILADMIN_BASE_URL = "http://localhost:8000"
+RUNSERVERPLUS_SERVER_ADDRESS_PORT = "127.0.0.1:9001"
+
+WAGTAILADMIN_BASE_URL = "http://127.0.0.1:9001"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
@@ -64,6 +65,10 @@ if LOCAL_FILE_LOGGING:
                 "backupCount": 2,
                 "formatter": "standard",
             },
+            "console": {
+                "level": "DEBUG",
+                "class": "logging.StreamHandler",
+            },
         },
         "loggers": {
             "django": {
@@ -98,6 +103,11 @@ if LOCAL_FILE_LOGGING:
             "hypha": {
                 "handlers": ["logfile"],
                 "level": "DEBUG",
+            },
+            "werkzeug": {
+                "handlers": ["console"],
+                "level": "DEBUG",
+                "propagate": True,
             },
         },
     }
