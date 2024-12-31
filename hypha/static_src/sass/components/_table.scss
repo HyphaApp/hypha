@@ -1,8 +1,6 @@
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
-// stylelint-disable selector-max-compound-selectors,max-nesting-depth
-
 .table-container {
     > table {
         border: 1px solid variables.$color--light-mid-grey;

@@ -1,10 +1,9 @@
 @use "sass:list";
 @use "functions";
 @use "variables";
-
-// stylelint-disable
-
 @use "sass:math";
+
+// stylelint-disable scss/at-mixin-pattern
 
 // Media queries
 @mixin media-query($queries...) {

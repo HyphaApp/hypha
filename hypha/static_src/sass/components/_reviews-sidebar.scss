@@ -1,8 +1,6 @@
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
-// stylelint-disable max-nesting-depth
-
 .reviews-sidebar {
     $root: &;
     margin-block-end: 20px;

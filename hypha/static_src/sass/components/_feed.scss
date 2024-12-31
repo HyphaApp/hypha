@@ -134,7 +134,6 @@
 
             span {
                 &:first-child {
-                    // stylelint-disable-next-line max-nesting-depth
                     &::after {
                         @include mixins.triangle(
                             right,
