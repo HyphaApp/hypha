@@ -104,11 +104,11 @@ if LOCAL_FILE_LOGGING:
                 "handlers": ["logfile"],
                 "level": "DEBUG",
             },
-            "werkzeug": {
-                "handlers": ["console"],
-                "level": "DEBUG",
-                "propagate": True,
-            },
+            # "werkzeug": {
+            #     "handlers": ["console"],
+            #     "level": "DEBUG",
+            #     "propagate": True,
+            # },
         },
     }
 
