@@ -42,7 +42,7 @@
         </div>
         <div>
             <h5 class="text-base">{% trans "E-mail" %}</h5>
-            {{ object.get_email_display }}
+            <a href="mailto:{{ object.user.email }}">{{ object.user.email }}</a>
         </div>
         {% if object.get_address_display != "-" %}
             <div class="hypha-grid__cell--span-two">
