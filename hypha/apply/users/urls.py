@@ -23,6 +23,7 @@ from .views import (
     account_email_change,
     create_password,
     elevate_check_code_view,
+    hijack_view,
     oauth,
     send_confirm_access_email_view,
     set_password_view,
@@ -112,6 +113,7 @@ account_urls = [
         ActivationView.as_view(),
         name="activate",
     ),
+    path("hijack/", hijack_view, name="hijack"),
     path("activate/", create_password, name="activate_password"),
     path("oauth", oauth, name="oauth"),
     # 2FA
