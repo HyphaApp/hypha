@@ -28,13 +28,13 @@ from hypha.apply.users.decorators import (
     is_apply_staff_or_reviewer_required,
 )
 
-from . import permissions, services
-from .models import (
+from .. import permissions, services
+from ..models import (
     ApplicationSubmission,
     ReviewerSettings,
     Round,
 )
-from .tables import (
+from ..tables import (
     SubmissionFilter,
 )
 
