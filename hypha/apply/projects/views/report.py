@@ -161,6 +161,24 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
         if form.is_valid():
             form.save(form_fields=self.form_fields)
             form.delete_temporary_files()
+
+            should_notify = True
+            if self.object.draft:
+                # It was a draft submission
+                should_notify = False
+            else:
+                if self.object.submitted != self.object.current.submitted:
+                    # It was a staff edit - post submission
+                    should_notify = False
+
+            if should_notify:
+                messenger(
+                    MESSAGES.SUBMIT_REPORT,
+                    request=self.request,
+                    user=self.request.user,
+                    source=self.object.project,
+                    related=self.object,
+                )
             response = HttpResponseRedirect(self.get_success_url())
         else:
             response = self.form_invalid(form)
@@ -169,32 +187,6 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
     def get_success_url(self):
         success_url = self.object.project.get_absolute_url()
         return success_url
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-
-        should_notify = True
-        if self.object.draft:
-            # It was a draft submission
-            should_notify = False
-        else:
-            if self.object.submitted != self.object.current.submitted:
-                # It was a staff edit - post submission
-                should_notify = False
-
-        if should_notify:
-            messenger(
-                MESSAGES.SUBMIT_REPORT,
-                request=self.request,
-                user=self.request.user,
-                source=self.object.project,
-                related=self.object,
-            )
-
-        # Required for django-file-form: delete temporary files for the new files
-        # that are uploaded.
-        form.delete_temporary_files()
-        return response
 
 
 class ReportPrivateMedia(ReportAccessMixin, PrivateMediaView):
