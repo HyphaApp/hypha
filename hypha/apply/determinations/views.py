@@ -16,7 +16,8 @@ from wagtail.models import Site
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity
 from hypha.apply.funds.models import ApplicationSubmission
-from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES, Concept
+from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES
+from hypha.apply.funds.workflow.models.stage import Concept
 from hypha.apply.projects.models import Project
 from hypha.apply.review.models import Review
 from hypha.apply.stream_forms.models import BaseStreamForm
