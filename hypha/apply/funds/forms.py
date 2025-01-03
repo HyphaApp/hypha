@@ -83,7 +83,9 @@ class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         lead_field = self.fields["lead"]
-        lead_field.label = _("New lead")
+        lead_field.label = _("Update lead from {lead} to").format(
+            lead=self.instance.lead
+        )
         lead_field.queryset = lead_field.queryset.exclude(id=self.instance.lead.id)
 
 
