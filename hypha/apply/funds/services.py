@@ -18,7 +18,7 @@ from django.http import HttpRequest
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity, Event
 from hypha.apply.funds.models.assigned_reviewers import AssignedReviewers
-from hypha.apply.funds.workflow import INITIAL_STATE
+from hypha.apply.funds.workflows import INITIAL_STATE
 from hypha.apply.review.options import DISAGREE, MAYBE
 
 

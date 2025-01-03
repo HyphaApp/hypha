@@ -26,7 +26,7 @@ from hypha.apply.funds.models.forms import (
     RoundBaseForm,
     RoundBaseReviewForm,
 )
-from hypha.apply.funds.workflow.registry import (
+from hypha.apply.funds.workflows.registry import (
     ConceptProposal,
     Request,
     RequestExternal,

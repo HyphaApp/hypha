@@ -41,7 +41,7 @@ from ..permissions import (
     get_archive_view_groups,
     has_permission,
 )
-from ..workflow import DRAFT_STATE
+from ..workflows import DRAFT_STATE
 
 if settings.APPLICATION_TRANSLATIONS_ENABLED:
     from hypha.apply.translate.utils import (

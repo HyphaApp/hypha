@@ -23,7 +23,7 @@ from hypha.images.models import CustomImage
 
 from .models import ApplicationSubmission, Round, ScreeningStatus
 from .widgets import Select2MultiCheckboxesWidget
-from .workflow import STATUSES, get_review_active_statuses
+from .workflows import STATUSES, get_review_active_statuses
 
 User = get_user_model()
 

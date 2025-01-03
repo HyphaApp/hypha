@@ -16,7 +16,7 @@ from hypha.apply.categories.categories_seed import CATEGORIES
 from hypha.apply.categories.models import Category, Option
 from hypha.apply.funds.models import ApplicationSubmission, FundType, LabType, Round
 from hypha.apply.funds.models.forms import LabBaseForm, RoundBaseForm
-from hypha.apply.funds.workflow import INITIAL_STATE
+from hypha.apply.funds.workflows import INITIAL_STATE
 
 
 class MigrationStorage(S3Boto3Storage):

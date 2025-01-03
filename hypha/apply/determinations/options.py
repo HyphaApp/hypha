@@ -1,6 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 
-from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES
+from hypha.apply.funds.workflows import DETERMINATION_OUTCOMES
 
 REJECTED = 0
 NEEDS_MORE_INFO = 1

@@ -7,7 +7,7 @@ from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Event
 
 from ..models import ApplicationSubmission
-from ..workflow import DRAFT_STATE
+from ..workflows.constants import DRAFT_STATE
 
 
 class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
