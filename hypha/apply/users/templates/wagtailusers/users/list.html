@@ -43,7 +43,7 @@
                         {% user_listing_buttons user %}
                     </ul>
                 </td>
-                <td class="username" valign="top">{{ user.get_username }}</td>
+                <td class="username" valign="top"><a href="mailto:{{user.get_username}}">{{ user.get_username }}</a></td>
                 {% comment %} <td class="level" valign="top">{% if user.is_superuser %}{% trans "Admin" %}{% endif %}</td> {% endcomment %}
                 <td class="level" valign="top">
                     {% if user.is_superuser %}
