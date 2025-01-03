@@ -1,0 +1,48 @@
+{% load i18n static %}
+
+{% modal_title %}{% trans "Switch to User..." %}{% endmodal_title %}
+
+<form class="p-4 form" action="{{ request.path }}" method="post">
+    {% csrf_token %}
+    {% if next %}
+        <input type="hidden" name="next" value="{{ next }}" />
+    {% endif %}
+
+    <label for="id_user_pk" class="block text-sm font-semibold text-fg-muted mb-2">
+        {% trans "Select User:" %}
+    </label>
+
+    {{ form.user_pk }}
+
+    <p class="m-0 pt-2 text-fg-muted text-sm">
+        {{ form.user_pk.help_text }}
+    </p>
+
+    <div class="mt-5 sm:gap-4 sm:mt-4 sm:flex sm:flex-row-reverse">
+        <button
+            class="button button--warning w-full sm:w-auto"
+            type="submit"
+        >
+            {% trans "Switch User" %}
+        </button>
+
+        <button
+            type="button"
+            class="inline-flex items-center justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            @click="show = false"
+        >{% trans "Cancel" %}</button>
+    </div>
+</i>
+
+<script type="module">
+    import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+
+    const selectElements = document.querySelectorAll('select#id_user_pk');
+
+    // add choices to all select elements
+    selectElements.forEach((selectElement) => {
+        new Choices(selectElement, {
+            allowHTML: true
+        });
+    });
+</script>
