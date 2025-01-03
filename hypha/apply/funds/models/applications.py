@@ -48,7 +48,7 @@ from hypha.core.wagtail.admin.panels import ReadOnlyInlinePanel
 
 from ..admin_forms import RoundBasePageAdminForm, WorkflowFormAdminForm
 from ..edit_handlers import ReadOnlyPanel
-from ..workflow import OPEN_CALL_PHASES
+from ..workflows.constants import OPEN_CALL_PHASES
 from .submissions import ApplicationSubmission
 from .utils import (
     LIMIT_TO_REVIEWERS,

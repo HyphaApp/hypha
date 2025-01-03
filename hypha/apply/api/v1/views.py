@@ -11,7 +11,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from hypha.apply.funds.reviewers.services import get_all_reviewers
-from hypha.apply.funds.workflow import STATUSES
+from hypha.apply.funds.workflows import STATUSES
 from hypha.apply.review.models import Review
 
 from .filters import SubmissionsFilter

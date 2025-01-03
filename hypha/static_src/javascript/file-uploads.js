@@ -3,7 +3,7 @@ jQuery(function ($) {
   $("form")
     .get()
     .forEach(function (form) {
-      // Prevent initilising it multiple times and run it for forms
+      // Prevent initialising it multiple times and run it for forms
       // that have a `form_id` field added by django-file-form.
       if (!form.initUploadFieldsDone && form.querySelector("[name=form_id]")) {
         init(form);

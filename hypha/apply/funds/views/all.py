@@ -20,7 +20,7 @@ from hypha.apply.categories.models import Option
 from hypha.apply.determinations.views import BatchDeterminationCreateView
 from hypha.apply.funds.models.screening import ScreeningStatus
 from hypha.apply.funds.utils import export_submissions_to_csv
-from hypha.apply.funds.workflow import PHASES, get_action_mapping, review_statuses
+from hypha.apply.funds.workflows import PHASES, get_action_mapping, review_statuses
 from hypha.apply.search.filters import apply_date_filter
 from hypha.apply.search.query_parser import parse_search_query
 from hypha.apply.users.decorators import (

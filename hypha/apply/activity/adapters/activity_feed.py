@@ -6,7 +6,7 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity.models import ALL, APPLICANT, TEAM
 from hypha.apply.activity.options import MESSAGES
-from hypha.apply.funds.workflow import PHASE_BG_COLORS
+from hypha.apply.funds.workflows.constants import PHASE_BG_COLORS
 from hypha.apply.projects.utils import (
     get_invoice_public_status,
     get_invoice_status_display_value,

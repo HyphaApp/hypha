@@ -4,7 +4,7 @@ JS_ESM_DIR = ./hypha/static_src/javascript/esm
 
 # Check if uv is installed then use it, else fallback to pip
 PIP := $(shell (command -v uv > /dev/null 2>&1 && echo "uv pip") || (command -v pip > /dev/null 2>&1 && echo "pip"))
-
+UV_RUN := $(shell (command -v uv > /dev/null 2>&1 && echo "uv run ") || echo "")
 
 .PHONY: help
 help: ## Show this help menu with a list of available commands and their descriptions
@@ -16,9 +16,9 @@ help: ## Show this help menu with a list of available commands and their descrip
 .PHONY: serve
 serve: .cache/tandem .cache/py-packages .cache/dev-build-fe  ## Run Django server, docs preview, and watch frontend changes
 	@.cache/tandem \
-		'python manage.py runserver_plus --settings=$(DJANGO_SETTINGS_MODULE)' \
+		'${UV_RUN}python manage.py runserver_plus --settings=$(DJANGO_SETTINGS_MODULE)' \
 		'npm:watch:*' \
-		'mkdocs serve'
+		'${UV_RUN}mkdocs serve'
 
 .PHONY: test
 test: lint py-test cov-html  ## Run all tests (linting, Python tests) and generate coverage report
@@ -26,19 +26,19 @@ test: lint py-test cov-html  ## Run all tests (linting, Python tests) and genera
 
 .PHONY: fmt
 fmt: .cache/dev-build-fe  ## Run code formatters on all code using pre-commit
-	@pre-commit run --all-files
+	${UV_RUN}pre-commit run --all-files
 
 
 .PHONY: lint
 lint: .cache/dev-build-fe  ## Run all linters
 	@echo "Running linters"
-	@pre-commit run --all-files
+	${UV_RUN}pre-commit run --all-files
 
 
 .PHONY: py-test
 py-test: .cache/py-packages  ## Run Python tests with pytest, including coverage report
 	@echo "Running python tests"
-	pytest --reuse-db --cov --cov-report term:skip-covered
+	${UV_RUN}pytest --reuse-db --cov --cov-report term:skip-covered
 
 	@echo "Removing test files generated during test"
 	@find media/ -iname 'test_*.pdf' -o -iname 'test_image*' -o -iname '*.dat' -delete
@@ -51,7 +51,7 @@ cov-html:  ## Generate HTML coverage report from previous test run
 ifneq ("$(wildcard .coverage)","")
 	@rm -rf htmlcov
 	@echo "Generate html coverage report…"
-	coverage html
+	${UV_RUN}coverage html
 	@echo "Open 'htmlcov/index.html' in your browser to see the report."
 else
 	$(error Unable to generate html coverage report, please run 'make test' or 'make py-test')
