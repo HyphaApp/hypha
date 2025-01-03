@@ -1020,18 +1020,6 @@ wheels = [
 ]
 
 [[package]]
-name = "djangorestframework-api-key"
-version = "3.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "packaging" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/78/4a/f30dc4121839323acfaee8d9938c0ff0630945f9d1765643adf420c1f042/djangorestframework-api-key-3.0.0.tar.gz", hash = "sha256:f18cdfa45aaea10fd4daaebffa60481ce4002c9b9ef6c551ef1fc21dadf28845", size = 36741 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/18/8b/5b7cf37dfc3474f06eda417ea0dce4c970e3bde85f72e71d31225a46c7c4/djangorestframework_api_key-3.0.0-py3-none-any.whl", hash = "sha256:b9443cd864e43caebdd330224f9309957b38128267fbc9dc1ba2f3fa1c8414d0", size = 15564 },
-]
-
-[[package]]
 name = "djhtml"
 version = "3.0.7"
 source = { registry = "https://pypi.org/simple" }
@@ -1057,19 +1045,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/8d/ee/eeb5d159b6ad55efb7f2ad96803b6527fb5a29737b4e2ec9cd8e4635dada/draftjs_exporter-2.1.7.tar.gz", hash = "sha256:5839cbc29d7bce2fb99837a404ca40c3a07313f2a20e2700de7ad6aa9a9a18fb", size = 27941 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/43/21/5ecec14572c86eed3173b8cd8ece268ec20be2faa4ead09669531739d31e/draftjs_exporter-2.1.7-py3-none-any.whl", hash = "sha256:d415a9964690a2cddb66a31ef32dd46c277e9b80434b94e39e3043188ed83e33", size = 43720 },
-]
-
-[[package]]
-name = "drf-nested-routers"
-version = "0.94.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-    { name = "djangorestframework" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/1e/24/9e6a070dc491a416c93e4ec41950c7ea66d6a63b8db8d8abc0c128355978/drf-nested-routers-0.94.1.tar.gz", hash = "sha256:2b846385ed95c9f17bf4242db3b264ac826b5af00dda6c737d3fe7cc7bf2c7db", size = 18347 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/4e/a2/313a95268ffae9773a59aeb15c3f6932d4c905616d4797b371e6257fc8f9/drf_nested_routers-0.94.1-py2.py3-none-any.whl", hash = "sha256:3a8ec45a025c0f39188ec1ec415244beb875a6f4db87911a1f5a606d09b68c9f", size = 36260 },
 ]
 
 [[package]]
@@ -1367,10 +1342,7 @@ dependencies = [
     { name = "django-tinymce" },
     { name = "django-two-factor-auth" },
     { name = "django-web-components" },
-    { name = "djangorestframework" },
-    { name = "djangorestframework-api-key" },
     { name = "djp" },
-    { name = "drf-nested-routers" },
     { name = "environs" },
     { name = "gunicorn" },
     { name = "heroicons" },
@@ -1468,10 +1440,7 @@ requires-dist = [
     { name = "django-tinymce", specifier = "~=4.1.0" },
     { name = "django-two-factor-auth", specifier = "~=1.17.0" },
     { name = "django-web-components", specifier = "~=0.2.0" },
-    { name = "djangorestframework", specifier = "~=3.15.2" },
-    { name = "djangorestframework-api-key", specifier = "~=3.0.0" },
     { name = "djp", specifier = "~=0.3.1" },
-    { name = "drf-nested-routers", specifier = "~=0.94.1" },
     { name = "environs", specifier = "~=11.2.1" },
     { name = "gunicorn", specifier = "~=23.0.0" },
     { name = "heroicons", specifier = "~=2.9.0" },
