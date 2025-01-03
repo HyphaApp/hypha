@@ -11,14 +11,14 @@
 @import "tailwindcss/utilities";
 
 @layer utilities {
-  .border-stripe {
-    border-image: repeating-linear-gradient(
-        -55deg,
-        #000 0px,
-        #000 20px,
-        #ffb101 20px,
-        #ffb101 40px
-      )
-      10;
-  }
+    .border-stripe {
+        border-image: repeating-linear-gradient(
+                -55deg,
+                #000 0px,
+                #000 20px,
+                #ffb101 20px,
+                #ffb101 40px
+            )
+            10;
+    }
 }
