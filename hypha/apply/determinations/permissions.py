@@ -1,4 +1,4 @@
-from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES
+from hypha.apply.funds.workflows import DETERMINATION_OUTCOMES
 
 from .utils import determination_actions, transition_from_outcome
 

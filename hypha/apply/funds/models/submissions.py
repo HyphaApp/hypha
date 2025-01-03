@@ -51,7 +51,7 @@ from hypha.apply.todo.views import remove_tasks_for_user
 from hypha.apply.users.roles import APPLICANT_GROUP_NAME
 
 from ..blocks import NAMED_BLOCKS, ApplicationCustomFormFieldsBlock
-from ..workflow import (
+from ..workflows import (
     PHASES,
     WORKFLOWS,
     accepted_statuses,
@@ -62,7 +62,7 @@ from ..workflow import (
     get_review_active_statuses,
     review_statuses,
 )
-from ..workflow.constants import (
+from ..workflows.constants import (
     COMMUNITY_REVIEW_PHASES,
     DETERMINATION_RESPONSE_PHASES,
     DRAFT_STATE,

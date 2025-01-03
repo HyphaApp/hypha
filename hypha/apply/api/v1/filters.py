@@ -7,7 +7,7 @@ from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import Option
 from hypha.apply.funds.models import ApplicationSubmission, FundType, LabType
 from hypha.apply.funds.reviewers.services import get_all_reviewers
-from hypha.apply.funds.workflow import PHASES
+from hypha.apply.funds.workflows import PHASES
 
 from .utils import (
     get_round_leads,

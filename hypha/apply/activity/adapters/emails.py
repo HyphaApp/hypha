@@ -148,7 +148,7 @@ class EmailAdapter(AdapterBase):
         }
 
     def handle_transition(self, old_phase, source, **kwargs):
-        from hypha.apply.funds.workflow import PHASES
+        from hypha.apply.funds.workflows import PHASES
 
         submission = source
         # Retrieve status index to see if we are going forward or backward.

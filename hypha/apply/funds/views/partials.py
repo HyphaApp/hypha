@@ -36,7 +36,7 @@ from ..utils import (
     get_statuses_as_params,
     status_and_phases_mapping,
 )
-from ..workflow.constants import PHASES_MAPPING
+from ..workflows.constants import PHASES_MAPPING
 
 User = get_user_model()
 

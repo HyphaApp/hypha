@@ -62,7 +62,7 @@ from ..models import (
 from ..permissions import (
     has_permission,
 )
-from ..workflow.constants import (
+from ..workflows.constants import (
     DRAFT_STATE,
     STAGE_CHANGE_ACTIONS,
 )

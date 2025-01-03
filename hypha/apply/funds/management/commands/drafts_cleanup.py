@@ -6,7 +6,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from hypha.apply.funds.models.submissions import ApplicationSubmission
-from hypha.apply.funds.workflow import DRAFT_STATE
+from hypha.apply.funds.workflows import DRAFT_STATE
 
 
 def check_not_negative(value) -> int:

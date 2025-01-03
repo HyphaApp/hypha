@@ -24,7 +24,7 @@ from hypha.apply.users.roles import (
     STAFF_GROUP_NAME,
 )
 
-from ..workflow import DRAFT_STATE, WORKFLOWS
+from ..workflows import DRAFT_STATE, WORKFLOWS
 
 REVIEW_GROUPS = [
     STAFF_GROUP_NAME,
