@@ -16,7 +16,7 @@ class TestCreateDeterminationFormView(TestCase):
             "field_label": factory.Faker("sentence").evaluate(
                 None, None, {"locale": None}
             ),
-            "help_text": factory.Faker("sentence").evaluate(
+            "field_help_text": factory.Faker("sentence").evaluate(
                 None, None, {"locale": None}
             ),
         }
@@ -24,7 +24,7 @@ class TestCreateDeterminationFormView(TestCase):
             "field_label": factory.Faker("sentence").evaluate(
                 None, None, {"locale": None}
             ),
-            "help_text": factory.Faker("sentence").evaluate(
+            "field_help_text": factory.Faker("sentence").evaluate(
                 None, None, {"locale": None}
             ),
             "default_value": True,
