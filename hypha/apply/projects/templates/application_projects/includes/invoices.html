@@ -11,7 +11,7 @@
             </a>
         {% endif %}
     </div>
-    <div class="data-block__body">
+    <div class="data-block__body"  x-data="{ showrejected: false }">
         {% if object.invoices.not_rejected %}
             <table class="data-block__table">
                 <thead>
@@ -33,10 +33,11 @@
 
         {% if object.invoices.rejected %}
             <p class="data-block__rejected">
-                <a class="data-block__rejected-link js-payment-block-rejected-link" href="#">{% trans "Show rejected" %}</a>
+                {% trans "Show rejected" as showrejectedtext %}{% trans "Hide rejected" as hiderejectedtext %}
+                <a class="data-block__rejected-link" href="#" @click="showrejected = ! showrejected" x-text="showrejected ? '{{ hiderejectedtext }}' : '{{ showrejectedtext }}'">{{ showrejectedtext }}</a>
             </p>
 
-            <table class="data-block__table is-hidden js-payment-block-rejected-table">
+            <table class="data-block__table"  x-show="showrejected" x-transition>
                 <thead>
                     <tr>
                         <th class="data-block__table-date">{% trans "Date submitted" %}</th>
