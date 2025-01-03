@@ -533,7 +533,7 @@ class UpdateLeadView(View):
             self.template,
             context={
                 "form": lead_form,
-                "value": _("Submit"),
+                "value": _("Update"),
                 "object": self.object,
             },
         )
