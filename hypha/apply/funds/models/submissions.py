@@ -52,15 +52,8 @@ from hypha.apply.users.roles import APPLICANT_GROUP_NAME
 
 from ..blocks import NAMED_BLOCKS, ApplicationCustomFormFieldsBlock
 from ..workflow import (
-    COMMUNITY_REVIEW_PHASES,
-    DETERMINATION_RESPONSE_PHASES,
-    DRAFT_STATE,
-    INITIAL_STATE,
     PHASES,
-    PHASES_MAPPING,
-    STAGE_CHANGE_ACTIONS,
     WORKFLOWS,
-    UserPermissions,
     accepted_statuses,
     active_statuses,
     dismissed_statuses,
@@ -68,6 +61,15 @@ from ..workflow import (
     ext_review_statuses,
     get_review_active_statuses,
     review_statuses,
+)
+from ..workflow.constants import (
+    COMMUNITY_REVIEW_PHASES,
+    DETERMINATION_RESPONSE_PHASES,
+    DRAFT_STATE,
+    INITIAL_STATE,
+    PHASES_MAPPING,
+    STAGE_CHANGE_ACTIONS,
+    UserPermissions,
 )
 from .mixins import AccessFormData
 from .reviewer_role import ReviewerRole
