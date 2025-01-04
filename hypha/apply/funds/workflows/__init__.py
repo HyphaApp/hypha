@@ -1,3 +1,21 @@
+"""
+Workflow System Documentation
+
+This package implements a flexible workflow system for managing application states
+and transitions. The system is built on the following key concepts:
+
+- Workflow: Overall process definition containing stages and phases
+- Stage: Major sections of the workflow (e.g. Request, Proposal)
+- Phase: Individual states within a stage
+- Transition: Allowed movements between phases
+
+Key Components:
+- models/: Core workflow model classes
+- definitions/: Workflow configuration definitions
+- registry.py: Central workflow registration and lookup
+- permissions.py: Permission checking system
+"""
+
 from .constants import (
     DETERMINATION_OUTCOMES,
     DRAFT_STATE,
