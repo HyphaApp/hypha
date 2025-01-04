@@ -25,7 +25,6 @@ from .constants import (
 )
 from .models.stage import Stage
 from .registry import (
-    DETERMINATION_PHASES,
     PHASES,
     STATUSES,
     WORKFLOWS,
@@ -43,7 +42,6 @@ from .utils import (
 
 __all__ = [
     "DETERMINATION_OUTCOMES",
-    "DETERMINATION_PHASES",
     "DRAFT_STATE",
     "INITIAL_STATE",
     "PHASES",

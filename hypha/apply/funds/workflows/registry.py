@@ -97,10 +97,6 @@ PHASES = list(
     itertools.chain.from_iterable(workflow.items() for workflow in WORKFLOWS.values())
 )
 
-DETERMINATION_PHASES = [
-    phase_name for phase_name, _ in PHASES if "_discussion" in phase_name
-]
-
 STATUSES = defaultdict(set)
 
 for key, value in PHASES:
