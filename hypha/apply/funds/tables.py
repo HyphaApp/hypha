@@ -22,7 +22,7 @@ from hypha.apply.utils.image import generate_image_tag
 from hypha.images.models import CustomImage
 
 from .models import ApplicationSubmission, Round, ScreeningStatus
-from .widgets import Select2MultiCheckboxesWidget
+from .widgets import MultiCheckboxesWidget, Select2MultiCheckboxesWidget
 from .workflows import STATUSES, get_review_active_statuses
 
 User = get_user_model()
@@ -299,14 +299,33 @@ class Select2CheckboxWidgetMixin(filters.Filter):
         super().__init__(*args, **kwargs)
 
 
+class MultiCheckboxesMixin(filters.Filter):
+    def __init__(self, *args, **kwargs):
+        label = kwargs.get("label")
+        kwargs.setdefault(
+            "widget", MultiCheckboxesWidget(attrs={"data-placeholder": label})
+        )
+        super().__init__(*args, **kwargs)
+
+
 class Select2MultipleChoiceFilter(
     Select2CheckboxWidgetMixin, filters.MultipleChoiceFilter
 ):
     pass
 
 
+class MultipleChoiceFilter(MultiCheckboxesMixin, filters.MultipleChoiceFilter):
+    pass
+
+
 class Select2ModelMultipleChoiceFilter(
     Select2MultipleChoiceFilter, filters.ModelMultipleChoiceFilter
+):
+    pass
+
+
+class ModelMultipleChoiceFilter(
+    MultipleChoiceFilter, filters.ModelMultipleChoiceFilter
 ):
     pass
 

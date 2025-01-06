@@ -3,11 +3,10 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-from django_select2.forms import Select2Widget
 
 from hypha.apply.funds.tables import (
-    Select2ModelMultipleChoiceFilter,
-    Select2MultipleChoiceFilter,
+    ModelMultipleChoiceFilter,
+    MultipleChoiceFilter,
     get_used_funds,
 )
 
@@ -28,15 +27,13 @@ def get_project_leads(request):
 
 
 class InvoiceListFilter(filters.FilterSet):
-    fund = Select2ModelMultipleChoiceFilter(
+    fund = ModelMultipleChoiceFilter(
         label=_("Funds"),
         queryset=get_used_funds,
         field_name="project__submission__page",
     )
-    status = Select2MultipleChoiceFilter(
-        label=_("Status"), choices=INVOICE_STATUS_CHOICES
-    )
-    lead = Select2ModelMultipleChoiceFilter(
+    status = MultipleChoiceFilter(label=_("Status"), choices=INVOICE_STATUS_CHOICES)
+    lead = ModelMultipleChoiceFilter(
         label=_("Lead"), queryset=get_project_leads, field_name="project__lead"
     )
 
@@ -51,27 +48,23 @@ class ProjectListFilter(filters.FilterSet):
         (1, "Behind schedule"),
     )
 
-    project_fund = Select2ModelMultipleChoiceFilter(
+    project_fund = ModelMultipleChoiceFilter(
         field_name="submission__page", label=_("Funds"), queryset=get_used_funds
     )
-    project_lead = Select2ModelMultipleChoiceFilter(
+    project_lead = ModelMultipleChoiceFilter(
         field_name="lead", label=_("Lead"), queryset=get_project_leads
     )
-    project_status = Select2MultipleChoiceFilter(
+    project_status = MultipleChoiceFilter(
         field_name="status", label=_("Status"), choices=PROJECT_STATUS_CHOICES
     )
     query = filters.CharFilter(
         field_name="title", lookup_expr="icontains", widget=forms.HiddenInput
     )
-    reporting = filters.ChoiceFilter(
+    reporting = MultipleChoiceFilter(
         choices=REPORTING_CHOICES,
         method="filter_reporting",
-        widget=Select2Widget(
-            attrs={
-                "data-placeholder": "Reporting",
-                "data-minimum-results-for-search": -1,
-            }
-        ),
+        field_name="reporting",
+        label="Reporting",
     )
 
     class Meta:
@@ -102,7 +95,7 @@ class DateRangeInputWidget(filters.widgets.SuffixedMultiWidget):
 
 
 class ReportingFilter(filters.FilterSet):
-    current_report_status = Select2MultipleChoiceFilter(
+    current_report_status = MultipleChoiceFilter(
         label=_("Status"),
         choices=[
             ("Not started", "Not started"),

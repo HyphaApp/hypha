@@ -37,4 +37,17 @@
     {{ filter.form.media.js }}
     <script src="{% static 'js/submission-filters.js' %}"></script>
     <script src="{% static 'js/batch-actions.js' %}"></script>
+    <script type="module">
+        import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+
+        const selectElements = document.querySelectorAll('.js-choices');
+
+        selectElements.forEach(selectElement => {
+            new Choices(selectElement, {
+                shouldSort: false,
+                allowHTML: true,
+                removeItemButton: true,
+            });
+        });
+    </script>
 {% endblock %}

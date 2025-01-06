@@ -1,3 +1,4 @@
+from django import forms
 from django.templatetags.static import static
 from django_select2.forms import Select2MultipleWidget
 
@@ -21,6 +22,20 @@ class Select2MultiCheckboxesWidget(Select2MultipleWidget):
             "django-select2", "django-select2-checkboxes"
         )
         return attrs
+
+
+class MultiCheckboxesWidget(forms.SelectMultiple):
+    """
+    Custom widget for Choices.js. Adds the required attributes.
+    """
+
+    def __init__(self, *args, **kwargs):
+        attrs = kwargs.get("attrs", {})
+        # Add the class for Choices.js initialization
+        attrs.setdefault("class", "js-choices")
+        attrs.setdefault("data-placeholder", "items")
+        kwargs["attrs"] = attrs
+        super().__init__(*args, **kwargs)
 
 
 class MetaTermSelect2Widget(Select2MultipleWidget):
