@@ -52,7 +52,7 @@
                         {% else %}
                             {% contract_category_latest_file object document_category as latest_file %}
                             {% if latest_file %}
-                                <div class="docs-block__row-inner">
+                                <div class="docs-block__document-inner__actions">
                                     <a class="docs-block__icon-link" href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
                                         {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                         {% trans "View" %}
