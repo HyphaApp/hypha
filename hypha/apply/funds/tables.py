@@ -22,7 +22,7 @@ from hypha.apply.utils.image import generate_image_tag
 from hypha.images.models import CustomImage
 
 from .models import ApplicationSubmission, Round, ScreeningStatus
-from .widgets import MultiCheckboxesWidget, Select2MultiCheckboxesWidget
+from .widgets import MultiCheckboxesWidget
 from .workflows import STATUSES, get_review_active_statuses
 
 User = get_user_model()
@@ -290,15 +290,6 @@ def get_meta_terms_from_dataset(dataset):
     ).distinct()
 
 
-class Select2CheckboxWidgetMixin(filters.Filter):
-    def __init__(self, *args, **kwargs):
-        label = kwargs.get("label")
-        kwargs.setdefault(
-            "widget", Select2MultiCheckboxesWidget(attrs={"data-placeholder": label})
-        )
-        super().__init__(*args, **kwargs)
-
-
 class MultiCheckboxesMixin(filters.Filter):
     def __init__(self, *args, **kwargs):
         label = kwargs.get("label")
@@ -308,19 +299,7 @@ class MultiCheckboxesMixin(filters.Filter):
         super().__init__(*args, **kwargs)
 
 
-class Select2MultipleChoiceFilter(
-    Select2CheckboxWidgetMixin, filters.MultipleChoiceFilter
-):
-    pass
-
-
 class MultipleChoiceFilter(MultiCheckboxesMixin, filters.MultipleChoiceFilter):
-    pass
-
-
-class Select2ModelMultipleChoiceFilter(
-    Select2MultipleChoiceFilter, filters.ModelMultipleChoiceFilter
-):
     pass
 
 
@@ -330,7 +309,7 @@ class ModelMultipleChoiceFilter(
     pass
 
 
-class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
+class StatusMultipleChoiceFilter(MultipleChoiceFilter):
     def __init__(self, limit_to, *args, **kwargs):
         choices = [
             (slugify(name), name)
@@ -356,25 +335,21 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
 
 
 class SubmissionFilter(filters.FilterSet):
-    fund = Select2ModelMultipleChoiceFilter(
+    fund = ModelMultipleChoiceFilter(
         field_name="page", queryset=get_used_funds, label=_("Funds")
     )
-    round = Select2ModelMultipleChoiceFilter(
-        queryset=get_used_rounds, label=_("Rounds")
-    )
-    lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label=_("Leads"))
-    screening_statuses = Select2ModelMultipleChoiceFilter(
+    round = ModelMultipleChoiceFilter(queryset=get_used_rounds, label=_("Rounds"))
+    lead = ModelMultipleChoiceFilter(queryset=get_round_leads, label=_("Leads"))
+    screening_statuses = ModelMultipleChoiceFilter(
         queryset=get_screening_statuses, label=_("Screening"), null_label=_("No Status")
     )
-    reviewers = Select2ModelMultipleChoiceFilter(
+    reviewers = ModelMultipleChoiceFilter(
         queryset=get_all_reviewers, label=_("Reviewers")
     )
-    category_options = Select2MultipleChoiceFilter(
+    category_options = MultipleChoiceFilter(
         choices=[], label=_("Category"), method="filter_category_options"
     )
-    meta_terms = Select2ModelMultipleChoiceFilter(
-        queryset=get_meta_terms, label=_("Terms")
-    )
+    meta_terms = ModelMultipleChoiceFilter(queryset=get_meta_terms, label=_("Terms"))
 
     class Meta:
         model = ApplicationSubmission
@@ -474,10 +449,8 @@ class SubmissionFilterAndSearch(SubmissionFilter):
 
 
 class SubmissionDashboardFilter(filters.FilterSet):
-    round = Select2ModelMultipleChoiceFilter(
-        queryset=get_used_rounds, label=_("Rounds")
-    )
-    fund = Select2ModelMultipleChoiceFilter(
+    round = ModelMultipleChoiceFilter(queryset=get_used_rounds, label=_("Rounds"))
+    fund = ModelMultipleChoiceFilter(
         field_name="page", queryset=get_used_funds, label=_("Funds")
     )
 
@@ -547,7 +520,7 @@ class RoundsTable(tables.Table):
         return classes_set
 
 
-class ActiveRoundFilter(Select2MultipleChoiceFilter):
+class ActiveRoundFilter(MultipleChoiceFilter):
     def __init__(self, *args, **kwargs):
         super().__init__(
             self,
@@ -567,7 +540,7 @@ class ActiveRoundFilter(Select2MultipleChoiceFilter):
             return qs.inactive()
 
 
-class OpenRoundFilter(Select2MultipleChoiceFilter):
+class OpenRoundFilter(MultipleChoiceFilter):
     def __init__(self, *args, **kwargs):
         super().__init__(
             self,
@@ -590,8 +563,8 @@ class OpenRoundFilter(Select2MultipleChoiceFilter):
 
 
 class RoundsFilter(filters.FilterSet):
-    fund = Select2ModelMultipleChoiceFilter(queryset=get_used_funds, label=_("Funds"))
-    lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label=_("Leads"))
+    fund = ModelMultipleChoiceFilter(queryset=get_used_funds, label=_("Funds"))
+    lead = ModelMultipleChoiceFilter(queryset=get_round_leads, label=_("Leads"))
     active = ActiveRoundFilter(label=_("Active"))
     round_state = OpenRoundFilter(label=_("Open"))
 
@@ -620,17 +593,17 @@ class ReviewerLeaderboardFilter(filters.FilterSet):
         field_name="full_name", lookup_expr="icontains", widget=forms.HiddenInput
     )
 
-    reviewer = Select2ModelMultipleChoiceFilter(
+    reviewer = ModelMultipleChoiceFilter(
         field_name="pk",
         label=_("Reviewers"),
         queryset=get_all_reviewers,
     )
-    funds = Select2ModelMultipleChoiceFilter(
+    funds = ModelMultipleChoiceFilter(
         field_name="applicationsubmission__page",
         label=_("Funds"),
         queryset=get_used_funds,
     )
-    rounds = Select2ModelMultipleChoiceFilter(
+    rounds = ModelMultipleChoiceFilter(
         field_name="applicationsubmission__round",
         label=_("Rounds"),
         queryset=get_used_rounds,
