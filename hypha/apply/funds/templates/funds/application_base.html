@@ -91,4 +91,18 @@
         <script src="{% static 'js/form-group-toggle.js' %}"></script>
     {% endif %}
     <script src="{% static 'js/multi-input-fields.js' %}"></script>
+
+    <script type="module">
+        import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+
+        const selectElements = document.querySelectorAll('.js-choices');
+
+        selectElements.forEach(selectElement => {
+            new Choices(selectElement, {
+                shouldSort: false,
+                allowHTML: true,
+                removeItemButton: true,
+            });
+        });
+    </script>
 {% endblock %}

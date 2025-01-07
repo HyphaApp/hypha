@@ -33,7 +33,7 @@ class MultiCheckboxesWidget(forms.SelectMultiple):
         attrs = kwargs.get("attrs", {})
         # Add the class for Choices.js initialization
         attrs.setdefault("class", "js-choices")
-        attrs.setdefault("data-placeholder", "items")
+        attrs.setdefault("data-placeholder", "")
         kwargs["attrs"] = attrs
         super().__init__(*args, **kwargs)
 
