@@ -268,7 +268,7 @@ def submissions_all(
     if request.GET.get("format") == "csv" and permissions.can_export_submissions(
         request.user
     ):
-        csv_data = export_submissions_to_csv(page.object_list)
+        csv_data = export_submissions_to_csv(qs)
         response = HttpResponse(csv_data.readlines(), content_type="text/csv")
         response["Content-Disposition"] = "attachment; filename=submissions.csv"
         return response
