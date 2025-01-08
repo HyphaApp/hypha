@@ -1,4 +1,4 @@
-# Stand Alone
+# Stand alone
 
 ## Standalone Server/VPS
 

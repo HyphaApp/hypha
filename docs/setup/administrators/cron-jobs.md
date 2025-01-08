@@ -1,8 +1,8 @@
-# Possible Cron Commands
+# Possible cron commands
 
 Hypha comes stock with management commands that can be utilized in tandem with a job scheduler to automate specific tasks
 
-## Account Cleanup
+## Account cleanup
 
 Accounts that haven't been logged into in 5 months can be marked as inactive with the following command:
 
@@ -10,7 +10,7 @@ Accounts that haven't been logged into in 5 months can be marked as inactive wit
 python3 manage.py accounts_cleanup
 ```
 
-## Drafts Cleanup
+## Drafts cleanup
 
 Drafts that haven't been modified in a specified time (in days) can be deleted with the following command:
 

@@ -1,4 +1,4 @@
-# Contribute to Documentation
+# Contribute to documentation
 
 Most of the work on the Hypha User Guide takes place on the [project’s GitHub repository](https://github.com/HyphaApp/hypha/). To get started, check out the list of [open issues](https://github.com/HyphaApp/hypha/issues) and pull requests. By contributing to the Hypha User Guide, you’re expected to follow the [Code of Conduct](./code-of-conduct.md).
 
@@ -19,7 +19,7 @@ This project consists of several distinct documentation types with specific purp
 Provides step-by-step instructions on how to set up a local instance of Hypha.
 > Write technical documentation with a new developer in mind. Create a quickstart doc wherever possible. What is the bare minimum information that a user needs to get started with the feature that you are documenting? Start there. 
 
-### User Guides
+### User guides
 
 Guides are focused on accomplishing a specific task and can assume some level of prerequisite knowledge. There may be multiple approaches to accomplishing a task, and we welcome your input.
 
