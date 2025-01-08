@@ -95,6 +95,10 @@
         &:last-child {
             margin-inline-end: 0;
         }
+
+        &:hover {
+            opacity: 0.8;
+        }
     }
 
     &__icon-link {
@@ -111,6 +115,10 @@
 
         &:last-child {
             margin-inline-end: 0;
+        }
+
+        &:hover {
+            opacity: 0.8;
         }
     }
 

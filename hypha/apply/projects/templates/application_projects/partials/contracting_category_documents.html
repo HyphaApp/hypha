@@ -1,4 +1,4 @@
-{% load i18n contract_tools project_tags heroicons %}
+{% load i18n apply_tags contract_tools project_tags heroicons %}
 
 <li class="docs-block__row">
     <div class="docs-block__row-inner">
@@ -13,13 +13,12 @@
 
     {% if all_contract_document_categories %}
 
-        <div class="w-full ps-9">
-            <p></p>
-            <ul>
+        <div class="w-full ps-7">
+            <ul class="space-y-2 pt-3">
                 {% for document_category in all_contract_document_categories %}
-                    <li class="docs-block__document">
+                    <li class="flex justify-between bg-gray-100 px-3 py-2 rounded">
                         <div class="docs-block__document-inner">
-                            <p class="docs-block__document-info">
+                            <span>
                                 {% if document_category in remaining_contract_document_categories %}
                                     {% trans "Pending " %}
                                     {{ document_category.name|lower }}
@@ -29,12 +28,14 @@
                                 {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
                                 {% if document_category.template %}
                                     {% heroicon_mini "information-circle" class="fill-light-blue inline align-middle" aria_hidden=true %}
-                                    <a class="font-bold border-b-2 border-dashed" href="{% url 'apply:projects:category_template' pk=object.pk type='contract_document' category_pk=document_category.pk %}" target="_blank">{% trans "View template" %}</a>
+                                    <a class="font-semibold border-b-2 border-dashed" href="{% url 'apply:projects:category_template' pk=object.pk type='contract_document' category_pk=document_category.pk %}" target="_blank">{% trans "View template" %}</a>
                                 {% endif %}
-                            </p>
+                            </span>
                             {% if document_category not in remaining_contract_document_categories %}
                                 {% contract_category_latest_file object document_category as latest_file %}
-                                <p class="docs-block__document-info"><b>{{ latest_file.title }}</b> - {{ latest_file.created_at }}</p>
+                                <div class="text-sm">
+                                    <span>{{ latest_file.title|truncatechars_middle:45 }}</span> - <span class="text-fg-muted">{{ latest_file.created_at }}</span>
+                                </div>
                             {% endif %}
                         </div>
                         {% if document_category in remaining_contract_document_categories and can_update_documents %}
@@ -53,7 +54,10 @@
                             {% contract_category_latest_file object document_category as latest_file %}
                             {% if latest_file %}
                                 <div class="docs-block__row-inner">
-                                    <a class="docs-block__icon-link" href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
+                                    <a class="docs-block__icon-link"
+                                       href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=latest_file.pk %}"
+                                       target="_blank"
+                                    >
                                         {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                         {% trans "View" %}
                                     </a>
@@ -92,4 +96,3 @@
         {% trans "Submit contract documents" %}
     </a>
 {% endif %}
-
