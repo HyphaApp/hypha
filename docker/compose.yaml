@@ -25,6 +25,8 @@ services:
             - hypha/static_compiled/
         - action: rebuild
           path: ./pyproject.toml
+        - action: rebuild
+          path: ./package-lock.json
     depends_on:
       - db
   db:
