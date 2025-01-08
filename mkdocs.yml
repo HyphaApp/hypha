@@ -151,6 +151,6 @@ extra:
     tested_ubuntu:
       version: 22.04 LTS
     tested_macos:
-      version: Ventura 13.5.2
+      version: Sequoia 15.2
     tested_fedora:
       version: Workstation 38
