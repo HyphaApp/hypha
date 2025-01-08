@@ -53,6 +53,8 @@ To start the docker containers you use the "up --watch" command. This command yo
 docker compose --file docker/compose.yaml  up --watch
 ```
 
+This will run "npm watch" as well as the "runserver_plus". All code changes to hypha will be synced in to the conatiner thanks to the docker watch functionality.
+
 ### Access the docker environment
 
 Go to [http://hypha.test:9001/](http://hypha.test:9001/)
@@ -70,6 +72,12 @@ docker exec -i -t hypha-django-dev bash
 ```
 
 Here you can issue django commands as normal.
+
+You can also run commands directly, e.g. "uv sync" like this.
+
+```shell
+docker exec hypha-django-dev uv sync
+```
 
 To get a shell on the container that runs Postgres, use this command.
 
