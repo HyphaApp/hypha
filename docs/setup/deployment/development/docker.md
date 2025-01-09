@@ -68,7 +68,7 @@ Press `ctrl+c` in the terminal window.
 To get bash shell on the container that runs the Django app, use this command.
 
 ```shell
-docker exec -i -t hypha-django-dev bash
+docker exec -it hypha-django-dev bash
 ```
 
 Here you can issue django commands as normal.
