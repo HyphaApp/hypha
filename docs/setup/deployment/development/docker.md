@@ -82,7 +82,7 @@ docker exec hypha-django-dev uv sync
 To get a shell on the container that runs Postgres, use this command.
 
 ```shell
-docker exec -i -t hypha-postgres-dev bash
+docker exec -it hypha-postgres-dev bash
 ```
 
 ## Restore a database dump in Docker
