@@ -98,7 +98,7 @@ docker cp public/sandbox_db.dump hypha-postgres-dev:/tmp/
 Get a shell on the container that runs Postgres.
 
 ```shell
-docker exec -i -t hypha-postgres-dev bash
+docker exec -it hypha-postgres-dev bash
 ```
 
 Before being able to work on this database, you have to drop and prevent any other connections to it.
