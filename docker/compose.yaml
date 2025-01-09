@@ -14,6 +14,8 @@ services:
       - "VIRTUAL_ENV=/opt/app/.venv"
     ports:
       - 9001:9001
+    volumes:
+      - ../hypha:/opt/app/hypha
     develop:
       watch:
         - action: sync
@@ -21,8 +23,8 @@ services:
           target: /opt/app
           ignore:
             - .venv/
+            - hypha/
             - node_modules/
-            - hypha/static_compiled/
         - action: rebuild
           path: ./pyproject.toml
         - action: rebuild
