@@ -864,19 +864,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-select2"
-version = "8.2.3"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-    { name = "django-appconf" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/db/f0/3e1969c99e193bc50fec7c6ef301867acc900f3ec5aca96fe5662ff5049b/django_select2-8.2.3.tar.gz", hash = "sha256:1de547c89ee2f005f1d461f76db89b440897939fcea894db8ba756b6f1ad36c1", size = 13255 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/1e/3a/fb6efff46f3d5257aca87737ee3c8ce2c9de059ab5142913b92181d021e1/django_select2-8.2.3-py3-none-any.whl", hash = "sha256:a3bc3f3bfb21d73791be1bc0dd8cc674d11e167129d605847c257942e7a2143b", size = 15401 },
-]
-
-[[package]]
 name = "django-slack"
 version = "5.19.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1334,7 +1321,6 @@ dependencies = [
     { name = "django-pagedown" },
     { name = "django-ratelimit" },
     { name = "django-role-permissions" },
-    { name = "django-select2" },
     { name = "django-slack" },
     { name = "django-storages" },
     { name = "django-stubs" },
@@ -1432,7 +1418,6 @@ requires-dist = [
     { name = "django-pagedown", specifier = "~=2.2.1" },
     { name = "django-ratelimit", specifier = "~=4.1.0" },
     { name = "django-role-permissions", specifier = "~=3.2.0" },
-    { name = "django-select2", specifier = "~=8.2.1" },
     { name = "django-slack", specifier = "~=5.19.0" },
     { name = "django-storages", specifier = "~=1.14.2" },
     { name = "django-stubs", specifier = "~=4.2.0" },
