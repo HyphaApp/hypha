@@ -201,9 +201,6 @@ django==4.2.17 \
 django-anymail==12.0 \
     --hash=sha256:65789c1b0f42915aa0450a4f173f77572d4c552979b748ddd8125af41972ad30 \
     --hash=sha256:de8458d713d0f9776da9ed04dcd3a0161be23e9ecbcb49dcf149219700ecd274
-django-appconf==1.0.6 \
-    --hash=sha256:c3ae442fba1ff7ec830412c5184b17169a7a1e71cf0864a4c3f93cf4c98a1993 \
-    --hash=sha256:cfe87ea827c4ee04b9a70fab90b86d704cb02f2981f89da8423cb0fabf88efbf
 django-basic-auth-ip-whitelist==0.6.0 \
     --hash=sha256:51fbef4d483cfccb15d0c38605fd149fd307314ad8a9308580a6b693b94b3329 \
     --hash=sha256:f866c1822861ab6612efb9adec03b12279a82314783aa721c843acfbea04b0b7
