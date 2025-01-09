@@ -12,7 +12,6 @@
     {% can_update_contracting_documents object user as can_update_documents %}
 
     {% if all_contract_document_categories %}
-
         <div class="w-full ps-7">
             <ul class="space-y-2 pt-3">
                 {% for document_category in all_contract_document_categories %}
@@ -54,10 +53,7 @@
                             {% contract_category_latest_file object document_category as latest_file %}
                             {% if latest_file %}
                                 <div class="docs-block__document-inner__actions">
-                                    <a class="docs-block__icon-link"
-                                       href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=latest_file.pk %}"
-                                       target="_blank"
-                                    >
+                                    <a class="docs-block__icon-link" href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
                                         {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                         {% trans "View" %}
                                     </a>
