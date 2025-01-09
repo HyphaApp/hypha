@@ -7,7 +7,6 @@
     {% if action %}action="{{ action }}"{% endif %}
 >
     {% csrf_token %}
-    {{ form.media.js }}
     {% for hidden in form.hidden_fields %}
         {{ hidden }}
     {% endfor %}

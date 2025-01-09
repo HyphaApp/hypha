@@ -31,7 +31,7 @@
                         {% endif %}
                     {% endfor %}
 
-                {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
+                    {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
                     {% for hidden_field in pf_form.hidden_fields %}
                         {{ hidden_field }}
                     {% endfor %}

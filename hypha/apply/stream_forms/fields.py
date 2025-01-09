@@ -20,7 +20,7 @@ class FileFieldWidgetMixin:
                 ]
             },
             js=[
-                static("file_form/file_form.js"),
+                static("file_form/file_form.min.js"),
                 static("js/file-uploads.js"),
             ],
         )
