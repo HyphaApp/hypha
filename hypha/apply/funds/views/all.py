@@ -24,7 +24,7 @@ from hypha.apply.determinations.utils import (
 )
 from hypha.apply.funds.models.screening import ScreeningStatus
 from hypha.apply.funds.utils import export_submissions_to_csv
-from hypha.apply.funds.workflow import (
+from hypha.apply.funds.workflows import (
     DETERMINATION_OUTCOMES,
     PHASES,
     get_action_mapping,
@@ -46,7 +46,7 @@ from ..models import (
 from ..tables import (
     SubmissionFilter,
 )
-from .utils import check_submissions_same_determination_form
+from ..utils import check_submissions_same_determination_form
 
 User = get_user_model()
 
