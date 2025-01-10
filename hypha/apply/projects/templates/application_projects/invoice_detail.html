@@ -53,8 +53,6 @@
             </div>
         </div>
         <aside class="sidebar">
-            {% block deliverables %}
-            {% endblock %}
             <div hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}" hx-trigger="invoicesUpdated from:body" class="sticky sidebar__inner sidebar__inner--light-blue sidebar__inner--actions top-8" data-testid="sidebar-primary-actions">
                 {% include "application_projects/partials/invoice_detail_actions.html" %}
             </div>

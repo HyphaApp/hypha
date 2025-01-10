@@ -373,9 +373,6 @@ django-web-components==0.2.0 \
 djangorestframework==3.15.2 \
     --hash=sha256:2b8871b062ba1aefc2de01f773875441a961fefbf79f5eed1e32b2f096944b20 \
     --hash=sha256:36fe88cd2d6c6bec23dca9804bab2ba5517a8bb9d8f47ebc68981b56840107ad
-djangorestframework-api-key==3.0.0 \
-    --hash=sha256:b9443cd864e43caebdd330224f9309957b38128267fbc9dc1ba2f3fa1c8414d0 \
-    --hash=sha256:f18cdfa45aaea10fd4daaebffa60481ce4002c9b9ef6c551ef1fc21dadf28845
 djhtml==3.0.7 \
     --hash=sha256:558c905b092a0c8afcbed27dea2f50aa6eb853a658b309e4e0f2bb378bdf6178
 djp==0.3.1 \
@@ -384,9 +381,6 @@ djp==0.3.1 \
 draftjs-exporter==2.1.7 \
     --hash=sha256:5839cbc29d7bce2fb99837a404ca40c3a07313f2a20e2700de7ad6aa9a9a18fb \
     --hash=sha256:d415a9964690a2cddb66a31ef32dd46c277e9b80434b94e39e3043188ed83e33
-drf-nested-routers==0.94.1 \
-    --hash=sha256:2b846385ed95c9f17bf4242db3b264ac826b5af00dda6c737d3fe7cc7bf2c7db \
-    --hash=sha256:3a8ec45a025c0f39188ec1ec415244beb875a6f4db87911a1f5a606d09b68c9f
 dslr==0.4.0 \
     --hash=sha256:32d132628de5767ed3fe2bfdd755374dd76da1fbe3b0b56c4c489ced1365e8f5 \
     --hash=sha256:782fbc58366a14abcaeaa8fc4f88a2bd8a31151fa7159e40016406a56011c036

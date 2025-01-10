@@ -57,8 +57,6 @@ INSTALLED_APPS = [
     "django_otp.plugins.otp_totp",
     "django_otp.plugins.otp_static",
     "two_factor",
-    "rest_framework",
-    "rest_framework_api_key",
     "django_file_form",
     "rolepermissions",
     "hijack",

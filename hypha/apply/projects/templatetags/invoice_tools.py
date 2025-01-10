@@ -63,11 +63,6 @@ def percentage(value, total):
 
 
 @register.simple_tag
-def can_edit_deliverables(invoice, user):
-    return invoice.can_user_edit_deliverables(user)
-
-
-@register.simple_tag
 def user_can_view_invoices(project, user):
     if project.status in [INVOICING_AND_REPORTING, CLOSING, COMPLETE]:
         return True
