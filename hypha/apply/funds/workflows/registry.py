@@ -12,6 +12,7 @@ hypha/apply/funds/views.py and hypha/apply/review/views.py.
 
 import itertools
 from collections import defaultdict
+from typing import List
 
 from .definitions.double_stage import DoubleStageDefinition
 from .definitions.single_stage import SingleStageDefinition
@@ -22,7 +23,7 @@ from .models.phase import Phase
 from .models.workflow import Workflow
 
 
-def phase_data(phases):
+def phase_data(phases: List[dict]) -> dict[str, Phase]:
     """
     Transforms a workflow definition into a dictionary of Phase objects.
 
@@ -30,8 +31,7 @@ def phase_data(phases):
         phases: A list of dictionaries defining the workflow phases and their configurations.
 
     Returns:
-        dict: A dictionary where keys are phase names and values are Phase objects, each initialized
-        with:
+        A dictionary where keys are phase names and values are Phase objects, each initialized with:
             - phase name
             - step number (order in workflow)
             - additional configuration data from the phase definition
