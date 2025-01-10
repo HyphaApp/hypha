@@ -40,7 +40,7 @@ Developed internally by Open Technology Fund (OTF) and community partners, Hypha
   - Two-factor authentication is available to enhance your platform security.
 - **Your data is yours**. Hypha is self-hosted. This means that application data and all associated information is available on your own systems.
 
-View our [Roadmap](https://github.com/HyphaApp/hypha/wiki/Roadmap) for upcoming features and enhancements.
+View our [Roadmap](https://github.com/HyphaApp/hypha/projects?query=is:open) for upcoming features and enhancements.
 
 ## Hypha Community
 
@@ -74,5 +74,5 @@ We are grateful to organizations that have chosen to implement Hypha and appreci
 
 ## Technology
 
-* Built with [Django](https://www.djangoproject.com/), [PostgreSQL](https://www.postgresql.org/) and [Wagtail](https://wagtail.io/)
+* Built with [Django](https://www.djangoproject.com/), [htmx](https://htmx.org), [PostgreSQL](https://www.postgresql.org/) and [Wagtail](https://wagtail.io/)
 * Deploy with [Heroku](./setup/deployment/production/heroku.md), [Docker](./setup/deployment/production/docker.md), or [your own server](./setup/deployment/production/stand-alone.md).
