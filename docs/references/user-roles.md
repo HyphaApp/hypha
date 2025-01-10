@@ -1,6 +1,6 @@
-# User Roles
+# User roles
 
-## User Roles vs. User Groups
+## User roles vs. user groups
 
 User Group refers to every account within this particular group. 
 
@@ -11,12 +11,11 @@ For example, system administrators could adjust the administrative access or per
 
 Hypha comes with the following user roles that has special permissions:
 
-- [User Roles vs. User Groups](#user-roles-vs-user-groups)
 - [Staff](#staff)
 - [Partner](#partner)
 - [Reviewer](#reviewer)
 - [Applicant](#applicant)
-- [Additional Roles](#additional-roles)
+- [Additional roles](#additional-roles)
 
 ## Staff
 
@@ -71,8 +70,6 @@ A **Reviewer** can:
 * Draft and submit Review Forms for application(s)
 * A reviewer's communication could be visible to staff, applicants, and other reviewers, or only with staff. These settings are determined by the implementing organization.
 
-![](/assets/Screenshot 2022-05-23 2.03.00 PM.png>)
-
 
 ## Applicant
 
@@ -89,7 +86,7 @@ An **Applicant** can:
 ![](../assets/staff_applicant_dashboard.png)
 
 
-## Additional Roles
+## Additional roles
 
 New roles can be created and permissions (capabilities) for these roles can be set in Wagtail by the person deploying Hypha for your organization.
 
