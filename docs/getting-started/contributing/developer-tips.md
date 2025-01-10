@@ -55,7 +55,7 @@ uv is used to:
 * Update python packages.
 * Generate the requirements files.
 
-See also [Stand alone development setup](/setup/deployment/development/stand-alone/)
+See also [Stand alone development setup](../../setup/deployment/development/stand-alone.md)
 
 ### Add and remove packages with uv
 
