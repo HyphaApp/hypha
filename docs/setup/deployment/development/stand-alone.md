@@ -1,24 +1,24 @@
-# Stand Alone
+# Stand alone
 
-In order to have get started with developing hypha locally, you'll need these
-minimal setup, the setup may vary slightly for your base operating systems.
+In order to get started with developing hypha locally, you'll need the following minimal setup, the setup may vary slightly for your base operating systems.
 
-## System Dependencies
+## 1. System dependencies
 
 Make sure you have these things installed on your system:
 
 * Git – [Installation Guide](https://git-scm.com/downloads)
-* Python {{ versions.python.version }}
+* uv – [Installation Guide](https://docs.astral.sh/uv/#getting-started)
+* Python {{ versions.python.version }} (installed automatically with uv)
 * Node {{ versions.node.version }}
 * PostgreSQL {{ versions.postgres.version }} (with `libpq-dev` on Linux)
 
 !!! info
-    On Linux install them with your normal package manager. On macOS [Homebrew] is an excellent option. For Windows [Chocolatey](https://chocolatey.org/) seems popular but we have no experience with Windows. 
+    On Linux install them with your normal package manager. On macOS [Homebrew](https://brew.sh/) is an excellent option. For Windows [Chocolatey](https://chocolatey.org/) seems popular but we have no experience with Windows.
     
-    This project ships with `.python-version` and `.nvmrc` to support **[pyenv]** and **[nvm]**. You can use it to setup the correct versions of Python and Node required for this project.
+    This project ships with `.python-version` and `.nvmrc` to support **[uv](https://docs.astral.sh/uv/)** and **[nvm](https://github.com/nvm-sh/nvm#readme)**. You can use it to setup the correct versions of Python and Node required for this project.
 
 
-### Basic installation steps
+### Installing PostgreSQL
 
 <!-- NOTE! Before updating the install steps here, ensure they are reflected in the production install as well -->
 
@@ -26,26 +26,22 @@ Make sure you have these things installed on your system:
 
     This process was tested on **Ubuntu {{ versions.tested_ubuntu.version }}**. It should work on any Debian-based system.
 
-    Install Python pip, venv & PostgreSQL:
+    Install PostgreSQL:
 
     ```shell
-    sudo apt install -y \
-        python3-pip python3-venv \
-        postgresql postgresql-contrib {{ versions.postgres.packages.debian }}
+    sudo apt install -y postgresql postgresql-contrib {{ versions.postgres.packages.debian }}
     ```
 
 === "Fedora"
 
     This process was tested on **Fedora {{ versions.tested_fedora.version }}**. It should work on RHEL as well.
 
-    Install Python pip, venv & PostgreSQL:
+    Install PostgreSQL:
 
     ```shell
     sudo dnf module -y reset postgresql
     sudo dnf module -y enable postgresql:{{ versions.postgres.version }}
-    sudo dnf install -y \
-        python3-pip gcc python3-devel \
-        {{ versions.postgres.packages.fedora }} postgresql-contrib {{ versions.postgres_devel.packages.fedora }}
+    sudo dnf install -y {{ versions.postgres.packages.fedora }} postgresql-contrib {{ versions.postgres_devel.packages.fedora }}
     sudo /usr/bin/postgresql-setup --initdb
     ```
 
@@ -54,17 +50,19 @@ Make sure you have these things installed on your system:
 
     This process was tested on **macOS {{ versions.tested_macos.version }}**.
 
-    Install Python pip, venv & PostgreSQL:
+    Install PostgreSQL:
 
     ```shell
-    brew install {{ versions.python.packages.macos }} 
     brew install {{ versions.postgres.packages.macos }}
     brew services start {{ versions.postgres.packages.macos }}
     ```
 
 ----
 
-## Get the code
+
+## 2. Get the code and dependencies
+
+### Clone the repo with git
 
 Use `git` to fetch the code, this will create a `hypha/` directory.
 
@@ -86,6 +84,22 @@ NOTE: In production media is stored on AWS S3 but for local development you need
     Everything from now on will happen inside the `hypha/` directory.
 
 
+### Set up the python virtual environment and install dependencies with uv
+
+```shell
+uv sync
+```
+
+This vill create a `.venv` directory (if it does not exist) and install all python dependencies there.
+
+All `uv …` commands will automatically use this virtual envionment.
+
+If you want other commands to use it you need to run this command to activate it.
+
+```shell
+source .venv/bin/activate
+```
+
 ### Installing Node Version Manager
 
 NodeJS versions have potential to change. To allow for ease of upgrading, it is recommended to use [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm).
@@ -93,15 +107,23 @@ NodeJS versions have potential to change. To allow for ease of upgrading, it is 
 The following commands will install nvm and proceed to setup Node based off of the content of `.nvmrc`.
 
 ```shell
-wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+```
+
+See [Installing and Updating Node Version Manager](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating)
+
+```shell
 nvm install     # Install the Node version in .nvmrc
 nvm use         # Use the Node version in .nvmrc
 ```
 
-## Compile JS & SCSS
+### Install all node packages and compile JS & SCSS
+
+Install node dependencies.
+
+```shell
+npm install
+```
 
 Build all JS/CSS assets for development:
 
@@ -114,7 +136,7 @@ npm run dev:build
     file for a complete list of commands.
 
 
-## Add/Update Configuration
+## 3. Add and update Hypha configuration
 
 Hypha supports configuration via either a `local.py` or a `.env` file:
 
@@ -170,7 +192,7 @@ Hypha supports configuration via either a `local.py` or a `.env` file:
     
     Open and take a look at the `local.py`, it already has some sensible defaults and you can use this to override all the settings.
 
-## Setup Database and Initial Data
+## 4. Setup the database and add initial data
 
 Create an empty database:
 
@@ -195,22 +217,22 @@ There are two ways to about it, you can either load demo data from  `/public/san
     It's not always completely up to date so run:
     
     ```shell
-    python3 manage.py migrate
-    python3 manage.py sync_roles
+    uv run python manage.py migrate
+    uv run python manage.py sync_roles
     ```
 
 === "From Scratch"
     Create the cache tables.
 
     ```text
-    python3 manage.py createcachetable
+    uv run python manage.py createcachetable
     ```
 
     Run all migrations to set up the database tables.
 
     ```text
-    python3 manage.py migrate
-    python3 manage.py sync_roles
+    uv run python manage.py migrate
+    uv run python manage.py sync_roles
     ```
 
 !!! tip "Tips"
@@ -225,7 +247,7 @@ There are two ways to about it, you can either load demo data from  `/public/san
         createuser [your-account-name]
         ```
 
-## Setup Sites
+## 5. Setup site
 
 You will need two domain to run this app, used to serve the public and apply site on different domains
 
@@ -247,59 +269,34 @@ Here we are setting the public site be served at http://hypha.test:9001.
      The "[.test](https://en.wikipedia.org/wiki/.test)" TLD is safe to use, it's reserved for testing purposes. Feel free to use another name but then remember to use it in all the commands below.
 
 
-## Create Login credentials
+## 6. Create login credentials
 
 ```shell
-python3 manage.py createsuperuser
+uv run python manage.py createsuperuser
 ```
 
-## Run Development Server
+## 7. Run development server
+
+You can use `make serve` command to run Django Development Server, watch and compile frontend changes and preview docs all at once.
 
 ```shell
-python3 manage.py runserver 0.0.0.0:9001 --settings=hypha.settings.dev
+make serve
 ```
 
-Alternatively, you can also use `make serve-django`
+Now you should be able to access the site.
 
+Hypha development server: [http://hypha.test:9001/](http://hypha.test:9001/)
 
-Now you should be able to access the site:
+### Documentation preview
 
-2. Apply Site: [http://hypha.test:9001/](http://hypha.test:9001/)
+A live preview of documentation is available at this address.
 
+MkDocs development server: [http://localhost:9100/](http://localhost:9100/)
 
-## Documentation
-
-To live preview of documentation, while you writing it.
-
-Activate your virtual environment and install dependencies:
-
-```shell
-source venv/bin/activate
-python3 -m pip install --no-deps -r requirements/dev.txt
-```
-
-If utilizing application machine translations, install the required dependencies:
-
-```shell
-python3 -m pip install -r requirements/translate.txt
-```
-
-Run:
-```shell
-make serve-docs
-```
-
-Open http://localhost:9100/ to preview the documentation site.
-
-
-!!! tip
-    You can use `make serve` command to run Django Development Server, watch and compile frontend changes and preview docs all at once.
-
-
-## Running tests
+## 8. Running tests
 
 Hypha uses `ruff` and [py.test](https://pytest-django.readthedocs.io/en/latest/) test runner and uses `hypha/settings/testing.py` for test settings.
-For frontend code, stylelint and eslint is used. 
+For frontend code, stylelint and biome is used.
 
 Run the test with:
 
@@ -313,14 +310,10 @@ For lint the code and not run the full test suite you can use:
 make lint
 ```
 
-## Helpful URLs
+## 9. Helpful URLs
 
 * The Apply dashboard: [http://hypha.test:9001/dashboard/](http://hypha.test:9001/dashboard/)
 * The Apply Wagtail admin: [http://hypha.test:9001/admin/](http://hypha.test:9001/admin/)
 * The Django Administration panel: [http://hypha.test:9001/django-admin/](http://hypha.test:9001/django-admin/)
 
 Use the email address and password you set in the `createsuperuser` step above to login.
-
-[nvm]: https://github.com/nvm-sh/nvm#readme
-[pyenv]: https://github.com/pyenv/pyenv#readme
-[Homebrew]: https://brew.sh/

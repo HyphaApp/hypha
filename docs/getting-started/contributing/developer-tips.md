@@ -1,4 +1,4 @@
-# Hypha developer tips
+# Developer tips
 
 ## Git configuration and commands
 
@@ -24,11 +24,71 @@ To update the feature branch on GitHub you then need to do a forced push. Instea
 git push --force-with-lease
 ```
 
+## Coding style and linting in pre-commit hook
+
+Hypha's coding style is enforced by ruff, stylelint and biome.
+
+Install pre-commit to auto-format the code before each commit:
+
+```shell
+pre-commit install
+```
+
+If you want to check all files without committing you can run:
+
+```shell
+pre-commit run --all-files
+```
+
+The pre-commit hook also updates the requirements files for you, see next section about uv.
+
+
+## Make best use of uv
+
+For development [uv](https://docs.astral.sh/uv/) is a Hypha requirement. It is fast and easy to use.
+
+uv is used to:
+
+* Setup the virtual environment
+* Install python dependencies.
+* Add and remove python packages.
+* Update python packages.
+* Generate the requirements files.
+
+See also [Stand alone development setup](/setup/deployment/development/stand-alone/)
+
+### Add and remove packages with uv
+
+All python requirements are listed in `pyproject.toml`.
+
+To add a package:
+
+```shell
+uv add django-htmx
+```
+
+To remove a package:
+
+```shell
+uv remove django-select2
+```
+
+After adding or removing a packages run this to update `uv.lock`.
+
+```shell
+uv sync
+```
+
+When you attempt to commit the pre-commit hook will update the requirements files for you.
+
+The requirements files exist so you do not need uv for deployment.
+
+
 ## Postgres snapshots/restore
 
 Hypha dev requirements contain the [dslr](https://github.com/mixxorz/DSLR) tool. Use this for fast snapshots and restores of the postgres database.
 
-Perfekt when testing migrations and other times when you need to reset the database or switch between databases.
+Perfect when testing migrations and other times when you need to reset the database or switch between databases.
 
 Take a snapshot, you can have as many as you like.
 
@@ -56,23 +116,21 @@ dslr list
 
 ## Commands in Makefile
 
-This is the one stop place to find commands for runiing test, build resources and docs, linting and code style checks/fixes.
+This is the one stop place to find commands for running test, build resources and docs, linting and code style checks/fixes.
 
-## Coding style and linting in pre-commit hook
-
-Hypha's coding style is enforced by ruff and prettier and comes pre-configured with prettier.
-
-Install pre-commit to auto-format the code before each commit:
+The one command you will be running the most is:
 
 ```shell
-pre-commit install
+make serve
 ```
+
+This command runs `npm watch` to keep the front end updates and runs development servers for both Hypha app and the Hypha docs.
 
 ## Editor extensions
 
-If you editor does not a Language Server Protocol (LSP) preinstalled make sure to add the plugin for it. Then add "LSP-ruff" for a fast Python linter and code transformation tool.
+If you editor does not have a Language Server Protocol (LSP) preinstalled make sure to add the plugin for it. Then add "LSP-ruff" for a fast Python linter and code transformation tool.
 
-Your editor most likely have plugins for the other languages Hypha uses as well, css/scss, yaml and html. We recoment to install them as well.
+Your editor most likely have plugins for the other languages Hypha uses as well, css/scss, yaml and html. We recommend to install them as well.
 
 ## Shell configuration
 
