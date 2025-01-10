@@ -21,7 +21,6 @@ Then so the following steps for each environment.
 
 Set these settings as a minimum:
 
-* `API_BASE_URL`
 * `BASIC_AUTH_ENABLED`
 * `BASIC_AUTH_LOGIN`
 * `BASIC_AUTH_PASSWORD`
