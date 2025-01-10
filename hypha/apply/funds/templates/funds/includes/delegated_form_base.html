@@ -7,8 +7,6 @@
     {% if action %}action="{{ action }}"{% endif %}
 >
     {% csrf_token %}
-
-    {{ form.media }}
     {% for hidden in form.hidden_fields %}
         {{ hidden }}
     {% endfor %}
@@ -42,5 +40,4 @@
             {{ value }}
         </button>
     </div>
-
 </form>

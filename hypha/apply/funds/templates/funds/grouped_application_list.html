@@ -1,10 +1,6 @@
 {% extends "base-apply.html" %}
 {% load i18n static %}
 
-{% block extra_css %}
-    {{ filter.form.media.css }}
-{% endblock %}
-
 {% block content %}
 
     {% adminbar %}
@@ -12,6 +8,10 @@
     {% endadminbar %}
 
     <div id="grouped-applications-list"></div>
+{% endblock %}
+
+{% block extra_css %}
+    {{ filter.form.media.css }}
 {% endblock %}
 
 {% block extra_js %}

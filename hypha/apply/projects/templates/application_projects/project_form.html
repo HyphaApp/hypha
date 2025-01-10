@@ -16,7 +16,6 @@
         <div class="wrapper--sidebar--inner">
             <form class="form" method="post">
                 {% csrf_token %}
-
                 {% for field in form %}
                     {% if field.field %}
                         {% include "forms/includes/field.html" %}
@@ -36,12 +35,4 @@
             </form>
         </div>
     </div>
-{% endblock %}
-
-{% block extra_css %}
-    {{ form.media.css }}
-{% endblock %}
-
-{% block extra_js %}
-    {{ form.media.js }}
 {% endblock %}

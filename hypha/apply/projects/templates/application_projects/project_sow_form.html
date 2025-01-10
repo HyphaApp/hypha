@@ -18,7 +18,6 @@
             <div class="wrapper--sidebar--inner">
                 <form class="form application-form" action="" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ sow_form.media }}
                     {% for field in sow_form %}
                         {% if field.field %}
                             {% if field.field.multi_input_field %}
@@ -65,11 +64,13 @@
 
 {% endblock %}
 
+{% block extra_css %}
+    {{ sow_form.media.css }}
+{% endblock %}
+
 {% block extra_js %}
-    <script src="{% static 'js/file-uploads.js' %}"></script>
-    <script src="{% static 'js/tinymce-word-count.js' %}"></script>
+    {{ sow_form.media.js }}
     <script src="{% static 'js/multi-input-fields.js' %}"></script>
-    <script src="{% static 'js/application-form-links-new-window.js' %}"></script>
     {% if not show_all_group_fields %}
         <script src="{% static 'js/form-group-toggle.js' %}"></script>
     {% endif %}

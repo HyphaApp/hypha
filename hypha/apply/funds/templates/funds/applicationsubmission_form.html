@@ -14,8 +14,6 @@
         <div class="wrapper--sidebar--inner">
             <form class="form application-form" action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ form.media }}
-
                 {% for field in form %}
                     {% if field.field %}
                         {% if field.field.multi_input_field %}
@@ -28,7 +26,7 @@
                     {% endif %}
                 {% endfor %}
 
-            {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
+                {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
                 {% for hidden_field in form.hidden_fields %}
                     {{ hidden_field }}
                 {% endfor %}
@@ -40,16 +38,16 @@
                     {% endfor %}
                 </div>
             </form>
+            <p class="wrapper--error message-no-js js-hidden">{% trans "You must have Javascript enabled to use this form." %}</p>
         </div>
     </div>
 
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/tinymce-word-count.js' %}"></script>
+    <script src="{% static 'js/application-form.js' %}"></script>
     <script src="{% static 'js/multi-input-fields.js' %}"></script>
     <script src="{% static 'js/submission-form-copy.js' %}"></script>
-    <script src="{% static 'js/application-form-links-new-window.js' %}"></script>
     {% if not show_all_group_fields %}
         <script src="{% static 'js/form-group-toggle.js' %}"></script>
     {% endif %}

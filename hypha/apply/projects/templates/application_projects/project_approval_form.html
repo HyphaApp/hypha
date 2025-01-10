@@ -19,7 +19,6 @@
             <div class="wrapper--sidebar--inner">
                 <form class="form application-form" action="" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ pf_form.media }}
                     {% for field in pf_form %}
                         {% if field.field %}
                             {% if field.field.multi_input_field %}
@@ -32,7 +31,7 @@
                         {% endif %}
                     {% endfor %}
 
-                {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
+                    {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
                     {% for hidden_field in pf_form.hidden_fields %}
                         {{ hidden_field }}
                     {% endfor %}
@@ -69,10 +68,13 @@
 
 {% endblock %}
 
+{% block extra_css %}
+    {{ pf_form.media.css }}
+{% endblock %}
+
 {% block extra_js %}
-    <script src="{% static 'js/tinymce-word-count.js' %}"></script>
+    {{ pf_form.media.js }}
     <script src="{% static 'js/multi-input-fields.js' %}"></script>
-    <script src="{% static 'js/application-form-links-new-window.js' %}"></script>
     {% if not show_all_group_fields %}
         <script src="{% static 'js/form-group-toggle.js' %}"></script>
     {% endif %}

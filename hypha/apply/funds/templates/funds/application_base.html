@@ -39,9 +39,7 @@
                     </a>
                 {% endif %}
                 <form class="form application-form" action="/test500/" method="POST" enctype="multipart/form-data">
-                    {{ form.media }}
                     {% csrf_token %}
-
                     {% for field in form %}
                         {% if field.field %}
                             {% if field.field.multi_input_field %}
@@ -62,7 +60,7 @@
                         {% endif %}
                     {% endfor %}
 
-                {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
+                    {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
                     {% for hidden_field in form.hidden_fields %}
                         {{ hidden_field }}
                     {% endfor %}
@@ -88,9 +86,7 @@
 
 {% block extra_js %}
     <script src="{% static 'js/application-form.js' %}"></script>
-    <script src="{% static 'js/tinymce-word-count.js' %}"></script>
     <script src="{% static 'js/submission-form-copy.js' %}"></script>
-    <script src="{% static 'js/application-form-links-new-window.js' %}"></script>
     {% if not show_all_group_fields %}
         <script src="{% static 'js/form-group-toggle.js' %}"></script>
     {% endif %}

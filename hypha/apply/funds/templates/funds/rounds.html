@@ -4,13 +4,7 @@
 
 {% block title %}{% trans "Rounds" %}{% endblock %}
 
-{% block extra_css %}
-    {{ filter.form.media.css }}
-{% endblock %}
-
-
 {% block content %}
-
     {% adminbar %}
         {% slot header %}{% trans "Rounds" %}{% endslot %}
         {% slot sub_heading %}{% trans "Explore current and past rounds" %}{% endslot %}
@@ -20,7 +14,10 @@
         {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term can_export=can_export %}
         {% render_table table %}
     </div>
+{% endblock %}
 
+{% block extra_css %}
+    {{ filter.form.media.css }}
 {% endblock %}
 
 {% block extra_js %}
