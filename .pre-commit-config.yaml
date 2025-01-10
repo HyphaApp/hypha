@@ -19,7 +19,8 @@ repos:
         args: ["--frozen", "--group", "dev", "-o", "requirements/dev.txt"]
       - id: uv-export
         name: uv-export requirements/docs.txt
-        args: ["--frozen", "--only-group", "docs", "-o", "requirements/docs.txt"]
+        args:
+          ["--frozen", "--only-group", "docs", "-o", "requirements/docs.txt"]
 
       # This is disabled because this doesn't export --find-links. The requirements-translate is maintained manually.
       # - id: uv-export
@@ -48,10 +49,21 @@ repos:
       - id: djhtml
         files: .*/templates/.*\.html$
 
+  - repo: local
+    hooks:
+      - id: rustywind
+        name: rustywind Tailwind CSS class linter
+        language: node
+        additional_dependencies:
+          - rustywind@latest
+        entry: rustywind
+        args: [--write]
+        types_or: [html]
+
   - repo: https://github.com/biomejs/pre-commit
     rev: "v0.6.1"
     hooks:
-    -   id: biome-check
+      - id: biome-check
         additional_dependencies: ["@biomejs/biome@1.9.4"]
 
   - repo: https://github.com/awebdeveloper/pre-commit-stylelint

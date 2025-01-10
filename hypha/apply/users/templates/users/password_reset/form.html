@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    <section class="my-5 py-4">
+    <section class="py-4 my-5">
         <div class="wrapper">
             {% if form.non_field_errors %}
                 <div class="messages">
@@ -18,7 +18,7 @@
                 </div>
             {% endif %}
 
-            <form class="form form--with-p-tags pt-4" method="post">
+            <form class="pt-4 form form--with-p-tags" method="post">
                 <h2 class="text-2xl">{% trans "Forgot password?" %}</h2>
                 <p class="form__help">{% trans "Please enter your user account's email address and we will send you a password reset link." %}</p>
                 {% csrf_token %}

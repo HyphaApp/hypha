@@ -6,7 +6,7 @@
         <li><span class="font-semibold text-fg-muted">{{ action.grouper }}</span>
             <ul class='pt-1 divide-y'>
                 {% for reminder in action.list %}
-                    <li class="flex justify-between gap-4 py-1">
+                    <li class="flex gap-4 justify-between py-1">
                         <span class="{% if reminder.is_expired %}text-red-600{% endif %}">
                             <span class="font-medium line-clamp-2">{{ reminder.title|default:"untitled reminder" }}</span>
                             <datetime class="text-xs text-fg-muted" datetime="{{ reminder.time|date:"c" }}">

@@ -3,12 +3,12 @@
 
 <div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
     <div class="docs-block__header" id="project-documents-section" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" role="button" aria-label="Toggle Project documents visibility" aria-controls="project-documents-elements" {% endif %}>
-        <div class="flex justify-between gap-2 w-full items-center">
-            <h2 class="text-lg font-semibold m-0">
+        <div class="flex gap-2 justify-between items-center w-full">
+            <h2 class="m-0 text-lg font-semibold">
                 {% trans "Project documents" %}
             </h2>
 
-            <div class="flex gap-2 flex-wrap">
+            <div class="flex flex-wrap gap-2">
                 {% user_can_send_for_approval object user as can_send_to_approve %}
                 {% if can_send_to_approve %}
                     <a class="button button--project-action"
@@ -64,7 +64,7 @@
                     </a>
                 {% endif %}
                 {% if collapsible_header %}
-                    <button class="align-middle ms-1 transform transition-transform" x-bind:class="collapsed ? '': '-rotate-90' ">
+                    <button class="align-middle transition-transform transform ms-1" x-bind:class="collapsed ? '': '-rotate-90' ">
                         {% heroicon_outline 'chevron-left' size=20 stroke_width=2 aria_hidden=true %}
                         <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">{% trans "expand" %}</span>
                     </button>
@@ -89,7 +89,7 @@
                     {% if can_edit_pfs %}
                         <a class="{% if not object.user_has_updated_pf_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit_pf' pk=object.pk %}">
                             {% if object.user_has_updated_pf_details %}
-                                {% heroicon_micro "pencil-square" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                                {% heroicon_micro "pencil-square" class="inline w-4 h-4 me-1" aria_hidden=true %}
                                 {% trans "Edit" %}
                             {% else %}
                                 {% trans "Fill in" %}
@@ -98,7 +98,7 @@
                     {% endif %}
                     {% if object.user_has_updated_pf_details and not user.is_applicant %}
                         <a class="docs-block__icon-link" href="{% url 'apply:projects:approval' pk=project.pk %}">
-                            {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                            {% heroicon_micro "eye" class="inline w-4 h-4 me-1" aria_hidden=true %}
                             {% trans "View" %}
                         </a>
                     {% endif %}
@@ -119,7 +119,7 @@
                                 {% if can_edit_pfs %}
                                     <a class="{% if not object.user_has_updated_sow_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit_sow' pk=object.pk %}">
                                         {% if object.user_has_updated_sow_details %}
-                                            {% heroicon_micro "pencil-square" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                                            {% heroicon_micro "pencil-square" class="inline w-4 h-4 me-1" aria_hidden=true %}
                                             {% trans "Edit" %}
                                         {% else %}
                                             {% trans "Fill in" %}
@@ -128,7 +128,7 @@
                                 {% endif %}
                                 {% if object.user_has_updated_sow_details %}
                                     <a class="docs-block__icon-link" href="{% url 'apply:projects:sow' pk=project.pk %}">
-                                        {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                                        {% heroicon_micro "eye" class="inline w-4 h-4 me-1" aria_hidden=true %}
                                         {% trans "View" %}
                                     </a>
                                 {% endif %}
@@ -147,10 +147,10 @@
                     <p class="docs-block__title">{% trans "Supporting documents" %}</p>
 
                     <div class="animate-pulse min-h-30">
-                        <div class="w-full mb-3 bg-gray-200 h-9"></div>
-                        <div class="w-full h-6 mb-1 bg-gray-200"></div>
-                        <div class="w-full h-1 mb-3 bg-gray-200"></div>
-                        <div class="w-20 h-6 mb-3 bg-gray-200"></div>
+                        <div class="mb-3 w-full h-9 bg-gray-200"></div>
+                        <div class="mb-1 w-full h-6 bg-gray-200"></div>
+                        <div class="mb-3 w-full h-1 bg-gray-200"></div>
+                        <div class="mb-3 w-20 h-6 bg-gray-200"></div>
                     </div>
                 </div>
             {% endif %}

@@ -2,10 +2,10 @@
 {% load show_applicant_identity from workflow_tags %}
 
 <tr
-    class="relative px-2 py-1 border hover:bg-gray-100"
+    class="relative py-1 px-2 border hover:bg-gray-100"
 >
     {% if enable_selection %}
-        <td class="hidden p-2 md:table-cell text-center align-top">
+        <td class="hidden p-2 text-center align-top md:table-cell">
             <!-- select -->
             <label class="py-2.5">
                 <input id="submission-{{ s.id }}"
@@ -13,7 +13,7 @@
                        value="{{ s.id }}"
                        x-model="selectedSubmissions"
                        name="selectedSubmissionIds"
-                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                       class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
                 >
                 <span class="sr-only">{% trans "Select submission" %} #{{ s.id }}</span>
             </label>
@@ -24,16 +24,16 @@
         <div class="py-1" tabindex="-1">
             {% if s.is_archive %}
                 {% trans "Archived Submission" as text_archived %}
-                {% heroicon_outline "lock-closed" aria_hidden="true" size=21 class="inline stroke-red-800 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content=text_archived data_tippy_delay=200 %}
+                {% heroicon_outline "lock-closed" aria_hidden="true" size=21 class="inline -mt-1 align-text-bottom stroke-red-800 stroke-1.5" data_tippy_placement='right' data_tippy_content=text_archived data_tippy_delay=200 %}
                 <span class="sr-only">{% trans "Archived" %}</span>
             {% elif s.get_current_screening_status %}
                 {% if s.get_yes_screening_status %}
-                    {% heroicon_mini "hand-thumb-up" aria_hidden="true" size=21 class="inline fill-green-400 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content=s.get_current_screening_status data_tippy_delay=200 %}
+                    {% heroicon_mini "hand-thumb-up" aria_hidden="true" size=21 class="inline -mt-1 align-text-bottom fill-green-400 stroke-1.5" data_tippy_placement='right' data_tippy_content=s.get_current_screening_status data_tippy_delay=200 %}
                 {% else %}
-                    {% heroicon_mini "hand-thumb-down" aria_hidden="true" size=21 class="inline fill-red-400 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content=s.get_current_screening_status data_tippy_delay=200 %}
+                    {% heroicon_mini "hand-thumb-down" aria_hidden="true" size=21 class="inline -mt-1 align-text-bottom fill-red-400 stroke-1.5" data_tippy_placement='right' data_tippy_content=s.get_current_screening_status data_tippy_delay=200 %}
                 {% endif %}
             {% else %}
-                {% heroicon_outline "question-mark-circle" aria_hidden="true" size=21 class="inline stroke-slate-300 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content="Awaiting Screening" data_tippy_delay=200 %}
+                {% heroicon_outline "question-mark-circle" aria_hidden="true" size=21 class="inline -mt-1 align-text-bottom stroke-slate-300 stroke-1.5" data_tippy_placement='right' data_tippy_content="Awaiting Screening" data_tippy_delay=200 %}
             {% endif %}
         </div>
     </td>
@@ -43,7 +43,7 @@
         <a
             title="{{ s.form_data.title }}"
             href="{% url "funds:submissions:detail" s.id %}?ref=table-view"
-            class="font-semibold text-base text-[#404041] hover:text-blue-600 transition-colors break-words line-clamp-2"
+            class="text-base font-semibold break-words transition-colors hover:text-blue-600 text-[#404041] line-clamp-2"
         >{{ s.form_data.title }}</a>
         <div class="text-xs text-fg-muted">
             #{{ s.public_id|default:s.id }}
@@ -71,7 +71,7 @@
                 hx-target="#main"
                 hx-push-url="true"
                 hx-swap="outerHTML"
-                class="text-inherit hover:underline"
+                class="hover:underline text-inherit"
             >
                 {{ s.user }}
             </a>
@@ -83,7 +83,7 @@
 
     {% if "round" not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
         <!-- fund -->
-        <td class="p-2 text-sm align-top text-center">
+        <td class="p-2 text-sm text-center align-top">
             {% if s.round %}
                 <a
                     href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" round=s.round.id %}"
@@ -91,7 +91,7 @@
                     hx-target="#main"
                     hx-push-url="true"
                     hx-swap="outerHTML"
-                    class="text-inherit hover:underline"
+                    class="hover:underline text-inherit"
                 >{{ s.round }}</a>
                 {% if 'fund' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
                     <span class="text-xs text-fg-muted"> / {{ s.page }}</span>
@@ -103,7 +103,7 @@
                     hx-target="#main"
                     hx-push-url="true"
                     hx-swap="outerHTML"
-                    class="text-inherit hover:underline"
+                    class="hover:underline text-inherit"
                 >
                     {{ s.page }}
                 </a>
@@ -119,7 +119,7 @@
                 hx-target="#main"
                 hx-push-url="true"
                 hx-swap="outerHTML"
-                class="text-inherit hover:underline"
+                class="hover:underline text-inherit"
             >{{ s.lead }}</a>
         </td>
     {% endif %}
@@ -129,7 +129,7 @@
                 {% comment %} Reviews {% endcomment %}
                 <span class="inline-block w-16">
                     <div
-                        class="relative items-center w-full gap-1 text-sm group"
+                        class="relative gap-1 items-center w-full text-sm group"
                         hx-trigger="mouseover once"
                         hx-get="{% url "funds:submissions:partial-reviews-card" s.id %}"
                         hx-target="find .review-hovercard"
@@ -142,14 +142,14 @@
                         </span>
 
                         <div
-                            class="absolute z-10 hidden w-64 p-2 bg-white border rounded shadow-lg review-hovercard bottom-6 -end-1/2 md:-end-4 group-hover:block"
+                            class="hidden absolute bottom-6 z-10 p-2 w-64 bg-white rounded border shadow-lg group-hover:block review-hovercard -end-1/2 md:-end-4"
                         >
                                 {% comment %} pre-loading animation {% endcomment %}
                             <div class="animate-pulse min-h-30">
-                                <div class="w-full mb-3 bg-gray-200 h-9"></div>
-                                <div class="w-full h-6 mb-1 bg-gray-200"></div>
-                                <div class="w-full h-1 mb-3 bg-gray-200"></div>
-                                <div class="w-1/2 h-6 mb-3 bg-gray-200"></div>
+                                <div class="mb-3 w-full h-9 bg-gray-200"></div>
+                                <div class="mb-1 w-full h-6 bg-gray-200"></div>
+                                <div class="mb-3 w-full h-1 bg-gray-200"></div>
+                                <div class="mb-3 w-1/2 h-6 bg-gray-200"></div>
                             </div>
                         </div>
                     </div>

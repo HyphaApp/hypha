@@ -15,13 +15,13 @@
 
         {% if user.can_access_dashboard %}
             <a href="{% url 'dashboard:dashboard' %}" class="button button--primary" hx-boost='true'>
-                {% heroicon_mini "squares-2x2" size=20 class="mr-1 inline align-text-bottom" %}
+                {% heroicon_mini "squares-2x2" size=20 class="inline mr-1 align-text-bottom" %}
                 {% trans "Go to my dashboard" %}
             </a>
         {% endif %}
     {% endadminbar %}
 
-    <div class="wrapper wrapper--inner-space-medium max-w-2xl  two-factor">
+    <div class="max-w-2xl wrapper wrapper--inner-space-medium two-factor">
         {% block content_inner %}{% endblock %}
     </div>
 {% endblock %}

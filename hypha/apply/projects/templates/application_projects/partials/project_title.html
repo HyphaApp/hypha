@@ -2,11 +2,11 @@
 
 {{ object.title }}
 {% if request.user.is_apply_staff %}
-    <a class="link is-active link--transparent hover:opacity-70 transition-opacity"
+    <a class="transition-opacity hover:opacity-70 link is-active link--transparent"
        href="{% url 'apply:projects:project_title_update' object.id %}"
        hx-get="{% url 'apply:projects:project_title_update' object.id %}"
        hx-target="#htmx-modal"
     >
-        {% heroicon_solid "pencil-square" class="inline ms-1 mt-2" aria_hidden=true %}
+        {% heroicon_solid "pencil-square" class="inline mt-2 ms-1" aria_hidden=true %}
     </a>
 {% endif %}

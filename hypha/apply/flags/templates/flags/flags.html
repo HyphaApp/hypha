@@ -1,5 +1,5 @@
 {% load i18n flag_tags heroicons %}
-<form class="wrapper wrapper--sidebar-buttons flex gap-4" id="submission-flags">
+<form class="flex gap-4 wrapper wrapper--sidebar-buttons" id="submission-flags">
     {% with submission|flagged_by:user as is_flagged %}
         <button
             class="button button--secondary flex items-center gap-4 !px-2 !py-3 w-full"

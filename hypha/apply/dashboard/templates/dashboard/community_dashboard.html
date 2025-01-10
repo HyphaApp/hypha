@@ -11,8 +11,8 @@
         {% slot sub_heading %}{% trans "An overview of active and past submissions" %}{% endslot %}
 
         <div class="wrapper wrapper--cta-box">
-            <h3 class="text-xl mb-0">{% trans "Submit a new application" %}</h3>
-            <p class="mt-0 mb-4 text-fg-muted text-sm">{% trans "Apply now for our open rounds" %}</p>
+            <h3 class="mb-0 text-xl">{% trans "Submit a new application" %}</h3>
+            <p class="mt-0 mb-4 text-sm text-fg-muted">{% trans "Apply now for our open rounds" %}</p>
             <a class="button button--primary" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
         </div>
     {% endadminbar %}
@@ -20,8 +20,8 @@
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
         <div class="wrapper wrapper--bottom-space">
-            <h2 class="text-xl mb-2">
-                {% trans "Community review submissions" %} <span class="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded">{{ my_community_review_count }}</span>
+            <h2 class="mb-2 text-xl">
+                {% trans "Community review submissions" %} <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded me-2">{{ my_community_review_count }}</span>
             </h2>
 
             {% if my_community_review.data %}
@@ -33,7 +33,7 @@
 
         {% if my_reviewed.data %}
             <div class="wrapper wrapper--bottom-space">
-                <h2 class="text-xl mb-2">
+                <h2 class="mb-2 text-xl">
                     {% trans "Your previous reviews" %}
                 </h2>
                 {% render_table my_reviewed %}
@@ -41,21 +41,21 @@
         {% endif %}
 
         <div class="wrapper wrapper--bottom-space">
-            <h2 class="text-xl mb-2">
+            <h2 class="mb-2 text-xl">
                 {% trans "Your active submissions" %}
             </h2>
             {% for submission in my_submissions %}
                 <div class="wrapper wrapper--status-bar-outer">
                     <div class="wrapper wrapper--status-bar-inner">
-                        <div class="flex max-w-sm sm:max-w-lg flex-col gap-2 md:flex-row md:justify-between md:w-full md:max-w-none lg:flex-col lg:justify-start lg:w-auto lg:max-w-sm">
+                        <div class="flex flex-col gap-2 max-w-sm sm:max-w-lg md:flex-row md:justify-between md:w-full md:max-w-none lg:flex-col lg:justify-start lg:w-auto lg:max-w-sm">
                             <div>
-                                <h3 class="heading heading--no-margin text-base font-bold">
+                                <h3 class="text-base font-bold heading heading--no-margin">
                                     <a class="{% if not submission.is_active %} text-slate-500 {% endif %} hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
                                         {{ submission.title }}
                                         <span class="text-gray-400">#{{ submission.public_id|default:submission.id }}</span>
                                     </a>
                                 </h3>
-                                <p class="heading heading--no-margin text-fg-muted text-sm">
+                                <p class="text-sm heading heading--no-margin text-fg-muted">
                                     {% trans "Submitted" %}: {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}
                                 </p>
                             </div>
@@ -66,7 +66,7 @@
                                             {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
                                         {% else %}
                                             <span class="whitespace-nowrap">
-                                                {% heroicon_mini "pencil-square" size=18 class="inline me-1 align-text-bottom" aria_hidden=true %}
+                                                {% heroicon_mini "pencil-square" size=18 class="inline align-text-bottom me-1" aria_hidden=true %}
                                                 {% trans "Edit" %}
                                             </span>
                                         {% endif %}
@@ -85,7 +85,7 @@
 
         {% if my_inactive_submissions.data %}
             <div class="wrapper wrapper--bottom-space">
-                <h2 class="text-xl mb-2">
+                <h2 class="mb-2 text-xl">
                     {% trans "Submission history" %}
                 </h2>
                 {% render_table my_inactive_submissions %}

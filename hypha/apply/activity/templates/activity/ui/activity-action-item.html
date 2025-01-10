@@ -1,13 +1,13 @@
 {% load i18n activity_tags heroicons %}
 
 {% with activity|display_for:request.user as activity_text %}
-    <div class="timeline-item relative" id="communications#{{ activity.id }}">
+    <div class="relative timeline-item" id="communications#{{ activity.id }}">
         <div
-            class="flex py-2 -ml-3  items-center before:block before:-z-10 before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-slate-300"
+            class="flex items-center py-2 -ml-3 before:block before:-z-10 before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-slate-300"
         >
-            <div class="relative inline-flex justify-center me-2 items-start">
+            <div class="inline-flex relative justify-center items-start me-2">
                 <div class="relative rounded-full inline-flex items-center justify-center border-white border-2 -ms-0.5 {% if activity.user.is_staff %}bg-slate-200 {% else %}bg-gray-200{% endif %}">
-                    <div class="inline-flex items-center justify-center w-6 h-6 text-fg-muted">
+                    <div class="inline-flex justify-center items-center w-6 h-6 text-fg-muted">
                         {% if 'edit' in activity_text.lower %}
                             {% heroicon_micro "pencil-square" class="inline" aria_hidden=true size=14 %}
                         {% elif 'progressed' in activity_text.lower %}
@@ -40,7 +40,7 @@
                 {% if not submission_title and activity|user_can_see_related:request.user %}
                     {% with url=activity.related_object.get_absolute_url %}
                         {% if url %}
-                            <a href="{{ url }}" class="ms-2 hover:opacity-70 transition-opacity font-semibold">
+                            <a href="{{ url }}" class="font-semibold transition-opacity hover:opacity-70 ms-2">
                                 {% trans "View" %}
                             </a>
                         {% endif %}

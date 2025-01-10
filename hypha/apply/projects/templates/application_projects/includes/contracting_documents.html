@@ -4,12 +4,12 @@
 <div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
     <div class="docs-block__header" id="contract-documents-section" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" role="button" aria-label="Toggle Contract documents visibility" aria-controls="contract-documents-elements" {% endif %}>
         <div class="flex justify-between w-full" >
-            <h2 class="text-lg font-semibold m-0">
+            <h2 class="m-0 text-lg font-semibold">
                 {% trans "Contracting documents" %}
             </h2>
 
             {% if collapsible_header %}
-                <button class="align-middle ms-1 transform transition-transform" x-bind:class="collapsed ? '': '-rotate-90' ">
+                <button class="align-middle transition-transform transform ms-1" x-bind:class="collapsed ? '': '-rotate-90' ">
                     {% heroicon_outline 'chevron-left' size=20 stroke_width=2 aria_hidden=true %}
 
                     <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">{% trans "expand" %}</span>
@@ -58,8 +58,8 @@
                 </div>
                 {% if contract_uploaded %}
                     <div class="docs-block__row-inner">
-                        <a class="font-bold flex items-center w-auto text-start bg-white text-light-blue me-0 mb-1 p-2.5 border-solid border border-light-blue focus:text-light-blue hover:bg-light-blue hover:text-white" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
-                            {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                        <a class="flex items-center p-2.5 mb-1 w-auto font-bold bg-white border border-solid hover:text-white text-start text-light-blue me-0 border-light-blue hover:bg-light-blue focus:text-light-blue" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
+                            {% heroicon_micro "eye" class="inline w-4 h-4 me-1" aria_hidden=true %}
                             {% trans "View" %}
                         </a>
                     </div>
@@ -69,7 +69,7 @@
                                 <div class="docs-block__row-inner">
                                 </div>
                                 <div class="docs-block__row-inner">
-                                    {% heroicon_mini "information-circle" class="fill-light-blue inline align-middle me-1" aria_hidden=true %}
+                                    {% heroicon_mini "information-circle" class="inline align-middle fill-light-blue me-1" aria_hidden=true %}
                                     <a class="docs-block__icon-link" href="#communications" target="_blank">
                                         <span>{% trans "Corrections/amendments?" %}</span>
                                     </a>
@@ -92,7 +92,7 @@
                             {% user_can_initiate_contract user as can_initiate_contract %}
                             {% if can_upload_contract and can_initiate_contract  %}
                                 <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                                    <a class="font-bold flex items-center w-auto text-start bg-light-blue text-white me-0 p-2.5 border-none"
+                                    <a class="flex items-center p-2.5 w-auto font-bold text-white border-none text-start bg-light-blue me-0"
                                        hx-get="{% url 'apply:projects:contract_upload' object.id %}"
                                        href="{% url 'apply:projects:contract_upload' object.id %}"
                                        hx-target="#htmx-modal"
@@ -115,7 +115,7 @@
                             </div>
                             {% if can_upload_contract and user.is_applicant %}
                                 <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                                    <a class="font-bold flex items-center w-auto text-start bg-light-blue text-white me-0 p-2.5 border-none"
+                                    <a class="flex items-center p-2.5 w-auto font-bold text-white border-none text-start bg-light-blue me-0"
                                        hx-get="{% url 'apply:projects:contract_upload' object.id %}"
                                        href="{% url 'apply:projects:contract_upload' object.id %}"
                                        hx-target="#htmx-modal"
@@ -143,10 +143,10 @@
                     <p class="docs-block__title">{% trans "Contracting documents" %}</p>
 
                     <div class="animate-pulse min-h-30">
-                        <div class="w-full mb-3 bg-gray-200 h-9"></div>
-                        <div class="w-full h-6 mb-1 bg-gray-200"></div>
-                        <div class="w-full h-1 mb-3 bg-gray-200"></div>
-                        <div class="w-20 h-6 mb-3 bg-gray-200"></div>
+                        <div class="mb-3 w-full h-9 bg-gray-200"></div>
+                        <div class="mb-1 w-full h-6 bg-gray-200"></div>
+                        <div class="mb-3 w-full h-1 bg-gray-200"></div>
+                        <div class="mb-3 w-20 h-6 bg-gray-200"></div>
                     </div>
                 </div>
             {% endif %}

@@ -1,13 +1,13 @@
 {% load i18n activity_tags nh3_tags markdown_tags submission_tags apply_tags heroicons users_tags %}
 
-<article class="timeline-item relative">
+<article class="relative timeline-item">
     <div
-        class="flex py-3 -ms-8 md:-ms-20 before:block before:-z-10 before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-slate-300"
+        class="flex py-3 -ms-8 before:block before:-z-10 before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-slate-300 md:-ms-20"
     >
         {% with activity|display_activity_author:request.user as author_name %}
-            <div class="relative inline-flex justify-center me-4 items-start">
+            <div class="inline-flex relative justify-center items-start me-4">
                 <div class="relative rounded-full inline-flex items-center justify-center border-white border-2 -ms-0.5 {% if activity.user.is_staff %}bg-slate-200 {% else %}bg-gray-100{% endif %}">
-                    <div class="md:block hidden p-2">
+                    <div class="hidden p-2 md:block">
                         {% user_image author_name size=25 %}
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                                 <span>
                                     {% for role in activity.user.get_role_names  %}
                                         <span
-                                            class="text-fg-muted font-semibold inline-block px-2 py-0.5 text-sm border border-gray-300 rounded-xl"
+                                            class="inline-block py-0.5 px-2 text-sm font-semibold rounded-xl border border-gray-300 text-fg-muted"
                                             data-tippy-content="This user is a {{ role }}"
                                         >
                                             {{ role }}
@@ -44,12 +44,12 @@
 
 
                     </div>
-                    <div class="flex items-center gap-1">
+                    <div class="flex gap-1 items-center">
                         {% if not request.user.is_applicant %}
 
                             {% if request.user.is_apply_staff and activity.assigned_to %}
 
-                                <span class="flex items-center gap-1 text-fg-muted text-xs border rounded-xl border-gray-300 py-0.5 px-1.5">
+                                <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs rounded-xl border border-gray-300 text-fg-muted">
                                     {% heroicon_outline "user-plus" size=14 class="inline" aria_hidden=true %}
                                     {% if activity.assigned_to.id == request.user.id %}
                                         {% trans "Assigned to you" %}
@@ -60,7 +60,7 @@
                             {% endif %}
 
                             {% with activity.visibility|visibility_display:request.user as visibility_text  %}
-                                <span class="text-fg-muted text-xs flex items-center gap-1 uppercase border rounded-xl border-gray-300 py-0.5 px-1.5"
+                                <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs uppercase rounded-xl border border-gray-300 text-fg-muted"
                                       data-tippy-content="This is visible to {{ visibility_text }}">
                                     {% heroicon_outline "eye" size=14 class="inline" aria_hidden=true %}
                                     {{ visibility_text }}
@@ -74,7 +74,7 @@
                                 hx-get="{% url 'activity:edit-comment' activity.id %}"
                                 hx-target="#text-comment-{{activity.id}}"
                                 title="Edit Comment"
-                                class="inline-flex items-center p-0.5 hover:bg-fuchsia-200 hover:opacity-100 opacity-80 transition-all rounded-md"
+                                class="inline-flex items-center p-0.5 rounded-md opacity-80 transition-all hover:bg-fuchsia-200 hover:opacity-100"
                             >
                                 {% heroicon_micro "pencil-square" size=18 class="inline" aria_hidden=true %}
                                 <span class="sr-only">{% trans "Edit" %}</span>
@@ -97,7 +97,7 @@
                             {% with url=activity.related_object.get_absolute_url %}
                                 {% if url %}
                                     <a href="{{ url }}">
-                                        {% trans "View " %}{{ activity.related_object|model_verbose_name }} <svg class="icon inline"><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                                        {% trans "View " %}{{ activity.related_object|model_verbose_name }} <svg class="inline icon"><use xlink:href="#arrow-head-pixels--solid"></use></svg>
                                     </a>
                                 {% endif %}
                             {% endwith %}

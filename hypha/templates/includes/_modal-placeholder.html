@@ -26,13 +26,13 @@ How this works:
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         x-description="Background backdrop, show/hide based on modal state."
-        class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
+        class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
         aria-hidden="true"
     ></div>
 
     <!-- Modal panel, show/hide based on modal state. -->
-    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-        <div class="flex items-end justify-center min-h-full p-4 text-center sm:items-center sm:p-0">
+    <div class="overflow-y-auto fixed inset-0 z-10 w-screen">
+        <div class="flex justify-center items-end p-4 min-h-full text-center sm:items-center sm:p-0">
             <div
                 x-show="show"
                 x-trap="show"
@@ -43,7 +43,7 @@ How this works:
                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 x-description="Modal panel, show/hide based on modal state."
-                class="relative w-full text-left transition-all transform bg-white border rounded-lg shadow-xl sm:my-8 sm:max-w-lg"
+                class="relative w-full text-left bg-white rounded-lg border shadow-xl transition-all transform sm:my-8 sm:max-w-lg"
                 id="htmx-modal"
                 hx-target="this"
                 @htmx:after-swap="show = true"

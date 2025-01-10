@@ -1,14 +1,14 @@
 {% load i18n heroicons apply_tags %}
 
-<a class="not-prose mb-2 flex justify-between items-center max-w-2xl border rounded px-3 py-2 font-medium bg-slate-50 hover:bg-slate-200 transition-colors"
+<a class="flex justify-between items-center py-2 px-3 mb-2 max-w-2xl font-medium rounded border transition-colors not-prose bg-slate-50 hover:bg-slate-200"
    href="{{ file.url }}"
    target="_blank" rel="noopener noreferrer"
    title="View file - {{ file.filename }}"
 >
-    <span class="truncate text-sm">
+    <span class="text-sm truncate">
         {% heroicon_mini "document-text" class="inline align-text-bottom" aria_hidden=true %}
         {{ file.filename|truncatechars_middle:45 }}
-        <span class="text-fg-muted text-xs">
+        <span class="text-xs text-fg-muted">
             <span class="sr-only">{% trans "uploaded" %}</span>
             <span aria-hidden>•</span>
             <relative-time datetime={{ file.modification_time|date:"c" }}>{{ file.modification_time|date:"SHORT_DATE_FORMAT" }}</relative-time>

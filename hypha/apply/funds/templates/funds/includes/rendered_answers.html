@@ -2,7 +2,7 @@
 {% if request.user|can_translate_submission %}
     {% if from_lang_name and to_lang_name %}
         {# For active translations #}
-        <div class="w-full text-center my-2 py-5 border rounded-lg shadow-md">
+        <div class="py-5 my-2 w-full text-center rounded-lg border shadow-md">
             <span>
                 {% heroicon_outline "language" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
                 {% blocktrans %} This application is translated from {{from_lang_name}} to {{to_lang_name}}. {% endblocktrans %}
@@ -13,12 +13,12 @@
         </div>
     {% else %}
         {# For a translation loading indicator #}
-        <div id="translate-card-loading" class="w-full text-center h-0 m-0 p-0 overflow-hidden content-center rounded-lg shadow-md animate-pulse htmx-indicator">
-            <span class="w-[490px] bg-gray-200 rounded-lg"></span>
+        <div id="translate-card-loading" class="overflow-hidden content-center p-0 m-0 w-full h-0 text-center rounded-lg shadow-md animate-pulse htmx-indicator">
+            <span class="bg-gray-200 rounded-lg w-[490px]"></span>
         </div>
     {% endif %}
 {% endif %}
-<h3 class="text-xl border-b pb-2 font-bold">{% trans "Proposal Information" %}</h3>
+<h3 class="pb-2 text-xl font-bold border-b">{% trans "Proposal Information" %}</h3>
 <div class="hypha-grid hypha-grid--proposal-info">
     {% if object.get_value_display != "-" %}
         <div>
@@ -37,7 +37,7 @@
     {# Hide potential applicant PII if warranted #}
     {% if object|show_applicant_identity:request.user %}
         <div>
-            <h5 class="text-base inline">{% trans "Legal Name" %}</h5>{% if request.user.is_apply_staff %} <span class="text-sm">(<a class="underline" href="{% url 'wagtailusers_users:edit' object.user_id %}">{% trans "Edit" %}</a>)</span>{% endif %}
+            <h5 class="inline text-base">{% trans "Legal Name" %}</h5>{% if request.user.is_apply_staff %} <span class="text-sm">(<a class="underline" href="{% url 'wagtailusers_users:edit' object.user_id %}">{% trans "Edit" %}</a>)</span>{% endif %}
             {{ object.get_full_name_display }}
         </div>
         <div>

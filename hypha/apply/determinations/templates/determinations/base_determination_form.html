@@ -9,7 +9,7 @@
             {% slot sub_heading %}{% if submission %}{% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>{% endif %}{% endslot %}
             {% slot buttons %}
                 <button
-                    class="tab__item ms-auto block pb-4"
+                    class="block pb-4 tab__item ms-auto"
                     x-data
                     @click="showSubmission = !showSubmission"
                 >
@@ -22,11 +22,11 @@
     {% endblock %}
 
     {% block form %}
-        <section class="my-8 flex justify-between" :class="showSubmission ? '' : 'flex-col'">
+        <section class="flex justify-between my-8" :class="showSubmission ? '' : 'flex-col'">
             {% include "forms/includes/form_errors.html" with form=form %}
             {% block determination_information %}
             {% endblock %}
-            <form class="form max-w-3xl flex-1"
+            <form class="flex-1 max-w-3xl form"
                   action="" method="post"
                   x-data="{ isFormSubmitting: false }"
                   x-on:submit="isFormSubmitting = true">
@@ -66,7 +66,7 @@
             {% block show_submission %}
                 <aside :class="showSubmission ? 'flex-1 ps-4' : ''">
                     <section
-                        class="p-4 overflow-y-auto bg-white shadow-xl max-h-screen"
+                        class="overflow-y-auto p-4 max-h-screen bg-white shadow-xl"
                         x-show="showSubmission"
                         x-transition:enter="transition ease-out duration-250"
                         x-transition:enter-start="transform opacity-0 translate-x-full"

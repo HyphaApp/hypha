@@ -18,7 +18,7 @@
 
         {% slot buttons %}
             {% if request.GET.format == 'list' %}
-                <a class="tab__item ms-auto block pb-4"
+                <a class="block pb-4 tab__item ms-auto"
                    href="{% modify_query "page" format="table" %}"
                 >
                     {% heroicon_mini "table-cells" aria_hidden="true" size=16 class="inline align-text-bottom" %}
@@ -26,7 +26,7 @@
                 </a>
             {% else %}
                 <a
-                    class="tab__item ms-auto block pb-4"
+                    class="block pb-4 tab__item ms-auto"
                     href="{% modify_query "page" format="list" %}"
                 >
                     {% heroicon_mini "queue-list" aria_hidden="true" size=16 class="inline align-text-bottom" %}
@@ -39,7 +39,7 @@
 
 
     <form
-        class="flex items-center justify-between gap-2 mt-3 md:gap-4"
+        class="flex gap-2 justify-between items-center mt-3 md:gap-4"
         hx-trigger="change"
         hx-get="./"
         hx-target="#main"
@@ -128,14 +128,14 @@
             {% endif %}
         {% endfor %}
 
-        <label class="relative flex-auto inline-flex items-center">
-            <span class="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
+        <label class="inline-flex relative flex-auto items-center">
+            <span class="flex absolute inset-y-0 items-center pointer-events-none start-0 ps-3">
                 {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" aria_hidden=true %}
             </span>
             <input
                 type="text"
                 id="search-navbar"
-                class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-sm ps-10 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                class="block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-sm border border-gray-300 focus:border-blue-500 focus:ring-blue-500 ps-10"
                 placeholder="{% trans 'Search…' %}"
                 name="query"
                 aria-label="{% trans 'Search submissions' %}"
@@ -145,13 +145,13 @@
 
         {% if can_view_archive %}
             <span>
-                <label class="relative inline-flex items-center cursor-pointer">
+                <label class="inline-flex relative items-center cursor-pointer">
                     <input type="checkbox" {% if show_archived %}checked{% endif %}
                            class="sr-only peer"
                            name="archived"
                     >
                     <div
-                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                        class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[ dark:peer-focus:ring-blue-800''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
                     </div>
                     <span class="text-sm font-medium text-gray-600 ms-3">{% trans "Archived" %}</span>
                 </label>
@@ -160,13 +160,13 @@
 
         {% if can_access_drafts %}
             <span>
-                <label class="relative inline-flex items-center cursor-pointer">
+                <label class="inline-flex relative items-center cursor-pointer">
                     <input type="checkbox" {% if show_drafts %}checked{% endif %}
                            class="sr-only peer"
                            name="drafts"
                     >
                     <div
-                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                        class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[ dark:peer-focus:ring-blue-800''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
                     </div>
                     <span class="text-sm font-medium text-gray-600 ms-3">{% trans "Drafts" %}</span>
                 </label>
@@ -175,7 +175,7 @@
 
         {% if can_export_submissions %}
             <a
-                class="px-2 py-1.5 transition-colors border rounded hover:bg-gray-100 shadow-sm"
+                class="py-1.5 px-2 rounded border shadow-sm transition-colors hover:bg-gray-100"
                 aria-label="Submissions: Download as CSV"
                 href="{% modify_query "page" format="csv" %}"
                 onclick="return confirm('{% blocktrans %}Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.{% endblocktrans %}');"
@@ -197,97 +197,97 @@
             <a
                 href="./"
                 hx-get="./"
-                class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2"
+                class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2"
             >
                 {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                 {% trans "Clear current search query, filters and sorts" %}
             </a>
 
             {% if selected_statuses %}
-                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
+                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
                     status:{% for s in selected_statuses %}{{ s }}{% endfor %}
-                    <a href="{% remove_from_query "status" %}" role="button" class="inline-flex items-center p-0.5 ms-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900" aria-label="Remove">
+                    <a href="{% remove_from_query "status" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove status filter" %}</span>
                     </a>
                 </span>
             {% endif %}
             {% if selected_fund_objects %}
-                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
+                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
                     fund:{% for s in selected_fund_objects %}"{{ s }}"{% endfor %}
-                    <a href="{% remove_from_query "fund" %}" role="button" class="inline-flex items-center p-0.5 ms-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                    <a href="{% remove_from_query "fund" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove fund filter" %}</span>
                     </a>
                 </span>
             {% endif %}
             {% if selected_round_objects %}
-                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
+                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
                     round:{% for s in selected_round_objects %}"{{ s }}"{% endfor %}
-                    <a href="{% remove_from_query "round" %}" role="button" class="inline-flex items-center p-0.5 ms-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                    <a href="{% remove_from_query "round" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove round filter" %}</span>
                     </a>
                 </span>
             {% endif %}
             {% if selected_leads %}
-                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
+                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
                     Lead:{% for s in selected_leads %}{{ s }}{% endfor %}
-                    <a href="{% remove_from_query "lead" %}" role="button" class="inline-flex items-center p-0.5 ms-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                    <a href="{% remove_from_query "lead" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove leads filter" %}</span>
                     </a>
                 </span>
             {% endif %}
             {% if selected_applicants %}
-                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
+                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
                     Applicant:{% for s in selected_applicants %}{{ s }}{% endfor %}
-                    <a href="{% remove_from_query "applicants" %}" role="button" class="inline-flex items-center p-0.5 ms-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                    <a href="{% remove_from_query "applicants" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove applicant filter" %}</span>
                     </a>
                 </span>
             {% endif %}
             {% for s in selected_reviewers %}
-                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
+                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
                     Reviewer:{{ s }}
-                    <a href="{% remove_from_query reviewers=s %}" role="button" class="inline-flex items-center p-0.5 ms-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                    <a href="{% remove_from_query reviewers=s %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove reviewer filter" %}</span>
                     </a>
                 </span>
             {% endfor %}
             {% for s in selected_meta_terms %}
-                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
+                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
                     Meta Term:{{ s }}
-                    <a href="{% remove_from_query meta_terms=s %}" role="button" class="inline-flex items-center p-0.5 ms-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                    <a href="{% remove_from_query meta_terms=s %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove meta term filter" %}</span>
                     </a>
                 </span>
             {% endfor %}
             {% for s in selected_category_options %}
-                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
+                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
                     Category:{{ s.value }}
-                    <a href="{% remove_from_query category_options=s.id %}" role="button" class="inline-flex items-center p-0.5 ms-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                    <a href="{% remove_from_query category_options=s.id %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove category filter" %}</span>
                     </a>
                 </span>
             {% endfor %}
             {% for s in selected_screening_statuses_objects %}
-                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
+                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
                     screening:"{{ s.title }}"
-                    <a href="{% remove_from_query screening_statuses=s.slug %}" role="button" class="inline-flex items-center p-0.5 ms-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                    <a href="{% remove_from_query screening_statuses=s.slug %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove screening decisions filter" %}</span>
                     </a>
                 </span>
             {% endfor %}
             {% if selected_sort %}
-                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
+                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
                     sort:{{ selected_sort }}
-                    <a href="{% remove_from_query "sort" %}" role="button" class="inline-flex items-center p-0.5 ms-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                    <a href="{% remove_from_query "sort" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove sort filter" %}</span>
                     </a>
@@ -341,16 +341,16 @@
         <header
             hx-target="#main"
             hx-swap="outerHTML show:top"
-            class="sticky top-0 z-[5] mt-3 px-3 py-2 flex flex-wrap items-center justify-between border-x border-t md:gap-5 bg-gray-50 md:text-sm md:font-medium border-gray-200"
+            class="flex sticky top-0 flex-wrap justify-between items-center py-2 px-3 mt-3 bg-gray-50 border-t border-gray-200 md:gap-5 md:text-sm md:font-medium z-[5] border-x"
         >
-            <span class="items-center hidden py-1 md:inline-flex">
+            <span class="hidden items-center py-1 md:inline-flex">
                 {% if enable_selection %}
                     <input
                         id="id_select_all"
                         type="checkbox"
                         x-ref="checkboxSelectAll"
                         aria-label="Select all submissions"
-                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
                         @click="toggleAllCheckboxes()"
                     >
                     <label
@@ -362,10 +362,10 @@
             </span>
 
             <nav x-show="!showSelectedSubmissions"
-                 class="flex flex-wrap items-center gap-2 menu-filters"
+                 class="flex flex-wrap gap-2 items-center menu-filters"
             >
                 <div id="filterupdated" aria-label="Filter by Updated" class="flex items-center">
-                    <button class="flex items-center justify-between w-full py-1 font-medium text-gray-600 border cursor-pointer ps-2 pe-2 md:pe-4 md:border-none hover:bg-gray-50 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">
+                    <button class="flex justify-between items-center py-1 w-full font-medium text-gray-600 border cursor-pointer md:p-0 md:border-none hover:bg-gray-50 ps-2 pe-2 md:pe-4 md:hover:bg-transparent md:hover:text-blue-700">
                         {% trans "Updated" %}
                         {% heroicon_mini "chevron-down" aria_hidden="true" width=18 height=18 class="hidden md:inline-block" %}
                     </button>
@@ -374,7 +374,7 @@
 
                 {% dropdown_menu title="Status" heading="Filter by current status" enable_search=True %}
                     <ul
-                        class="flex flex-col overflow-scroll text-gray-700 divide-y max-h-80"
+                        class="flex overflow-scroll flex-col max-h-80 text-gray-700 divide-y"
                         data-filter-list>
                         {% if selected_statuses %}
                             <li>
@@ -407,12 +407,12 @@
                             </li>
                         {% endfor %}
                     </ul>
-                    <p class="px-3 py-2 m-0 text-fg-muted" data-filter-empty-state hidden>{% trans "No statuses found. Sorry about that." %}</p>
+                    <p class="py-2 px-3 m-0 text-fg-muted" data-filter-empty-state hidden>{% trans "No statuses found. Sorry about that." %}</p>
                 {% enddropdown_menu %}
 
                 {% dropdown_menu title="Screening" heading="Filter by screening decision"  %}
                     <ul
-                        class="flex flex-col overflow-scroll text-gray-700 divide-y max-h-80"
+                        class="flex overflow-scroll flex-col max-h-80 text-gray-700 divide-y"
                     >
                         {% for s in screening_options %}
                             <li>
@@ -495,7 +495,7 @@
             <section
                 x-cloak
                 x-show="showSelectedSubmissions"
-                class="flex flex-row flex-wrap items-center gap-5 selection-actions"
+                class="flex flex-row flex-wrap gap-5 items-center selection-actions"
             >
                 {% dropdown_menu title="Status" heading="Update Status" enable_search=True %}
                     {% slot "url" hx-include="[name='selectedSubmissionIds']" hx-trigger="mouseover, focus" %}{% url "apply:submissions:submenu-update-status" %}{% endslot %}
@@ -514,7 +514,7 @@
                         hx-post="{% url 'apply:submissions:bulk-archive' %}"
                         hx-include="[name='selectedSubmissionIds']"
                         hx-confirm="Are you sure you want to archive the selected submissions?"
-                        class="flex items-center px-2 py-1 bg-gray-100 border hover:bg-gray-200"
+                        class="flex items-center py-1 px-2 bg-gray-100 border hover:bg-gray-200"
                     >
                         {% heroicon_outline "lock-closed" aria_hidden="true" size=14 class="inline stroke-gray-600 me-1" %}
                         {% trans "Archive" %}
@@ -526,7 +526,7 @@
                         hx-post="{% url 'apply:submissions:bulk-delete' %}"
                         hx-include="[name='selectedSubmissionIds']"
                         hx-confirm="Are you sure you want to delete the selected submissions? This action cannot be undone."
-                        class="flex items-center px-2 py-1 bg-gray-100 border hover:bg-red-300"
+                        class="flex items-center py-1 px-2 bg-gray-100 border hover:bg-red-300"
                     >
                         {% heroicon_outline "trash" aria_hidden="true" size=14 class="inline stroke-gray-600 me-1" %}
                         {% trans "Delete" %}
@@ -545,7 +545,7 @@
             {% if submissions %}
                 {% include "submissions/partials/submissions-inline.html" with submissions=submissions row_layout=request.GET.format enable_selection=enable_selection %}
             {% else %}
-                <div class="flex flex-col items-center justify-center px-4 py-20 border-t">
+                <div class="flex flex-col justify-center items-center py-20 px-4 border-t">
                     <h2 class='text-2xl'>{% trans "No results matched your search" %}</h2>
                     <p>{% trans "Try" %} <a href="./" hx-get="./" hx-target="#main" hx-push-url="true" hx-swap="outerHTML">{% trans "clearing" %}</a> {% trans "the current query and try again" %}.</p>
                 </div>
@@ -553,18 +553,18 @@
         </section>
 
         <nav class="mt-5 mb-20" aria-label="Pagination">
-            <span class="flex items-center justify-center gap-2 step-links">
+            <span class="flex gap-2 justify-center items-center step-links">
                 {% if page.has_previous %}
                     <a
                         href="{% modify_query page=1 %}"
-                        class="px-3 py-1.5 border hover:bg-slate-200 font-semibold"
+                        class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
                         aria-label="{% trans "First Page" %}"
                     >
                         &laquo; {% trans "First" %}
                     </a>
                     <a
                         href="{% modify_query page=page.previous_page_number %}"
-                        class="px-3 py-1.5 border hover:bg-slate-200 font-semibold"
+                        class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
                         aria-label={% trans "Previous Page" %}
                     >
                         {% trans "Previous" %}
@@ -578,14 +578,14 @@
                 {% if page.has_next %}
                     <a
                         href="{% modify_query page=page.next_page_number %}"
-                        class="px-3 py-1.5 border hover:bg-slate-200 font-semibold"
+                        class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
                         aria-label="{% trans "Next Page" %}"
                     >
                         {% trans "Next" %}
                     </a>
                     <a
                         href="{% modify_query page=page.paginator.num_pages %}"
-                        class="px-3 py-1.5 border hover:bg-slate-200 font-semibold"
+                        class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
                         aria-label="{% trans "Last Page" %}"
                     >
                         {% trans "Last" %} &raquo;

@@ -2,7 +2,7 @@
 
 <form action="{% url 'hijack:release' %}"
       method="POST"
-      class="bg-yellow-500 text-black px-4 py-2 border-t-4 border-warning border-stripe text-center"
+      class="py-2 px-4 text-center text-black bg-yellow-500 border-t-4 border-warning border-stripe"
 >
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ request.path }}">
@@ -15,7 +15,7 @@
         {% endblocktrans %}
         &LT;{{ request.user.email }}&GT;
         {% for role in request.user.get_role_names %}
-            <span class="inline-block bg-gray-200 text-gray-800 text-xs font-semibold px-2 rounded-full uppercase">
+            <span class="inline-block px-2 text-xs font-semibold text-gray-800 uppercase bg-gray-200 rounded-full">
                 {{ role }}
             </span>
         {% endfor %}
@@ -23,7 +23,7 @@
 
     </span>
 
-    <button class="button button--link underline ms-2 font-semibold uppercase" type="submit">
+    <button class="font-semibold underline uppercase button button--link ms-2" type="submit">
         {% translate 'Release' %}
     </button>
 </form>

@@ -29,20 +29,20 @@
                     <span @click="tab = 'open_rounds'"
                           role="tab"
                           :class="{ 'border-x border-t border-b-transparent': tab === 'open_rounds' }"
-                          class="text-center bg-white inline-block px-4 py-2 border-b rounded-t-lg round cursor-pointer hover:text-gray-900">{% trans "Open" %}</span>
+                          class="inline-block py-2 px-4 text-center bg-white rounded-t-lg border-b cursor-pointer hover:text-gray-900 round">{% trans "Open" %}</span>
                 {% endif %}
 
                 {% if closed_rounds %}
                     <span @click="tab = 'closed_rounds'"
                           role="tab"
                           :class="{ 'border-x border-t border-b-transparent': tab === 'closed_rounds' }"
-                          class="text-center bg-white inline-block px-4 py-2 border-b rounded-t-lg cursor-pointer hover:text-gray-900">{% trans "Closed" %}</span>
+                          class="inline-block py-2 px-4 text-center bg-white rounded-t-lg border-b cursor-pointer hover:text-gray-900">{% trans "Closed" %}</span>
                 {% endif %}
             </nav>
 
             <div data-filter-list>
                 {% if closed_rounds %}
-                    <div class="tab-closed-rounds divide-y overflow-scroll max-h-80"
+                    <div class="overflow-scroll max-h-80 divide-y tab-closed-rounds"
                          x-show="tab === 'closed_rounds'"
                          :aria-hidden="tab === 'closed_rounds' ? 'false' : 'true'"
                          role="tabpanel"
@@ -63,7 +63,7 @@
                 {% endif %}
 
                 {% if open_rounds %}
-                    <div class="tab-open-rounds divide-y overflow-scroll max-h-80"
+                    <div class="overflow-scroll max-h-80 divide-y tab-open-rounds"
                          x-show="tab === 'open_rounds'"
                          :aria-hidden="tab === 'open_rounds' ? 'false' : 'true'"
                          role="tabpanel"
@@ -86,7 +86,7 @@
                 {% endif %}
             </div>
     {% else %}
-        <div class="block px-3 py-2 text-gray-600">
+        <div class="block py-2 px-3 text-gray-600">
             {% trans "No rounds available" %}
         </div>
     {% endif %}

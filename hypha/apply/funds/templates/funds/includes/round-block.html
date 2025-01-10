@@ -4,7 +4,7 @@
      x-init="activeTab = window.location.hash && ['#open-rounds', '#closed-rounds'].includes(window.location.hash) ? window.location.hash.substring(1) : activeTab"
 >
     <section class="flex flex-col justify-between items-center md:flex-row">
-        <h3 class="text-xl mb-2">
+        <h3 class="mb-2 text-xl">
             <a href="{% url 'apply:rounds:list' %}">{{ title }}</a>
         </h3>
         <div>

@@ -11,7 +11,7 @@
     <div class="wrapper wrapper--medium">
         <ul class="my-8 border border-slate-300">
             {% for revision in object_list %}
-                <li class="flex flex-col justify-between p-4 border-b border-dashed first:bg-sky-blue last:border-0 md:flex-row">
+                <li class="flex flex-col justify-between p-4 border-b border-dashed md:flex-row last:border-0 first:bg-sky-blue">
                     <p class="m-0">
                         <span class="font-semibold">{{ revision.timestamp|date:"Y-m-d H:i e"}} </span>
                         {% trans "by" %} {{ revision.author }}

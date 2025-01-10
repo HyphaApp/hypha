@@ -8,19 +8,19 @@
         <input type="hidden" name="next" value="{{ next }}" />
     {% endif %}
 
-    <label for="id_user_pk" class="block text-sm font-semibold text-fg-muted mb-2">
+    <label for="id_user_pk" class="block mb-2 text-sm font-semibold text-fg-muted">
         {% trans "Select User:" %}
     </label>
 
     {{ form.user_pk }}
 
-    <p class="m-0 pt-2 text-fg-muted text-sm">
+    <p class="pt-2 m-0 text-sm text-fg-muted">
         {{ form.user_pk.help_text }}
     </p>
 
-    <div class="mt-5 sm:gap-4 sm:mt-4 sm:flex sm:flex-row-reverse">
+    <div class="mt-5 sm:flex sm:flex-row-reverse sm:gap-4 sm:mt-4">
         <button
-            class="button button--warning w-full sm:w-auto"
+            class="w-full sm:w-auto button button--warning"
             type="submit"
         >
             {% trans "Switch User" %}
@@ -28,7 +28,7 @@
 
         <button
             type="button"
-            class="inline-flex items-center justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white rounded-sm ring-1 ring-inset ring-gray-300 shadow-sm sm:mt-0 sm:w-auto hover:bg-gray-50"
             @click="show = false"
         >{% trans "Cancel" %}</button>
     </div>

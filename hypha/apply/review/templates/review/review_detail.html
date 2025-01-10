@@ -35,28 +35,28 @@
             </div>
         </div>
 
-        <div class="flex gap-4 flex-col items-end">
-            <div class="flex gap-4 items-start justify-end">
+        <div class="flex flex-col gap-4 items-end">
+            <div class="flex gap-4 justify-end items-start">
                 <span class="flex items-center">
-                    {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                    {% heroicon_micro "eye" class="inline w-4 h-4 me-1" aria_hidden=true %}
                     {{ review.get_visibility_display }}
                 </span>
                 {% if perms.funds.delete_review or request.user == review.author.reviewer %}
                     <a
-                        class="font-bold flex text-red-500 items-center hover:opacity-70 transition-opacity"
+                        class="flex items-center font-bold text-red-500 transition-opacity hover:opacity-70"
                         href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}"
                     >
-                        {% heroicon_micro "trash" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                        {% heroicon_micro "trash" class="inline w-4 h-4 me-1" aria_hidden=true %}
                         {% trans "Delete" %}
                     </a>
                 {% endif %}
 
                 {% if perms.funds.change_review or request.user == review.author.reviewer %}
                     <a
-                        class="font-bold flex items-center hover:opacity-70 transition-opacity"
+                        class="flex items-center font-bold transition-opacity hover:opacity-70"
                         href="{% url 'apply:submissions:reviews:edit' submission_pk=object.submission.id pk=object.id %}"
                     >
-                        {% heroicon_micro "pencil-square" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                        {% heroicon_micro "pencil-square" class="inline w-4 h-4 me-1" aria_hidden=true %}
                         {% trans "Edit" %}
                     </a>
                 {% endif %}
@@ -87,7 +87,7 @@
             {{ form }}
         </form>
 
-        <em class='text-fg-muted flex items-center mb-8'>
+        <em class='flex items-center mb-8 text-fg-muted'>
             {% heroicon_micro "information-circle" class="mr-1 w-4 h-4 fill-fg-muted" aria_hidden=true %}
             <span>{% trans "An opinion is a replacement for a review. You will no longer be able to submit a review for this application." %}</span>
         </em>

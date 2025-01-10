@@ -1,19 +1,19 @@
 {% load i18n markdown_tags nh3_tags heroicons %}
 
-<div class="group bg-white p-2 flex items-center">
+<div class="flex items-center p-2 bg-white group">
     <svg class="w-6 h-6 ms-1 me-2"><use xlink:href="#{{ task.icon }}"></use></svg>
     <div class="flex flex-1 items-center">
         <span>{{ task.text|markdown|nh3 }}</span>
         {% if task.type == "Draft" %}
             <span
-                class="bg-red-200 rounded-full whitespace-nowrap inline-block ms-1 my-2 px-2 pt-0.5 pb-1 text-sm font-medium text-gray-800 hidden sm:block"
+                class="inline-block hidden px-2 pt-0.5 pb-1 my-2 text-sm font-medium text-gray-800 whitespace-nowrap bg-red-200 rounded-full sm:block ms-1"
             >
                 {{ task.type }}
             </span>
         {% endif %}
     </div>
     {% if task.user %}
-        <button class="ms-2 invisible group-hover:visible" data-tooltip="Remove task" hx-delete="{% url 'todo:delete' pk=task.id %}" hx-target="this" hx-swap="none" hx-confirm='{% trans "Are you sure you want to remove this task? It will remove this task from your task list." %}'>{% heroicon_micro "x-mark" class="inline me-2" width=24 height=24 aria_hidden=true %}</button>
+        <button class="invisible group-hover:visible ms-2" data-tooltip="Remove task" hx-delete="{% url 'todo:delete' pk=task.id %}" hx-target="this" hx-swap="none" hx-confirm='{% trans "Are you sure you want to remove this task? It will remove this task from your task list." %}'>{% heroicon_micro "x-mark" class="inline me-2" width=24 height=24 aria_hidden=true %}</button>
     {% endif %}
     <a class="button {{ button_type_class }} ms-2" href="{{ task.url }}">{% trans "View" %}</a>
 </div>

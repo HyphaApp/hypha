@@ -1,13 +1,13 @@
 {% load components i18n %}
 
-<div class="admin-bar bg-arsenic text-white">
-    <div class="admin-bar__inner items-center md:flex md:justify-between">
+<div class="text-white admin-bar bg-arsenic">
+    <div class="items-center md:flex md:justify-between admin-bar__inner">
         <div>
             {% render_slot slots.back_link %}
-            <h1 class="text-2xl mb-2 font-medium md:text-3xl md:m-0">{% render_slot slots.header %}</h1>
-            {% if slots.sub_heading %}<p class="text-sm m-0">{% render_slot slots.sub_heading %}</p>{% endif %}
+            <h1 class="mb-2 text-2xl font-medium md:m-0 md:text-3xl">{% render_slot slots.header %}</h1>
+            {% if slots.sub_heading %}<p class="m-0 text-sm">{% render_slot slots.sub_heading %}</p>{% endif %}
         </div>
-        {% if slots.buttons %}<div class="-mb-5 self-end">{% render_slot slots.buttons %}</div>{% endif %}
+        {% if slots.buttons %}<div class="self-end -mb-5">{% render_slot slots.buttons %}</div>{% endif %}
         {% render_slot slots.inner_block %}
     </div>
 </div>

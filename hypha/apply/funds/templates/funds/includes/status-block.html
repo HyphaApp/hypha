@@ -4,8 +4,8 @@
         <ul class="status-block">
             {% for status, data in status_counts.items %}
                 <a class="status-block__item {% if data.is_active %}status-block__item--active{% endif %}" href="{{ data.url }}">
-                    <p class="status-block__title text-black"><strong>{{ data.name }}</strong></p>
-                    <p class="status-block__info text-gray-400">{{ data.count }} {{ type }}</p>
+                    <p class="text-black status-block__title"><strong>{{ data.name }}</strong></p>
+                    <p class="text-gray-400 status-block__info">{{ data.count }} {{ type }}</p>
                 </a>
             {% endfor %}
         </ul>

@@ -14,20 +14,20 @@
     {% if all_document_categories %}
 
         <div class="w-full ps-7">
-            <ul class="space-y-2 pt-3">
+            <ul class="pt-3 space-y-2">
                 {% for document_category in all_document_categories %}
-                    <li class="flex justify-between bg-gray-100 px-3 py-2 rounded">
+                    <li class="flex justify-between py-2 px-3 bg-gray-100 rounded">
                         <div class="docs-block__document-inner">
                             <span>{{ document_category.name }}
                                 {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
                                 {% if document_category.template %}
-                                    <a class="font-semibold hover:opacity-70 transition-opacity"
+                                    <a class="font-semibold transition-opacity hover:opacity-70"
                                        href="{% url 'apply:projects:category_template' pk=object.pk type='project_document' category_pk=document_category.pk %}"
                                        target="_blank"
                                     >
                                         <span class="border-b-2 border-dashed">
                                             {% trans "View template" %}
-                                        </span>{% heroicon_mini "information-circle" class="fill-light-blue inline align-middle me-1" aria_hidden=true %}
+                                        </span>{% heroicon_mini "information-circle" class="inline align-middle fill-light-blue me-1" aria_hidden=true %}
                                     </a>
                                 {% endif %}
                             </span>
@@ -41,13 +41,13 @@
                         {% can "upload_project_documents" object as can_upload_documents %}
                         {% if document_category in remaining_document_categories and can_upload_documents %}
                             <div class="docs-block__document-inner__actions">
-                                <a class="font-bold flex items-center me-0 hover:opacity-70 transition-opacity"
+                                <a class="flex items-center font-bold transition-opacity hover:opacity-70 me-0"
                                    href="{% url 'apply:projects:supporting_doc_upload' object.id document_category.id %}"
                                    hx-get="{% url 'apply:projects:supporting_doc_upload' object.id document_category.id %}"
                                    hx-target="#htmx-modal"
                                    aria-label="{% trans "Upload Supporting Documents" %}"
                                 >
-                                    {% heroicon_micro "arrow-up-tray" class="inline me-1 w-4 h-4" aria_hidden="true" %}
+                                    {% heroicon_micro "arrow-up-tray" class="inline w-4 h-4 me-1" aria_hidden="true" %}
                                     {% trans "Upload" %}
                                 </a>
 
