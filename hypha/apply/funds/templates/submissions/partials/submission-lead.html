@@ -1,6 +1,6 @@
 {% load i18n heroicons %}
 {% if request.user.is_apply_staff %}
-    <a class="link link--edit-lead is-active link--transparent hover:opacity-70 transition-opacity"
+    <a class="transition-opacity hover:opacity-70 link link--edit-lead is-active link--transparent"
        href="{% url 'funds:submissions:lead_update' pk=submission.pk %}"
        hx-get="{% url 'funds:submissions:lead_update' pk=submission.pk %}"
        hx-target="#htmx-modal"

@@ -11,14 +11,14 @@
         <span class="flex gap-4">
             {% if user.can_access_dashboard %}
                 <a href="{% url 'dashboard:dashboard' %}" class="button button--primary">
-                    {% heroicon_mini "squares-2x2" size=20 class="me-1 inline align-text-bottom" aria_hidden=true %}
+                    {% heroicon_mini "squares-2x2" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
                     {% trans "Go to my dashboard" %}
                 </a>
             {% else %}
-                <div class="wrapper wrapper--cta-box flex items-center">
+                <div class="flex items-center wrapper wrapper--cta-box">
                     <div class="flex-1">
-                        <h3 class="heading heading--no-margin font-bold">{% trans "Submit a new application" %}</h3>
-                        <p class="text-base m-0">{% trans "Apply now for our open rounds" %}</p>
+                        <h3 class="font-bold heading heading--no-margin">{% trans "Submit a new application" %}</h3>
+                        <p class="m-0 text-base">{% trans "Apply now for our open rounds" %}</p>
                     </div>
                     <div>
                         <a class="button button--blue-white" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
@@ -28,7 +28,7 @@
             {% endif %}
             {% if perms.wagtailadmin.access_admin %}
                 <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="button button--primary">
-                    {% heroicon_solid "cog-6-tooth" size=20 class="me-1 inline align-text-bottom" aria_hidden=true %}
+                    {% heroicon_solid "cog-6-tooth" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
                     {% trans "Administration" %}
                 </a>
             {% endif %}
@@ -55,8 +55,8 @@
             <h2 class="text-2xl">{% trans "Account Security" %}</h2>
 
             {% if show_change_password %}
-                <div class="block_manage_password mb-8">
-                    <h3 class="text-base mb-0">{% trans "Password" %}</h3>
+                <div class="mb-8 block_manage_password">
+                    <h3 class="mb-0 text-base">{% trans "Password" %}</h3>
                     <p>
                         {% if user.has_usable_password %}
                             <a class="button button--primary" href="{% url 'users:password_change' %}">
@@ -74,11 +74,11 @@
                 </div>
             {% endif %}
 
-            <h3 class="text-base mb-2">{% trans "Two-Factor Authentication (2FA)" %}</h3>
+            <h3 class="mb-2 text-base">{% trans "Two-Factor Authentication (2FA)" %}</h3>
             <div>
                 {% if default_device %}
-                    <a class="button button--primary mb-2" href="{% url 'users:backup_tokens' %}">{% trans "Backup codes" %}</a>
-                    <a class="button button--primary button--warning mb-2 w-fit" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a>
+                    <a class="mb-2 button button--primary" href="{% url 'users:backup_tokens' %}">{% trans "Backup codes" %}</a>
+                    <a class="mb-2 button button--primary button--warning w-fit" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a>
                 {% else %}
                     <a class="button button--primary" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a>
                 {% endif %}
@@ -88,7 +88,7 @@
             {% comment %}
             {% can_use_oauth as show_oauth_link %}
             {% if show_oauth_link %}
-            <h3 class="text-base mb-2">Manage OAuth</h3>
+            <h3 class="mb-2 text-base">Manage OAuth</h3>
             <div>
                 <a href="{% url 'users:oauth' %}">
                     {% trans "Manage OAuth" %}

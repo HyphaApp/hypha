@@ -2,12 +2,12 @@
 <ul class="messages">
     {% for message in messages %}
         {% if 'project_action_message' in message.tags %}
-            <li class="messages__actions border px-3 py-2 shadow-md rounded"
+            <li class="py-2 px-3 rounded border shadow-md messages__actions"
                 x-data="{ show: true }"
                 x-show="show"
                 x-transition
             >
-                {% heroicon_outline "check" stroke_width=2 class="inline-block me-1 w-4 h-4" aria_hidden=true %}
+                {% heroicon_outline "check" stroke_width=2 class="inline-block w-4 h-4 me-1" aria_hidden=true %}
                 <p class="messages__copy">{{ message }}</p>
                 <button type="button" class="p-2 hover:opacity-70" x-on:click="show = ! show">
                     <span class="sr-only">{% trans "Close" %}</span>

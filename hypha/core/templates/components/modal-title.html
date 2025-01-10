@@ -1,13 +1,13 @@
 {% load components heroicons %}
 
-<header class="flex items-center justify-between gap-4 p-2 border-b">
+<header class="flex gap-4 justify-between items-center p-2 border-b">
     <h1 id="model-title" class="py-2 pl-2 m-0 text-base font-semibold">
         {% render_slot slots.inner_block %}
     </h1>
 
     <div>
         <button
-            class="p-1.5 opacity-70 rounded hover:bg-gray-100 hover:opacity-100"
+            class="p-1.5 rounded opacity-70 hover:bg-gray-100 hover:opacity-100"
             aria-label="Close Modal"
             @click="show = false"
             type="button"

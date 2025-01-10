@@ -1,6 +1,6 @@
 {% load i18n static %}
 
-<div class="wrapper wrapper--comments pb-4">
+<div class="pb-4 wrapper wrapper--comments">
     <form
         class="form form__comments"
         method="post"
@@ -15,12 +15,12 @@
         {% endfor %}
 
         <div class="flex flex-wrap gap-4 lg:flex-nowrap lg:gap-8">
-            <div class="w-full lg:flex-1 -mt-4 max-w-[53rem]">
+            <div class="-mt-4 w-full lg:flex-1 max-w-[53rem]">
                 {% include "forms/includes/field.html" with field=comment_form.message label_classes="sr-only" %}
 
                 <div class="text-right">
                     <button
-                        class="button button--primary w-full lg:w-auto"
+                        class="w-full lg:w-auto button button--primary"
                         id="{{ comment_form.name }}-submit"
                         name="{{ form_prefix }}{{ comment_form.name }}"
                         type="submit"

@@ -1,6 +1,6 @@
 {% load i18n heroicons %}
 <form
-    class="form form--error-inline px-4 py-4 mb-4 border rounded-sm bg-gray-50 w-full text-center"
+    class="py-4 px-4 mb-4 w-full text-center bg-gray-50 rounded-sm border form form--error-inline"
     id="elevate-check-code-form"
     x-data="{ code: '' }"
 >
@@ -33,7 +33,7 @@
 
     <div>
         <button
-            class="button button--primary block mb-4"
+            class="block mb-4 button button--primary"
             type="submit"
             hx-post="{% url 'users:elevate_check_code' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
             hx-validate="true"
@@ -45,7 +45,7 @@
     </div>
     {% if error %}
         <button
-            class="link hover:underline"
+            class="hover:underline link"
             hx-post="{% url 'users:elevate_send_confirm_access_email' %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}"
             hx-target="#section-form"
         >
@@ -55,7 +55,7 @@
 </form>
 
 {% if request.user.has_usable_password %}
-    <section data-test-id="section-send-email" class="px-4 border pt-2 pb-4">
+    <section data-test-id="section-send-email" class="px-4 pt-2 pb-4 border">
         <p>{% trans "Having problems?" %}</p>
         <ul class="list-disc ms-4">
             <li>

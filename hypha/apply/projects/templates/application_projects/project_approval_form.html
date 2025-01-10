@@ -15,7 +15,7 @@
     {% if approval_form_exists %}
         {% include "forms/includes/form_errors.html" with form=pf_form %}
 
-        <div class="pt-8 pb-8 mx-auto mt-4 mb-12 wrapper wrapper--default-bg wrapper--sidebar ps-20 ">
+        <div class="pt-8 pb-8 mx-auto mt-4 mb-12 wrapper wrapper--default-bg wrapper--sidebar ps-20">
             <div class="wrapper--sidebar--inner">
                 <form class="form application-form" action="" method="post" enctype="multipart/form-data">
                     {% csrf_token %}

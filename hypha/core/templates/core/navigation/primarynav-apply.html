@@ -9,11 +9,11 @@
     x-transition:leave="transition ease-in duration-150"
     x-transition:leave-start="transform opacity-100 translate-x-0"
     x-transition:leave-end="transform opacity-0 translate-x-full"
-    class="fixed top-0 bottom-0 z-20 pt-10 overflow-y-auto bg-white shadow-xl md:static md:bg-transparent md:pt-0 md:top-auto end-0 md:z-auto md:shadow-none md:overflow-clip"
+    class="overflow-y-auto fixed top-0 bottom-0 z-20 pt-10 bg-white shadow-xl md:static md:top-auto md:z-auto md:pt-0 md:bg-transparent md:shadow-none end-0 md:overflow-clip"
 >
     <!-- Mobile Menu Opener -->
     <button
-        class="absolute top-6 end-4 md:hidden border rounded p-1.5 z-30 hover:bg-slate-100 transition-colors"
+        class="absolute top-6 z-30 p-1.5 rounded border transition-colors md:hidden end-4 hover:bg-slate-100"
         @click="showDesktopMenu = false"
     >
         {% heroicon_outline "x-mark" aria_hidden="true" size=24 stroke_width=3 class="inline" %}
@@ -21,7 +21,7 @@
 
     <!-- Menu -->
     {% primary_navigation_items request.user as nav_items %}
-    <ul class="flex flex-col p-4 md:gap-8 md:p-0 md:flex-row" role="menubar">
+    <ul class="flex flex-col p-4 md:flex-row md:gap-8 md:p-0" role="menubar">
         {% for item in nav_items %}
             <li
                 role="presentation"
@@ -60,7 +60,7 @@
                         x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
                         x-transition:leave-end="transform opacity-0 scale-95 -translate-y-3"
                         @click.outside="open = false"
-                        class="relative z-20 block bg-white rounded-sm min-w-48 md:absolute md:shadow-xl md:border-y"
+                        class="block relative z-20 bg-white rounded-sm md:absolute md:shadow-xl min-w-48 md:border-y"
                     >
                         {% for sub_item in item.sub_items %}
                             <a

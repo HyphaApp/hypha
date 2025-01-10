@@ -4,10 +4,10 @@
     {% csrf_token %}
 
     <div class="sm:flex sm:items-start">
-        <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-red-100 rounded-full sm:mx-0 sm:h-10 sm:w-10">
+        <div class="flex flex-shrink-0 justify-center items-center mx-auto w-12 h-12 bg-red-100 rounded-full sm:mx-0 sm:w-10 sm:h-10">
             {% heroicon_outline "exclamation-triangle" class="w-6 h-6 text-red-600" stroke_width="1.5" aria_hidden="true" %}
         </div>
-        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
             <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">
                 {% trans "Unarchive Submission" %}
             </h3>
@@ -22,14 +22,14 @@
         </div>
     </div>
 
-    <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+    <div class="mt-5 sm:flex sm:flex-row-reverse sm:mt-4">
         <button
             type="submit"
-            class="inline-flex justify-center w-full px-3 py-2 text-sm font-semibold text-white bg-red-600 rounded-sm shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+            class="inline-flex justify-center py-2 px-3 w-full text-sm font-semibold text-white bg-red-600 rounded-sm shadow-sm sm:ml-3 sm:w-auto hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >{% trans "Unarchive" %}</button>
         <button
             type="button"
-            class="inline-flex justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            class="inline-flex justify-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white rounded-sm ring-1 ring-inset ring-gray-300 shadow-sm sm:mt-0 sm:w-auto hover:bg-gray-50"
             @click="show = false"
         >{% trans "Cancel" %}</button>
     </div>

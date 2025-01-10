@@ -18,11 +18,11 @@
 
     {% include "forms/includes/form_errors.html" with form=form %}
 
-    <div class="my-8 relative" x-data="reviewScore">
+    <div class="relative my-8" x-data="reviewScore">
         <!-- Review score sticky display -->
-        <div class="absolute h-full right-0 top-0 hidden lg:block">
+        <div class="hidden absolute top-0 right-0 h-full lg:block">
             <div
-                class="bg-arsenic text-white font-semibold inline-block px-3 py-1.5 mt-1 text-center sticky top-1"
+                class="inline-block sticky top-1 py-1.5 px-3 mt-1 font-semibold text-center text-white bg-arsenic"
                 x-clock
                 x-show="showScore"
             >
@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <form id="review-form-edit" class="form form--scoreable max-w-3xl" action="" method="post" novalidate>
+        <form id="review-form-edit" class="max-w-3xl form form--scoreable" action="" method="post" novalidate>
             {% csrf_token %}
             {% for hidden in form.hidden_fields %}
                 {{ hidden }}
@@ -52,7 +52,7 @@
                     {{ field }}
                 {% endif %}
             {% endfor %}
-            <div class="flex gap-4 items-center flex-wrap">
+            <div class="flex flex-wrap gap-4 items-center">
 
                 <button
                     class="button button--primary min-w-48"

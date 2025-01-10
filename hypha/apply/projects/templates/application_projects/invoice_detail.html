@@ -32,7 +32,7 @@
                 <p class="card__text"><b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}</p>
             </div>
             <div hx-get="{% url 'apply:projects:partial-invoice-status' pk=object.project.pk invoice_pk=object.pk %}" hx-trigger="load, invoicesUpdated from:body" class="flex card card--solid" x-data="{ collapsed: true }">
-                <div class="flex-none content-center min-h-10"><div class="h-4 min-w-96 bg-gray-400 rounded-full animate-pulse"></div></div>
+                <div class="flex-none content-center min-h-10"><div class="h-4 bg-gray-400 rounded-full animate-pulse min-w-96"></div></div>
                 <div class="ps-2"></div>
             </div>
 
@@ -53,7 +53,7 @@
             </div>
         </div>
         <aside class="sidebar">
-            <div hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}" hx-trigger="invoicesUpdated from:body" class="sticky sidebar__inner sidebar__inner--light-blue sidebar__inner--actions top-8" data-testid="sidebar-primary-actions">
+            <div hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}" hx-trigger="invoicesUpdated from:body" class="sticky top-8 sidebar__inner sidebar__inner--light-blue sidebar__inner--actions" data-testid="sidebar-primary-actions">
                 {% include "application_projects/partials/invoice_detail_actions.html" %}
             </div>
         </aside>

@@ -8,13 +8,13 @@
     {% endif %}
 >
     {% if row_layout != "list" %}
-        <div class="pt-48 -mt-48 overflow-x-auto">
+        <div class="overflow-x-auto pt-48 -mt-48">
             <table class="w-full relative [&_th]:p-2 [&_td]:p-2">
                 <thead class="bg-gray-50 border">
                     <tr class="">
-                        {% if enable_selection %}<th class="md:table-cell hidden"></th>{% endif %}
+                        {% if enable_selection %}<th class="hidden md:table-cell"></th>{% endif %}
                         <th></th>
-                        <th class="min-w-48 font-semibold">
+                        <th class="font-semibold min-w-48">
                             Title
                         </th>
                         <th class="font-semibold">Status</th>
@@ -26,7 +26,7 @@
                         </th>
 
                         {% if "round" not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                            <th class="min-w-36 font-semibold">Round</th>
+                            <th class="font-semibold min-w-36">Round</th>
                         {% endif %}
 
                         {% if 'lead' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}

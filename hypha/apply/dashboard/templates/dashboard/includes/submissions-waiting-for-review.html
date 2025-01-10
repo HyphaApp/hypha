@@ -1,8 +1,8 @@
 {% load render_table from django_tables2 %}
 {% load i18n %}
 
-<h2 class="text-xl mb-2">
-    {% trans "Submissions waiting for your review" %} <span class="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded">{{ in_review_count }}</span>
+<h2 class="mb-2 text-xl">
+    {% trans "Submissions waiting for your review" %} <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded me-2">{{ in_review_count }}</span>
 </h2>
 
 {% if my_review.data %}
@@ -17,8 +17,8 @@
     {% endif %}
 
 {% else %}
-    <div class="border shadow-sm py-10 bg-white w-full text-center px-2">
-        <p class="text-base my-2">{% trans "Nice! You're all caught up. 🎉" %}</p>
+    <div class="py-10 px-2 w-full text-center bg-white border shadow-sm">
+        <p class="my-2 text-base">{% trans "Nice! You're all caught up. 🎉" %}</p>
         <a class="button button--primary" href="{% url 'apply:submissions:list' %}" hx-boost='true'>{% trans "Find new applications to review" %}</a>
     </div>
     {# TODO Fill in data and update styles in future ticket #}

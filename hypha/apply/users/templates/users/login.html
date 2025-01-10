@@ -5,7 +5,7 @@
 {% block body_class %}bg-white{% endblock %}
 
 {% block content %}
-    <div class="max-w-2xl bg-white my-5">
+    <div class="my-5 max-w-2xl bg-white">
 
         <section>
             <div class="px-4 pt-4">
@@ -25,7 +25,7 @@
                     <p>
                         {% blocktrans trimmed %}Please enter one of the backup codes to log in to your account.{% endblocktrans %}
                     </p>
-                    <p class="text-sm mb-4 text-fg-muted">
+                    <p class="mb-4 text-sm text-fg-muted">
                         {% blocktrans trimmed %}Those codes were generated for you during 2FA setup to print or keep safe in a password manager.{% endblocktrans %}
                     </p>
                 {% endif %}
@@ -48,26 +48,26 @@
                                 {% include "forms/includes/field.html" %}
                                 {% if field.auto_id == "id_auth-password" %}
                                     <div class="text-end">
-                                        <a class="link text-sm hover:opacity-75" href="{% url 'users:password_reset' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true">{% trans "Forgot your password?" %}</a>
+                                        <a class="text-sm hover:opacity-75 link" href="{% url 'users:password_reset' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true">{% trans "Forgot your password?" %}</a>
                                     </div>
                                 {% endif %}
                             </div>
                         {% endfor %}
 
                         {% if settings.users.AuthSettings.extra_text %}
-                            <div class="prose prose-sm mb-6 rounded-sm bg-slate-50 p-4">
+                            <div class="p-4 mb-6 rounded-sm prose prose-sm bg-slate-50">
                                 {{ settings.users.AuthSettings.extra_text|richtext}}
                             </div>
                         {% endif %}
 
-                        <div class="form__group max-w-sm flex items-center justify-between gap-4">
+                        <div class="flex gap-4 justify-between items-center max-w-sm form__group">
                             <button class="button button--primary button--login" type="submit">{% trans "Log in" %}</button>
                         </div>
 
-                        <div class="flex items-center justify-center min-[465px]:justify-start relative mb-4">
-                            <hr class="inline w-32 h-px my-6 bg-gray-300 border-0">
-                            <span class="px-3 text-gray-400 font-medium">{% trans "or" %}</span>
-                            <hr class="inline w-32 h-px my-6 bg-gray-300 border-0">
+                        <div class="flex relative justify-center items-center mb-4 min-[465px]:justify-start">
+                            <hr class="inline my-6 w-32 h-px bg-gray-300 border-0">
+                            <span class="px-3 font-medium text-gray-400">{% trans "or" %}</span>
+                            <hr class="inline my-6 w-32 h-px bg-gray-300 border-0">
                         </div>
 
                         <section class="space-y-0.5">
@@ -107,7 +107,7 @@
                                     type="submit"
                                     value="backup"
                                     aria-label="Click here to use a backup code"
-                                    class="inline font-bold text-dark-blue hover:opacity-70 transition-opacity"
+                                    class="inline font-bold transition-opacity hover:opacity-70 text-dark-blue"
                                 >
                                     {% trans "Use a Backup Code" %}
                                 </button>

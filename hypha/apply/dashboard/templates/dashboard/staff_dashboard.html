@@ -11,7 +11,7 @@
 
         {% if perms.wagtailadmin.access_admin %}
             <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="button button--primary">
-                {% heroicon_solid "cog-6-tooth" size=20 class="me-1 inline align-text-bottom" aria_hidden=true %}
+                {% heroicon_solid "cog-6-tooth" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
                 {% trans "Administration" %}
             </a>
         {% endif %}
@@ -24,7 +24,7 @@
             {% endif %}
 
             <div class="stat-block">
-                <a href="#submissions-awaiting-review" class="stat-block__item border shadow-sm">
+                <a href="#submissions-awaiting-review" class="border shadow-sm stat-block__item">
                     <p class="stat-block__number">{{ awaiting_reviews.count }}</p>
                     <p class="stat-block__text">{% trans "Submissions waiting for your review" %}</p>
                     {% if awaiting_reviews.count %}
@@ -32,14 +32,14 @@
                     {% endif %}
                 </a>
                 {% if PROJECTS_ENABLED %}
-                    <a href="#active-projects" class="stat-block__item border shadow-sm">
+                    <a href="#active-projects" class="border shadow-sm stat-block__item">
                         <p class="stat-block__number">{{ projects.count }}</p>
                         <p class="stat-block__text">{% trans "Live projects under your management" %}</p>
                         {% if projects.count %}
                             <div class="stat-block__view">{% trans "View" %}</div>
                         {% endif %}
                     </a>
-                    <a href="#active-invoices" class="stat-block__item border shadow-sm">
+                    <a href="#active-invoices" class="border shadow-sm stat-block__item">
                         <p class="stat-block__number">{{ active_invoices.count }}</p>
                         <p class="stat-block__text">{% trans "Requests for invoices requiring your attention" %}</p>
                         {% if active_invoices.count %}
@@ -48,13 +48,13 @@
                     </a>
                 {% else %}
                     {% if my_flagged.table.data %}
-                        <a href="#submissions-flagged" class="stat-block__item border shadow-sm">
+                        <a href="#submissions-flagged" class="border shadow-sm stat-block__item">
                             <p class="stat-block__number">{{ my_flagged.table.rows|length }}</p>
                             <p class="stat-block__text">Your flagged submissions</p>
                         </a>
                     {% endif %}
                     {% if my_reviewed.table.data %}
-                        <a href="#my-review" class="stat-block__item border shadow-sm">
+                        <a href="#my-review" class="border shadow-sm stat-block__item">
                             <p class="stat-block__number">{{ my_reviewed.table.rows|length }}</p>
                             <p class="stat-block__text">Your previous reviews</p>
                         </a>
@@ -69,14 +69,14 @@
 
         {% if my_flagged.submissions %}
             <div id="submissions-flagged" class="wrapper wrapper--bottom-space">
-                <h3 class="text-xl mb-2">
+                <h3 class="mb-2 text-xl">
                     <a href="{% url "apply:submissions:list" %}?query=flagged:@me">Your flagged submissions <span class="text-sm">({{ my_flagged.count }})</span></a>
                 </h3>
 
                 {% include "submissions/partials/submissions-inline.html" with submissions=my_flagged.submissions row_layout="table" %}
 
                 {% if my_flagged.display_more  %}
-                    <div class="border-x border-b flex items-center justify-center py-3 font-semibold">
+                    <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
                         <a href="{% url "apply:submissions:list" %}?query=flagged:@me">Show All</a>
                     </div>
                 {% endif %}
@@ -89,14 +89,14 @@
 
         {% if PROJECTS_ENABLED and paf_for_review.count %}
             <div id="paf_for_review" class="wrapper wrapper--bottom-space">
-                <h3 class="text-xl mb-2">{% trans "Project forms for review" %}</h3>
+                <h3 class="mb-2 text-xl">{% trans "Project forms for review" %}</h3>
                 {% render_table paf_for_review.table %}
             </div>
         {% endif %}
 
         {% if PROJECTS_ENABLED and projects.table.data %}
             <div id="active-projects" class="wrapper wrapper--bottom-space">
-                <h3 class="text-xl mb-2">
+                <h3 class="mb-2 text-xl">
                     {% trans "Your projects" %}
                 </h3>
 

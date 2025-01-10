@@ -3,7 +3,7 @@
 {% comment %} {% trans "Update" as update %}
 {% include 'funds/includes/delegated_form_base.html' with form=form value=update %} {% endcomment %}
 <form
-    class="form px-3"
+    class="px-3 form"
     id="bulk-update-reviewers-form"
     method="POST"
     hx-post="{% url "apply:submissions:submenu-bulk-update-reviewers" %}"
@@ -41,7 +41,7 @@
     {% endfor %}
 
     <button
-        class="button button--primary mt-6 mb-3"
+        class="mt-6 mb-3 button button--primary"
         type="submit"
         @click='open = false'
     >

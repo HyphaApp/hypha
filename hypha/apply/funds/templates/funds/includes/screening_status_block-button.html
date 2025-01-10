@@ -67,16 +67,16 @@
             @keydown.down.prevent="$focus.wrap().next()"
             @keydown.up.prevent="$focus.wrap().previous()"
         >
-            <header class="subheading border-b px-3 py-2 flex justify-between items-center gap-2">
-                <span class="SubMenuHeading font-medium text-inherit">Options</span>
+            <header class="flex gap-2 justify-between items-center py-2 px-3 border-b subheading">
+                <span class="font-medium SubMenuHeading text-inherit">Options</span>
                 <button type="button" @click='isOpen = false' class="appearance-none">
                     {% heroicon_mini "x-mark" aria_hidden="true" width=16 height=16 class="stroke-1 hover:stroke-2" %}
                 </button>
             </header>
-            <div class="divide-y font-semibold text-inherit">
+            <div class="font-semibold divide-y text-inherit">
                 {% for status in screening_options  %}
                     {% if current_status.id == status.id %}
-                        <span class="text-gray-800 flex items-center gap-2 pe-2 py-2 ps-2 font-medium bg-gray-100">
+                        <span class="flex gap-2 items-center py-2 font-medium text-gray-800 bg-gray-100 pe-2 ps-2">
                             <span class="w-4">
                                 {% heroicon_mini "check" aria_hidden="true" size=18 class="stroke-2 me-1" %}
                             </span>
@@ -98,7 +98,7 @@
                 {% endfor %}
                 {% if current_status %}
                     <a
-                        class="flex ps-8 pe-3 cursor-pointer hover:bg-light-blue/10 py-3 font-normal text-red-600 whitespace-nowrap"
+                        class="flex py-3 font-normal text-red-600 whitespace-nowrap cursor-pointer ps-8 pe-3 hover:bg-light-blue/10"
                         role='button'
                         hx-post="{% url 'funds:submissions:partial-screening-card' object.id %}"
                         hx-swap="outerHTML"

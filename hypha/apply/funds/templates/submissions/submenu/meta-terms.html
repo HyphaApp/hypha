@@ -1,6 +1,6 @@
 {% load i18n %}
 {% load querystrings %}
-<ul class="text-gray-700 divide-y max-h-80 overflow-scroll" aria-labelledby="dropdown-meta-terms" data-filter-list>
+<ul class="overflow-scroll max-h-80 text-gray-700 divide-y" aria-labelledby="dropdown-meta-terms" data-filter-list>
     {% if selected_meta_terms %}
         <li data-filter-item-text>
             <a href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "meta_terms" %}"
@@ -38,9 +38,9 @@
             </a>
         </li>
     {% empty %}
-        <li class="ps-4 pe-3 py-2 text-gray-600 max-w-xs">
+        <li class="py-2 max-w-xs text-gray-600 ps-4 pe-3">
             {% trans "No meta terms found." %}
         </li>
     {% endfor %}
 </ul>
-<p class="m-0 px-3 py-2 text-fg-muted" data-filter-empty-state hidden>{% trans "No meta terms found. Sorry about that." %}</p>
+<p class="py-2 px-3 m-0 text-fg-muted" data-filter-empty-state hidden>{% trans "No meta terms found. Sorry about that." %}</p>

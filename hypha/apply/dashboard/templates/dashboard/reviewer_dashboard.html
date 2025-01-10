@@ -18,14 +18,14 @@
 
         {% if my_flagged.submissions %}
             <div id="submissions-flagged" class="wrapper wrapper--bottom-space">
-                <h3 class="text-xl mb-2">
+                <h3 class="mb-2 text-xl">
                     <a href="{% url "apply:submissions:list" %}?query=flagged:@me">Your flagged submissions <span class="text-sm">({{ my_flagged.count }})</span></a>
                 </h3>
 
                 {% include "submissions/partials/submissions-inline.html" with submissions=my_flagged.submissions row_layout="table" %}
 
                 {% if my_flagged.display_more  %}
-                    <div class="border-x border-b flex items-center justify-center py-3 font-semibold">
+                    <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
                         <a href="{% url "apply:submissions:list" %}?query=flagged:@me">Show All</a>
                     </div>
                 {% endif %}
@@ -34,12 +34,12 @@
 
         {% if my_reviewed.table.data %}
             <div class="wrapper wrapper--bottom-space">
-                <h3 class="text-xl mb-2">Your previous reviews</h3>
+                <h3 class="mb-2 text-xl">Your previous reviews</h3>
 
                 {% include "submissions/partials/submissions-inline.html" with submissions=my_reviewed.table.data row_layout="table" %}
 
                 {% if my_reviewed.display_more %}
-                    <div class="border-x border-b flex items-center justify-center py-3 font-semibold">
+                    <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
                         <a href="{{ my_reviewed.url }}?query=reviewed-by:@me">{% trans "Show all" %}</a>
                     </div>
                 {% endif %}
@@ -48,7 +48,7 @@
 
         {% if my_submissions %}
             <div class="wrapper wrapper--bottom-space">
-                <h2 class="text-xl mb-2">
+                <h2 class="mb-2 text-xl">
                     {% trans "Your active submissions" %}
                 </h2>
                 {% for submission in my_submissions %}
@@ -76,7 +76,7 @@
 
         {% if my_inactive_submissions.data %}
             <div class="wrapper wrapper--bottom-space">
-                <h2 class="text-xl mb-2">
+                <h2 class="mb-2 text-xl">
                     {% trans "Submission history" %}
                 </h2>
                 {% render_table my_inactive_submissions %}

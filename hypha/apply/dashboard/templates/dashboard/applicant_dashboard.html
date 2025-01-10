@@ -6,15 +6,15 @@
 
 {% block content %}
     <div class="admin-bar">
-        <div class="admin-bar__inner wrapper--applicant-dashboard gap-4">
+        <div class="gap-4 admin-bar__inner wrapper--applicant-dashboard">
             <div class="my-auto">
-                <h1 class="heading heading--no-margin font-bold">{% trans "My dashboard" %}</h1>
+                <h1 class="font-bold heading heading--no-margin">{% trans "My dashboard" %}</h1>
                 <p class="m-0">{% trans "An overview of active and past submissions and projects" %}</p>
             </div>
-            <div class="wrapper wrapper--cta-box flex items-center">
+            <div class="flex items-center wrapper wrapper--cta-box">
                 <div class="flex-1">
-                    <h3 class="heading heading--no-margin font-bold">{% trans "Submit a new application" %}</h3>
-                    <p class="text-base m-0">{% trans "Apply now for our open rounds" %}</p>
+                    <h3 class="font-bold heading heading--no-margin">{% trans "Submit a new application" %}</h3>
+                    <p class="m-0 text-base">{% trans "Apply now for our open rounds" %}</p>
                 </div>
                 <div>
                     <a class="button button--blue-white" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
@@ -31,12 +31,12 @@
         {% if my_submissions_exists %}
             <div class="mb-10">
                 <div class="flex">
-                    <h2 class="font-light flex-1">{% trans "My submissions" %}</h2>
+                    <h2 class="flex-1 font-light">{% trans "My submissions" %}</h2>
                 </div>
 
                 <div hx-get="{% url 'dashboard:applicant_submissions' %}" hx-trigger="load" id="submissions_list">
                     {% for dummy_item in per_section_items %}
-                        <div class="wrapper wrapper--status-bar-outer animate-pulse min-h-40">
+                        <div class="animate-pulse wrapper wrapper--status-bar-outer min-h-40">
                             <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-gray-200 "></div>
                         </div>
                     {% endfor %}
@@ -48,11 +48,11 @@
         {% if my_projects_exists %}
             <div class="mb-10">
                 <div class="flex">
-                    <h2 class="font-light flex-1">{% trans "My projects" %}</h2>
+                    <h2 class="flex-1 font-light">{% trans "My projects" %}</h2>
                 </div>
                 <div hx-get="{% url 'dashboard:applicant_projects' %}" hx-trigger="load delay:50" id="projects_list">
                     {% for dummy_item in per_section_items %}
-                        <div class="wrapper wrapper--status-bar-outer animate-pulse min-h-40">
+                        <div class="animate-pulse wrapper wrapper--status-bar-outer min-h-40">
                             <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-gray-200 "></div>
                         </div>
                     {% endfor %}
@@ -64,24 +64,24 @@
         {% if active_invoices.count %}
             <div class="mb-10">
                 <div class="flex">
-                    <h2 class="font-light flex-1">{% trans "My active invoices" %}</h2>
+                    <h2 class="flex-1 font-light">{% trans "My active invoices" %}</h2>
                 </div>
                 {% for invoice in active_invoices.data %}
                     <div class="wrapper wrapper--status-bar-outer">
-                        <div class="wrapper flex flex-wrap justify-between ps-4 pe-4">
-                            <div class="md:w-1/3 flex flex-col item-start my-auto">
-                                <h4 class="heading heading--no-margin font-bold"><a class="link" href="{{ invoice.get_absolute_url }}">
+                        <div class="flex flex-wrap justify-between wrapper ps-4 pe-4">
+                            <div class="flex flex-col my-auto md:w-1/3 item-start">
+                                <h4 class="font-bold heading heading--no-margin"><a class="link" href="{{ invoice.get_absolute_url }}">
                                     {% if invoice.invoice_number %}{{ invoice.invoice_number }}{% else %}{{ invoice.vendor_document_number }}{% endif %}
                                 </a></h4>
-                                <p class="m-0 text-fg-muted text-sm">{% trans "Date added: " %} {{ invoice.requested_at }}</p>
+                                <p class="m-0 text-sm text-fg-muted">{% trans "Date added: " %} {{ invoice.requested_at }}</p>
                             </div>
-                            <div class="md:w-1/3 flex flex-col items-center text-center my-auto">
+                            <div class="flex flex-col items-center my-auto text-center md:w-1/3">
                                 <p class="text-2xl">{% if invoice.invoice_amount %}{{ invoice.invoice_amount | format_number_as_currency }}{% else %}-{% endif %}</p>
                             </div>
-                            <div class="md:w-1/3 flex flex-col items-end my-auto">
+                            <div class="flex flex-col items-end my-auto md:w-1/3">
                                 {% display_invoice_table_status_for_user invoice.status request.user as invoice_status %}
-                                <div class="w-full flex-1"></div>
-                                <div class="max-w-fit w-full text-end">
+                                <div class="flex-1 w-full"></div>
+                                <div class="w-full max-w-fit text-end">
                                     <p class="{{ invoice_status|invoice_status_bg_color }} text-base py-2 px-3 {{ invoice_status|invoice_status_fg_color }}">{{ invoice_status }}</p>
                                 </div>
                             </div>
@@ -95,15 +95,15 @@
     </div>
 
     {% if historical_submissions.count %}
-        <div class="wrapper wrapper--large wrapper--inner-space-medium mb-8">
-            <h2 class="text-xl mb-2">{% trans "Submission history" %}</h2>
+        <div class="mb-8 wrapper wrapper--large wrapper--inner-space-medium">
+            <h2 class="mb-2 text-xl">{% trans "Submission history" %}</h2>
             {% render_table historical_submissions.table %}
         </div>
     {% endif %}
 
     {% if historical_projects.count %}
-        <div class="wrapper wrapper--large wrapper--inner-space-medium mb-8">
-            <h2 class="text-xl mb-2">{% trans "Project history" %}</h2>
+        <div class="mb-8 wrapper wrapper--large wrapper--inner-space-medium">
+            <h2 class="mb-2 text-xl">{% trans "Project history" %}</h2>
             {% render_table historical_projects.table %}
         </div>
     {% endif %}

@@ -124,7 +124,7 @@
                                     {% display_submission_author True %}
                                 </strong>
                             </span>
-                            <div class="flex gap-4 justify-end flex-1 items-center no-print">
+                            <div class="flex flex-1 gap-4 justify-end items-center no-print">
                                 {% can "delete_submission" object as can_delete_submission %}
                                 {% if can_delete_submission %}
                                     <a
@@ -194,22 +194,22 @@
                                 <h5>{% trans "Related submissions" %}</h5>
 
                                 {% if object.previous %}
-                                    <p class="mb-4"><a class="underline font-bold" href="{% url 'funds:submissions:detail' object.previous.id %}">{% trans "View linked" %} {{ object.previous.stage }}</a></p>
+                                    <p class="mb-4"><a class="font-bold underline" href="{% url 'funds:submissions:detail' object.previous.id %}">{% trans "View linked" %} {{ object.previous.stage }}</a></p>
                                 {% endif %}
 
                                 {% if object.next %}
-                                    <p class="mb-4"><a class="underline font-bold" href="{% url 'funds:submissions:detail' object.next.id %}">{% trans "View linked" %} {{ object.next.stage }}</a></p>
+                                    <p class="mb-4"><a class="font-bold underline" href="{% url 'funds:submissions:detail' object.next.id %}">{% trans "View linked" %} {{ object.next.stage }}</a></p>
                                 {% endif %}
 
                                 <section class="flex flex-col gap-2" data-js-collapse>
                                     {% for submission in other_submissions %}
                                         {% if forloop.first %}
-                                            <h6 class="text-fg-muted uppercase mb-0 pb-2 border-b font-semibold">
+                                            <h6 class="pb-2 mb-0 font-semibold uppercase border-b text-fg-muted">
                                                 {% trans "Other Submissions" %}
                                             </h6>
                                         {% endif %}
                                         <div>
-                                            <a class="font-bold line-clamp-2 hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
+                                            <a class="font-bold hover:underline line-clamp-2" href="{% url 'funds:submissions:detail' submission.id %}">
                                                 {{ submission.title }}
                                             </a>
                                             <div class="text-sm text-fg-muted">

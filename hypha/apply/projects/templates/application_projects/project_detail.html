@@ -18,7 +18,7 @@
                 <span class="inline-block bg-gray-600 rounded-md animate-pulse"></span>
             </h1>
 
-            <div class="heading heading--meta text-sm mt-1 font-medium">
+            <div class="mt-1 text-sm font-medium heading heading--meta">
 
                 <span>{{ object.submission.page }}</span>
 
@@ -45,7 +45,7 @@
 
             </div>
 
-            <div class="status-bar my-6">
+            <div class="my-6 status-bar">
                 {% for status, text in statuses %}
                     {% if forloop.counter0 == current_status_index %}
                         {% include "funds/includes/status_bar_item.html" with is_current=True is_complete=False label=text %}
@@ -57,7 +57,7 @@
                 {% endfor %}
             </div>
 
-            <div class="status-bar--mobile mt-5">
+            <div class="mt-5 status-bar--mobile">
                 <h6 class="status-bar__subheading">
                     {{ project_status }}
                 </h6>
@@ -89,7 +89,7 @@
 
     {% show_closing_banner object as show_banner %}
     {% if show_banner %}
-        <div class="bg-red-500 text-white font-semibold text-center p-2">
+        <div class="p-2 font-semibold text-center text-white bg-red-500">
             {% blocktrans with status=project_status %} This project is in {{ status }} state. {% endblocktrans %}
         </div>
     {% endif %}
@@ -144,9 +144,9 @@
                     <aside class="sidebar">
                         {% user_next_step_on_project object user request=request as next_step %}
                         {% if next_step %}
-                            <div class="bg-yellow-100 shadow px-5 py-3 mb-8 sidebar__inner--actions">
-                                <h5 class="border-b pb-2 border-b-orange-200">
-                                    {% heroicon_solid "sparkles" class="inline me-1 fill-orange-500 align-text-top" aria_hidden=true %}
+                            <div class="py-3 px-5 mb-8 bg-yellow-100 shadow sidebar__inner--actions">
+                                <h5 class="pb-2 border-b border-b-orange-200">
+                                    {% heroicon_solid "sparkles" class="inline align-text-top me-1 fill-orange-500" aria_hidden=true %}
                                     {{ next_step.heading }}
                                 </h5>
                                 <p class="">{{ next_step.text }}</p>
@@ -172,10 +172,10 @@
                                         {% if rejected %}
                                             <div class="flex">
                                                 <div>
-                                                    <svg class="w-5 h-5 me-1 mt-1"><use xlink:href="#request-changes"></use></svg>
+                                                    <svg class="mt-1 w-5 h-5 me-1"><use xlink:href="#request-changes"></use></svg>
                                                 </div>
                                                 <div>
-                                                    <p class="sidebar__paf-approvals--approved m-0">{% trans "Request changes or more information by " %}{{ paf_approval.user }}</p>
+                                                    <p class="m-0 sidebar__paf-approvals--approved">{% trans "Request changes or more information by " %}{{ paf_approval.user }}</p>
                                                     {% get_comment_for_requested_approval paf_approval as rejected_comment %}
                                                     {% if rejected_comment %}
                                                         <a href="#communications#{{ rejected_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
@@ -183,10 +183,10 @@
                                                 </div>
                                             </div>
                                         {% else %}
-                                            <p class="sidebar__paf-approvals--pending m-0">{% trans "Pending approval from " %}{% if paf_approval.user %}{{ paf_approval.user }}{% else %} {{ paf_approval.paf_reviewer_role.label }}{% trans " (nobody assigned yet)" %} {% endif %}</p>
+                                            <p class="m-0 sidebar__paf-approvals--pending">{% trans "Pending approval from " %}{% if paf_approval.user %}{{ paf_approval.user }}{% else %} {{ paf_approval.paf_reviewer_role.label }}{% trans " (nobody assigned yet)" %} {% endif %}</p>
                                         {% endif %}
                                     {% else %}
-                                        <p class="sidebar__paf-approvals--approved m-0">{% trans "Approved by " %}{{ paf_approval.user }} {% if paf_approval.approved_at %}(<i>{{ paf_approval.approved_at|date }}</i>){% endif %}</p>
+                                        <p class="m-0 sidebar__paf-approvals--approved">{% trans "Approved by " %}{{ paf_approval.user }} {% if paf_approval.approved_at %}(<i>{{ paf_approval.approved_at|date }}</i>){% endif %}</p>
                                     {% endif %}
                                     <br>
                                 {% endfor %}

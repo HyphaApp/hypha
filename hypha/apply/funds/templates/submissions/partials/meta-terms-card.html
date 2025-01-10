@@ -1,9 +1,9 @@
 {% load i18n heroicons %}
 
-<div class="flex justify-between gap-4 pb-4">
+<div class="flex gap-4 justify-between pb-4">
     <h5 class="m-0">{% trans "Meta Terms" %}</h5>
     <button
-        class="flex items-center px-2 py-1 font-bold transition-colors rounded hover:bg-gray-100 text-dark-blue -me-2"
+        class="flex items-center py-1 px-2 font-bold rounded transition-colors hover:bg-gray-100 text-dark-blue -me-2"
         hx-get="{% url 'funds:submissions:metaterms_update' pk=submission.pk %}"
         hx-target="#htmx-modal"
         role="button"
@@ -32,7 +32,7 @@
             <div class="flex flex-wrap gap-2">
                 {% for meta_term in group.list %}
                     <a
-                        class="px-2 py-1 text-sm font-semibold transition-opacity border rounded-lg bg-slate-100 hover:opacity-70"
+                        class="py-1 px-2 text-sm font-semibold rounded-lg border transition-opacity hover:opacity-70 bg-slate-100"
                         href="{% url 'apply:submissions:list' %}?meta_terms={{ meta_term.id }}"
                         hx-boost="true"
                         hx-target="#main"

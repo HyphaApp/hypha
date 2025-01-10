@@ -16,14 +16,14 @@
 
     {% endadminbar %}
 
-    <div class="flex justify-between pt-2 mb-2 mt-2 max-w-[50em] border-b">
+    <div class="flex justify-between pt-2 mt-2 mb-2 border-b max-w-[50em]">
         <h5>
             {% trans "Determination" %}: {{ determination.get_outcome_display }}
         </h5>
         {% if request.user.is_apply_staff %}
             <a class="text-blue-500 hover:underline" href="{% url 'apply:submissions:determinations:edit' submission_pk=determination.submission.id pk=determination.id %}">
                 <span class="whitespace-nowrap">
-                    {% trans "Edit" %}{% heroicon_mini "pencil-square" size=18 class="inline ms-1 align-text-bottom" aria_hidden=true %}
+                    {% trans "Edit" %}{% heroicon_mini "pencil-square" size=18 class="inline align-text-bottom ms-1" aria_hidden=true %}
                 </span>
             </a>
         {% endif %}

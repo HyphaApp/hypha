@@ -22,17 +22,17 @@
         </div>
 
         {# Right #}
-        <div class="flex items-center gap-4">
+        <div class="flex gap-4 items-center">
             {% get_query 'archived' as archived_param %}
             {% if show_archive %}
                 {% if request.GET.archived == '1' %}
                     <a
-                        class="px-3 py-1.5 flex items-center transition-colors rounded hover:bg-gray-100 hover:shadow-sm"
+                        class="flex items-center py-1.5 px-3 rounded transition-colors hover:bg-gray-100 hover:shadow-sm"
                         href="{% modify_query archived='0' %}"
                     >{% trans "Hide Archived" %}</a>
                 {% else %}
                     <a
-                        class="px-3 py-1.5 flex items-center transition-colors rounded hover:bg-gray-100 hover:shadow-sm"
+                        class="flex items-center py-1.5 px-3 rounded transition-colors hover:bg-gray-100 hover:shadow-sm"
                         href="{% modify_query archived='1' %}"
                     >{% trans "Show Archived" %}</a>
                 {% endif %}
@@ -40,7 +40,7 @@
             {% with request.get_full_path as path %}
                 {% if 'submission' in path and can_export %}
                     <a
-                        class="px-2 py-1.5 flex items-center transition-colors border rounded hover:bg-gray-100 shadow-sm"
+                        class="flex items-center py-1.5 px-2 rounded border shadow-sm transition-colors hover:bg-gray-100"
                         aria-label="Submissions: Download as CSV"
                         href="{{path}}{% if '?' in path %}&{%else%}?{% endif %}export=true"
                         onclick="return confirm('{% blocktrans %}Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.{% endblocktrans %}');"
@@ -75,7 +75,7 @@
                     {% endif %}
                     {% trans "submissions" as submissions %}
                     <input
-                        class="rounded shadow-sm input input--search input--secondary md:w-48"
+                        class="rounded shadow-sm md:w-48 input input--search input--secondary"
                         type="text"
                         placeholder="{% trans 'Search' %} {{ search_placeholder|default:submissions }}"
                         name="query"

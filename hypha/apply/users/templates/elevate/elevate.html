@@ -5,11 +5,11 @@
 {% block body_class %}bg-white{% endblock %}
 
 {% block content %}
-    <div class="max-w-md px-4 pt-4 mx-auto md:mt-5 md:py-4">
+    <div class="px-4 pt-4 mx-auto max-w-md md:py-4 md:mt-5">
 
         <h2 class="text-2xl text-center">{% trans "Confirm access" %}</h2>
 
-        <p class="text-center mb-4">
+        <p class="mb-4 text-center">
             Signed in as <strong>{% if request.user.full_name %} {{ request.user.full_name }} ({{ request.user.email }}) {% else %}{{ request.user.email }} {% endif %}</strong>
         </p>
 
@@ -17,7 +17,7 @@
 
             {% if request.user.has_usable_password %}
                 <form
-                    class="form form--error-inline mb-4 px-4 pt-4 border rounded-sm bg-gray-50"
+                    class="px-4 pt-4 mb-4 bg-gray-50 rounded-sm border form form--error-inline"
                     method="post"
                     action="./"
                     data-test-id="section-password-input"
@@ -33,7 +33,7 @@
                     </div>
                 </form>
             {% else %}
-                <section data-test-id="section-confirm" id="confirm-code-input" class="mb-4 px-4 pt-4 text-center">
+                <section data-test-id="section-confirm" id="confirm-code-input" class="px-4 pt-4 mb-4 text-center">
 
                     <button
                         class="button button--primary"
@@ -48,7 +48,7 @@
             {% endif %}
 
             {% if request.user.has_usable_password %}
-                <section data-test-id="section-send-email" class="px-4 border pt-2 pb-4">
+                <section data-test-id="section-send-email" class="px-4 pt-2 pb-4 border">
                     <p>{% trans "Having problems?" %}</p>
                     <ul class="list-disc ms-4">
                         <li>
@@ -68,7 +68,7 @@
         </section>
 
 
-        <p class="text-xs text-center max-w-xs mt-8 text-gray-500 mx-auto leading-relaxed">
+        <p class="mx-auto mt-8 max-w-xs text-xs leading-relaxed text-center text-gray-500">
             {% blocktrans %}
                 <strong>Tip:</strong> You are entering sudo mode. After you've performed a sudo-protected
                 action, you'll only be asked to re-authenticate again after a few hours of inactivity.

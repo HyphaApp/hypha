@@ -1,7 +1,7 @@
 {% load i18n wagtailcore_tags %}
 
 {% if show_banner %}
-    <div class="cookieconsent w-full z-20 py-8">
+    <div class="z-20 py-8 w-full cookieconsent">
         <div class="cookieconsent__content">
             <div class="cookieconsent__brief">
                 <div>
@@ -53,7 +53,7 @@
                             <span class="font-bold">{% trans "Always enabled." %}</span>
                         </div>
                         {% if settings.cookieconsent_analytics %}
-                            <div class="cookieconsent__info lg:pl-10">
+                            <div class="lg:pl-10 cookieconsent__info">
                                 <p class="font-semibold">{% trans "Analytics Cookies" %}</p>
                                 {{ settings.cookieconsent_analytics_about|richtext }}
                             </div>
