@@ -50,7 +50,9 @@ TASKS_CODE_CHOICES = (
 template_map = {
     # ADD Manual Task
     COMMENT_TASK: {
-        "text": _("{msg}"),
+        "text": _(
+            '{related.user} assigned you a comment on [<span class="truncate inline-block max-w-32 align-bottom ">{related.source.title}</span>]({link} "{related.source.title}"):\n<span class="line-clamp-2 italic align-bottom ">{msg}</span>'
+        ),
         "icon": "comment",
         "url": "{link}",
         "type": _("Comment"),
@@ -217,7 +219,8 @@ def get_task_template(request, task, **kwargs):
         "link": link_to(related_obj, request),
     }
     if task.code == COMMENT_TASK:
-        template_kwargs["msg"] = related_obj.message
+        # Replace all newlines with spaces
+        template_kwargs["msg"] = " ".join(related_obj.message.splitlines())
     template["text"] = template["text"].format(**template_kwargs)
     template["url"] = template["url"].format(**template_kwargs)
     # additional field
