@@ -230,7 +230,6 @@ Here is a list of settings that can be set as environment variables or in a `hyp
 **None optional:**
 
 ```text
-API_BASE_URL:                                  https://example.org/api
 CACHE_CONTROL_MAX_AGE:                         14400
 COOKIE_SECURE:                                 true
 DJANGO_SETTINGS_MODULE:                        hypha.settings.production
