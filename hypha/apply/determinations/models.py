@@ -14,7 +14,7 @@ from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.fields import RichTextField, StreamField
 
 from hypha.apply.funds.models.mixins import AccessFormData
-from hypha.apply.funds.workflow import Concept, Proposal, Request
+from hypha.apply.funds.workflows.models.stage import Concept, Proposal, Request
 
 from .blocks import (
     DeterminationBlock,

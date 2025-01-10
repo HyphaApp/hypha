@@ -1,7 +1,7 @@
 from django.urls import reverse
 
 from hypha.apply.funds.tests.factories.models import ApplicationSubmissionFactory
-from hypha.apply.funds.workflow import DRAFT_STATE
+from hypha.apply.funds.workflows import DRAFT_STATE
 from hypha.apply.users.tests.factories import AdminFactory, ApplicantFactory
 
 

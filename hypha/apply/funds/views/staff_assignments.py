@@ -11,7 +11,7 @@ from ..models import (
     ReviewerRole,
 )
 from ..tables import StaffAssignmentsTable
-from ..workflow import active_statuses
+from ..workflows import active_statuses
 
 User = get_user_model()
 

@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views.decorators.http import require_GET
 
 from hypha.apply.funds.models.submissions import ApplicationSubmission
-from hypha.apply.funds.workflow import active_statuses
+from hypha.apply.funds.workflows import active_statuses
 from hypha.apply.projects.models import Project
 
 

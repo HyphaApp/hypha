@@ -26,7 +26,11 @@ from hypha.apply.funds.models.forms import (
     RoundBaseForm,
     RoundBaseReviewForm,
 )
-from hypha.apply.funds.workflow import ConceptProposal, Request, RequestExternal
+from hypha.apply.funds.workflows.registry import (
+    ConceptProposal,
+    Request,
+    RequestExternal,
+)
 from hypha.apply.stream_forms.testing.factories import FormDataFactory
 from hypha.apply.users.roles import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 from hypha.apply.users.tests.factories import (
