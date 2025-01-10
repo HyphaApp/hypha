@@ -1,0 +1,11 @@
+.cache
+.git
+.github
+.ruff_cache
+.venv
+.vscode
+docs
+docs_build
+hypha/static_compiled
+media
+node_modules
