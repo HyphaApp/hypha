@@ -1,14 +1,35 @@
-{% load heroicons %}
+{% load heroicons i18n %}
 
-<template x-teleport="body" x-data="{scrollBackTop: false, lastScrollTop: 0}">
+{# Component for displaying a "back to top" button that appears when scrolling up #}
+<template x-teleport="body"
+    {# fmt:off #}
+    x-data="{
+        scrollBackTop: false, // Whether the button should be visible
+        lastScrollTop: 0, // Last recorded scroll position
+        checkScroll() {
+            const scrollingUp = window.scrollY < this.lastScrollTop;
+            const pastThreshold = window.scrollY > window.innerHeight * 0.4;
+            // Show button only when scrolling up and past threshold
+            this.scrollBackTop = scrollingUp && pastThreshold;
+            this.lastScrollTop = window.scrollY;
+        },
+        scrollToTop() {
+            // Smoothly scroll to top of page
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+    }"
+    {# fmt:on #}
+>
     <button
+        role="button"
+        x-on:scroll.window.passive="checkScroll"
         x-show="scrollBackTop"
         x-transition
         x-transition.duration.500ms
-        x-on:scroll.window.throttle.50ms="scrollBackTop = (window.pageYOffset < lastScrollTop && window.pageYOffset > window.outerHeight * 0.4) ? true : false; lastScrollTop = window.pageYOffset;"
-        @click="window.scrollTo({top: 0, behavior: 'smooth'})"
-        aria-label="Back to top"
-        class="fixed top-0 z-30 py-2 px-3 mt-10 text-white rounded-2xl shadow-lg transition-all cursor-pointer hover:text-white hover:shadow-lg focus:outline-none end-1/2 -me-[64px] bg-light-blue/80 hover:bg-light-blue">
-        {% heroicon_mini "arrow-long-up" class="inline align-text-bottom" size=18 aria_hidden=true %} Back to top
+        @click="scrollToTop"
+        class="fixed top-0 z-30 py-2 px-3 mt-10 text-white rounded-2xl shadow-lg transition-all cursor-pointer hover:text-white hover:shadow-lg focus:ring-2 focus:outline-none end-1/2 -me-[64px] bg-light-blue/80 hover:bg-light-blue focus:ring-light-blue"
+    >
+        {% heroicon_mini "arrow-long-up" class="inline align-text-bottom" size=18 aria_hidden=true %}
+        {% trans 'Back to top' %}
     </button>
 </template>
