@@ -8,8 +8,8 @@ class MultiCheckboxesWidget(forms.SelectMultiple):
 
     def __init__(self, *args, **kwargs):
         attrs = kwargs.get("attrs", {})
-        # Add the class for Choices.js initialization
-        attrs.setdefault("class", "js-choices")
+        # Add the date attribute for Choices.js initialization
+        attrs.setdefault("data-js-choices", "")
         attrs.setdefault("data-placeholder", "")
         kwargs["attrs"] = attrs
         super().__init__(*args, **kwargs)

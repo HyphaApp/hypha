@@ -398,7 +398,9 @@ class GroupedModelMultipleChoiceField(forms.ModelMultipleChoiceField):
 class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
     meta_terms = GroupedModelMultipleChoiceField(
         queryset=None,  # updated in init method
-        widget=MetaTermWidget(attrs={"data-placeholder": "Select..."}),
+        widget=MetaTermWidget(
+            attrs={"data-placeholder": "Select...", "data-js-choices": ""}
+        ),
         label=_("Meta terms"),
         choices_groupby="get_parent",
         required=False,
