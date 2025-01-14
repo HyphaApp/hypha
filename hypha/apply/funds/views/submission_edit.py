@@ -756,13 +756,14 @@ class UpdateMetaTermsView(View):
         if form.is_valid():
             form.save()
 
+            message = _("Tags updated successfully.")
             return HttpResponse(
                 status=204,
                 headers={
                     "HX-Trigger": json.dumps(
                         {
                             "metaTermsUpdated": None,
-                            "showMessage": "Meta terms updated successfully.",
+                            "showMessage": message,
                         }
                     ),
                 },

@@ -1,17 +1,17 @@
 {% load i18n heroicons %}
 
 <div class="flex gap-4 justify-between pb-4">
-    <h5 class="m-0">{% trans "Meta Terms" %}</h5>
+    <h5 class="m-0">{% trans "Tags" %}</h5>
     <button
         class="flex items-center py-1 px-2 font-bold rounded transition-colors hover:bg-gray-100 text-dark-blue -me-2"
         hx-get="{% url 'funds:submissions:metaterms_update' pk=submission.pk %}"
         hx-target="#htmx-modal"
         role="button"
         {% if meta_terms %}
-            aria-label="{% trans "Update Meta Terms" %}"
-            title="{% trans "Update Meta Terms" %}"
+            aria-label="{% trans "Update tags" %}"
+            title="{% trans "Update tags" %}"
         {% else %}
-            aria-label="{% trans "Add Meta Terms" %}"
+            aria-label="{% trans "Add tags" %}"
         {% endif %}
     >
         {% if meta_terms %}
@@ -33,7 +33,7 @@
                 {% for meta_term in group.list %}
                     <a
                         class="py-1 px-2 text-sm font-semibold rounded-lg border transition-opacity hover:opacity-70 bg-slate-100"
-                        href="{% url 'apply:submissions:list' %}?meta_terms={{ meta_term.id }}"
+                        href="{% url 'apply:submissions:list' %}?tags={{ meta_term.id }}"
                         hx-boost="true"
                         hx-target="#main"
                         hx-select="#main"
