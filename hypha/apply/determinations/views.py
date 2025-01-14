@@ -45,7 +45,6 @@ from .permissions import can_create_determination, can_edit_determination
 from .utils import (
     determination_actions,
     has_final_determination,
-    outcome_from_actions,
     transition_from_outcome,
 )
 
@@ -244,41 +243,6 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
                     transition, self.request.user, request=self.request, notify=False
                 )
         return response
-
-    @classmethod
-    def should_redirect(cls, request, submissions, actions):
-        excluded = []
-        for submission in submissions:
-            if has_final_determination(submission):
-                excluded.append(submission)
-
-        non_determine_states = set(actions) - set(DETERMINATION_OUTCOMES.keys())
-        if not any(non_determine_states):
-            if excluded:
-                messages.warning(
-                    request,
-                    _(
-                        "A determination already exists for the following submissions and they have been excluded: {submissions}"
-                    ).format(
-                        submissions=", ".join(
-                            [submission.title_text_display for submission in excluded]
-                        ),
-                    ),
-                )
-
-            submissions = submissions.exclude(
-                id__in=[submission.id for submission in excluded]
-            )
-            action = outcome_from_actions(actions)
-            return HttpResponseRedirect(
-                reverse_lazy("apply:submissions:determinations:batch")
-                + "?action="
-                + action
-                + "&submissions="
-                + ",".join([str(submission.id) for submission in submissions])
-            )
-        elif set(actions) != non_determine_states:
-            raise ValueError("Inconsistent states provided - please talk to an admin")
 
     def get_success_url(self):
         try:
