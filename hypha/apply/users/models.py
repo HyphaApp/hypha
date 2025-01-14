@@ -197,9 +197,6 @@ class User(AbstractUser):
         max_length=50,
     )
 
-    # Meta: used for migration purposes only
-    drupal_id = models.IntegerField(null=True, blank=True, editable=False)
-
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
