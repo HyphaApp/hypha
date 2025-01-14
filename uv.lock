@@ -770,6 +770,19 @@ wheels = [
 ]
 
 [[package]]
+name = "django-model-info"
+version = "0.2.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "rich" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7a/29/97d3990d5251963ae687c9b525af24b291c676c2897eff1aa26d0caf7790/django-model-info-0.2.2.tar.gz", hash = "sha256:095c5a56be1b45f182ac94dd66d439e74e5b216a10752cf50cdc54c2dafdf59d", size = 16936 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8b/a7/d02fe91ba5ef08c05cde9c79a890c9a9993c1d9b0def66d903c3cdeadfd4/django_model_info-0.2.2-py2.py3-none-any.whl", hash = "sha256:25fc503b56f3e650420f107fff6bb72910275abbff3cd4352ec89c365d8c6ed7", size = 15726 },
+]
+
+[[package]]
 name = "django-modelcluster"
 version = "6.4"
 source = { registry = "https://pypi.org/simple" }
@@ -1376,6 +1389,7 @@ dev = [
     { name = "django-coverage-plugin" },
     { name = "django-debug-toolbar" },
     { name = "django-dynamic-fixture" },
+    { name = "django-model-info" },
     { name = "djhtml" },
     { name = "dslr" },
     { name = "factory-boy" },
@@ -1474,6 +1488,7 @@ dev = [
     { name = "django-coverage-plugin", specifier = ">=3.1.0" },
     { name = "django-debug-toolbar", specifier = ">=4.3.0" },
     { name = "django-dynamic-fixture", specifier = ">=4.0.1" },
+    { name = "django-model-info", specifier = ">=0.2.2" },
     { name = "djhtml", specifier = ">=3.0.5" },
     { name = "dslr", specifier = ">=0.4.0" },
     { name = "factory-boy", specifier = ">=3.3.1" },
