@@ -87,7 +87,6 @@ class SubmissionResultView(SubmissionStatsMixin, FilterView):
             .exclude_draft()
             .defer(
                 "search_data",
-                "drupal_id",
                 "submit_time",
                 "workflow_name",
                 "search_document",
