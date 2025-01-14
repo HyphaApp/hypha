@@ -123,6 +123,23 @@
         </script>
         <!-- htmx end -->
 
+        <!-- choices select -->
+        <script type="module">
+            import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+
+            htmx.onLoad(function() {
+                const selectElements = document.querySelectorAll("[data-js-choices]");
+
+                selectElements.forEach((selectElement) => {
+                    new Choices(selectElement, {
+                        shouldSort: false,
+                        allowHTML: true,
+                        removeItemButton: true,
+                    });
+                });
+            });
+        </script>
+
         <!-- Placeholder for the htmx modal & toast -->
         {% include "includes/_modal-placeholder.html" %}
         {% include "includes/_toast-placeholder.html" %}

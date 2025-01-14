@@ -21,7 +21,7 @@ from .models import (
 )
 from .permissions import can_change_external_reviewers
 from .utils import model_form_initial, render_icon
-from .widgets import MetaTermSelect2Widget, Select2MultiCheckboxesWidget
+from .widgets import MetaTermWidget, MultiCheckboxesWidget
 
 
 class ApplicationSubmissionModelForm(forms.ModelForm):
@@ -234,7 +234,7 @@ class BatchUpdateReviewersForm(forms.Form):
     )
     external_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().only("pk", "full_name"),
-        widget=Select2MultiCheckboxesWidget(attrs={"data-placeholder": "Select..."}),
+        widget=MultiCheckboxesWidget(attrs={"data-placeholder": "Select..."}),
         label=_("External Reviewers"),
         required=False,
     )
@@ -398,7 +398,9 @@ class GroupedModelMultipleChoiceField(forms.ModelMultipleChoiceField):
 class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
     meta_terms = GroupedModelMultipleChoiceField(
         queryset=None,  # updated in init method
-        widget=MetaTermSelect2Widget(attrs={"data-placeholder": "Select..."}),
+        widget=MetaTermWidget(
+            attrs={"data-placeholder": "Select...", "data-js-choices": ""}
+        ),
         label=_("Meta terms"),
         choices_groupby="get_parent",
         required=False,

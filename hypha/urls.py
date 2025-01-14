@@ -43,7 +43,6 @@ urlpatterns = [
     path("", include(tf_urls, "two_factor")),
     path("", include((user_urls, "users"))),
     path("tinymce/", include("tinymce.urls")),
-    path("select2/", include("django_select2.urls")),
 ]
 
 if settings.HIJACK_ENABLE:
