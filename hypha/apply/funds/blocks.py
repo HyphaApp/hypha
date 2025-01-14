@@ -30,7 +30,7 @@ class TitleBlock(ApplicationMustIncludeFieldBlock):
     field_label = blocks.CharBlock(
         label=_("Label"), default=_("What is the title of your application?")
     )
-    help_text = blocks.TextBlock(
+    help_text = blocks.RichTextBlock(
         required=False,
         label=_("Help text"),
         default=_("This project name can be changed if a full proposal is requested."),
@@ -72,7 +72,7 @@ class EmailBlock(ApplicationMustIncludeFieldBlock):
     field_label = blocks.CharBlock(
         label=_("Label"), default=_("What email address should we use to contact you?")
     )
-    help_text = blocks.TextBlock(
+    help_text = blocks.RichTextBlock(
         required=False,
         label=_("Help text"),
         default=_(
@@ -117,7 +117,7 @@ class FullNameBlock(ApplicationMustIncludeFieldBlock):
     name = "full_name"
     description = "Full name"
     field_label = blocks.CharBlock(label=_("Label"), default=_("What is your name?"))
-    help_text = blocks.TextBlock(
+    help_text = blocks.RichTextBlock(
         required=False,
         label=_("Help text"),
         default=_(
