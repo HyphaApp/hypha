@@ -159,8 +159,11 @@ DEBUG_TOOLBAR_CONFIG = {
     "SHOW_COLLAPSED": True,
 }
 
-# Required for testing the apis from postman
-REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = REST_FRAMEWORK[
-    "DEFAULT_AUTHENTICATION_CLASSES"
-] + ("rest_framework.authentication.BasicAuthentication",)
+# Sentry deny URLs.
 SENTRY_DENY_URLS += ["__reload__", "/favicon.ico", "/media/", "/static/", "__debug__"]
+
+# Add django-model-info.
+INSTALLED_APPS = [
+    *INSTALLED_APPS,
+    "django_model_info.apps.DjangoModelInfoConfig",
+]
