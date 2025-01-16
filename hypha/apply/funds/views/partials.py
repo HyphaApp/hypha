@@ -32,6 +32,7 @@ from .. import services
 from ..models import ApplicationSubmission, Round
 from ..permissions import can_change_external_reviewers
 from ..utils import (
+    check_submissions_same_determination_form,
     get_or_create_default_screening_statuses,
     get_statuses_as_params,
     status_and_phases_mapping,
@@ -309,6 +310,8 @@ def sub_menu_update_status(request: HttpRequest) -> HttpResponse:
     submission_ids = request.GET.getlist("selectedSubmissionIds")
     qs = ApplicationSubmission.objects.filter(id__in=submission_ids)
 
+    allow_determination = check_submissions_same_determination_form(qs)
+
     list_of_actions_list = [s.get_actions_for_user(request.user) for s in qs]
     action_names = [[x[1] for x in action_list] for action_list in list_of_actions_list]
     common_actions = (
@@ -316,6 +319,13 @@ def sub_menu_update_status(request: HttpRequest) -> HttpResponse:
         if action_names
         else []
     )
+
+    # hide determination actions if submissions have different forms
+    if not allow_determination:
+        determination_actions = ["Dismiss", "Request More Information", "Accept"]
+        common_actions = [
+            action for action in common_actions if action not in determination_actions
+        ]
 
     ctx = {
         "statuses": {slugify(a): a for a in common_actions}.items(),
