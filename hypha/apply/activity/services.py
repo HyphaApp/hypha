@@ -60,7 +60,7 @@ def get_related_actions_for_user(obj, user):
     )
 
 
-def get_related_comments_for_user(obj, user):
+def get_related_activities_for_user(obj, user):
     """Return comments/communications related to an object, esp. useful with
     ApplicationSubmission and Project.
 
