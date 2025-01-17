@@ -107,18 +107,20 @@ class ActivityContextMixin:
             project_obj = self.object
             application_obj = self.object.submission
         else:
-            project_obj = self.object.project
+            project_obj = None
+            if hasattr(self.object, "project"):
+                project_obj = self.object.project
             application_obj = self.object
 
-        application_activities = services.get_related_activities_for_user(
+        activities = services.get_related_activities_for_user(
             application_obj, self.request.user
         )
-        project_activities = services.get_related_activities_for_user(
-            project_obj, self.request.user
-        )
-        activities = application_activities | project_activities
 
-        print(activities)
+        if project_obj is not None:
+            project_activities = services.get_related_activities_for_user(
+                project_obj, self.request.user
+            )
+            activities = activities | project_activities
 
         # Comments for both projects and applications exist under the original application
         comments_count = services.get_comment_count(application_obj, user)
