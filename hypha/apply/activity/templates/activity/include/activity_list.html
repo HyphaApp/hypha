@@ -4,7 +4,7 @@
     <section class="ml-4 max-w-3xl md:ml-20">
 
         <div class="timeline">
-            {% for activity in comments %}
+            {% for activity in activities %}
                 {% if activity.type == "comment" %}
                     {% include "activity/ui/activity-comment-item.html" with activity=activity %}
                 {% else %}
@@ -25,7 +25,7 @@
             {% endif %}
         </div>
 
-        {% if not comments %}
+        {% if not activities %}
             {% trans "No comments available" %}
         {% endif %}
     </section>

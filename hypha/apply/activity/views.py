@@ -31,7 +31,7 @@ def partial_comments(request, content_type: str, pk: int):
 
     This view handles comments for both 'submission' and 'project' content types.
     It checks the user's permissions and fetches the related comments for the user.
-    The comments are paginated and rendered in the 'comment_list' template.
+    The comments are paginated and rendered in the 'activity_list' template.
 
     Args:
         request (HttpRequest): The HTTP request object.
@@ -39,7 +39,7 @@ def partial_comments(request, content_type: str, pk: int):
         pk (int): The primary key of the content object.
 
     Returns:
-        HttpResponse: The rendered 'comment_list' template with the context data.
+        HttpResponse: The rendered 'activity_list' template with the context data.
     """
     if content_type == "submission":
         obj = get_object_or_404(ApplicationSubmission, pk=pk)
@@ -54,17 +54,19 @@ def partial_comments(request, content_type: str, pk: int):
         )
         editable = False if obj.status == "complete" else True
     else:
-        return render(request, "activity/include/comment_list.html", {})
+        return render(request, "activity/include/activity_list.html", {})
 
     qs = services.get_related_activities_for_user(obj, request.user)
+    if hasattr(obj, "project") and obj.project:
+        qs = qs | services.get_related_activities_for_user(obj.project, request.user)
     page = Paginator(qs, per_page=10, orphans=5).page(request.GET.get("page", 1))
 
     ctx = {
         "page": page,
-        "comments": page.object_list,
+        "activities": page.object_list,
         "editable": editable,
     }
-    return render(request, "activity/include/comment_list.html", ctx)
+    return render(request, "activity/include/activity_list.html", ctx)
 
 
 @login_required
