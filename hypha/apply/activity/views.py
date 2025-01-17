@@ -56,7 +56,7 @@ def partial_comments(request, content_type: str, pk: int):
     else:
         return render(request, "activity/include/comment_list.html", {})
 
-    qs = services.get_related_comments_for_user(obj, request.user)
+    qs = services.get_related_activities_for_user(obj, request.user)
     page = Paginator(qs, per_page=10, orphans=5).page(request.GET.get("page", 1))
 
     ctx = {
@@ -98,16 +98,30 @@ class ActivityContextMixin:
     """Mixin to add related 'comments' of the current view's 'self.object'"""
 
     def get_context_data(self, **kwargs):
-        extra = {
-            # Do not prefetch on the related_object__author as the models
-            # are not homogeneous and this will fail
-            "comments": services.get_related_comments_for_user(
-                self.object, self.request.user
-            ),
-            "comments_count": services.get_comment_count(
-                self.object, self.request.user
-            ),
-        }
+        # Do not prefetch on the related_object__author as the models
+        # are not homogeneous and this will fail
+        user = self.request.user
+        if isinstance(self.object, Project):
+            project_obj = self.object
+            application_obj = self.object.submission
+        else:
+            project_obj = self.object.project
+            application_obj = self.object
+
+        application_activities = services.get_related_activities_for_user(
+            application_obj, self.request.user
+        )
+        project_activities = services.get_related_activities_for_user(
+            project_obj, self.request.user
+        )
+        activities = application_activities | project_activities
+
+        print(activities)
+
+        # Comments for both projects and applications exist under the original application
+        comments_count = services.get_comment_count(application_obj, user)
+
+        extra = {"activities": activities, "comments_count": comments_count}
         return super().get_context_data(**extra, **kwargs)
 
 
