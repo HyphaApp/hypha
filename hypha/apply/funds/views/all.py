@@ -389,6 +389,14 @@ def bulk_update_submissions_status(request: HttpRequest) -> HttpResponse:
         )
 
     if succeeded_submissions := submissions.exclude(id__in=(s.id for s in failed)):
+        base_message = _("Successfully updated status to {status}: ").format(
+            status=succeeded_submissions[0].phase
+        )
+        submissions_text = [
+            submission.title_text_display for submission in succeeded_submissions
+        ]
+        messages.success(request, base_message + ", ".join(submissions_text))
+
         messenger(
             MESSAGES.BATCH_TRANSITION,
             user=request.user,

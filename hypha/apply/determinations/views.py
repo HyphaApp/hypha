@@ -201,6 +201,13 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
             determination.submission.id: determination
             for determination in form.instances
         }
+
+        base_message = _("Successfully determined as {outcome}: ").format(
+            outcome=determinations[submissions[0].id].clean_outcome
+        )
+        submissions_text = [submission.title_text_display for submission in submissions]
+        messages.success(self.request, base_message + ", ".join(submissions_text))
+
         messenger(
             MESSAGES.BATCH_DETERMINATION_OUTCOME,
             request=self.request,
