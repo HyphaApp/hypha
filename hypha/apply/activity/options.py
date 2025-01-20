@@ -65,8 +65,6 @@ class MESSAGES(TextChoices):
     REPORT_FREQUENCY_CHANGED = "REPORT_FREQUENCY_CHANGED", _("changed report frequency")
     DISABLED_REPORTING = "DISABLED_REPORTING", _("disabled reporting")
     REPORT_NOTIFY = "REPORT_NOTIFY", _("notified report")
-    CREATE_REMINDER = "CREATE_REMINDER", _("created reminder")
-    DELETE_REMINDER = "DELETE_REMINDER", _("deleted reminder")
     REVIEW_REMINDER = "REVIEW_REMINDER", _("reminder to review")
     BATCH_DELETE_SUBMISSION = "BATCH_DELETE_SUBMISSION", _("batch deleted submissions")
     BATCH_ARCHIVE_SUBMISSION = (

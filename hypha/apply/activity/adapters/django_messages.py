@@ -18,8 +18,6 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.SKIPPED_REPORT: "handle_skipped_report",
         MESSAGES.REPORT_FREQUENCY_CHANGED: "handle_report_frequency",
         MESSAGES.DISABLED_REPORTING: _("Reporting disabled"),
-        MESSAGES.CREATE_REMINDER: _("Reminder created"),
-        MESSAGES.DELETE_REMINDER: _("Reminder deleted"),
     }
 
     def batch_reviewers_updated(self, added, sources, **kwargs):

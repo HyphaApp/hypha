@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import (
     login_required,
     user_passes_test,
 )
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import (
     HttpResponse,
     HttpResponseRedirect,
@@ -17,7 +18,6 @@ from django.views import View
 from django.views.decorators.http import require_http_methods
 from django.views.generic import DeleteView
 
-from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.users.decorators import (
     is_apply_staff,
     staff_required,
@@ -76,14 +76,8 @@ class ReminderCreateView(View):
             self.request.POST, instance=self.submission, user=self.request.user
         )
         if form.is_valid():
-            reminder = form.save()
-            messenger(
-                MESSAGES.CREATE_REMINDER,
-                request=self.request,
-                user=self.request.user,
-                source=self.submission,
-                related=reminder,
-            )
+            form.save()
+            messages.info(self.request, _("Reminder created"))
             return HttpResponse(
                 status=204,
                 headers={
@@ -99,22 +93,12 @@ class ReminderCreateView(View):
 
 
 @method_decorator(staff_required, name="dispatch")
-class ReminderDeleteView(DeleteView):
+class ReminderDeleteView(SuccessMessageMixin, DeleteView):
     model = Reminder
+    success_message = _("Reminder deleted")
 
     def get_success_url(self):
         submission = get_object_or_404(
             ApplicationSubmission, id=self.kwargs["submission_pk"]
         )
         return reverse_lazy("funds:submissions:detail", args=(submission.id,))
-
-    def form_valid(self, form):
-        reminder = self.get_object()
-        messenger(
-            MESSAGES.DELETE_REMINDER,
-            user=self.request.user,
-            request=self.request,
-            source=reminder.submission,
-            related=reminder,
-        )
-        return super().form_valid(form)
