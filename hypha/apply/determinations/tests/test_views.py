@@ -508,9 +508,9 @@ class BatchDeterminationTestCase(BaseViewTestCase):
         self.assertEqual(submissions[1].determinations.count(), 1)
         self.assertEqual(submissions[1].determinations.first().outcome, REJECTED)
 
-        # 5 base - 2 x django messages, 1 x activity feed, 1 x email, 1 x slack
+        # 5 base - 1 x django messages, 1 x activity feed, 1 x email, 1 x slack
         # plus 1 extra for unable to determine
-        self.assertEqual(len(response.context["messages"]), 6)
+        self.assertEqual(len(response.context["messages"]), 5)
 
 
 class UserDeterminationFormTestCase(BaseViewTestCase):
