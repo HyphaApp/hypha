@@ -980,7 +980,7 @@ class UploadContractDocumentView(View):
                     "HX-Trigger": json.dumps(
                         {
                             "contractingDocumentUpload": None,
-                            "showMessage": _("Contracting Document has been uploaded"),
+                            "showMessage": _("Contracting document has been uploaded"),
                         }
                     ),
                 },

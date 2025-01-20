@@ -301,7 +301,7 @@ class ReportFrequencyUpdate(View):
                 form.instance.disable_reporting = True
                 form.instance.schedule_start = None
                 form.save()
-                messages.info(self.request, _("Reporting disabled"))
+                messages.success(self.request, _("Reporting disabled"))
             else:
                 form.instance.disable_reporting = False
                 form.instance.schedule_start = form.cleaned_data["start"]
