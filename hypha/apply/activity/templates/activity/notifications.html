@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static activity_tags apply_tags nh3_tags markdown_tags submission_tags heroicons %}
+{% load i18n static activity_tags apply_tags nh3_tags heroicons %}
 {% block content %}
     <div class="admin-bar">
         <div class="admin-bar__inner">
@@ -66,7 +66,7 @@
                             <div class="js-feed-meta">
                                 <p class="feed__meta-item">
                                     <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title|capfirst }}</a>
-                                    : {{ activity.user.get_full_name }} {{ activity|display_for:request.user }} <relative-time class="text-sm text-fg-muted" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
+                                    : {{ activity.user.get_full_name }} {{ activity|display_for:request.user|nh3 }} <relative-time class="text-sm text-fg-muted" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
                                 </p>
                                 {% if activity.related_object %}
                                     <p>
