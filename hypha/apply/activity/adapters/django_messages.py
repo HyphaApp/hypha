@@ -14,7 +14,6 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.BATCH_REVIEWERS_UPDATED: "batch_reviewers_updated",
         MESSAGES.BATCH_TRANSITION: "batch_transition",
         MESSAGES.BATCH_DETERMINATION_OUTCOME: "batch_determinations",
-        MESSAGES.REMOVE_DOCUMENT: _("Successfully removed document"),
     }
 
     def batch_reviewers_updated(self, added, sources, **kwargs):

@@ -169,7 +169,7 @@ def partial_translate_answers(request: HttpRequest, pk: int) -> HttpResponse:
             message = _("Submission translation failed. Contact your Administrator.")
             return HttpResponse(
                 status=400,
-                headers={"HX-Trigger": json.dumps({"showMessage": {message}})},
+                headers={"HX-Trigger": json.dumps({"showMessage": message})},
             )
 
     elif params == prev_params:

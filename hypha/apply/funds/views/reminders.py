@@ -77,11 +77,15 @@ class ReminderCreateView(View):
         )
         if form.is_valid():
             form.save()
-            messages.info(self.request, _("Reminder created"))
             return HttpResponse(
                 status=204,
                 headers={
-                    "HX-Trigger": json.dumps({"remindersUpdated": None}),
+                    "HX-Trigger": json.dumps(
+                        {
+                            "remindersUpdated": None,
+                            "showMessage": _("Reminder created"),
+                        }
+                    ),
                 },
             )
         return render(

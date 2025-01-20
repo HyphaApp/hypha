@@ -51,7 +51,6 @@ class MESSAGES(TextChoices):
         _("submitted contract documents"),
     )
     UPLOAD_DOCUMENT = "UPLOAD_DOCUMENT", _("uploaded document to project")
-    REMOVE_DOCUMENT = "REMOVE_DOCUMENT", _("removed document from project")
     UPLOAD_CONTRACT = "UPLOAD_CONTRACT", _("uploaded contract to project")
     APPROVE_CONTRACT = "APPROVE_CONTRACT", _("approved contract")
     CREATE_INVOICE = "CREATE_INVOICE", _("created invoice for project")
