@@ -399,10 +399,10 @@ class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
     meta_terms = GroupedModelMultipleChoiceField(
         queryset=None,  # updated in init method
         widget=MetaTermSelect2Widget(attrs={"data-placeholder": "Select..."}),
-        label=_("Meta terms"),
+        label=_("Tags"),
         choices_groupby="get_parent",
         required=False,
-        help_text=_("Meta terms are hierarchical in nature."),
+        help_text=_("Tags are hierarchical in nature."),
     )
 
     class Meta:

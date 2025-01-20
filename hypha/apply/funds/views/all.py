@@ -88,7 +88,7 @@ def submissions_all(
     selected_statuses = request.GET.getlist("status")
     selected_screening_statuses = request.GET.getlist("screening_statuses")
     selected_reviewers = request.GET.getlist("reviewers")
-    selected_meta_terms = request.GET.getlist("meta_terms")
+    selected_meta_terms = request.GET.getlist("tags")
     selected_category_options = request.GET.getlist("category_options")
     selected_sort = request.GET.get("sort")
     page = request.GET.get("page", 1)
