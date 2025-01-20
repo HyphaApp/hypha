@@ -142,7 +142,7 @@ class ActivityAdapter(AdapterBase):
         return " ".join(message)
 
     def batch_reviewers_updated(self, added, **kwargs):
-        base = [_("Batch Reviewers Updated.")]
+        base = [_("Batch reviewers updated:")]
         base.extend(
             [
                 _("{user} as {name}.").format(user=str(user), name=role.name)

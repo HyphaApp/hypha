@@ -51,7 +51,6 @@ class MESSAGES(TextChoices):
         _("submitted contract documents"),
     )
     UPLOAD_DOCUMENT = "UPLOAD_DOCUMENT", _("uploaded document to project")
-    REMOVE_DOCUMENT = "REMOVE_DOCUMENT", _("removed document from project")
     UPLOAD_CONTRACT = "UPLOAD_CONTRACT", _("uploaded contract to project")
     APPROVE_CONTRACT = "APPROVE_CONTRACT", _("approved contract")
     CREATE_INVOICE = "CREATE_INVOICE", _("created invoice for project")
@@ -65,8 +64,6 @@ class MESSAGES(TextChoices):
     REPORT_FREQUENCY_CHANGED = "REPORT_FREQUENCY_CHANGED", _("changed report frequency")
     DISABLED_REPORTING = "DISABLED_REPORTING", _("disabled reporting")
     REPORT_NOTIFY = "REPORT_NOTIFY", _("notified report")
-    CREATE_REMINDER = "CREATE_REMINDER", _("created reminder")
-    DELETE_REMINDER = "DELETE_REMINDER", _("deleted reminder")
     REVIEW_REMINDER = "REVIEW_REMINDER", _("reminder to review")
     BATCH_DELETE_SUBMISSION = "BATCH_DELETE_SUBMISSION", _("batch deleted submissions")
     BATCH_ARCHIVE_SUBMISSION = (

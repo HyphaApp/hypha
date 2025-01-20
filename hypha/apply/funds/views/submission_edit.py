@@ -554,7 +554,10 @@ class UpdateLeadView(View):
                 status=204,
                 headers={
                     "HX-Trigger": json.dumps(
-                        {"leadUpdated": None, "showMessage": "Submission Lead updated."}
+                        {
+                            "leadUpdated": None,
+                            "showMessage": _("Submission Lead updated."),
+                        }
                     ),
                 },
             )
@@ -623,7 +626,10 @@ class UpdateReviewersView(View):
                 status=204,
                 headers={
                     "HX-Trigger": json.dumps(
-                        {"reviewerUpdated": None, "showMessage": "Reviewers updated."}
+                        {
+                            "reviewerUpdated": None,
+                            "showMessage": _("Reviewers updated."),
+                        }
                     ),
                 },
             )
@@ -704,7 +710,7 @@ class UpdatePartnersView(View):
                     "HX-Trigger": json.dumps(
                         {
                             "partnerUpdated": None,
-                            "showMessage": "Partners updated successfully.",
+                            "showMessage": _("Partners updated successfully."),
                         }
                     ),
                 },
@@ -762,7 +768,7 @@ class UpdateMetaTermsView(View):
                     "HX-Trigger": json.dumps(
                         {
                             "metaTermsUpdated": None,
-                            "showMessage": "Meta terms updated successfully.",
+                            "showMessage": _("Meta terms updated successfully."),
                         }
                     ),
                 },

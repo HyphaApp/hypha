@@ -180,7 +180,10 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
             )
 
             handle_tasks_on_invoice_update(old_status=old_status, invoice=self.object)
-            htmx_headers = {"invoicesUpdated": None, "showMessage": "Invoice updated."}
+            htmx_headers = {
+                "invoicesUpdated": None,
+                "showMessage": _("Invoice updated."),
+            }
             if self.object.status == DECLINED:
                 htmx_headers.update({"rejectedInvoicesUpdated": None})
             return HttpResponse(

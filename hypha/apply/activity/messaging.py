@@ -2,7 +2,7 @@ import logging
 
 from django.contrib.auth import get_user_model
 
-from .adapters import ActivityAdapter, DjangoMessagesAdapter, EmailAdapter, SlackAdapter
+from .adapters import ActivityAdapter, EmailAdapter, SlackAdapter
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -59,7 +59,6 @@ adapters = [
     ActivityAdapter(),
     SlackAdapter(),
     EmailAdapter(),
-    DjangoMessagesAdapter(),
 ]
 
 messenger = MessengerBackend(*adapters)
