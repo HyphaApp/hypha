@@ -15,9 +15,6 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.BATCH_TRANSITION: "batch_transition",
         MESSAGES.BATCH_DETERMINATION_OUTCOME: "batch_determinations",
         MESSAGES.REMOVE_DOCUMENT: _("Successfully removed document"),
-        MESSAGES.SKIPPED_REPORT: "handle_skipped_report",
-        MESSAGES.REPORT_FREQUENCY_CHANGED: "handle_report_frequency",
-        MESSAGES.DISABLED_REPORTING: _("Reporting disabled"),
     }
 
     def batch_reviewers_updated(self, added, sources, **kwargs):
@@ -40,16 +37,6 @@ class DjangoMessagesAdapter(AdapterBase):
         return _(
             "Successfully updated reporting frequency. They will now report {new_schedule} starting on {schedule_start}"
         ).format(new_schedule=new_schedule, schedule_start=config.schedule_start)
-
-    def handle_skipped_report(self, report, **kwargs):
-        if report.skipped:
-            return _(
-                "Successfully skipped a Report for {start_date} to {end_date}"
-            ).format(start_date=report.start_date, end_date=report.end_date)
-        else:
-            return _(
-                "Successfully unskipped a Report for {start_date} to {end_date}"
-            ).format(start_date=report.start_date, end_date=report.end_date)
 
     def batch_transition(self, sources, transitions, **kwargs):
         base_message = "Successfully updated:"
