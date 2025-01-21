@@ -104,18 +104,25 @@ def get_statuses_as_params(statuses):
     return params
 
 
-def export_submissions_to_csv(submissions_list):
+def export_submissions_to_csv(submissions_list, request):
     csv_stream = StringIO()
-    header_row = ["Application #"]
-    index = 1
+    header_row = ["Application #", "URL"]
+    index = 2
     data_list = []
+
     for submission in submissions_list:
         values = {}
         values["Application #"] = submission.id
+        values["URL"] = request.build_absolute_uri(submission.get_absolute_url())
         for field_id in submission.question_text_field_ids:
             question_field = submission.serialize(field_id)
             field_name = question_field["question"]
             field_value = question_field["answer"]
+            if field_id == "address":
+                address = []
+                for key, value in field_value.items():
+                    address.append(f"{key}: {value}")
+                field_value = "\n".join(address)
             if field_name not in header_row:
                 if field_id not in submission.named_blocks:
                     header_row.append(field_name)
