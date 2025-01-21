@@ -51,7 +51,6 @@ from .views import (
     partial_get_invoice_detail_actions,
     partial_get_invoice_status,
     partial_get_invoice_status_table,
-    partial_project_activities,
     partial_project_lead,
     partial_project_title,
     partial_supporting_documents,
@@ -77,11 +76,6 @@ urlpatterns = [
         include(
             [
                 path("", ProjectDetailView.as_view(), name="detail"),
-                path(
-                    "partial/activities/",
-                    partial_project_activities,
-                    name="partial-activities",
-                ),
                 path("partial/lead/", partial_project_lead, name="project_lead"),
                 path("partial/title/", partial_project_title, name="project_title"),
                 path("lead/update/", UpdateLeadView.as_view(), name="lead_update"),

@@ -10,15 +10,11 @@ from django.utils.translation import gettext as _
 from django.views.decorators.http import require_GET
 
 from hypha.apply.activity.models import Activity
-from hypha.apply.activity.services import (
-    get_related_actions_for_user,
-)
 from hypha.apply.funds.utils import get_statuses_as_params
 
 from ..constants import statuses_and_table_statuses_mapping
 from ..models.payment import Invoice
 from ..models.project import ContractDocumentCategory, DocumentCategory, Project
-from ..permissions import has_permission
 from ..utils import get_project_status_choices
 
 
@@ -36,15 +32,6 @@ def partial_project_title(request, pk):
     return render(
         request, "application_projects/partials/project_title.html", {"object": project}
     )
-
-
-@login_required
-@require_GET
-def partial_project_activities(request, pk):
-    project = get_object_or_404(Project, pk=pk)
-    has_permission("project_access", request.user, object=project, raise_exception=True)
-    ctx = {"actions": get_related_actions_for_user(project, request.user)}
-    return render(request, "activity/include/action_list.html", ctx)
 
 
 @login_required

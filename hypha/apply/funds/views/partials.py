@@ -15,9 +15,6 @@ from django_htmx.http import (
 from wagtail.models import Page
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.activity.services import (
-    get_related_actions_for_user,
-)
 from hypha.apply.categories.models import MetaTerm, Option
 from hypha.apply.funds.forms import BatchUpdateReviewersForm
 from hypha.apply.funds.models.reviewer_role import ReviewerRole
@@ -224,17 +221,6 @@ def sub_menu_category_options(request):
     }
 
     return render(request, "submissions/submenu/category.html", ctx)
-
-
-@login_required
-@require_http_methods(["GET"])
-def partial_submission_activities(request, pk):
-    submission = get_object_or_404(ApplicationSubmission, pk=pk)
-    has_permission(
-        "submission_view", request.user, object=submission, raise_exception=True
-    )
-    ctx = {"actions": get_related_actions_for_user(submission, request.user)}
-    return render(request, "activity/include/action_list.html", ctx)
 
 
 @login_required
