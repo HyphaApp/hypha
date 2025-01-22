@@ -1,8 +1,10 @@
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import OuterRef, Subquery
+from django.db.models import OuterRef, Q, Subquery
 from django.db.models.functions import JSONObject
 from django.utils import timezone
 
+from hypha.apply.funds.models.submissions import ApplicationSubmission
+from hypha.apply.projects.models.project import Project
 from hypha.apply.todo.models import Task
 
 from .models import Activity
@@ -42,16 +44,34 @@ def get_related_activities_for_user(obj, user):
     ApplicationSubmission and Project.
 
     Args:
-        obj: instance of a model class
+        obj: instance of either an [`ApplicationSubmission`][hypha.apply.funds.models.submissions.ApplicationSubmission] or [`Project`][hypha.apply.projects.models.project.Project].
         user: user who these actions are visible to.
 
     Returns:
         [`Activity`][hypha.apply.activity.models.Activity] queryset
     """
-    related_query = type(obj).activities.rel.related_query_name
+    proj_content_type = ContentType.objects.get_for_model(Project)
+    app_content_type = ContentType.objects.get_for_model(ApplicationSubmission)
+
+    # Determine if the provided object is an ApplicationSubmission or Project, then pull
+    # the related it's related Project/ApplicationSubmission activites if attribute it exists
+    if isinstance(obj, ApplicationSubmission):
+        source_filter = Q(source_object_id=obj.id, source_content_type=app_content_type)
+        if hasattr(obj, "project") and obj.project:
+            source_filter = source_filter | Q(
+                source_object_id=obj.project.id, source_content_type=proj_content_type
+            )
+    else:
+        source_filter = Q(
+            source_object_id=obj.id, source_content_type=proj_content_type
+        )
+        if hasattr(obj, "submission") and obj.submission:
+            source_filter = source_filter | Q(
+                source_object_id=obj.submission.id, source_content_type=app_content_type
+            )
 
     queryset = (
-        Activity.objects.filter(**{related_query: obj})
+        Activity.objects.filter(source_filter)
         .exclude(current=False)
         .select_related("user")
         .prefetch_related(

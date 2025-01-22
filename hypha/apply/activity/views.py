@@ -57,8 +57,6 @@ def partial_comments(request, content_type: str, pk: int):
         return render(request, "activity/include/activity_list.html", {})
 
     qs = services.get_related_activities_for_user(obj, request.user)
-    if hasattr(obj, "project") and obj.project:
-        qs = qs | services.get_related_activities_for_user(obj.project, request.user)
     page = Paginator(qs, per_page=10, orphans=5).page(request.GET.get("page", 1))
 
     ctx = {
@@ -103,26 +101,16 @@ class ActivityContextMixin:
         # Do not prefetch on the related_object__author as the models
         # are not homogeneous and this will fail
         user = self.request.user
-        if isinstance(self.object, Project):
-            project_obj = self.object
-            application_obj = self.object.submission
-        else:
-            project_obj = None
-            if hasattr(self.object, "project"):
-                project_obj = self.object.project
-            application_obj = self.object
-
         activities = services.get_related_activities_for_user(
-            application_obj, self.request.user
+            self.object, self.request.user
         )
 
-        if project_obj is not None:
-            project_activities = services.get_related_activities_for_user(
-                project_obj, self.request.user
-            )
-            activities = activities | project_activities
-
         # Comments for both projects and applications exist under the original application
+        if isinstance(self.object, ApplicationSubmission):
+            application_obj = self.object
+        else:
+            application_obj = self.object.submission
+
         comments_count = services.get_comment_count(application_obj, user)
 
         extra = {"activities": activities, "comments_count": comments_count}
