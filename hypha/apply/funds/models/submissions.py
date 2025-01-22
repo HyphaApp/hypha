@@ -496,9 +496,6 @@ class ApplicationSubmission(
         editable=False,
     )
 
-    # Meta: used for migration purposes only
-    drupal_id = models.IntegerField(null=True, blank=True, editable=False)
-
     # archive old submissions
     is_archive = models.BooleanField(default=False)
 

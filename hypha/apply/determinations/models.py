@@ -123,9 +123,6 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
         default=True, verbose_name=_("Send message to applicant")
     )
 
-    # Meta: used for migration purposes only
-    drupal_id = models.IntegerField(null=True, blank=True, editable=False)
-
     objects = DeterminationQuerySet.as_manager()
 
     @property

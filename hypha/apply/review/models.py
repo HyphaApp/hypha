@@ -181,9 +181,6 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
         max_length=10,
     )
 
-    # Meta: used for migration purposes only
-    drupal_id = models.IntegerField(null=True, blank=True, editable=False)
-
     objects = ReviewQuerySet.as_manager()
 
     class Meta:
