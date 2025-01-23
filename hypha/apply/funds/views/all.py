@@ -96,6 +96,13 @@ def submissions_all(
     can_view_archives = permissions.can_view_archived_submissions(request.user)
     can_access_drafts = permissions.can_access_drafts(request.user)
 
+    # Filter out anything that isn't an int
+    if selected_funds:
+        selected_funds = [id for id in selected_funds if id.isdigit()]
+
+    if selected_rounds:
+        selected_rounds = [id for id in selected_rounds if id.isdigit()]
+
     selected_fund_objects = (
         Page.objects.filter(id__in=selected_funds) if selected_funds else []
     )
