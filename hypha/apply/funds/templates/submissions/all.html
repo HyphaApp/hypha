@@ -176,10 +176,10 @@
         {% if can_export_submissions %}
             <a
                 class="py-1.5 px-2 rounded border shadow-sm transition-colors hover:bg-gray-100"
-                aria-label="Submissions: Download as CSV"
+                aria-label="{% trans 'Submissions: Download as CSV' %}"
                 href="{% modify_query "page" format="csv" %}"
                 onclick="return confirm('{% blocktrans %}Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.{% endblocktrans %}');"
-                data-tippy-content="Export as CSV"
+                data-tippy-content="{% trans 'Export as CSV' %}"
             >
                 {% heroicon_mini "arrow-down-tray" %}
             </a>
@@ -205,7 +205,7 @@
 
             {% if selected_statuses %}
                 <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
-                    Status: {% for s in selected_statuses %}{{ s }}{% endfor %}
+                    {% trans "Status:" %} {% for s in selected_statuses %}{{ s }}{% endfor %}
                     <a href="{% remove_from_query "status" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove status filter" %}</span>
@@ -214,7 +214,7 @@
             {% endif %}
             {% for fund in selected_fund_objects %}
                 <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
-                    Fund: {{ fund }}
+                    {% trans "Fund:" %} {{ fund }}
                     <a href="{% remove_from_query fund=fund.id %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove fund filter" %}</span>
@@ -223,7 +223,7 @@
             {% endfor %}
             {% for round in selected_round_objects %}
                 <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
-                    Round: {{ round }}
+                    {% trans "Round:" %} {{ round }}
                     <a href="{% remove_from_query round=round.id %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove round filter" %}</span>
@@ -232,7 +232,7 @@
             {% endfor %}
             {% for s in selected_leads %}
                 <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
-                    Lead: {{ s|get_display_name_from_id }}
+                    {% trans "Lead:" %} {{ s|get_display_name_from_id }}
                     <a href="{% remove_from_query lead=s %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove leads filter" %}</span>
@@ -241,7 +241,7 @@
             {% endfor %}
             {% if selected_applicants %}
                 <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
-                    Applicant: {% for s in selected_applicants %}{{ s }}{% endfor %}
+                    {% trans "Applicant:" %} {% for s in selected_applicants %}{{ s }}{% endfor %}
                     <a href="{% remove_from_query "applicants" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove applicant filter" %}</span>
@@ -250,7 +250,7 @@
             {% endif %}
             {% for s in selected_reviewers %}
                 <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
-                    Reviewer: {{ s|get_display_name_from_id }}
+                    {% trans "Reviewer:" %} {{ s|get_display_name_from_id }}
                     <a href="{% remove_from_query reviewers=s %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove reviewer filter" %}</span>
@@ -259,7 +259,7 @@
             {% endfor %}
             {% for s in selected_meta_terms %}
                 <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
-                    Meta Term: {{ s }}
+                    {% trans "Meta Term:" %} {{ s }}
                     <a href="{% remove_from_query meta_terms=s %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove meta term filter" %}</span>
@@ -268,7 +268,7 @@
             {% endfor %}
             {% for s in selected_category_options %}
                 <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
-                    Category: {{ s.value }}
+                    {% trans "Category:" %} {{ s.value }}
                     <a href="{% remove_from_query category_options=s.id %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove category filter" %}</span>
@@ -277,7 +277,7 @@
             {% endfor %}
             {% for s in selected_screening_statuses_objects %}
                 <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
-                    Screening: "{{ s.title }}"
+                    {% trans "Screening:" %} "{{ s.title }}"
                     <a href="{% remove_from_query screening_statuses=s.slug %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove screening decisions filter" %}</span>
@@ -286,7 +286,7 @@
             {% endfor %}
             {% if selected_sort %}
                 <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
-                    Sort: {{ selected_sort }}
+                    {% trans "Sort:" %} {{ selected_sort }}
                     <a href="{% remove_from_query "sort" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">{% trans "Remove sort filter" %}</span>
@@ -349,7 +349,7 @@
                         id="id_select_all"
                         type="checkbox"
                         x-ref="checkboxSelectAll"
-                        aria-label="Select all submissions"
+                        aria-label="{% trans 'Select all submissions' %}"
                         class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
                         @click="toggleAllCheckboxes()"
                     >
@@ -513,7 +513,7 @@
                     <button
                         hx-post="{% url 'apply:submissions:bulk-archive' %}"
                         hx-include="[name='selectedSubmissionIds']"
-                        hx-confirm="Are you sure you want to archive the selected submissions?"
+                        hx-confirm="{% trans 'Are you sure you want to archive the selected submissions?' %}"
                         class="flex items-center py-1 px-2 bg-gray-100 border hover:bg-gray-200"
                     >
                         {% heroicon_outline "lock-closed" aria_hidden="true" size=14 class="inline stroke-gray-600 me-1" %}
@@ -525,7 +525,7 @@
                     <button
                         hx-post="{% url 'apply:submissions:bulk-delete' %}"
                         hx-include="[name='selectedSubmissionIds']"
-                        hx-confirm="Are you sure you want to delete the selected submissions? This action cannot be undone."
+                        hx-confirm="{% trans 'Are you sure you want to delete the selected submissions? This action cannot be undone.' %}"
                         class="flex items-center py-1 px-2 bg-gray-100 border hover:bg-red-300"
                     >
                         {% heroicon_outline "trash" aria_hidden="true" size=14 class="inline stroke-gray-600 me-1" %}
@@ -558,14 +558,14 @@
                     <a
                         href="{% modify_query page=1 %}"
                         class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                        aria-label="{% trans "First Page" %}"
+                        aria-label="{% trans 'First Page' %}"
                     >
                         &laquo; {% trans "First" %}
                     </a>
                     <a
                         href="{% modify_query page=page.previous_page_number %}"
                         class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                        aria-label={% trans "Previous Page" %}
+                        aria-label="{% trans 'Previous Page' %}"
                     >
                         {% trans "Previous" %}
                     </a>
@@ -579,14 +579,14 @@
                     <a
                         href="{% modify_query page=page.next_page_number %}"
                         class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                        aria-label="{% trans "Next Page" %}"
+                        aria-label="{% trans 'Next Page' %}"
                     >
                         {% trans "Next" %}
                     </a>
                     <a
                         href="{% modify_query page=page.paginator.num_pages %}"
                         class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                        aria-label="{% trans "Last Page" %}"
+                        aria-label="{% trans 'Last Page' %}"
                     >
                         {% trans "Last" %} &raquo;
                     </a>
@@ -611,12 +611,12 @@
                 startDate: start,
                 endDate: end,
                 ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    '{% trans "Today" %}': [moment(), moment()],
+                    '{% trans "Yesterday" %}': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    '{% trans "Last 7 Days" %}': [moment().subtract(6, 'days'), moment()],
+                    '{% trans "Last 30 Days" %}': [moment().subtract(29, 'days'), moment()],
+                    '{% trans "This Month" %}': [moment().startOf('month'), moment().endOf('month')],
+                    '{% trans "Last Month" %}': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
                 }
             });
 

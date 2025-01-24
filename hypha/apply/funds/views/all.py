@@ -22,7 +22,7 @@ from hypha.apply.funds.models.screening import ScreeningStatus
 from hypha.apply.funds.utils import export_submissions_to_csv
 from hypha.apply.funds.workflows import PHASES, get_action_mapping, review_statuses
 from hypha.apply.search.filters import apply_date_filter
-from hypha.apply.search.query_parser import parse_search_query
+from hypha.apply.search.query_parser import filter_non_digits, parse_search_query
 from hypha.apply.users.decorators import (
     is_apply_staff,
     is_apply_staff_or_reviewer_required,
@@ -81,27 +81,24 @@ def submissions_all(
 
     show_archived = request.GET.get("archived", False) == "on"
     show_drafts = request.GET.get("drafts", False) == "on"
-    selected_funds = request.GET.getlist("fund")
-    selected_rounds = request.GET.getlist("round")
-    selected_leads = request.GET.getlist("lead")
-    selected_applicants = request.GET.getlist("applicants")
+    selected_funds = filter_non_digits(request.GET.getlist("fund", []))
+    selected_rounds = filter_non_digits(request.GET.getlist("round", []))
+    selected_leads = filter_non_digits(request.GET.getlist("lead", []))
+    selected_applicants = filter_non_digits(request.GET.getlist("applicants", []))
     selected_statuses = request.GET.getlist("status")
-    selected_screening_statuses = request.GET.getlist("screening_statuses")
-    selected_reviewers = request.GET.getlist("reviewers")
-    selected_meta_terms = request.GET.getlist("meta_terms")
-    selected_category_options = request.GET.getlist("category_options")
+    selected_screening_statuses = filter_non_digits(
+        request.GET.getlist("screening_statuses", [])
+    )
+    selected_reviewers = filter_non_digits(request.GET.getlist("reviewers", []))
+    selected_meta_terms = filter_non_digits(request.GET.getlist("meta_terms", []))
+    selected_category_options = filter_non_digits(
+        request.GET.getlist("category_options", [])
+    )
     selected_sort = request.GET.get("sort")
     page = request.GET.get("page", 1)
 
     can_view_archives = permissions.can_view_archived_submissions(request.user)
     can_access_drafts = permissions.can_access_drafts(request.user)
-
-    # Filter out anything that isn't an int
-    if selected_funds:
-        selected_funds = [id for id in selected_funds if id.isdigit()]
-
-    if selected_rounds:
-        selected_rounds = [id for id in selected_rounds if id.isdigit()]
 
     selected_fund_objects = (
         Page.objects.filter(id__in=selected_funds) if selected_funds else []
