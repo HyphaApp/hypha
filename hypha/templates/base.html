@@ -34,11 +34,8 @@
         {% comment %}Detect if javascript is enabled; helps with styling{% endcomment %}
         <script>document.querySelector("html").classList.replace("no-js", "js")</script>
 
-        <!-- htmx start: installed with npm -->
-        <script src="{% static 'js/vendor/htmx.min.js' %}"></script>
-        <script src="{% static 'js/vendor/htmx-ext-multi-swap.min.js' %}"></script>
+        <!-- Nprogressbar -->
         <script defer src="{% static 'js/vendor/nprogress-2.0.0.min.js' %}"></script>
-        <!-- htmx end -->
 
         <!-- Cookieconsent -->
         <script defer src="{% static 'js/cookieconsent.js' %}"></script>
@@ -95,6 +92,10 @@
         {% endblock scroll_to_top %}
 
         {% cookie_banner %}
+
+        <!-- htmx start: installed with npm -->
+        <script src="{% static 'js/vendor/htmx.min.js' %}"></script>
+        <script src="{% static 'js/vendor/htmx-ext-multi-swap.min.js' %}"></script>
 
         <!-- htmx progress, error handeling and tooltip loading -->
         <script>
