@@ -37,7 +37,7 @@ from ..utils import (
     get_statuses_as_params,
     status_and_phases_mapping,
 )
-from ..workflows.constants import PHASES_MAPPING
+from ..workflows.constants import DETERMINATION_OUTCOMES, PHASES_MAPPING
 
 User = get_user_model()
 
@@ -313,19 +313,21 @@ def sub_menu_update_status(request: HttpRequest) -> HttpResponse:
     allow_determination = check_submissions_same_determination_form(qs)
 
     list_of_actions_list = [s.get_actions_for_user(request.user) for s in qs]
-    action_names = [[x[1] for x in action_list] for action_list in list_of_actions_list]
+
+    action_names = [
+        [
+            action[1]
+            for action in action_list
+            if allow_determination or action[0] not in DETERMINATION_OUTCOMES
+        ]
+        for action_list in list_of_actions_list
+    ]
+
     common_actions = (
         sorted(functools.reduce(lambda l1, l2: set(l1).intersection(l2), action_names))
         if action_names
         else []
     )
-
-    # hide determination actions if submissions have different forms
-    if not allow_determination:
-        determination_actions = ["Dismiss", "Request More Information", "Accept"]
-        common_actions = [
-            action for action in common_actions if action not in determination_actions
-        ]
 
     ctx = {
         "statuses": {slugify(a): a for a in common_actions}.items(),
