@@ -131,11 +131,14 @@
                 const selectElements = document.querySelectorAll("[data-js-choices]");
 
                 selectElements.forEach((selectElement) => {
-                    new Choices(selectElement, {
-                        shouldSort: false,
-                        allowHTML: true,
-                        removeItemButton: true,
-                    });
+                    if (!selectElement.choicesInstance) {
+                        const choicesInstance = new Choices(selectElement, {
+                            shouldSort: false,
+                            allowHTML: true,
+                            removeItemButton: true,
+                        });
+                        selectElement.choicesInstance = choicesInstance;
+                    };
                 });
 
                 const choicesElements = document.querySelectorAll(".choices__input--cloned")
@@ -145,7 +148,7 @@
                     const minWidth = window.getComputedStyle(choiceElement).getPropertyValue("min-width");
                     choiceElement.addEventListener("focus", () => {
                         if (choiceElement) {
-                            choiceElement.placeholder = ""
+                            choiceElement.placeholder = "Search..."
                         }
                     });
 
