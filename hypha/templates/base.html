@@ -131,13 +131,13 @@
                 const selectElements = document.querySelectorAll("[data-js-choices]");
 
                 selectElements.forEach((selectElement) => {
-                    if (!selectElement.choicesInstance) {
+                    if (!selectElement.hasChoicesInstance) {
                         const choicesInstance = new Choices(selectElement, {
                             shouldSort: false,
                             allowHTML: true,
                             removeItemButton: true,
                         });
-                        selectElement.choicesInstance = choicesInstance;
+                        selectElement.hasChoicesInstance = true;
                     };
                 });
 
@@ -149,6 +149,7 @@
                     choiceElement.addEventListener("focus", () => {
                         if (choiceElement) {
                             choiceElement.placeholder = "Search..."
+                            choiceElement.style.minWidth = '7ch';
                         }
                     });
 
