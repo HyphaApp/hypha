@@ -2,3 +2,8 @@ body {
     color: var(--color-fg-default);
     background-color: var(--color-bg-default);
 }
+
+/* Transitioning page view. */
+@view-transition {
+    navigation: auto;
+}
