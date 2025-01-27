@@ -1,6 +1,6 @@
 from django.conf import settings
-from wagtail.contrib.modeladmin.options import modeladmin_register
 from wagtail.contrib.settings.registry import register_setting
+from wagtail_modeladmin.options import modeladmin_register
 
 from .admin import ProjectAdminGroup
 from .models import ProjectSettings

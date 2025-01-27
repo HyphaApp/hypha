@@ -1,7 +1,7 @@
 from django.urls import re_path
 from django.utils.safestring import mark_safe
-from wagtail.contrib.modeladmin.helpers import PermissionHelper
-from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
+from wagtail_modeladmin.helpers import PermissionHelper
+from wagtail_modeladmin.options import ModelAdmin, ModelAdminGroup
 
 from hypha.apply.categories.admin import CategoryAdmin, MetaTermAdmin
 from hypha.apply.determinations.admin import (

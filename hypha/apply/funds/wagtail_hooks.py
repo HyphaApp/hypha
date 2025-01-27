@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Permission
 from wagtail import hooks
-from wagtail.contrib.modeladmin.options import modeladmin_register
+from wagtail_modeladmin.options import modeladmin_register
 
 from .admin import ApplyAdminGroup
 from .admin_views import custom_admin_round_copy_view
