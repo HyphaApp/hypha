@@ -124,6 +124,46 @@
         </script>
         <!-- htmx end -->
 
+        <!-- choices select -->
+        <script type="module">
+            import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+
+            htmx.onLoad(function() {
+                const selectElements = document.querySelectorAll("[data-js-choices]");
+
+                selectElements.forEach((selectElement) => {
+                    if (!selectElement.hasChoicesInstance) {
+                        const choicesInstance = new Choices(selectElement, {
+                            shouldSort: false,
+                            allowHTML: true,
+                            removeItemButton: true,
+                        });
+                        selectElement.hasChoicesInstance = true;
+                    };
+                });
+
+                const choicesElements = document.querySelectorAll(".choices__input--cloned")
+                choicesElements.forEach((choiceElement) => {
+                    const inputPlaceholder = choiceElement.getAttribute("placeholder");
+                    // Get the computed min-width of the input element otherwise it reset to 1
+                    const minWidth = window.getComputedStyle(choiceElement).getPropertyValue("min-width");
+                    choiceElement.addEventListener("focus", () => {
+                        if (choiceElement) {
+                            choiceElement.placeholder = "Search..."
+                            choiceElement.style.minWidth = '7ch';
+                        }
+                    });
+
+                    choiceElement.addEventListener("blur", () => {
+                        if (choiceElement) {
+                            choiceElement.placeholder = inputPlaceholder
+                            choiceElement.style.minWidth = minWidth;
+                        }
+                    });
+                });
+            });
+        </script>
+
         <!-- Placeholder for the htmx modal & toast -->
         {% include "includes/_modal-placeholder.html" %}
         {% include "includes/_toast-placeholder.html" %}

@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     "tinymce",
     "django_tables2",
     "django_filters",
-    "django_select2",
     "hypha.addressfield",
     "django_nh3",
     "django_fsm",

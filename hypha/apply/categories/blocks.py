@@ -1,7 +1,6 @@
 from django import forms
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from django_select2.forms import Select2MultipleWidget
 from wagtail.blocks import BooleanBlock, CharBlock, ChoiceBlock, TextBlock
 from wagtail.coreutils import resolve_model_string
 
@@ -73,7 +72,9 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
             if category_size < 32:
                 return forms.CheckboxSelectMultiple
             else:
-                return Select2MultipleWidget
+                from hypha.apply.funds.tables import MultiCheckboxesWidget
+
+                return MultiCheckboxesWidget
         else:
             return forms.RadioSelect
 

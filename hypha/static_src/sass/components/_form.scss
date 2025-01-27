@@ -157,21 +157,6 @@
     }
 
     &__filters {
-        #{variables.$filter-dropdown} {
-            border: 0;
-            border-block-start: 1px solid variables.$color--mid-grey;
-
-            &.is-active {
-                font-weight: variables.$weight--normal;
-                background-color: variables.$color--light-blue-90;
-                border-color: variables.$color--mid-grey;
-            }
-
-            @include mixins.media-query(lg) {
-                border: 1px solid variables.$color--mid-grey;
-            }
-        }
-
         @include mixins.media-query(lg) {
             display: flex;
             align-items: flex-start;

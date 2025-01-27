@@ -201,9 +201,6 @@ django==4.2.18 \
 django-anymail==12.0 \
     --hash=sha256:65789c1b0f42915aa0450a4f173f77572d4c552979b748ddd8125af41972ad30 \
     --hash=sha256:de8458d713d0f9776da9ed04dcd3a0161be23e9ecbcb49dcf149219700ecd274
-django-appconf==1.0.6 \
-    --hash=sha256:c3ae442fba1ff7ec830412c5184b17169a7a1e71cf0864a4c3f93cf4c98a1993 \
-    --hash=sha256:cfe87ea827c4ee04b9a70fab90b86d704cb02f2981f89da8423cb0fabf88efbf
 django-basic-auth-ip-whitelist==0.6.0 \
     --hash=sha256:51fbef4d483cfccb15d0c38605fd149fd307314ad8a9308580a6b693b94b3329 \
     --hash=sha256:f866c1822861ab6612efb9adec03b12279a82314783aa721c843acfbea04b0b7
@@ -260,9 +257,6 @@ django-ratelimit==4.1.0 \
 django-role-permissions==3.2.0 \
     --hash=sha256:39c4237e9ed2983c0d7fa38bd7f7c4942a04daac739d5be1921efccb074a0606 \
     --hash=sha256:5a89eaa098f3da951b4633e655d5f3188f3d6ec5f0b846a8b1690d094ddc6ea6
-django-select2==8.2.3 \
-    --hash=sha256:1de547c89ee2f005f1d461f76db89b440897939fcea894db8ba756b6f1ad36c1 \
-    --hash=sha256:a3bc3f3bfb21d73791be1bc0dd8cc674d11e167129d605847c257942e7a2143b
 django-slack==5.19.0 \
     --hash=sha256:4d7b5e6ee229eacc58be6ab43786c14323b52df96e84e6941907315bebef8b32 \
     --hash=sha256:cdc6b58ec4e30be6287287c147868f9124cf86c5945ae200c230663c6fa9846c
