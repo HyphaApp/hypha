@@ -5,14 +5,14 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.contrib.modeladmin.forms import ParentChooserForm
-from wagtail.contrib.modeladmin.helpers import (
+from wagtail.models import Page
+from wagtail_modeladmin.forms import ParentChooserForm
+from wagtail_modeladmin.helpers import (
     ButtonHelper,
     PageAdminURLHelper,
     PageButtonHelper,
 )
-from wagtail.contrib.modeladmin.views import ChooseParentView
-from wagtail.models import Page
+from wagtail_modeladmin.views import ChooseParentView
 
 
 class VerboseLabelModelChoiceField(forms.ModelChoiceField):

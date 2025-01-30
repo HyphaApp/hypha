@@ -324,7 +324,7 @@ name = "click"
 version = "8.1.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "colorama", marker = "platform_system == 'Windows'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/b9/2e/0090cbf739cee7d23781ad4b89a9894a41538e4fcf4c31dcdd705b78eb8b/click-8.1.8.tar.gz", hash = "sha256:ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a", size = 226593 }
 wheels = [
@@ -1350,6 +1350,7 @@ dependencies = [
     { name = "social-auth-app-django" },
     { name = "svgwrite" },
     { name = "wagtail" },
+    { name = "wagtail-modeladmin" },
     { name = "whitenoise" },
     { name = "xhtml2pdf" },
     { name = "xmltodict" },
@@ -1447,6 +1448,7 @@ requires-dist = [
     { name = "social-auth-app-django", specifier = "~=5.4.1" },
     { name = "svgwrite", specifier = "~=1.4.3" },
     { name = "wagtail", specifier = "==5.2.7" },
+    { name = "wagtail-modeladmin", specifier = ">=2.1.0" },
     { name = "whitenoise", specifier = "~=6.8.2" },
     { name = "xhtml2pdf", specifier = "~=0.2.16" },
     { name = "xmltodict", specifier = "~=0.14.2" },
@@ -1777,7 +1779,7 @@ version = "1.6.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
-    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "colorama", marker = "platform_system == 'Windows'" },
     { name = "ghp-import" },
     { name = "jinja2" },
     { name = "markdown" },
@@ -2864,7 +2866,7 @@ name = "qrcode"
 version = "7.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "colorama", marker = "platform_system == 'Windows'" },
     { name = "pypng" },
     { name = "typing-extensions" },
 ]
@@ -3456,7 +3458,7 @@ dependencies = [
     { name = "filelock" },
     { name = "fsspec" },
     { name = "jinja2" },
-    { name = "mkl", marker = "sys_platform == 'win32'" },
+    { name = "mkl", marker = "platform_system == 'Windows'" },
     { name = "networkx" },
     { name = "sympy" },
     { name = "typing-extensions" },
@@ -3475,7 +3477,7 @@ name = "tqdm"
 version = "4.67.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "colorama", marker = "platform_system == 'Windows'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a8/4b/29b4ef32e036bb34e4ab51796dd745cdba7ed47ad142a9f4a1eb8e0c744d/tqdm-4.67.1.tar.gz", hash = "sha256:f8aef9c52c08c13a65f30ea34f4e5aac3fd1a34959879d7e59e63027286627f2", size = 169737 }
 wheels = [
@@ -3523,7 +3525,7 @@ name = "tzlocal"
 version = "5.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "tzdata", marker = "sys_platform == 'win32'" },
+    { name = "tzdata", marker = "platform_system == 'Windows'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/04/d3/c19d65ae67636fe63953b20c2e4a8ced4497ea232c43ff8d01db16de8dc0/tzlocal-5.2.tar.gz", hash = "sha256:8d399205578f1a9342816409cc1e46a93ebd5755e39ea2d85334bea911bf0e6e", size = 30201 }
 wheels = [
@@ -3610,6 +3612,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/d1/74/9d958709e7b9a0f637b05c73ce66126f962bc47f7fb00ade12d5155214ba/wagtail_factories-4.2.1.tar.gz", hash = "sha256:bfe158092982a2b30a3e603c482242905df0b163fc69573fa6f159df482175c5", size = 9516 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/72/b9/11450ece998472b441ae9572f476c3ebd862869907a4a2eedc9d80727cc3/wagtail_factories-4.2.1-py2.py3-none-any.whl", hash = "sha256:7a180fc1b074af7a78648c634740ee89d4dbb45899917744b66431d38155b6ae", size = 10560 },
+]
+
+[[package]]
+name = "wagtail-modeladmin"
+version = "2.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "wagtail" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d1/bc/338d8a371099eb7c4e4cc2cdb4166d48771faa201e90797bf59c59b577ac/wagtail_modeladmin-2.1.0.tar.gz", hash = "sha256:a83502b0c02d2376cde33d81eb607ae10be95840b35072404cca877da161f7da", size = 136808 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d7/d7/6dc6f966cd3aeab43adc8dc8e2cee3adeda94ee2ede488e45eb598e74ec6/wagtail_modeladmin-2.1.0-py3-none-any.whl", hash = "sha256:4ef3cfde4fb4858e8e17e26bb322ea1d44836c07b3e016d6921599caba67503a", size = 265600 },
 ]
 
 [[package]]

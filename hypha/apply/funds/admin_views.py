@@ -6,8 +6,8 @@ from wagtail import hooks
 from wagtail.admin import messages
 from wagtail.admin.forms.pages import CopyForm
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
-from wagtail.contrib.modeladmin.views import CreateView, EditView
 from wagtail.models import Page
+from wagtail_modeladmin.views import CreateView, EditView
 
 from hypha.apply.funds.utils import get_copied_form_name
 from hypha.apply.utils.blocks import show_admin_form_error_messages

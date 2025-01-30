@@ -1,6 +1,6 @@
 from django.urls import re_path
-from wagtail.contrib.modeladmin.options import ModelAdmin
-from wagtail.contrib.modeladmin.views import CreateView, InstanceSpecificView
+from wagtail_modeladmin.options import ModelAdmin
+from wagtail_modeladmin.views import CreateView, InstanceSpecificView
 
 from hypha.apply.determinations.models import (
     DeterminationForm,

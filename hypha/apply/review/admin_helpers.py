@@ -1,4 +1,4 @@
-from wagtail.contrib.modeladmin.helpers import PageButtonHelper
+from wagtail_modeladmin.helpers import PageButtonHelper
 
 
 class ButtonsWithClone(PageButtonHelper):

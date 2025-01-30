@@ -1,10 +1,10 @@
 from django.contrib.auth.models import Permission
 from django.core.exceptions import ImproperlyConfigured
-from wagtail.contrib.modeladmin.helpers import PagePermissionHelper, PermissionHelper
-from wagtail.contrib.modeladmin.options import WagtailRegisterable
 from wagtail.contrib.settings.models import BaseSiteSetting
 from wagtail.contrib.settings.registry import SettingMenuItem
 from wagtail.models import Page
+from wagtail_modeladmin.helpers import PagePermissionHelper, PermissionHelper
+from wagtail_modeladmin.options import WagtailRegisterable
 
 
 class SettingModelAdmin(WagtailRegisterable):

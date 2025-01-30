@@ -1,6 +1,6 @@
 from django.contrib.admin.utils import unquote
 from django.shortcuts import get_object_or_404
-from wagtail.contrib.modeladmin.views import CreateView
+from wagtail_modeladmin.views import CreateView
 
 
 class AddChildMetaTermViewClass(CreateView):

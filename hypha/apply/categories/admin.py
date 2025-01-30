@@ -1,5 +1,5 @@
 from django.urls import re_path
-from wagtail.contrib.modeladmin.options import ModelAdmin
+from wagtail_modeladmin.options import ModelAdmin
 
 from hypha.apply.utils.admin import AdminIcon
 

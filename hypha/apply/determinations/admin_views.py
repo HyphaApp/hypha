@@ -1,4 +1,4 @@
-from wagtail.contrib.modeladmin.views import CreateView, EditView
+from wagtail_modeladmin.views import CreateView, EditView
 
 from hypha.apply.utils.blocks import show_admin_form_error_messages
 

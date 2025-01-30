@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     "django_htmx",
     "heroicons",
     "django_web_components",
-    "wagtail.contrib.modeladmin",
+    "wagtail_modeladmin",
     "wagtail.contrib.settings",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",

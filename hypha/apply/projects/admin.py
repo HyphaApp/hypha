@@ -1,4 +1,4 @@
-from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
+from wagtail_modeladmin.options import ModelAdmin, ModelAdminGroup
 
 from hypha.apply.utils.admin import AdminIcon, ListRelatedMixin
 from hypha.core.wagtail.admin import SettingModelAdmin
