@@ -209,11 +209,17 @@ def check_submissions_same_determination_form(submissions):
     """
 
     same_form = True
-    # check form id
-    determination_form_ids = [
-        submission.get_from_parent("determination_forms").first().id
-        for submission in submissions
-    ]
+    try:
+        # check form id
+        determination_form_ids = [
+            submission.get_from_parent("determination_forms").first().id
+            for submission in submissions
+        ]
+    except Exception:
+        # if there is a form id error, handles old determination form issues
+        same_form = False
+        return same_form
+
     if any(d_id != determination_form_ids[0] for d_id in determination_form_ids):
         same_form = False
     return same_form
