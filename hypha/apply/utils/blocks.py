@@ -5,7 +5,6 @@ from django.core.exceptions import ValidationError
 from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from pagedown.widgets import PagedownWidget
 from wagtail.admin import messages
 from wagtail.blocks import ListBlock, StaticBlock, StreamBlock, StreamValue
 
@@ -15,6 +14,7 @@ from hypha.apply.stream_forms.blocks import (
     TextFieldBlock,
 )
 from hypha.apply.utils.options import RICH_TEXT_WIDGET
+from hypha.core.widgets import PagedownWidget
 
 
 def find_duplicates(items):

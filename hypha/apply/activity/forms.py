@@ -2,12 +2,12 @@ from django import forms
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 from django_file_form.forms import FileFormMixin
-from pagedown.widgets import PagedownWidget
 
 from hypha.apply.stream_forms.fields import MultiFileField
 from hypha.apply.todo.options import COMMENT_TASK
 from hypha.apply.todo.views import add_task_to_user
 from hypha.apply.users.models import STAFF_GROUP_NAME, User
+from hypha.core.widgets import PagedownWidget
 
 from .models import Activity, ActivityAttachment
 
