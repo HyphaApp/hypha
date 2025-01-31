@@ -1,6 +1,6 @@
 {% load i18n %}
 {% load querystrings %}
-<ul class="overflow-scroll max-h-80 text-gray-700 divide-y" aria-labelledby="dropdown-meta-terms" data-filter-list>
+<ul class="overflow-auto max-h-80 text-gray-700 divide-y" aria-labelledby="dropdown-meta-terms" data-filter-list>
     {% if selected_meta_terms %}
         <li data-filter-item-text>
             <a href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "meta_terms" %}"

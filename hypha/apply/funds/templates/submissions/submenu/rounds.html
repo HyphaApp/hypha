@@ -42,15 +42,21 @@
 
             <div data-filter-list>
                 {% if closed_rounds %}
-                    <div class="overflow-scroll max-h-80 divide-y tab-closed-rounds"
+                    <div class="overflow-auto max-h-80 divide-y tab-closed-rounds"
                          x-show="tab === 'closed_rounds'"
                          :aria-hidden="tab === 'closed_rounds' ? 'false' : 'true'"
                          role="tabpanel"
                     >
                         {% for f in closed_rounds %}
                             <a data-filter-item-text
-                               href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" round=f.id %}"
-                               hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" round=f.id %}"
+                               {% if f.selected %}
+                                   href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" round=f.id %}"
+                                   hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" round=f.id %}"
+                               {% else %}
+                                   href="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" round=f.id %}"
+                                   hx-get="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" round=f.id %}"
+                               {% endif %}
+
                                hx-push-url="true"
                                class="flex {% if f.selected %}ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
                                 {% if f.selected %}
@@ -63,7 +69,7 @@
                 {% endif %}
 
                 {% if open_rounds %}
-                    <div class="overflow-scroll max-h-80 divide-y tab-open-rounds"
+                    <div class="overflow-auto max-h-80 divide-y tab-open-rounds"
                          x-show="tab === 'open_rounds'"
                          :aria-hidden="tab === 'open_rounds' ? 'false' : 'true'"
                          role="tabpanel"
@@ -71,8 +77,13 @@
                         {% for f in open_rounds %}
                             <a
                                 data-filter-item-text
-                                href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" round=f.id %}"
-                                hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" round=f.id %}"
+                                {% if f.selected %}
+                                    href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" round=f.id %}"
+                                    hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" round=f.id %}"
+                                {% else %}
+                                    href="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" round=f.id %}"
+                                    hx-get="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" round=f.id %}"
+                                {% endif %}
                                 hx-push-url="true"
                                 class="flex {% if f.selected %}ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
                                 {% if f.selected %}

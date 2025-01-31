@@ -1,5 +1,6 @@
 import datetime as dt
 import re
+from typing import List
 
 from lark import Lark, Transformer
 
@@ -127,3 +128,17 @@ def parse_search_query(search_query: str) -> dict:
     }
     """
     return parser.parse(search_query)
+
+
+def filter_non_digits(values: List[str]) -> List[str]:
+    """Filter out all non-digit strings from a list
+
+    ie. ['test', '13', 'uh', '78'] -> ['13', '78']
+
+    Args:
+        values: a list of strings to be filtered
+
+    Returns:
+        list: a filtered list of strings that are all numbers
+    """
+    return [value for value in values if value.isdigit()]
