@@ -349,7 +349,7 @@ class SubmissionFilter(filters.FilterSet):
     category_options = MultipleChoiceFilter(
         choices=[], label=_("Category"), method="filter_category_options"
     )
-    meta_terms = ModelMultipleChoiceFilter(queryset=get_meta_terms, label=_("Terms"))
+    meta_terms = ModelMultipleChoiceFilter(queryset=get_meta_terms, label=_("Tags"))
 
     class Meta:
         model = ApplicationSubmission
