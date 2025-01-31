@@ -61,15 +61,6 @@
             <div class="form__help prose prose-sm">{{ field.help_text|markdown|nh3 }}</div>
         {% endif %}
 
-        {% if field.field.help_link %}
-            <p class="form__help-link">
-                <a href="{{ field.field.help_link }}" target="_blank" rel="noopener noreferrer">
-                    {% trans "See help guide for more information." %}
-                    {% heroicon_micro "arrow-top-right-on-square" class="inline w-4 h-4 align-text-bottom" aria_hidden=true %}
-                </a>
-            </p>
-        {% endif %}
-
         {% if not field.is_hidden %}
             <div class="form__item">
                 {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
