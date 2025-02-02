@@ -212,7 +212,7 @@ class AdminIcon(Enum):
             case self.SCREENING_STATUS | self.META_TERM:
                 return "tag"
             case self.ROUND:
-                return "repeat"
+                return "rotate"
             case self.SEALED_ROUND:
                 return "lock"
             case self.PROJECT:
