@@ -91,7 +91,10 @@ def bulk_update_lead(
         QuerySet of submissions that have been changed
     """
     submissions = submissions.exclude(lead=lead)
-    submissions.update(lead=lead)
+
+    base_message = _("Lead set to {lead} on ").format(lead=lead)
+    submissions_text = [submission.title_text_display for submission in submissions]
+    messages.success(request, base_message + ", ".join(submissions_text))
 
     messenger(
         MESSAGES.BATCH_UPDATE_LEAD,
@@ -100,6 +103,9 @@ def bulk_update_lead(
         sources=submissions,
         new_lead=lead,
     )
+
+    # update submissions
+    submissions.update(lead=lead)
     return submissions
 
 
