@@ -3,8 +3,6 @@ from django.db.models import OuterRef, Q, Subquery
 from django.db.models.functions import JSONObject
 from django.utils import timezone
 
-from hypha.apply.funds.models.submissions import ApplicationSubmission
-from hypha.apply.projects.models.project import Project
 from hypha.apply.todo.models import Task
 
 from .models import Activity
@@ -50,25 +48,12 @@ def get_related_activities_for_user(obj, user):
     Returns:
         [`Activity`][hypha.apply.activity.models.Activity] queryset
     """
-    proj_content_type = ContentType.objects.get_for_model(Project)
-    app_content_type = ContentType.objects.get_for_model(ApplicationSubmission)
-
-    # Determine if the provided object is an ApplicationSubmission or Project, then pull
-    # the related it's related Project/ApplicationSubmission activites if attribute it exists
-    if isinstance(obj, ApplicationSubmission):
-        source_filter = Q(source_object_id=obj.id, source_content_type=app_content_type)
-        if hasattr(obj, "project") and obj.project:
-            source_filter = source_filter | Q(
-                source_object_id=obj.project.id, source_content_type=proj_content_type
-            )
+    if hasattr(obj, "project") and obj.project:
+        source_filter = Q(submission=obj) | Q(project=obj.project)
+    if hasattr(obj, "submission") and obj.submission:
+        source_filter = Q(submission=obj.submission) | Q(project=obj)
     else:
-        source_filter = Q(
-            source_object_id=obj.id, source_content_type=proj_content_type
-        )
-        if hasattr(obj, "submission") and obj.submission:
-            source_filter = source_filter | Q(
-                source_object_id=obj.submission.id, source_content_type=app_content_type
-            )
+        source_filter = Q(submission=obj)
 
     queryset = (
         Activity.objects.filter(source_filter)
