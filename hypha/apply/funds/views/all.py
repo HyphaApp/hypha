@@ -336,7 +336,6 @@ def bulk_archive_submissions(request):
         request=request,
     )
 
-    messages.info(request, f"{len(submissions)} submissions archived.")
     return HttpResponseClientRefresh()
 
 
@@ -394,7 +393,7 @@ def bulk_update_submissions_status(request: HttpRequest) -> HttpResponse:
         )
         if not check_submissions_same_determination_form(submissions):
             messages.error(
-                request, "Submissions expect different forms - please contact admin"
+                request, _("Submissions expect different forms - please contact admin")
             )
             return HttpResponseClientRefresh()
         action = outcome_from_actions(transitions)
@@ -407,7 +406,7 @@ def bulk_update_submissions_status(request: HttpRequest) -> HttpResponse:
         )
     elif set(transitions) != non_determine_states:
         messages.error(
-            request, "Inconsistent states provided - please talk to an admin"
+            request, _("Inconsistent states provided - please talk to an admin")
         )
         return HttpResponseClientRefresh()
 

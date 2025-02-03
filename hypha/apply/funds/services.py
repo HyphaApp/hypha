@@ -37,7 +37,13 @@ def bulk_archive_submissions(
     Returns:
         QuerySet of submissions that have been archived
     """
+    # update submissions
     submissions.update(is_archive=True)
+
+    messages.success(
+        request, _("{number} submissions archived.").format(number=len(submissions))
+    )
+
     messenger(
         MESSAGES.BATCH_ARCHIVE_SUBMISSION,
         request=request,
@@ -65,14 +71,19 @@ def bulk_delete_submissions(
     Event.objects.filter(
         type=MESSAGES.NEW_SUBMISSION, object_id__in=submission_ids
     ).delete()
-    # delete submissions
-    submissions.delete()
+
+    messages.success(
+        request, _("{number} submissions deleted.").format(number=len(submissions))
+    )
+
     messenger(
         MESSAGES.BATCH_DELETE_SUBMISSION,
         request=request,
         user=user,
         sources=submissions,
     )
+    # delete submissions
+    submissions.delete()
     return submissions
 
 
