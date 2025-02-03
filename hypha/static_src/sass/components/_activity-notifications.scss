@@ -24,7 +24,8 @@
         }
 
         select {
-            padding-inline-end: 1em;
+            padding-inline-end: 2em;
+            color: variables.$color--default;
         }
 
         .form {
