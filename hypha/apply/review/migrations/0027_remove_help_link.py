@@ -11,18 +11,20 @@ def merge_help_text_link(apps, schema_editor):
     for reviewform in ReviewForm.objects.all():
         for id, struct_child in enumerate(reviewform.form_fields):
             struct_value = struct_child.value
-            if (
+            try:
                 struct_value["help_text"]
-                and struct_value["help_link"]
-                and struct_value["help_link"] != ""
-            ):
-                reviewform.form_fields[id].value["help_text"] = (
-                    "%s [See help guide for more information.](%s)"
-                    % (
-                        reviewform.form_fields[id].value["help_text"],
-                        reviewform.form_fields[id].value["help_link"],
+                struct_value["help_link"]
+            except (KeyError, TypeError):
+                pass
+            else:
+                if struct_value["help_link"] != "":
+                    reviewform.form_fields[id].value["help_text"] = (
+                        "%s [See help guide for more information.](%s)"
+                        % (
+                            reviewform.form_fields[id].value["help_text"],
+                            reviewform.form_fields[id].value["help_link"],
+                        )
                     )
-                )
         reviewform.save()
 
 

@@ -11,54 +11,60 @@ def merge_help_text_link(apps, schema_editor):
     for projectform in ProjectForm.objects.all():
         for id, struct_child in enumerate(projectform.form_fields):
             struct_value = struct_child.value
-            if (
+            try:
                 struct_value["help_text"]
-                and struct_value["help_link"]
-                and struct_value["help_link"] != ""
-            ):
-                projectform.form_fields[id].value["help_text"] = (
-                    "%s [See help guide for more information.](%s)"
-                    % (
-                        projectform.form_fields[id].value["help_text"],
-                        projectform.form_fields[id].value["help_link"],
+                struct_value["help_link"]
+            except (KeyError, TypeError):
+                pass
+            else:
+                if struct_value["help_link"] != "":
+                    projectform.form_fields[id].value["help_text"] = (
+                        "%s [See help guide for more information.](%s)"
+                        % (
+                            projectform.form_fields[id].value["help_text"],
+                            projectform.form_fields[id].value["help_link"],
+                        )
                     )
-                )
         projectform.save()
 
     ProjectSOWForm = apps.get_model("application_projects", "ProjectSOWForm")
     for projectsowform in ProjectSOWForm.objects.all():
         for id, struct_child in enumerate(projectsowform.form_fields):
             struct_value = struct_child.value
-            if (
+            try:
                 struct_value["help_text"]
-                and struct_value["help_link"]
-                and struct_value["help_link"] != ""
-            ):
-                projectsowform.form_fields[id].value["help_text"] = (
-                    "%s [See help guide for more information.](%s)"
-                    % (
-                        projectsowform.form_fields[id].value["help_text"],
-                        projectsowform.form_fields[id].value["help_link"],
+                struct_value["help_link"]
+            except (KeyError, TypeError):
+                pass
+            else:
+                if struct_value["help_link"] != "":
+                    projectsowform.form_fields[id].value["help_text"] = (
+                        "%s [See help guide for more information.](%s)"
+                        % (
+                            projectsowform.form_fields[id].value["help_text"],
+                            projectsowform.form_fields[id].value["help_link"],
+                        )
                     )
-                )
         projectsowform.save()
 
     ProjectReportForm = apps.get_model("application_projects", "ProjectReportForm")
     for projectreportform in ProjectReportForm.objects.all():
         for id, struct_child in enumerate(projectreportform.form_fields):
             struct_value = struct_child.value
-            if (
+            try:
                 struct_value["help_text"]
-                and struct_value["help_link"]
-                and struct_value["help_link"] != ""
-            ):
-                projectreportform.form_fields[id].value["help_text"] = (
-                    "%s [See help guide for more information.](%s)"
-                    % (
-                        projectreportform.form_fields[id].value["help_text"],
-                        projectreportform.form_fields[id].value["help_link"],
+                struct_value["help_link"]
+            except (KeyError, TypeError):
+                pass
+            else:
+                if struct_value["help_link"] != "":
+                    projectreportform.form_fields[id].value["help_text"] = (
+                        "%s [See help guide for more information.](%s)"
+                        % (
+                            projectreportform.form_fields[id].value["help_text"],
+                            projectreportform.form_fields[id].value["help_link"],
+                        )
                     )
-                )
         projectreportform.save()
 
 
