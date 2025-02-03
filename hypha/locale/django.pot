@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-03 09:03+0000\n"
+"POT-Creation-Date: 2025-02-03 09:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7213,21 +7213,25 @@ msgstr ""
 msgid "Alert! An attempt to update your email."
 msgstr ""
 
-#: hypha/apply/users/views.py:268
+#: hypha/apply/users/views.py:269
 #, python-brace-format
 msgid "Your email has been successfully updated to {email}!"
 msgstr ""
 
-#: hypha/apply/users/views.py:348
+#: hypha/apply/users/views.py:354
 msgid "Your password was successfully updated!"
 msgstr ""
 
-#: hypha/apply/users/views.py:734
+#: hypha/apply/users/views.py:359
+msgid "Please correct the errors below."
+msgstr ""
+
+#: hypha/apply/users/views.py:740
 #, python-brace-format
 msgid "Confirmation code for {org_long_name}: {token}"
 msgstr ""
 
-#: hypha/apply/users/views.py:793
+#: hypha/apply/users/views.py:801
 msgid "✓ Check your email for password set link."
 msgstr ""
 
