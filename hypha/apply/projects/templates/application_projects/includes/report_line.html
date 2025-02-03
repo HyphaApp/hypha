@@ -26,7 +26,7 @@
 
             <input
                 hx-post="{% url "apply:projects:reports:skip" pk=report.id %}"
-                hx-confirm="{% blocktrans %} You're skipping the report for {{ report.start_date }} - {{ report.end_date }}. This will result in a gap in reporting for the project. You can undo this at any time. {% endblocktrans %}"
+                hx-confirm="{% blocktrans with start_date=report.start_date end_date=report.end_date %} You're skipping the report for {{ start_date }} - {{ end_date }}. This will result in a gap in reporting for the project. You can undo this at any time. {% endblocktrans %}"
                 type="submit"
                 value="{% trans 'Skip' %}"
                 class="btn data-block__action-link"

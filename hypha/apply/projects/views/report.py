@@ -1,8 +1,10 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic import DetailView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
@@ -299,12 +301,7 @@ class ReportFrequencyUpdate(View):
                 form.instance.disable_reporting = True
                 form.instance.schedule_start = None
                 form.save()
-                messenger(
-                    MESSAGES.DISABLED_REPORTING,
-                    request=self.request,
-                    user=self.request.user,
-                    source=self.project,
-                )
+                messages.success(self.request, _("Reporting disabled"))
             else:
                 form.instance.disable_reporting = False
                 form.instance.schedule_start = form.cleaned_data["start"]

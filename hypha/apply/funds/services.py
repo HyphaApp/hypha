@@ -1,5 +1,6 @@
 from django.apps import apps
 from django.conf import settings
+from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db.models import (
     Case,
@@ -14,6 +15,7 @@ from django.db.models import (
 )
 from django.db.models.functions import Coalesce
 from django.http import HttpRequest
+from django.utils.translation import gettext as _
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity, Event
@@ -130,12 +132,30 @@ def bulk_update_reviewers(
             submission,
         )
 
+    added = [[role, reviewer] for role, reviewer in assigned_roles.items()]
+    if added:
+        reviewers_text = ", ".join(
+            [
+                _("{user} as {name}").format(user=str(user), name=role.name)
+                for role, user in added
+                if user
+            ]
+        )
+    else:
+        reviewers_text = ", ".join([str(user) for user in external_reviewers if user])
+
+    base_message = _("Batch reviewers updated: {reviewers_text} on ").format(
+        reviewers_text=reviewers_text
+    )
+    submissions_text = [submission.title_text_display for submission in submissions]
+    messages.success(request, base_message + ", ".join(submissions_text))
+
     messenger(
         MESSAGES.BATCH_REVIEWERS_UPDATED,
         request=request,
         user=user,
         sources=submissions,
-        added=[[role, reviewer] for role, reviewer in assigned_roles.items()],
+        added=added,
     )
 
     for submission in submissions:

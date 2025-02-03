@@ -332,7 +332,7 @@ class UploadDocumentView(CreateView):
                     "HX-Trigger": json.dumps(
                         {
                             "supportingDocumentUpload": None,
-                            "showMessage": "Document has been uploaded",
+                            "showMessage": _("Document has been uploaded"),
                         }
                     ),
                 },
@@ -354,18 +354,13 @@ class RemoveDocumentView(View):
         self.object = self.project.packet_files.get(pk=kwargs.get("document_pk"))
         self.object.delete()
 
-        messages.success(
-            self.request,
-            _("Document has been removed"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-        )
         return HttpResponse(
             status=204,
             headers={
                 "HX-Trigger": json.dumps(
                     {
                         "supportingDocumentRemove": None,
-                        "showMessage": "Document has been removed",
+                        "showMessage": _("Document has been removed"),
                     }
                 ),
             },
@@ -388,19 +383,13 @@ class RemoveContractDocumentView(View):
         )
         self.object.delete()
 
-        messages.success(
-            self.request,
-            _("Contracting document has been removed"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-        )
-
         return HttpResponse(
             status=204,
             headers={
                 "HX-Trigger": json.dumps(
                     {
                         "contractingDocumentRemove": None,
-                        "showMessage": "Contracting Document has been removed",
+                        "showMessage": _("Contracting document has been removed"),
                     }
                 ),
             },
@@ -454,7 +443,10 @@ class UpdateLeadView(View):
                 status=204,
                 headers={
                     "HX-Trigger": json.dumps(
-                        {"leadUpdated": None, "showMessage": "Lead has been updated."}
+                        {
+                            "leadUpdated": None,
+                            "showMessage": _("Lead has been updated."),
+                        }
                     ),
                 },
             )
@@ -508,16 +500,14 @@ class UpdateProjectTitleView(DelegatedViewMixin, UpdateView):
                 related=old_title,
             )
 
-            messages.success(
-                self.request,
-                _("Title has been updated"),
-                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-            )
             return HttpResponse(
                 status=204,
                 headers={
                     "HX-Trigger": json.dumps(
-                        {"titleUpdated": None, "showMessage": "Title has been updated."}
+                        {
+                            "titleUpdated": None,
+                            "showMessage": _("Title has been updated"),
+                        }
                     ),
                 },
             )
@@ -990,7 +980,7 @@ class UploadContractDocumentView(View):
                     "HX-Trigger": json.dumps(
                         {
                             "contractingDocumentUpload": None,
-                            "showMessage": "Contracting Document has been uploaded",
+                            "showMessage": _("Contracting document has been uploaded"),
                         }
                     ),
                 },
