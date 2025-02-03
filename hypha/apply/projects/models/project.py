@@ -65,8 +65,6 @@ def contract_document_path(instance, filename):
     return f"projects/{instance.project_id}/contracting_documents/{filename}"
 
 
-PROJECT_ACTION_MESSAGE_TAG = "project_action_message"
-
 APPROVE = "approve"
 REQUEST_CHANGE = "request_change"
 PAF_STATUS_CHOICES = (

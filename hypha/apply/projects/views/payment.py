@@ -3,6 +3,7 @@ import json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.http import HttpResponse
@@ -66,7 +67,7 @@ from ..models.payment import (
     INVOICE_TRANISTION_TO_RESUBMITTED,
     Invoice,
 )
-from ..models.project import PROJECT_ACTION_MESSAGE_TAG, Project
+from ..models.project import Project
 from ..service_utils import batch_update_invoices_status, handle_tasks_on_invoice_update
 from ..tables import AdminInvoiceListTable, FinanceInvoiceTable
 
@@ -244,9 +245,10 @@ class InvoiceView(ViewDispatcher):
     applicant_view = InvoiceApplicantView
 
 
-class CreateInvoiceView(CreateView):
+class CreateInvoiceView(SuccessMessageMixin, CreateView):
     model = Invoice
     form_class = CreateInvoiceForm
+    success_message = _("Invoice added")
 
     def dispatch(self, request, *args, **kwargs):
         self.project = Project.objects.get(pk=kwargs["pk"])
@@ -306,10 +308,6 @@ class CreateInvoiceView(CreateView):
             code=INVOICE_WAITING_APPROVAL,
             user=self.object.project.lead,
             related_obj=self.object,
-        )
-
-        messages.success(
-            self.request, _("Invoice added"), extra_tags=PROJECT_ACTION_MESSAGE_TAG
         )
 
         # Required for django-file-form: delete temporary files for the new files

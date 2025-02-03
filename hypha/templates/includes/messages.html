@@ -1,21 +1,6 @@
 {% load heroicons i18n %}
-<ul class="messages">
+<ul class="fixed inset-x-0 top-2 z-50 pointer-events-none">
     {% for message in messages %}
-        {% if 'project_action_message' in message.tags %}
-            <li class="py-2 px-3 rounded border shadow-md messages__actions"
-                x-data="{ show: true }"
-                x-show="show"
-                x-transition
-            >
-                {% heroicon_outline "check" stroke_width=2 class="inline-block w-4 h-4 me-1" aria_hidden=true %}
-                <p class="messages__copy">{{ message }}</p>
-                <button type="button" class="p-2 hover:opacity-70" x-on:click="show = ! show">
-                    <span class="sr-only">{% trans "Close" %}</span>
-                    {% heroicon_outline "x-mark" stroke_width=2 class="inline" aria_hidden=true %}
-                </button>
-            </li>
-        {% else %}
-            {% include "includes/message_item.html" with message=message tag=message.tags close=True %}
-        {% endif %}
+        {% include "includes/message_item.html" with message=message tag=message.tags close=True %}
     {% endfor %}
 </ul>
