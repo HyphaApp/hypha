@@ -6,30 +6,37 @@
 
 {% block content %}
 
-    <section class="py-4 my-5">
-        <div class="wrapper">
-            {% if form.non_field_errors %}
-                <div class="messages">
-                    <ul>
-                        {% for error in form.non_field_errors %}
-                            <li class="error">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
+    <div class="mt-12 max-w-xl wrapper">
+        <form class="form form--with-p-tags" method="post">
+            <h2 class="text-2xl">{% trans "Forgot password?" %}</h2>
+            <p class="form__help">{% trans "Please enter your user account's email address and we will send you a password reset link." %}</p>
+            {% csrf_token %}
+            {% if redirect_url %}
+                <input type="hidden" name="next" value="{{ redirect_url }}">
             {% endif %}
 
-            <form class="pt-4 form form--with-p-tags" method="post">
-                <h2 class="text-2xl">{% trans "Forgot password?" %}</h2>
-                <p class="form__help">{% trans "Please enter your user account's email address and we will send you a password reset link." %}</p>
-                {% csrf_token %}
-                {% if redirect_url %}
-                    <input type="hidden" name="next" value="{{ redirect_url }}">
-                {% endif %}
-                <p>{{ form.email.label_tag }}</p>
-                <p>{{ form.email }}</p>
+            {% if form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
 
-                <button class="button button--primary button--login" type="submit">{% trans "Send reset email" %}</button>
-            </form>
-        </div>
-    </section>
+            {% if form.errors %}
+                <ul class="errorlist">
+                    {% blocktrans trimmed count counter=form.errors.items|length %}
+                        <li>Please correct the error below.</li>
+                    {% plural %}
+                        <li>Please correct the errors below.</li>
+                    {% endblocktrans %}
+                </ul>
+            {% endif %}
+
+            <p>{{ form.email.label_tag }}</p>
+            <p>{{ form.email }}</p>
+
+            <button class="button button--primary button--login" type="submit">{% trans "Send reset email" %}</button>
+        </form>
+    </div>
 {% endblock %}
