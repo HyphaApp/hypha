@@ -16,9 +16,12 @@ def merge_help_text_link(apps, schema_editor):
                 and struct_value["help_link"]
                 and struct_value["help_link"] != ""
             ):
-                determinationform.form_fields[id].value["help_text"] = "%s %s" % (
-                    determinationform.form_fields[id].value["help_text"],
-                    determinationform.form_fields[id].value["help_link"],
+                determinationform.form_fields[id].value["help_text"] = (
+                    "%s [See help guide for more information.](%s)"
+                    % (
+                        determinationform.form_fields[id].value["help_text"],
+                        determinationform.form_fields[id].value["help_link"],
+                    )
                 )
         determinationform.save()
 

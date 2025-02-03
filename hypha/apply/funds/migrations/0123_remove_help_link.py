@@ -18,9 +18,12 @@ def merge_help_text_link(apps, schema_editor):
                 and struct_value["help_link"]
                 and struct_value["help_link"] != ""
             ):
-                applicationform.form_fields[id].value["help_text"] = "%s %s" % (
-                    applicationform.form_fields[id].value["help_text"],
-                    applicationform.form_fields[id].value["help_link"],
+                applicationform.form_fields[id].value["help_text"] = (
+                    "%s [See help guide for more information.](%s)"
+                    % (
+                        applicationform.form_fields[id].value["help_text"],
+                        applicationform.form_fields[id].value["help_link"],
+                    )
                 )
         applicationform.save()
 

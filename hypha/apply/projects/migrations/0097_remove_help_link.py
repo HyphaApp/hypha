@@ -16,9 +16,12 @@ def merge_help_text_link(apps, schema_editor):
                 and struct_value["help_link"]
                 and struct_value["help_link"] != ""
             ):
-                projectform.form_fields[id].value["help_text"] = "%s %s" % (
-                    projectform.form_fields[id].value["help_text"],
-                    projectform.form_fields[id].value["help_link"],
+                projectform.form_fields[id].value["help_text"] = (
+                    "%s [See help guide for more information.](%s)"
+                    % (
+                        projectform.form_fields[id].value["help_text"],
+                        projectform.form_fields[id].value["help_link"],
+                    )
                 )
         projectform.save()
 
@@ -31,9 +34,12 @@ def merge_help_text_link(apps, schema_editor):
                 and struct_value["help_link"]
                 and struct_value["help_link"] != ""
             ):
-                projectsowform.form_fields[id].value["help_text"] = "%s %s" % (
-                    projectsowform.form_fields[id].value["help_text"],
-                    projectsowform.form_fields[id].value["help_link"],
+                projectsowform.form_fields[id].value["help_text"] = (
+                    "%s [See help guide for more information.](%s)"
+                    % (
+                        projectsowform.form_fields[id].value["help_text"],
+                        projectsowform.form_fields[id].value["help_link"],
+                    )
                 )
         projectsowform.save()
 
@@ -46,9 +52,12 @@ def merge_help_text_link(apps, schema_editor):
                 and struct_value["help_link"]
                 and struct_value["help_link"] != ""
             ):
-                projectreportform.form_fields[id].value["help_text"] = "%s %s" % (
-                    projectreportform.form_fields[id].value["help_text"],
-                    projectreportform.form_fields[id].value["help_link"],
+                projectreportform.form_fields[id].value["help_text"] = (
+                    "%s [See help guide for more information.](%s)"
+                    % (
+                        projectreportform.form_fields[id].value["help_text"],
+                        projectreportform.form_fields[id].value["help_link"],
+                    )
                 )
         projectreportform.save()
 
