@@ -342,6 +342,9 @@ def create_password(request):
     """
     redirect_url = get_redirect_url(request, redirect_field="next")
 
+    if request.user.is_anonymous:
+        raise PermissionDenied()
+
     if request.method == "POST":
         form = AdminPasswordChangeForm(request.user, request.POST)
 
