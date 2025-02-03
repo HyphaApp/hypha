@@ -207,7 +207,7 @@ def account_email_change(request):
 
     # alert email
     request.user.email_user(
-        subject="Alert! An attempt to update your email.",
+        subject=_("Alert! An attempt to update your email."),
         message=render_to_string(
             "users/email_change/update_info_email.html",
             {
@@ -265,7 +265,10 @@ class EmailChangeConfirmationView(TemplateView):
                 user.email = email
                 user.save()
                 messages.success(
-                    request, _(f"Your email has been successfully updated to {email}!")
+                    request,
+                    _("Your email has been successfully updated to {email}!").format(
+                        email=email
+                    ),
                 )
             return redirect("users:account")
 
@@ -345,12 +348,12 @@ def create_password(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # Important!
-            messages.success(request, "Your password was successfully updated!")
+            messages.success(request, _("Your password was successfully updated!"))
             if redirect_url:
                 return redirect(redirect_url)
             return redirect("users:account")
         else:
-            messages.error(request, "Please correct the errors below.")
+            messages.error(request, _("Please correct the errors below."))
     else:
         form = AdminPasswordChangeForm(request.user)
 
@@ -731,7 +734,9 @@ def send_confirm_access_email_view(request):
         "user": request.user,
         "timeout_minutes": settings.PASSWORDLESS_LOGIN_TIMEOUT // 60,
     }
-    subject = "Confirmation code for {org_long_name}: {token}".format(**email_context)
+    subject = _("Confirmation code for {org_long_name}: {token}").format(
+        **email_context
+    )
     email = MarkdownMail("users/emails/confirm_access.md")
     email.send(
         to=request.user.email,
@@ -790,7 +795,7 @@ def set_password_view(request):
             email_template="users/emails/set_password.txt",
             email_subject_template="users/emails/set_password_subject.txt",
         )
-        return HttpResponse("✓ Check your email for password set link.")
+        return HttpResponse(_("✓ Check your email for password set link."))
 
 
 @never_cache
