@@ -1,7 +1,12 @@
 from django import forms
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import BooleanBlock, CharBlock, ChoiceBlock, TextBlock
+from wagtail.blocks import (
+    BooleanBlock,
+    CharBlock,
+    ChoiceBlock,
+    RichTextBlock,
+)
 from wagtail.coreutils import resolve_model_string
 
 from hypha.apply.stream_forms.blocks import OptionalFormFieldBlock
@@ -31,7 +36,7 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
         required=False,
         help_text=_("Leave blank to use the default Category label"),
     )
-    help_text = TextBlock(
+    help_text = RichTextBlock(
         label=_("Help text"),
         required=False,
         help_text=_("Leave blank to use the default Category help text"),
