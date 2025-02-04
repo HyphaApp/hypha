@@ -3,11 +3,19 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from wagtail.admin.panels import FieldPanel, Panel
 from wagtail.models import Page
+from wagtail.snippets.models import get_snippet_models
 
 
 def reverse_edit(obj):
     if isinstance(obj, Page):
         return reverse("wagtailadmin_pages:edit", args=(obj.id,))
+
+    snippet_models = get_snippet_models()
+    if obj.__class__ in snippet_models:
+        return reverse(
+            f"wagtailsnippets_{obj._meta.app_label}_{obj._meta.model_name}:edit",
+            args=(obj.id,),
+        )
 
     url_name = f"{obj._meta.app_label}_{obj._meta.model_name}_modeladmin_edit"
     return reverse(url_name, args=(obj.id,))

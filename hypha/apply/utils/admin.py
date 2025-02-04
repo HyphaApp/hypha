@@ -118,7 +118,7 @@ class RelatedFormsMixin:
         def build_urls(application_forms):
             for application_form in application_forms:
                 url = reverse(
-                    "funds_applicationform_modeladmin_edit",
+                    "wagtailsnippets_funds_applicationform:edit",
                     args=[application_form.form.id],
                 )
                 yield f'<a href="{url}">{application_form}</a>'

@@ -1,4 +1,6 @@
 from django.db import models
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import StreamField
@@ -22,6 +24,33 @@ class ApplicationForm(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def used_by(self):
+        rows = []
+        related_models = [
+            ("applicationbaseform", "application"),
+            ("roundbaseform", "round"),
+            ("labbaseform", "lab"),
+        ]
+
+        for form, field in related_models:
+            related_values = getattr(self, f"{form}_set").values(
+                f"{field}__title", f"{field}__id"
+            )
+            for value in related_values:
+                title = value.get(f"{field}__title")
+                obj_id = value.get(f"{field}__id")
+                if title and obj_id:
+                    edit_url = reverse("wagtailadmin_pages:edit", args=(obj_id,))
+                    rows.append(
+                        f'<a href="{edit_url}">'
+                        f'<svg width="0.85rem" height="0.85rem" aria-hidden="true">'
+                        f'<use href="#icon-{field}"></use></svg> {title}</a>'
+                    )
+                elif title:
+                    rows.append(f"{title}")
+        return mark_safe(", ".join(rows))
 
 
 class AbstractRelatedForm(Orderable):
