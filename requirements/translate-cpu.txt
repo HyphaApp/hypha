@@ -2,5 +2,5 @@
 
 # Only install the CPU version of torch when available (linux)
 --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
-torch==2.3.1+cpu; sys_platform == 'linux'
+torch==2.3.1+cpu
 argostranslate==1.9.6
