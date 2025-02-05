@@ -539,60 +539,61 @@
         Load reviews using htmx multi-swap extension, the reviewers for all the submission
         on the page are fetched after the pages is loaded
         {% endcomment %}
-        <section
-            class="w-full bg-white"
-        >
+        <section class="w-full bg-white">
             {% if submissions %}
                 {% include "submissions/partials/submissions-inline.html" with submissions=submissions row_layout=request.GET.format enable_selection=enable_selection %}
             {% else %}
-                <div class="flex flex-col justify-center items-center py-20 px-4 border-t">
+                <div class="flex flex-col justify-center items-center py-32 px-4 mb-8 border">
                     <h2 class='text-2xl'>{% trans "No results matched your search" %}</h2>
                     <p>{% trans "Try" %} <a href="./" hx-get="./" hx-target="#main" hx-push-url="true" hx-swap="outerHTML">{% trans "clearing" %}</a> {% trans "the current query and try again" %}.</p>
                 </div>
             {% endif %}
         </section>
 
-        <nav class="mt-5 mb-20" aria-label="Pagination">
-            <span class="flex gap-2 justify-center items-center step-links">
-                {% if page.has_previous %}
-                    <a
-                        href="{% modify_query page=1 %}"
-                        class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                        aria-label="{% trans 'First Page' %}"
-                    >
-                        &laquo; {% trans "First" %}
-                    </a>
-                    <a
-                        href="{% modify_query page=page.previous_page_number %}"
-                        class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                        aria-label="{% trans 'Previous Page' %}"
-                    >
-                        {% trans "Previous" %}
-                    </a>
-                {% endif %}
+        {% if page.paginator.count %}
+            <nav class="mt-5 mb-20" aria-label="Pagination">
+                <span class="flex gap-2 justify-center items-center step-links">
+                    {% if page.has_previous %}
+                        <a
+                            href="{% modify_query page=1 %}"
+                            class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
+                            aria-label="{% trans 'First Page' %}"
+                        >
+                            &laquo; {% trans "First" %}
+                        </a>
+                        <a
+                            href="{% modify_query page=page.previous_page_number %}"
+                            class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
+                            aria-label="{% trans 'Previous Page' %}"
+                        >
+                            {% trans "Previous" %}
+                        </a>
+                    {% endif %}
 
-                <span class="current">
-                    {% blocktrans with page_number=page.number total=page.paginator.num_pages %}Page {{ page_number }} of {{ total }}.{% endblocktrans %}
+                    <span class="current">
+                        {% blocktrans with page_number=page.number total=page.paginator.num_pages %}Page {{ page_number }} of {{ total }}.{% endblocktrans %}
+                    </span>
+
+                    {% if page.has_next %}
+                        <a
+                            href="{% modify_query page=page.next_page_number %}"
+                            class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
+                            aria-label="{% trans 'Next Page' %}"
+                        >
+                            {% trans "Next" %}
+                        </a>
+                        <a
+                            href="{% modify_query page=page.paginator.num_pages %}"
+                            class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
+                            aria-label="{% trans 'Last Page' %}"
+                        >
+                            {% trans "Last" %} &raquo;
+                        </a>
+                    {% endif %}
                 </span>
+            </nav>
+        {% endif %}
 
-                {% if page.has_next %}
-                    <a
-                        href="{% modify_query page=page.next_page_number %}"
-                        class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                        aria-label="{% trans 'Next Page' %}"
-                    >
-                        {% trans "Next" %}
-                    </a>
-                    <a
-                        href="{% modify_query page=page.paginator.num_pages %}"
-                        class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                        aria-label="{% trans 'Last Page' %}"
-                    >
-                        {% trans "Last" %} &raquo;
-                    </a>
-                {% endif %}
-            </span>
-        </nav>
     </section>
 {% endspaceless %}{% endblock content %}
 
