@@ -14,25 +14,26 @@ repos:
             "-o",
             "requirements/prod.txt",
           ]
+
       - id: uv-export
         name: uv-export requirements/dev.txt
         args: ["--frozen", "--group", "dev", "-o", "requirements/dev.txt"]
+
       - id: uv-export
         name: uv-export requirements/docs.txt
         args:
           ["--frozen", "--only-group", "docs", "-o", "requirements/docs.txt"]
 
-      # This is disabled because this doesn't export --find-links. The requirements-translate is maintained manually.
-      # - id: uv-export
-      #   name: uv-export requirements/translate.txt
-      #   args:
-      #     [
-      #       "--frozen",
-      #       "--only-group",
-      #       "translate",
-      #       "-o",
-      #       "requirements/translate.txt",
-      #     ]
+      - id: uv-export
+        name: uv-export requirements/translate.txt
+        args:
+          [
+            "--frozen",
+            "--only-group",
+            "translate",
+            "-o",
+            "requirements/translate.txt",
+          ]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: "v0.8.4"

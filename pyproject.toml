@@ -2,7 +2,7 @@
 name = "hypha"
 description = "A open source submission management platform to receive and manage applications for funding."
 readme = "README.md"
-version = "5.21.0"
+version = "5.24.0"
 requires-python = ">=3.10"
 license = { text = "BSD-3-Clause" }
 
@@ -99,20 +99,7 @@ dependencies = [
 ]
 
 # Requirements for machine translations
-# NOTE: If you update this section please manual update `requirements/translate.txt` as well.
-"translate" = [
-    # Only install the CPU version of torch when available (linux)
-    "torch==2.3.1+cpu; sys_platform == 'linux'",
-    "argostranslate~=1.9.6",
-]
-
-[tool.uv.sources]
-torch = { index = "pytorch" }
-
-[[tool.uv.index]]
-name = "pytorch"
-url = "https://download.pytorch.org/whl/cpu"
-explicit = true
+"translate" = ["torch~=2.3", "argostranslate~=1.9.6"]
 
 [tool.uv]
 default-groups = ["dev", "docs"]
