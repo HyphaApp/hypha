@@ -93,9 +93,12 @@
 
         {% cookie_banner %}
 
-        <!-- htmx start: installed with npm -->
+        <!-- htmx, htmx multi swap and htmx configs. -->
         <script src="{% static 'js/vendor/htmx.min.js' %}"></script>
         <script src="{% static 'js/vendor/htmx-ext-multi-swap.min.js' %}"></script>
+        <script>
+            htmx.config.globalViewTransitions = true;
+        </script>
 
         <!-- htmx progress, error handeling and tooltip loading -->
         <script>
