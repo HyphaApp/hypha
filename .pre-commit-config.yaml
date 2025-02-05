@@ -3,7 +3,7 @@ repos:
     rev: "0.5.13"
     hooks:
       - id: uv-export
-        name: uv-export requirements.txt
+        name: uv-export requirements/prod.txt
         args:
           [
             "--frozen",
