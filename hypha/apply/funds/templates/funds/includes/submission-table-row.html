@@ -133,7 +133,7 @@
                         hx-trigger="mouseover once"
                         hx-get="{% url "funds:submissions:partial-reviews-card" s.id %}"
                         hx-target="find .review-hovercard"
-                        hx-swap="innerHTML"
+                        hx-swap="innerHTML transition:false"
                     >
                         <span id="r{{s.id}}" class="inline-block w-full">
                                 {% comment %} pre-loading animation {% endcomment %}
