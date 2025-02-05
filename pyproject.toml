@@ -98,6 +98,22 @@ dependencies = [
     "griffe>=0.49.0",
 ]
 
+# Requirements for machine translations
+# NOTE: If you update this section please manual update `requirements/translate.txt` as well.
+"translate" = [
+    # Only install the CPU version of torch when available (linux)
+    "torch==2.3.1+cpu; sys_platform == 'linux'",
+    "argostranslate~=1.9.6",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch" }
+
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
 [tool.uv]
 default-groups = ["dev", "docs"]
 
