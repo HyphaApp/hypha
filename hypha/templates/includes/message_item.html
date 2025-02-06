@@ -1,21 +1,37 @@
 {% load i18n heroicons %}
 <li
-    class="shadow-md messages__text{% if tag %} messages__text--{{ tag }}{% endif %}"
-    x-data="{ show: true }"
-    x-transition
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+    x-data="{ show: true, status: '{{ tag }}' }"
     x-show="show"
+    x-transition:enter="transition ease-in duration-200"
+    x-transition:enter-start="transform opacity-0 translate-y-2"
+    x-transition:enter-end="transform opacity-100"
+    x-transition:leave="transition ease-out duration-500"
+    x-transition:leave-start="transform translate-y-0 opacity-100"
+    x-transition:leave-end="transform -translate-y-full opacity-0"
+    class="flex gap-2 items-center py-2 px-3 mx-auto max-w-lg text-sm font-bold text-white rounded-md shadow-xl max-h-1000px"
+    :class="{
+            'bg-gray-500': status === 'debug',
+            'bg-green-500': status === 'success',
+            'bg-blue-500': status === 'info',
+            'bg-orange-500': status === 'warning',
+            'bg-red-500': status === 'error',
+            }"
+    style="pointer-events:all"
 >
-    <div class="messages__inner">
-        {% heroicon_outline "exclamation-circle" class="inline me-1" aria_hidden=true %}
-        <p class="messages__copy">{{ message }}</p>
-        {% if close %}
-            <button
-                type="button"
-                class="transition-opacity hover:opacity-70 messages__button"
-                @click="show = false"
-            >
-                {% trans "Ok" %}
-            </button>
-        {% endif %}
-    </div>
+    <span x-show="status == 'info'" aria-hidden="true">
+        {% heroicon_solid "information-circle" size=24 class="inline-block rounded-full" %}
+    </span>
+    <span x-show="status == 'success'" aria-hidden="true">
+        {% heroicon_solid "check-circle" size=24 class="inline-block rounded-full" %}
+    </span>
+    <span class="flex-1">{{ message }}</span>
+    {% if close %}
+        <button type="button" class="p-2 hover:opacity-70" x-on:click="show = ! show">
+            <span class="sr-only">{% trans "Close" %}</span>
+            {% heroicon_outline "x-mark" stroke_width=2 class="inline" aria_hidden=true %}
+        </button>
+    {% endif %}
 </li>

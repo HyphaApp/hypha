@@ -95,7 +95,6 @@ from ..models.project import (
     DRAFT,
     INTERNAL_APPROVAL,
     INVOICING_AND_REPORTING,
-    PROJECT_ACTION_MESSAGE_TAG,
     PROJECT_PUBLIC_STATUSES,
     REQUEST_CHANGE,
     Contract,
@@ -256,11 +255,7 @@ class SendForApprovalView(View):
                 related=old_stage,
             )
 
-            messages.success(
-                self.request,
-                _("PAF has been submitted for approval"),
-                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-            )
+            messages.success(self.request, _("PAF has been submitted for approval"))
             return HttpResponseClientRefresh()
         return render(
             self.request,
@@ -629,10 +624,8 @@ class ApproveContractView(View):
             messages.success(
                 self.request,
                 _(
-                    "Contractor documents have been approved."
-                    " You can receive invoices from vendor now."
+                    "Contractor documents have been approved.  You can receive invoices from vendor now."
                 ),
-                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
             )
             return HttpResponseClientRefresh()
         return render(
@@ -697,18 +690,10 @@ class UploadContractView(View):
             if self.request.user == self.project.user:
                 form.instance.signed_by_applicant = True
                 form.instance.uploaded_by_applicant_at = timezone.now()
-                messages.success(
-                    self.request,
-                    _("Countersigned contract uploaded"),
-                    extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-                )
+                messages.success(self.request, _("Countersigned contract uploaded"))
             elif self.request.user.is_contracting or self.request.user.is_apply_staff:
                 form.instance.uploaded_by_contractor_at = timezone.now()
-                messages.success(
-                    self.request,
-                    _("Signed contract uploaded"),
-                    extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-                )
+                messages.success(self.request, _("Signed contract uploaded"))
 
             form.save()
 
@@ -915,11 +900,7 @@ class SubmitContractDocumentsView(View):
                 related_obj=self.project,
             )
 
-            messages.success(
-                self.request,
-                _("Contract documents submitted"),
-                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-            )
+            messages.success(self.request, _("Contract documents submitted"))
             return HttpResponseClientRefresh()
         return render(
             self.request,
@@ -1139,9 +1120,7 @@ class ChangePAFStatusView(View):
                 )
 
                 messages.success(
-                    self.request,
-                    _("Project form status has been updated"),
-                    extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+                    self.request, _("Project form status has been updated")
                 )
             elif paf_status == APPROVE:
                 # remove task for paf approval user/user_group related to this paf_approval of project
@@ -1194,11 +1173,7 @@ class ChangePAFStatusView(View):
                                 user_group=next_paf_approval.paf_reviewer_role.user_roles.all(),
                                 related_obj=self.object,
                             )
-                messages.success(
-                    self.request,
-                    _("Project form has been approved"),
-                    extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-                )
+                messages.success(self.request, _("Project form has been approved"))
 
             if form.cleaned_data["comment"]:
                 comment = f"<p>\"{form.cleaned_data['comment']}.\"</p>"
@@ -1307,11 +1282,7 @@ class ChangeProjectstatusView(View):
                 related=old_stage,
             )
 
-            messages.success(
-                self.request,
-                _("Project status has been updated"),
-                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-            )
+            messages.success(self.request, _("Project status has been updated"))
             return HttpResponseClientRefresh()
         return render(
             self.request,
@@ -1604,9 +1575,7 @@ class UpdatePAFApproversView(View):
                         )
 
             messages.success(
-                self.request,
-                _("Project form approvers have been updated"),
-                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+                self.request, _("Project form approvers have been updated")
             )
             return HttpResponseClientRefresh()
         return render(
