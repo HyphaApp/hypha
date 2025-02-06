@@ -427,6 +427,7 @@ class UpdateProjectLeadForm(forms.ModelForm):
         lead_field.label = _("Update lead from {lead} to").format(
             lead=self.instance.lead
         )
+        lead_field.widget.attrs.update({"data-js-choices": ""})
 
         qwargs = Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)
         lead_field.queryset = (
