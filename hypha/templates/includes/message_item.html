@@ -11,7 +11,7 @@
     x-transition:leave="transition ease-out duration-500"
     x-transition:leave-start="transform translate-y-0 opacity-100"
     x-transition:leave-end="transform -translate-y-full opacity-0"
-    class="flex items-center py-2 px-3 mx-auto max-w-lg text-sm font-bold text-white rounded-md shadow-xl max-h-1000px"
+    class="flex gap-2 items-center py-2 px-3 mx-auto max-w-lg text-sm font-bold text-white rounded-md shadow-xl max-h-1000px"
     :class="{
             'bg-gray-500': status === 'debug',
             'bg-green-500': status === 'success',
@@ -21,8 +21,13 @@
             }"
     style="pointer-events:all"
 >
-    {% heroicon_outline "check" stroke_width=2 class="inline-block w-4 h-4 me-1" aria_hidden=true %}
-    <p class="flex-1 m-0 break-words">{{ message }}</p>
+    <span x-show="status == 'info'" aria-hidden="true">
+        {% heroicon_solid "information-circle" size=24 class="inline-block rounded-full" %}
+    </span>
+    <span x-show="status == 'success'" aria-hidden="true">
+        {% heroicon_solid "check-circle" size=24 class="inline-block rounded-full" %}
+    </span>
+    <span class="flex-1">{{ message }}</span>
     {% if close %}
         <button type="button" class="p-2 hover:opacity-70" x-on:click="show = ! show">
             <span class="sr-only">{% trans "Close" %}</span>
