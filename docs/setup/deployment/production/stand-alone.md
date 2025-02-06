@@ -110,6 +110,11 @@ If utilizing application machine translations, install the required dependencies
 ```shell
 python3 -m pip install -r requirements/translate.txt
 ```
+or, if you are on a platform that does not support GPU processing:
+```shell
+python3 -m pip install -r requirements/translate-cpu.txt
+```
+
 
 ### Install Node packages
 

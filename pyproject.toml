@@ -2,7 +2,7 @@
 name = "hypha"
 description = "A open source submission management platform to receive and manage applications for funding."
 readme = "README.md"
-version = "5.21.0"
+version = "5.24.0"
 requires-python = ">=3.10"
 license = { text = "BSD-3-Clause" }
 
@@ -52,7 +52,6 @@ dependencies = [
     "Pillow~=10.4.0",
     "psycopg[binary]~=3.2.3",
     "pwned-passwords-django~=5.1.1",
-    "qrcode~=7.4.2",
     "reportlab~=4.2.5",
     "setuptools>=75.1.0",
     "social_auth_app_django~=5.4.1",
@@ -100,16 +99,10 @@ dependencies = [
 ]
 
 # Requirements for machine translations
-# NOTE: If you update this section please manual update `requirements/translate.txt` as well.
-"translate" = [
-    # Only install the CPU version of torch when available (linux)
-    "torch==2.3.1+cpu; sys_platform == 'linux'",
-    "argostranslate~=1.9.6",
-]
+"translate" = ["torch~=2.3", "argostranslate~=1.9.6"]
 
 [tool.uv]
 default-groups = ["dev", "docs"]
-find-links = ["https://download.pytorch.org/whl/torch_stable.html"]
 
 [tool.mypy]
 plugins = ["mypy_django_plugin.main"]

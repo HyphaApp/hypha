@@ -11,6 +11,13 @@ As referenced in the [production deployment guide](../deployment/production/stan
 python3 -m pip install -r requirements/translate.txt
 ```
 
+or, if you are on a platform that does not support GPU processing:
+
+```bash
+python3 -m pip install -r requirements/translate-cpu.txt
+```
+
+
 This requirements file will specifically attempt to install the CPU version of [PyTorch](https://pytorch.org/) if available on the detected platform to play better with heroku (doesn't support GPU processing) and to minimize package bloat (CPU package is ~300MB less than the normal GPU). Depending on your use case, you may want to adjust this.
 
 
