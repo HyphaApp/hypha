@@ -324,6 +324,35 @@ def make_role_reviewer_fields():
     return role_fields
 
 
+class UpdateAuthorForm(ApplicationSubmissionModelForm):
+    author = forms.ModelChoiceField(
+        queryset=User.objects.applicants(),
+        label=_("Applicants"),
+        required=False,
+    )
+    author.widget.attrs.update({"data-placeholder": "Select..."})
+
+    class Meta:
+        model = ApplicationSubmission
+        fields: list = []
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+        current_author = self.instance.user
+
+        author_field = self.fields["author"]
+
+        # Removed current author from queryset
+        author_field.queryset = author_field.queryset.exclude(id=current_author.id)
+        author_field.initial = current_author
+
+    def save(self, *args, **kwargs):
+        self.instance.user = self.cleaned_data["author"]
+        self.instance.save()
+        return self.instance
+
+
 class UpdatePartnersForm(ApplicationSubmissionModelForm):
     partner_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.partners(),

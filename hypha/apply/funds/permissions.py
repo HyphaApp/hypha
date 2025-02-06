@@ -193,9 +193,20 @@ def can_view_submission_screening(user, submission):
     return True, ""
 
 
+def can_change_submission_author(user, submission):
+    if not user.is_authenticated:
+        return False, "Login Required"
+
+    if user.is_apply_staff:
+        return True, "Staff can update author"
+
+    return False, "Forbidden Error"
+
+
 permissions_map = {
     "submission_view": is_user_has_access_to_view_submission,
     "submission_edit": can_edit_submission,
+    "change_author": can_change_submission_author,
     "can_view_submission_screening": can_view_submission_screening,
     "archive_alter": can_alter_archived_submissions,
 }
