@@ -130,6 +130,8 @@
                 {% trans "Create Reminder" %}
             </button>
 
+            <button class="w-full btn btn-outline" hx-get="{% url 'funds:submissions:change_author' pk=object.pk %}" hx-target="#htmx-modal" >{% trans "Change Author" %}</button>
+
             <a
                 class="w-full btn btn-outline"
                 href="{% url "apply:submissions:download" pk=object.pk %}"
