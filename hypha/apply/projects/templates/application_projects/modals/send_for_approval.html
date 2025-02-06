@@ -32,8 +32,7 @@
             <p class="flex-grow mb-0 h-px bg-mid-grey"></p>
         </div>
 
-        {% url 'apply:projects:submit_project_for_approval' pk=object.id as document_submit_url %}
-        {% include 'funds/includes/dialog_form_base.html' with form=form value=submit url=document_submit_url %}
+        {% include 'funds/includes/dialog_form_base.html' with form=form value=submit %}
     {% else %}
         <p>
             {% trans "No reviewer roles configured. Please add roles in " %}
