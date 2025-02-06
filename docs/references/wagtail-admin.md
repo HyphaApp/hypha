@@ -22,7 +22,7 @@ The WagTail Admin is your "back office" for setting up form applications and pub
 - Category Questions: Application questions with multiple options for users to select.
 - Screening Statuses: For metadata related to the initial screening stage. 
 - Reviewer Roles: Adding reviewer roles.
-- Meta Terms: For metadata, such as tags, thumbnail image and ... “and” - The results must match all terms (default for database search).
+- Tags: For metadata, such as tags, thumbnail image and ... “and” - The results must match all terms (default for database search).
 - Manage
 
 ### Wagtail default settings

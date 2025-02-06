@@ -213,7 +213,7 @@ Should staff admins be able to export submissions.
 
 Columns to exclude from the submission tables.
 
-Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms, organization_name
+Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, tags, organization_name
 
     SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list('SUBMISSIONS_TABLE_EXCLUDED_FIELDS', [])
 

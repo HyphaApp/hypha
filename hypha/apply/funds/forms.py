@@ -401,10 +401,10 @@ class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
         widget=MetaTermWidget(
             attrs={"data-placeholder": "Select...", "data-js-choices": ""}
         ),
-        label=_("Meta terms"),
+        label=_("Tags"),
         choices_groupby="get_parent",
         required=False,
-        help_text=_("Meta terms are hierarchical in nature."),
+        help_text=_("Tags are hierarchical in nature."),
     )
 
     class Meta:

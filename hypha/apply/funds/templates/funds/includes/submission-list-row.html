@@ -52,7 +52,7 @@
                 class="{{ s.phase.bg_color }} hover:opacity-70 transition-opacity rounded-full whitespace-nowrap inline-block ms-1 px-2 pt-0.5 pb-1 text-xs font-medium text-gray-800"
             >{{ s.phase.display_name }}</a>
 
-            {% if "meta_terms" not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
+            {% if "tags" not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
                 {% for meta_term in s.get_assigned_meta_terms %}
                     <a
                         href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" meta_terms=meta_term.id %}"
@@ -60,7 +60,7 @@
                         hx-target="#main"
                         hx-push-url="true"
                         hx-swap="outerHTML"
-                        data-tippy-content="Meta Term: {{meta_term.name}}"
+                        data-tippy-content="Tags: {{meta_term.name}}"
                         data-tippy-placement="top"
                         class="inline-block px-2 pt-0.5 pb-1 text-xs font-medium whitespace-nowrap rounded-full transition-opacity hover:opacity-70 ms-1 text-slate-900 bg-slate-200"
                     >{{meta_term.name}}</a>
