@@ -47,7 +47,7 @@
                 hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" status=s.phase.display_slug %}"
                 hx-target="#main"
                 hx-push-url="true"
-                hx-swap="outerHTML"
+                hx-swap="outerHTML transition:true"
                 href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" status=s.phase.display_slug %}"
                 class="{{ s.phase.bg_color }} hover:opacity-70 transition-opacity rounded-full whitespace-nowrap inline-block ms-1 px-2 pt-0.5 pb-1 text-xs font-medium text-gray-800"
             >{{ s.phase.display_name }}</a>
@@ -59,7 +59,7 @@
                         hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" meta_terms=meta_term.id %}"
                         hx-target="#main"
                         hx-push-url="true"
-                        hx-swap="outerHTML"
+                        hx-swap="outerHTML transition:true"
                         data-tippy-content="Tags: {{meta_term.name}}"
                         data-tippy-placement="top"
                         class="inline-block px-2 pt-0.5 pb-1 text-xs font-medium whitespace-nowrap rounded-full transition-opacity hover:opacity-70 ms-1 text-slate-900 bg-slate-200"
@@ -78,7 +78,7 @@
                     hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" applicants=s.user.id %}"
                     hx-target="#main"
                     hx-push-url="true"
-                    hx-swap="outerHTML"
+                    hx-swap="outerHTML transition:true"
                     class="hover:underline text-inherit"
                 >{{ s.user }}</a>{% endif %} • {{ s.stage }} •
 
@@ -91,7 +91,7 @@
                             href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" round=s.round.id %}"
                             hx-target="#main"
                             hx-push-url="true"
-                            hx-swap="outerHTML"
+                            hx-swap="outerHTML transition:true"
                             class="hover:underline text-inherit"
                         >{{ s.round }}</a>
 
@@ -101,7 +101,7 @@
                                 href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" fund=s.page.id %}"
                                 hx-target="#main"
                                 hx-push-url="true"
-                                hx-swap="outerHTML"
+                                hx-swap="outerHTML transition:true"
                                 class="hover:underline text-inherit"
                             >{{ s.page }}</a>)
                         {% endif %}
@@ -113,7 +113,7 @@
                             href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" fund=s.page.id %}"
                             hx-target="#main"
                             hx-push-url="true"
-                            hx-swap="outerHTML"
+                            hx-swap="outerHTML transition:true"
                             class="hover:underline text-inherit"
                         >
                             {{ s.page }}</a>
@@ -140,7 +140,7 @@
                         href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" leads=s.lead.id %}"
                         hx-target="#main"
                         hx-push-url="true"
-                        hx-swap="outerHTML"
+                        hx-swap="outerHTML transition:true"
                         class="hover:underline text-inherit"
                     >
                         {{ s.lead }}
@@ -157,7 +157,7 @@
                     hx-trigger="mouseover once"
                     hx-get="{% url "funds:submissions:partial-reviews-card" s.id %}"
                     hx-target="find .review-hovercard"
-                    hx-swap="innerHTML transition:false"
+                    hx-swap="innerHTML"
                 >
                     <span id="r{{s.id}}" class="inline-block w-full">
                         {% comment %} pre-loading animation {% endcomment %}

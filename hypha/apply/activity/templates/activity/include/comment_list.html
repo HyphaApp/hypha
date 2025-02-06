@@ -19,7 +19,7 @@
                     hx-get="{{ request.path }}?page={{ page.next_page_number }}"
                     hx-trigger="intersect"
                     hx-target="this"
-                    hx-swap="outerHTML"
+                    hx-swap="outerHTML transition:true"
                     hx-select=".timeline"
                 >Show more...</a>
             {% endif %}

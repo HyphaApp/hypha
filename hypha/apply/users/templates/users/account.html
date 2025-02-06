@@ -65,7 +65,7 @@
                         {% else %}
                             <button class="button button--primary"
                                     hx-post="{% url 'users:set_user_password' %}"
-                                    hx-swap="outerHTML"
+                                    hx-swap="outerHTML transition:true"
                             >
                                 {% trans "Set Password" %}
                             </button>

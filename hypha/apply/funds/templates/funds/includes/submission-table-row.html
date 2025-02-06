@@ -56,7 +56,7 @@
         <a
             hx-target="#main"
             hx-push-url="true"
-            hx-swap="outerHTML"
+            hx-swap="outerHTML transition:true"
             href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" status=s.phase.display_slug %}"
             hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" status=s.phase.display_slug %}"
             class="{{ s.phase.bg_color }} hover:opacity-70 text-center transition-opacity rounded-full inline-block ms-1 px-2 pt-0.5 pb-1 text-xs font-medium text-gray-800"
@@ -70,7 +70,7 @@
                 hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" applicants=s.user.id %}"
                 hx-target="#main"
                 hx-push-url="true"
-                hx-swap="outerHTML"
+                hx-swap="outerHTML transition:true"
                 class="hover:underline text-inherit"
             >
                 {{ s.user }}
@@ -90,7 +90,7 @@
                     hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" round=s.round.id %}"
                     hx-target="#main"
                     hx-push-url="true"
-                    hx-swap="outerHTML"
+                    hx-swap="outerHTML transition:true"
                     class="hover:underline text-inherit"
                 >{{ s.round }}</a>
                 {% if 'fund' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
@@ -102,7 +102,7 @@
                     hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" fund=s.page.id %}"
                     hx-target="#main"
                     hx-push-url="true"
-                    hx-swap="outerHTML"
+                    hx-swap="outerHTML transition:true"
                     class="hover:underline text-inherit"
                 >
                     {{ s.page }}
@@ -118,7 +118,7 @@
                 hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" lead=s.lead.id %}"
                 hx-target="#main"
                 hx-push-url="true"
-                hx-swap="outerHTML"
+                hx-swap="outerHTML transition:true"
                 class="hover:underline text-inherit"
             >{{ s.lead }}</a>
         </td>
@@ -133,7 +133,7 @@
                         hx-trigger="mouseover once"
                         hx-get="{% url "funds:submissions:partial-reviews-card" s.id %}"
                         hx-target="find .review-hovercard"
-                        hx-swap="innerHTML transition:false"
+                        hx-swap="innerHTML"
                     >
                         <span id="r{{s.id}}" class="inline-block w-full">
                                 {% comment %} pre-loading animation {% endcomment %}
