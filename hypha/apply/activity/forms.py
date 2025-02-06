@@ -20,6 +20,7 @@ class CommentForm(FileFormMixin, forms.ModelForm):
         empty_label=_("Select..."),
         label=_("Assign to"),
     )
+    assign_to.widget.attrs.update({"data-js-choices": ""})
 
     class Meta:
         model = Activity

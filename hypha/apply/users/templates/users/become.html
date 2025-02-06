@@ -33,16 +33,3 @@
         >{% trans "Cancel" %}</button>
     </div>
 </i>
-
-<script type="module">
-    import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
-
-    const selectElements = document.querySelectorAll('select#id_user_pk');
-
-    // add choices to all select elements
-    selectElements.forEach((selectElement) => {
-        new Choices(selectElement, {
-            allowHTML: true
-        });
-    });
-</script>

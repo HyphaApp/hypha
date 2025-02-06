@@ -244,6 +244,7 @@ class BecomeUserForm(forms.Form):
         label="",
         required=False,
     )
+    user_pk.widget.attrs.update({"data-js-choices": ""})
 
 
 class EmailChangePasswordForm(forms.Form):
