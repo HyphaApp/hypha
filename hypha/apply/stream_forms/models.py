@@ -91,7 +91,6 @@ class BaseStreamForm:
                     block.__class__, ApplicationMustIncludeFieldBlock
                 ):
                     field_from_block.required = False
-                field_from_block.help_link = struct_value.get("help_link")
                 field_from_block.group_number = group_counter if is_in_group else 1
                 if isinstance(block, GroupToggleBlock) and not is_in_group:
                     field_from_block.group_number = 1
