@@ -6,7 +6,7 @@
     class="p-4 form"
     id="partner_form"
     hx-target="this"
-    hx-swap="outerHTML transition:true"
+    hx-swap="outerHTML"
     method="POST"
     hx-post="{% url 'funds:submissions:partners_update' pk=object.pk %}"
 >
