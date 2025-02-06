@@ -48,18 +48,3 @@
         {% trans "Update" %}
     </button>
 </form>
-
-<script type="module">
-    {% comment %} Do this here as the select elements for different roles are dynamically generated. {% endcomment %}
-    import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
-
-    const selectElements = document.querySelectorAll('#bulk-update-reviewers-form select');
-
-    // add choices to all select elements
-    selectElements.forEach((selectElement) => {
-        new Choices(selectElement, {
-            removeItemButton: true,
-            allowHTML: true,
-        });
-    });
-</script>

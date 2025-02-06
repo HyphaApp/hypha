@@ -95,12 +95,13 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
         label=_("External Reviewers"),
         required=False,
     )
+    reviewer_reviewers.widget.attrs.update(
+        {"data-placeholder": _("Select..."), "data-js-choices": ""}
+    )
 
     class Meta:
         model = ApplicationSubmission
         fields: list = []
-
-    reviewer_reviewers.widget.attrs.update({"data-placeholder": "Select..."})
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
@@ -127,6 +128,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
             self.fields[field_name] = data["field"]
             self.role_fields[field_name] = data["role"]
             self.fields[field_name].initial = assigned_roles.get(data["role"])
+            self.fields[field_name].widget.attrs.update({"data-js-choices": ""})
 
         self.submitted_reviewers = User.objects.filter(
             id__in=self.instance.assigned.reviewed().values("reviewer"),
@@ -234,7 +236,7 @@ class BatchUpdateReviewersForm(forms.Form):
     )
     external_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().only("pk", "full_name"),
-        widget=MultiCheckboxesWidget(attrs={"data-placeholder": "Select..."}),
+        widget=MultiCheckboxesWidget(attrs={"data-placeholder": _("Select...")}),
         label=_("External Reviewers"),
         required=False,
     )
@@ -252,6 +254,7 @@ class BatchUpdateReviewersForm(forms.Form):
             field_name = data["field_name"]
             self.fields[field_name] = data["field"]
             self.role_fields[field_name] = data["role"]
+            self.fields[field_name].widget.attrs.update({"data-js-choices": ""})
 
         self.fields.move_to_end("external_reviewers")
 
@@ -330,7 +333,9 @@ class UpdatePartnersForm(ApplicationSubmissionModelForm):
         label=_("Partners"),
         required=False,
     )
-    partner_reviewers.widget.attrs.update({"data-placeholder": "Select..."})
+    partner_reviewers.widget.attrs.update(
+        {"data-placeholder": _("Select..."), "data-js-choices": ""}
+    )
 
     class Meta:
         model = ApplicationSubmission
