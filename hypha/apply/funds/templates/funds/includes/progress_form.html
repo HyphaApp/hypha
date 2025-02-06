@@ -11,7 +11,7 @@
                 <dd>{{ object.phase }}</dd>
             </dl>
         </div>
-        {% url 'funds:submissions:progress' pk=object.pk as progress_url %}
-        {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=progress_url data_var="statusUpdated" %}
+
+        {% include 'funds/includes/dialog_form_base.html' with form=form value=value %}
     </div>
 {% endif %}
