@@ -59,6 +59,7 @@ from .views.submission_edit import (
     CreateProjectView,
     ProgressSubmissionView,
     SubmissionEditView,
+    UpdateAuthorView,
     UpdateLeadView,
     UpdateMetaTermsView,
     UpdateReviewersView,
@@ -250,6 +251,11 @@ submission_urls = (
                         "reminder/create/",
                         ReminderCreateView.as_view(),
                         name="create_reminder",
+                    ),
+                    path(
+                        "author/change/",
+                        UpdateAuthorView.as_view(),
+                        name="change_author",
                     ),
                     path(
                         "translate/",
