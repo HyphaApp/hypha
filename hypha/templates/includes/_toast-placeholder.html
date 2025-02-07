@@ -10,7 +10,7 @@ How this works:
 <script>
     function toastHandler() {
         "use strict";
-        const AUTO_HIDE_TIMEOUT = 2500;
+        const AUTO_HIDE_TIMEOUT = 3000;
         return {
             toasts: [],
             visible: [],
@@ -103,7 +103,7 @@ How this works:
             @click="remove(toast.id)"
             @mouseenter="pause(toast.id)"
             @mouseleave="resume(toast.id)"
-            class="relative py-3 px-4 mt-4 w-full max-w-full text-sm font-bold text-white rounded-md shadow-xl cursor-pointer sm:w-auto sm:max-w-sm group"
+            class="relative py-3 px-4 mt-4 w-full max-w-full text-sm font-bold text-white rounded-md shadow-xl cursor-pointer sm:w-auto sm:max-w-sm group sm:min-w-64"
             :class="{
                     'bg-gray-500': toast.type === 'debug',
                     'bg-green-500': toast.type === 'success',
