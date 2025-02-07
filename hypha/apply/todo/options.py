@@ -49,11 +49,12 @@ TASKS_CODE_CHOICES = (
 
 template_map = {
     # ADD Manual Task
+    # Use heroicons for "icon".
     COMMENT_TASK: {
         "text": _(
             '{related.user} assigned you a comment on [<span class="truncate inline-block max-w-32 align-bottom ">{related.source.title}</span>]({link} "{related.source.title}"):\n<span class="line-clamp-2 italic align-bottom ">{msg}</span>'
         ),
-        "icon": "comment",
+        "icon": "chat-bubble-left-ellipsis",
         "url": "{link}",
         "type": _("Comment"),
     },
@@ -63,7 +64,7 @@ template_map = {
         "text": _(
             'A Submission draft [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting to be submitted'
         ),
-        "icon": "comment",
+        "icon": "chat-bubble-left-ellipsis",
         "url": "{link}",
         "type": _("Draft"),
     },
@@ -71,7 +72,7 @@ template_map = {
         "text": _(
             'Determination draft for submission [<span class="truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted',
         ),
-        "icon": "edit-draft",
+        "icon": "pencil-square",
         "url": "{link}",
         "type": _("Draft"),
     },
@@ -79,7 +80,7 @@ template_map = {
         "text": _(
             'Review draft for submission [<span class="truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted'
         ),
-        "icon": "edit-draft",
+        "icon": "pencil-square",
         "url": "{link}",
         "type": _("Draft"),
     },
@@ -89,7 +90,7 @@ template_map = {
         "text": _(
             'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for project form'
         ),
-        "icon": "dashboard-paf",
+        "icon": "clipboard-document-list",
         "url": "{link}",
         "type": _("project"),
     },
@@ -97,7 +98,7 @@ template_map = {
         "text": _(
             'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for scope of work'
         ),
-        "icon": "dashboard-paf",
+        "icon": "clipboard-document-list",
         "url": "{link}",
         "type": _("project"),
     },
@@ -105,7 +106,7 @@ template_map = {
         "text": _(
             'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for project form(s) submission'
         ),
-        "icon": "dashboard-paf",
+        "icon": "clipboard-document-list",
         "url": "{link}",
         "type": _("project"),
     },
@@ -113,7 +114,7 @@ template_map = {
         "text": _(
             'Project form for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") required changes or more information'
         ),
-        "icon": "dashboard-paf",
+        "icon": "clipboard-document-list",
         "url": "{link}",
         "type": _("project"),
     },
@@ -122,7 +123,7 @@ template_map = {
         "text": _(
             'Project form for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for assignee'
         ),
-        "icon": "dashboard-paf",
+        "icon": "clipboard-document-list",
         "url": "{link}",
         "type": _("project"),
     },
@@ -130,7 +131,7 @@ template_map = {
         "text": _(
             'Project form for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for your approval'
         ),
-        "icon": "dashboard-paf",
+        "icon": "clipboard-document-list",
         "url": "{link}",
         "type": _("project"),
     },
@@ -139,7 +140,7 @@ template_map = {
         "text": _(
             'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for contract'
         ),
-        "icon": "dashboard-contract",
+        "icon": "document-duplicate",
         "url": "{link}",
         "type": _("project"),
     },
@@ -147,7 +148,7 @@ template_map = {
         "text": _(
             'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for contracting documents'
         ),
-        "icon": "dashboard-document",
+        "icon": "arrow-down-on-square",
         "url": "{link}",
         "type": _("project"),
     },
@@ -155,7 +156,7 @@ template_map = {
         "text": _(
             'Contract for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for review'
         ),
-        "icon": "dashboard-contract",
+        "icon": "document-duplicate",
         "url": "{link}",
         "type": _("project"),
     },
@@ -164,7 +165,7 @@ template_map = {
         "text": _(
             'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for invoice'
         ),
-        "icon": "dashboard-invoice",
+        "icon": "document-currency-dollar",
         "url": "{link}",
         "type": _("project"),
     },
@@ -172,7 +173,7 @@ template_map = {
         "text": _(
             "Invoice [{related.invoice_number}]({link}) required changes or more information"
         ),
-        "icon": "dashboard-invoice",
+        "icon": "document-currency-dollar",
         "url": "{link}",
         "type": _("project"),
     },
@@ -180,13 +181,13 @@ template_map = {
         "text": _(
             "Invoice [{related.invoice_number}]({link}) is waiting for your approval"
         ),
-        "icon": "dashboard-invoice",
+        "icon": "document-currency-dollar",
         "url": "{link}",
         "type": _("project"),
     },
     INVOICE_WAITING_PAID: {
         "text": _("Invoice [{related.invoice_number}]({link}) is waiting to be paid"),
-        "icon": "dashboard-invoice",
+        "icon": "document-currency-dollar",
         "url": "{link}",
         "type": _("project"),
     },
@@ -194,7 +195,7 @@ template_map = {
         "text": _(
             'Report for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is due'
         ),
-        "icon": "dashboard-report",
+        "icon": "document-text",
         "url": "{link}",
         "type": _("project"),
     },
