@@ -1,7 +1,7 @@
-{% load heroicons activity_tags nh3_tags markdown_tags submission_tags apply_tags users_tags %}
+{% load heroicons activity_tags nh3_tags markdown_tags apply_tags users_tags %}
 
 <div class="max-w-none prose">
-    {{ activity|display_for:request.user|submission_links|markdown|nh3 }}
+    {{ activity|display_for:request.user|submission_links:request.user|markdown|nh3 }}
 </div>
 
 {% if activity.edited %}

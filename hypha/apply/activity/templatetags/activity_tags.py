@@ -1,15 +1,21 @@
 import json
+import re
+from typing import Dict, List
 
 from django import template
 from django.conf import settings
+from django.db.models import Q
 from django.template.defaultfilters import stringfilter
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from hypha.apply.activity.utils import format_comment_mentions
 from hypha.apply.determinations.models import Determination
 from hypha.apply.funds.models.submissions import ApplicationSubmission
 from hypha.apply.projects.models import Contract
 from hypha.apply.review.models import Review
 from hypha.apply.users.models import User
+from hypha.apply.users.roles import ROLES_ORG_FACULTY
 
 from ..models import ALL, APPLICANT_PARTNERS, REVIEWER, TEAM
 
@@ -176,3 +182,38 @@ def source_type(value) -> str:
 def lowerfirst(value):
     """Lowercase the first character of the value."""
     return value and value[0].lower() + value[1:]
+
+
+@register.simple_tag
+def get_org_faculty_auto_suggest() -> List[Dict]:
+    staff = User.objects.filter(groups__name__in=ROLES_ORG_FACULTY).distinct()
+    staff_list = [
+        {"email": user.email.lower(), "display": user.get_display_name()}
+        for user in staff
+    ]
+    return staff_list
+
+
+@register.filter
+def submission_links(value: str, user: User):
+    # regex to find #id in a string, which id can be alphanumeric, underscore, hyphen
+    submission_matches = re.findall(r"(?<![\w\&])\#([\w-]+)(?!\w)", value)
+    if submission_matches:
+        links = {}
+        numeric_ids = filter(str.isdigit, submission_matches)
+        qs = ApplicationSubmission.objects.filter(
+            Q(id__in=numeric_ids) | Q(public_id__in=submission_matches)
+        )
+        for submission in qs:
+            links[rf"\#{submission.public_id or submission.id}"] = (
+                f'<a href="{submission.get_absolute_url()}">{submission.title} <span class="text-gray-400">#{submission.public_id or submission.id}</span></a>'
+            )
+
+        if links:
+            for sid, link in links.items():
+                value = re.sub(rf"(?<!\w){sid}(?!\w)", link, value)
+
+    if user.is_org_faculty:
+        value = format_comment_mentions(value, user)
+
+    return mark_safe(value)

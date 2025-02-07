@@ -1,0 +1,46 @@
+.comment-mirror {
+    position: absolute;
+    top: 28px;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    color: transparent;
+    z-index: -1;
+}
+
+// .comment-suggestions {
+//     display: none;
+//     position: absolute;
+//     width: fit-content;
+//     z-index: 1000;
+//     background-color: white;
+//     border-radius: 0.25rem;
+//     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+//     border-width: 1px;
+//     cursor: pointer;
+// 	border-top-width: 1px;
+//     border-bottom-width: 0px;
+
+//     &__option {
+//         padding-top: 0.25rem;
+//         padding-bottom: 0.25rem;
+//         padding-inline: 1rem;
+        
+//         &:not(:last-child) {
+//             border-bottom: 1px solid rgb(229, 231, 235);
+//         }
+
+//         &:hover {
+//             background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
+//         }
+
+//         &--display {
+//             font-weight: bold;
+//         }
+    
+//         &--email {
+//             font-size: 0.9rem;
+//         }
+//     }
+// }

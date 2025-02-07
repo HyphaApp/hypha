@@ -16,9 +16,7 @@ class TestTemplateTags(TestCase):
 
     def test_submission_tags(self):
         submission = ApplicationSubmissionFactory()
-        template = Template(
-            "{% load submission_tags %}{{ content|submission_links|safe }}"
-        )
+        template = Template("{% load activity_tags %}{{ content|submission_links }}")
         context = Context(
             {"content": f"Lorem ipsum dolor #{submission.public_id} sit amet."}
         )

@@ -1,4 +1,4 @@
-{% load i18n activity_tags nh3_tags markdown_tags submission_tags apply_tags heroicons users_tags %}
+{% load i18n activity_tags nh3_tags markdown_tags apply_tags heroicons users_tags %}
 
 <article class="relative timeline-item">
     <div
@@ -47,7 +47,7 @@
                     <div class="flex gap-1 items-center">
                         {% if not request.user.is_applicant %}
 
-                            {% if request.user.is_apply_staff and activity.assigned_to %}
+                            {% comment %} {% if request.user.is_apply_staff and activity.assigned_to %}
 
                                 <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs rounded-xl border border-gray-300 text-fg-muted">
                                     {% heroicon_outline "user-plus" size=14 class="inline" aria_hidden=true %}
@@ -57,7 +57,7 @@
                                         {% blocktrans with activity.assigned_to.full_name as assigned_to %}Assigned to {{ assigned_to }}{% endblocktrans %}
                                     {% endif %}
                                 </span>
-                            {% endif %}
+                            {% endif %} {% endcomment %}
 
                             {% with activity.visibility|visibility_display:request.user as visibility_text  %}
                                 <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs uppercase rounded-xl border border-gray-300 text-fg-muted"

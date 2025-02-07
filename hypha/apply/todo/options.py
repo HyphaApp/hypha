@@ -51,7 +51,7 @@ template_map = {
     # ADD Manual Task
     COMMENT_TASK: {
         "text": _(
-            '{related.user} assigned you a comment on [<span class="truncate inline-block max-w-32 align-bottom ">{related.source.title}</span>]({link} "{related.source.title}"):\n<span class="line-clamp-2 italic align-bottom ">{msg}</span>'
+            '{related.user} mentioned you in a comment on [<span class="truncate inline-block max-w-32 align-bottom ">{related.source.title}</span>]({link} "{related.source.title}"):\n<span class="line-clamp-2 italic align-bottom ">{msg}</span>'
         ),
         "icon": "comment",
         "url": "{link}",

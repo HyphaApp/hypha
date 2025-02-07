@@ -1,4 +1,4 @@
-{% load i18n static %}
+{% load i18n static activity_tags %}
 
 <div class="pb-4 wrapper wrapper--comments">
     <form
@@ -33,23 +33,149 @@
 
             <div class="w-full lg:max-w-[30%]">
                 {% include "forms/includes/field.html" with field=comment_form.visibility %}
-                {% include "forms/includes/field.html" with field=comment_form.assign_to %}
+                {# {% include "forms/includes/field.html" with field=comment_form.assign_to %} #}
                 {% include "forms/includes/field.html" with field=comment_form.attachments %}
             </div>
         </div>
     </form>
+    <template id="suggestions-template">
+        {% get_org_faculty_auto_suggest as faculty %}
+        <div class="hidden absolute z-50 bg-white rounded border divide-y shadow-lg suggestions w-fit">
+            {% for user in faculty %}
+                <a class="hidden py-1 px-4 text-gray-800 cursor-pointer hover:bg-gray-100 focus:bg-gray-100" role="button">
+                    <span class="font-bold display">{{ user.display }}</span>
+                    <span class="text-sm email">{{ user.email }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </template>
     <script type="module">
-        {% comment %} Do this here as the select elements for partners are dynamically generated. {% endcomment %}
-        import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+        /*
+        Comment user tagging auto suggest 
+        */
 
-        const selectElements = document.querySelectorAll('.id_assign_to select');
+        const commentForm = document.getElementById("wmd-input-id_message");
+        const container = commentForm.parentNode;
+        const suggestionsTemplate = document.getElementById("suggestions-template").content.cloneNode(true);
+        const re = /(^|[^a-zA-z]+)@([a-zA-z-]*)/g
 
-        // add choices to all select elements
-        selectElements.forEach((selectElement) => {
-            new Choices(selectElement, {
-                removeItemButton: true,
-                allowHTML: true,
-            });
+        container.appendChild(suggestionsTemplate)
+        const suggestions = document.querySelector("div.suggestions");
+
+        const mirrored = document.createElement('div');
+        mirrored.textContent = commentForm.value;
+        mirrored.classList.add('comment-mirror');
+        container.prepend(mirrored);
+
+        const textareaStyles = window.getComputedStyle(commentForm);
+        [
+            'border',
+            'boxSizing',
+            'fontFamily',
+            'fontSize',
+            'fontWeight',
+            'letterSpacing',
+            'lineHeight',
+            'padding',
+            'textDecoration',
+            'textIndent',
+            'textTransform',
+            'whiteSpace',
+            'wordSpacing',
+            'wordWrap',
+        ].forEach((property) => {
+            mirrored.style[property] = textareaStyles[property];
         });
+        mirrored.style.borderColor = 'transparent';
+
+        const parseValue = (v) => v.endsWith('px') ? parseInt(v.slice(0, -2), 10) : 0;
+        const borderWidth = parseValue(textareaStyles.borderWidth);
+
+        const ro = new ResizeObserver(() => {
+            mirrored.style.width = `${commentForm.clientWidth + 2 * borderWidth}px`;
+            mirrored.style.height = `${commentForm.clientHeight + 2 * borderWidth}px`;
+        });
+        ro.observe(commentForm);
+
+        commentForm.addEventListener('scroll', () => {
+            mirrored.scrollTop = commentForm.scrollTop;
+        });
+
+        function indexOfGroup(match, n) {
+            var ix= match.index;
+            for (var i= 1; i<n; i++)
+                ix+= match[i].length;
+            return ix;
+        }
+
+        function insertString(start, end, substring, string){
+            return `${string.substring(0, start)}${substring}${string.substring(end)}`
+        }
+
+        function filterOptions(input, matchIndex, content) {
+            input = input.toLowerCase();
+            const staffOptions = Array.from(suggestions.querySelectorAll("a:has(span.email)"))
+            if (!staffOptions.length) {
+                return false
+            }
+            staffOptions.forEach((option) => {
+                option.style.display = 'none';
+                const email = option.querySelector("span.email").innerText.toLowerCase()
+                const display = option.querySelector("span.display").innerText.toLowerCase()
+                if (email.indexOf(input) > -1 || display.indexOf(input) > -1) {
+                    option.style.display = 'block';
+                }
+                option.addEventListener('click', function() {
+                    const newValue = insertString(matchIndex, matchIndex + input.length + 1, `@${email}`, content)
+                    commentForm.value = newValue;
+                    commentForm.focus();
+                    commentForm.selectionStart = matchIndex + 1 + email.length
+                    commentForm.selectionEnd = commentForm.selectionStart
+                    suggestions.style.display = 'none';
+                });
+            })
+
+            return true
+        }
+
+        function suggestFaculty(event){
+            const content = event.target.value;
+            let m;
+            suggestions.style.display = "none"
+            do {
+                m = re.exec(content);
+                if (m) {
+                    const matchIndex = indexOfGroup(m, 2)
+                    const inputStr = m[2];
+                    if (matchIndex + inputStr.length + 1 == event.target.selectionStart) {
+                        if (!filterOptions(inputStr, matchIndex, content)) {
+                            suggestions.style.display = 'none';
+                            return;
+                        }
+
+                        const textBeforeCursor = content.substring(0, event.target.selectionStart);
+                        const textAfterCursor = content.substring(event.target.selectionStart);
+
+                        const pre = document.createTextNode(textBeforeCursor);
+                        const post = document.createTextNode(textAfterCursor);
+                        const caret = document.createElement('span');
+                        caret.innerHTML = '&nbsp;';
+                        caret.id = "caret";
+
+                        mirrored.innerHTML = '';
+                        mirrored.append(pre, caret, post);
+
+                        const containerRect = container.getBoundingClientRect();
+                        const caretRect = caret.getBoundingClientRect();
+                        suggestions.style.top = `calc(${caretRect.top - containerRect.top}px + 2.5rem)`;
+                        suggestions.style.left = `${caretRect.left - containerRect.left}px`;
+
+                        suggestions.style.display = 'block';
+                    }
+                }
+            } while (m);
+        }
+
+        commentForm.addEventListener('input', suggestFaculty, false);
     </script>
 </div>
