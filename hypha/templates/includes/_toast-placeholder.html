@@ -85,7 +85,7 @@ How this works:
 
 <div
     x-data="toastHandler()"
-    class="flex fixed inset-0 flex-col justify-start items-end px-4 w-screen h-screen pointer-events-none"
+    class="flex fixed inset-0 flex-col justify-start items-end px-8 mx-auto w-screen h-screen pointer-events-none max-w-[2200px]"
     @notice.window="add($event.detail)"
 >
     <template x-for="toast of toasts" :key="toast.id">
@@ -103,7 +103,7 @@ How this works:
             @click="remove(toast.id)"
             @mouseenter="pause(toast.id)"
             @mouseleave="resume(toast.id)"
-            class="relative py-3 px-4 mt-4 w-full max-w-full text-sm font-bold text-white rounded-md shadow-xl cursor-pointer sm:w-auto sm:max-w-sm group sm:min-w-64"
+            class="relative py-3 px-4 mt-4 w-full max-w-full text-sm font-bold text-white break-words rounded-md shadow-xl cursor-pointer sm:w-auto sm:max-w-sm group sm:min-w-64"
             :class="{
                     'bg-gray-500': toast.type === 'debug',
                     'bg-green-500': toast.type === 'success',
