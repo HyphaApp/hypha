@@ -2,8 +2,10 @@
 {% comment %}
 How this works:
 - A htmx response responds with either "showMessage" or "messages" "HX-Trigger" event.
-- htmx traps the event and create another event for the toast layer.
+- htmx traps the event and creates another event for the toast layer.
 - The toast layer listens to the event and adds the toast to the list.
+- Toasts can be paused on hover and dismissed manually
+- Supports different message types with corresponding styles and icons
 {% endcomment %}
 
 <!-- Toast layer -->
@@ -56,36 +58,28 @@ How this works:
             },
         };
     }
-    htmx.on("showMessage", (e) => {
-        let message_detail = { type: "success", text: e.detail.value };
-        dispatchEvent(
-            new CustomEvent("notice", {
-                detail: message_detail,
-                bubbles: true,
-                cancelable: true,
-                composed: true,
-            })
-        );
+
+    const createNoticeEvent = (detail) => new CustomEvent("notice", {
+        detail,
+        bubbles: true,
+        cancelable: true,
+        composed: true
     });
+
+    htmx.on("showMessage", (e) => {
+        dispatchEvent(createNoticeEvent({ type: "success", text: e.detail.value }));
+    });
+
     htmx.on("messages", (e) => {
-        e.detail.value.forEach((message) => {
-            let message_detail = { type: message.tags, text: message.message };
-            console.log(message_detail);
-            dispatchEvent(
-                new CustomEvent("notice", {
-                    detail: message_detail,
-                    bubbles: true,
-                    cancelable: true,
-                    composed: true,
-                })
-            );
+        e.detail.value.forEach(message => {
+            dispatchEvent(createNoticeEvent({ type: message.tags, text: message.message }));
         });
     });
 </script>
 
 <div
     x-data="toastHandler()"
-    class="flex fixed inset-0 flex-col justify-start items-end px-8 mx-auto w-screen h-screen pointer-events-none max-w-[2200px]"
+    class="flex fixed inset-0 z-50 flex-col justify-start items-end px-8 mx-auto w-screen h-screen pointer-events-none max-w-[2200px]"
     @notice.window="add($event.detail)"
 >
     <template x-for="toast of toasts" :key="toast.id">
@@ -96,29 +90,38 @@ How this works:
             x-show="visible.includes(toast)"
             x-transition:enter="transition ease-in duration-200"
             x-transition:enter-start="transform opacity-0 translate-y-2"
-            x-transition:enter-end="transform opacity-100"
+            x-transition:enter-end="transform opacity-100 translate-y-0"
             x-transition:leave="transition ease-out duration-500"
             x-transition:leave-start="transform translate-x-0 opacity-100"
             x-transition:leave-end="transform translate-x-full opacity-0"
             @click="remove(toast.id)"
             @mouseenter="pause(toast.id)"
             @mouseleave="resume(toast.id)"
-            class="relative py-3 px-4 mt-4 w-full max-w-full text-sm font-bold text-white break-words rounded-md shadow-xl cursor-pointer sm:w-auto sm:max-w-sm group sm:min-w-64"
+            class="relative py-3 px-4 mt-4 w-full max-w-full text-sm font-semibold text-white rounded-md shadow-xl cursor-pointer sm:w-auto sm:max-w-sm break-anywhere hyphens-auto group sm:min-w-64"
             :class="{
-                    'bg-gray-500': toast.type === 'debug',
-                    'bg-green-500': toast.type === 'success',
+                    'bg-neutral-500': toast.type === 'debug',
+                    'bg-green-600': toast.type === 'success',
                     'bg-blue-500': toast.type === 'info',
                     'bg-orange-500': toast.type === 'warning',
                     'bg-red-500': toast.type === 'error',
                     }"
             style="pointer-events:all"
         >
-            <div class="flex gap-2 items-center">
+            <div class="flex gap-4 items-center">
                 <span x-show="toast.type == 'info'" aria-hidden="true">
-                    {% heroicon_solid "information-circle" size=24 class="inline-block rounded-full" %}
+                    {% heroicon_solid "light-bulb" size=24 class="inline-block rounded-full" %}
                 </span>
                 <span x-show="toast.type == 'success'" aria-hidden="true">
                     {% heroicon_solid "check-circle" size=24 class="inline-block rounded-full" %}
+                </span>
+                <span x-show="toast.type == 'warning'" aria-hidden="true">
+                    {% heroicon_solid "exclamation-circle" size=24 class="inline-block rounded-full" %}
+                </span>
+                <span x-show="toast.type == 'error'" aria-hidden="true">
+                    {% heroicon_solid "exclamation-triangle" size=24 class="inline-block rounded-full" %}
+                </span>
+                <span x-show="toast.type == 'debug'" aria-hidden="true">
+                    {% heroicon_solid "wrench" size=24 class="inline-block rounded-full" %}
                 </span>
                 <span x-text="toast.text"></span>
             </div>
