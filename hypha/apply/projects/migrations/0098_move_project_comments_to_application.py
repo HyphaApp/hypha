@@ -22,7 +22,7 @@ def migrate_project_comments_to_application(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("application_projects", "0096_remove_invoicedeliverable_deliverable_and_more"),
+        ("application_projects", "0097_help_text_rich_text"),
     ]
 
     operations = [migrations.RunPython(migrate_project_comments_to_application)]
