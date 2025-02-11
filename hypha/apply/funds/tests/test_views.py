@@ -28,6 +28,7 @@ from hypha.apply.funds.tests.factories import (
 from hypha.apply.funds.views.submission_detail import SubmissionDetailView
 from hypha.apply.funds.workflows import INITIAL_STATE
 from hypha.apply.projects.models import Project
+from hypha.apply.projects.models.project import CONTRACTING
 from hypha.apply.projects.tests.factories import ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory
 from hypha.apply.users.tests.factories import (
@@ -327,6 +328,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             {
                 "project_create_form": "",
                 "project_lead": self.user.id,
+                "project_initial_status": CONTRACTING,
                 "submission": self.submission.id,
             },
             view_name="create_project",
@@ -337,6 +339,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
 
         self.assertTrue(hasattr(submission, "project"))
         self.assertEqual(submission.project.id, project.id)
+        self.assertEqual(submission.project.status, CONTRACTING)
 
     def test_can_see_add_determination_primary_action(self):
         def assert_add_determination_displayed(submission, button_text):
