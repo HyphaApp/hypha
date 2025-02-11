@@ -437,7 +437,9 @@ class CreateProjectView(View):
             project = form.save()
 
             readable_project_status = next(
-                x[1] for x in PROJECT_STATUS_CHOICES if x[0] == project.status
+                status[1]
+                for status in PROJECT_STATUS_CHOICES
+                if status[0] == project.status
             )
 
             # Record activity

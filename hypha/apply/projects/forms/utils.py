@@ -15,9 +15,11 @@ def get_project_status_options() -> List[Tuple[str, str]]:
     Filters out complete & internal approval statuses as there isn't value in
     being able to set these
     """
-    return filter(
-        lambda x: x[0] not in [COMPLETE, INTERNAL_APPROVAL], PROJECT_STATUS_CHOICES
-    )
+    return [
+        status
+        for status in PROJECT_STATUS_CHOICES
+        if status[0] not in [COMPLETE, INTERNAL_APPROVAL]
+    ]
 
 
 def get_project_default_status() -> Tuple[str, str]:
@@ -27,6 +29,10 @@ def get_project_default_status() -> Tuple[str, str]:
     to draft
     """
     return next(
-        (x for x in PROJECT_STATUS_CHOICES if x[0] == settings.PROJECTS_DEFAULT_STATUS),
+        (
+            status
+            for status in PROJECT_STATUS_CHOICES
+            if status[0] == settings.PROJECTS_DEFAULT_STATUS
+        ),
         PROJECT_STATUS_CHOICES[0],
     )
