@@ -6,6 +6,10 @@ from django.utils.translation import gettext_lazy as _
 from django_file_form.forms import FileFormMixin
 
 from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.projects.forms.utils import (
+    get_project_default_status,
+    get_project_status_options,
+)
 from hypha.apply.stream_forms.fields import SingleFileField
 from hypha.apply.stream_forms.forms import StreamBaseForm
 from hypha.apply.users.roles import STAFF_GROUP_NAME
@@ -85,6 +89,13 @@ class ProjectCreateForm(forms.Form):
         label=_("Select Project Lead"), queryset=User.objects.all()
     )
 
+    # Set the initial value to the settings default if valid, otherwise fall back to draft
+    project_initial_status = forms.ChoiceField(
+        label=_("Initial Project Status"),
+        choices=get_project_status_options(),
+        initial=get_project_default_status(),
+    )
+
     def __init__(self, *args, instance=None, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -107,7 +118,8 @@ class ProjectCreateForm(forms.Form):
     def save(self, *args, **kwargs):
         submission = self.cleaned_data["submission"]
         lead = self.cleaned_data["project_lead"]
-        return Project.create_from_submission(submission, lead=lead)
+        status = self.cleaned_data["project_initial_status"]
+        return Project.create_from_submission(submission, lead=lead, status=status)
 
 
 class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):

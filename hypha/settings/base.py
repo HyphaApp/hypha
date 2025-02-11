@@ -92,6 +92,10 @@ PROJECTS_ENABLED = env.bool("PROJECTS_ENABLED", False)
 # Auto create projects for approved applications.
 PROJECTS_AUTO_CREATE = env.bool("PROJECTS_AUTO_CREATE", False)
 
+# Default status for projects, must be a string literal of "draft" (default), "contracting", "invoicing_and_reporting" or "closing"
+# Will be used for auto-create or be the default selection in the project creation form
+PROJECTS_DEFAULT_STATUS = env.str("PROJECTS_DEFAULT_STATUS", "draft")
+
 # Send out e-mail, slack messages etc. from Hypha. Set to true for production.
 SEND_MESSAGES = env.bool("SEND_MESSAGES", False)
 

@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django_file_form.uploaded_file import PlaceholderUploadedFile
 
@@ -58,18 +57,6 @@ def save_project_details(project_id, data):
     project = Project.objects.get(id=project_id)
     project.external_project_information = data
     project.save()
-
-
-def create_invoice(invoice):
-    """
-    Creates invoice at enabled payment service.
-    """
-    if settings.INTACCT_ENABLED:
-        from hypha.apply.projects.services.sageintacct.utils import (
-            create_intacct_invoice,
-        )
-
-        create_intacct_invoice(invoice)
 
 
 def get_paf_status_display(paf_status):
