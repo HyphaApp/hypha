@@ -10,8 +10,6 @@ from django_ratelimit.decorators import ratelimit
 
 from hypha.apply.funds.models.submissions import ApplicationSubmission
 from hypha.apply.funds.permissions import has_permission as has_funds_permission
-from hypha.apply.projects.models.project import Project
-from hypha.apply.projects.permissions import has_permission as has_projects_permission
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegatedViewMixin
@@ -25,11 +23,11 @@ from .models import COMMENT, Activity, ActivityAttachment
 
 @login_required
 @require_http_methods(["GET"])
-def partial_comments(request, content_type: str, pk: int):
+def partial_comments(request, pk: int):
     """
-    Render a partial view of comments for a given content type and primary key.
+    Render a partial view of comments for a given submission primary key.
 
-    This view handles comments for both 'submission' and 'project' content types.
+    This view handles comments for both submission and (if existing) pulls related project activities.
     It checks the user's permissions and fetches the related comments for the user.
     The comments are paginated and rendered in the 'activity_list' template.
 
@@ -41,20 +39,11 @@ def partial_comments(request, content_type: str, pk: int):
     Returns:
         HttpResponse: The rendered 'activity_list' template with the context data.
     """
-    if content_type == "submission":
-        obj = get_object_or_404(ApplicationSubmission, pk=pk)
-        has_funds_permission(
-            "submission_view", request.user, object=obj, raise_exception=True
-        )
-        editable = not obj.is_archive
-    elif content_type == "project":
-        obj = get_object_or_404(Project, pk=pk)
-        has_projects_permission(
-            "project_access", request.user, object=obj, raise_exception=True
-        )
-        editable = False if obj.status == "complete" else True
-    else:
-        return render(request, "activity/include/activity_list.html", {})
+    obj = get_object_or_404(ApplicationSubmission, pk=pk)
+    has_funds_permission(
+        "submission_view", request.user, object=obj, raise_exception=True
+    )
+    editable = not obj.is_archive
 
     qs = services.get_related_activities_for_user(obj, request.user)
     page = Paginator(qs, per_page=10, orphans=5).page(request.GET.get("page", 1))

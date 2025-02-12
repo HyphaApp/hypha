@@ -240,7 +240,7 @@
                 <div
                     class="comments"
                     id="comment-feed"
-                    hx-get="{% url 'activity:partial-comments' 'submission' object.id %}"
+                    hx-get="{% url 'activity:partial-comments' object.id %}"
                     hx-trigger="fetchComments from:body, intersect once"
                 >
                     <p>{% trans "Loading…" %}</p>

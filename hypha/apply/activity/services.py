@@ -50,7 +50,7 @@ def get_related_activities_for_user(obj, user):
     """
     if hasattr(obj, "project") and obj.project:
         source_filter = Q(submission=obj) | Q(project=obj.project)
-    if hasattr(obj, "submission") and obj.submission:
+    elif hasattr(obj, "submission") and obj.submission:
         source_filter = Q(submission=obj.submission) | Q(project=obj)
     else:
         source_filter = Q(submission=obj)
