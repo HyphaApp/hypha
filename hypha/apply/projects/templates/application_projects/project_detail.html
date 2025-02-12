@@ -171,9 +171,7 @@
                                         {% project_rejected_by_user object paf_approval.user as rejected %}
                                         {% if rejected %}
                                             <div class="flex">
-                                                <div>
-                                                    <svg class="mt-1 w-5 h-5 me-1"><use xlink:href="#request-changes"></use></svg>
-                                                </div>
+                                                {% heroicon_outline "exclamation-circle" class="inline stroke-red-500" aria_hidden=true %}
                                                 <div>
                                                     <p class="m-0 sidebar__paf-approvals--approved">{% trans "Request changes or more information by " %}{{ paf_approval.user }}</p>
                                                     {% get_comment_for_requested_approval paf_approval as rejected_comment %}
