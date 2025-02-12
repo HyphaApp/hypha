@@ -787,12 +787,14 @@ class TestProjectDetailApprovalView(TestCase):
         request = factory.get(f"/project/{project.pk}")
         request.user = StaffFactory()
 
-        response = ProjectDetailApprovalView.as_view()(request, pk=project.public_id)
+        response = ProjectDetailApprovalView.as_view()(
+            request, pk=project.submission.id
+        )
         self.assertEqual(response.status_code, 200)
 
         request.user = ApplicantFactory()
         with self.assertRaises(PermissionDenied):
-            ProjectDetailApprovalView.as_view()(request, pk=project.public_id)
+            ProjectDetailApprovalView.as_view()(request, pk=project.submission.id)
 
 
 class TestStaffDetailInvoiceStatus(BaseViewTestCase):

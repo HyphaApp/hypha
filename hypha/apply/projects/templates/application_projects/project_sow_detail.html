@@ -52,11 +52,11 @@
                                 {% trans 'Download SOW' %}
                             </button>
                             <div x-show="show" x-transition class="dropdown__content">
-                                <a href="{% url 'apply:projects:download-sow' pk=object.public_id export_type='pdf' %}"
+                                <a href="{% url 'apply:projects:download-sow' pk=object.submssion.id export_type='pdf' %}"
                                 >
                                     {% trans 'Download as PDF' %}
                                 </a>
-                                <a href="{% url 'apply:projects:download-sow' pk=object.public_id export_type='docx' %}">
+                                <a href="{% url 'apply:projects:download-sow' pk=object.submission.id export_type='docx' %}">
                                     {% trans 'Download as DOCX' %}
                                 </a>
                             </div>

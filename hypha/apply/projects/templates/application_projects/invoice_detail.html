@@ -39,8 +39,8 @@
             <div class="card card--solid">
                 <div class="card__inner">
                     <h5 class="card__heading">{% trans "Invoice" %}</h5>
-                    <p class="card__text"><a target="_blank" href="{% url "apply:projects:invoice-document" pk=object.project.public_id invoice_pk=object.pk %}">{{object.filename}}</a></p>
-                    <embed src="{% url "apply:projects:invoice-document" pk=object.project.public_id invoice_pk=object.pk %}" width="800px" height="800px" />
+                    <p class="card__text"><a target="_blank" href="{% url "apply:projects:invoice-document" pk=object.project.submission.id invoice_pk=object.pk %}">{{object.filename}}</a></p>
+                    <embed src="{% url "apply:projects:invoice-document" pk=object.project.submission.id invoice_pk=object.pk %}" width="800px" height="800px" />
                 </div>
                 {% if object.supporting_documents.exists %}
                     <div class="card__inner">
