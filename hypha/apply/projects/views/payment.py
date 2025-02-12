@@ -348,7 +348,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         if "delete" in form.data:
             return redirect(
                 "apply:projects:invoice-delete",
-                pk=self.object.project.public_id,
+                pk=self.object.project.submission.id,
                 invoice_pk=self.object.id,
             )
         if form.is_valid():
