@@ -5,7 +5,7 @@
     method="POST"
     hx-post="{{ request.path }}"
     hx-target="this"
-    hx-swap="outerHTML"
+    hx-swap="outerHTML transition:true"
     class="form"
 >
     {% csrf_token %}

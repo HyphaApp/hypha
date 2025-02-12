@@ -109,7 +109,7 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
         self._submissions = None
         if not self.get_action() or not self.get_submissions():
             messages.warning(
-                self.request, "Improperly configured request, please try again."
+                self.request, _("Improperly configured request, please try again.")
             )
             return HttpResponseRedirect(self.get_success_url())
 
@@ -163,7 +163,7 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
         submissions = self.get_submissions()
         if not self.check_all_submissions_are_of_same_type(submissions):
             raise ValueError(
-                "All selected submissions excpects determination forms attached"
+                "All selected submissions expects determination forms attached"
                 " - please contact admin"
             )
         if not submissions[0].is_determination_form_attached:
@@ -222,9 +222,9 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
             except KeyError:
                 messages.warning(
                     self.request,
-                    'Unable to determine submission "{title}" as already determined'.format(
-                        title=submission.title_text_display
-                    ),
+                    _(
+                        'Unable to determine submission "{title}" as already determined'
+                    ).format(title=submission.title_text_display),
                 )
             else:
                 if submission.is_determination_form_attached:
@@ -440,8 +440,11 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
 
             if self.submission.accepted_for_funding and settings.PROJECTS_AUTO_CREATE:
                 Project.create_from_submission(self.submission)
+                messages.success(
+                    self.request, _("A project was automatically created.")
+                )
 
-        # remove current users's task for determination
+        # remove current user's task for determination
         remove_tasks_for_user(
             code=DETERMINATION_DRAFT, user=self.object.author, related_obj=self.object
         )
