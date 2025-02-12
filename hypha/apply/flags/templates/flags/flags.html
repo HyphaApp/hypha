@@ -7,7 +7,7 @@
                 disabled=true
             {% else %}
                 hx-post="{% url 'apply:submissions:flags:create_submission_flag' submission.id "user" %}"
-                hx-swap="outerHTML"
+                hx-swap="outerHTML transition:true"
                 hx-target="#submission-flags"
                 {% if is_flagged %}
                     data-tippy-content="Remove from your flagged submissions"
@@ -33,7 +33,7 @@
                     disabled=true
                 {% else %}
                     hx-post="{% url 'apply:submissions:flags:create_submission_flag' submission.id "staff" %}"
-                    hx-swap="outerHTML"
+                    hx-swap="outerHTML transition:true"
                     hx-target="#submission-flags"
                     {% if is_flagged %}
                         data-tippy-content="Remove staff flag"

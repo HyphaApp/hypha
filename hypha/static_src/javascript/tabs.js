@@ -74,9 +74,20 @@
       const tab = e.currentTarget;
 
       const tabContentId = $(tab).closest(".js-tabs").data("tabs");
-      this.stripTabClasses(tabContentId);
-      this.addTabClasses(tab);
-      this.updateUrl(tab);
+
+      // For older browsers that do not support ViewTransition.
+      if (!document.startViewTransition) {
+        this.stripTabClasses(tabContentId);
+        this.addTabClasses(tab);
+        this.updateUrl(tab);
+      }
+
+      // For modern browsers activate ViewTransition.
+      document.startViewTransition(() => {
+        this.stripTabClasses(tabContentId);
+        this.addTabClasses(tab);
+        this.updateUrl(tab);
+      });
     }
 
     stripTabClasses(tabContentId) {

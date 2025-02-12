@@ -39,7 +39,7 @@
                         class="button button--primary"
                         type="submit"
                         hx-post="{% url 'users:elevate_send_confirm_access_email' %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}"
-                        hx-swap="outerHTML"
+                        hx-swap="outerHTML transition:true"
                         hx-target="#confirm-code-input"
                     >
                         {% trans "Send a confirmation code to your email" %}
