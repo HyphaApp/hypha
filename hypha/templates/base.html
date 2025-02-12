@@ -71,10 +71,6 @@
             {% include "includes/hijack-bar.html" %}
         {% endif %}
 
-        {% if messages %}
-            {% include 'includes/messages.html' %}
-        {% endif %}
-
         {% block header %}{% endblock header %}
 
         {% block content_wrapper %}
@@ -165,6 +161,11 @@
         <!-- Placeholder for the htmx modal & toast -->
         {% include "includes/_modal-placeholder.html" %}
         {% include "includes/_toast-placeholder.html" %}
+
+        {# Display messages from django.contrib.messages as toast #}
+        {% for message in messages %}
+            <template x-init="$nextTick(() => {$dispatch('notice', {type: '{{ message.tags }}', text: '{{ message }}'})})"></template>
+        {% endfor %}
 
         <!-- We still need jQuery for select2, daterangepicker and a few custom scripts. -->
         <!-- Please do not add new features that require jQuery! -->
