@@ -42,15 +42,8 @@
         {% endif %}
     </div>
 
-    <ul
-        class="docs-block__inner"
-        id="contract-documents-elements"
-        {% if collapsible_header %}
-        x-show="!collapsed"
-        role="region"
-        aria-labelledby="contract-documents-section"
-        {% endif %}
-    >
+    <ul class="docs-block__inner" id="contract-documents-elements" {% if collapsible_header %} x-show="!collapsed" role="region"
+            aria-labelledby="contract-documents-section" {% endif %}>
 
             {% is_project_contract_approved object as is_contract_approved %}
             {% contract_uploaded_by_contracting object as contract_uploaded %}

@@ -227,7 +227,7 @@ class Invoice(models.Model):
     def get_absolute_url(self):
         return reverse(
             "apply:projects:invoice-detail",
-            kwargs={"pk": self.project.public_id, "invoice_pk": self.pk},
+            kwargs={"pk": self.project.submission.id, "invoice_pk": self.pk},
         )
 
     @property
@@ -258,7 +258,7 @@ class SupportingDocument(models.Model):
         return reverse(
             "apply:projects:invoice-supporting-document",
             kwargs={
-                "pk": self.invoice.project.public_id,
+                "pk": self.invoice.project.submission.id,
                 "invoice_pk": self.invoice.pk,
                 "file_pk": self.pk,
             },
