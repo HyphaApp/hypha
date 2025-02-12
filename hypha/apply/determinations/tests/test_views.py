@@ -9,6 +9,7 @@ from hypha.apply.activity.models import Activity
 from hypha.apply.determinations.options import ACCEPTED, NEEDS_MORE_INFO, REJECTED
 from hypha.apply.determinations.views import BatchDeterminationCreateView
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.projects.models.project import CONTRACTING, DRAFT
 from hypha.apply.users.tests.factories import StaffFactory, UserFactory
 from hypha.apply.utils.testing import BaseViewTestCase
 
@@ -336,6 +337,50 @@ class DeterminationFormTestCase(BaseViewTestCase):
 
         self.assertIsNone(submission_next)
         self.assertFalse(hasattr(submission_original, "project"))
+
+    @override_settings(PROJECTS_DEFAULT_STATUS="contracting")
+    def test_auto_creation_uses_status_settings(self):
+        submission = ApplicationSubmissionFactory(
+            status="post_review_discussion",
+            workflow_stages=1,
+            lead=self.user,
+        )
+
+        self.post_page(
+            submission,
+            {
+                "data": "value",
+                "outcome": ACCEPTED,
+                "message": "You are invited to submit a proposal",
+            },
+            "form",
+        )
+
+        submission_original = self.refresh(submission)
+        self.assertTrue(hasattr(submission_original, "project"))
+        self.assertEqual(submission.project.status, CONTRACTING)
+
+    @override_settings(PROJECTS_DEFAULT_STATUS="garbage")
+    def test_auto_creation_uses_draft_when_invalid_status_settings(self):
+        submission = ApplicationSubmissionFactory(
+            status="post_review_discussion",
+            workflow_stages=1,
+            lead=self.user,
+        )
+
+        self.post_page(
+            submission,
+            {
+                "data": "value",
+                "outcome": ACCEPTED,
+                "message": "You are invited to submit a proposal",
+            },
+            "form",
+        )
+
+        submission_original = self.refresh(submission)
+        self.assertTrue(hasattr(submission_original, "project"))
+        self.assertEqual(submission.project.status, DRAFT)
 
     @override_settings(PROJECTS_AUTO_CREATE=False)
     def test_disabling_project_auto_creation_stops_projects_being_created(self):

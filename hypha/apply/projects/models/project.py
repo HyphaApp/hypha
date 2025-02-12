@@ -312,7 +312,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return ""  # todo: need to figure out
 
     @classmethod
-    def create_from_submission(cls, submission, lead=None):
+    def create_from_submission(cls, submission, lead=None, status=None):
         """
         Create a Project from the given submission.
 
@@ -331,10 +331,22 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         if hasattr(submission, "project"):
             return submission.project
 
+        # If default status is valid and status arg is None, use it otherwise fallback to draft
+        if status is None:
+            status = next(
+                (
+                    x[0]
+                    for x in PROJECT_STATUS_CHOICES
+                    if x[0] == settings.PROJECTS_DEFAULT_STATUS
+                ),
+                DRAFT,
+            )
+
         return Project.objects.create(
             submission=submission,
             user=submission.user,
             title=submission.title,
+            status=status,
             lead=lead if lead else None,
             value=submission.form_data.get("value", 0),
         )

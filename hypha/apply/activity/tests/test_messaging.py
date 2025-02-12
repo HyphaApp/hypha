@@ -223,7 +223,11 @@ class TestActivityAdapter(TestCase):
         submission = ApplicationSubmissionFactory()
 
         self.adapter.send_message(
-            message, user=user, source=submission, sources=[], related=None
+            message,
+            user=user,
+            source=submission,
+            sources=[],
+            related=None,
         )
 
         self.assertEqual(Activity.objects.count(), 1)
@@ -786,6 +790,7 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
             adapter=self.activity(),
             source=project,
             related=project.submission,
+            status="Draft",
         )
         self.assertEqual(Activity.objects.count(), 1)
         activity = Activity.objects.first()

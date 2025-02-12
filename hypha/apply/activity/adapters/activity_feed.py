@@ -48,7 +48,9 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.DELETE_REVIEW_OPINION: _(
             "deleted the opinion for review: {review_opinion.review}"
         ),
-        MESSAGES.CREATED_PROJECT: _("Created project"),
+        MESSAGES.CREATED_PROJECT: _(
+            'Created project with initial status of "{status}"'
+        ),
         MESSAGES.PROJECT_TRANSITION: "handle_project_transition",
         MESSAGES.UPDATE_PROJECT_TITLE: _(
             "updated the project title from {old_title} to {source.title}"

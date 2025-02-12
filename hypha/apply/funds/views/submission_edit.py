@@ -37,6 +37,7 @@ from hypha.apply.determinations.views import (
     DeterminationCreateOrUpdateView,
 )
 from hypha.apply.projects.forms import ProjectCreateForm
+from hypha.apply.projects.models.project import PROJECT_STATUS_CHOICES
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
 from hypha.apply.todo.options import PROJECT_WAITING_PF, PROJECT_WAITING_SOW
 from hypha.apply.todo.views import add_task_to_user
@@ -434,11 +435,19 @@ class CreateProjectView(View):
         form = ProjectCreateForm(self.request.POST, instance=self.submission)
         if form.is_valid():
             project = form.save()
+
+            readable_project_status = next(
+                status[1]
+                for status in PROJECT_STATUS_CHOICES
+                if status[0] == project.status
+            )
+
             # Record activity
             messenger(
                 MESSAGES.CREATED_PROJECT,
                 request=self.request,
                 user=self.request.user,
+                status=readable_project_status,
                 source=project,
                 related=project.submission,
             )
