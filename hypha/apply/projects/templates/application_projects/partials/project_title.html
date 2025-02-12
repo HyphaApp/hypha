@@ -2,7 +2,7 @@
 
 {{ object.title }}
 {% if request.user.is_apply_staff %}
-    <a class="transition-opacity hover:opacity-70 link is-active link--transparent"
+    <a class="transition-opacity hover:opacity-70 is-active"
        href="{% url 'apply:projects:project_title_update' object.id %}"
        hx-get="{% url 'apply:projects:project_title_update' object.id %}"
        hx-target="#htmx-modal"
