@@ -1970,7 +1970,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
             documents_dict[packet_file.title] = self.request.build_absolute_uri(
                 reverse(
                     "apply:projects:document",
-                    kwargs={"pk": project.public_id, "file_pk": packet_file.id},
+                    kwargs={"pk": project.submission.id, "file_pk": packet_file.id},
                 )
             )
         return documents_dict
