@@ -191,6 +191,10 @@ CONN_HEALTH_CHECKS = env.bool("CONN_HEALTH_CHECKS", True)
 # The corresponding locale dir is named: en, en_GB, en_US
 LANGUAGE_CODE = env.str("LANGUAGE_CODE", "en")
 
+# Optional language switcher
+# Set LANGUAGE setting to limit the languages available.
+LANGUAGE_SWITCHER = env.bool("LANGUAGE_SWITCHER", False)
+
 # Machine translation settings
 # NOTE: Ensure the packages in `requirements/translate.txt` have been installed!
 APPLICATION_TRANSLATIONS_ENABLED = env.bool("APPLICATION_TRANSLATIONS_ENABLED", False)
