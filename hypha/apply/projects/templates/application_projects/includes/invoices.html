@@ -5,8 +5,10 @@
         <h2 class="m-0 text-lg font-semibold">{% trans "Invoices" %}</h2>
         {% user_can_add_invoices object user as can_add_invoice %}
         {% if can_add_invoice %}
-            <a class="button button--project-action button--project-action--white" target="_blank"
-               href="{% url "apply:projects:invoice" pk=object.submission.pk %}">
+            <a
+                class="button button--project-action button--project-action--white"
+                href="{% url "apply:projects:invoice" pk=object.submission.pk %}"
+            >
                 {% trans "Add Invoice" %}
             </a>
         {% endif %}

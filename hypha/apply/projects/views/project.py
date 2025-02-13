@@ -116,11 +116,6 @@ from ..utils import (
 from .report import ReportingMixin
 
 
-class ProjectGetObjectMixin:
-    def get_object(self):
-        return get_object_or_404(Project, submission__pk=self.kwargs["pk"])
-
-
 @method_decorator(staff_required, name="dispatch")
 class SendForApprovalView(View):
     form_class = SetPendingForm
@@ -1595,7 +1590,10 @@ class UpdatePAFApproversView(View):
         )
 
 
-class BaseProjectDetailView(ReportingMixin, ProjectGetObjectMixin, DetailView):
+class BaseProjectDetailView(ReportingMixin, DetailView):
+    def get_object(self):
+        return get_object_or_404(Project, submission__pk=self.kwargs["pk"])
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["statuses"] = get_project_status_choices()
@@ -1775,7 +1773,7 @@ class ContractDocumentPrivateMediaView(PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
+        self.project = get_object_or_404(Project, id=self.kwargs["pk"])
         self.document = ContractPacketFile.objects.get(pk=kwargs["file_pk"])
         permission, _ = has_permission(
             "view_contract_documents",
