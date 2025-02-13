@@ -383,6 +383,8 @@ def can_access_project(user, project):
 
 
 def can_view_contract_category_documents(user, project, **kwargs):
+    if user.is_superuser:
+        return True, "Superuser can view all documents"
     contract_category = kwargs.get("contract_category")
     if not contract_category:
         return False, "Contract Category is required"
