@@ -30,6 +30,17 @@
                 {% heroicon_outline "user" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-dark-blue" aria_hidden=true %}
                 {% trans 'My account' %}
             </a>
+            {% if LANGUAGE_SWITCHER %}
+                <a
+                    class="flex gap-2 items-center py-2 px-3 text-black transition-colors hover:font-semibold outline-1 border-x group hover:bg-slate-100 hover:text-dark-blue focus-visible:outline-dashed"
+                    hx-get="{% url 'users:hijack' %}?next={{ request.path }}"
+                    hx-target="#htmx-modal"
+                    x-on:click="show = false"
+                >
+                    {% heroicon_outline "language" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-dark-blue" aria_hidden=true %}
+                    {% trans "Language" %}
+                </a>
+            {% endif %}
             {% if request.user.is_apply_staff %}
                 <a
                     href="{% url 'activity:notifications' %}"
