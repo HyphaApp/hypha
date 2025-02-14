@@ -40,8 +40,8 @@
                         {% if document_category in remaining_contract_document_categories and can_update_documents %}
                             <div class="docs-block__document-inner__actions">
                                 <a class="flex items-center font-bold me-0"
-                                   href="{% url 'apply:projects:contract_doc_upload' object.id document_category.id %}"
-                                   hx-get="{% url 'apply:projects:contract_doc_upload' object.id document_category.id %}"
+                                   href="{% url 'apply:projects:contract_doc_upload' object.submission.id document_category.id %}"
+                                   hx-get="{% url 'apply:projects:contract_doc_upload' object.submission.id document_category.id %}"
                                    hx-target="#htmx-modal"
                                    aria-label="{% trans "Upload Contracting Documents" %}"
                                 >
@@ -53,15 +53,20 @@
                             {% contract_category_latest_file object document_category as latest_file %}
                             {% if latest_file %}
                                 <div class="docs-block__document-inner__actions">
-                                    <a class="docs-block__icon-link" href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
+                                    <a
+                                        class="docs-block__icon-link"
+                                        href="{% url 'apply:projects:contract_document' pk=object.submission.pk file_pk=latest_file.pk %}"
+                                        target="_blank"
+                                    >
                                         {% heroicon_micro "eye" class="inline w-4 h-4 me-1" aria_hidden=true %}
                                         {% trans "View" %}
                                     </a>
                                     {% if can_update_documents %}
-                                        <button class="docs-block__icon-link button button--link button--remove"
-                                                hx-delete="{% url "apply:projects:remove_contracting_document" object.pk latest_file.pk %}"
-                                                hx-swap="none"
-                                                hx-confirm="Are you sure you want to remove this document?"
+                                        <button
+                                            class="docs-block__icon-link button button--link button--remove"
+                                            hx-delete="{% url "apply:projects:remove_contracting_document" object.submission.pk latest_file.pk %}"
+                                            hx-swap="none"
+                                            hx-confirm="Are you sure you want to remove this document?"
                                         >
                                             {% heroicon_micro "trash" class="inline me-1 fill-red-500" aria_hidden=true %}
                                             {% csrf_token %}
