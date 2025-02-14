@@ -123,7 +123,7 @@ class SendForApprovalView(View):
     template_name = "application_projects/modals/send_for_approval.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.object = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.object = get_object_or_404(Project, submission__id=kwargs.get("pk"))
         # permission check
         return super().dispatch(request, *args, **kwargs)
 

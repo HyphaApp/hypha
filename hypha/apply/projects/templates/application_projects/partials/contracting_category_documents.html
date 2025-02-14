@@ -85,8 +85,8 @@
     <a class="button button--project-action {% if required_remaining_contract_document_categories or not contract.signed_by_applicant %}is-disabled{% endif %}"
        id="submit_contract_document"
        hx-swap-oob="true"
-       hx-get="{% url 'apply:projects:contract_documents_submit' object.id %}"
-       href="{% url 'apply:projects:contract_documents_submit' object.id %}"
+       hx-get="{% url 'apply:projects:contract_documents_submit' object.submission.id %}"
+       href="{% url 'apply:projects:contract_documents_submit' object.submission.id %}"
        hx-target="#htmx-modal"
     >
         {% trans "Submit contract documents" %}
