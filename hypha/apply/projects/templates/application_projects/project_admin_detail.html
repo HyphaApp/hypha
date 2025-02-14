@@ -24,8 +24,8 @@
                     <summary class="sidebar__separator sidebar__separator--medium">{% trans "More actions" %}</summary>
 
                     <a class="button button--white button--full-width button--bottom-space"
-                       href="{% url 'apply:projects:project_status_update' object.id %}"
-                       hx-get="{% url 'apply:projects:project_status_update' object.id %}"
+                       href="{% url 'apply:projects:project_status_update' object.submission.id %}"
+                       hx-get="{% url 'apply:projects:project_status_update' object.submission.id %}"
                        hx-target="#htmx-modal"
                     >
                         {% trans "Update Project Status" %}

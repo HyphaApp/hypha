@@ -7,13 +7,16 @@
             <h2 class="m-0 text-lg font-semibold">
                 {% trans "Reports" %}
             </h2>
+
             {% user_can_update_report_config object user as can_update_report_config %}
             {% if can_update_report_config %}
                 <p class="m-0 text-fg-muted">
+
                     {{ object.report_config.get_frequency_display }} &middot;
+
                     <a class="font-semibold"
-                       href="{% url 'apply:projects:report_frequency_update' pk=object.id %}"
-                       hx-get="{% url 'apply:projects:report_frequency_update' pk=object.id %}"
+                        href="{% url 'apply:projects:report_frequency_update' pk=object.submission.id %}"
+                        hx-get="{% url 'apply:projects:report_frequency_update' pk=object.submission.id %}"
                        hx-target="#htmx-modal"
                     >
                         {% if object.report_config.disable_reporting %}
@@ -40,8 +43,6 @@
         </div>
     </section>
 {% endif %}
-
-
 
 <section class="docs-block wrapper--outer-space-large">
     <h2 class="m-0 text-lg font-semibold docs-block__header">
