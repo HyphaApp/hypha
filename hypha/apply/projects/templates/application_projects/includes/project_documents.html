@@ -12,8 +12,8 @@
                 {% user_can_send_for_approval object user as can_send_to_approve %}
                 {% if can_send_to_approve %}
                     <a class="button button--project-action"
-                       href="{% url 'apply:projects:submit_project_for_approval' object.id %}"
-                       hx-get="{% url 'apply:projects:submit_project_for_approval' object.id %}"
+                       href="{% url 'apply:projects:submit_project_for_approval' object.submission.id %}"
+                       hx-get="{% url 'apply:projects:submit_project_for_approval' object.submission.id %}"
                        hx-target="#htmx-modal"
                     >
                         {% if object.paf_approvals.exists %}
