@@ -23,5 +23,6 @@ def global_vars(request):
         "SENTRY_PUBLIC_KEY": settings.SENTRY_PUBLIC_KEY,
         "SUBMISSIONS_TABLE_EXCLUDED_FIELDS": settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS,
         "HIJACK_ENABLE": settings.HIJACK_ENABLE,
+        "LANGUAGES": settings.LANGUAGES,
         "LANGUAGE_SWITCHER": settings.LANGUAGE_SWITCHER,
     }
