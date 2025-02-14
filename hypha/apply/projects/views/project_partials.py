@@ -51,7 +51,7 @@ def partial_supporting_documents(request, pk):
 @login_required
 @require_GET
 def partial_contracting_documents(request, pk):
-    project = get_object_or_404(Project, pk=pk)
+    project = get_object_or_404(Project, submission__pk=pk)
     ctx = {"object": project}
     ctx["all_contract_document_categories"] = ContractDocumentCategory.objects.all()
     ctx["remaining_contract_document_categories"] = (
