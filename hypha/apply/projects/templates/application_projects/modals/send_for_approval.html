@@ -1,16 +1,16 @@
 {% load i18n approval_tools project_tags heroicons %}
-{% modal_title %}{% trans "Submit Documents for Review" %}{% endmodal_title %}
+{% modal_title %}{% trans "Submit documents for review" %}{% endmodal_title %}
 
 <div class="p-4">
     {% if remaining_document_categories %}
-        <div class="p-2 mb-4 bg-red-100 rounded prose">
-            <p class="mb-0">{% trans "Looks like the following documents are mi" %}:</p>
+        <div class="p-2 mb-4 bg-red-100 rounded prose"></div>
+        <p class="mb-0">{% trans "Looks like the following documents are missing" %}:</p>
 
-            <ul class="mt-0">
-                {% for missing_category in remaining_document_categories %}
-                    <li>{{ missing_category.name }}</li>
-                {% endfor %}
-            </ul>
+        <ul class="mt-0">
+            {% for missing_category in remaining_document_categories %}
+                <li>{{ missing_category.name }}</li>
+            {% endfor %}
+        </ul>
         </div>
         {% trans "Submit anyway" as submit %}
     {% endif %}
