@@ -68,7 +68,7 @@ from hypha.apply.users.roles import CONTRACTING_GROUP_NAME
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import render_as_pdf
 from hypha.apply.utils.storage import PrivateMediaView
-from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
+from hypha.apply.utils.views import DelegateableView, ViewDispatcher
 
 from ...funds.files import generate_private_file_path
 from ..filters import ProjectListFilter
@@ -398,13 +398,13 @@ class RemoveContractDocumentView(ProjectBySubmissionIdMixin, View):
 
 
 @method_decorator(staff_required, name="dispatch")
-class UpdateLeadView(View):
+class UpdateLeadView(ProjectBySubmissionIdMixin, View):
     model = Project
     form_class = UpdateProjectLeadForm
     template_name = "application_projects/modals/lead_update.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.project = self.get_object()
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
@@ -459,42 +459,27 @@ class UpdateLeadView(View):
         )
 
 
-@method_decorator(staff_required, name="dispatch")
-class UpdateProjectTitleView(DelegatedViewMixin, UpdateView):
-    model = Project
-    form_class = UpdateProjectTitleForm
+@login_required
+def update_project_title(request, pk):
+    if not request.user.is_apply_staff:
+        raise PermissionDenied
+
+    project = get_object_or_404(Project, submission__id=pk)
     template_name = "application_projects/modals/project_title_update.html"
 
-    def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
-        return super().dispatch(request, *args, **kwargs)
+    form = UpdateProjectTitleForm(instance=project)
 
-    def get(self, *args, **kwargs):
-        form = self.form_class(instance=self.project)
-        return render(
-            self.request,
-            self.template_name,
-            context={
-                "form": form,
-                "value": _("Update"),
-                "object": self.project,
-            },
-        )
-
-    def post(self, *args, **kwargs):
-        # Fetch the old lead from the database
-        old_title = copy.copy(self.project.title)
-
-        form = self.form_class(self.request.POST, instance=self.project)
+    if request.method == "POST":
+        old_title = copy.copy(project.title)
+        form = UpdateProjectTitleForm(request.POST, instance=project)
 
         if form.is_valid():
             form.save()
-
             messenger(
                 MESSAGES.UPDATE_PROJECT_TITLE,
-                request=self.request,
-                user=self.request.user,
-                source=self.project,
+                request=request,
+                user=request.user,
+                source=project,
                 related=old_title,
             )
 
@@ -509,15 +494,13 @@ class UpdateProjectTitleView(DelegatedViewMixin, UpdateView):
                     ),
                 },
             )
-        return render(
-            self.request,
-            self.template_name,
-            context={
-                "form": form,
-                "value": _("Update"),
-                "object": self.project,
-            },
-        )
+
+    ctx = {
+        "form": form,
+        "value": _("Update"),
+        "object": project,
+    }
+    return render(request, template_name, ctx)
 
 
 # CONTRACTS
