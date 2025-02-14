@@ -2,8 +2,8 @@
 
 {% if request.user.is_apply_staff %}
     <a class="transition-opacity hover:opacity-70 is-active"
-       href="{% url 'apply:projects:lead_update' object.id %}"
-       hx-get="{% url 'apply:projects:lead_update' object.id %}"
+       href="{% url 'apply:projects:lead_update' object.submission.id %}"
+       hx-get="{% url 'apply:projects:lead_update' object.submission.id %}"
        hx-target="#htmx-modal"
     >
         <u>{% trans "Lead" %}: {{ object.lead }}</u>
