@@ -9,6 +9,6 @@
         </dl>
     </div>
 
-    {% url 'apply:projects:lead_update' object.id as url %}
+    {% url 'apply:projects:lead_update' object.submission.id as url %}
     {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=url %}
 </div>
