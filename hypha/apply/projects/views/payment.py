@@ -200,7 +200,7 @@ class DeleteInvoiceView(DeleteView):
     model = Invoice
 
     def get_object(self):
-        project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        project = get_object_or_404(Project, submission__pk=self.kwargs["pk"])
         return get_object_or_404(project.invoices.all(), pk=self.kwargs["invoice_pk"])
 
     def dispatch(self, request, *args, **kwargs):

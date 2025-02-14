@@ -21,7 +21,7 @@
 {% if user_can_delete_request %}
     <a
         class="button button--bottom-space button--primary button--full-width"
-        href="{% url 'apply:projects:invoice-delete' pk=object.project.pk invoice_pk=object.pk %}">
+        href="{% url 'apply:projects:invoice-delete' pk=object.project.submission.pk invoice_pk=object.pk %}">
         {% trans "Delete Invoice" %}
     </a>
 {% endif %}
