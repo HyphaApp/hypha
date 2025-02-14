@@ -37,20 +37,21 @@
             {% get_available_languages as LANGUAGES %}
             {% get_language_info_list for LANGUAGES as languages %}
             {% if languages|length > 1 %}
-                <form action="{% url 'set_language' %}" method="post" class="my-2">
+                <form action="{% url 'set_language' %}" method="post" class="my-2" x-ref="langForm">
                     {% csrf_token %}
                     <input name="next" type="hidden" value="{{ request.path }}">
                     <fieldset class="grid grid-cols-2 gap-x-4">
                         {% for language in languages %}
                             <div>
-                                <input class="sr-only" name="language" id="{{ language.code }}" value="{{ language.code }}" type="radio" {% if language.code == LANGUAGE_CODE %}checked{% endif %} onchange="this.form.submit()">
-                                <label class="font-semibold capitalize cursor-pointer hover:underline text-dark-blue" for="{{ language.code }}">{{ language.name_local }}</label>
+                                <input class="sr-only" name="language" id="{{ language.code }}" value="{{ language.code }}" type="radio" {% if language.code == LANGUAGE_CODE %}checked{% endif %}>
+                                <label class="font-semibold capitalize {% if language.code != LANGUAGE_CODE %}cursor-pointer hover:underline text-dark-blue{% endif %}" for="{{ language.code }}" x-on:click="$nextTick(() => { $refs.langForm.submit() })">{{ language.name_local }}</label>
                             </div>
                         {% endfor %}
+                        <button class="sr-only button button--primary button--narrow button--top-space" type="submit">{% trans "Set" %}</button>
                     </fieldset>
                 </form>
             {% else %}
-                <span class="text-red-500">{% trans "Can't switch language. Only one language is active." %}</span>
+                <span class="text-red-500">{% trans "Can't switch language, only one language is active." %}</span>
             {% endif %}
         </div>
     </div>
