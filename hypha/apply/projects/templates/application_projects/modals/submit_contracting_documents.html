@@ -2,8 +2,9 @@
 {% modal_title %}{% trans "Submit contracting documents" %}{% endmodal_title %}
 
 <div class="p-4">
-    <h5> {% trans "Are you sure you want to submit contracting documents?" %}</h5>
-    <p>{% trans "Make sure you have uploaded correct contract and all required contracting documents." %}</p>
-
+    <p class="mb-4 text-gray-500">
+        {% trans "Are you sure you want to submit contracting documents?" %}
+        {% trans "Make sure you have uploaded correct contract and all required contracting documents." %}
+    </p>
     {% include 'includes/dialog_form_base.html' with form=form value=value %}
 </div>

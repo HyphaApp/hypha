@@ -32,8 +32,8 @@
         {% user_can_approve_contract request.user object as can_approve_contract %}
         {% if contract_to_approve and can_approve_contract %}
             <a class="button button--project-action"
-               hx-get="{% url 'apply:projects:contract_approve' object.id %}"
-               href="{% url 'apply:projects:contract_approve' object.id %}"
+               hx-get="{% url 'apply:projects:contract_approve' object.submission.id %}"
+               href="{% url 'apply:projects:contract_approve' object.submission.id %}"
                hx-target="#htmx-modal"
             >
                 {% trans "Approve contract documents" %}
@@ -97,8 +97,8 @@
                             {% if can_upload_contract and can_initiate_contract  %}
                                 <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
                                     <a class="flex items-center p-2.5 w-auto font-bold text-white border-none text-start bg-light-blue me-0"
-                                       hx-get="{% url 'apply:projects:contract_upload' object.id %}"
-                                       href="{% url 'apply:projects:contract_upload' object.id %}"
+                                       hx-get="{% url 'apply:projects:contract_upload' object.submission.id %}"
+                                       href="{% url 'apply:projects:contract_upload' object.submission.id %}"
                                        hx-target="#htmx-modal"
                                     >
                                         {% heroicon_micro "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
@@ -120,8 +120,8 @@
                             {% if can_upload_contract and user.is_applicant %}
                                 <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
                                     <a class="flex items-center p-2.5 w-auto font-bold text-white border-none text-start bg-light-blue me-0"
-                                       hx-get="{% url 'apply:projects:contract_upload' object.id %}"
-                                       href="{% url 'apply:projects:contract_upload' object.id %}"
+                                       hx-get="{% url 'apply:projects:contract_upload' object.submission.id %}"
+                                       href="{% url 'apply:projects:contract_upload' object.submission.id %}"
                                        hx-target="#htmx-modal"
                                     >
                                         {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
@@ -141,7 +141,7 @@
             {% if contracting_documents_configured and contract_uploaded %}
                 <div
                     hx-trigger="load, contractingDocumentUpload from:body, contractingDocumentRemove from:body"
-                    hx-get="{% url "apply:projects:contract_documents" object.id %}"
+                    hx-get="{% url "apply:projects:contract_documents" object.submission.id %}"
                     hx-target="this">
                     {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
                     <p class="docs-block__title">{% trans "Contracting documents" %}</p>
