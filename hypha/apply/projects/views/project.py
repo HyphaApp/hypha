@@ -116,14 +116,19 @@ from ..utils import (
 from .report import ReportingMixin
 
 
+class ProjectBySubmissionIdMixin:
+    def get_object(self):
+        return get_object_or_404(Project, submission__id=self.kwargs["pk"])
+
+
 @method_decorator(staff_required, name="dispatch")
-class SendForApprovalView(View):
+class SendForApprovalView(ProjectBySubmissionIdMixin, View):
     form_class = SetPendingForm
     model = Project
     template_name = "application_projects/modals/send_for_approval.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.object = get_object_or_404(Project, submission__id=kwargs.get("pk"))
+        self.object = self.get_object()
         # permission check
         return super().dispatch(request, *args, **kwargs)
 
@@ -273,13 +278,13 @@ class SendForApprovalView(View):
 
 
 # PROJECT DOCUMENTS
-class UploadDocumentView(CreateView):
+class UploadDocumentView(ProjectBySubmissionIdMixin, CreateView):
     form_class = UploadDocumentForm
     model = Project
     template_name = "application_projects/modals/supporting_documents_upload.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.project = self.get_object()
         self.category = get_object_or_404(
             DocumentCategory, id=kwargs.get("category_pk")
         )
@@ -341,11 +346,11 @@ class UploadDocumentView(CreateView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class RemoveDocumentView(View):
+class RemoveDocumentView(ProjectBySubmissionIdMixin, View):
     model = Project
 
     def delete(self, *args, **kwargs):
-        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.project = self.get_object()
         self.object = self.project.packet_files.get(pk=kwargs.get("document_pk"))
         self.object.delete()
 
@@ -363,20 +368,18 @@ class RemoveDocumentView(View):
 
 
 @method_decorator(login_required, name="dispatch")
-class RemoveContractDocumentView(View):
+class RemoveContractDocumentView(ProjectBySubmissionIdMixin, View):
     model = Project
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.project = self.get_object()
         if not request.user.is_applicant or request.user != self.project.user:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        self.object = self.project.contract_packet_files.get(
-            pk=kwargs.get("document_pk")
-        )
-        self.object.delete()
+        document = self.project.contract_packet_files.get(pk=kwargs.get("document_pk"))
+        document.delete()
 
         return HttpResponse(
             status=204,
@@ -520,7 +523,7 @@ class UpdateProjectTitleView(DelegatedViewMixin, UpdateView):
 # CONTRACTS
 
 
-class ContractsMixin:
+class ContractsMixin(ProjectBySubmissionIdMixin):
     def get_context_data(self, **kwargs):
         project = self.get_object()
         contracts = project.contracts.select_related(
@@ -545,19 +548,19 @@ class ContractsMixin:
 
 
 @method_decorator(staff_required, name="dispatch")
-class ApproveContractView(View):
+class ApproveContractView(ProjectBySubmissionIdMixin, View):
     form_class = ApproveContractForm
     model = Contract
     template_name = "application_projects/modals/approve_contract.html"
 
-    def get_object(self):
+    def get_contract_object(self):
         latest_contract = self.project.contracts.order_by("-created_at").first()
         if latest_contract and not latest_contract.approver:
             return latest_contract
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
-        self.object = self.get_object()
+        self.project = self.get_object()
+        self.object = self.get_contract_object()
         # permission
         return super().dispatch(request, *args, **kwargs)
 
@@ -640,13 +643,13 @@ class ApproveContractView(View):
 
 
 @method_decorator(login_required, name="dispatch")
-class UploadContractView(View):
+class UploadContractView(ProjectBySubmissionIdMixin, View):
     model = Project
     form_class = UploadContractForm
     template_name = "application_projects/modals/upload_contract.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.project = self.get_object()
         permission, _ = has_permission(
             "contract_upload", request.user, object=self.project
         )
@@ -846,7 +849,7 @@ class SubmitContractDocumentsView(View):
     template_name = "application_projects/modals/submit_contracting_documents.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.project = get_object_or_404(Project, submission__id=kwargs.get("pk"))
         if ContractDocumentCategory.objects.filter(
             ~Q(contract_packet_files__project=self.project) & Q(required=True)
         ).exists():
@@ -914,14 +917,14 @@ class SubmitContractDocumentsView(View):
 
 
 @method_decorator(login_required, name="dispatch")
-class UploadContractDocumentView(View):
+class UploadContractDocumentView(ProjectBySubmissionIdMixin, View):
     form_class = UploadContractDocumentForm
     model = Project
     context_name = "contract_document_form"
     template_name = "application_projects/modals/contracting_documents_upload.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.project = self.get_object()
         self.category = get_object_or_404(
             ContractDocumentCategory, id=kwargs.get("category_pk")
         )
@@ -1590,10 +1593,7 @@ class UpdatePAFApproversView(View):
         )
 
 
-class BaseProjectDetailView(ReportingMixin, DetailView):
-    def get_object(self):
-        return get_object_or_404(Project, submission__pk=self.kwargs["pk"])
-
+class BaseProjectDetailView(ReportingMixin, ProjectBySubmissionIdMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["statuses"] = get_project_status_choices()
@@ -1682,7 +1682,9 @@ class ProjectDetailView(ViewDispatcher):
 
 
 @method_decorator(login_required, name="dispatch")
-class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
+class ProjectPrivateMediaView(
+    ProjectBySubmissionIdMixin, UserPassesTestMixin, PrivateMediaView
+):
     """
     See also hypha/apply/funds/files.py
     """
@@ -1690,7 +1692,7 @@ class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
+        self.project = self.get_object()
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
@@ -1718,11 +1720,11 @@ class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
 
 @method_decorator(login_required, name="dispatch")
-class CategoryTemplatePrivateMediaView(PrivateMediaView):
+class CategoryTemplatePrivateMediaView(ProjectBySubmissionIdMixin, PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
+        self.project = self.get_object()
         self.category_type = kwargs["type"]
         permission, _ = has_permission(
             "project_access",
@@ -1745,11 +1747,13 @@ class CategoryTemplatePrivateMediaView(PrivateMediaView):
 
 
 @method_decorator(login_required, name="dispatch")
-class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
+class ContractPrivateMediaView(
+    ProjectBySubmissionIdMixin, UserPassesTestMixin, PrivateMediaView
+):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
+        self.project = self.get_object()
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
@@ -1769,11 +1773,11 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
 
 @method_decorator(login_required, name="dispatch")
-class ContractDocumentPrivateMediaView(PrivateMediaView):
+class ContractDocumentPrivateMediaView(ProjectBySubmissionIdMixin, PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        self.project = get_object_or_404(Project, id=self.kwargs["pk"])
+        self.project = self.get_object()
         self.document = ContractPacketFile.objects.get(pk=kwargs["file_pk"])
         permission, _ = has_permission(
             "view_contract_documents",
@@ -1794,19 +1798,19 @@ class ContractDocumentPrivateMediaView(PrivateMediaView):
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name="dispatch")
-class ProjectDetailApprovalView(DetailView):
+class ProjectDetailApprovalView(ProjectBySubmissionIdMixin, DetailView):
     model = Project
     template_name_suffix = "_approval_detail"
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name="dispatch")
-class ProjectSOWView(DetailView):
+class ProjectSOWView(ProjectBySubmissionIdMixin, DetailView):
     model = Project
     template_name_suffix = "_sow_detail"
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name="dispatch")
-class ProjectSOWDownloadView(SingleObjectMixin, View):
+class ProjectSOWDownloadView(ProjectBySubmissionIdMixin, SingleObjectMixin, View):
     model = Project
 
     def get(self, request, *args, **kwargs):
@@ -1818,7 +1822,7 @@ class ProjectSOWDownloadView(SingleObjectMixin, View):
         context["id"] = self.object.id
         context["title"] = self.object.title
         context["project_link"] = self.request.build_absolute_uri(
-            object.get_absolute_url()
+            self.object.get_absolute_url()
         )
         template_path = "application_projects/sow_export.html"
 
@@ -1881,7 +1885,7 @@ class ProjectSOWDownloadView(SingleObjectMixin, View):
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name="dispatch")
-class ProjectDetailDownloadView(SingleObjectMixin, View):
+class ProjectDetailDownloadView(ProjectBySubmissionIdMixin, SingleObjectMixin, View):
     model = Project
 
     def get(self, request, *args, **kwargs):
@@ -1974,7 +1978,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
         return documents_dict
 
 
-class ProjectFormsEditView(BaseStreamForm, UpdateView):
+class ProjectFormsEditView(BaseStreamForm, ProjectBySubmissionIdMixin, UpdateView):
     model = Project
 
     def buttons(self):

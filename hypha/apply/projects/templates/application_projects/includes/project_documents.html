@@ -87,7 +87,7 @@
                 <div class="docs-block__row-inner">
                     {% user_can_edit_pfs object user as can_edit_pfs %}
                     {% if can_edit_pfs %}
-                        <a class="{% if not object.user_has_updated_pf_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit_pf' pk=object.pk %}">
+                        <a class="{% if not object.user_has_updated_pf_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit_pf' pk=object.submission.pk %}">
                             {% if object.user_has_updated_pf_details %}
                                 {% heroicon_micro "pencil-square" class="inline w-4 h-4 me-1" aria_hidden=true %}
                                 {% trans "Edit" %}
@@ -97,7 +97,7 @@
                         </a>
                     {% endif %}
                     {% if object.user_has_updated_pf_details and not user.is_applicant %}
-                        <a class="docs-block__icon-link" href="{% url 'apply:projects:approval' pk=project.pk %}">
+                        <a class="docs-block__icon-link" href="{% url 'apply:projects:approval' pk=project.submission.pk %}">
                             {% heroicon_micro "eye" class="inline w-4 h-4 me-1" aria_hidden=true %}
                             {% trans "View" %}
                         </a>
@@ -127,7 +127,7 @@
                                     </a>
                                 {% endif %}
                                 {% if object.user_has_updated_sow_details %}
-                                    <a class="docs-block__icon-link" href="{% url 'apply:projects:sow' pk=project.pk %}">
+                                    <a class="docs-block__icon-link" href="{% url 'apply:projects:sow' pk=project.submission.pk %}">
                                         {% heroicon_micro "eye" class="inline w-4 h-4 me-1" aria_hidden=true %}
                                         {% trans "View" %}
                                     </a>

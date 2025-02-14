@@ -184,9 +184,10 @@
                                             <p class="m-0 sidebar__paf-approvals--pending">{% trans "Pending approval from " %}{% if paf_approval.user %}{{ paf_approval.user }}{% else %} {{ paf_approval.paf_reviewer_role.label }}{% trans " (nobody assigned yet)" %} {% endif %}</p>
                                         {% endif %}
                                     {% else %}
-                                        <p class="m-0 sidebar__paf-approvals--approved">{% trans "Approved by " %}{{ paf_approval.user }} {% if paf_approval.approved_at %}(<i>{{ paf_approval.approved_at|date }}</i>){% endif %}</p>
+                                        <p class="m-0 mb-2 sidebar__paf-approvals--approved">
+                                            {% trans "Approved by " %}{{ paf_approval.user }}
+                                            {% if paf_approval.approved_at %}<span class="text-sm text-fg-muted">{{ paf_approval.approved_at|date }}</span>{% endif %}</p>
                                     {% endif %}
-                                    <br>
                                 {% endfor %}
 
                             </div>
