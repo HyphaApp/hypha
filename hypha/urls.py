@@ -45,6 +45,11 @@ urlpatterns = [
     path("tinymce/", include("tinymce.urls")),
 ]
 
+if settings.LANGUAGE_SWITCHER:
+    urlpatterns = [
+        path("i18n/", include("django.conf.urls.i18n")),
+    ] + urlpatterns
+
 if settings.HIJACK_ENABLE:
     urlpatterns = [
         path("hijack/", include("hijack.urls", "hijack")),
