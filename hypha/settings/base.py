@@ -189,11 +189,23 @@ CONN_HEALTH_CHECKS = env.bool("CONN_HEALTH_CHECKS", True)
 
 # Language code in standard language id format: en, en-gb, en-us
 # The corresponding locale dir is named: en, en_GB, en_US
+# Make sure the set lang code is included in LANGUAGES setting.
 LANGUAGE_CODE = env.str("LANGUAGE_CODE", "en")
 
 # Optional language switcher
 # Set LANGUAGE setting to limit the languages available.
 LANGUAGE_SWITCHER = env.bool("LANGUAGE_SWITCHER", False)
+
+# By default only English is activ.
+# When LANGUAGE_SWITCHER is on we activate all the languages there are complete translations for.
+if LANGUAGE_SWITCHER:
+    LANGUAGES = [
+        ("en", "English"),
+        ("ru", "Russian"),
+        ("zh-hans", "Simplified Chinese"),
+    ]
+else:
+    LANGUAGES = [("en", "English")]
 
 # Machine translation settings
 # NOTE: Ensure the packages in `requirements/translate.txt` have been installed!
