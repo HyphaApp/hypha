@@ -24,32 +24,24 @@
         role="dialog"
         aria-labelledby="dialogtitle"
         @click.outside="open = false"
-        class="overflow-y-scroll fixed top-0 z-30 bg-white rounded border shadow-md md:absolute md:top-auto start-0 end-0 md:start-auto md:min-w-[400px] md:max-h-[500px]"
+        class="overflow-y-auto absolute right-0 z-30 bg-white rounded border shadow-md"
     >
-        <header class="flex gap-2 justify-between items-center py-2 px-3 bg-gray-100 border-b subheading">
-            <span id="dialogtitle" class="font-medium">
-                {% trans "Language switcher" %}
-            </span>
-            <button type="button" @click='open = false' class="opacity-70 appearance-none hover:opacity-100" aria-label="{% trans "Close" %}">
-                {% heroicon_solid "x-mark" aria_hidden="true" fill="currentColor" %}
-            </button>
-        </header>
 
-        <div id="id-language-switcher" class="p-4">
+        <div id="id-language-switcher" class="">
             {% get_available_languages as LANGUAGES %}
             {% get_language_info_list for LANGUAGES as languages %}
             {% if languages|length > 1 %}
-                <form action="{% url 'set_language' %}" method="post" class="my-2" x-ref="langForm">
+                <form action="{% url 'set_language' %}" method="post" class="p-4" x-ref="langForm">
                     {% csrf_token %}
                     <input name="next" type="hidden" value="{{ request.path }}">
-                    <fieldset class="grid grid-cols-2 gap-x-4">
+                    <fieldset class="grid gap-1">
                         {% for language in languages %}
                             <div>
                                 <input class="sr-only" name="language" id="{{ language.code }}" value="{{ language.code }}" type="radio" {% if language.code == LANGUAGE_CODE %}checked{% endif %}>
                                 <label lang="{{ language.code }}" class="font-semibold capitalize {% if language.code != LANGUAGE_CODE %}cursor-pointer hover:underline text-dark-blue{% endif %}" for="{{ language.code }}" x-on:click="$nextTick(() => { $refs.langForm.submit() })">{{ language.name_local }}</label>
                             </div>
                         {% endfor %}
-                        <button class="sr-only button button--primary button--narrow button--top-space" type="submit">{% trans "Set language" %}</button>
+                        <button class="sr-only" type="submit">{% trans "Set language" %}</button>
                     </fieldset>
                 </form>
             {% else %}
