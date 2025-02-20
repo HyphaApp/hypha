@@ -9,7 +9,7 @@
         {% endif %}
         class="button button--bottom-space button--primary button--full-width{% if not user_can_edit_request %} button--tooltip-disabled{% endif %}"
         href={% if user_can_edit_request %}
-             "{% url "apply:projects:invoice-edit" pk=object.project.pk invoice_pk=object.pk %}"
+             "{% url "apply:projects:invoice-edit" pk=object.project.submission.pk invoice_pk=object.pk %}"
         {% else %}
              "#"
         {% endif %}
