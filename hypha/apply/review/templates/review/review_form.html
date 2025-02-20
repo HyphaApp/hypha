@@ -30,10 +30,10 @@
     {% include "forms/includes/form_errors.html" with form=form %}
 
     <section class="flex relative justify-between my-8" x-data="reviewScore">
-        <div class="hidden absolute top-0 right-0 h-full lg:block">
+        <div class="absolute top-0 right-0 h-full lg:block">
             <div
                 class="inline-block sticky top-1 py-1.5 px-3 mt-1 font-semibold text-center text-white bg-arsenic float-end"
-                x-clock
+                x-cloak
                 x-show="showScore"
             >
                 {% trans "Score:" %} <span x-text="totalScore">-</span>
@@ -74,7 +74,7 @@
                     <button class="button button--primary min-w-48" type="submit" name="submit">
                         {% trans "Submit" %}
                     </button>
-                    <div class="text-fg-muted" x-clock x-show="showScore">
+                    <div class="text-fg-muted" x-cloak x-show="showScore">
                         {% trans "Total Score:" %} <span x-text="totalScore"></span>
                     </div>
                 </div>
