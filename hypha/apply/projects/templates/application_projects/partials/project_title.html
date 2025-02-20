@@ -1,6 +1,8 @@
-{% load heroicons %}
+{% load heroicons i18n %}
 
-{{ object.title }}
+<span id="app-title">{{ object.title }}</span>
+<span class="text-gray-400">#{{ object.submission.public_id|default:object.submission.id }}</span>
+
 {% if request.user.is_apply_staff %}
     <a class="transition-opacity hover:opacity-70 is-active"
        href="{% url 'apply:projects:project_title_update' object.id %}"
@@ -8,5 +10,6 @@
        hx-target="#htmx-modal"
     >
         {% heroicon_solid "pencil-square" class="inline mt-2 ms-1" aria_hidden=true %}
+        <span class="sr-only">{% trans "edit title" %}</span>
     </a>
 {% endif %}
