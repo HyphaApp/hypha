@@ -15,7 +15,10 @@
             {% if not rejected %}
                 {% can_edit invoice user as user_can_edit_request %}
                 {% if user_can_edit_request %}
-                    <a class="data-block__action-icon-link" href="{% url "apply:projects:invoice-edit" pk=invoice.project.pk invoice_pk=invoice.pk %}">
+                    <a
+                        class="data-block__action-icon-link"
+                        href="{% url "apply:projects:invoice-edit" pk=object.submission.pk invoice_pk=invoice.pk %}"
+                    >
                         {% heroicon_micro "pencil-square" aria_hidden=true class="me-1" %}
                         {% trans "Edit" %}
                     </a>
