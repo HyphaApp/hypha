@@ -30,7 +30,7 @@ def _check_permission(user, method: str) -> bool:
 def get_primary_navigation_items(user):
     DEFAULT_NAV_ITEMS = [
         {
-            "title": _("My Dashboard"),
+            "title": _("My dashboard"),
             "url": reverse_lazy("dashboard:dashboard"),
             "permission_method": "hypha.apply.users.decorators.has_dashboard_access",
         },
