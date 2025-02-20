@@ -25,6 +25,10 @@
                 {% include "includes/menu-notifications.html" %}
             {% endif %}
 
+            {% if LANGUAGE_SWITCHER %}
+                {% include "includes/language-switcher.html" %}
+            {% endif %}
+
             {% if request.path != '/auth/' and request.path != '/login/' %}
                 {% include "includes/user_menu.html" %}
             {% endif %}
