@@ -1,0 +1,8 @@
+{% load i18n %}
+{% modal_title %}{% trans "Create project" %}{% endmodal_title %}
+
+<div class="p-4">
+    <p class="mt-0 text-fg-muted">{% trans "Are you sure you want create a project from this submission? This cannot be undone." %}</p>
+    <br>
+    {% include 'includes/dialog_form_base.html' with form=form value=value %}
+</div>
