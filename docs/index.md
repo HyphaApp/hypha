@@ -24,7 +24,7 @@ hide:
 
 # What is Hypha?
 
-Hypha is an open source submission management platform to receive and manage applications for funding. You are welcome to explore Hypha on our demo site. [Online Demo](https://sandbox.opentech.fund/)
+Hypha is an open source submission management platform to receive and manage applications for funding, programs, or other resources. You are welcome to explore Hypha on our demo site. [Online Demo](https://sandbox.opentech.fund/)
 
 Developed internally by Open Technology Fund (OTF) and community partners, Hypha is an easy to use, secure, and privacy-focused application and project management system for application reviewers, prospective and current funding recipients, and project managers. Our goal is to facilitate open, accessible, and reproducible code to individuals and organizations working to build a more equitable world.
 
