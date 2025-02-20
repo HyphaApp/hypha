@@ -370,7 +370,7 @@ class ProgressSubmissionView(View):
         )
         return render(
             self.request,
-            "funds/includes/progress_form.html",
+            "funds/modals/progress_form.html",
             context={
                 "form": project_creation_form,
                 "value": _("Progress"),
@@ -398,7 +398,7 @@ class ProgressSubmissionView(View):
             return HttpResponseClientRefresh()
         return render(
             self.request,
-            "funds/includes/progress_form.html",
+            "funds/modals/progress_form.html",
             context={"form": form, "value": _("Progress"), "object": self.submission},
             status=400,
         )
@@ -423,7 +423,7 @@ class CreateProjectView(View):
         project_creation_form = ProjectCreateForm(instance=self.submission)
         return render(
             self.request,
-            "funds/includes/create_project_form.html",
+            "funds/modals/create_project_form.html",
             context={
                 "form": project_creation_form,
                 "value": _("Confirm"),
@@ -467,7 +467,7 @@ class CreateProjectView(View):
             return HttpResponseClientRedirect(project.get_absolute_url())
         return render(
             self.request,
-            "funds/includes/create_project_form.html",
+            "funds/modals/create_project_form.html",
             context={"form": form, "value": _("Confirm"), "object": self.object},
             status=400,
         )
@@ -735,7 +735,7 @@ class UpdatePartnersView(View):
 
 @method_decorator(staff_required, name="dispatch")
 class UpdateMetaTermsView(View):
-    template = "funds/includes/update_meta_terms_form.html"
+    template = "funds/modals/update_meta_terms_form.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
