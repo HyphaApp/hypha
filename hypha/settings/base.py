@@ -201,6 +201,7 @@ LANGUAGE_SWITCHER = env.bool("LANGUAGE_SWITCHER", False)
 if LANGUAGE_SWITCHER:
     LANGUAGES = [
         ("en", "English"),
+        ("cs", "Czech"),
         ("ru", "Russian"),
         ("zh-hans", "Simplified Chinese"),
     ]
