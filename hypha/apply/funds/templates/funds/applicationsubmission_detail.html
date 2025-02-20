@@ -240,22 +240,11 @@
                 <div
                     class="comments"
                     id="comment-feed"
-                    hx-get="{% url 'activity:partial-comments' 'submission' object.id %}"
+                    hx-get="{% url 'activity:partial-comments' object.id %}"
                     hx-trigger="fetchComments from:body, intersect once"
                 >
                     <p>{% trans "Loading…" %}</p>
                 </div>
-            </div>
-        </div>
-
-        {# Tab 3 #}
-        <div class="tabs__content" id="tab-3">
-            <div
-                class="feed ms-3"
-                hx-get="{% url 'funds:submissions:partial-activities' object.id %}"
-                hx-trigger="intersect once"
-            >
-                <p>{% trans "Loading…" %}</p>
             </div>
         </div>
     </div>

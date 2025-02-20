@@ -10,8 +10,6 @@ from django_ratelimit.decorators import ratelimit
 
 from hypha.apply.funds.models.submissions import ApplicationSubmission
 from hypha.apply.funds.permissions import has_permission as has_funds_permission
-from hypha.apply.projects.models.project import Project
-from hypha.apply.projects.permissions import has_permission as has_projects_permission
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegatedViewMixin
@@ -25,13 +23,13 @@ from .models import COMMENT, Activity, ActivityAttachment
 
 @login_required
 @require_http_methods(["GET"])
-def partial_comments(request, content_type: str, pk: int):
+def partial_comments(request, pk: int):
     """
-    Render a partial view of comments for a given content type and primary key.
+    Render a partial view of comments for a given submission primary key.
 
-    This view handles comments for both 'submission' and 'project' content types.
+    This view handles comments for both submission and (if existing) pulls related project activities.
     It checks the user's permissions and fetches the related comments for the user.
-    The comments are paginated and rendered in the 'comment_list' template.
+    The comments are paginated and rendered in the 'activity_list' template.
 
     Args:
         request (HttpRequest): The HTTP request object.
@@ -39,32 +37,23 @@ def partial_comments(request, content_type: str, pk: int):
         pk (int): The primary key of the content object.
 
     Returns:
-        HttpResponse: The rendered 'comment_list' template with the context data.
+        HttpResponse: The rendered 'activity_list' template with the context data.
     """
-    if content_type == "submission":
-        obj = get_object_or_404(ApplicationSubmission, pk=pk)
-        has_funds_permission(
-            "submission_view", request.user, object=obj, raise_exception=True
-        )
-        editable = not obj.is_archive
-    elif content_type == "project":
-        obj = get_object_or_404(Project, pk=pk)
-        has_projects_permission(
-            "project_access", request.user, object=obj, raise_exception=True
-        )
-        editable = False if obj.status == "complete" else True
-    else:
-        return render(request, "activity/include/comment_list.html", {})
+    obj = get_object_or_404(ApplicationSubmission, pk=pk)
+    has_funds_permission(
+        "submission_view", request.user, object=obj, raise_exception=True
+    )
+    editable = not obj.is_archive
 
-    qs = services.get_related_comments_for_user(obj, request.user)
+    qs = services.get_related_activities_for_user(obj, request.user)
     page = Paginator(qs, per_page=10, orphans=5).page(request.GET.get("page", 1))
 
     ctx = {
         "page": page,
-        "comments": page.object_list,
+        "activities": page.object_list,
         "editable": editable,
     }
-    return render(request, "activity/include/comment_list.html", ctx)
+    return render(request, "activity/include/activity_list.html", ctx)
 
 
 @login_required
@@ -98,16 +87,22 @@ class ActivityContextMixin:
     """Mixin to add related 'comments' of the current view's 'self.object'"""
 
     def get_context_data(self, **kwargs):
-        extra = {
-            # Do not prefetch on the related_object__author as the models
-            # are not homogeneous and this will fail
-            "comments": services.get_related_comments_for_user(
-                self.object, self.request.user
-            ),
-            "comments_count": services.get_comment_count(
-                self.object, self.request.user
-            ),
-        }
+        # Do not prefetch on the related_object__author as the models
+        # are not homogeneous and this will fail
+        user = self.request.user
+        activities = services.get_related_activities_for_user(
+            self.object, self.request.user
+        )
+
+        # Comments for both projects and applications exist under the original application
+        if isinstance(self.object, ApplicationSubmission):
+            application_obj = self.object
+        else:
+            application_obj = self.object.submission
+
+        comments_count = services.get_comment_count(application_obj, user)
+
+        extra = {"activities": activities, "comments_count": comments_count}
         return super().get_context_data(**extra, **kwargs)
 
 

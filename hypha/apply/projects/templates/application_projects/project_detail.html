@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 
-{% load i18n contract_tools static wagtailcore_tags approval_tools invoice_tools project_tags %}
+{% load i18n static wagtailcore_tags approval_tools invoice_tools project_tags %}
 {% load heroicons %}
 
 {% block title %}{{ object.title }}{% endblock %}
@@ -206,29 +206,17 @@
             <div class="feed">
                 {% if not object.is_archive %}
                     <h4 class="m-0 sr-only">{% trans "Add communication" %}</h4>
-                    {% include "activity/include/comment_form.html" %}
+                    {% include "activity/include/comment_form.html" with action=object.submission.get_absolute_url %}
                 {% endif %}
 
                 <div
                     class="comments"
                     id="comment-feed"
-                    hx-get="{% url 'activity:partial-comments' 'project' object.id %}"
+                    hx-get="{% url 'activity:partial-comments' object.submission.id %}"
                     hx-trigger="intersect once"
                 >
                     <p>{% trans "Loading…" %}</p>
                 </div>
-            </div>
-        </div>
-
-        {# Tab 3 #}
-        <div class="tabs__content" id="tab-3">
-            <div
-                class="feed ms-3"
-                hx-get="{% url 'apply:projects:partial-activities' object.id %}"
-                hx-trigger="intersect once"
-            >
-                {% comment %} Loaded using the htmx via alpine's custom event "open-tab-3"{% endcomment %}
-                <p>{% trans "Loading…" %}</p>
             </div>
         </div>
     </div>
