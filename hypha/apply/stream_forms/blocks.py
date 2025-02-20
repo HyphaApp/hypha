@@ -9,6 +9,7 @@ from django.forms.widgets import ClearableFileInput
 from django.utils.dateparse import parse_datetime
 from django.utils.encoding import force_str
 from django.utils.html import conditional_escape
+from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_nh3.templatetags.nh3_tags import nh3_value
@@ -418,10 +419,11 @@ class FileFieldBlock(UploadableMediaBlock):
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        kwargs["help_text"] = _(
-            "{help_text} Accepted file types are {file_types}"
-        ).format(
-            help_text=kwargs["help_text"], file_types=settings.FILE_ACCEPT_ATTR_VALUE
+        kwargs["help_text"] = mark_safe(
+            _("{help_text} Accepted file types are {file_types}").format(
+                help_text=kwargs["help_text"],
+                file_types=settings.FILE_ACCEPT_ATTR_VALUE,
+            )
         )
         return kwargs
 
@@ -436,10 +438,11 @@ class MultiFileFieldBlock(UploadableMediaBlock):
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        kwargs["help_text"] = _(
-            "{help_text} Accepted file types are {file_types}"
-        ).format(
-            help_text=kwargs["help_text"], file_types=settings.FILE_ACCEPT_ATTR_VALUE
+        kwargs["help_text"] = mark_safe(
+            _("{help_text} Accepted file types are {file_types}").format(
+                help_text=kwargs["help_text"],
+                file_types=settings.FILE_ACCEPT_ATTR_VALUE,
+            )
         )
         return kwargs
 
