@@ -56,8 +56,8 @@
                 {% user_can_update_paf_status object user request=request as can_update_paf_status %}
                 {% if object.can_make_approval and can_update_paf_status %}
                     <a class="button button--project-action ms-2"
-                       href="{% url 'apply:projects:update_pafstatus' object.id %}"
-                       hx-get="{% url 'apply:projects:update_pafstatus' object.id %}"
+                       href="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
+                       hx-get="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
                        hx-target="#htmx-modal"
                     >
                         {% trans "Update Status" %}
