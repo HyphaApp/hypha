@@ -141,7 +141,7 @@
             {% if supporting_documents_configured %}
                 <div class=""
                      hx-trigger="load, supportingDocumentUpload from:body, supportingDocumentRemove from:body"
-                     hx-get="{% url "apply:projects:supporting_documents" object.id %}"
+                     hx-get="{% url "apply:projects:supporting_documents" object.submission.id %}"
                      hx-target="this">
                     {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
                     <p class="docs-block__title">{% trans "Supporting documents" %}</p>

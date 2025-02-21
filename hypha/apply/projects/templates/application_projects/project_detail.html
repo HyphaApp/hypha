@@ -12,7 +12,7 @@
     <div class="admin-bar" xmlns="http://www.w3.org/1999/html">
         <div class="admin-bar__inner">
             <h1 class="mb-0 font-medium"
-                hx-get="{% url "apply:projects:project_title" object.id %}"
+                hx-get="{% url "apply:projects:project_title" object.submission.id %}"
                 hx-trigger="load, titleUpdated from:body"
             >
                 <span class="inline-block bg-gray-600 rounded-md animate-pulse"></span>
