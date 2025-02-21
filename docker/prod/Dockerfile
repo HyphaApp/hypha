@@ -1,7 +1,7 @@
 #
 # Builder stage.
 #
-FROM python:3.12.7-bookworm AS builder
+FROM python:3.12.9-bookworm AS builder
 
 # Add venv/bin to PATH.
 ENV PATH="/opt/app/.venv/bin:/usr/local/bin:$PATH"
@@ -45,7 +45,7 @@ RUN npm run build && python manage.py collectstatic --noinput --verbosity=0
 #
 # Production stage.
 #
-FROM python:3.12.7-slim-bookworm
+FROM python:3.12.9-slim-bookworm
 
 # Add venv/bin to PATH.
 ENV PATH="/opt/app/.venv/bin:/usr/local/bin:$PATH"
