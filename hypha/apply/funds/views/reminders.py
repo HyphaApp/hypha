@@ -63,7 +63,7 @@ class ReminderCreateView(View):
         reminder_form = CreateReminderForm(instance=self.submission)
         return render(
             self.request,
-            "funds/includes/create_reminder_form.html",
+            "funds/modals/create_reminder_form.html",
             context={
                 "form": reminder_form,
                 "value": _("Create Reminder"),
@@ -90,7 +90,7 @@ class ReminderCreateView(View):
             )
         return render(
             self.request,
-            "funds/includes/create_reminder_form.html",
+            "funds/modals/create_reminder_form.html",
             context={"form": form, "value": _("Create"), "object": self.submission},
             status=400,
         )
