@@ -133,8 +133,8 @@
                         {% endif %}
                         {% if can_update_paf_status %}
                             <a class="button button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}"
-                               href="{% url 'apply:projects:update_pafstatus' object.id %}"
-                               hx-get="{% url 'apply:projects:update_pafstatus' object.id %}"
+                               href="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
+                               hx-get="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
                                hx-target="#htmx-modal"
                             >
                                 {% trans "Update Status" %}

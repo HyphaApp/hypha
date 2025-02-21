@@ -974,7 +974,7 @@ class ChangePAFStatusView(View):
     template_name = "application_projects/modals/pafstatus_update.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.object = get_object_or_404(Project, pk=self.kwargs["pk"])
+        self.object = get_object_or_404(Project, submission__pk=self.kwargs["pk"])
         permission, _ = has_permission(
             "paf_status_update",
             self.request.user,

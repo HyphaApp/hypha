@@ -36,7 +36,7 @@
 
                 {% if not HIDE_STAFF_IDENTITY or request.user.is_apply_staff %}
                     <span
-                        hx-get="{% url "apply:projects:project_lead" object.id %}"
+                        hx-get="{% url "apply:projects:project_lead" object.submission.id %}"
                         hx-trigger="load, leadUpdated from:body"
                     >
                         <span class="inline-block w-24 bg-gray-600 rounded-md animate-pulse"></span>
