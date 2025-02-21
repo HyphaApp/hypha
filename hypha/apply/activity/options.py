@@ -79,3 +79,4 @@ class MESSAGES(TextChoices):
     ARCHIVE_SUBMISSION = "ARCHIVE_SUBMISSION", _("archived submission")
     UNARCHIVE_SUBMISSION = "UNARCHIVE_SUBMISSION", _("unarchived submission")
     REMOVE_TASK = "REMOVE_TASK", _("remove task")
+    UPDATED_AUTHOR = "UPDATED_AUTHOR", _("updated author")
