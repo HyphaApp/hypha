@@ -338,7 +338,7 @@ class ReportListTable(tables.Table):
     project = tables.LinkColumn(
         "funds:projects:reports:detail",
         text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
-        args=[tables.utils.A("submission__pk")],
+        args=[tables.utils.A("pk")],
     )
     report_period = tables.Column(accessor="pk")
     submitted = tables.DateColumn()
