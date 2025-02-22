@@ -183,7 +183,6 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
                 submissions[:limit], prefix="my-review-"
             ),
             "display_more": submissions.count() > limit,
-            "url": reverse("funds:submissions:list"),
         }
 
     def rounds(self):
@@ -324,7 +323,6 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
             "count": count,
             "display_more": count > limit,
             "table": ReviewerSubmissionsTable(submissions[:limit], prefix="my-review-"),
-            "url": reverse("funds:submissions:list"),
         }
 
     def my_reviewed(self, submissions):
@@ -342,7 +340,6 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
             ),
             "table": ReviewerSubmissionsTable(submissions[:limit], prefix="my-review-"),
             "display_more": submissions.count() > limit,
-            "url": reverse("funds:submissions:list"),
         }
 
 
