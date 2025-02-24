@@ -28,16 +28,16 @@
                 {% if can_update_paf_approvers %}
                     {% if user == project.lead %}
                         <a class="button button--project-action button--project-action--white ms-2"
-                           href="{% url 'apply:projects:update_pafapprovers' object.id %}"
-                           hx-get="{% url 'apply:projects:update_pafapprovers' object.id %}"
+                           href="{% url 'apply:projects:update_pafapprovers' object.submission.id %}"
+                           hx-get="{% url 'apply:projects:update_pafapprovers' object.submission.id %}"
                            hx-target="#htmx-modal"
                         >
                             {% trans "View/Update Approvers" %}
                         </a>
                     {% else %}
                         <a class="button button--project-action button--project-action--white ms-2"
-                           href="{% url 'apply:projects:assign_pafapprovers' object.id %}"
-                           hx-get="{% url 'apply:projects:assign_pafapprovers' object.id %}"
+                           href="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
+                           hx-get="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
                            hx-target="#htmx-modal"
                         >
                             {% trans "Change approver" %}
@@ -46,8 +46,8 @@
                 {% endif %}
                 {% if can_assign_paf_approvers %}
                     <a class="button button--project-action"
-                       href="{% url 'apply:projects:assign_pafapprovers' object.id %}"
-                       hx-get="{% url 'apply:projects:assign_pafapprovers' object.id %}"
+                       href="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
+                       hx-get="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
                        hx-target="#htmx-modal"
                     >
                         {% trans "Assign approver" %}
