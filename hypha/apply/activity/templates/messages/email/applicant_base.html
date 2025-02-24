@@ -6,7 +6,7 @@
 {# fmt:off #}
 {% block more_info %}{% trans "Link to your application" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 
-{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
+{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{% if source.submission %}{% url 'funds:submissions:comments' pk=source.submission.pk %}{% else %}{% url 'funds:submissions:comments' pk=source.pk %}{% endif %}
 
 {% trans "See our guide for more information" %}: {{ ORG_GUIDE_URL }}
 
