@@ -113,8 +113,8 @@
                         {% if can_update_paf_approvers %}
                             {% if user != project.lead %}
                                 <a class="button button--bottom-space button--white button--full-width"
-                                   href="{% url 'apply:projects:assign_pafapprovers' object.id %}"
-                                   hx-get="{% url 'apply:projects:assign_pafapprovers' object.id %}"
+                                   href="{% url 'apply:projects:assign_pafapprovers' pk=object.submission.id %}"
+                                   hx-get="{% url 'apply:projects:assign_pafapprovers' pk=object.submission.id %}"
                                    hx-target="#htmx-modal"
                                 >
                                     {% trans "Change approver" %}
@@ -124,8 +124,8 @@
                         {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
                         {% if can_assign_paf_approvers %}
                             <a class="button button--bottom-space button--primary button--full-width"
-                               href="{% url 'apply:projects:assign_pafapprovers' object.id %}"
-                               hx-get="{% url 'apply:projects:assign_pafapprovers' object.id %}"
+                               href="{% url 'apply:projects:assign_pafapprovers' pk=object.submission.id %}"
+                               hx-get="{% url 'apply:projects:assign_pafapprovers' pk=object.submission.id %}"
                                hx-target="#htmx-modal"
                             >
                                 {% trans "Assign approver" %}
