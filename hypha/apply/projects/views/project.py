@@ -1031,9 +1031,8 @@ class ChangePAFStatusView(View):
             comment = form.cleaned_data.get("comment", "")
 
             paf_status_update_message = _(
-                "{role} has updated project form status to {paf_status}."
+                "updated project form status to {paf_status}."
             ).format(
-                role=paf_approval.paf_reviewer_role.label,
                 paf_status=get_paf_status_display(paf_status).lower(),
             )
             Activity.objects.create(
