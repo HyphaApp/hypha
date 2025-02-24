@@ -17,10 +17,7 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.activity.views import (
-    ActivityContextMixin,
-    CommentFormView,
-)
+from hypha.apply.activity.views import ActivityContextMixin
 from hypha.apply.users.decorators import (
     staff_or_finance_required,
     staff_required,
@@ -28,7 +25,6 @@ from hypha.apply.users.decorators import (
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
 from hypha.apply.utils.views import (
-    DelegateableView,
     ViewDispatcher,
 )
 
@@ -51,12 +47,9 @@ if settings.APPLICATION_TRANSLATIONS_ENABLED:
     )
 
 
-class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
+class AdminSubmissionDetailView(ActivityContextMixin, DetailView):
     template_name_suffix = "_admin_detail"
     model = ApplicationSubmission
-    form_views = [
-        CommentFormView,
-    ]
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
@@ -115,10 +108,9 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
         )
 
 
-class ReviewerSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
+class ReviewerSubmissionDetailView(ActivityContextMixin, DetailView):
     template_name_suffix = "_reviewer_detail"
     model = ApplicationSubmission
-    form_views = [CommentFormView]
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
@@ -145,9 +137,8 @@ class ReviewerSubmissionDetailView(ActivityContextMixin, DelegateableView, Detai
         return super().dispatch(request, *args, **kwargs)
 
 
-class PartnerSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
+class PartnerSubmissionDetailView(ActivityContextMixin, DetailView):
     model = ApplicationSubmission
-    form_views = [CommentFormView]
 
     def get_object(self):
         return super().get_object().from_draft()
@@ -170,10 +161,9 @@ class PartnerSubmissionDetailView(ActivityContextMixin, DelegateableView, Detail
         return super().dispatch(request, *args, **kwargs)
 
 
-class CommunitySubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
+class CommunitySubmissionDetailView(ActivityContextMixin, DetailView):
     template_name_suffix = "_community_detail"
     model = ApplicationSubmission
-    form_views = [CommentFormView]
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
@@ -192,9 +182,8 @@ class CommunitySubmissionDetailView(ActivityContextMixin, DelegateableView, Deta
         return super().dispatch(request, *args, **kwargs)
 
 
-class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
+class ApplicantSubmissionDetailView(ActivityContextMixin, DetailView):
     model = ApplicationSubmission
-    form_views = [CommentFormView]
 
     def get_object(self):
         return super().get_object().from_draft()

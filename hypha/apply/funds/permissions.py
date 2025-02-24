@@ -28,6 +28,22 @@ def can_edit_submission(user, submission):
 
 
 @register_object_checker()
+def view_comments(role, user, submission) -> bool:
+    from hypha.apply.projects.permissions import can_access_project
+
+    if role == StaffAdmin:
+        return True
+
+    if is_user_has_access_to_view_submission(user, submission):
+        return True
+
+    if submission.project and can_access_project(user, submission.project):
+        return True
+
+    return False
+
+
+@register_object_checker()
 def delete_submission(role, user, submission) -> bool:
     """
     Determines if a user has permission to delete a submission.
