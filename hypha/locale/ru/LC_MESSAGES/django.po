@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-20 14:16+0000\n"
+"POT-Creation-Date: 2025-02-24 09:03+0000\n"
 "PO-Revision-Date: 2024-04-23 14:50+0000\n"
 "Last-Translator: arctic_garden <siaurine.roze@gmail.com>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/hypha/hypha-core/"
@@ -1160,7 +1160,6 @@ msgstr "Просмотреть "
 #: hypha/apply/funds/workflows/definitions/single_stage_same.py:20
 #: hypha/apply/funds/workflows/definitions/single_stage_same.py:47
 #: hypha/apply/funds/workflows/definitions/single_stage_same.py:92
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:20
 #: hypha/apply/projects/templates/application_projects/report_form.html:57
 #: hypha/apply/projects/views/project.py:302
 #: hypha/apply/projects/views/project.py:338
@@ -1996,7 +1995,7 @@ msgstr "Ваши помеченные заявки"
 #: hypha/apply/dashboard/templates/dashboard/includes/submissions-waiting-for-review.html:16
 #: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:43
 #: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:106
-#: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:126
+#: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:125
 #: hypha/apply/funds/templates/funds/includes/round-block-listing.html:34
 msgid "Show all"
 msgstr "Показать все"
@@ -5757,84 +5756,66 @@ msgid "Disable Reporting"
 msgstr "Отключить отчетность"
 
 #: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:2
-msgid "Submit for Approval"
-msgstr "Отправить на утверждение"
-
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:6
-msgid ""
-"Are you sure you're ready to submit the project documents to be approved in"
-msgstr ""
-"Вы уверены, что готовы представить проектную документацию на утверждение в"
+#, fuzzy
+#| msgid "Submit for review"
+msgid "Submit documents for review"
+msgstr "Отправить на рассмотрение"
 
 #: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:7
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:19
-msgid "sequential order?"
-msgstr "последовательном порядке?"
-
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:7
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:19
-msgid "parallel order?"
-msgstr "параллельном порядке?"
-
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:9
-msgid "This project is missing the following documents"
+#, fuzzy
+#| msgid "This project is missing the following documents"
+msgid "Looks like the following documents are missing"
 msgstr "В этом проекте отсутствуют следующие документы"
 
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:16
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:15
 msgid "Submit anyway"
 msgstr "Отправить в любом случае"
 
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:18
-msgid "Are you ready to submit the project documents to be approved in"
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:20
+#, fuzzy
+#| msgid "Are you ready to submit the project documents to be approved in"
+msgid ""
+"This will submit the project documents for review by the configured "
+"approvers."
 msgstr "Готовы ли вы представить проектную документацию для утверждения в"
 
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:24
-msgid ""
-"By default all the members are notified when an approver is not selected. "
-"Optionally, you may select specific approvers to assign and notify them."
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:21
+msgid "Approvers will review sequentially in order."
 msgstr ""
-"По умолчанию все участники получают уведомление, если утверждающий не "
-"выбран. По желанию можно выбрать конкретных утверждающих и уведомить их."
 
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:26
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:21
+msgid "Approvers can review in parallel at any time."
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:25
+msgid ""
+"Note: All group members will be notified unless specific approvers are "
+"selected below."
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:30
+#, fuzzy
+#| msgid "Change approver"
+msgid "Select approvers "
+msgstr "Изменить утверждающего"
+
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:30
 #, fuzzy
 #| msgid "Options"
 msgid "Optional"
 msgstr "Опции"
 
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:30
-msgid "Please note that in "
-msgstr "Пожалуйста, обратите внимание, что в "
-
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:30
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:39
 #, fuzzy
-#| msgid "sequential order, approvers will approve PAF one after the other."
-msgid ""
-"sequential order, approvers will approve project form one after the other."
+#| msgid "Approval form not configured. Please add an approval form in the"
+msgid "No reviewer roles configured. Please add roles in "
 msgstr ""
-"последовательном порядке утверждающие лица будут утверждать проекты один за "
-"другим."
+"Форма утверждения не сконфигурирована. Пожалуйста, добавьте форму утверждения"
 
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:30
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:40
 #, fuzzy
-#| msgid "parallel order, approvers can approve PAF anytime."
-msgid "parallel order, approvers can approve project form anytime."
-msgstr ""
-"параллельном порядке утверждающие лица могут утвердить проекты в любое время."
-
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:34
-#: hypha/apply/projects/templates/application_projects/modals/update_pafapprovers.html:11
-#, fuzzy
-#| msgid "No PAF Reviewer Roles created yet, please create these in "
-msgid ""
-"No project form reviewer roles has been created yet, please create these in "
-msgstr ""
-"Роли ревьюеров формы утверждения проекта еще не созданы, пожалуйста, "
-"создайте их в "
-
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:35
-#: hypha/apply/projects/templates/application_projects/modals/update_pafapprovers.html:12
-msgid " project settings"
+#| msgid " project settings"
+msgid "project settings"
 msgstr " настройки проекта"
 
 #: hypha/apply/projects/templates/application_projects/modals/submit_contracting_documents.html:2
@@ -5872,6 +5853,19 @@ msgstr ""
 #: hypha/apply/projects/templates/application_projects/modals/update_pafapprovers.html:6
 msgid "All approvers will be notified via email."
 msgstr "Все утверждающие получат уведомление по электронной почте."
+
+#: hypha/apply/projects/templates/application_projects/modals/update_pafapprovers.html:11
+#, fuzzy
+#| msgid "No PAF Reviewer Roles created yet, please create these in "
+msgid ""
+"No project form reviewer roles has been created yet, please create these in "
+msgstr ""
+"Роли ревьюеров формы утверждения проекта еще не созданы, пожалуйста, "
+"создайте их в "
+
+#: hypha/apply/projects/templates/application_projects/modals/update_pafapprovers.html:12
+msgid " project settings"
+msgstr " настройки проекта"
 
 #: hypha/apply/projects/templates/application_projects/modals/upload_contract.html:3
 msgid "Upload Countersigned Contract"
@@ -5957,6 +5951,12 @@ msgstr "добавлен комментарий"
 #: hypha/apply/projects/templates/application_projects/partials/invoice_status.html:39
 msgid "Hide"
 msgstr "Скрыть"
+
+#: hypha/apply/projects/templates/application_projects/partials/project_title.html:13
+#, fuzzy
+#| msgid "Project file: {title}"
+msgid "edit title"
+msgstr "Файл проекта: {title}"
 
 #: hypha/apply/projects/templates/application_projects/pdf_invoice_approved_page.html:5
 #, fuzzy
@@ -8303,17 +8303,17 @@ msgstr "Вернуться в проект"
 msgid "Menu Item"
 msgstr ""
 
-#: hypha/settings/django.py:160 hypha/settings/local.py:95
+#: hypha/settings/django.py:161 hypha/settings/local.py:95
 msgid ""
 "This password has previously appeared in a data breach and should not be "
 "used. Please choose a different password."
 msgstr ""
 
-#: hypha/settings/django.py:163 hypha/settings/local.py:98
+#: hypha/settings/django.py:164 hypha/settings/local.py:98
 msgid "Your password must not have been detected in a major security breach."
 msgstr ""
 
-#: hypha/templates/base-apply.html:36
+#: hypha/templates/base-apply.html:40
 msgid "Menu"
 msgstr ""
 
@@ -8340,6 +8340,19 @@ msgstr ""
 
 #: hypha/templates/includes/hijack-bar.html:27
 msgid "Release"
+msgstr ""
+
+#: hypha/templates/includes/language-switcher.html:6
+#: hypha/templates/includes/language-switcher.html:11
+msgid "Language switcher"
+msgstr ""
+
+#: hypha/templates/includes/language-switcher.html:44
+msgid "Set language"
+msgstr ""
+
+#: hypha/templates/includes/language-switcher.html:48
+msgid "Can't switch language, only one language is active."
 msgstr ""
 
 #: hypha/templates/includes/menu-notifications.html:11
@@ -8407,6 +8420,46 @@ msgstr "Требуется пароль"
 #: hypha/templates/password_required.html:11
 msgid "Please enter the password to proceed."
 msgstr "Пожалуйста, введите пароль, чтобы продолжить."
+
+#~ msgid "Submit for Approval"
+#~ msgstr "Отправить на утверждение"
+
+#~ msgid ""
+#~ "Are you sure you're ready to submit the project documents to be approved "
+#~ "in"
+#~ msgstr ""
+#~ "Вы уверены, что готовы представить проектную документацию на утверждение в"
+
+#~ msgid "sequential order?"
+#~ msgstr "последовательном порядке?"
+
+#~ msgid "parallel order?"
+#~ msgstr "параллельном порядке?"
+
+#~ msgid ""
+#~ "By default all the members are notified when an approver is not selected. "
+#~ "Optionally, you may select specific approvers to assign and notify them."
+#~ msgstr ""
+#~ "По умолчанию все участники получают уведомление, если утверждающий не "
+#~ "выбран. По желанию можно выбрать конкретных утверждающих и уведомить их."
+
+#~ msgid "Please note that in "
+#~ msgstr "Пожалуйста, обратите внимание, что в "
+
+#, fuzzy
+#~| msgid "sequential order, approvers will approve PAF one after the other."
+#~ msgid ""
+#~ "sequential order, approvers will approve project form one after the other."
+#~ msgstr ""
+#~ "последовательном порядке утверждающие лица будут утверждать проекты один "
+#~ "за другим."
+
+#, fuzzy
+#~| msgid "parallel order, approvers can approve PAF anytime."
+#~ msgid "parallel order, approvers can approve project form anytime."
+#~ msgstr ""
+#~ "параллельном порядке утверждающие лица могут утвердить проекты в любое "
+#~ "время."
 
 #~ msgid "Edited"
 #~ msgstr "Отредактировано"
