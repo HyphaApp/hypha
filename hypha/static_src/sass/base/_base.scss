@@ -37,6 +37,15 @@ a {
 
 p {
     margin-block: 0.5rem;
+    text-wrap: pretty;
+}
+
+dd {
+    text-wrap: pretty;
+}
+
+li {
+    text-wrap: pretty;
 }
 
 details {
