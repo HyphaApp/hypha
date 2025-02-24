@@ -19,7 +19,7 @@
         {% if my_flagged.submissions %}
             <div id="submissions-flagged" class="wrapper wrapper--bottom-space">
                 <h3 class="mb-2 text-xl">
-                    <a href="{% url "apply:submissions:list" %}?query=flagged:@me">Your flagged submissions <span class="text-sm">({{ my_flagged.count }})</span></a>
+                    <a href="{% url "apply:submissions:list" %}?query=flagged:@me">Your flagged submissions <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded me-2">({{ my_flagged.count }})</span></a>
                 </h3>
 
                 {% include "submissions/partials/submissions-inline.html" with submissions=my_flagged.submissions row_layout="table" %}
@@ -40,7 +40,7 @@
 
                 {% if my_reviewed.display_more %}
                     <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
-                        <a href="{{ my_reviewed.url }}?query=reviewed-by:@me">{% trans "Show all" %}</a>
+                        <a href="{% url "apply:submissions:list" %}?query=reviewed-by:@me">{% trans "Show all" %}</a>
                     </div>
                 {% endif %}
             </div>
