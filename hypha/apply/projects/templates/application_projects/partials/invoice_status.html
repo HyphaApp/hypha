@@ -12,7 +12,7 @@
         {% if latest_activity_comment %}
             {% heroicon_outline "exclamation-circle" stroke_width=2 size=22 class="inline stroke-red-500" aria_hidden=true %}
             <a
-                href="{% url 'apply:projects:detail' pk=object.project.submission.id %}#communications--{{ latest_activity_comment.id }}"
+                href="{{ latest_activity_comment.get_absolute_url }}"
                 class="font-bold"
             >{% trans "View comment" %}</a>
         {% endif %}
@@ -25,7 +25,7 @@
             {% if activity_comment %}
                 {% heroicon_outline "exclamation-circle" stroke_width=2 size=22 class="inline stroke-red-500" aria_hidden=true %}
                 <a
-                    href="{% url 'apply:projects:detail' pk=object.project.submission.id %}#communications--{{ activity_comment.id }}"
+                    href="{{ activity_comment.get_absolute_url }}"
                     class="font-bold"
                 >{% trans "View comment" %}</a>
             {% endif %}
