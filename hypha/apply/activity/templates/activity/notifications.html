@@ -39,9 +39,10 @@
                         <div class="feed__content js-feed-content ms-4">
                             <div class="feed__meta js-feed-meta">
                                 <p class="feed__meta-item">
-                                    <a href="{{ activity.source.get_absolute_url }}#communications">
-                                        {{ activity.source.title|capfirst }}</a>
-                                    : {{ activity.user.get_full_name }} {% trans "made a comment" %}
+                                    {{ activity.user.get_full_name }} {% trans "commented on" %}
+                                    <a href="{{ activity.get_absolute_url }}" class="font-semibold">
+                                        #{{ activity.source.public_id|default:activity.source.id }}: {{ activity.source.title|capfirst|truncatechars:80 }}
+                                    </a>
                                     <relative-time class="text-sm text-fg-muted" datetime={{ activity.timestamp|date:"c" }}>
                                         {{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}
                                     </relative-time>

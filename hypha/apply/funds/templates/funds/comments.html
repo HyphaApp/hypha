@@ -1,0 +1,123 @@
+{% extends "base-apply.html" %}
+{% load i18n static heroicons %}
+
+{% block title %}Comments: {{ object.title_text_display }}{% endblock %}
+
+{% block content %}
+    <div class="admin-bar">
+        <div class="admin-bar__inner">
+
+            {% if object.project %}
+                {% include "application_projects/includes/project_header.html" with object=object.project %}
+            {% else %}
+                {% include "funds/includes/application_header.html" %}
+            {% endif %}
+
+            <div class="tabs">
+                <div class="tabs__container">
+                    <a
+                        class="tab__item"
+                        href="{% url 'funds:submissions:detail' pk=object.id %}">
+                        {% trans "Application" %}
+                    </a>
+
+                    <a class="tab__item tab__item--active"
+                       href="{% url 'funds:submissions:comments' pk=object.id %}"
+                       data-tab="tab-2"
+                    >
+                        {% trans "Conversations" %} ({{ comments_count }})
+                    </a>
+
+                    {% if object.project and PROJECTS_ENABLED %}
+                        <a class="tab__item"
+                           href="{% url 'apply:projects:detail' pk=object.id %}"
+                        >
+                            {% trans "Project" %}
+                        </a>
+                    {% endif %}
+
+                    {# is_staff is only used for Django Admin. #}
+                    {% if request.user.is_staff %}
+                        <a
+                            class="tab__item tab__item--right"
+                            href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}"
+                        >
+                            {% trans "View message log" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="wrapper wrapper--large wrapper--tabs">
+        <div class="feed">
+            {% if not object.is_archive or object.project %}
+                <h4 class="m-0 sr-only">{% trans "Add communication" %}</h4>
+                <div class="pb-4 wrapper wrapper--comments">
+                    <form
+                        class="form form__comments"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        action="./"
+                    >
+                        {% csrf_token %}
+
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+
+                        <div class="flex flex-wrap gap-4 lg:flex-nowrap lg:gap-8">
+                            <div class="-mt-4 w-full lg:flex-1 max-w-[53rem]">
+                                {% include "forms/includes/field.html" with field=form.message label_classes="sr-only" %}
+
+                                <div class="text-right">
+                                    <button
+                                        class="w-full lg:w-auto button button--primary"
+                                        type="submit"
+                                    >
+                                        {% trans "Add Comment" %}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="w-full lg:max-w-[30%]">
+                                {% include "forms/includes/field.html" with field=form.visibility %}
+                                {% include "forms/includes/field.html" with field=form.assign_to %}
+                                {% include "forms/includes/field.html" with field=form.attachments %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            {% endif %}
+
+            <div
+                class="comments"
+                id="comment-feed"
+                hx-get="{% url 'activity:partial-comments' object.id %}"
+                hx-trigger="load, intersect once"
+            >
+                <p>{% trans "Loading…" %}</p>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        // Scroll to hash after loading content
+        document.addEventListener('htmx:afterSettle', scrollToHash);
+        function scrollToHash() {
+            const hash = window.location.hash;
+            if (hash) {
+                const element = document.querySelector(hash);
+                if (element) {
+                    window.location.hash = '';
+                    window.location.hash = hash;
+                }
+            }
+        }
+    </script>
+{% endblock %}
