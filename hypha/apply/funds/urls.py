@@ -16,6 +16,7 @@ from .views.all import (
     bulk_update_submissions_status,
     submissions_all,
 )
+from .views.comments import comments_view
 from .views.partials import (
     get_applications_status_counts,
     partial_meta_terms_card,
@@ -172,6 +173,7 @@ submission_urls = (
                         name="partial-get-lead",
                     ),
                     path("lead/update/", UpdateLeadView.as_view(), name="lead_update"),
+                    path("comments/", comments_view, name="comments"),
                     path("archive/", htmx_archive_unarchive_submission, name="archive"),
                     path(
                         "partial/screening-card/",

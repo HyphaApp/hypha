@@ -16,26 +16,26 @@
                 {% include "funds/includes/application_header.html" %}
             {% endif %}
 
-
-
-            <div class="tabs js-tabs">
+            <div class="tabs">
                 <div class="tabs__container">
-                    <a class="tab__item" href="#submission-details" data-tab="tab-1">
+                    <a
+                        class="tab__item tab__item--active"
+                        href="{% url 'funds:submissions:detail' pk=object.id %}"
+                    >
                         {% trans "Application" %}
                     </a>
 
-                    <a class="tab__item"
-                       href="#communications"
-                       data-tab="tab-2"
-                       x-data
-                       @click="$dispatch('fetchComments')"
+                    <a
+                        class="tab__item"
+                        href="{% url 'funds:submissions:comments' pk=object.id %}"
                     >
                         {% trans "Conversations" %} ({{ comments_count }})
                     </a>
 
-                    {% if object.project and PROJECTS_ENABLED %}
-                        <a class="tab__item js-tabs-off"
-                           href="{% url 'apply:projects:detail' pk=object.id %}"
+                    {% if PROJECTS_ENABLED and object.project %}
+                        <a
+                            class="tab__item"
+                            href="{% url 'apply:projects:detail' pk=object.id %}"
                         >
                             {% trans "Project" %}
                         </a>
@@ -51,198 +51,156 @@
         </div>
     </div>
 
-    <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
-    {# Tab 1 #}
-        <div class="tabs__content" id="tab-1">
-            <div class="wrapper wrapper--sidebar">
-                {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
-                    <div class="wrapper--sidebar--inner">
-                        <h4>{% trans "Congratulations!" %}</h4>
-                        <h5>{% blocktrans with stage=object.previous.stage %}Your {{ stage }} application has been accepted.{% endblocktrans %}</h5>
-                        <a class="button button--primary" href="{% url 'funds:submissions:edit' object.id %}">{% blocktrans with stage=object.stage %}Start your {{ stage }} application.{% endblocktrans %}</a>
-                    </div>
-                {% else %}
-                    <article class="wrapper--sidebar--inner">
-                        {% if object.is_archive %}
-                            <div class="flex gap-2 justify-center items-center py-2 mb-4 font-semibold text-center text-white bg-red-600 rounded-sm">
-                                {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
-                                {% trans "This application has been archived. This is visible to the roles " %} {{ archive_access_groups|join_with_commas }}.
-                            </div>
-                        {% endif %}
-
-                        {% if object.round.specific.is_sealed %}
-                            <div class="flex gap-2 justify-center items-center py-2 mb-4 font-semibold text-center text-white bg-red-600 rounded-sm">
-                                {% heroicon_outline "clock" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
-                                {% trans "This application is sealed." %}
-                            </div>
-                        {% endif %}
-
-                        <header class="heading heading--submission-meta heading-text zeta">
-                            <span>
-                                {% if object.is_draft %}
-                                    {% trans "Drafted " %}
-                                {% else %}
-                                    {% trans "Submitted " %}
-                                {% endif %}
-                                <strong><relative-time datetime={{ object.submit_time|date:"c" }}>{{ object.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong>
-                                {% trans "by" %}
-                                <strong>
-                                    {% display_submission_author %}
-                                </strong>
-                            </span>
-                            <span>{% trans "Updated" %} <strong>
-                                <relative-time datetime={{ object.live_revision.timestamp|date:"c" }}>{{ object.live_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong>
-                                {% trans "by" %}
-                                <strong>
-                                    {% display_submission_author True %}
-                                </strong>
-                            </span>
-                            <div class="flex flex-1 gap-4 justify-end items-center no-print">
-                                {% can "delete_submission" object as can_delete_submission %}
-                                {% if can_delete_submission %}
-                                    <a
-                                        class="flex items-center font-bold text-red-600 transition-opacity hover:opacity-70"
-                                        href="{% url 'funds:submissions:delete' object.id %}"
-                                        hx-get="{% url 'funds:submissions:delete' object.id %}"
-                                        hx-target="#htmx-modal"
-                                        aria-label="{% trans "Delete Submission" %}"
-                                    >
-                                        {% heroicon_micro "trash" class="inline me-1 fill-red-600" aria_hidden=true %}
-                                        {% trans "Delete" %}
-                                    </a>
-                                {% endif %}
-                                {% if request.user|has_edit_perm:object %}
-                                    <a
-                                        class="flex items-center font-bold transition-opacity hover:opacity-70"
-                                        href="{% url 'funds:submissions:edit' object.id %}"
-                                    >
-                                        {% heroicon_micro "pencil-square" class="inline me-1" aria_hidden=true %}
-                                        {% trans "Edit" %}
-                                    </a>
-                                {% endif %}
-                            </div>
-                        </header>
-                        {% if request.user|can_translate_submission %}
-                            <div class="wrapper" hx-get="{% url 'funds:submissions:partial-translate-answers' object.id %}" hx-trigger="translateSubmission from:body" hx-indicator="#translate-card-loading" hx-vals='js:{fl: event.detail.from_lang, tl: event.detail.to_lang}'>
-                                {% include "funds/includes/rendered_answers.html" %}
-                            </div>
-                        {% else %}
-                            <div class="wrapper">
-                                {% include "funds/includes/rendered_answers.html" %}
-                            </div>
-                        {% endif %}
-
-                    </article>
-                {% endif %}
-
-                <aside class="sidebar">
-                    {% block sidebar_top %}
-                        {% include "funds/includes/generic_primary_actions.html" %}
-                    {% endblock %}
-
-                    {% block screening_status %}
-                    {% endblock %}
-
-                    {% block determination %}
-                        {% if object.determinations.submitted.count %}
-                            {% include 'determinations/includes/applicant_determination_block.html' with submission=object %}
-                        {% endif %}
-                    {% endblock %}
-
-                    {% block reviews %}
-                    {% endblock %}
-
-                    {% block flags %}
-                    {% endblock %}
-
-                    {% block meta_terms %}
-                    {% endblock %}
-
-                    {% block reminders %}
-                    {% endblock %}
-
-                    {% block related %}
-                        {% if other_submissions or object.previous or object.next %}
-                            <div class="sidebar__inner">
-                                <h5>{% trans "Related submissions" %}</h5>
-
-                                {% if object.previous %}
-                                    <p class="mb-4"><a class="font-bold underline" href="{% url 'funds:submissions:detail' object.previous.id %}">{% trans "View linked" %} {{ object.previous.stage }}</a></p>
-                                {% endif %}
-
-                                {% if object.next %}
-                                    <p class="mb-4"><a class="font-bold underline" href="{% url 'funds:submissions:detail' object.next.id %}">{% trans "View linked" %} {{ object.next.stage }}</a></p>
-                                {% endif %}
-
-                                <section class="flex flex-col gap-2" data-js-collapse>
-                                    {% for submission in other_submissions %}
-                                        {% if forloop.first %}
-                                            <h6 class="pb-2 mb-0 font-semibold uppercase border-b text-fg-muted">
-                                                {% trans "Other Submissions" %}
-                                            </h6>
-                                        {% endif %}
-                                        <div>
-                                            <a class="font-bold hover:underline line-clamp-2" href="{% url 'funds:submissions:detail' submission.id %}">
-                                                {{ submission.title }}
-                                            </a>
-                                            <div class="text-sm text-fg-muted">
-                                                <span>#{{ submission.public_id|default:submission.id }}</span>
-                                                <relative-time datetime='{{ submission.submit_time|date:"c" }}'>{{ submission.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
-                                                in {{ submission.round|default_if_none:submission.page }}
-                                                &middot;
-                                                <span>{{ submission.phase }}</span>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </section>
-                            </div>
-                        {% endif %}
-                    {% endblock %}
-                </aside>
-            </div>
-        </div>
-
-        {# Tab 2 #}
-        <div class="tabs__content" id="tab-2">
-            <div class="feed">
-                {% if not object.is_archive or object.project %}
-                    <h4 class="m-0 sr-only">{% trans "Add communication" %}</h4>
-                    {% include "activity/include/comment_form.html" %}
-                {% endif %}
-
-                <div
-                    class="comments"
-                    id="comment-feed"
-                    hx-get="{% url 'activity:partial-comments' object.id %}"
-                    hx-trigger="fetchComments from:body, intersect once"
-                >
-                    <p>{% trans "Loading…" %}</p>
+    <div class="wrapper wrapper--large wrapper--tabs">
+        <div class="wrapper wrapper--sidebar">
+            {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
+                <div class="wrapper--sidebar--inner">
+                    <h4>{% trans "Congratulations!" %}</h4>
+                    <h5>{% blocktrans with stage=object.previous.stage %}Your {{ stage }} application has been accepted.{% endblocktrans %}</h5>
+                    <a class="button button--primary" href="{% url 'funds:submissions:edit' object.id %}">{% blocktrans with stage=object.stage %}Start your {{ stage }} application.{% endblocktrans %}</a>
                 </div>
-            </div>
+            {% else %}
+                <article class="wrapper--sidebar--inner">
+                    {% if object.is_archive %}
+                        <div class="flex gap-2 justify-center items-center py-2 mb-4 font-semibold text-center text-white bg-red-600 rounded-sm">
+                            {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
+                            {% trans "This application has been archived. This is visible to the roles " %} {{ archive_access_groups|join_with_commas }}.
+                        </div>
+                    {% endif %}
+
+                    {% if object.round.specific.is_sealed %}
+                        <div class="flex gap-2 justify-center items-center py-2 mb-4 font-semibold text-center text-white bg-red-600 rounded-sm">
+                            {% heroicon_outline "clock" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
+                            {% trans "This application is sealed." %}
+                        </div>
+                    {% endif %}
+
+                    <header class="heading heading--submission-meta heading-text zeta">
+                        <span>
+                            {% if object.is_draft %}
+                                {% trans "Drafted " %}
+                            {% else %}
+                                {% trans "Submitted " %}
+                            {% endif %}
+                            <strong><relative-time datetime={{ object.submit_time|date:"c" }}>{{ object.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong>
+                            {% trans "by" %}
+                            <strong>
+                                {% display_submission_author %}
+                            </strong>
+                        </span>
+                        <span>{% trans "Updated" %} <strong>
+                            <relative-time datetime={{ object.live_revision.timestamp|date:"c" }}>{{ object.live_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong>
+                            {% trans "by" %}
+                            <strong>
+                                {% display_submission_author True %}
+                            </strong>
+                        </span>
+                        <div class="flex flex-1 gap-4 justify-end items-center no-print">
+                            {% can "delete_submission" object as can_delete_submission %}
+                            {% if can_delete_submission %}
+                                <a
+                                    class="flex items-center font-bold text-red-600 transition-opacity hover:opacity-70"
+                                    href="{% url 'funds:submissions:delete' object.id %}"
+                                    hx-get="{% url 'funds:submissions:delete' object.id %}"
+                                    hx-target="#htmx-modal"
+                                    aria-label="{% trans "Delete Submission" %}"
+                                >
+                                    {% heroicon_micro "trash" class="inline me-1 fill-red-600" aria_hidden=true %}
+                                    {% trans "Delete" %}
+                                </a>
+                            {% endif %}
+                            {% if request.user|has_edit_perm:object %}
+                                <a
+                                    class="flex items-center font-bold transition-opacity hover:opacity-70"
+                                    href="{% url 'funds:submissions:edit' object.id %}"
+                                >
+                                    {% heroicon_micro "pencil-square" class="inline me-1" aria_hidden=true %}
+                                    {% trans "Edit" %}
+                                </a>
+                            {% endif %}
+                        </div>
+                    </header>
+                    {% if request.user|can_translate_submission %}
+                        <div class="wrapper" hx-get="{% url 'funds:submissions:partial-translate-answers' object.id %}" hx-trigger="translateSubmission from:body" hx-indicator="#translate-card-loading" hx-vals='js:{fl: event.detail.from_lang, tl: event.detail.to_lang}'>
+                            {% include "funds/includes/rendered_answers.html" %}
+                        </div>
+                    {% else %}
+                        <div class="wrapper">
+                            {% include "funds/includes/rendered_answers.html" %}
+                        </div>
+                    {% endif %}
+
+                </article>
+            {% endif %}
+
+            <aside class="sidebar">
+                {% block sidebar_top %}
+                    {% include "funds/includes/generic_primary_actions.html" %}
+                {% endblock %}
+
+                {% block screening_status %}
+                {% endblock %}
+
+                {% block determination %}
+                    {% if object.determinations.submitted.count %}
+                        {% include 'determinations/includes/applicant_determination_block.html' with submission=object %}
+                    {% endif %}
+                {% endblock %}
+
+                {% block reviews %}
+                {% endblock %}
+
+                {% block flags %}
+                {% endblock %}
+
+                {% block meta_terms %}
+                {% endblock %}
+
+                {% block reminders %}
+                {% endblock %}
+
+                {% block related %}
+                    {% if other_submissions or object.previous or object.next %}
+                        <div class="sidebar__inner">
+                            <h5>{% trans "Related submissions" %}</h5>
+
+                            {% if object.previous %}
+                                <p class="mb-4"><a class="font-bold underline" href="{% url 'funds:submissions:detail' object.previous.id %}">{% trans "View linked" %} {{ object.previous.stage }}</a></p>
+                            {% endif %}
+
+                            {% if object.next %}
+                                <p class="mb-4"><a class="font-bold underline" href="{% url 'funds:submissions:detail' object.next.id %}">{% trans "View linked" %} {{ object.next.stage }}</a></p>
+                            {% endif %}
+
+                            <section class="flex flex-col gap-2" data-js-collapse>
+                                {% for submission in other_submissions %}
+                                    {% if forloop.first %}
+                                        <h6 class="pb-2 mb-0 font-semibold uppercase border-b text-fg-muted">
+                                            {% trans "Other Submissions" %}
+                                        </h6>
+                                    {% endif %}
+                                    <div>
+                                        <a class="font-bold hover:underline line-clamp-2" href="{% url 'funds:submissions:detail' submission.id %}">
+                                            {{ submission.title }}
+                                        </a>
+                                        <div class="text-sm text-fg-muted">
+                                            <span>#{{ submission.public_id|default:submission.id }}</span>
+                                            <relative-time datetime='{{ submission.submit_time|date:"c" }}'>{{ submission.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
+                                            in {{ submission.round|default_if_none:submission.page }}
+                                            &middot;
+                                            <span>{{ submission.phase }}</span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </section>
+                        </div>
+                    {% endif %}
+                {% endblock %}
+            </aside>
         </div>
     </div>
 {% endblock %}
 
-{% block extra_css %}
-    {{ comment_form.media.css }}
-{% endblock %}
-
 {% block extra_js %}
-    {{ comment_form.media.js }}
-    <script src="{% static 'js/tabs.js' %}"></script>
     <script src="{% static 'js/submission-text-cleanup.js' %}"></script>
-    <script>
-        // Scroll to hash after loading content
-        document.addEventListener('htmx:afterSettle', scrollToHash);
-        function scrollToHash() {
-            const hash = window.location.hash;
-            if (hash) {
-                const element = document.querySelector(hash);
-                if (element) {
-                    window.location.hash = '';
-                    window.location.hash = hash;
-                }
-            }
-        }
-    </script>
 {% endblock %}

@@ -74,7 +74,10 @@
                                 </div>
                                 <div class="docs-block__row-inner">
                                     {% heroicon_mini "information-circle" class="inline align-middle fill-light-blue me-1" aria_hidden=true %}
-                                    <a class="docs-block__icon-link" href="#communications" target="_blank">
+                                    <a
+                                        class="docs-block__icon-link"
+                                        href="{% url 'funds:submissions:comments' object.submission.id %}"
+                                    >
                                         <span>{% trans "Corrections/amendments?" %}</span>
                                     </a>
                                 </div>

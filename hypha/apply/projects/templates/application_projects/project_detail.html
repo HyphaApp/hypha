@@ -13,23 +13,26 @@
 
             {% include "application_projects/includes/project_header.html" %}
 
-            <div class="tabs js-tabs">
+            <div class="tabs">
                 <div class="tabs__container">
                     <a
-                        class="tab__item js-tabs-off"
+                        class="tab__item"
                         href="{{ project.submission.get_absolute_url }}"
                     >
                         {% trans "Application" %}
                     </a>
 
-                    <a class="tab__item"
-                       href="#communications"
-                       data-tab="tab-2"
+                    <a
+                        class="tab__item"
+                        href="{% url 'funds:submissions:comments' pk=object.submission.id %}"
                     >
                         {% trans "Conversations" %} ({{ comments_count }})
                     </a>
 
-                    <a class="tab__item" href="#details" data-tab="tab-1">
+                    <a
+                        class="tab__item tab__item--active"
+                        href="{% url 'apply:projects:detail' pk=object.id %}"
+                    >
                         {% trans "Project" %}
                     </a>
                 </div>
@@ -44,168 +47,141 @@
         </div>
     {% endif %}
 
-    <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
-        <div class="tabs__content" id="tab-1">
-            {% block notifications %}
-            {% endblock %}
-            <div class="wrapper wrapper--sidebar">
-                <article class="wrapper--sidebar--inner">
-                    <h3>{% trans "Project Information" %}</h3>
-                    <div class="hypha-grid hypha-grid--proposal-info">
-                        <div>
-                            <h5>{% trans "Contractor" %}</h5>
-                            <p>{{ object.user |default:"-" }}</p>
-                        </div>
+    <div class="wrapper wrapper--large wrapper--tabs">
 
-                        <div>
-                            <h5>{% trans "E-mail" %}</h5>
-                            {% if object.user.email %}
-                                <a href="mailto:{{ object.user.email }}">{{ object.user.email }}</a>
-                            {% else %}
-                                -
-                            {% endif %}
-                        </div>
+        {% block notifications %}{% endblock %}
+
+        <div class="wrapper wrapper--sidebar">
+            <article class="wrapper--sidebar--inner">
+                <h3>{% trans "Project Information" %}</h3>
+                <div class="hypha-grid hypha-grid--proposal-info">
+                    <div>
+                        <h5>{% trans "Contractor" %}</h5>
+                        <p>{{ object.user |default:"-" }}</p>
                     </div>
 
-                    {% user_can_view_invoices object user as can_view_invoices %}
-                    {% if can_view_invoices %}
-                        <div class="wrapper wrapper--outer-space-large">
-                            {% include "application_projects/includes/invoices.html" %}
-                        </div>
-                    {% endif %}
-
-                    {% project_can_have_report object as can_have_reports %}
-                    {% if can_have_reports %}
-                        <div class="wrapper wrapper--outer-space-large">
-                            {% include "application_projects/includes/reports.html" %}
-                        </div>
-                    {% endif %}
-
-                    {% project_can_have_contracting_section object as can_have_contracting_section %}
-                    {% if can_have_contracting_section %}
-                        {% include "application_projects/includes/contracting_documents.html" %}
-                    {% endif %}
-
-                    {% include "application_projects/includes/project_documents.html" %}
-                </article>
-
-                {% block sidebar %}
-
-                    <aside class="sidebar">
-                        {% user_next_step_on_project object user request=request as next_step %}
-                        {% if next_step %}
-                            <div class="py-3 px-5 mb-8 bg-yellow-100 shadow sidebar__inner--actions">
-                                <h5 class="pb-2 border-b border-b-orange-200">
-                                    {% heroicon_solid "sparkles" class="inline align-text-top me-1 fill-orange-500" aria_hidden=true %}
-                                    {{ next_step.heading }}
-                                </h5>
-                                <p class="">{{ next_step.text }}</p>
-                                {% user_next_step_instructions object user as instructions %}
-                                {% if instructions %}
-                                    <div class="sidebar__inner--actions--instructions">
-                                        {% for instruction in instructions %}
-                                            <p>{{forloop.counter}}. {{ instruction }}</p>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-
-                            </div>
+                    <div>
+                        <h5>{% trans "E-mail" %}</h5>
+                        {% if object.user.email %}
+                            <a href="mailto:{{ object.user.email }}">{{ object.user.email }}</a>
+                        {% else %}
+                            -
                         {% endif %}
-                        {% if object.paf_approvals.exists and not user.is_applicant %}
-                            <div class="sidebar__inner sidebar__inner--actions">
+                    </div>
+                </div>
 
-                                <h5>{% trans "Project form approvals" %}</h5>
-                                {% for paf_approval in object.paf_approvals.all %}
+                {% user_can_view_invoices object user as can_view_invoices %}
+                {% if can_view_invoices %}
+                    <div class="wrapper wrapper--outer-space-large">
+                        {% include "application_projects/includes/invoices.html" %}
+                    </div>
+                {% endif %}
 
-                                    {% if not paf_approval.approved %}
-                                        {% project_rejected_by_user object paf_approval.user as rejected %}
-                                        {% if rejected %}
-                                            <div class="flex">
-                                                {% heroicon_outline "exclamation-circle" class="inline stroke-red-500" aria_hidden=true %}
-                                                <div>
-                                                    <p class="m-0 sidebar__paf-approvals--approved">{% trans "Request changes or more information by " %}{{ paf_approval.user }}</p>
-                                                    {% get_comment_for_requested_approval paf_approval as rejected_comment %}
-                                                    {% if rejected_comment %}
-                                                        <a href="#communications#{{ rejected_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        {% else %}
-                                            <p class="flex gap-2 items-center m-0 mb-2 text-red-600">
-                                                <span>{% heroicon_micro "clock" class="inline-block w-4 h-4 align-middle" aria_hidden=true %}</span>
-                                                <span>{% trans "Pending approval from " %}{% if paf_approval.user %}{{ paf_approval.user }}{% else %} {{ paf_approval.paf_reviewer_role.label }} ({% trans "nobody assigned yet" %}){% endif %}</span>
+                {% project_can_have_report object as can_have_reports %}
+                {% if can_have_reports %}
+                    <div class="wrapper wrapper--outer-space-large">
+                        {% include "application_projects/includes/reports.html" %}
+                    </div>
+                {% endif %}
+
+                {% project_can_have_contracting_section object as can_have_contracting_section %}
+                {% if can_have_contracting_section %}
+                    {% include "application_projects/includes/contracting_documents.html" %}
+                {% endif %}
+
+                {% include "application_projects/includes/project_documents.html" %}
+            </article>
+
+            {% block sidebar %}
+                <aside class="sidebar">
+                    {% user_next_step_on_project object user request=request as next_step %}
+                    {% if next_step %}
+                        <div class="py-3 px-5 mb-8 bg-yellow-100 shadow sidebar__inner--actions">
+                            <h5 class="pb-2 border-b border-b-orange-200">
+                                {% heroicon_solid "sparkles" class="inline align-text-top me-1 fill-orange-500" aria_hidden=true %}
+                                {{ next_step.heading }}
+                            </h5>
+                            <p class="">{{ next_step.text }}</p>
+                            {% user_next_step_instructions object user as instructions %}
+                            {% if instructions %}
+                                <div class="sidebar__inner--actions--instructions">
+                                    {% for instruction in instructions %}
+                                        <p>{{forloop.counter}}. {{ instruction }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                        </div>
+                    {% endif %}
+                    {% if object.paf_approvals.exists and not user.is_applicant %}
+                        <div class="sidebar__inner sidebar__inner--actions">
+
+                            <h5>{% trans "Project form approvals" %}</h5>
+
+                            {% for paf_approval in object.paf_approvals.all %}
+
+                                {% if not paf_approval.approved %}
+                                    {% project_rejected_by_user object paf_approval.user as rejected %}
+                                    {% if rejected %}
+                                        <div class="flex gap-2">
+                                            {% heroicon_outline "exclamation-circle" class="inline stroke-red-500" aria_hidden=true %}
+
+                                            <p class="m-0 sidebar__paf-approvals--approved">
+                                                {% trans "Request changes or more information by " %}{{ paf_approval.user }}.
+
+                                                {% get_comment_for_requested_approval paf_approval as rejected_comment %}
+                                                {% if rejected_comment %}
+                                                    <a href="{{ rejected_comment.get_absolute_url }}" class="font-bold">
+                                                        {% trans "View comment" %}
+                                                    </a>
+                                                {% endif %}
                                             </p>
-                                        {% endif %}
-                                    {% else %}
-                                        <p class="flex gap-2 items-center m-0 mb-2">
-                                            {% heroicon_micro "check-circle" class="inline align-middle fill-green-500" aria_hidden=true %}
 
-                                            <span>{{ paf_approval.user }} {% trans "approved" %}
-                                                {% if paf_approval.approved_at %}
-                                                    <relative-time datetime="{{ paf_approval.approved_at|date:"c" }}" class="text-fg-muted">
-                                                        {{ paf_approval.approved_at|date }}
-                                                    </relative-time>
+                                        </div>
+                                    {% else %}
+                                        <p class="flex gap-2 items-center m-0 mb-2 text-red-600">
+                                            <span>{% heroicon_micro "clock" class="inline-block w-4 h-4 align-middle" aria_hidden=true %}</span>
+                                            <span>
+                                                {% trans "Pending approval from " %}
+                                                {% if paf_approval.user %}
+                                                    {{ paf_approval.user }}
+                                                {% else %}
+                                                    {{ paf_approval.paf_reviewer_role.label }} ({% trans "nobody assigned yet" %})
                                                 {% endif %}
                                             </span>
                                         </p>
                                     {% endif %}
-                                {% endfor %}
+                                {% else %}
+                                    <p class="flex gap-2 items-center m-0 mb-2">
+                                        {% heroicon_micro "check-circle" class="inline align-middle fill-green-500" aria_hidden=true %}
+                                        <span>{{ paf_approval.user }} {% trans "approved" %}
+                                            {% if paf_approval.approved_at %}
+                                                <relative-time datetime="{{ paf_approval.approved_at|date:"c" }}" class="text-fg-muted">
+                                                    {{ paf_approval.approved_at|date }}
+                                                </relative-time>
+                                            {% endif %}
+                                        </span>
+                                    </p>
+                                {% endif %}
 
-                            </div>
-                        {% endif %}
+                            {% endfor %}
 
-                        {% if request.user.is_apply_staff %}
-                            {% block admin_assignments %}{% endblock %}
-                        {% endif %}
+                        </div>
+                    {% endif %}
 
-                    </aside>
-                {% endblock sidebar %}
-            </div>
+                    {% if request.user.is_apply_staff %}
+                        {% block admin_assignments %}{% endblock %}
+                    {% endif %}
+
+                </aside>
+            {% endblock sidebar %}
         </div>
 
-        {# Tab 2 #}
-        <div class="tabs__content" id="tab-2">
-            <div class="feed">
-                {% if not object.is_archive %}
-                    <h4 class="m-0 sr-only">{% trans "Add communication" %}</h4>
-                    {% include "activity/include/comment_form.html" with action=object.submission.get_absolute_url %}
-                {% endif %}
-
-                <div
-                    class="comments"
-                    id="comment-feed"
-                    hx-get="{% url 'activity:partial-comments' object.submission.id %}"
-                    hx-trigger="intersect once"
-                >
-                    <p>{% trans "Loading…" %}</p>
-                </div>
-            </div>
-        </div>
     </div>
 {% endblock content %}
 
 
-{% block extra_css %}
-    {{ comment_form.media.css }}
-{% endblock %}
-
 {% block extra_js %}
-    {{ comment_form.media.js }}
-    <script src="{% static 'js/tabs.js' %}"></script>
     <script src="{% static 'js/past-reports-pagination.js' %}"></script>
     <script src="{% static 'js/report-calculator.js' %}"></script>
-    <script>
-        // Scroll to hash after loading content
-        document.addEventListener('htmx:afterSettle', scrollToHash);
-        function scrollToHash() {
-            const hash = window.location.hash;
-            if (hash) {
-                const element = document.querySelector(hash);
-                if (element) {
-                    window.location.hash = '';
-                    window.location.hash = hash;
-                }
-            }
-        }
-    </script>
 {% endblock %}
