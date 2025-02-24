@@ -8,6 +8,5 @@
 <div class="p-4">
     <p>{% trans "Selected approver will be notified. On unselecting, every listed member here will be notified." %} </p>
 
-    {% url 'apply:projects:assign_pafapprovers' pk=object.id as url %}
-    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=url %}
+    {% include 'includes/dialog_form_base.html' with form=form value=value %}
 </div>

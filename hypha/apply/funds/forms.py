@@ -87,6 +87,7 @@ class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):
             lead=self.instance.lead
         )
         lead_field.queryset = lead_field.queryset.exclude(id=self.instance.lead.id)
+        lead_field.widget.attrs.update({"data-js-choices": ""})
 
 
 class UpdateReviewersForm(ApplicationSubmissionModelForm):
