@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-20 14:16+0000\n"
+"POT-Creation-Date: 2025-02-24 09:03+0000\n"
 "PO-Revision-Date: 2024-07-11 01:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -1244,7 +1244,6 @@ msgstr "查看"
 #: hypha/apply/funds/workflows/definitions/single_stage_same.py:20
 #: hypha/apply/funds/workflows/definitions/single_stage_same.py:47
 #: hypha/apply/funds/workflows/definitions/single_stage_same.py:92
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:20
 #: hypha/apply/projects/templates/application_projects/report_form.html:57
 #: hypha/apply/projects/views/project.py:302
 #: hypha/apply/projects/views/project.py:338
@@ -2077,7 +2076,7 @@ msgstr "您的已标记提交"
 #: hypha/apply/dashboard/templates/dashboard/includes/submissions-waiting-for-review.html:16
 #: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:43
 #: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:106
-#: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:126
+#: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:125
 #: hypha/apply/funds/templates/funds/includes/round-block-listing.html:34
 msgid "Show all"
 msgstr "显示所有"
@@ -5917,72 +5916,63 @@ msgid "Disable Reporting"
 msgstr "报告"
 
 #: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:2
-msgid "Submit for Approval"
-msgstr "提交以批准"
-
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:6
-msgid ""
-"Are you sure you're ready to submit the project documents to be approved in"
-msgstr ""
+#, fuzzy
+#| msgid "Submit for review"
+msgid "Submit documents for review"
+msgstr "提交供审核"
 
 #: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:7
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:19
-msgid "sequential order?"
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:7
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:19
-msgid "parallel order?"
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:9
-msgid "This project is missing the following documents"
+#, fuzzy
+#| msgid "This project is missing the following documents"
+msgid "Looks like the following documents are missing"
 msgstr "此项目缺失如下文档"
 
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:16
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:15
 msgid "Submit anyway"
 msgstr "依然提交"
 
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:18
-msgid "Are you ready to submit the project documents to be approved in"
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:24
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:20
 msgid ""
-"By default all the members are notified when an approver is not selected. "
-"Optionally, you may select specific approvers to assign and notify them."
+"This will submit the project documents for review by the configured "
+"approvers."
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:26
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:21
+msgid "Approvers will review sequentially in order."
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:21
+msgid "Approvers can review in parallel at any time."
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:25
+msgid ""
+"Note: All group members will be notified unless specific approvers are "
+"selected below."
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:30
+#, fuzzy
+#| msgid "Selected"
+msgid "Select approvers "
+msgstr "已选中"
+
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:30
 #, fuzzy
 #| msgid "Options"
 msgid "Optional"
 msgstr "设置"
 
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:30
-msgid "Please note that in "
-msgstr ""
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:39
+#, fuzzy
+#| msgid "Approval form not configured. Please add an approval form in the"
+msgid "No reviewer roles configured. Please add roles in "
+msgstr "未配置好批准表单，请在如下位置添加"
 
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:30
-msgid ""
-"sequential order, approvers will approve project form one after the other."
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:30
-msgid "parallel order, approvers can approve project form anytime."
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:34
-#: hypha/apply/projects/templates/application_projects/modals/update_pafapprovers.html:11
-msgid ""
-"No project form reviewer roles has been created yet, please create these in "
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:35
-#: hypha/apply/projects/templates/application_projects/modals/update_pafapprovers.html:12
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:40
 #, fuzzy
 #| msgid "Project Link"
-msgid " project settings"
+msgid "project settings"
 msgstr "项目链接"
 
 #: hypha/apply/projects/templates/application_projects/modals/submit_contracting_documents.html:2
@@ -6023,6 +6013,17 @@ msgstr ""
 #: hypha/apply/projects/templates/application_projects/modals/update_pafapprovers.html:6
 msgid "All approvers will be notified via email."
 msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/modals/update_pafapprovers.html:11
+msgid ""
+"No project form reviewer roles has been created yet, please create these in "
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/modals/update_pafapprovers.html:12
+#, fuzzy
+#| msgid "Project Link"
+msgid " project settings"
+msgstr "项目链接"
 
 #: hypha/apply/projects/templates/application_projects/modals/upload_contract.html:3
 #, fuzzy
@@ -6116,6 +6117,12 @@ msgstr "留下了评论"
 #: hypha/apply/projects/templates/application_projects/partials/invoice_status.html:39
 msgid "Hide"
 msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/partials/project_title.html:13
+#, fuzzy
+#| msgid "Project file: {title}"
+msgid "edit title"
+msgstr "项目档案：{title}"
 
 #: hypha/apply/projects/templates/application_projects/pdf_invoice_approved_page.html:5
 #, fuzzy
@@ -8362,17 +8369,17 @@ msgstr "返回账户"
 msgid "Menu Item"
 msgstr ""
 
-#: hypha/settings/django.py:160 hypha/settings/local.py:95
+#: hypha/settings/django.py:161 hypha/settings/local.py:95
 msgid ""
 "This password has previously appeared in a data breach and should not be "
 "used. Please choose a different password."
 msgstr ""
 
-#: hypha/settings/django.py:163 hypha/settings/local.py:98
+#: hypha/settings/django.py:164 hypha/settings/local.py:98
 msgid "Your password must not have been detected in a major security breach."
 msgstr ""
 
-#: hypha/templates/base-apply.html:36
+#: hypha/templates/base-apply.html:40
 msgid "Menu"
 msgstr ""
 
@@ -8399,6 +8406,19 @@ msgstr ""
 
 #: hypha/templates/includes/hijack-bar.html:27
 msgid "Release"
+msgstr ""
+
+#: hypha/templates/includes/language-switcher.html:6
+#: hypha/templates/includes/language-switcher.html:11
+msgid "Language switcher"
+msgstr ""
+
+#: hypha/templates/includes/language-switcher.html:44
+msgid "Set language"
+msgstr ""
+
+#: hypha/templates/includes/language-switcher.html:48
+msgid "Can't switch language, only one language is active."
 msgstr ""
 
 #: hypha/templates/includes/menu-notifications.html:11
@@ -8466,6 +8486,9 @@ msgstr "需要密码"
 #: hypha/templates/password_required.html:11
 msgid "Please enter the password to proceed."
 msgstr "请输入密码以继续。"
+
+#~ msgid "Submit for Approval"
+#~ msgstr "提交以批准"
 
 #~ msgid "Edited"
 #~ msgstr "编辑了"
