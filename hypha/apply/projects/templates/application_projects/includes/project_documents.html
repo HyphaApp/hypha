@@ -117,7 +117,10 @@
                             </div>
                             <div class="docs-block__document-inner__actions">
                                 {% if can_edit_pfs %}
-                                    <a class="{% if not object.user_has_updated_sow_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit_sow' pk=object.pk %}">
+                                    <a
+                                        class="{% if not object.user_has_updated_sow_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}"
+                                        href="{% url 'apply:projects:edit_sow' pk=object.submission.pk %}"
+                                    >
                                         {% if object.user_has_updated_sow_details %}
                                             {% heroicon_micro "pencil-square" class="inline w-4 h-4 me-1" aria_hidden=true %}
                                             {% trans "Edit" %}
