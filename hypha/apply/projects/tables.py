@@ -171,7 +171,6 @@ class BaseProjectsTable(tables.Table):
     fund = tables.Column(verbose_name=_("Fund"), accessor="submission__page")
     reporting = tables.Column(verbose_name=_("Reporting"), accessor="pk")
     last_payment_request = tables.DateColumn()
-    end_date = tables.DateColumn(verbose_name=_("End Date"), accessor="proposed_end")
 
     def order_reporting(self, qs, is_descending):
         direction = "-" if is_descending else ""
@@ -204,7 +203,7 @@ class ProjectsDashboardTable(BaseProjectsTable):
             "fund",
             "reporting",
             "last_payment_request",
-            "end_date",
+            "created_at",
         ]
         model = Project
         template_name = "application_projects/tables/table.html"
@@ -220,7 +219,7 @@ class ProjectsAssigneeDashboardTable(BaseProjectsTable):
             "lead",
             "reporting",
             "last_payment_request",
-            "end_date",
+            "created_at",
         ]
         model = Project
         orderable = False
@@ -281,16 +280,13 @@ class ProjectsListTable(BaseProjectsTable):
             "fund",
             "reporting",
             "last_payment_request",
-            "end_date",
+            "created_at",
         ]
         model = Project
         orderable = True
-        order_by = ("-end_date",)
+        order_by = ("-created_at",)
         template_name = "application_projects/tables/table.html"
         attrs = {"class": "projects-table"}
-
-    def order_end_date(self, qs, desc):
-        return qs.by_end_date(desc), True
 
 
 class ReportingTable(tables.Table):
