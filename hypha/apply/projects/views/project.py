@@ -8,8 +8,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import Group
+from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.db import transaction
+from django.db import models, transaction
 from django.db.models import Q
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -71,7 +72,7 @@ from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
 from ...funds.files import generate_private_file_path
-from ..filters import ProjectListFilter
+from ..filters import REPORTING_CHOICES, ProjectListFilter
 from ..forms import (
     ApproveContractForm,
     ApproversForm,
@@ -91,12 +92,14 @@ from ..forms import (
 )
 from ..models.project import (
     APPROVE,
+    CLOSING,
     CONTRACTING,
     DRAFT,
     INTERNAL_APPROVAL,
     INVOICING_AND_REPORTING,
     PROJECT_ACTION_MESSAGE_TAG,
     PROJECT_PUBLIC_STATUSES,
+    PROJECT_STATUS_CHOICES,
     REQUEST_CHANGE,
     Contract,
     ContractDocumentCategory,
@@ -2251,3 +2254,90 @@ class ProjectListView(SingleTableMixin, FilterView):
     queryset = Project.objects.for_table()
     table_class = ProjectsListTable
     template_name = "application_projects/project_list.html"
+
+    def get_queryset(self):
+        qs = Project.objects.all().for_table()
+
+        selected_funds = self.request.GET.getlist("fund", [])
+        selected_leads = self.request.GET.getlist("lead", [])
+        self.selected_statuses = self.request.GET.getlist("status", [])
+        self.selected_reporting = []
+        if "reporting" in self.request.GET:
+            self.selected_reporting = self.request.GET.get("reporting", "0")
+        search_query = self.request.GET.get("query", "").strip()
+
+        if selected_funds:
+            qs = qs.filter(submission__page__in=selected_funds)
+
+        if selected_leads:
+            qs = qs.filter(lead__id__in=selected_leads)
+
+        if self.selected_statuses:
+            qs = qs.filter(status__in=self.selected_statuses)
+
+        if self.selected_reporting:
+            if self.selected_reporting == "1":
+                qs = qs.filter(outstanding_reports__gt=0)
+            else:
+                qs = qs.filter(
+                    Q(outstanding_reports__lt=1) | Q(outstanding_reports__isnull=True),
+                    status__in=(INVOICING_AND_REPORTING, CLOSING),
+                )
+
+        if search_query:
+            query = SearchQuery(search_query, search_type="websearch")
+            qs = qs.annotate(rank=SearchRank(models.F("search_document"), query))
+            qs = qs.filter(search_document=query)
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        status_count_raw = {}
+
+        # Status Filter Options
+        for row in (
+            Project.objects.all()
+            .order_by()
+            .values("status")
+            .annotate(n=models.Count("status"))
+        ):
+            display_name = dict(PROJECT_STATUS_CHOICES)[row["status"]]
+            try:
+                count = status_count_raw[display_name]["count"]
+            except KeyError:
+                count = 0
+            status_count_raw[display_name] = {
+                "count": count + row["n"],
+                "title": display_name,
+                "slug": slugify(row["status"]),
+                "selected": slugify(row["status"]) in self.selected_statuses,
+            }
+
+        status_counts = sorted(
+            status_count_raw.values(),
+            key=lambda t: (t["selected"], t["count"]),
+            reverse=True,
+        )
+        ctx["status_counts"] = status_counts
+
+        reporting_raw = {}
+        for reporting_choice, reporting_display in dict(REPORTING_CHOICES).items():
+            reporting_raw[reporting_display] = {
+                "title": reporting_display,
+                "slug": slugify(reporting_choice),
+                "selected": slugify(reporting_choice) in self.selected_reporting,
+            }
+        ctx["reporting"] = sorted(
+            reporting_raw.values(),
+            key=lambda t: (t["selected"]),
+            reverse=True,
+        )
+
+        ctx["selected_funds"] = self.request.GET.getlist("fund", [])
+        ctx["selected_leads"] = self.request.GET.getlist("lead", [])
+        ctx["selected_statuses"] = self.request.GET.getlist("status", [])
+        ctx["selected_reporting"] = self.request.GET.getlist("reporting", [])
+        ctx["search_query"] = self.request.GET.get("query", "")
+
+        return ctx
