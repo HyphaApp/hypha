@@ -1,5 +1,7 @@
 {% extends "base-apply.html" %}
-{% load i18n static activity_tags apply_tags nh3_tags heroicons %}
+{% load i18n %}
+{% block title %}{% trans "Notifications" %}{% endblock %}
+
 {% block content %}
     <div class="admin-bar">
         <div class="admin-bar__inner">
@@ -10,83 +12,11 @@
                     <button class="button button--primary" type="submit" value="Filter">{% trans "Filter" %}</button>
                 </form>
             </div>
-
-            <div class="tabs js-tabs">
-                <div class="tabs__container">
-                    <a class="tab__item" href="#comments" data-tab="tab-1">
-                        {% trans "Communications" %}
-                    </a>
-
-                    <a class="tab__item" href="#actions" data-tab="tab-2">
-                        {% trans "Activity Feed" %}
-                    </a>
-                </div>
-            </div>
         </div>
     </div>
 
-    <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
-    {# Tab 1 #}
-        <div class="tabs__content" id="tab-1">
-            {% for activity in object_list %}
-                {% if activity.type == 'comment' %}
-                    <div class="feed__item feed__item--{{ activity.type }}">
-                        <div class="feed__pre-content">
-                            <p class="feed__label feed__label--{{ activity.source_content_type.name|source_type|lower }}">
-                                {{ activity.source_content_type.name|source_type }}
-                            </p>
-                        </div>
-                        <div class="feed__content js-feed-content ms-4">
-                            <div class="feed__meta js-feed-meta">
-                                <p class="feed__meta-item">
-                                    <a href="{{ activity.source.get_absolute_url }}#communications">
-                                        {{ activity.source.title|capfirst }}</a>
-                                    : {{ activity.user.get_full_name }} {% trans "made a comment" %}
-                                    <relative-time class="text-sm text-fg-muted" datetime={{ activity.timestamp|date:"c" }}>
-                                        {{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}
-                                    </relative-time>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-    {# Tab 2 #}
-        <div class="tabs__content" id="tab-2">
-            {% for activity in object_list %}
-                {% if activity.type == 'action' %}
-                    <div class="feed__item feed__item--{{ activity.type }}">
-                        <div class="feed__pre-content">
-                            <p class="feed__label feed__label--{{ activity.source_content_type.name|source_type|lower }} py-1   ">
-                                {{ activity.source_content_type.name|source_type }}
-                            </p>
-                        </div>
-                        <div class="feed__content js-feed-content ps-4">
-                            <div class="js-feed-meta">
-                                <p class="feed__meta-item">
-                                    <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title|capfirst }}</a>
-                                    : {{ activity.user.get_full_name }} {{ activity|display_for:request.user|nh3 }} <relative-time class="text-sm text-fg-muted" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
-                                </p>
-                                {% if activity.related_object %}
-                                    <p>
-                                        <a href="{{ activity.related_object.get_absolute_url }}" class="font-bold uppercase transition-opacity hover:opacity-70">
-                                            <span>{% trans "View" %} {{ activity.related_object|model_verbose_name }}</span>
-                                            {% heroicon_outline "arrow-right" size=12 class="inline align-baseline" stroke_width=4 %}
-                                        </a>
-                                    </p>
-
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
+    <div class="wrapper wrapper--large wrapper--outer-space-medium">
+        {% include "activity/include/activity_list.html" with activities=object_list  %}
     </div>
 
-{% endblock %}
-
-{% block extra_js %}
-    <script src="{% static 'js/tabs.js' %}"></script>
 {% endblock %}
