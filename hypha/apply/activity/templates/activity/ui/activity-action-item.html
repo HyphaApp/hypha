@@ -28,6 +28,9 @@
             </div>
 
             <div class="text-sm">
+                {% if notifications_page %}
+                    <a href="{{ activity.source.get_absolute_url }}" data-tippy-content="{{ activity.source.title|capfirst }}"><span class="inline-block py-0.5 px-2 text-sm font-semibold rounded-xl border border-gray-300 text-fg-muted">{{ activity.source_content_type.name|source_type }}</span></a>
+                {% endif %}
                 <strong class="font-medium">
                     {{ activity|display_activity_author:request.user }}
                 </strong>
