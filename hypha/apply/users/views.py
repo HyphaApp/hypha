@@ -737,9 +737,7 @@ def send_confirm_access_email_view(request):
         "user": request.user,
         "timeout_minutes": settings.PASSWORDLESS_LOGIN_TIMEOUT // 60,
     }
-    subject = _("Confirmation code for {org_long_name}: {token}").format(
-        **email_context
-    )
+    subject = "Confirmation code for {org_long_name}: {token}".format(**email_context)
     email = MarkdownMail("users/emails/confirm_access.md")
     email.send(
         to=request.user.email,
