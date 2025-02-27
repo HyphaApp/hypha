@@ -9,6 +9,24 @@ from hypha.apply.users.models import User
 register = template.Library()
 
 
+@register.simple_tag
+def prepare_query_data(key, value):
+    return "{key}={value}".format(key=key, value=value)
+
+
+@register.simple_tag
+def get_item_value(form, key):
+    return form[key].value()
+
+
+@register.filter
+def get_field_choices(form, field_name):
+    """Returns the choices of a form field."""
+    if hasattr(form[field_name].field, "choices"):
+        return form[field_name].field.choices if field_name in form.fields else []
+    return []
+
+
 @register.filter
 def row_from_record(row, record):
     row = copy.copy(row)

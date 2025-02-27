@@ -3,8 +3,8 @@
 <ul class="overflow-auto max-h-80 text-gray-700 divide-y" aria-labelledby="dropdownBgHoverButton" data-filter-list>
     {% if selected_leads %}
         <li data-filter-item-text>
-            <a href="{{ target_url }}{% remove_from_query "only_query_string" "page" "lead" %}"
-               hx-get="{{ target_url }}{% remove_from_query "only_query_string" "page" "lead" %}"
+            <a href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "lead" %}"
+               hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "lead" %}"
                hx-push-url="true"
                class="flex px-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
                 {% trans "All Leads" %}
@@ -15,11 +15,11 @@
         <li data-filter-item-text>
             <a
                 {% if user.selected %}
-                    href="{{ target_url }}{% remove_from_query "only_query_string" "page" lead=user.id %}"
-                    hx-get="{{ target_url }}{% remove_from_query "only_query_string" "page" lead=user.id %}"
+                    href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" lead=user.id %}"
+                    hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" lead=user.id %}"
                 {% else %}
-                    href="{{ target_url }}{% add_to_query "only_query_string" "page" lead=user.id %}"
-                    hx-get="{{ target_url }}{% add_to_query "only_query_string" "page" lead=user.id %}"
+                    href="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" lead=user.id %}"
+                    hx-get="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" lead=user.id %}"
                 {% endif %}
                 hx-push-url="true"
                 class="flex {% if user.selected %}ps-2 font-medium bg-gray-100{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"

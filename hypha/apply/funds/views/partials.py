@@ -59,12 +59,10 @@ def sub_menu_funds(request):
         .order_by("title")
         .distinct()
     ]
-    target_url = urlparse(request.headers.get("HX-Current-URL")).path
 
     ctx = {
         "funds": funds,
         "selected_funds": selected_funds,
-        "target_url": target_url,
     }
 
     return render(request, "submissions/submenu/funds.html", ctx)
@@ -77,13 +75,6 @@ def sub_menu_leads(
 ) -> HttpResponse:
     selected_leads = request.GET.getlist("lead")
 
-    target_url = urlparse(request.headers.get("HX-Current-URL")).path
-
-    if "/projects/" in target_url:
-        all_leads = User.objects.filter(lead_projects__isnull=False)
-    else:
-        all_leads = User.objects.filter(submission_lead__isnull=False)
-
     leads = [
         {
             "id": item.id,
@@ -91,7 +82,9 @@ def sub_menu_leads(
             "title": str(item),
             "slack": item.slack,
         }
-        for item in all_leads.order_by().distinct()
+        for item in User.objects.filter(submission_lead__isnull=False)
+        .order_by()
+        .distinct()
     ]
 
     # show selected and current user first
@@ -104,7 +97,6 @@ def sub_menu_leads(
     ctx = {
         "leads": leads,
         "selected_leads": selected_leads,
-        "target_urls": target_url,
     }
 
     return render(request, template_name, ctx)

@@ -1,5 +1,5 @@
 {% load django_tables2 i18n heroicons %}
-{% load querystrings %}
+{% load querystrings table_tags %}
 
 <div class="wrapper wrapper--table-actions js-table-actions">
     <div class="actions-bar">
@@ -93,19 +93,63 @@
 
 </div>
 
-<div class="filters {% if filter_classes %}{{filter_classes}}{% endif %}">
+<nav class="filters {% if filter_classes %}{{filter_classes}}{% endif %}">
     <div class="filters__header">
         <button class="filters__button js-clear-filters">{% trans "Clear" %}</button>
         <div>{% trans "Filter by" %}</div>
         <button class="filters__button js-close-filters">{% trans "Close" %}</button>
     </div>
 
-    <form action="{{ filter_action }}" method="get" class="form form--filters js-filter-form">
-        <ul class="form__filters">
-            {{ filter.form.as_ul }}
-            <li>
-                <button class="button button--primary" type="submit" value="Filter">{% trans "Filter" %}</button>
-            </li>
-        </ul>
+    <form method="GET" id="filter-form" class="flex sticky top-0 flex-wrap justify-end items-center py-2 px-3 mt-3 bg-gray-50 border-t border-gray-200 md:gap-5 md:text-sm md:font-medium z-[5] border-x">
+        <span class="hidden items-center py-1 md:inline-flex"></span>
+        {% for field_name, field in filter.form.fields.items %}
+            {% with filter.form|default_if_none:'' as form %}
+                {% if form %}
+                    <nav class="flex flex-wrap gap-2 items-center menu-filters">
+                        {% dropdown_menu title=field.label heading="Filter by "|add:field_name enable_search=True position="right" %}
+                            <ul class="flex overflow-auto flex-col max-h-80 text-gray-700 divide-y" data-filter-list>
+                                {% for value, label in filter.form|get_field_choices:field_name %}
+                                    {% get_item_value filter.form field_name as selected_value %}
+                                    <li>
+                                        <a
+                                            {% if value|stringformat:'s' in selected_value %}
+                                                href="{% dup_remove_from_query "page" field_name value %}"
+                                            {% else %}
+                                                href="{% dup_modify_query "page" field_name value %}"
+                                            {% endif %}
+                                            role="menuitemradio"
+                                            class="flex {% if value|stringformat:'s' in selected_value %}bg-gray-100 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
+                                        >
+                                            {% if value|stringformat:'s' in selected_value %}
+                                                {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-2" %}
+                                            {% endif %}
+                                            <span>{{ label }}</span>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% enddropdown_menu %}
+                    </nav>
+                {% endif %}
+            {% endwith %}
+        {% endfor %}
     </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll("input[type='radio']").forEach(filter => {
+                filter.addEventListener("change", function () {
+                    document.getElementById("filter-form").submit();
+                });
+            });
+        });
+    </script>
+
+<!--        <ul class="form__filters">-->
+<!--            {{ filter.form.as_ul }}-->
+<!--            <li>-->
+<!--                <button class="button button&#45;&#45;primary" type="submit" value="Filter">{% trans "Filter" %}</button>-->
+<!--            </li>-->
+<!--        </ul>-->
+
 </div>
