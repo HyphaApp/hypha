@@ -6,9 +6,9 @@
         <div class="timeline">
             {% for activity in activities %}
                 {% if activity.type == "comment" %}
-                    {% include "activity/ui/activity-comment-item.html" with activity=activity notifications_page=notifications_page %}
+                    {% include "activity/ui/activity-comment-item.html" with activity=activity %}
                 {% else %}
-                    {% include "activity/ui/activity-action-item.html" with activity=activity notifications_page=notifications_page %}
+                    {% include "activity/ui/activity-action-item.html" with activity=activity %}
                 {% endif %}
             {% endfor %}
 
