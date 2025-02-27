@@ -24,7 +24,7 @@
                         {% with activity|display_for:request.user as activity_text %}
                             <div class="relative timeline-item" id="communications#{{ activity.id }}">
                                 {% ifchanged activity.source.id %}
-                                    <div class="py-0.5 px-2 mt-4 bg-gray-100 border-s-2 border-slate-300">
+                                    <div class="py-0.5 mt-4 bg-gray-100 ps-5 pe-2 border-s-2 border-slate-300">
                                         <span class="text-sm font-semibold text-fg-muted">{{ activity.source_content_type.name|source_type }}</span> <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title|capfirst }}</a>
                                     </div>
                                 {% endifchanged %}
