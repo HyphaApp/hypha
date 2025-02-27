@@ -62,6 +62,32 @@ def modify_query(context, *params_to_remove, **params_to_change):
 
 
 @register.simple_tag(takes_context=True)
+def dup_modify_query(
+    context, param_to_remove, param_key_to_change, param_value_to_change
+):
+    query_params = []
+    param_key_used = False
+    for key, value_list in context["request"].GET.lists():
+        if key != param_to_remove:
+            # don't add key-value pairs for params_to_remove
+            if key == param_key_to_change:
+                # update values for keys in params_to_change
+                query_params.append((key, param_value_to_change))
+                param_key_used = True
+            else:
+                # leave existing parameters as they were
+                # if not mentioned in the params_to_change
+                for value in value_list:
+                    query_params.append((key, value))
+                    # attach new params
+    if not param_key_used:
+        query_params.append((param_key_to_change, param_value_to_change))
+    return construct_query_string(
+        context=context, query_params=query_params, only_query_string=False
+    )
+
+
+@register.simple_tag(takes_context=True)
 def add_to_query(context, *params_to_remove, **params_to_add):
     """Renders a link with modified current query parameters"""
     only_query_string = False
@@ -106,4 +132,25 @@ def remove_from_query(context, *args, **kwargs):
                     query_params.append((key, value))
     return construct_query_string(
         context=context, query_params=query_params, only_query_string=only_query_string
+    )
+
+
+@register.simple_tag(takes_context=True)
+def dup_remove_from_query(
+    context, param_to_remove, param_key_to_remove, param_value_to_remove
+):
+    query_params = []
+    # go through current query params..
+    for key, value_list in context["request"].GET.lists():
+        # skip keys mentioned in the args
+        if key != param_to_remove:
+            for value in value_list:
+                # skip key-value pairs mentioned in kwargs
+                if not (
+                    key == param_key_to_remove
+                    and str(value) == str(param_value_to_remove)
+                ):
+                    query_params.append((key, value))
+    return construct_query_string(
+        context=context, query_params=query_params, only_query_string=False
     )
