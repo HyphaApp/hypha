@@ -17,42 +17,36 @@
                  id="communications--{{ activity.id }}">
                 <header class="{% if activity.user == request.user %}bg-fuchsia-100{% else %}bg-slate-100{% endif %} flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-t">
                     <div>
-                        <span>
-                            <strong class="font-semibold">{{ author_name }}</strong>
-
-                            {% if not request.user.is_applicant %}
-                                <span>
-                                    {% for role in activity.user.get_role_names  %}
-                                        <span
-                                            class="inline-block py-0.5 px-2 text-sm font-semibold rounded-xl border border-gray-300 text-fg-muted"
-                                            data-tippy-content="This user is a {{ role }}"
-                                        >
-                                            {{ role }}
-                                        </span>
-                                    {% endfor %}
-                                </span>
-                            {% endif %}
-
-                            <a href="{{ activity.get_absolute_url }}" class="hover:underline">
-                                <span class="text-fg-muted">commented</span>
-                                <relative-time
-                                    class="text-fg-muted"
-                                    datetime="{{ activity.timestamp|date:"c" }}"
-                                >{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
-                            </a>
-                        </span>
-
-
-                    </div>
-                    <div class="flex gap-1 items-center">
                         {% if notifications_page %}
                             <a href="{{ activity.source.get_absolute_url }}" data-tippy-content="{{ activity.source.title|capfirst }}"><span class="inline-block py-0.5 px-2 text-sm font-semibold rounded-xl border border-gray-300 text-fg-muted">{{ activity.source_content_type.name|source_type }}</span></a>
                         {% endif %}
 
-                        {% if not request.user.is_applicant and not notifications_page %}
+                        <strong class="font-semibold">{{ author_name }}</strong>
 
+                        {% if not request.user.is_applicant %}
+                            <span>
+                                {% for role in activity.user.get_role_names  %}
+                                    <span
+                                        class="inline-block py-0.5 px-2 text-sm font-semibold rounded-xl border border-gray-300 text-fg-muted"
+                                        data-tippy-content="This user is a {{ role }}"
+                                    >
+                                        {{ role }}
+                                    </span>
+                                {% endfor %}
+                            </span>
+                        {% endif %}
+
+                        <a href="{{ activity.get_absolute_url }}" class="hover:underline">
+                            <span class="text-fg-muted">commented</span>
+                            <relative-time
+                                class="text-fg-muted"
+                                datetime="{{ activity.timestamp|date:"c" }}"
+                            >{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
+                        </a>
+                    </div>
+                    <div class="flex gap-1 items-center">
+                        {% if not request.user.is_applicant %}
                             {% if request.user.is_apply_staff and activity.assigned_to %}
-
                                 <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs rounded-xl border border-gray-300 text-fg-muted">
                                     {% heroicon_outline "user-plus" size=14 class="inline" aria_hidden=true %}
                                     {% if activity.assigned_to.id == request.user.id %}
@@ -70,7 +64,6 @@
                                     {{ visibility_text }}
                                 </span>
                             {% endwith %}
-
                         {% endif %}
 
                         {% if editable and activity.user == request.user %}
