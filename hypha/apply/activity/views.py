@@ -177,7 +177,7 @@ class NotificationsView(ListView):
         queryset = Activity.objects.filter(current=True).latest()
 
         self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
-        qs = self.filterset.qs.distinct().order_by("-timestamp")
+        qs = self.filterset.qs.distinct().order_by("-timestamp", "source_object_id")
 
         if self.request.htmx and self.request.GET.get("type") == "header_dropdown":
             qs = qs[:5]

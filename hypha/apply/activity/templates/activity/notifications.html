@@ -1,5 +1,7 @@
 {% extends "base-apply.html" %}
-{% load i18n static activity_tags apply_tags nh3_tags heroicons %}
+{% load i18n activity_tags heroicons %}
+{% block title %}{% trans "Notifications" %}{% endblock %}
+
 {% block content %}
     <div class="admin-bar">
         <div class="admin-bar__inner">
@@ -10,83 +12,80 @@
                     <button class="button button--primary" type="submit" value="Filter">{% trans "Filter" %}</button>
                 </form>
             </div>
+        </div>
+    </div>
 
-            <div class="tabs js-tabs">
-                <div class="tabs__container">
-                    <a class="tab__item" href="#comments" data-tab="tab-1">
-                        {% trans "Communications" %}
-                    </a>
+    <div class="wrapper wrapper--large wrapper--outer-space-medium">
+        <div class="border-b-2 border-b-slate-300">
+            <section class="ml-4 max-w-3xl md:ml-20">
 
-                    <a class="tab__item" href="#actions" data-tab="tab-2">
-                        {% trans "Activity Feed" %}
-                    </a>
+                <div class="timeline">
+                    {% for activity in object_list %}
+                        {% with activity|display_for:request.user as activity_text %}
+                            <div class="relative timeline-item" id="communications#{{ activity.id }}">
+                                {% ifchanged activity.source.id %}
+                                    <div class="py-0.5 mt-4 bg-gray-100 ps-5 pe-2 border-s-2 border-slate-300">
+                                        <span class="text-sm font-semibold text-fg-muted">{{ activity.source_content_type.name|source_type }}</span> <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title|capfirst }}</a>
+                                    </div>
+                                {% endifchanged %}
+                                <div
+                                    class="flex gap-2 items-center py-2 -ml-3 before:block before:-z-10 before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-slate-300"
+                                >
+                                    <div class="inline-flex relative justify-center items-start">
+                                        <div class="relative rounded-full inline-flex items-center justify-center border-white border-2 -ms-0.5 {% if activity.user.is_staff %}bg-slate-200 {% else %}bg-gray-200{% endif %}">
+                                            <div class="inline-flex justify-center items-center w-6 h-6 text-fg-muted">
+                                                {% if activity.type == "comment" %}
+                                                    {% heroicon_micro "chat-bubble-bottom-center-text" class="inline" aria_hidden=true size=14 %}
+                                                {% elif 'edit' in activity_text.lower %}
+                                                    {% heroicon_micro "pencil-square" class="inline" aria_hidden=true size=14 %}
+                                                {% elif 'progressed' in activity_text.lower %}
+                                                    {% heroicon_micro "arrow-trending-up" class="inline" aria_hidden=true size=14 %}
+                                                {% elif 'sent a determination' in activity_text.lower %}
+                                                    {% heroicon_micro "rocket-launch" class="inline" aria_hidden=true size=14 %}
+                                                {% elif 'submitted a review' in activity_text.lower %}
+                                                    {% heroicon_micro "chat-bubble-left-ellipsis" class="inline" aria_hidden=true size=14 %}
+                                                {% elif 'un-archived' in activity_text.lower %}
+                                                    {% heroicon_micro "lock-open" class="inline" aria_hidden=true size=14 %}
+                                                {% elif 'archived' in activity_text.lower %}
+                                                    {% heroicon_micro "lock-closed" class="inline" aria_hidden=true size=14 %}
+                                                {% else %}
+                                                    {% heroicon_micro "eye" class="inline" aria_hidden=true size=15 %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-sm">
+                                        <strong class="font-medium">
+                                            {{ activity|display_activity_author:request.user }}
+                                        </strong>
+                                        <span class="text-fg-muted">
+                                            {{ activity_text|lowerfirst|safe }}
+                                            <relative-time datetime="{{ activity.timestamp|date:'c' }}">
+                                                {{ activity.timestamp|date:'SHORT_DATETIME_FORMAT' }}
+                                            </relative-time>
+                                        </span>
+                                        {% if activity|user_can_see_related:request.user %}
+                                            {% with url=activity.related_object.get_absolute_url %}
+                                                {% if url %}
+                                                    <a href="{{ url }}" class="font-semibold transition-opacity hover:opacity-70">
+                                                        {% trans "View" %}
+                                                    </a>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endwith %}
+                    {% endfor %}
                 </div>
-            </div>
+
+                {% if not object_list %}
+                    {% trans "No comments available" %}
+                {% endif %}
+            </section>
         </div>
     </div>
 
-    <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
-    {# Tab 1 #}
-        <div class="tabs__content" id="tab-1">
-            {% for activity in object_list %}
-                {% if activity.type == 'comment' %}
-                    <div class="feed__item feed__item--{{ activity.type }}">
-                        <div class="feed__pre-content">
-                            <p class="feed__label feed__label--{{ activity.source_content_type.name|source_type|lower }}">
-                                {{ activity.source_content_type.name|source_type }}
-                            </p>
-                        </div>
-                        <div class="feed__content js-feed-content ms-4">
-                            <div class="feed__meta js-feed-meta">
-                                <p class="feed__meta-item">
-                                    <a href="{{ activity.source.get_absolute_url }}#communications">
-                                        {{ activity.source.title|capfirst }}</a>
-                                    : {{ activity.user.get_full_name }} {% trans "made a comment" %}
-                                    <relative-time class="text-sm text-fg-muted" datetime={{ activity.timestamp|date:"c" }}>
-                                        {{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}
-                                    </relative-time>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-    {# Tab 2 #}
-        <div class="tabs__content" id="tab-2">
-            {% for activity in object_list %}
-                {% if activity.type == 'action' %}
-                    <div class="feed__item feed__item--{{ activity.type }}">
-                        <div class="feed__pre-content">
-                            <p class="feed__label feed__label--{{ activity.source_content_type.name|source_type|lower }} py-1   ">
-                                {{ activity.source_content_type.name|source_type }}
-                            </p>
-                        </div>
-                        <div class="feed__content js-feed-content ps-4">
-                            <div class="js-feed-meta">
-                                <p class="feed__meta-item">
-                                    <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title|capfirst }}</a>
-                                    : {{ activity.user.get_full_name }} {{ activity|display_for:request.user|nh3 }} <relative-time class="text-sm text-fg-muted" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
-                                </p>
-                                {% if activity.related_object %}
-                                    <p>
-                                        <a href="{{ activity.related_object.get_absolute_url }}" class="font-bold uppercase transition-opacity hover:opacity-70">
-                                            <span>{% trans "View" %} {{ activity.related_object|model_verbose_name }}</span>
-                                            {% heroicon_outline "arrow-right" size=12 class="inline align-baseline" stroke_width=4 %}
-                                        </a>
-                                    </p>
-
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-
-{% endblock %}
-
-{% block extra_js %}
-    <script src="{% static 'js/tabs.js' %}"></script>
 {% endblock %}
