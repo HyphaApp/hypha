@@ -8,6 +8,6 @@
             <dd class="truncate">{{ category }}</dd>
         </dl>
     </div>
-    {% url 'apply:projects:contract_doc_upload' pk=object.id category_pk=category.id as url %}
-    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=url %}
+
+    {% include 'includes/dialog_form_base.html' with form=form value=value %}
 </div>

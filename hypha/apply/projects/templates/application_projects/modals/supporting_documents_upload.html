@@ -9,6 +9,5 @@
         </dl>
     </div>
 
-    {% url 'apply:projects:supporting_doc_upload' pk=object.id category_pk=category.id as document_upload_url %}
-    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=document_upload_url %}
+    {% include 'includes/dialog_form_base.html' with form=form value=value %}
 </div>

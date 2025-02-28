@@ -3,8 +3,8 @@
 
 <div class="p-4" id="change_invoice_status">
     <p>{% trans "Current status" %}: {{ object.status_display }}</p>
-    {% url 'apply:projects:invoice_status_update' object.project.id object.id as url %}
-    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=url %}
+
+    {% include 'includes/dialog_form_base.html' with form=form value=value %}
 </div>
 
 <script>
