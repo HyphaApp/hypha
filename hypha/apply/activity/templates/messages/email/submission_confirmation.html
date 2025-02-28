@@ -7,7 +7,7 @@
 
 {% if source.is_draft %}{% trans "Please note that it is not submitted for review because it's still in draft." %} {% trans "You can access the draft at" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}{% else %}{% trans "We will review and reply to your submission as quickly as possible." %}{% endif %}
 
-{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
+{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'funds:submissions:comments' pk=source.pk %}
 
 {% blocktrans %}If you have issues accessing the submission system or general inquiries, please email us at {{ ORG_EMAIL }}.{% endblocktrans %}
 

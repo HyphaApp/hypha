@@ -15,8 +15,8 @@
                         <p class="data-block__card-copy">{{ object.report_config.get_frequency_display }}</p>
                         <p class="data-block__card-copy">
                             <a class="data-block__action-link"
-                               href="{% url 'apply:projects:report_frequency_update' pk=object.id %}"
-                               hx-get="{% url 'apply:projects:report_frequency_update' pk=object.id %}"
+                               href="{% url 'apply:projects:report_frequency_update' pk=object.submission.id %}"
+                               hx-get="{% url 'apply:projects:report_frequency_update' pk=object.submission.id %}"
                                hx-target="#htmx-modal"
                             >
                                 {% if object.report_config.disable_reporting %}{% trans "Enable" %}{% else %}{% trans "Change" %}{% endif %}

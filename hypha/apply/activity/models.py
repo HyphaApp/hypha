@@ -241,10 +241,16 @@ class Activity(models.Model):
         base_manager_name = "objects"
 
     def get_absolute_url(self):
-        return f"{self.source.get_absolute_url()}#communications--{self.id}"
+        # coverup for both submission and project as source.
+        submission_id = (
+            self.source.submission.id
+            if hasattr(self.source, "submission")
+            else self.source.id
+        )
+        return f"{reverse('funds:submissions:comments', args=[submission_id])}#communications--{self.id}"
 
     @property
-    def priviledged(self):
+    def privileged(self):
         # Not visible to applicant
         return self.visibility not in [APPLICANT, PARTNER, APPLICANT_PARTNERS, ALL]
 
@@ -376,7 +382,7 @@ class Event(models.Model):
 
     def __str__(self):
         if self.source and hasattr(self.source, "title"):
-            return f"{self.by} {self.get_type_display()} - {self.source.title }"
+            return f"{self.by} {self.get_type_display()} - {self.source.title}"
         else:
             return f"{self.by} {self.get_type_display()}"
 

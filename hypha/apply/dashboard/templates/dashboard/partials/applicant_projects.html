@@ -4,7 +4,7 @@
     <div class="wrapper wrapper--status-bar-outer">
         <div class="wrapper wrapper--status-bar-inner ms-4">
             <div class="mt-5 lg:max-w-[30%]">
-                <h4 class="mb-0 font-bold heading line-clamp-3 hover:line-clamp-none"><a class="link" href="{% url 'apply:projects:detail' project.id %}">{{ project.title }}</a></h4>
+                <h4 class="mb-0 font-bold heading line-clamp-3 hover:line-clamp-none"><a class="link" href="{{ project.get_absolute_url }}">{{ project.title }}</a></h4>
                 <p class="m-0 text-sm text-fg-muted">{% trans "Project start date: " %} {{ project.created_at.date }}</p>
             </div>
             {% project_status_bar project.status request.user css_class="status-bar--small" %}
