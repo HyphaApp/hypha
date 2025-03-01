@@ -16,13 +16,13 @@
             {% include "dashboard/includes/submissions-waiting-for-review.html" with in_review_count=awaiting_reviews.count my_review=awaiting_reviews.table display_more=awaiting_reviews.display_more active_statuses_filter=awaiting_reviews.active_statuses_filter %}
         </div>
 
-        {% if my_flagged.submissions %}
+        {% if my_flagged.count %}
             <div id="submissions-flagged" class="wrapper wrapper--bottom-space">
                 <h3 class="mb-2 text-xl">
                     <a href="{% url "apply:submissions:list" %}?query=flagged:@me">Your flagged submissions <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded me-2">({{ my_flagged.count }})</span></a>
                 </h3>
 
-                {% include "submissions/partials/submissions-inline.html" with submissions=my_flagged.submissions row_layout="table" %}
+                {% include "submissions/partials/submissions-inline.html" with submissions=my_flagged.objects row_layout="table" %}
 
                 {% if my_flagged.display_more  %}
                     <div class="flex justify-center items-center py-3 font-semibold border-b border-x">

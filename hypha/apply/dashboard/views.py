@@ -33,6 +33,15 @@ from hypha.apply.utils.views import ViewDispatcher
 from .services import get_paf_for_review
 
 
+def get_preview_context(queryset, limit=5):
+    count = queryset.count()
+    return {
+        "objects": queryset[:limit],
+        "count": count,
+        "display_more": count > limit,
+    }
+
+
 class MySubmissionContextMixin:
     def get_context_data(self, **kwargs):
         submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
@@ -60,14 +69,9 @@ class MySubmissionContextMixin:
 
 class MyFlaggedMixin:
     def my_flagged(self, submissions):
-        submissions = submissions.flagged_by(self.request.user).order_by("-submit_time")
-
-        limit = 5
-        return {
-            "submissions": submissions[:limit],
-            "count": submissions.count(),
-            "display_more": submissions.count() > limit,
-        }
+        return get_preview_context(
+            queryset=submissions.flagged_by(self.request.user).order_by("-submit_time")
+        )
 
 
 class AdminDashboardView(MyFlaggedMixin, TemplateView):
