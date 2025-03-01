@@ -1,5 +1,6 @@
 {% extends "wagtailusers/users/create.html" %}
 {% load  static %}
+{% load hooks_tags %}
 
 {% block fields %}
     {% if form.separate_username_field %}
@@ -7,6 +8,8 @@
     {% endif %}
     {% include "wagtailadmin/shared/field_as_li.html" with field=form.email %}
     {% include "wagtailadmin/shared/field_as_li.html" with field=form.full_name %}
+
+    {% hook 'wagtail_user_edit' %}
 
     {% comment %}
         First/last name hidden input with dummy values because.. Wagtail admin
