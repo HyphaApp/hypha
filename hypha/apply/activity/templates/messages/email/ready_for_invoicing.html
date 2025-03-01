@@ -8,7 +8,7 @@
 
 {% block more_info %}
 {% trans "Link to your project" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
+{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'funds:submissions:comments' pk=source.submission.pk %}
 
 {% trans "See our guide for more information" %}: {{ ORG_GUIDE_URL }}
 
