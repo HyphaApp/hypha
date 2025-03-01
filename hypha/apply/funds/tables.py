@@ -331,7 +331,7 @@ class StatusMultipleChoiceFilter(MultipleChoiceFilter):
         return any(item in second for item in first)
 
     def get_filter_predicate(self, v):
-        return {f"{ self.field_name }__in": self.status_map.get(v, [])}
+        return {f"{self.field_name}__in": self.status_map.get(v, [])}
 
 
 class SubmissionFilter(filters.FilterSet):
@@ -468,12 +468,6 @@ class SubmissionDashboardFilter(filters.FilterSet):
             for field, filter in self.filters.items()
             if field not in exclude
         }
-
-
-class SubmissionReviewerFilterAndSearch(SubmissionDashboardFilter):
-    query = filters.CharFilter(
-        field_name="search_data", lookup_expr="icontains", widget=forms.HiddenInput
-    )
 
 
 class RoundsTable(tables.Table):

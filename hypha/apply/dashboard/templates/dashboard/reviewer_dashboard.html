@@ -32,11 +32,11 @@
             </div>
         {% endif %}
 
-        {% if my_reviewed.table.data %}
+        {% if my_reviewed.count %}
             <div class="wrapper wrapper--bottom-space">
                 <h3 class="mb-2 text-xl">Your previous reviews</h3>
 
-                {% include "submissions/partials/submissions-inline.html" with submissions=my_reviewed.table.data row_layout="table" %}
+                {% include "submissions/partials/submissions-inline.html" with submissions=my_reviewed.objects row_layout="table" %}
 
                 {% if my_reviewed.display_more %}
                     <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
