@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 # Application definition
 INSTALLED_APPS = [
     "scout_apm.django",
+    "hypha.core.django_hooks",
     "hypha.cookieconsent",
     "hypha.images",
     "hypha.core.apps.CoreAppConfig",
