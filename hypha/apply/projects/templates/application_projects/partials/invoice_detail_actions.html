@@ -5,7 +5,7 @@
 {% if user.is_apply_staff or user.is_applicant %}
     <a
         {% if not user_can_edit_request %}
-            data-tooltip="{% trans "Only editable when 'Submitted' or you have been requested to make changes" %}"
+            data-tippy-content="{% trans "Only editable when 'Submitted' or you have been requested to make changes" %}"
         {% endif %}
         class="button button--bottom-space button--primary button--full-width{% if not user_can_edit_request %} button--tooltip-disabled{% endif %}"
         href={% if user_can_edit_request %}
