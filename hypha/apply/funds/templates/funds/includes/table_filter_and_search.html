@@ -12,7 +12,11 @@
             {% if invoice_batch_actions %}
                 <div class="actions-bar__inner actions-bar__inner--batch-actions">
                     <p class="actions-bar__total"><span class="js-total-actions">0</span> {% trans "Selected" %}</p>
-                    <button class="button button--action js-batch-button js-batch-invoice-progress" href="{% url 'apply:projects:bulk_invoice_status_update' %}" hx-target="#htmx-modal">
+                    <button
+                        class="button button--action js-batch-button js-batch-invoice-progress"
+                        href="{% url 'apply:projects:bulk_invoice_status_update' %}"
+                        hx-target="#htmx-modal"
+                    >
                         {% heroicon_mini "arrows-right-left" class="inline" aria_hidden=true %}
                         {% trans "Status" %}
                     </button>

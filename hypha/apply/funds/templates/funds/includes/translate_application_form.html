@@ -54,7 +54,12 @@
             class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white rounded-sm ring-1 ring-inset ring-gray-300 shadow-sm sm:mt-0 sm:w-auto hover:bg-gray-50"
             @click="show = false"
         >{% trans "Cancel" %}</button>
-        <span class="inline-block" data-tooltip="{% trans "Translations are an experimental feature and may be inaccurate" %}">{% heroicon_outline "information-circle" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}</span>
+        <span
+            class="inline-block"
+            data-tippy-content="{% trans "Translations are an experimental feature and may be inaccurate" %}"
+        >
+            {% heroicon_outline "information-circle" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
+        </span>
     </div>
 </form>
 
