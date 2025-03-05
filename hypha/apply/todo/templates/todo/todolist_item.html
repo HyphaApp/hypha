@@ -13,7 +13,17 @@
         {% endif %}
     </div>
     {% if task.user %}
-        <button class="invisible group-hover:visible ms-2" data-tooltip="Remove task" hx-delete="{% url 'todo:delete' pk=task.id %}" hx-target="this" hx-swap="none" hx-confirm='{% trans "Are you sure you want to remove this task? It will remove this task from your task list." %}'>{% heroicon_micro "x-mark" class="inline me-2" width=24 height=24 aria_hidden=true %}</button>
+        <button
+            class="hidden p-2 group-hover:block hover:bg-gray-100"
+            data-tippy-content="{% trans 'Remove this task' %}"
+            hx-delete="{% url 'todo:delete' pk=task.id %}"
+            hx-target="this"
+            hx-swap="none"
+            hx-confirm='{% trans "Are you sure you want to remove this task? It will remove this task from your task list." %}'
+        >
+            {% heroicon_solid "x-mark" aria_hidden=true %}
+            <span class="sr-only">"{% trans 'Remove this task' %}"</span>
+        </button>
     {% endif %}
     <a class="button {{ button_type_class }} ms-2" href="{{ task.url }}">{% trans "View" %}</a>
 </div>
