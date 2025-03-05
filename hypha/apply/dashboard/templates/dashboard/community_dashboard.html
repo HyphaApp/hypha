@@ -31,12 +31,12 @@
             {% endif %}
         </div>
 
-        {% if my_reviewed.data %}
+        {% if my_reviewed.count %}
             <div class="wrapper wrapper--bottom-space">
                 <h2 class="mb-2 text-xl">
                     {% trans "Your previous reviews" %}
                 </h2>
-                {% render_table my_reviewed %}
+                {% include "submissions/partials/submissions-inline.html" with submissions=my_reviewed.objects row_layout="table" %}
             </div>
         {% endif %}
 

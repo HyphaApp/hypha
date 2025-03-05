@@ -13,8 +13,6 @@ from hypha.apply.funds.models import (
 from hypha.apply.funds.permissions import can_export_submissions
 from hypha.apply.funds.tables import (
     ReviewerSubmissionsTable,
-    SubmissionFilterAndSearch,
-    SubmissionReviewerFilterAndSearch,
     SubmissionsTable,
     SummarySubmissionsTableWithRole,
     review_filter_for_user,
@@ -31,6 +29,15 @@ from hypha.apply.todo.views import render_task_templates_for_user
 from hypha.apply.utils.views import ViewDispatcher
 
 from .services import get_paf_for_review
+
+
+def get_preview_context(queryset, limit=5):
+    count = queryset.count()
+    return {
+        "objects": queryset[:limit],
+        "count": count,
+        "display_more": count > limit,
+    }
 
 
 class MySubmissionContextMixin:
@@ -60,14 +67,9 @@ class MySubmissionContextMixin:
 
 class MyFlaggedMixin:
     def my_flagged(self, submissions):
-        submissions = submissions.flagged_by(self.request.user).order_by("-submit_time")
-
-        limit = 5
-        return {
-            "submissions": submissions[:limit],
-            "count": submissions.count(),
-            "display_more": submissions.count() > limit,
-        }
+        return get_preview_context(
+            queryset=submissions.flagged_by(self.request.user).order_by("-submit_time")
+        )
 
 
 class AdminDashboardView(MyFlaggedMixin, TemplateView):
@@ -81,7 +83,9 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
             {
                 "awaiting_reviews": self.awaiting_reviews(submissions),
                 "can_export": can_export_submissions(self.request.user),
-                "my_reviewed": self.my_reviewed(submissions),
+                "my_reviewed": get_preview_context(
+                    submissions.reviewed_by(self.request.user).order_by("-submit_time")
+                ),
                 "rounds": self.rounds(),
                 "my_flagged": self.my_flagged(submissions),
                 "my_tasks": self.my_tasks(),
@@ -164,25 +168,6 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
             "table": ProjectsDashboardTable(data=projects[:limit], prefix="project-"),
             "display_more": projects.count() > limit,
             "url": reverse("apply:projects:all"),
-        }
-
-    def my_reviewed(self, submissions):
-        """Staff reviewer's reviewed submissions for 'Previous reviews' block"""
-        submissions = submissions.reviewed_by(self.request.user).order_by(
-            "-submit_time"
-        )
-
-        limit = 5
-        return {
-            "filterset": SubmissionFilterAndSearch(
-                data=self.request.GET or None,
-                request=self.request,
-                queryset=submissions,
-            ),
-            "table": SummarySubmissionsTableWithRole(
-                submissions[:limit], prefix="my-review-"
-            ),
-            "display_more": submissions.count() > limit,
         }
 
     def rounds(self):
@@ -301,7 +286,9 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
         context.update(
             {
                 "awaiting_reviews": self.awaiting_reviews(submissions),
-                "my_reviewed": self.my_reviewed(submissions),
+                "my_reviewed": get_preview_context(
+                    submissions.reviewed_by(self.request.user).order_by("-submit_time")
+                ),
                 "my_flagged": self.my_flagged(submissions),
             }
         )
@@ -323,23 +310,6 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
             "count": count,
             "display_more": count > limit,
             "table": ReviewerSubmissionsTable(submissions[:limit], prefix="my-review-"),
-        }
-
-    def my_reviewed(self, submissions):
-        """Staff reviewer's reviewed submissions for 'Previous reviews' block"""
-        submissions = submissions.reviewed_by(self.request.user).order_by(
-            "-submit_time"
-        )
-
-        limit = 5
-        return {
-            "filterset": SubmissionReviewerFilterAndSearch(
-                data=self.request.GET or None,
-                request=self.request,
-                queryset=submissions,
-            ),
-            "table": ReviewerSubmissionsTable(submissions[:limit], prefix="my-review-"),
-            "display_more": submissions.count() > limit,
         }
 
 
@@ -463,15 +433,13 @@ class CommunityDashboardView(MySubmissionContextMixin, TemplateView):
         my_community_review, my_community_review = self.my_community_review(
             self.request.user, submissions
         )
-
-        # Partner's reviewed submissions
-        my_reviewed = self.my_reviewed(self.request, submissions)
-
         context.update(
             {
                 "my_community_review": my_community_review,
                 "my_community_review_count": my_community_review.count(),
-                "my_reviewed": my_reviewed,
+                "my_reviewed": get_preview_context(
+                    submissions.reviewed_by(self.request.user).order_by("-submit_time")
+                ),
             }
         )
 
@@ -486,12 +454,6 @@ class CommunityDashboardView(MySubmissionContextMixin, TemplateView):
         )
 
         return my_community_review, my_community_review_table
-
-    def my_reviewed(self, request, submissions):
-        return ReviewerSubmissionsTable(
-            submissions.reviewed_by(request.user).order_by("-submit_time"),
-            prefix="my-reviewed-",
-        )
 
 
 class ApplicantDashboardView(TemplateView):
