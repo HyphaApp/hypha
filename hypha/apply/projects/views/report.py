@@ -73,19 +73,7 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
     object = None
     form_class = None
     form_fields = None
-
-    def get_form_class(self, draft=False, form_data=None, user=None):
-        """
-        Expects self.form_fields to have already been set.
-        """
-        # This is where the magic happens.
-        fields = self.get_form_fields(draft, form_data, user)
-        the_class = type(
-            "WagtailStreamForm",
-            (ReportEditForm,),
-            fields,
-        )
-        return the_class
+    submission_form_class = ReportEditForm
 
     def dispatch(self, request, *args, **kwargs):
         report = self.get_object()
@@ -114,7 +102,7 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
         }
         return context_data
 
-    def get_form(self, form_class=None):
+    def get_form(self, form_class=None, draft=False):
         if self.object.current is None or self.object.form_fields is None:
             # Here is where we get the form_fields, the ProjectReportForm associated with the Fund:
             report_form = (
@@ -128,7 +116,7 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
             self.form_fields = self.object.form_fields
 
         if form_class is None:
-            form_class = self.get_form_class()
+            form_class = self.get_form_class(draft=draft)
         report_instance = form_class(**self.get_form_kwargs())
         return report_instance
 
@@ -159,7 +147,8 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
         return form_kwargs
 
     def post(self, request, *args, **kwargs):
-        form = self.get_form()
+        save_draft = "save" in request.POST  # clicked on save button?
+        form = self.get_form(draft=save_draft)
         if form.is_valid():
             form.save(form_fields=self.form_fields)
             form.delete_temporary_files()
