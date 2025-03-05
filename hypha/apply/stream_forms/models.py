@@ -22,11 +22,27 @@ from .forms import BlockFieldWrapper, PageStreamBaseForm
 
 
 class BaseStreamForm:
+    """Base class for creating dynamic forms using Wagtail StreamField.
+
+    This class provides functionality for handling form field definitions,
+    form data serialization/deserialization, and form generation.
+    """
+
     submission_form_class = PageStreamBaseForm
     wagtail_reference_index_ignore = True
 
     @classmethod
     def from_db(cls, db, field_names, values):
+        """Deserialize form data when loading from database.
+
+        Args:
+            db: Database connection
+            field_names: List of field names being loaded
+            values: Values for the fields
+
+        Returns:
+            Instance with deserialized form data
+        """
         instance = super().from_db(db, field_names, values)
         if "form_data" in field_names:
             instance.form_data = cls.deserialize_form_data(
@@ -36,6 +52,16 @@ class BaseStreamForm:
 
     @classmethod
     def deserialize_form_data(cls, instance, form_data, form_fields):
+        """Convert stored form data back into Python objects.
+
+        Args:
+            instance: Form instance
+            form_data: Raw form data from database
+            form_fields: Form field definitions
+
+        Returns:
+            Deserialized form data
+        """
         data = form_data.copy()
         # PERFORMANCE NOTE:
         # Do not attempt to iterate over form_fields - that will fully instantiate the form_fields
@@ -52,9 +78,36 @@ class BaseStreamForm:
         return data
 
     def get_defined_fields(self):
-        return self.form_fields
+        """Get the form field definitions.
+
+        Returns:
+            StreamField containing form field blocks
+
+        Raises:
+            AttributeError: If form_fields attribute is not defined on instance
+        """
+        try:
+            return self.form_fields  # type: ignore
+        except AttributeError as err:
+            raise AttributeError(
+                "form_fields attribute not found. "
+                "Make sure form_fields is defined on the implementing class."
+            ) from err
 
     def get_form_fields(self, draft=False, form_data=None, user=None):
+        """Generate form fields with applied logic and grouping.
+
+        Args:
+            draft: Whether this is a draft form. When True, fields that are not
+                  marked as ApplicationMustIncludeFieldBlock will have their
+                  required flag set to False, allowing incomplete form submissions
+                  to be saved as drafts.
+            form_data: Existing form data
+            user: User completing the form
+
+        Returns:
+            OrderedDict of form fields
+        """
         if form_data is None:
             form_data = {}
 
@@ -147,13 +200,31 @@ class BaseStreamForm:
         return form_fields
 
     def get_form_class(self, draft=False, form_data=None, user=None):
+        """Dynamically creates and returns a form class based on the field configuration.
+
+        Creates a new form class that inherits from submission_form_class (PageStreamBaseForm)
+        and includes all the dynamically generated form fields.
+
+        Args:
+            draft: Whether this is a draft form
+            form_data: Existing form data for pre-populating form fields
+            user: User completing the form, used for auto-populating user fields.
+
+        Returns:
+            A dynamically generated form class
+        """
         return type(
             "WagtailStreamForm",
             (self.submission_form_class,),
-            self.get_form_fields(draft, form_data, user),
+            self.get_form_fields(draft=draft, form_data=form_data, user=user),
         )
 
 
 class AbstractStreamForm(BaseStreamForm, AbstractForm):
+    """Abstract base class for stream forms.
+
+    Combines BaseStreamForm functionality with Wagtail's AbstractForm.
+    """
+
     class Meta:
         abstract = True
