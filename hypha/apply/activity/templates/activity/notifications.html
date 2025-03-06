@@ -92,7 +92,9 @@
                 </div>
 
                 {% if not object_list %}
-                    {% trans "No comments available" %}
+                    <p class="mb-8 text-xl">
+                        {% trans "No activities found, try updating your filters." %}
+                    </p>
                 {% endif %}
             </section>
         </div>
