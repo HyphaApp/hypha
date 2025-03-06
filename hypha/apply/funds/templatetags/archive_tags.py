@@ -19,4 +19,4 @@ def join_with_commas(obj_list: list):
     if list_len == 1:
         return f"{obj_list[0]}"
 
-    return f"{', '.join(str(obj) for obj in obj_list[:list_len-1])} and {obj_list[list_len-1]}"
+    return f"{', '.join(str(obj) for obj in obj_list[: list_len - 1])} and {obj_list[list_len - 1]}"

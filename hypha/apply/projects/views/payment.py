@@ -273,7 +273,7 @@ class CreateInvoiceView(SuccessMessageMixin, CreateView):
         if form.cleaned_data["message_for_pm"]:
             invoice_status_change = _("<p>Invoice added.</p>")
 
-            message_for_pm = f'<p>{form.cleaned_data["message_for_pm"]}</p>'
+            message_for_pm = f"<p>{form.cleaned_data['message_for_pm']}</p>"
 
             message = invoice_status_change + message_for_pm
 
@@ -369,7 +369,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
                 invoice_status_change = _(
                     "<p>Invoice status updated to: {status}.</p>"
                 ).format(status=self.object.get_status_display())
-                message_for_pm = f'<p>{form.cleaned_data["message_for_pm"]}</p>'
+                message_for_pm = f"<p>{form.cleaned_data['message_for_pm']}</p>"
                 message = invoice_status_change + message_for_pm
 
                 Activity.objects.create(

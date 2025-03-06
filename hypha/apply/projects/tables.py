@@ -191,7 +191,7 @@ class BaseProjectsTable(tables.Table):
         else:
             display = ""
 
-        display += f"{ record.report_config.outstanding_reports() } outstanding"
+        display += f"{record.report_config.outstanding_reports()} outstanding"
         return mark_safe(display)
 
 
