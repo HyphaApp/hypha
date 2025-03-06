@@ -1,27 +1,29 @@
-TemplateHook
-============
+# TemplateHook
 
-Adding a hook-point in ``main_app``'s template::
+Adding a hook-point in `main_app`'s template:
+
 
     # my_main_app/templates/_base.html
 
-    {% load hooks_tags %}
+    { % load hooks_tags %}
 
     <!DOCTYPE html>
     <html>
       <head>
-        #...
+        …
 
-        {% hook 'within_head' %}
+        { % hook 'within_head' %}
 
-        #...
+        …
       </head>
     </html>
 
-.. Tip:: Here we are adding a *hook-point* called ``within_head`` where *third-party*
-    apps will be able to insert their code.
+**Tip**
 
-Creating a hook listener in a ``third_party_app``::
+Here we are adding a *hook-point* called `within_head` where
+*third-party* apps will be able to insert their code.
+
+Creating a hook listener in a `third_party_app`:
 
     # third_party_app/template_hooks.py
 
@@ -63,7 +65,7 @@ Creating a hook listener in a ``third_party_app``::
             context_instance=context
         )
 
-Registering a hook listener in a ``third_party_app``::
+Registering a hook listener in a `third_party_app`:
 
     # third_party_app/apps.py
 
@@ -81,9 +83,11 @@ Registering a hook listener in a ``third_party_app``::
 
             hook.register("within_head", css_resources)
 
-.. Tip:: Where to register your hooks:
+**Tip**
 
-    Use ``AppConfig.ready()``: docs_ and example_
+Where to register your hooks:
 
-.. _docs: https://docs.djangoproject.com/en/1.8/ref/applications/#django.apps.AppConfig.ready
-.. _example: http://chriskief.com/2014/02/28/django-1-7-signals-appconfig/
+Use `AppConfig.ready()`:
+[docs](https://docs.djangoproject.com/en/1.8/ref/applications/#django.apps.AppConfig.ready)
+and
+[example](http://chriskief.com/2014/02/28/django-1-7-signals-appconfig/)
