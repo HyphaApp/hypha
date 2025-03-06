@@ -652,7 +652,5 @@ if SENTRY_DSN:
         integrations=[DjangoIntegration()],
     )
 
-# DJP plugins
-DJP_PLUGINS_DIR = (PROJECT_DIR + "/plugins_custom",)
 # Load settings from any djp plugins.
 djp.settings(globals())
