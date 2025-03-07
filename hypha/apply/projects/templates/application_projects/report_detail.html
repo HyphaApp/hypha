@@ -2,29 +2,29 @@
 {% load i18n static nh3_tags heroicons %}
 
 {% block title %}{% trans "Report" %} | {{ object.project.title }}{% endblock %}
-{% block body_class %}{% endblock %}
-{% block content %}
 
+{% block content %}
     {% adminbar %}
         {% slot back_link %}
             <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
                 {% trans "View project page" %}
             </a>
         {% endslot %}
-        {% slot header %}{{ object.project.title }}{% endslot %}
-        {% slot sub_heading %}{% trans "View report" %}{% endslot %}
+        {% slot header %}{{ object.project.title }} <span class="text-gray-400">#{{ object.project.submission.public_id|default:object.project.submission.id }}</span>{% endslot %}
+        {% slot sub_heading %}{% trans "Report" %}{% endslot %}
     {% endadminbar %}
 
     <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
-        <div class="wrapper--sidebar--inner">
-            <div class="alert">
-                {% heroicon_outline 'exclamation-circle' stroke_width=2 size=22 class="inline me-1 stroke-dark-blue" aria_hidden=true %}
-                <p class="alert__text">
-                    {% trans "This report is for the period" %} <strong>{{ object.start_date }}</strong> {% trans "to" %} <strong>{{ object.end_date }}</strong>
-                </p>
-            </div>
 
-            <div class="card card--solid">
+        <div class="wrapper--sidebar--inner">
+            <p class="flex items-center py-2 px-3 mt-0 mb-8 text-sm border bg-[var(--color-light-blue-90)]">
+                {% heroicon_outline 'exclamation-circle' stroke_width=2 size=18 class="inline me-1 stroke-dark-blue" aria_hidden=true %}
+                <span>
+                    {% trans "This report is for the period" %} <strong class="font-semibold">{{ object.start_date }}</strong> {% trans "to" %} <strong class="font-semibold">{{ object.end_date }}</strong>
+                </span>
+            </p>
+
+            <section>
                 {% if report.skipped %}
                     <h2>{% trans "Report Skipped" %}</h2>
                 {% else %}
@@ -50,7 +50,7 @@
                         {% endif %}
                     {% endfor %}
                 {% endif %}
-            </div>
+            </section>
         </div>
         <aside class="sidebar">
             {% if request.user.is_apply_staff or report.previous or report.next %}
