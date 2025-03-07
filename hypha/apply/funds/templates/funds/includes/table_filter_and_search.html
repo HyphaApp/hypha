@@ -93,7 +93,7 @@
 
 </div>
 
-<nav class="filters {% if filter_classes %}{{filter_classes}}{% endif %}">
+<div class="filters {% if filter_classes %}{{filter_classes}}{% endif %}">
     <div class="filters__header">
         <button class="filters__button js-clear-filters">{% trans "Clear" %}</button>
         <div>{% trans "Filter by" %}</div>
@@ -102,7 +102,7 @@
 
     <form method="GET" id="filter-form" class="flex sticky top-0 flex-wrap justify-end items-center py-2 px-3 mt-3 bg-gray-50 border-t border-gray-200 md:gap-5 md:text-sm md:font-medium z-[5] border-x">
         <span class="hidden items-center py-1 md:inline-flex"></span>
-        {% for field_name, field in filter.form.fields.items %}
+        {% for field_name, field in filter.form|get_filter_fields %}
             {% with filter.form|default_if_none:'' as form %}
                 {% if form %}
                     <nav class="flex flex-wrap gap-2 items-center menu-filters">
@@ -114,6 +114,8 @@
                                         <a
                                             {% if value|stringformat:'s' in selected_value %}
                                                 href="{% dup_remove_from_query "page" field_name value %}"
+                                            {% elif field|check_multiple %}
+                                                href="{% dup_add_to_query "page" field_name value only_query_string=True %}"
                                             {% else %}
                                                 href="{% dup_modify_query "page" field_name value %}"
                                             {% endif %}
@@ -134,22 +136,4 @@
             {% endwith %}
         {% endfor %}
     </form>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll("input[type='radio']").forEach(filter => {
-                filter.addEventListener("change", function () {
-                    document.getElementById("filter-form").submit();
-                });
-            });
-        });
-    </script>
-
-<!--        <ul class="form__filters">-->
-<!--            {{ filter.form.as_ul }}-->
-<!--            <li>-->
-<!--                <button class="button button&#45;&#45;primary" type="submit" value="Filter">{% trans "Filter" %}</button>-->
-<!--            </li>-->
-<!--        </ul>-->
-
 </div>

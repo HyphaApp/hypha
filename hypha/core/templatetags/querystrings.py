@@ -115,6 +115,34 @@ def add_to_query(context, *params_to_remove, **params_to_add):
 
 
 @register.simple_tag(takes_context=True)
+def dup_add_to_query(
+    context,
+    param_to_remove,
+    param_key_to_add,
+    param_value_to_add,
+    only_query_string=False,
+):
+    """Renders a link with modified current query parameters"""
+    query_params = []
+    param_key_used = False
+    # go through current query params..
+    for key, value_list in context["request"].GET.lists():
+        if key != param_to_remove:
+            # don't add key-value pairs which already
+            # exist in the query
+            if key == param_key_to_add and param_value_to_add in value_list:
+                param_key_used = True
+            for value in value_list:
+                query_params.append((key, value))
+    # add the rest key-value pairs
+    if not param_key_used:
+        query_params.append((param_key_to_add, param_value_to_add))
+    return construct_query_string(
+        context=context, query_params=query_params, only_query_string=only_query_string
+    )
+
+
+@register.simple_tag(takes_context=True)
 def remove_from_query(context, *args, **kwargs):
     """Renders a link with modified current query parameters"""
     only_query_string = False
