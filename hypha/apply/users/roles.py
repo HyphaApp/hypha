@@ -25,7 +25,7 @@ ROLES_ORG_FACULTY = [
 class Applicant(AbstractUserRole):
     role_name = APPLICANT_GROUP_NAME
     help_text = _(
-        "Can access their own application and communicate via " "the communication tab."
+        "Can access their own application and communicate via the communication tab."
     )
 
     available_permissions = {}

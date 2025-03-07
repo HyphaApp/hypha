@@ -1176,7 +1176,7 @@ class ChangePAFStatusView(View):
                 messages.success(self.request, _("Project form has been approved"))
 
             if form.cleaned_data["comment"]:
-                comment = f"<p>\"{form.cleaned_data['comment']}.\"</p>"
+                comment = f'<p>"{form.cleaned_data["comment"]}."</p>'
 
                 message = paf_status_update_message + comment
 

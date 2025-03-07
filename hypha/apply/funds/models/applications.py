@@ -839,7 +839,7 @@ class RoundsAndLabs(Page):
         params = f"fund={self.pk}"
         if self.fund:
             params = f"round={self.pk}"
-        return f'{reverse("apply:submissions:list")}?{params}'
+        return f"{reverse('apply:submissions:list')}?{params}"
 
     def save(self, *args, **kwargs):
         raise NotImplementedError("Do not save through this model")

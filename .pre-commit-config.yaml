@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: "0.5.13"
+    rev: "0.6.4"
     hooks:
       - id: uv-export
         name: uv-export requirements/prod.txt
@@ -36,7 +36,7 @@ repos:
           ]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.8.4"
+    rev: "v0.9.9"
     hooks:
       # Run the linter.
       - id: ruff

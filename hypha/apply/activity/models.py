@@ -376,7 +376,7 @@ class Event(models.Model):
 
     def __str__(self):
         if self.source and hasattr(self.source, "title"):
-            return f"{self.by} {self.get_type_display()} - {self.source.title }"
+            return f"{self.by} {self.get_type_display()} - {self.source.title}"
         else:
             return f"{self.by} {self.get_type_display()}"
 

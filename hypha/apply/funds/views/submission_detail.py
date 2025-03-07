@@ -306,7 +306,7 @@ class SubmissionDetailPDFView(SingleObjectMixin, View):
                         self.object.stage,
                         self.object.page,
                         self.object.round,
-                        f"Lead: { self.object.lead }",
+                        f"Lead: {self.object.lead}",
                     ],
                 },
             ],
