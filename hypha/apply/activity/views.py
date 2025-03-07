@@ -89,7 +89,6 @@ class ActivityContextMixin:
     def get_context_data(self, **kwargs):
         # Do not prefetch on the related_object__author as the models
         # are not homogeneous and this will fail
-        user = self.request.user
         activities = services.get_related_activities_for_user(
             self.object, self.request.user
         )
@@ -100,7 +99,7 @@ class ActivityContextMixin:
         else:
             application_obj = self.object.submission
 
-        comments_count = services.get_comment_count(application_obj, user)
+        comments_count = services.get_comment_count(application_obj, self.request.user)
 
         extra = {"activities": activities, "comments_count": comments_count}
         return super().get_context_data(**extra, **kwargs)
@@ -167,23 +166,21 @@ class NotificationsView(ListView):
     template_name = "activity/notifications.html"
     filterset_class = NotificationFilter
 
-    def get_template_names(self):
-        if self.request.htmx and self.request.GET.get("type") == "header_dropdown":
-            return ["activity/include/notifications_dropdown.html"]
-        return super().get_template_names()
-
     def get_queryset(self):
-        # List only last 30 days' activities
         queryset = Activity.objects.filter(current=True).latest()
 
-        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
-        qs = self.filterset.qs.distinct().order_by("-timestamp", "source_object_id")
+        # filter by one month by default
+        date_filter = self.request.GET.get("date", "month")
 
-        if self.request.htmx and self.request.GET.get("type") == "header_dropdown":
-            qs = qs[:5]
-        return qs
+        self.filterset = self.filterset_class(
+            {"date": date_filter}
+            if date_filter not in self.request.GET
+            else self.request.GET,
+            queryset=queryset,
+        )
+        return self.filterset.qs.distinct().order_by("-timestamp", "source_object_id")
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(NotificationsView, self).get_context_data()
+        context = super().get_context_data()
         context["filter"] = self.filterset
         return context

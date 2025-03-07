@@ -14,6 +14,7 @@ class NotificationFilter(django_filters.FilterSet):
         ("yesterday", _("Yesterday")),
         ("week", _("Past 7 days")),
         ("month", _("This month")),
+        ("three_months", _("Last 3 months")),
     ]
     timestamp_filters = {
         "today": lambda qs, name: qs.filter(
@@ -38,6 +39,12 @@ class NotificationFilter(django_filters.FilterSet):
         ),
         "month": lambda qs, name: qs.filter(
             **{"%s__year" % name: now().year, "%s__month" % name: now().month}
+        ),
+        "three_months": lambda qs, name: qs.filter(
+            **{
+                "%s__gte" % name: _truncate(now() - timedelta(days=90)),
+                "%s__lt" % name: _truncate(now() + timedelta(days=1)),
+            }
         ),
     }
 
