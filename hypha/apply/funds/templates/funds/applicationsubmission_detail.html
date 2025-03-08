@@ -62,7 +62,7 @@
 
                     {% if object.project and PROJECTS_ENABLED %}
                         <a class="tab__item js-tabs-off"
-                           href="{% url 'apply:projects:detail' pk=object.project.id %}"
+                           href="{% url 'apply:projects:detail' pk=object.id %}"
                         >
                             {% trans "Project" %}
                         </a>

@@ -49,10 +49,14 @@
             #{{ s.public_id|default:s.id }}
             submitted <relative-time datetime="{{ s.submit_time|date:"c" }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
             • {{ s.stage }}
+            {% if s.project %}
+                • <a href="{% url "apply:projects:detail" s.id %}" class="hover:underline text-inherit">{% trans "Project" %}</a>
+            {% endif %}
         </div>
     </td>
 
     <td class="p-2 text-center align-top">
+
         <a
             hx-target="#main"
             hx-push-url="true"
