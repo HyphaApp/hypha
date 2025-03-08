@@ -181,12 +181,23 @@
                                                 </div>
                                             </div>
                                         {% else %}
-                                            <p class="m-0 sidebar__paf-approvals--pending">{% trans "Pending approval from " %}{% if paf_approval.user %}{{ paf_approval.user }}{% else %} {{ paf_approval.paf_reviewer_role.label }}{% trans " (nobody assigned yet)" %} {% endif %}</p>
+                                            <p class="flex gap-2 items-center m-0 mb-2 text-red-600">
+                                                <span>{% heroicon_micro "clock" class="inline-block w-4 h-4 align-middle" aria_hidden=true %}</span>
+                                                <span>{% trans "Pending approval from " %}{% if paf_approval.user %}{{ paf_approval.user }}{% else %} {{ paf_approval.paf_reviewer_role.label }} ({% trans "nobody assigned yet" %}){% endif %}</span>
+                                            </p>
                                         {% endif %}
                                     {% else %}
-                                        <p class="m-0 sidebar__paf-approvals--approved">{% trans "Approved by " %}{{ paf_approval.user }} {% if paf_approval.approved_at %}(<i>{{ paf_approval.approved_at|date }}</i>){% endif %}</p>
+                                        <p class="flex gap-2 items-center m-0 mb-2">
+                                            {% heroicon_micro "check-circle" class="inline align-middle fill-green-500" aria_hidden=true %}
+
+                                            <span>{{ paf_approval.user }} {% trans "approved" %}
+                                                {% if paf_approval.approved_at %}
+                                                    <relative-time datetime="{{ paf_approval.approved_at|date:"c" }}" class="text-fg-muted">
+                                                        {{ paf_approval.approved_at|date }}
+                                                    </relative-time>
+                                                {% endif %}</span>
+                                        </p>
                                     {% endif %}
-                                    <br>
                                 {% endfor %}
 
                             </div>
