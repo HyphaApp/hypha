@@ -1,8 +1,8 @@
 {% load i18n invoice_tools humanize heroicons %}
 
-<div id="invoices" class="data-block">
-    <div class="data-block__header">
-        <p class="data-block__title">{% trans "Invoices" %}</p>
+<section id="invoices" class="docs-block wrapper--outer-space-large">
+    <div class="docs-block__header">
+        <h2 class="m-0 text-lg font-semibold">{% trans "Invoices" %}</h2>
         {% user_can_add_invoices object user as can_add_invoice %}
         {% if can_add_invoice %}
             <a class="button button--project-action button--project-action--white" target="_blank"
@@ -11,7 +11,7 @@
             </a>
         {% endif %}
     </div>
-    <div class="data-block__body"  x-data="{ showrejected: false }">
+    <div class="docs-block__inner"  x-data="{ showrejected: false }">
         {% if object.invoices.not_rejected %}
             <table class="data-block__table">
                 <thead>
@@ -32,12 +32,20 @@
         {% endif %}
 
         {% if object.invoices.rejected %}
-            <p class="data-block__rejected">
-                {% trans "Show rejected" as showrejectedtext %}{% trans "Hide rejected" as hiderejectedtext %}
-                <a class="data-block__rejected-link" href="#" @click="showrejected = ! showrejected" x-text="showrejected ? '{{ hiderejectedtext }}' : '{{ showrejectedtext }}'">{{ showrejectedtext }}</a>
+            <p class="text-center">
+                {% trans "Show rejected" as showrejectedtext %}
+                {% trans "Hide rejected" as hiderejectedtext %}
+                <a
+                    class="font-semibold"
+                    href="#"
+                    @click.prevent="showrejected = ! showrejected"
+                    x-text="showrejected ? '{{ hiderejectedtext }}' : '{{ showrejectedtext }}'"
+                >
+                    {{ showrejectedtext }}
+                </a>
             </p>
 
-            <table class="data-block__table"  x-show="showrejected" x-transition>
+            <table class="data-block__table"  x-show="showrejected">
                 <thead>
                     <tr>
                         <th class="data-block__table-date">{% trans "Date submitted" %}</th>
@@ -53,4 +61,4 @@
             </table>
         {% endif %}
     </div>
-</div>
+</section>

@@ -19,7 +19,7 @@
   }
 
   /**
-   * Check remaning.
+   * Check remaining.
    */
   function checkRemaining() {
     const [...remaining] = $(".js-past-reports-table tr.is-hidden");

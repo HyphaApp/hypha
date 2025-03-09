@@ -2,19 +2,17 @@
 @import "./base/variables.css";
 @import "./base/core.css";
 @import "./base/forms.css";
-
 @import "tailwindcss/components";
 @import "./components/choices.css";
 @import "./components/daterangepicker.css";
 @import "./components/django-file-field.css";
-
 @import "tailwindcss/utilities";
 
 @layer utilities {
     .border-stripe {
         border-image: repeating-linear-gradient(
                 -55deg,
-                #000 0px,
+                #000 0,
                 #000 20px,
                 #ffb101 20px,
                 #ffb101 40px

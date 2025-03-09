@@ -3,77 +3,6 @@
 
 .data-block {
     $root: &;
-    margin-block-end: 1rem;
-    border: 1px solid variables.$color--light-blue;
-
-    &__header {
-        padding: 1rem;
-        background-color: variables.$color--light-blue-90;
-
-        @include mixins.media-query(sm) {
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-    }
-
-    &__body {
-        padding: 1rem;
-
-        @include mixins.media-query(sm) {
-            padding: 2rem;
-        }
-    }
-
-    &__title {
-        font-size: variables.$font-size--epsilon;
-        font-weight: variables.$weight--bold;
-        margin: 0 0 1rem;
-
-        @include mixins.media-query(sm) {
-            margin: 0;
-        }
-    }
-
-    &__button {
-        display: inline-block;
-        padding: 0.5rem 1.2rem;
-
-        #{$root}__header & {
-            &:hover,
-            &:focus {
-                background-color: variables.$color--white;
-            }
-        }
-
-        #{$root}__links & {
-            margin-inline-end: 1rem;
-
-            &:only-child {
-                margin-inline-end: 0;
-            }
-        }
-    }
-
-    &__status {
-        margin: 0;
-
-        @include mixins.media-query(lg) {
-            display: block;
-            font-weight: variables.$weight--bold;
-        }
-    }
-
-    &__pagination,
-    &__rejected {
-        text-align: center;
-    }
-
-    &__pagination-link,
-    &__rejected-link {
-        font-weight: variables.$weight--bold;
-    }
 
     &__mobile-label {
         display: inline-block;
@@ -88,7 +17,6 @@
     &__table {
         thead {
             display: none;
-            border-block-start: 2px solid variables.$color--light-mid-grey;
 
             @include mixins.media-query(lg) {
                 display: table-header-group;
@@ -96,7 +24,7 @@
 
             th {
                 color: variables.$color--mid-dark-grey;
-                padding: 10px;
+                padding: 0.5rem;
 
                 @include mixins.media-query(lg) {
                     text-align: left;
@@ -104,20 +32,22 @@
             }
 
             tr {
-                border-color: variables.$color--light-mid-grey;
+                border-block-end: 2px solid variables.$color--light-mid-grey;
             }
         }
 
         tbody {
-            font-size: variables.$font-size--zeta;
-        }
+            tr {
+                border: 0;
+                border-block-end: 2px solid variables.$color--light-grey;
 
-        tr {
-            border: 0;
-            border-block-end: 2px solid variables.$color--light-grey;
+                &:last-child {
+                    border-block-end: 0;
+                }
 
-            &:hover {
-                box-shadow: none;
+                &:hover {
+                    box-shadow: none;
+                }
             }
         }
     }
@@ -133,7 +63,7 @@
     }
 
     &__table-date {
-        min-width: 180px;
+        min-width: 150px;
         width: 15%;
     }
 
@@ -147,7 +77,6 @@
     }
 
     &__action-link {
-        font-size: variables.$font-size--zeta;
         font-weight: variables.$weight--bold;
         display: inline-block;
         margin-inline-end: 1rem;
@@ -167,7 +96,6 @@
     }
 
     &__action-icon-link {
-        font-size: variables.$font-size--zeta;
         font-weight: variables.$weight--bold;
         display: flex;
         align-items: center;
@@ -192,7 +120,7 @@
 
     &__list-item {
         border-block-end: 2px solid variables.$color--light-grey;
-        padding: 1rem 0;
+        padding: 0.5em 0.75em;
 
         @include mixins.media-query(lg) {
             display: flex;
@@ -211,54 +139,5 @@
         &:only-child {
             padding: 0;
         }
-    }
-
-    &__info {
-        margin: 0 1rem 1rem 0;
-
-        @include mixins.media-query(lg) {
-            margin: 0 1rem 0 0;
-            flex: 1;
-        }
-    }
-
-    &__links {
-        display: flex;
-        align-items: center;
-
-        @include mixins.media-query(lg) {
-            justify-content: flex-end;
-        }
-    }
-
-    &__card {
-        padding-block-end: 1rem;
-        position: relative;
-        margin-block-end: 2rem;
-
-        &::after {
-            content: "";
-            width: calc(100% + 2rem);
-            position: absolute;
-            height: 2px;
-            display: block;
-            background: variables.$color--mid-grey;
-            inset-inline-start: -1rem;
-            inset-block-end: 0;
-
-            @include mixins.media-query(sm) {
-                width: calc(100% + 4rem);
-                inset-inline-start: -2rem;
-            }
-        }
-    }
-
-    &__card-copy,
-    &__card-title {
-        margin: 0 0 0.5rem;
-    }
-
-    &__card-title {
-        font-weight: variables.$weight--bold;
     }
 }
