@@ -14,10 +14,11 @@
 
                     {{ object.report_config.get_frequency_display }} &middot;
 
-                    <a class="font-semibold"
+                    <a
+                        class="font-semibold"
                         href="{% url 'apply:projects:report_frequency_update' pk=object.submission.id %}"
                         hx-get="{% url 'apply:projects:report_frequency_update' pk=object.submission.id %}"
-                       hx-target="#htmx-modal"
+                        hx-target="#htmx-modal"
                     >
                         {% if object.report_config.disable_reporting %}
                             {% trans "Enable" %}
