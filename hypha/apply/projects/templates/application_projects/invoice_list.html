@@ -11,13 +11,7 @@
         {% slot sub_heading %}{% trans "View, search and filter all project invoices" %}{% endslot %}
     {% endadminbar %}
 
-    <div class="wrapper wrapper--large wrapper--inner-space-medium">
-        <div hx-get="{% url 'apply:projects:invoices_status_counts' %}" hx-trigger="load delay:50">
-            <div class="animate-pulse min-h-40">
-                <div class="mb-5 w-full h-9 bg-gray-200"></div>
-                <div class="mb-5 w-full h-6 bg-gray-200"></div>
-            </div>
-        </div>
+    <div class="wrapper wrapper--large">
 
         {% if table %}
             {% trans "invoices" as search_placeholder %}

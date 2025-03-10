@@ -1,12 +1,44 @@
 import copy
 import math
 
-from django import template
+from django import forms, template
 
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.users.models import User
 
 register = template.Library()
+
+
+@register.simple_tag
+def prepare_query_data(key, value):
+    return "{key}={value}".format(key=key, value=value)
+
+
+@register.simple_tag
+def get_item_value(form, key):
+    return form[key].value()
+
+
+@register.filter
+def get_field_choices(form, field_name):
+    """Returns the choices of a form field."""
+    if hasattr(form[field_name].field, "choices"):
+        return form[field_name].field.choices if field_name in form.fields else []
+    return []
+
+
+@register.filter
+def check_multiple(field):
+    return field.widget.allow_multiple_selected
+
+
+@register.filter
+def get_filter_fields(form):
+    fields = []
+    for field_name, field in form.fields.items():
+        if not isinstance(field.widget, forms.HiddenInput):
+            fields.append((field_name, field))
+    return fields
 
 
 @register.filter
