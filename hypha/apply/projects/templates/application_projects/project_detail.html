@@ -8,60 +8,10 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
-    {% display_project_status object request.user as project_status %}
-    <div class="admin-bar" xmlns="http://www.w3.org/1999/html">
+    <div class="admin-bar">
         <div class="admin-bar__inner">
-            <h1 class="mb-0 font-medium"
-                hx-get="{% url "apply:projects:project_title" object.id %}"
-                hx-trigger="load, titleUpdated from:body"
-            >
-                <span class="inline-block bg-gray-600 rounded-md animate-pulse"></span>
-            </h1>
 
-            <div class="mt-1 text-sm font-medium heading heading--meta">
-
-                <span>{{ object.submission.page }}</span>
-
-                {% if object.submission.round %}
-                    {% if request.user.is_apply_staff %}
-                        <span>
-                            <a class="text-white underline"
-                               href="{% url 'apply:submissions:list' %}?round={{ object.submission.round.pk }}"
-                            >{{ object.submission.round }}</a>
-                        </span>
-                    {% else %}
-                        {{ object.submission.round }}
-                    {% endif %}
-                {% endif %}
-
-                {% if not HIDE_STAFF_IDENTITY or request.user.is_apply_staff %}
-                    <span
-                        hx-get="{% url "apply:projects:project_lead" object.id %}"
-                        hx-trigger="load, leadUpdated from:body"
-                    >
-                        <span class="inline-block w-24 bg-gray-600 rounded-md animate-pulse"></span>
-                    </span>
-                {% endif %}
-
-            </div>
-
-            <div class="my-6 status-bar">
-                {% for status, text in statuses %}
-                    {% if forloop.counter0 == current_status_index %}
-                        {% include "funds/includes/status_bar_item.html" with is_current=True is_complete=False label=text %}
-                    {% elif forloop.counter0 < current_status_index %}
-                        {% include "funds/includes/status_bar_item.html" with is_current=False is_complete=True label=text %}
-                    {% else %}
-                        {% include "funds/includes/status_bar_item.html" with is_current=False is_complete=False label=text %}
-                    {% endif %}
-                {% endfor %}
-            </div>
-
-            <div class="mt-5 status-bar--mobile">
-                <h6 class="status-bar__subheading">
-                    {{ project_status }}
-                </h6>
-            </div>
+            {% include "application_projects/includes/project_header.html" %}
 
             <div class="tabs js-tabs">
                 <div class="tabs__container">
@@ -195,7 +145,8 @@
                                                     <relative-time datetime="{{ paf_approval.approved_at|date:"c" }}" class="text-fg-muted">
                                                         {{ paf_approval.approved_at|date }}
                                                     </relative-time>
-                                                {% endif %}</span>
+                                                {% endif %}
+                                            </span>
                                         </p>
                                     {% endif %}
                                 {% endfor %}
