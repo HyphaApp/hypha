@@ -1,23 +1,18 @@
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
-from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_http_methods
-from django.views.generic import CreateView, ListView
-from django_ratelimit.decorators import ratelimit
+from django.views.generic import ListView
+from rolepermissions.checkers import has_object_permission
 
 from hypha.apply.funds.models.submissions import ApplicationSubmission
-from hypha.apply.funds.permissions import has_permission as has_funds_permission
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.storage import PrivateMediaView
-from hypha.apply.utils.views import DelegatedViewMixin
 
 from . import services
 from .filters import NotificationFilter
-from .forms import CommentForm
-from .messaging import MESSAGES, messenger
 from .models import COMMENT, Activity, ActivityAttachment
 
 
@@ -39,13 +34,13 @@ def partial_comments(request, pk: int):
     Returns:
         HttpResponse: The rendered 'activity_list' template with the context data.
     """
-    obj = get_object_or_404(ApplicationSubmission, pk=pk)
-    has_funds_permission(
-        "submission_view", request.user, object=obj, raise_exception=True
-    )
-    editable = not obj.is_archive
+    submission = get_object_or_404(ApplicationSubmission, pk=pk)
+    if not has_object_permission("view_comments", request.user, submission):
+        raise PermissionDenied
 
-    qs = services.get_related_activities_for_user(obj, request.user)
+    editable = not submission.is_archive
+
+    qs = services.get_related_activities_for_user(submission, request.user)
     page = Paginator(qs, per_page=10, orphans=5).page(request.GET.get("page", 1))
 
     ctx = {
@@ -87,64 +82,18 @@ class ActivityContextMixin:
     """Mixin to add related 'comments' of the current view's 'self.object'"""
 
     def get_context_data(self, **kwargs):
-        # Do not prefetch on the related_object__author as the models
-        # are not homogeneous and this will fail
-        activities = services.get_related_activities_for_user(
-            self.object, self.request.user
-        )
-
         # Comments for both projects and applications exist under the original application
         if isinstance(self.object, ApplicationSubmission):
             application_obj = self.object
         else:
             application_obj = self.object.submission
 
-        comments_count = services.get_comment_count(application_obj, self.request.user)
-
-        extra = {"activities": activities, "comments_count": comments_count}
+        extra = {
+            "comments_count": services.get_comment_count(
+                application_obj, self.request.user
+            )
+        }
         return super().get_context_data(**extra, **kwargs)
-
-
-@method_decorator(
-    ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
-    name="dispatch",
-)
-class CommentFormView(DelegatedViewMixin, CreateView):
-    form_class = CommentForm
-    context_name = "comment_form"
-
-    def form_valid(self, form):
-        source = self.kwargs["object"]
-        form.instance.user = self.request.user
-        form.instance.source = source
-        form.instance.type = COMMENT
-        form.instance.timestamp = timezone.now()
-        response = super().form_valid(form)
-        messenger(
-            MESSAGES.COMMENT,
-            request=self.request,
-            user=self.request.user,
-            source=source,
-            related=self.object,
-        )
-        return response
-
-    def get_success_url(self):
-        return self.object.source.get_absolute_url() + "#communications"
-
-    def get_form_kwargs(self) -> dict:
-        """Get the kwargs for the [`CommentForm`][hypha.apply.activity.forms.CommentForm].
-
-        Returns:
-            A dict of kwargs to be passed to [`CommentForm`][hypha.apply.activity.forms.CommentForm].
-            The submission instance is removed from this return, while a boolean of `has_partners` is
-            added based off the submission.
-        """
-        kwargs = super().get_form_kwargs()
-        instance = kwargs.pop("instance")
-        if isinstance(instance, ApplicationSubmission):
-            kwargs["submission_partner_list"] = instance.partners.all()
-        return kwargs
 
 
 class AttachmentView(PrivateMediaView):
