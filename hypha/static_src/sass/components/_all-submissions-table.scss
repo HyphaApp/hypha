@@ -258,21 +258,4 @@
             opacity: 0.7;
         }
     }
-
-    &__more {
-        display: flex;
-        justify-content: center;
-        background-color: variables.$color--white;
-        padding: 20px 25px;
-        min-height: auto;
-        border-block-end: 1px solid variables.$color--light-mid-grey;
-        border-inline-start: 1px solid variables.$color--light-mid-grey;
-        border-inline-end: 1px solid variables.$color--light-mid-grey;
-
-        a {
-            margin: 0;
-            flex-basis: auto;
-            font-weight: variables.$weight--semibold;
-        }
-    }
 }

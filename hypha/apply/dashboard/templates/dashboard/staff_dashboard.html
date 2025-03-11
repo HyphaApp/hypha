@@ -56,7 +56,7 @@
                     {% if my_reviewed.count %}
                         <a href="#my-review" class="border shadow-sm stat-block__item">
                             <p class="stat-block__number">{{ my_reviewed.count }}</p>
-                            <p class="stat-block__text">Your previous reviews</p>
+                            <p class="stat-block__text">{% trans "Your previous reviews" %}</p>
                         </a>
                     {% endif %}
                 {% endif %}
@@ -102,7 +102,7 @@
 
                 {% render_table projects.table %}
 
-                <div class="all-submissions-table__more">
+                <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
                     <a href="{{ projects.url }}?lead={{ request.user.pk }}">{% trans "Show all" %}</a>
                 </div>
             </div>
@@ -117,12 +117,12 @@
 
         {% if my_reviewed.count %}
             <div class="wrapper wrapper--bottom-space">
-                <h3 class="mb-2 text-xl">Your previous reviews</h3>
+                <h3 class="mb-2 text-xl"><a href="{% url "apply:submissions:list" %}?query=reviewed-by:@me">{% trans "Your previous reviews" %} <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded me-2">{{ my_reviewed.count }}</span></a></h3>
                 {% include "submissions/partials/submissions-inline.html" with submissions=my_reviewed.objects row_layout="table" %}
 
                 {% if my_reviewed.display_more %}
-                    <div class="all-submissions-table__more">
-                        <a href="{% url "apply:submissions:list" %}?reviewers={{ request.user.pk }}">{% trans "Show all" %}</a>
+                    <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
+                        <a href="{% url "apply:submissions:list" %}?query=reviewed-by:@me">{% trans "Show all" %}</a>
                     </div>
                 {% endif %}
             </div>

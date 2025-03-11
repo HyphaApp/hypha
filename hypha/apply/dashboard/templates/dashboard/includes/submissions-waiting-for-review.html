@@ -11,7 +11,7 @@
     {% comment %} {% render_table my_review %} {% endcomment %}
 
     {% if display_more %}
-        <div class="all-submissions-table__more">
+        <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
             <a href="{% url "apply:submissions:list" %}?query=reviewer:@me">{% trans "Show all" %}</a>
         </div>
     {% endif %}
