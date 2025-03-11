@@ -252,7 +252,7 @@ class EmailAdapter(AdapterBase):
         # Pass the user object to render_message rather than the email string
         recipient_obj = User.objects.get(email__exact=recipient)
         kwargs["recipient"] = recipient_obj
-        if not comment.priviledged:
+        if not comment.privileged:
             return self.render_message("messages/email/comment.html", **kwargs)
 
     def recipients(self, message_type, source, user, **kwargs):

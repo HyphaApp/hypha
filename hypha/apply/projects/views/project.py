@@ -39,7 +39,7 @@ from rolepermissions.checkers import has_object_permission
 from hypha.apply.activity.adapters.utils import get_users_for_groups
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import ACTION, ALL, COMMENT, TEAM, Activity
-from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
+from hypha.apply.activity.views import ActivityContextMixin
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.todo.options import (
     PAF_REQUIRED_CHANGES,
@@ -1031,9 +1031,8 @@ class ChangePAFStatusView(View):
             comment = form.cleaned_data.get("comment", "")
 
             paf_status_update_message = _(
-                "<p>{role} has updated project form status to {paf_status}.</p>"
+                "updated project form status to {paf_status}."
             ).format(
-                role=paf_approval.paf_reviewer_role.label,
                 paf_status=get_paf_status_display(paf_status).lower(),
             )
             Activity.objects.create(
@@ -1598,11 +1597,9 @@ class AdminProjectDetailView(
     ContractsMixin,
     BaseProjectDetailView,
 ):
-    form_views = [
-        CommentFormView,
-    ]
     model = Project
     template_name_suffix = "_admin_detail"
+    form_views = []
 
     def dispatch(self, *args, **kwargs):
         project = self.get_object()
@@ -1629,12 +1626,9 @@ class ApplicantProjectDetailView(
     ContractsMixin,
     BaseProjectDetailView,
 ):
-    form_views = [
-        CommentFormView,
-    ]
-
     model = Project
     template_name_suffix = "_detail"
+    form_views = []
 
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()
