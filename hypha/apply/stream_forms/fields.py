@@ -1,32 +1,11 @@
 from django.conf import settings
 from django.core.validators import FileExtensionValidator
-from django.forms import FileField, Media
-from django.templatetags.static import static
-from django.utils.functional import cached_property
+from django.forms import FileField
 from django_file_form.fields import MultipleUploadedFileField, UploadedFileField
 from django_file_form.widgets import UploadMultipleWidget, UploadWidget
 
 
-class FileFieldWidgetMixin:
-    # This file seems to be imported even during collectstatic,
-    # at which point `static()` won't be able to find these files yet
-    # using production settings, so we delay calling `static()` until it's needed.
-    @cached_property
-    def media(self):
-        return Media(
-            css={
-                "all": [
-                    static("file_form/file_form.css"),
-                ]
-            },
-            js=[
-                static("file_form/file_form.min.js"),
-                static("js/file-uploads.js"),
-            ],
-        )
-
-
-class MultiFileFieldWidget(FileFieldWidgetMixin, UploadMultipleWidget):
+class MultiFileFieldWidget(UploadMultipleWidget):
     pass
 
 
@@ -69,7 +48,7 @@ class MultiFileField(MultipleUploadedFileField):
         return attrs
 
 
-class SingleFileFieldWidget(FileFieldWidgetMixin, UploadWidget):
+class SingleFileFieldWidget(UploadWidget):
     pass
 
 
