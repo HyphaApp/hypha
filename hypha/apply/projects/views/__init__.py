@@ -34,10 +34,10 @@ from .project import (
     UpdateAssignApproversView,
     UpdateLeadView,
     UpdatePAFApproversView,
-    UpdateProjectTitleView,
     UploadContractDocumentView,
     UploadContractView,
     UploadDocumentView,
+    update_project_title,
 )
 from .project_partials import (
     get_invoices_status_counts,
@@ -76,8 +76,8 @@ __all__ = [
     "SendForApprovalView",
     "SkipPAFApprovalProcessView",
     "SubmitContractDocumentsView",
-    "UpdateProjectTitleView",
     "UpdatePAFApproversView",
+    "update_project_title",
     "UploadContractDocumentView",
     "ChangePAFStatusView",
     "UploadDocumentView",

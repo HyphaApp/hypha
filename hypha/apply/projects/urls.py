@@ -41,7 +41,6 @@ from .views import (
     UpdateAssignApproversView,
     UpdateLeadView,
     UpdatePAFApproversView,
-    UpdateProjectTitleView,
     UploadContractDocumentView,
     UploadContractView,
     UploadDocumentView,
@@ -54,6 +53,7 @@ from .views import (
     partial_project_lead,
     partial_project_title,
     partial_supporting_documents,
+    update_project_title,
 )
 
 app_name = "projects"
@@ -86,7 +86,7 @@ urlpatterns = [
                 ),
                 path(
                     "title/update/",
-                    UpdateProjectTitleView.as_view(),
+                    update_project_title,
                     name="project_title_update",
                 ),
                 path(

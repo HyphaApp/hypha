@@ -228,7 +228,7 @@ class ReportFrequencyUpdate(View):
     template_name = "application_projects/modals/report_frequency_config.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.project = get_object_or_404(Project, submission__id=kwargs.get("pk"))
         self.object = self.project.report_config
         return super().dispatch(request, *args, **kwargs)
 

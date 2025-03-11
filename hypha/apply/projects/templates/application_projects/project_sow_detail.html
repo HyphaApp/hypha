@@ -40,21 +40,28 @@
                         <h5>{% trans "Actions to take" %}</h5>
                         {% user_can_edit_pfs object user as can_edit_pfs %}
                         {% if can_edit_pfs %}
-                            <a class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit_sow' pk=object.pk %}">{% trans "Edit" %}</a>
+                            <a
+                                class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}"
+                                href="{% url 'apply:projects:edit_sow' pk=object.submission.pk %}"
+                            >
+                                {% trans "Edit" %}
+                            </a>
                         {% endif %}
                         <div x-data="{ show: false }" class="relative">
                             <button x-on:click="show = ! show" class="button button--bottom-space button--primary button--full-width" type="button">
                                 {% trans 'Download SOW' %}
                             </button>
                             <div x-show="show" x-transition class="dropdown__content">
-                                <a href="{% url 'apply:projects:download-sow' pk=object.pk export_type='pdf' %}">
-                                    {% trans 'Download as PDF' %}</a>
-                                <a href="{% url 'apply:projects:download-sow' pk=object.pk export_type='docx' %}">
-                                    {% trans 'Download as DOCX' %}</a>
+                                <a href="{% url 'apply:projects:download-sow' pk=object.submission.id export_type='pdf' %}"
+                                >
+                                    {% trans 'Download as PDF' %}
+                                </a>
+                                <a href="{% url 'apply:projects:download-sow' pk=object.submission.id export_type='docx' %}">
+                                    {% trans 'Download as DOCX' %}
+                                </a>
                             </div>
                         </div>
                     </div>
-
                 </aside>
             {% endif %}
         </div>

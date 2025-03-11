@@ -8,9 +8,13 @@
     {% get_comment_for_invoice_action object latest_activity as latest_activity_comment %}
     <p>{{ latest_activity_status }} {% if user.is_applicant and latest_activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ latest_activity.user }}){% endif %}
         <span class="text-gray-400">{{ latest_activity.timestamp }}</span>
+
         {% if latest_activity_comment %}
             {% heroicon_outline "exclamation-circle" stroke_width=2 size=22 class="inline stroke-red-500" aria_hidden=true %}
-            <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ latest_activity_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
+            <a
+                href="{% url 'apply:projects:detail' pk=object.project.submission.id %}#communications--{{ latest_activity_comment.id }}"
+                class="font-bold"
+            >{% trans "View comment" %}</a>
         {% endif %}
     </p>
     {% for activity in activities %}
@@ -20,7 +24,10 @@
             <span class="text-gray-400">{{ activity.timestamp }}</span>
             {% if activity_comment %}
                 {% heroicon_outline "exclamation-circle" stroke_width=2 size=22 class="inline stroke-red-500" aria_hidden=true %}
-                <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ activity_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
+                <a
+                    href="{% url 'apply:projects:detail' pk=object.project.submission.id %}#communications--{{ activity_comment.id }}"
+                    class="font-bold"
+                >{% trans "View comment" %}</a>
             {% endif %}
         </p>
     {% endfor %}
