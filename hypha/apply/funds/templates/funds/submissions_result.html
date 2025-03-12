@@ -14,22 +14,22 @@
             <h3>{% trans "Summary" %}</h3>
 
             <div class="grid gap-4 lg:gap-8 grid-cols-[repeat(auto-fit,minmax(300px,1fr))]">
-                <section class="p-4 border shadow" aria-labelledby="amounts-heading">
+                <section class="p-4 border shadow-sm" aria-labelledby="amounts-heading">
                     <h5 id="amounts-heading">{% trans "Amounts" %}</h5>
 
                     <div class="flex flex-wrap gap-4">
-                        <dl role="list" aria-label="{% trans 'Applied amounts' %}" class="flex-grow">
+                        <dl role="list" aria-label="{% trans 'Applied amounts' %}" class="grow">
                             <dt class="pb-2 border-b text-fg-muted">{% trans "Applied" %} ({% get_currency_symbol %})</dt>
                             <dd class="pt-2 text-xl font-semibold">{{ submission_sum|default:"0"|format_number_as_currency }}</dd>
                         </dl>
-                        <dl role="list" aria-label="{% trans 'Accepted amounts' %}" class="flex-grow">
+                        <dl role="list" aria-label="{% trans 'Accepted amounts' %}" class="grow">
                             <dt class="pb-2 border-b text-fg-muted">{% trans "Accepted" %} ({% get_currency_symbol %})</dt>
                             <dd class="pt-2 text-xl font-semibold">{{ submission_accepted_sum|default:"0"|format_number_as_currency }}</dd>
                         </dl>
                     </div>
                 </section>
 
-                <section class="p-4 border shadow" aria-labelledby="submissions-heading">
+                <section class="p-4 border shadow-sm" aria-labelledby="submissions-heading">
                     <h5 id="submissions-heading">{% trans "Submissions" %}</h5>
                     <div class="grid grid-cols-3 gap-4">
                         <dl role="list" aria-label="{% trans 'Applied submissions' %}">
@@ -47,7 +47,7 @@
                     </div>
                 </section>
 
-                <section class="p-4 border shadow" aria-labelledby="reviews-heading">
+                <section class="p-4 border shadow-sm" aria-labelledby="reviews-heading">
                     <h5 id="reviews-heading">{% trans "Reviews" %}</h5>
                     <div class="mt-2 mb-0">
                         <div class="grid grid-cols-4 gap-4">
@@ -75,20 +75,20 @@
             {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term filter_action=filter_action filter_classes="filters-open" %}
 
             <div class="grid gap-4 max-w-none lg:gap-8 prose grid-cols-[repeat(auto-fit,minmax(300px,1fr))]">
-                <section class='flex flex-col gap-4 p-4 border shadow' aria-labelledby="submissions-count-heading">
+                <section class='flex flex-col gap-4 p-4 border shadow-sm' aria-labelledby="submissions-count-heading">
                     <span id="submissions-count-heading" class="text-fg-muted">{% trans "Number of submissions" %}</span>
                     <span class="text-2xl font-semibold">
                         {{ count_values }}<sup>{% if not count_values == object_list.count %}*{% endif %}</sup>
                     </span>
                 </section>
-                <section class='flex flex-col gap-4 p-4 border shadow' aria-labelledby="average-value-heading">
+                <section class='flex flex-col gap-4 p-4 border shadow-sm' aria-labelledby="average-value-heading">
                     <span id="average-value-heading" class="text-fg-muted">{% trans "Average value" %}</span>
                     <span class="text-2xl font-semibold">
                         {{ average_value|format_number_as_currency }}
                     </span>
                 </section>
 
-                <section class='flex flex-col gap-4 p-4 border shadow' aria-labelledby="total-value-heading">
+                <section class='flex flex-col gap-4 p-4 border shadow-sm' aria-labelledby="total-value-heading">
                     <span id="total-value-heading" class="text-fg-muted">{% trans "Total value" %}</span>
                     <span class="text-2xl font-semibold">
                         {{ total_value|format_number_as_currency }}

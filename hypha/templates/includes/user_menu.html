@@ -4,7 +4,7 @@
     <div x-data="{ show: false }" x-on:keydown.escape="show = false" class="flex relative">
         <button
             x-on:click="show = ! show"
-            class="flex items-center px-1.5 font-bold rounded-sm transition-all group"
+            class="flex items-center px-1.5 font-bold transition-all rounded-xs group"
             type="button"
             :class="show ? 'bg-gray-900 text-white' : 'hover:bg-slate-200'"
         >
@@ -20,7 +20,7 @@
             x-transition
             x-transition.origin.top
             @click.outside="show = false"
-            class="block absolute top-10 bg-white rounded-sm shadow-xl min-w-48 z-[100000] border-y end-0"
+            class="block absolute top-10 bg-white shadow-xl rounded-xs min-w-48 z-100000 border-y end-0"
         >
             <a
                 href="{% url 'users:account' %}"

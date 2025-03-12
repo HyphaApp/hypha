@@ -4,7 +4,7 @@
     {% if my_tasks.data %}
         <h2 class="font-light text-center">{% trans "My tasks" %}</h2>
 
-        <div class="border divide-y shadow-sm task--list">
+        <div class="border divide-y shadow-xs task--list">
             {% for task in my_tasks.data %}
                 {% include "todo/todolist_item.html" with button_type_class="button--transparent" %}
             {% endfor %}

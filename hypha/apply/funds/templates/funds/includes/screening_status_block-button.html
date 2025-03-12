@@ -51,7 +51,7 @@
     <!-- panel -->
     {% if can_screen and screening_options.count > 1 %}
         <div
-            class=" bg-white tras min-w-48 text-sm top absolute {% if type == 'yes' %}md:start-0 {% else %}end-0{% endif %} divide-y rounded border shadow-lg group-hover:absolute z-20"
+            class=" bg-white tras min-w-48 text-sm top absolute {% if type == 'yes' %}md:start-0 {% else %}end-0{% endif %} divide-y rounded-sm border shadow-lg group-hover:absolute z-20"
             x-cloak
             role="menu"
             x-show="isOpen || openedWithKeyboard"

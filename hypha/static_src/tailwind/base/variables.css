@@ -85,8 +85,8 @@
     /* Spacing */
     --gutters: calc(5px + 1.5625vw);
     --gutters-reverse: calc(0px - (5px + 1.5625vw));
-    --spacing: 1.25rem;
-    --spacing-reverse: -1.25rem;
+    /* --spacing: 1.25rem; */
+    /* --spacing-reverse: -1.25rem; */
 
     /* Dropdown height */
     --dropdown-height: 45px;

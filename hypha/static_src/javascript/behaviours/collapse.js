@@ -35,7 +35,7 @@
     // Create a wrapper for the button with gradient background
     const btn_wrapper = document.createElement("div");
     btn_wrapper.classList.add(
-      ..."w-full absolute bottom-0 left-0 text-center pt-8 pb-4 bg-gradient-to-t from-white".split(
+      ..."w-full absolute bottom-0 left-0 text-center pt-8 pb-4 bg-linear-to-t from-white".split(
         " "
       )
     );

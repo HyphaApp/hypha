@@ -3,7 +3,7 @@
 
 <div class="p-4">
     {% if remaining_document_categories %}
-        <div class="p-2 mb-4 bg-red-100 rounded prose">
+        <div class="p-2 mb-4 bg-red-100 rounded-sm prose">
             <p class="mb-0">{% trans "Looks like the following documents are missing" %}:</p>
 
             <ul class="mt-0">
@@ -26,10 +26,10 @@
         </p>
 
         <div class="flex items-center mb-4 text-sm">
-            <p class="flex-shrink mb-0 font-bold text-slate-500 pe-2">
+            <p class="mb-0 font-bold shrink text-slate-500 pe-2">
                 {% trans "Select approvers " %} ({% trans "Optional" %})
             </p>
-            <p class="flex-grow mb-0 h-px bg-mid-grey"></p>
+            <p class="mb-0 h-px grow bg-mid-grey"></p>
         </div>
 
         {% include 'includes/dialog_form_base.html' with form=form value=submit %}

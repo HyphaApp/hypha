@@ -3,7 +3,7 @@
 =   For the select component rendered with choices.js
 =============================== */
 .choices {
-    @apply relative mb-6 overflow-hidden text-base focus:outline-none;
+    @apply relative mb-6 overflow-hidden text-base focus:outline-hidden;
 }
 
 .choices:last-child {
@@ -107,7 +107,7 @@
 .choices__inner {
     min-height: 40px;
 
-    @apply inline-block w-full p-1 overflow-hidden text-sm text-gray-900 align-top border border-gray-300 rounded-sm;
+    @apply inline-block w-full p-1 overflow-hidden text-sm text-gray-900 align-top border border-gray-300 rounded-xs;
 }
 
 .is-focused .choices__inner {
@@ -119,7 +119,7 @@
 }
 
 .is-open .choices__inner {
-    @apply rounded-sm;
+    @apply rounded-xs;
 }
 
 .is-flipped.is-open .choices__inner {
@@ -270,7 +270,7 @@
 .choices__button {
     text-indent: -9999px;
 
-    @apply bg-transparent bg-center bg-no-repeat border-none appearance-none cursor-pointer focus:outline-none;
+    @apply bg-transparent bg-center bg-no-repeat border-none appearance-none cursor-pointer focus:outline-hidden;
 }
 
 .choices__input {

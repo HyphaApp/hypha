@@ -2,7 +2,7 @@
 <form class="flex gap-4 wrapper wrapper--sidebar-buttons" id="submission-flags">
     {% with submission|flagged_by:user as is_flagged %}
         <button
-            class="button button--secondary flex items-center gap-4 !px-2 !py-3 w-full"
+            class="button button--secondary flex items-center gap-4 px-2! py-3! w-full"
             {% if submission.is_archive %}
                 disabled=true
             {% else %}
@@ -28,7 +28,7 @@
     {% if request.user.is_apply_staff %}
         {% with submission|flagged_staff as is_flagged %}
             <button
-                class="button button--secondary flex items-center gap-4 !px-2 !py-3 w-full whitespace-nowrap"
+                class="button button--secondary flex items-center gap-4 px-2! py-3! w-full whitespace-nowrap"
                 {% if submission.is_archive %}
                     disabled=true
                 {% else %}

@@ -2,7 +2,7 @@
 {% load i18n %}
 
 <h2 class="mb-2 text-xl">
-    <a href="{% url "apply:submissions:list" %}?query=reviewer:@me">{% trans "Submissions waiting for your review" %} <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded me-2">{{ in_review_count }}</span></a>
+    <a href="{% url "apply:submissions:list" %}?query=reviewer:@me">{% trans "Submissions waiting for your review" %} <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded-sm me-2">{{ in_review_count }}</span></a>
 </h2>
 
 {% if my_review.data %}
@@ -17,7 +17,7 @@
     {% endif %}
 
 {% else %}
-    <div class="py-10 px-2 w-full text-center bg-white border shadow-sm">
+    <div class="py-10 px-2 w-full text-center bg-white border shadow-xs">
         <p class="my-2 text-base">{% trans "Nice! You're all caught up. 🎉" %}</p>
         <a class="button button--primary" href="{% url 'apply:submissions:list' %}" hx-boost='true'>{% trans "Find new applications to review" %}</a>
     </div>

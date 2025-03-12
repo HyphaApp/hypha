@@ -24,7 +24,7 @@
             {% endif %}
 
             <div class="stat-block">
-                <a href="#submissions-awaiting-review" class="border shadow-sm stat-block__item">
+                <a href="#submissions-awaiting-review" class="border shadow-xs stat-block__item">
                     <p class="stat-block__number">{{ awaiting_reviews.count }}</p>
                     <p class="stat-block__text">{% trans "Submissions waiting for your review" %}</p>
                     {% if awaiting_reviews.count %}
@@ -32,14 +32,14 @@
                     {% endif %}
                 </a>
                 {% if PROJECTS_ENABLED %}
-                    <a href="#active-projects" class="border shadow-sm stat-block__item">
+                    <a href="#active-projects" class="border shadow-xs stat-block__item">
                         <p class="stat-block__number">{{ projects.count }}</p>
                         <p class="stat-block__text">{% trans "Live projects under your management" %}</p>
                         {% if projects.count %}
                             <div class="stat-block__view">{% trans "View" %}</div>
                         {% endif %}
                     </a>
-                    <a href="#active-invoices" class="border shadow-sm stat-block__item">
+                    <a href="#active-invoices" class="border shadow-xs stat-block__item">
                         <p class="stat-block__number">{{ active_invoices.count }}</p>
                         <p class="stat-block__text">{% trans "Requests for invoices requiring your attention" %}</p>
                         {% if active_invoices.count %}
@@ -48,13 +48,13 @@
                     </a>
                 {% else %}
                     {% if my_flagged.count %}
-                        <a href="#submissions-flagged" class="border shadow-sm stat-block__item">
+                        <a href="#submissions-flagged" class="border shadow-xs stat-block__item">
                             <p class="stat-block__number">{{ my_flagged.count }}</p>
                             <p class="stat-block__text">Your flagged submissions</p>
                         </a>
                     {% endif %}
                     {% if my_reviewed.count %}
-                        <a href="#my-review" class="border shadow-sm stat-block__item">
+                        <a href="#my-review" class="border shadow-xs stat-block__item">
                             <p class="stat-block__number">{{ my_reviewed.count }}</p>
                             <p class="stat-block__text">{% trans "Your previous reviews" %}</p>
                         </a>
@@ -70,7 +70,7 @@
         {% if my_flagged.count %}
             <div id="submissions-flagged" class="wrapper wrapper--bottom-space">
                 <h3 class="mb-2 text-xl">
-                    <a href="{% url "apply:submissions:list" %}?query=flagged:@me">Your flagged submissions <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded me-2">{{ my_flagged.count }}</span></a>
+                    <a href="{% url "apply:submissions:list" %}?query=flagged:@me">Your flagged submissions <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded-sm me-2">{{ my_flagged.count }}</span></a>
                 </h3>
 
                 {% include "submissions/partials/submissions-inline.html" with submissions=my_flagged.objects row_layout="table" %}
@@ -117,7 +117,7 @@
 
         {% if my_reviewed.count %}
             <div class="wrapper wrapper--bottom-space">
-                <h3 class="mb-2 text-xl"><a href="{% url "apply:submissions:list" %}?query=reviewed-by:@me">{% trans "Your previous reviews" %} <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded me-2">{{ my_reviewed.count }}</span></a></h3>
+                <h3 class="mb-2 text-xl"><a href="{% url "apply:submissions:list" %}?query=reviewed-by:@me">{% trans "Your previous reviews" %} <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded-sm me-2">{{ my_reviewed.count }}</span></a></h3>
                 {% include "submissions/partials/submissions-inline.html" with submissions=my_reviewed.objects row_layout="table" %}
 
                 {% if my_reviewed.display_more %}

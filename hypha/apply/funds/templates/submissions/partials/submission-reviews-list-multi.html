@@ -1,7 +1,7 @@
 {% load review_tags %}
 
 {% for s in submissions %}<span id="r{{s.id}}" >
-    <span class="inline-flex gap-2 justify-center items-center py-1 px-3 w-full text-xs font-medium rounded border">
+    <span class="inline-flex gap-2 justify-center items-center py-1 px-3 w-full text-xs font-medium rounded-sm border">
         <span class="inline-flex" title="">
             <span title="Submitted Count" aria-label="Total number of reviews">{{ s.review_submitted_count|default:'0' }}</span>
             <span>/</span>

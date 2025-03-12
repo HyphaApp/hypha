@@ -13,7 +13,7 @@
                 </div>
             </div>
 
-            <div class="{% if activity.user == request.user %}border-cyan-300{% else %}border-gray-300{% endif %} flex-1 pb-2 bg-white border rounded target:ring-2 target:ring-cyan-500 scroll-m-2"
+            <div class="{% if activity.user == request.user %}border-cyan-300{% else %}border-gray-300{% endif %} flex-1 pb-2 bg-white border rounded-sm target:ring-2 target:ring-cyan-500 scroll-m-2"
                  id="communications--{{ activity.id }}">
                 <header class="{% if activity.user == request.user %}bg-fuchsia-100{% else %}bg-slate-100{% endif %} flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-t">
                     <div>
