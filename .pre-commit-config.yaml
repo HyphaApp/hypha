@@ -59,7 +59,7 @@ repos:
           - rustywind@latest
         entry: rustywind
         args: [--write]
-        types_or: [html]
+        types_or: [html, css]
 
   - repo: https://github.com/biomejs/pre-commit
     rev: "v0.6.1"

@@ -13,8 +13,8 @@
    * Show next ten.
    */
   function showNextTen() {
-    const [...nextTen] = $(".js-past-reports-table tr.is-hidden").slice(0, 10);
-    nextTen.forEach((item) => item.classList.remove("is-hidden"));
+    const [...nextTen] = $(".js-past-reports-table tr.hidden").slice(0, 10);
+    nextTen.forEach((item) => item.classList.remove("hidden"));
     checkRemaining();
   }
 
@@ -22,9 +22,9 @@
    * Check remaining.
    */
   function checkRemaining() {
-    const [...remaining] = $(".js-past-reports-table tr.is-hidden");
+    const [...remaining] = $(".js-past-reports-table tr.hidden");
     if (remaining.length === 0) {
-      $(".js-data-block-pagination").addClass("is-hidden");
+      $(".js-data-block-pagination").addClass("hidden");
     }
   }
 

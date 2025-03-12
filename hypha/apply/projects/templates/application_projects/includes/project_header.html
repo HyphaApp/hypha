@@ -1,6 +1,4 @@
-{% load project_tags dashboard_statusbar_tags %}
-
-{% display_project_status object request.user as project_status %}
+{% load dashboard_statusbar_tags %}
 
 <h1
     class="mb-0 font-medium"
@@ -36,10 +34,4 @@
 
 </div>
 
-<div class="my-6 status-bar">
-    {% project_status_bar object.status request.user css_class="w-full" %}
-</div>
-
-<div class="mt-5 status-bar--mobile">
-    <h6 class="status-bar__subheading">{{ project_status }}</h6>
-</div>
+{% project_status_bar object.status request.user css_class="w-full" %}

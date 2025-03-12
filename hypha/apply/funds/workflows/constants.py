@@ -20,7 +20,7 @@ PHASE_BG_COLORS = {
     "Invited for Proposal": "bg-green-100",
     "Internal Review": "bg-yellow-200",
     "External Review": "bg-yellow-200",
-    "More information required": "bg-yellow-100",
+    "More information required": "bg-yellow-200",
     "Accepted but additional info required": "bg-green-100",
     "Dismissed": "bg-rose-200",
 }

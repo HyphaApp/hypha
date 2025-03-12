@@ -13,7 +13,7 @@
 >
     <!-- Mobile Menu Opener -->
     <button
-        class="absolute top-6 z-30 p-1.5 rounded border transition-colors md:hidden end-4 hover:bg-slate-100"
+        class="absolute top-6 z-30 p-1.5 rounded-sm border transition-colors md:hidden end-4 hover:bg-slate-100"
         @click="showDesktopMenu = false"
     >
         {% heroicon_outline "x-mark" aria_hidden="true" size=24 stroke_width=3 class="inline" %}
@@ -60,14 +60,14 @@
                         x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
                         x-transition:leave-end="transform opacity-0 scale-95 -translate-y-3"
                         @click.outside="open = false"
-                        class="block relative z-20 bg-white rounded-sm md:absolute md:shadow-xl min-w-48 md:border-y"
+                        class="block relative z-20 bg-white md:absolute md:shadow-xl rounded-xs min-w-48 md:border-y"
                     >
                         {% for sub_item in item.sub_items %}
                             <a
                                 href="{{ sub_item.url }}"
                                 role="menuitem"
                                 class="pr-4 py-2 block font-normal hover:bg-slate-100
-                                       focus-visible:outline-dashed outline-1 transition-colors
+                                       focus-visible:outline-dashed transition-colors
                                        {% if sub_item.url == request.path %}
                                            border-l-dark-blue bg-slate-100 pl-3 border-l-4 border-r text-dark-blue font-semibold
                                        {% else %}

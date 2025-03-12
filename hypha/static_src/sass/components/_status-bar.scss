@@ -19,6 +19,8 @@
     }
 
     &--mobile {
+        padding-bottom: calc(var(--spacing) * 4);
+
         @include mixins.media-query(md) {
             display: none;
         }

@@ -34,19 +34,19 @@ INT_REQUEST_FOR_CHANGE = _("Request for change")
 
 
 INVOICE_STATUS_BG_COLORS = {
-    INT_ORG_PENDING: "bg-yellow-100",
-    INT_PAID: "bg-green-100",
-    INT_REQUEST_FOR_CHANGE: "bg-blue-100",
-    INT_PAYMENT_FAILED: "bg-red-100",
-    INT_DECLINED: "bg-pink-100",
+    INT_ORG_PENDING: "bg-yellow-200",
+    INT_PAID: "bg-green-200",
+    INT_REQUEST_FOR_CHANGE: "bg-blue-200",
+    INT_PAYMENT_FAILED: "bg-red-200",
+    INT_DECLINED: "bg-pink-200",
 }
 
 INVOICE_STATUS_FG_COLORS = {
-    INT_ORG_PENDING: "text-yellow-700",
-    INT_PAID: "text-green-700",
-    INT_REQUEST_FOR_CHANGE: "text-blue-700",
-    INT_PAYMENT_FAILED: "text-red-700",
-    INT_DECLINED: "text-pink-700",
+    INT_ORG_PENDING: "text-yellow-800",
+    INT_PAID: "text-green-800",
+    INT_REQUEST_FOR_CHANGE: "text-blue-800",
+    INT_PAYMENT_FAILED: "text-red-800",
+    INT_DECLINED: "text-pink-800",
 }
 
 

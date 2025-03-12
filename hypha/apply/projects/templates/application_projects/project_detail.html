@@ -8,7 +8,7 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
-    <div class="admin-bar">
+    <div class="pt-4 pb-0 admin-bar">
         <div class="admin-bar__inner">
 
             {% include "application_projects/includes/project_header.html" %}
@@ -97,7 +97,7 @@
                 <aside class="sidebar">
                     {% user_next_step_on_project object user request=request as next_step %}
                     {% if next_step %}
-                        <div class="py-3 px-5 mb-8 bg-yellow-100 shadow sidebar__inner--actions">
+                        <div class="py-3 px-5 mb-8 bg-yellow-200 shadow-sm sidebar__inner--actions">
                             <h5 class="pb-2 border-b border-b-orange-200">
                                 {% heroicon_solid "sparkles" class="inline align-text-top me-1 fill-orange-500" aria_hidden=true %}
                                 {{ next_step.heading }}

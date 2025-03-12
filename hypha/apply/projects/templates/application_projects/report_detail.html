@@ -17,7 +17,7 @@
     <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
 
         <div class="wrapper--sidebar--inner">
-            <p class="flex items-center py-2 px-3 mt-0 mb-8 text-sm border bg-[var(--color-light-blue-90)]">
+            <p class="flex items-center py-2 px-3 mt-0 mb-8 text-sm border bg-(--color-light-blue-90)">
                 {% heroicon_outline 'exclamation-circle' stroke_width=2 size=18 class="inline me-1 stroke-dark-blue" aria_hidden=true %}
                 <span>
                     {% trans "This report is for the period" %} <strong class="font-semibold">{{ object.start_date }}</strong> {% trans "to" %} <strong class="font-semibold">{{ object.end_date }}</strong>

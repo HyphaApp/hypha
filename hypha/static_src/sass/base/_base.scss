@@ -2,117 +2,103 @@
 
 @use "../abstracts/variables";
 
-/* Transitioning page view. */
-@view-transition {
-    navigation: auto;
-}
+@layer base {
+    body {
+        overflow-x: hidden;
 
-:root {
-  // Activate transition to intrinsic sizes like auto and fit-content.
-  interpolate-size: allow-keywords;
-}
+        &.no-scroll {
+            overflow-y: hidden;
+        }
+    }
 
-body {
-    overflow-x: hidden;
+    // Prevent empty space below images appearing
+    img,
+    svg {
+        vertical-align: top;
+    }
 
-    &.no-scroll {
-        overflow-y: hidden;
+    a {
+        color: variables.$color--primary;
+        text-decoration: none;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    p {
+        margin-block: 0.5rem;
+        text-wrap: pretty;
+    }
+
+    dd {
+        text-wrap: pretty;
+    }
+
+    li {
+        text-wrap: pretty;
+    }
+
+    details {
+        overflow: hidden;
+
+        & > summary {
+            cursor: pointer;
+            margin-block-end: 10px;
+        }
+
+        &::details-content {
+            block-size: 0;
+            transition:
+                block-size 0.25s,
+                content-visibility 0.25s;
+            transition-behavior: allow-discrete;
+        }
+
+        &[open]::details-content {
+            block-size: auto;
+        }
     }
 }
 
-// Prevent empty space below images appearing
-img,
-svg {
-    vertical-align: top;
-}
-
-a {
-    color: variables.$color--primary;
-    text-decoration: none;
-
-    &:hover {
-        cursor: pointer;
-    }
-}
-
-p {
-    margin-block: 0.5rem;
-    text-wrap: pretty;
-}
-
-dd {
-    text-wrap: pretty;
-}
-
-li {
-    text-wrap: pretty;
-}
-
-details {
-    overflow: hidden;
-
-    & > summary {
-        cursor: pointer;
-        margin-block-end: 10px;
+@layer utilities {
+    .is-invisible,
+    %is-invisible {
+        z-index: -1;
+        opacity: 0;
+        transition: opacity, z-index, variables.$transition;
     }
 
-    &::details-content {
-        block-size: 0;
-        transition: block-size 0.25s, content-visibility 0.25s;
-        transition-behavior: allow-discrete;
+    .is-visible,
+    %is-visible {
+        z-index: 5;
+        opacity: 1;
+        transition: opacity, z-index, variables.$transition;
     }
 
-    &[open]::details-content {
-        block-size: auto;
+    .js-hidden,
+    %js-hidden {
+        html.js & {
+            display: none;
+        }
     }
-}
 
-.is-invisible,
-%is-invisible {
-    z-index: -1;
-    opacity: 0;
-    transition: opacity, z-index, variables.$transition;
-}
-
-.is-visible,
-%is-visible {
-    z-index: 5;
-    opacity: 1;
-    transition: opacity, z-index, variables.$transition;
-}
-
-.is-hidden,
-%is-hidden {
-    display: none;
-}
-
-.js-hidden,
-%js-hidden {
-    html.js & {
-        @extend %is-hidden;
+    .no-js-hidden,
+    %no-js-hidden {
+        html.no-js & {
+            display: none;
+        }
     }
-}
 
-.no-js-hidden,
-%no-js-hidden {
-    html.no-js & {
-        @extend %is-hidden;
+    .off-screen,
+    %off-screen {
+        position: absolute;
+        inset-inline-start: -9999px;
     }
-}
 
-.is-unhidden,
-%is-unhidden {
-    display: block;
-}
-
-.off-screen,
-%off-screen {
-    position: absolute;
-    inset-inline-start: -9999px;
-}
-
-.on-screen,
-%on-screen {
-    position: relative;
-    inset-inline-start: 0;
+    .on-screen,
+    %on-screen {
+        position: relative;
+        inset-inline-start: 0;
+    }
 }

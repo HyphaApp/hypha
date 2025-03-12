@@ -1,27 +1,66 @@
-@import "tailwindcss/base";
-@import "./base/variables.css";
-@import "./base/core.css";
-@import "./base/forms.css";
-@import "tailwindcss/components";
-@import "./components/choices.css";
-@import "./components/daterangepicker.css";
-@import "./components/django-file-field.css";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
+@import "./base/variables.css" layer(base);
+@import "./base/core.css" layer(base);
+@import "./base/forms.css" layer(components);
+@import "./components/choices.css" layer(components);
+@import "./components/daterangepicker.css" layer(components);
+@import "./components/django-file-field.css" layer(components);
 
-@layer utilities {
-    .border-stripe {
-        border-image: repeating-linear-gradient(
-                -55deg,
-                #000 0,
-                #000 20px,
-                #ffb101 20px,
-                #ffb101 40px
-            )
-            10;
-    }
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
 
-    /* see https://github.com/tailwindlabs/tailwindcss/pull/12128 */
-    .break-anywhere {
-        overflow-wrap: anywhere;
-    }
+@theme {
+  --color-light-blue: #0d7db0;
+  --color-dark-blue: #0c72a0;
+  --color-sky-blue: #e7f2f6;
+  --color-tomato: #f05e54;
+  --color-mid-grey: #cfcfcf;
+  --color-light-grey: #f7f7f7;
+  --color-arsenic: #404041;
+  --color-fg-muted: var(--color-fg-muted);
+  --color-fg-default: var(--color-fg-default);
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+
+  /* Transitioning page view. */
+  @view-transition {
+    navigation: auto;
+  }
+
+  :root {
+    /* Activate transition to intrinsic sizes like auto and fit-content. */
+    interpolate-size: allow-keywords;
+  }
+}
+
+@utility border-stripe {
+  border-image: repeating-linear-gradient(
+      -55deg,
+      #000 0,
+      #000 20px,
+      #ffb101 20px,
+      #ffb101 40px
+    )
+    10;
+}
+
+@utility break-anywhere {
+  /* see https://github.com/tailwindlabs/tailwindcss/pull/12128 */
+  overflow-wrap: anywhere;
 }

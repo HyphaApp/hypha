@@ -61,7 +61,7 @@
                 {% endblock %}
             </form>
             {% for type, message in message_templates.items %}
-                <div class="is-hidden" data-type="{{ type }}" id="determination-message-{{ type }}">
+                <div class="hidden" data-type="{{ type }}" id="determination-message-{{ type }}">
                     {{ message }}
                 </div>
             {% endfor %}

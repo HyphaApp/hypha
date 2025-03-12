@@ -7,7 +7,7 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
-    <div class="admin-bar">
+    <div class="pt-4 pb-0 admin-bar">
         <div class="admin-bar__inner">
 
             {% if object.project %}
@@ -62,14 +62,14 @@
             {% else %}
                 <article class="wrapper--sidebar--inner">
                     {% if object.is_archive %}
-                        <div class="flex gap-2 justify-center items-center py-2 mb-4 font-semibold text-center text-white bg-red-600 rounded-sm">
+                        <div class="flex gap-2 justify-center items-center py-2 mb-4 font-semibold text-center text-white bg-red-600 rounded-xs">
                             {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
                             {% trans "This application has been archived. This is visible to the roles " %} {{ archive_access_groups|join_with_commas }}.
                         </div>
                     {% endif %}
 
                     {% if object.round.specific.is_sealed %}
-                        <div class="flex gap-2 justify-center items-center py-2 mb-4 font-semibold text-center text-white bg-red-600 rounded-sm">
+                        <div class="flex gap-2 justify-center items-center py-2 mb-4 font-semibold text-center text-white bg-red-600 rounded-xs">
                             {% heroicon_outline "clock" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
                             {% trans "This application is sealed." %}
                         </div>

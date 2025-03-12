@@ -13,7 +13,7 @@
                        value="{{ s.id }}"
                        x-model="selectedSubmissions"
                        name="selectedSubmissionIds"
-                       class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
+                       class="w-4 h-4 text-blue-600 bg-gray-100 rounded-sm border-gray-300 focus:ring-2 focus:ring-blue-500"
                 >
                 <span class="sr-only">{% trans "Select submission" %} #{{ s.id }}</span>
             </label>
@@ -141,12 +141,12 @@
                     >
                         <span id="r{{s.id}}" class="inline-block w-full">
                                 {% comment %} pre-loading animation {% endcomment %}
-                            <span class="inline-block w-full h-5 bg-gray-200 rounded animate-pulse"
+                            <span class="inline-block w-full h-5 bg-gray-200 rounded-sm animate-pulse"
                             ></span>
                         </span>
 
                         <div
-                            class="hidden absolute bottom-6 z-10 p-2 w-64 bg-white rounded border shadow-lg group-hover:block review-hovercard -end-1/2 md:-end-4"
+                            class="hidden absolute bottom-6 z-10 p-2 w-64 bg-white rounded-sm border shadow-lg group-hover:block review-hovercard -end-1/2 md:-end-4"
                         >
                                 {% comment %} pre-loading animation {% endcomment %}
                             <div class="animate-pulse min-h-30">

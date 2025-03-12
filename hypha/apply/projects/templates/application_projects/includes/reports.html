@@ -60,7 +60,7 @@
             </thead>
             <tbody>
                 {% for report in object.reports.done %}
-                    <tr {% if forloop.counter > 8 %}class="is-hidden"{% endif %}>
+                    <tr {% if forloop.counter > 8 %}class="hidden"{% endif %}>
                         <td class="py-4 px-2.5">
                             <span class="data-block__mobile-label">{% trans "Period End" %}: </span>{{ report.end_date }}
                         </td>
