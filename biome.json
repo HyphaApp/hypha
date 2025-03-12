@@ -13,21 +13,13 @@
       "**/javascript/esm/**",
       "**/javascript/vendor/**",
       "public/**",
-      "eslint.config.mjs",
       "site.webmanifest"
     ]
   },
   "formatter": {
     "enabled": true,
     "useEditorconfig": true,
-    "formatWithErrors": false,
-    "indentStyle": "space",
-    "indentWidth": 2,
-    "lineEnding": "lf",
-    "lineWidth": 80,
-    "attributePosition": "auto",
-    "bracketSpacing": true,
-    "ignore": []
+    "indentStyle": "space"
   },
   "organizeImports": { "enabled": true },
   "linter": {
