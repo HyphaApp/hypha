@@ -1,59 +1,61 @@
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
-.admin-bar {
-    position: relative;
-    padding-inline: variables.$gutters;
-    padding-block: variables.$spacing;
-    margin-inline: variables.$gutters-reverse;
-    color: variables.$color--white;
-    background-color: variables.$color--dark-grey;
+@layer components {
+    .admin-bar {
+        position: relative;
+        padding-inline: variables.$gutters;
+        padding-block: calc(var(--spacing) * 5);
+        margin-inline: variables.$gutters-reverse;
+        color: variables.$color--white;
+        background-color: variables.$color--dark-grey;
 
-    @include mixins.media-query(xl) {
-        padding-inline: 0;
-        margin-inline: calc(50% - 50vw);
-    }
+        @include mixins.media-query(xl) {
+            padding-inline: 0;
+            margin-inline: calc(50% - 50vw);
+        }
 
-    &__inner {
-        max-width: variables.$site-width;
-        margin: 0 auto;
+        &__inner {
+            max-width: variables.$site-width;
+            margin: 0 auto;
 
-        &--with-button {
-            @include mixins.media-query(md) {
-                display: flex;
-                align-items: center;
-                flex-direction: row;
-                justify-content: space-between;
+            &--with-button {
+                @include mixins.media-query(md) {
+                    display: flex;
+                    align-items: center;
+                    flex-direction: row;
+                    justify-content: space-between;
+                }
             }
         }
-    }
 
-    &__heading {
-        margin-block-end: 0;
-    }
-
-    &__meta {
-        margin: 0 0 10px;
-
-        span {
-            margin: 0 5px;
+        &__heading {
+            margin-block-end: 0;
         }
-    }
 
-    &__back-link {
-        display: inline-flex;
-        align-items: center;
-        color: variables.$color--lightest-blue;
-        font-weight: variables.$weight--bold;
+        &__meta {
+            margin: 0 0 10px;
 
-        &::before {
-            @include mixins.triangle(top);
-            margin-inline-end: 0.5rem;
-            transform: rotate(-90deg);
+            span {
+                margin: 0 5px;
+            }
         }
-    }
 
-    .app-open & .submissions-count {
-        display: none;
+        &__back-link {
+            display: inline-flex;
+            align-items: center;
+            color: variables.$color--lightest-blue;
+            font-weight: variables.$weight--bold;
+
+            &::before {
+                @include mixins.triangle(top);
+                margin-inline-end: 0.5rem;
+                transform: rotate(-90deg);
+            }
+        }
+
+        .app-open & .submissions-count {
+            display: none;
+        }
     }
 }

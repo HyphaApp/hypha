@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "./base/variables.css" layer(base);
 @import "./base/core.css" layer(base);
-@import "./base/forms.css" layer(base);
+@import "./base/forms.css" layer(components);
 @import "./components/choices.css" layer(components);
 @import "./components/daterangepicker.css" layer(components);
 @import "./components/django-file-field.css" layer(components);
@@ -36,6 +36,16 @@
     ::backdrop,
     ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
+    }
+
+    /* Transitioning page view. */
+    @view-transition {
+        navigation: auto;
+    }
+
+    :root {
+        /* Activate transition to intrinsic sizes like auto and fit-content. */
+        interpolate-size: allow-keywords;
     }
 }
 

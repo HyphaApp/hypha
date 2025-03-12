@@ -66,10 +66,9 @@ $font-size--zeta: var(--font-size-zeta);
 $font-size--milli: var(--font-size-milli);
 
 // Font weights
-$weight--black: var(--weight-black);
-$weight--bold: var(--weight-bold);
-$weight--semibold: var(--weight-semibold);
-$weight--normal: var(--weight-normal);
+$weight--normal: var(--font-weight-normal);
+$weight--bold: var(--font-weight-bold);
+$weight--semibold: var(--font-weight-semibold);
 
 // Wrappers
 $site-width: var(--site-width);

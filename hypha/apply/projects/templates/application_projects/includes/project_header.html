@@ -36,9 +36,8 @@
 
 </div>
 
-<div class="my-6 status-bar">
-    {% project_status_bar object.status request.user css_class="w-full" %}
-</div>
+{% project_status_bar object.status request.user css_class="w-full" %}
+
 
 <div class="mt-5 status-bar--mobile">
     <h6 class="status-bar__subheading">{{ project_status }}</h6>

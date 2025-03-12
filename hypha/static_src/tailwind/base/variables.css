@@ -64,12 +64,6 @@
     --font-size-zeta: 14px;
     --font-size-milli: 12px;
 
-    /* Font weights */
-    --weight-black: 800;
-    --weight-bold: 700;
-    --weight-semibold: 600;
-    --weight-normal: 400;
-
     /* Wrappers */
     --site-width: 1280px;
     --wrapper-medium: 1020px;

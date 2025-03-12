@@ -25,7 +25,7 @@
             <a
                 href="{% url 'users:account' %}"
                 title="Goto your account"
-                class="flex gap-2 items-center py-2 px-3 text-black transition-colors hover:font-semibold outline-1 border-x group hover:bg-slate-100 hover:text-dark-blue focus-visible:outline-dashed"
+                class="flex gap-2 items-center py-2 px-3 text-black transition-colors hover:font-semibold border-x group hover:bg-slate-100 hover:text-dark-blue focus-visible:outline-dashed"
             >
                 {% heroicon_outline "user" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-dark-blue" aria_hidden=true %}
                 {% trans 'My account' %}
@@ -34,7 +34,7 @@
                 <a
                     href="{% url 'activity:notifications' %}"
                     title="Check latest notifications"
-                    class="flex gap-2 items-center py-2 px-3 text-black transition-colors hover:font-semibold outline-1 border-x group hover:bg-slate-100 hover:text-dark-blue focus-visible:outline-dashed"
+                    class="flex gap-2 items-center py-2 px-3 text-black transition-colors hover:font-semibold border-x group hover:bg-slate-100 hover:text-dark-blue focus-visible:outline-dashed"
                 >
                     {% heroicon_outline "bolt" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-dark-blue" aria_hidden=true %}
                     {% trans "Activity feed" %}
@@ -42,7 +42,7 @@
                 <a
                     href="{% url "apply:submissions:list" %}?query=flagged:@me"
                     title="Goto your flagged submissions"
-                    class="flex gap-2 items-center py-2 px-3 text-black border-r transition-colors hover:font-semibold outline-1 group hover:bg-slate-100 hover:text-dark-blue focus-visible:outline-dashed"
+                    class="flex gap-2 items-center py-2 px-3 text-black transition-colors hover:font-semibold border-x group hover:bg-slate-100 hover:text-dark-blue focus-visible:outline-dashed"
                 >
                     {% heroicon_outline "flag" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-dark-blue" aria_hidden=true %}
                     {% trans "My flagged" %}
@@ -51,7 +51,7 @@
                     <a
                         href="{% url 'wagtailadmin_home' %}"
                         title="Goto wagtail admin"
-                        class="flex gap-2 items-center py-2 px-3 text-black transition-colors hover:font-semibold outline-1 border-x group hover:bg-slate-100 hover:text-dark-blue focus-visible:outline-dashed"
+                        class="flex gap-2 items-center py-2 px-3 text-black transition-colors hover:font-semibold border-x group hover:bg-slate-100 hover:text-dark-blue focus-visible:outline-dashed"
                     >
                         {% heroicon_outline "cog-6-tooth" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-dark-blue" aria_hidden=true %}
                         {% trans "Administration" %}
@@ -60,7 +60,7 @@
             {% endif %}
             {% if HIJACK_ENABLE and not user.is_hijacked and user.is_superuser %}
                 <a
-                    class="flex gap-2 items-center py-2 px-3 text-black transition-colors hover:font-semibold outline-1 border-x group hover:bg-slate-100 hover:text-dark-blue focus-visible:outline-dashed"
+                    class="flex gap-2 items-center py-2 px-3 text-black transition-colors hover:font-semibold border-x group hover:bg-slate-100 hover:text-dark-blue focus-visible:outline-dashed"
                     hx-get="{% url 'users:hijack' %}?next={{ request.path }}"
                     hx-target="#htmx-modal"
                     x-on:click="show = false"
@@ -77,7 +77,7 @@
                     <input type="hidden" name="next" value="{{ request.path }}">
 
                     <button type="submit"
-                            class="flex gap-2 items-center py-2 px-3 w-full text-black transition-colors hover:font-semibold outline-1 border-x group hover:bg-slate-100 hover:text-dark-blue focus-visible:outline-dashed"
+                            class="flex gap-2 items-center py-2 px-3 w-full text-black transition-colors hover:font-semibold border-x group hover:bg-slate-100 hover:text-dark-blue focus-visible:outline-dashed"
                     >
                         {% heroicon_outline "user-minus" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-dark-blue" aria_hidden=true %}
                         {% translate 'Release User' %}
@@ -88,7 +88,7 @@
             <a
                 href="{% url 'users:logout' %}"
                 title="Log out"
-                class="block py-2 px-3 font-semibold text-center text-red-600 transition-all hover:font-semibold hover:text-red-900 hover:bg-red-100 outline-1 border-x focus-visible:outline-dashed"
+                class="block py-2 px-3 font-semibold text-center text-red-600 transition-all hover:font-semibold hover:text-red-900 hover:bg-red-100 border-x focus-visible:outline-dashed"
             >
                 {% trans "Log out" %}
             </a>
