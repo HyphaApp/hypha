@@ -2,119 +2,119 @@
 @use "../abstracts/variables";
 
 .reviews-sidebar {
-    $root: &;
+  $root: &;
+  margin-block-end: 20px;
+  font-weight: variables.$weight--bold;
+
+  &__decision {
+    position: relative;
+    font-size: 14px;
+    border-block-start: 1px solid variables.$color--mid-grey;
+    border-block-end: 1px solid variables.$color--mid-grey;
     margin-block-end: 20px;
-    font-weight: variables.$weight--bold;
+    padding-block-start: 10px;
+  }
 
-    &__decision {
-        position: relative;
-        font-size: 14px;
-        border-block-start: 1px solid variables.$color--mid-grey;
-        border-block-end: 1px solid variables.$color--mid-grey;
-        margin-block-end: 20px;
-        padding-block-start: 10px;
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    margin-block-end: 20px;
+
+    @supports (display: grid) {
+      display: grid;
+      grid-template-columns: 45% 25% 15% 15%;
+      gap: 5px;
     }
 
-    &__item {
-        display: flex;
-        justify-content: space-between;
-        margin-block-end: 20px;
+    &--decision {
+      margin-block-end: 10px;
+      font-weight: variables.$weight--semibold;
 
-        @supports (display: grid) {
-            display: grid;
-            grid-template-columns: 45% 25% 15% 15%;
-            gap: 5px;
+      &:first-child {
+        #{$root}__outcome {
+          &::before,
+          &::after {
+            position: absolute;
+            inset-block-start: -23px;
+            inset-inline-start: 5px;
+          }
+
+          &::after {
+            @include mixins.triangle(
+              top,
+              variables.$color--white,
+              8px
+            );
+            inset-block-start: -21px;
+          }
+
+          &::before {
+            @include mixins.triangle(
+              top,
+              variables.$color--mid-grey,
+              8px
+            );
+          }
         }
-
-        &--decision {
-            margin-block-end: 10px;
-            font-weight: variables.$weight--semibold;
-
-            &:first-child {
-                #{$root}__outcome {
-                    &::before,
-                    &::after {
-                        position: absolute;
-                        inset-block-start: -23px;
-                        inset-inline-start: 5px;
-                    }
-
-                    &::after {
-                        @include mixins.triangle(
-                            top,
-                            variables.$color--white,
-                            8px
-                        );
-                        inset-block-start: -21px;
-                    }
-
-                    &::before {
-                        @include mixins.triangle(
-                            top,
-                            variables.$color--mid-grey,
-                            8px
-                        );
-                    }
-                }
-            }
-        }
-
-        &.is-hidden {
-            display: none;
-        }
-
-        &.no-response {
-            color: variables.$color--black-20;
-        }
-
-        .yes {
-            color: variables.$color--green;
-        }
-
-        .maybe {
-            color: variables.$color--mustard;
-        }
-
-        .no {
-            color: variables.$color--tomato;
-        }
+      }
     }
 
-    &__no-reviews {
-        color: variables.$color--mid-grey;
+    &.is-hidden {
+      display: none;
     }
 
-    &__name {
-        position: relative;
-        display: flex;
-        align-items: center;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        background: variables.$color--white;
-
-        &:hover {
-            display: inline-flex;
-            overflow: visible;
-        }
-
-        img {
-            margin-inline-start: 7px;
-        }
+    &.no-response {
+      color: variables.$color--black-20;
     }
 
-    &__outcome {
-        position: relative;
-
-        &.agree {
-            color: variables.$color--green;
-        }
-
-        &.disagree {
-            color: variables.$color--tomato;
-        }
+    .yes {
+      color: variables.$color--green;
     }
 
-    &__split {
-        margin-block-end: 20px;
+    .maybe {
+      color: variables.$color--mustard;
     }
+
+    .no {
+      color: variables.$color--tomato;
+    }
+  }
+
+  &__no-reviews {
+    color: variables.$color--mid-grey;
+  }
+
+  &__name {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: variables.$color--white;
+
+    &:hover {
+      display: inline-flex;
+      overflow: visible;
+    }
+
+    img {
+      margin-inline-start: 7px;
+    }
+  }
+
+  &__outcome {
+    position: relative;
+
+    &.agree {
+      color: variables.$color--green;
+    }
+
+    &.disagree {
+      color: variables.$color--tomato;
+    }
+  }
+
+  &__split {
+    margin-block-end: 20px;
+  }
 }

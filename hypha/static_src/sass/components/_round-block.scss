@@ -2,101 +2,101 @@
 @use "../abstracts/variables";
 
 .round-block {
-    $root: &;
+  $root: &;
 
-    p {
-        font-size: 14px;
-    }
+  p {
+    font-size: 14px;
+  }
 
-    &__item {
-        align-items: center;
-        background-color: variables.$color--white;
-        border: 1px solid variables.$color--light-mid-grey;
-        border-block-end: 0;
-        padding: 25px;
-        transition: background-color variables.$transition--quick;
-        min-height: 80px;
+  &__item {
+    align-items: center;
+    background-color: variables.$color--white;
+    border: 1px solid variables.$color--light-mid-grey;
+    border-block-end: 0;
+    padding: 25px;
+    transition: background-color variables.$transition--quick;
+    min-height: 80px;
 
-        &:last-child {
-            border-block-end: 1px solid variables.$color--light-mid-grey;
-        }
-
-        @include mixins.media-query(lg) {
-            display: flex;
-
-            &:hover {
-                background-color: variables.$color--light-grey;
-            }
-
-            // item spacing
-            > * {
-                margin: 0 30px 0 0;
-                flex-basis: 200px;
-            }
-        }
-
-        &--more {
-            padding: 20px 25px;
-            justify-content: center;
-            border-block-end: 1px solid variables.$color--light-mid-grey;
-            min-height: auto;
-
-            &:hover {
-                background-color: variables.$color--white;
-            }
-
-            // show more link
-            a {
-                margin: 0;
-                flex-basis: auto;
-                font-weight: variables.$weight--semibold;
-            }
-        }
-    }
-
-    &__view {
-        margin: 0 0 0 auto;
-        transition: color variables.$transition--quick;
-        font-weight: variables.$weight--bold;
-        text-transform: uppercase;
-
-        @include mixins.media-query(lg) {
-            color: transparent;
-            flex-basis: auto;
-            pointer-events: none;
-        }
-
-        &:focus,
-        #{$root}__item:hover & {
-            color: variables.$color--primary;
-            pointer-events: all;
-        }
-    }
-
-    &__title {
-        color: variables.$color--default;
-        font-size: variables.$font-size--epsilon;
-        font-weight: variables.$weight--semibold;
-    }
-
-    &__not-found {
-        margin: 0;
-        padding: 20px;
-        background-color: variables.$color--white;
-        border: 1px solid variables.$color--light-mid-grey;
+    &:last-child {
+      border-block-end: 1px solid variables.$color--light-mid-grey;
     }
 
     @include mixins.media-query(lg) {
-        &__title {
-            flex-basis: 25em;
-        }
+      display: flex;
 
-        &__fund {
-            flex-basis: 20em;
-        }
+      &:hover {
+        background-color: variables.$color--light-grey;
+      }
 
-        &__view {
-            flex-basis: 5em;
-        }
+      // item spacing
+      > * {
+        margin: 0 30px 0 0;
+        flex-basis: 200px;
+      }
     }
+
+    &--more {
+      padding: 20px 25px;
+      justify-content: center;
+      border-block-end: 1px solid variables.$color--light-mid-grey;
+      min-height: auto;
+
+      &:hover {
+        background-color: variables.$color--white;
+      }
+
+      // show more link
+      a {
+        margin: 0;
+        flex-basis: auto;
+        font-weight: variables.$weight--semibold;
+      }
+    }
+  }
+
+  &__view {
+    margin: 0 0 0 auto;
+    transition: color variables.$transition--quick;
+    font-weight: variables.$weight--bold;
+    text-transform: uppercase;
+
+    @include mixins.media-query(lg) {
+      color: transparent;
+      flex-basis: auto;
+      pointer-events: none;
+    }
+
+    &:focus,
+    #{$root}__item:hover & {
+      color: variables.$color--primary;
+      pointer-events: all;
+    }
+  }
+
+  &__title {
+    color: variables.$color--default;
+    font-size: variables.$font-size--epsilon;
+    font-weight: variables.$weight--semibold;
+  }
+
+  &__not-found {
+    margin: 0;
+    padding: 20px;
+    background-color: variables.$color--white;
+    border: 1px solid variables.$color--light-mid-grey;
+  }
+
+  @include mixins.media-query(lg) {
+    &__title {
+      flex-basis: 25em;
+    }
+
+    &__fund {
+      flex-basis: 20em;
+    }
+
+    &__view {
+      flex-basis: 5em;
+    }
+  }
 }

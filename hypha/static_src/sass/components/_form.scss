@@ -4,514 +4,514 @@
 @use "sass:math";
 
 .form {
-    $root: &;
+  $root: &;
 
-    &--with-p-tags {
-        p {
-            margin: 0 0 10px;
+  &--with-p-tags {
+    p {
+      margin: 0 0 10px;
 
-            label {
-                display: block;
-                margin-block-end: 0.5em;
-                font-weight: variables.$weight--bold;
-            }
-        }
-
-        button {
-            margin-block-start: 1.5rem;
-        }
-    }
-
-    &--error-inline {
-        // stylelint-disable-next-line selector-class-pattern
-        .form__error-text {
-            padding-inline-start: 0.5rem;
-            position: relative;
-            max-width: 100%;
-
-            &::before {
-                display: none;
-            }
-        }
-    }
-
-    &__group {
-        position: relative;
-        margin-block-start: 0.5rem;
-        margin-block-end: 1.5rem;
-
-        &:nth-of-type(1) {
-            margin-block-start: 0;
-        }
-
-        &:last-child {
-            .locality & {
-                // remove margin from last item in address field set
-                margin-block-end: 0;
-            }
-        }
-
-        #{$root}--report-frequency & {
-            margin: 1rem;
-
-            &--schedule {
-                display: flex;
-                align-items: center;
-            }
-
-            &--report-every {
-                font-weight: 700;
-            }
-
-            // stylelint-disable-next-line selector-class-pattern
-            &.id_occurrence {
-                width: 15%;
-                margin: 0 1rem;
-            }
-
-            // stylelint-disable-next-line selector-class-pattern
-            &.id_frequency {
-                margin: 0;
-            }
-        }
-
-        &--wrap {
-            flex-wrap: wrap;
-        }
-
-        &--checkbox {
-            .form {
-                &__item {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5em;
-                }
-            }
-        }
-
-        input[type="date"]:last-child {
-            max-width: 385px;
-        }
-    }
-
-    &__question {
+      label {
         display: block;
-        font-weight: variables.$weight--semibold;
-        font-size: 1rem;
-        line-height: 1.25rem;
-
-        // stylelint-disable selector-class-pattern
-        &--image_field,
-        &--multi_file_field,
-        &--single_file_field,
-        &--file_field {
-            @include mixins.button(
-                variables.$color--white,
-                variables.$color--light-blue
-            );
-            display: inline-block;
-            color: variables.$color--light-blue;
-            border: 1px solid variables.$color--mid-grey;
-
-            &:focus {
-                color: variables.$color--light-blue;
-            }
-
-            &:hover {
-                color: variables.$color--white;
-            }
-
-            max-width: 15rem;
-            text-align: center;
-
-            .no-js & {
-                display: none;
-            }
-        }
-
-        &--boolean_field {
-            display: inline;
-            margin-block-end: 0;
-        }
-        // stylelint-enable selector-class-pattern
-    }
-
-    &__file-label {
-        padding-block-end: 0.5rem;
-    }
-
-    &__file-list {
-        ul {
-            margin: 0.5rem 0;
-        }
-    }
-
-    &__file-drop-zone {
-        color: variables.$color--mid-grey;
-        padding: 25px;
-        font-size: 17px;
+        margin-block-end: 0.5em;
         font-weight: variables.$weight--bold;
-        text-align: center;
-        border: 2px dashed variables.$color--mid-grey;
-        border-radius: 5px;
+      }
     }
 
-    &__filters {
+    button {
+      margin-block-start: 1.5rem;
+    }
+  }
+
+  &--error-inline {
+    // stylelint-disable-next-line selector-class-pattern
+    .form__error-text {
+      padding-inline-start: 0.5rem;
+      position: relative;
+      max-width: 100%;
+
+      &::before {
+        display: none;
+      }
+    }
+  }
+
+  &__group {
+    position: relative;
+    margin-block-start: 0.5rem;
+    margin-block-end: 1.5rem;
+
+    &:nth-of-type(1) {
+      margin-block-start: 0;
+    }
+
+    &:last-child {
+      .locality & {
+        // remove margin from last item in address field set
+        margin-block-end: 0;
+      }
+    }
+
+    #{$root}--report-frequency & {
+      margin: 1rem;
+
+      &--schedule {
+        display: flex;
+        align-items: center;
+      }
+
+      &--report-every {
+        font-weight: 700;
+      }
+
+      // stylelint-disable-next-line selector-class-pattern
+      &.id_occurrence {
+        width: 15%;
+        margin: 0 1rem;
+      }
+
+      // stylelint-disable-next-line selector-class-pattern
+      &.id_frequency {
+        margin: 0;
+      }
+    }
+
+    &--wrap {
+      flex-wrap: wrap;
+    }
+
+    &--checkbox {
+      .form {
+        &__item {
+          display: flex;
+          align-items: center;
+          gap: 0.5em;
+        }
+      }
+    }
+
+    input[type="date"]:last-child {
+      max-width: 385px;
+    }
+  }
+
+  &__question {
+    display: block;
+    font-weight: variables.$weight--semibold;
+    font-size: 1rem;
+    line-height: 1.25rem;
+
+    // stylelint-disable selector-class-pattern
+    &--image_field,
+    &--multi_file_field,
+    &--single_file_field,
+    &--file_field {
+      @include mixins.button(
+        variables.$color--white,
+        variables.$color--light-blue
+      );
+      display: inline-block;
+      color: variables.$color--light-blue;
+      border: 1px solid variables.$color--mid-grey;
+
+      &:focus {
+        color: variables.$color--light-blue;
+      }
+
+      &:hover {
+        color: variables.$color--white;
+      }
+
+      max-width: 15rem;
+      text-align: center;
+
+      .no-js & {
+        display: none;
+      }
+    }
+
+    &--boolean_field {
+      display: inline;
+      margin-block-end: 0;
+    }
+    // stylelint-enable selector-class-pattern
+  }
+
+  &__file-label {
+    padding-block-end: 0.5rem;
+  }
+
+  &__file-list {
+    ul {
+      margin: 0.5rem 0;
+    }
+  }
+
+  &__file-drop-zone {
+    color: variables.$color--mid-grey;
+    padding: 25px;
+    font-size: 17px;
+    font-weight: variables.$weight--bold;
+    text-align: center;
+    border: 2px dashed variables.$color--mid-grey;
+    border-radius: 5px;
+  }
+
+  &__filters {
+    @include mixins.media-query(lg) {
+      display: flex;
+      align-items: flex-start;
+      padding: 10px 0 30px;
+      opacity: 0;
+      transition: opacity variables.$transition;
+
+      .filters-open & {
+        opacity: 1;
+        transition-delay: 300ms;
+      }
+
+      .filters--dates & {
+        align-items: flex-end;
+        margin: 10px 0 30px;
+        padding: 0;
+      }
+    }
+
+    label {
+      display: none;
+
+      .filters--dates & {
+        display: block;
+      }
+    }
+
+    // so the form can be output in any tag
+    > * {
+      @include mixins.media-query(lg) {
+        flex-basis: 225px;
+
+        &:not(:last-child) {
+          margin-inline-end: 10px;
+        }
+      }
+    }
+
+    &--mobile {
+      flex-direction: column;
+      padding: 0;
+
+      // so the form can be output in any tag
+      > * {
+        flex-basis: auto;
+        margin: 0;
+      }
+    }
+
+    > li {
+      padding: 0 1rem;
+
+      @include mixins.media-query(lg) {
+        padding: 0;
+      }
+
+      // re-order from/to date inputs and text
+      .filters--dates & {
+        margin: 0 auto 1rem;
+        max-width: 320px;
+
+        @include mixins.media-query(sm) {
+          display: flex;
+          max-width: 600px;
+
+          @supports (display: grid) {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+          }
+        }
+
         @include mixins.media-query(lg) {
-            display: flex;
-            align-items: flex-start;
-            padding: 10px 0 30px;
-            opacity: 0;
-            transition: opacity variables.$transition;
-
-            .filters-open & {
-                opacity: 1;
-                transition-delay: 300ms;
-            }
-
-            .filters--dates & {
-                align-items: flex-end;
-                margin: 10px 0 30px;
-                padding: 0;
-            }
+          margin: 0 1rem 0 0;
+          max-width: initial;
         }
 
         label {
-            display: none;
-
-            .filters--dates & {
-                display: block;
-            }
+          @supports (display: grid) {
+            grid-column: 1;
+            grid-row: 1;
+          }
         }
 
-        // so the form can be output in any tag
-        > * {
-            @include mixins.media-query(lg) {
-                flex-basis: 225px;
-
-                &:not(:last-child) {
-                    margin-inline-end: 10px;
-                }
+        input {
+          &:first-of-type {
+            @supports (display: grid) {
+              grid-column: 1;
             }
+          }
         }
 
-        &--mobile {
-            flex-direction: column;
-            padding: 0;
-
-            // so the form can be output in any tag
-            > * {
-                flex-basis: auto;
-                margin: 0;
-            }
+        span {
+          @supports (display: grid) {
+            grid-column: 2;
+            grid-row: 1;
+          }
         }
+      }
+    }
+  }
 
-        > li {
-            padding: 0 1rem;
+  &__label {
+    .wrapper--comments & {
+      font-size: 15px;
+    }
+  }
 
-            @include mixins.media-query(lg) {
-                padding: 0;
-            }
+  &__required {
+    color: variables.$color--purple;
+  }
 
-            // re-order from/to date inputs and text
-            .filters--dates & {
-                margin: 0 auto 1rem;
-                max-width: 320px;
+  &__help {
+    margin: 0;
+    color: var(--color-fg-muted);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
 
-                @include mixins.media-query(sm) {
-                    display: flex;
-                    max-width: 600px;
+    .profile & {
+      margin-block-start: 0;
+    }
+  }
 
-                    @supports (display: grid) {
-                        display: grid;
-                        grid-template-columns: 1fr 1fr;
-                        gap: 5px;
-                    }
-                }
+  &__help-link {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
 
-                @include mixins.media-query(lg) {
-                    margin: 0 1rem 0 0;
-                    max-width: initial;
-                }
+    a {
+      &:hover {
+        cursor: pointer;
+        color: variables.$color--darkest-blue;
+      }
+    }
+  }
 
-                label {
-                    @supports (display: grid) {
-                        grid-column: 1;
-                        grid-row: 1;
-                    }
-                }
+  &__open-icon {
+    display: inline;
+    width: 20px;
+    height: 20px;
+    fill: variables.$color--dark-grey;
+  }
 
-                input {
-                    &:first-of-type {
-                        @supports (display: grid) {
-                            grid-column: 1;
-                        }
-                    }
-                }
+  &__item {
+    position: relative;
+    padding-block-start: 0.5rem;
+  }
 
-                span {
-                    @supports (display: grid) {
-                        grid-column: 2;
-                        grid-row: 1;
-                    }
-                }
-            }
-        }
+  &__select {
+    max-width: 385px;
+
+    &:has(.choices) {
+      background: none;
     }
 
-    &__label {
-        .wrapper--comments & {
-            font-size: 15px;
-        }
+    .form--scoreable & {
+      margin-block-start: 20px;
     }
 
-    &__required {
-        color: variables.$color--purple;
-    }
-
-    &__help {
-        margin: 0;
-        color: var(--color-fg-muted);
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-
-        .profile & {
-            margin-block-start: 0;
-        }
-    }
-
-    &__help-link {
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-
-        a {
-            &:hover {
-                cursor: pointer;
-                color: variables.$color--darkest-blue;
-            }
-        }
-    }
-
-    &__open-icon {
-        display: inline;
-        width: 20px;
-        height: 20px;
-        fill: variables.$color--dark-grey;
-    }
-
-    &__item {
-        position: relative;
-        padding-block-start: 0.5rem;
-    }
-
-    &__select {
-        max-width: 385px;
-
-        &:has(.choices) {
-            background: none;
-        }
-
-        .form--scoreable & {
-            margin-block-start: 20px;
-        }
-
-        .form {
-            &__filters & {
-                max-width: 100%;
-
-                select {
-                    height: variables.$dropdown-height;
-                }
-            }
-        }
-
-        select[multiple="multiple"] {
-            display: block;
-        }
+    .form {
+      &__filters & {
+        max-width: 100%;
 
         select {
-            option {
-                background-color: variables.$color--white;
-            }
+          height: variables.$dropdown-height;
         }
-
-        &--narrow {
-            max-width: 280px;
-        }
+      }
     }
 
+    select[multiple="multiple"] {
+      display: block;
+    }
+
+    select {
+      option {
+        background-color: variables.$color--white;
+      }
+    }
+
+    &--narrow {
+      max-width: 280px;
+    }
+  }
+
+  select,
+  input[type="url"],
+  input[type="text"]:not(.input--secondary),
+  input[type="date"],
+  input[type="time"],
+  input[type="email"],
+  input[type="number"],
+  input[type="password"],
+  input[type="datetime-local"] {
+    width: 100%;
+    max-width: 385px;
+
+    &.invalid {
+      border: 2px solid variables.$color--error;
+      outline: none;
+    }
+  }
+
+  &__error {
     select,
+    textarea,
     input[type="url"],
-    input[type="text"]:not(.input--secondary),
+    input[type="text"],
     input[type="date"],
     input[type="time"],
     input[type="email"],
     input[type="number"],
     input[type="password"],
     input[type="datetime-local"] {
-        width: 100%;
-        max-width: 385px;
+      border: 2px solid variables.$color--error;
+    }
+  }
 
-        &.invalid {
-            border: 2px solid variables.$color--error;
-            outline: none;
-        }
+  &__error-text {
+    max-width: 200px;
+    padding: 5px;
+    margin: 20px 0 0;
+    color: variables.$color--white;
+    background: variables.$color--error;
+    z-index: 2;
+
+    @include mixins.media-query(lg) {
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline-end: 0;
+      max-width: auto;
+      margin: 0;
+
+      &::before {
+        position: absolute;
+        inset-block-start: 12px;
+        inset-inline-start: -10px;
+        border-color: transparent variables.$color--error transparent
+          transparent;
+        border-style: solid;
+        border-width: 5px 10px 5px 0;
+        content: "";
+      }
+    }
+  }
+
+  // make date & time input siblings inline
+  input[type="date"] {
+    max-width: calc(385px - 100px);
+  }
+
+  input[type="date"] + input[type="time"] {
+    width: 100px;
+  }
+
+  input[type="file"] {
+    @extend %off-screen;
+
+    .no-js & {
+      @extend %on-screen;
+    }
+  }
+
+  textarea,
+  &__textarea {
+    display: block;
+    width: 100%;
+    padding: 0.4em;
+    border: 1px solid variables.$color--mid-grey;
+  }
+
+  .wmd-preview {
+    width: 100%;
+  }
+
+  .wmd-input {
+    field-sizing: content;
+    min-height: 14rem;
+  }
+
+  &__comments {
+    // stylelint-disable-next-line selector-class-pattern,selector-id-pattern
+    ul#id_visibility {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
 
-    &__error {
-        select,
-        textarea,
-        input[type="url"],
-        input[type="text"],
-        input[type="date"],
-        input[type="time"],
-        input[type="email"],
-        input[type="number"],
-        input[type="password"],
-        input[type="datetime-local"] {
-            border: 2px solid variables.$color--error;
-        }
-    }
-
-    &__error-text {
-        max-width: 200px;
-        padding: 5px;
-        margin: 20px 0 0;
-        color: variables.$color--white;
-        background: variables.$color--error;
-        z-index: 2;
-
-        @include mixins.media-query(lg) {
-            position: absolute;
-            inset-block-start: 0;
-            inset-inline-end: 0;
-            max-width: auto;
-            margin: 0;
-
-            &::before {
-                position: absolute;
-                inset-block-start: 12px;
-                inset-inline-start: -10px;
-                border-color: transparent variables.$color--error transparent
-                    transparent;
-                border-style: solid;
-                border-width: 5px 10px 5px 0;
-                content: "";
-            }
-        }
-    }
-
-    // make date & time input siblings inline
-    input[type="date"] {
-        max-width: calc(385px - 100px);
-    }
-
-    input[type="date"] + input[type="time"] {
-        width: 100px;
-    }
-
-    input[type="file"] {
-        @extend %off-screen;
-
-        .no-js & {
-            @extend %on-screen;
-        }
-    }
-
-    textarea,
-    &__textarea {
-        display: block;
-        width: 100%;
-        padding: 0.4em;
-        border: 1px solid variables.$color--mid-grey;
-    }
-
+    .wmd-input,
     .wmd-preview {
-        width: 100%;
+      max-width: 100%;
+      margin-block-end: 0;
+    }
+  }
+
+  // Radio + Checkbox
+  [type="radio"],
+  [type="checkbox"] {
+    & + label {
+      padding-inline-start: 0.25rem;
+      cursor: pointer;
+    }
+  }
+
+  .errorlist {
+    padding: 5px;
+    margin-block-end: 0.2em;
+    background: variables.$color--light-pink;
+    border: 1px solid variables.$color--tomato;
+  }
+
+  .address {
+    padding: 0.4em;
+    border: 1px solid #cfcfcf8f;
+    max-width: 410px;
+
+    // stylelint-disable-next-line selector-class-pattern
+    .form__group {
+      margin-block-start: 0.5rem;
     }
 
-    .wmd-input {
-        field-sizing: content;
-        min-height: 14rem;
+    // stylelint-disable-next-line selector-class-pattern
+    .form__question {
+      margin-block-end: 0.25rem;
+      font-size: 1rem;
+      line-height: 1.25rem;
+
+      &:nth-of-type(1) {
+        margin-block-start: 0;
+      }
     }
+  }
 
-    &__comments {
-        // stylelint-disable-next-line selector-class-pattern,selector-id-pattern
-        ul#id_visibility {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
+  .multi-input-field-hidden {
+    display: none;
+  }
 
-        .wmd-input,
-        .wmd-preview {
-            max-width: 100%;
-            margin-block-end: 0;
-        }
+  &__info-box {
+    background-color: variables.$color--light-blue-90;
+    padding: 1rem;
+
+    p {
+      margin: 0;
     }
+  }
 
-    // Radio + Checkbox
-    [type="radio"],
-    [type="checkbox"] {
-        & + label {
-            padding-inline-start: 0.25rem;
-            cursor: pointer;
-        }
-    }
-
-    .errorlist {
-        padding: 5px;
-        margin-block-end: 0.2em;
-        background: variables.$color--light-pink;
-        border: 1px solid variables.$color--tomato;
-    }
-
-    .address {
-        padding: 0.4em;
-        border: 1px solid #cfcfcf8f;
-        max-width: 410px;
-
-        // stylelint-disable-next-line selector-class-pattern
-        .form__group {
-            margin-block-start: 0.5rem;
-        }
-
-        // stylelint-disable-next-line selector-class-pattern
-        .form__question {
-            margin-block-end: 0.25rem;
-            font-size: 1rem;
-            line-height: 1.25rem;
-
-            &:nth-of-type(1) {
-                margin-block-start: 0;
-            }
-        }
-    }
-
-    .multi-input-field-hidden {
-        display: none;
-    }
-
-    &__info-box {
-        background-color: variables.$color--light-blue-90;
-        padding: 1rem;
-
-        p {
-            margin: 0;
-        }
-    }
-
-    .password-reset {
-        margin-block-start: -1em;
-    }
+  .password-reset {
+    margin-block-start: -1em;
+  }
 }
 
 .flash-item {
-    animation: flash 1s ease 1;
+  animation: flash 1s ease 1;
 }
 
 @keyframes flash {
-    50% {
-        background-color: variables.$color--mustard;
-    }
+  50% {
+    background-color: variables.$color--mustard;
+  }
 }

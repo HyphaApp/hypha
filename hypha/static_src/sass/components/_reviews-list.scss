@@ -1,61 +1,61 @@
 @use "../abstracts/variables";
 
 .reviews-list {
-    position: relative;
-    margin-block-start: 40px;
-    table-layout: auto;
+  position: relative;
+  margin-block-start: 40px;
+  table-layout: auto;
 
-    &__body {
-        overflow-x: scroll;
+  &__body {
+    overflow-x: scroll;
+  }
+
+  &__th {
+    &:hover {
+      box-shadow: none;
     }
 
-    &__th {
-        &:hover {
-            box-shadow: none;
+    &:first-child {
+      font-weight: variables.$weight--bold;
+    }
+  }
+
+  &__tr {
+    border-block-start: 0;
+    border-block-end: 2px solid variables.$color--light-grey;
+  }
+
+  &__td {
+    max-width: 340px;
+    min-width: 240px;
+    padding: 20px;
+
+    &--author {
+      > div {
+        display: flex;
+        align-items: center;
+
+        img {
+          margin-inline-start: 7px;
         }
-
-        &:first-child {
-            font-weight: variables.$weight--bold;
-        }
+      }
     }
+  }
 
-    &__tr {
-        border-block-start: 0;
-        border-block-end: 2px solid variables.$color--light-grey;
+  &__th,
+  &__td {
+    display: table-cell;
+    height: auto;
+    vertical-align: top;
+
+    &:first-child {
+      width: 160px;
+      background-color: variables.$color--light-mid-grey;
     }
+  }
 
-    &__td {
-        max-width: 340px;
-        min-width: 240px;
-        padding: 20px;
-
-        &--author {
-            > div {
-                display: flex;
-                align-items: center;
-
-                img {
-                    margin-inline-start: 7px;
-                }
-            }
-        }
-    }
-
-    &__th,
-    &__td {
-        display: table-cell;
-        height: auto;
-        vertical-align: top;
-
-        &:first-child {
-            width: 160px;
-            background-color: variables.$color--light-mid-grey;
-        }
-    }
-
-    &__th--author {
-        position: sticky;
-        inset-block-start: 0;
-        background-color: variables.$color--white;
-    }
+  &__th--author {
+    position: sticky;
+    inset-block-start: 0;
+    background-color: variables.$color--white;
+  }
 }

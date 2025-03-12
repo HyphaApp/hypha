@@ -1,27 +1,27 @@
 .group-help-text {
-    font-size: smaller;
-    padding-inline-start: 10px;
+  font-size: smaller;
+  padding-inline-start: 10px;
 }
 
 // Stylings used for the Wagtail admin "roles" tab when creating/editing a user
 .form {
-    &__label {
-        p {
-            margin: 0;
-        }
-
-        .group-help-text {
-            color: var(--w-color-grey-400);
-        }
+  &__label {
+    p {
+      margin: 0;
     }
+
+    .group-help-text {
+      color: var(--w-color-grey-400);
+    }
+  }
 }
 
 // Stylings used for the Wagtail admin groups view
 .title-wrapper {
-    a {
-        .group-help-text {
-            font-weight: normal;
-            display: inline;
-        }
+  a {
+    .group-help-text {
+      font-weight: normal;
+      display: inline;
     }
+  }
 }

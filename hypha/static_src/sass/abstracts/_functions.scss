@@ -9,41 +9,41 @@
 
 // Strip the unit from the given value and return the value
 @function strip-unit($value) {
-    @return math.div($value, ($value * 0 + 1));
+  @return math.div($value, ($value * 0 + 1));
 }
 
 // Return an em unit based on the pixel value and context
 @function rem($px, $context: variables.$base-font-size) {
-    @return #{strip-unit(math.div($px, strip-unit($context)))}rem;
+  @return #{strip-unit(math.div($px, strip-unit($context)))}rem;
 }
 
 // Returns the opposite direction of each direction in a list
 // @param {List} $directions - List of initial directions
 // @return {List} - List of opposite directions
 @function opposite-direction($directions) {
-    $opposite-directions: ();
-    $direction-map: (
-        "top": "bottom",
-        "right": "left",
-        "bottom": "top",
-        "left": "right",
-        "center": "center",
-        "ltr": "rtl",
-        "rtl": "ltr",
-    );
+  $opposite-directions: ();
+  $direction-map: (
+    "top": "bottom",
+    "right": "left",
+    "bottom": "top",
+    "left": "right",
+    "center": "center",
+    "ltr": "rtl",
+    "rtl": "ltr",
+  );
 
-    @each $direction in $directions {
-        $direction: string.to-lower-case($direction);
+  @each $direction in $directions {
+    $direction: string.to-lower-case($direction);
 
-        @if map.has-key($direction-map, $direction) {
-            $opposite-directions: list.append(
-                $opposite-directions,
-                string.unquote(map.get($direction-map, $direction))
-            );
-        } @else {
-            @warn 'No opposite direction can be found for `#{$direction}`. Direction omitted.';
-        }
+    @if map.has-key($direction-map, $direction) {
+      $opposite-directions: list.append(
+        $opposite-directions,
+        string.unquote(map.get($direction-map, $direction))
+      );
+    } @else {
+      @warn 'No opposite direction can be found for `#{$direction}`. Direction omitted.';
     }
+  }
 
-    @return $opposite-directions;
+  @return $opposite-directions;
 }

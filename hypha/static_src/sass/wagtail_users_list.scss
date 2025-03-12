@@ -1,56 +1,56 @@
 // stylelint-disable media-feature-range-notation
 
 .users-list {
-    padding-inline-start: 1rem;
-    padding-inline-end: 1rem;
+  padding-inline-start: 1rem;
+  padding-inline-end: 1rem;
 
-    li:has(input[type="radio"]) {
+  li:has(input[type="radio"]) {
+    display: flex;
+    align-items: center;
+    padding-block-start: 0.25rem;
+    padding-block-end: 0.25rem;
+  }
+
+  &__results {
+    flex: 1;
+  }
+
+  &--has-filters {
+    display: flex;
+    flex-direction: column-reverse;
+
+    @media screen and (min-width: 1000px) {
+      gap: 2rem;
+      flex-direction: row;
+    }
+  }
+
+  .filterable {
+    &__filters {
+      h2 {
+        display: none;
+      }
+
+      form {
         display: flex;
+        flex-direction: row-reverse;
+        gap: 1rem;
         align-items: center;
-        padding-block-start: 0.25rem;
-        padding-block-end: 0.25rem;
-    }
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
 
-    &__results {
-        flex: 1;
-    }
-
-    &--has-filters {
-        display: flex;
-        flex-direction: column-reverse;
-
-        @media screen and (min-width: 1000px) {
-            gap: 2rem;
-            flex-direction: row;
+      @media screen and (min-width: 1000px) {
+        h2 {
+          display: block;
         }
-    }
 
-    .filterable {
-        &__filters {
-            h2 {
-                display: none;
-            }
-
-            form {
-                display: flex;
-                flex-direction: row-reverse;
-                gap: 1rem;
-                align-items: center;
-                flex-wrap: wrap;
-                justify-content: flex-end;
-            }
-
-            @media screen and (min-width: 1000px) {
-                h2 {
-                    display: block;
-                }
-
-                form {
-                    flex-direction: column-reverse;
-                    align-items: flex-start;
-                    gap: 0;
-                }
-            }
+        form {
+          flex-direction: column-reverse;
+          align-items: flex-start;
+          gap: 0;
         }
+      }
     }
+  }
 }

@@ -1,25 +1,25 @@
 @use "../abstracts/mixins";
 
 .responsive-table {
-    @include mixins.table-ordering-styles;
+  @include mixins.table-ordering-styles;
 
-    thead {
-        display: none;
+  thead {
+    display: none;
 
-        @include mixins.media-query(lg) {
-            display: table-header-group;
-        }
-
-        th {
-            padding: 25px 10px;
-        }
+    @include mixins.media-query(lg) {
+      display: table-header-group;
     }
 
-    tbody {
-        td {
-            &.title {
-                padding-block-start: 15px;
-            }
-        }
+    th {
+      padding: 25px 10px;
     }
+  }
+
+  tbody {
+    td {
+      &.title {
+        padding-block-start: 15px;
+      }
+    }
+  }
 }

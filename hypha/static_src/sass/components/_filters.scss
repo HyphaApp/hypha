@@ -2,71 +2,71 @@
 @use "../abstracts/variables";
 
 .filters {
-    display: none;
+  display: none;
+
+  &.filters-open {
+    position: fixed;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+    inset-block-start: 0;
+    inset-block-end: 0;
+    z-index: 9;
+    display: block;
+    width: 100%;
+    height: 100vh;
+    background: variables.$color--white;
+  }
+
+  @include mixins.media-query(lg) {
+    display: block;
+    max-height: 0;
+    transition: max-height variables.$transition;
+    transition-delay: 30ms;
+    pointer-events: none;
 
     &.filters-open {
-        position: fixed;
-        inset-inline-start: 0;
-        inset-inline-end: 0;
-        inset-block-start: 0;
-        inset-block-end: 0;
-        z-index: 9;
-        display: block;
-        width: 100%;
-        height: 100vh;
-        background: variables.$color--white;
+      position: relative;
+      inset-inline-start: auto;
+      inset-inline-end: auto;
+      inset-block-start: auto;
+      inset-block-end: auto;
+      height: auto;
+      background: transparent;
+      max-height: fit-content;
+      pointer-events: all;
     }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 20px 0;
 
     @include mixins.media-query(lg) {
-        display: block;
-        max-height: 0;
-        transition: max-height variables.$transition;
-        transition-delay: 30ms;
-        pointer-events: none;
-
-        &.filters-open {
-            position: relative;
-            inset-inline-start: auto;
-            inset-inline-end: auto;
-            inset-block-start: auto;
-            inset-block-end: auto;
-            height: auto;
-            background: transparent;
-            max-height: fit-content;
-            pointer-events: all;
-        }
+      display: none;
     }
 
-    &__header {
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        padding: 20px 0;
+    > div[class^="js-"] {
+      color: variables.$color--primary;
 
-        @include mixins.media-query(lg) {
-            display: none;
-        }
-
-        > div[class^="js-"] {
-            color: variables.$color--primary;
-
-            &:hover {
-                cursor: pointer;
-            }
-        }
+      &:hover {
+        cursor: pointer;
+      }
     }
+  }
 
-    &__button {
-        appearance: none;
-        -webkit-appearance: none; // stylelint-disable-line property-no-vendor-prefix
-        border: 0;
-        color: variables.$color--primary;
-        background: transparent;
-    }
+  &__button {
+    appearance: none;
+    -webkit-appearance: none; // stylelint-disable-line property-no-vendor-prefix
+    border: 0;
+    color: variables.$color--primary;
+    background: transparent;
+  }
 }
 // stylelint-disable selector-max-id
 #show-filters-button {
-    @include mixins.media-query(lg) {
-        display: none;
-    }
+  @include mixins.media-query(lg) {
+    display: none;
+  }
 }

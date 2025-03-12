@@ -2,102 +2,102 @@
 @use "../abstracts/variables";
 
 .projects-table {
-    @include mixins.table-ordering-styles;
+  @include mixins.table-ordering-styles;
 
-    thead {
-        display: none;
+  thead {
+    display: none;
+
+    @include mixins.media-query(lg) {
+      display: table-header-group;
+    }
+  }
+
+  tbody {
+    td {
+      > span.mobile-label {
+        display: inline-block;
+        width: 90px;
 
         @include mixins.media-query(lg) {
-            display: table-header-group;
+          display: none;
         }
+      }
     }
+  }
 
-    tbody {
-        td {
-            > span.mobile-label {
-                display: inline-block;
-                width: 90px;
-
-                @include mixins.media-query(lg) {
-                    display: none;
-                }
-            }
-        }
+  .reporting {
+    .icon {
+      margin-inline-end: 0.3rem;
+      width: 25px;
+      height: 25px;
+      fill: variables.$color--tomato;
     }
-
-    .reporting {
-        .icon {
-            margin-inline-end: 0.3rem;
-            width: 25px;
-            height: 25px;
-            fill: variables.$color--tomato;
-        }
-    }
+  }
 }
 
 .invoices-table {
-    @include mixins.table-ordering-styles;
+  @include mixins.table-ordering-styles;
 
-    thead {
-        display: none;
+  thead {
+    display: none;
+
+    @include mixins.media-query(lg) {
+      display: table-header-group;
+    }
+
+    th {
+      &.selected {
+        @include mixins.table-checkbox;
 
         @include mixins.media-query(lg) {
-            display: table-header-group;
+          width: 50px;
+          padding-inline-end: 0;
         }
-
-        th {
-            &.selected {
-                @include mixins.table-checkbox;
-
-                @include mixins.media-query(lg) {
-                    width: 50px;
-                    padding-inline-end: 0;
-                }
-            }
-        }
+      }
     }
+  }
 
-    tbody {
-        td {
-            > span.mobile-label {
-                display: inline-block;
-                width: 90px;
+  tbody {
+    td {
+      > span.mobile-label {
+        display: inline-block;
+        width: 90px;
 
-                @include mixins.media-query(lg) {
-                    display: none;
-                }
-            }
-
-            // batch action checkboxes
-            &.selected {
-                @include mixins.table-checkbox;
-                display: none;
-                padding-inline-end: 0;
-
-                @include mixins.media-query(lg) {
-                    display: table-cell;
-                }
-            }
+        @include mixins.media-query(lg) {
+          display: none;
         }
+      }
+
+      // batch action checkboxes
+      &.selected {
+        @include mixins.table-checkbox;
+        display: none;
+        padding-inline-end: 0;
+
+        @include mixins.media-query(lg) {
+          display: table-cell;
+        }
+      }
     }
+  }
 }
 
 .reporting-table {
-    @include mixins.table-ordering-styles;
+  @include mixins.table-ordering-styles;
 
-    tbody {
-        td {
-            &.status {
-                span {
-                    display: inline-block;
-                    padding: 5px;
-                    font-size: 13px;
-                    font-weight: variables.$weight--bold;
-                    color: variables.$color--white;
-                    text-align: center;
-                    background-color: variables.$color--dark-blue;
-                }
-            }
+  tbody {
+    td {
+      &.status {
+        span {
+          display: inline-block;
+          padding: 5px;
+          font-size: 13px;
+          font-weight: variables.$weight--bold;
+          color: variables.$color--white;
+          text-align: center;
+          background-color: variables.$color--dark-blue;
         }
+      }
     }
+  }
 }

@@ -3,41 +3,41 @@
 @use "../abstracts/variables";
 
 .nav {
-    background-color: var(--color-bg-default);
+  background-color: var(--color-bg-default);
 
-    &__link {
-        @extend %h5;
-        display: flex;
-        position: relative;
-        padding-block: 0.5rem;
-        color: variables.$color--default;
-        transition: color variables.$transition;
+  &__link {
+    @extend %h5;
+    display: flex;
+    position: relative;
+    padding-block: 0.5rem;
+    color: variables.$color--default;
+    transition: color variables.$transition;
 
-        &:focus,
-        &:hover {
-            color: variables.$color--light-blue;
-        }
-
-        @include mixins.media-query(md) {
-            &::after {
-                position: absolute;
-                inset-block-end: 0;
-                inset-inline-start: 0;
-                width: 100%;
-                height: 5px;
-                background-color: variables.$color--dark-blue;
-                content: "";
-                opacity: 0;
-                transition: opacity 0.5s cubic-bezier(0.2, 1.4, 0.67, 1.13);
-            }
-        }
-
-        &--active,
-        &:focus,
-        &:hover {
-            &::after {
-                opacity: 1;
-            }
-        }
+    &:focus,
+    &:hover {
+      color: variables.$color--light-blue;
     }
+
+    @include mixins.media-query(md) {
+      &::after {
+        position: absolute;
+        inset-block-end: 0;
+        inset-inline-start: 0;
+        width: 100%;
+        height: 5px;
+        background-color: variables.$color--dark-blue;
+        content: "";
+        opacity: 0;
+        transition: opacity 0.5s cubic-bezier(0.2, 1.4, 0.67, 1.13);
+      }
+    }
+
+    &--active,
+    &:focus,
+    &:hover {
+      &::after {
+        opacity: 1;
+      }
+    }
+  }
 }
