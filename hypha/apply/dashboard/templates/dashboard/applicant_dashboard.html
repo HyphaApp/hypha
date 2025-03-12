@@ -5,7 +5,7 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
-    <div class="pt-4 pb-0 admin-bar">
+    <div class="admin-bar">
         <div class="gap-4 admin-bar__inner wrapper--applicant-dashboard">
             <div class="my-auto">
                 <h1 class="font-bold heading heading--no-margin">{% trans "My dashboard" %}</h1>
@@ -82,7 +82,9 @@
                                 {% display_invoice_table_status_for_user invoice.status request.user as invoice_status %}
                                 <div class="flex-1 w-full"></div>
                                 <div class="w-full max-w-fit text-end">
-                                    <p class="{{ invoice_status|invoice_status_bg_color }} text-base py-2 px-3 {{ invoice_status|invoice_status_fg_color }}">{{ invoice_status }}</p>
+                                    <p class="{{ invoice_status|invoice_status_bg_color }} text-sm font-semibold py-2 px-3 rounded-sm shadow-xs {{ invoice_status|invoice_status_fg_color }}">
+                                        {{ invoice_status }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
