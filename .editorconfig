@@ -10,7 +10,7 @@ indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[*.{yml,yaml,js,json}]
+[*.{yml,yaml,js,json,css}]
 indent_size = 2
 
 [*.md]

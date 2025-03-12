@@ -108,10 +108,5 @@
       "trailingCommas": "es5"
     },
     "globals": ["define", "htmx", "jQuery", "Alpine"]
-  },
-  "css": {
-    "formatter": {
-      "indentWidth": 4
-    }
   }
 }

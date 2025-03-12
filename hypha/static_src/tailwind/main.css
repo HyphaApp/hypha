@@ -10,15 +10,15 @@
 @plugin '@tailwindcss/typography';
 
 @theme {
-    --color-light-blue: #0d7db0;
-    --color-dark-blue: #0c72a0;
-    --color-sky-blue: #e7f2f6;
-    --color-tomato: #f05e54;
-    --color-mid-grey: #cfcfcf;
-    --color-light-grey: #f7f7f7;
-    --color-arsenic: #404041;
-    --color-fg-muted: var(--color-fg-muted);
-    --color-fg-default: var(--color-fg-default);
+  --color-light-blue: #0d7db0;
+  --color-dark-blue: #0c72a0;
+  --color-sky-blue: #e7f2f6;
+  --color-tomato: #f05e54;
+  --color-mid-grey: #cfcfcf;
+  --color-light-grey: #f7f7f7;
+  --color-arsenic: #404041;
+  --color-fg-muted: var(--color-fg-muted);
+  --color-fg-default: var(--color-fg-default);
 }
 
 /*
@@ -30,37 +30,37 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
-    *,
-    ::after,
-    ::before,
-    ::backdrop,
-    ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
-    }
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
 
-    /* Transitioning page view. */
-    @view-transition {
-        navigation: auto;
-    }
+  /* Transitioning page view. */
+  @view-transition {
+    navigation: auto;
+  }
 
-    :root {
-        /* Activate transition to intrinsic sizes like auto and fit-content. */
-        interpolate-size: allow-keywords;
-    }
+  :root {
+    /* Activate transition to intrinsic sizes like auto and fit-content. */
+    interpolate-size: allow-keywords;
+  }
 }
 
 @utility border-stripe {
-    border-image: repeating-linear-gradient(
-            -55deg,
-            #000 0,
-            #000 20px,
-            #ffb101 20px,
-            #ffb101 40px
-        )
-        10;
+  border-image: repeating-linear-gradient(
+      -55deg,
+      #000 0,
+      #000 20px,
+      #ffb101 20px,
+      #ffb101 40px
+    )
+    10;
 }
 
 @utility break-anywhere {
-    /* see https://github.com/tailwindlabs/tailwindcss/pull/12128 */
-    overflow-wrap: anywhere;
+  /* see https://github.com/tailwindlabs/tailwindcss/pull/12128 */
+  overflow-wrap: anywhere;
 }
