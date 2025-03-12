@@ -2,68 +2,68 @@
 @use "../abstracts/variables";
 
 .sidebar {
-    @include mixins.media-query(md) {
-        width: 345px;
+  @include mixins.media-query(md) {
+    width: 345px;
+  }
+
+  &__inner {
+    padding: 20px;
+    margin-block-end: 20px;
+    border: 1px solid variables.$color--mid-grey;
+
+    &--light-blue {
+      background-color: variables.$color--light-blue-90;
     }
 
-    &__inner {
-        padding: 20px;
-        margin-block-end: 20px;
-        border: 1px solid variables.$color--mid-grey;
-
-        &--light-blue {
-            background-color: variables.$color--light-blue-90;
+    &--actions {
+      @include mixins.media-query(md) {
+        &--instructions {
+          margin-block-start: 10px;
+          margin-inline-start: 10px;
         }
+      }
+    }
+  }
 
-        &--actions {
-            @include mixins.media-query(md) {
-                &--instructions {
-                    margin-block-start: 10px;
-                    margin-inline-start: 10px;
-                }
-            }
-        }
+  &__project {
+    // stylelint-disable value-no-vendor-prefix
+    position: -webkit-sticky; /* for Safari */
+    position: sticky;
+    align-self: flex-start;
+    inset-block-start: 2rem;
+  }
+
+  &__paf-approvals {
+    &--pending {
+      color: variables.$color--mid-grey;
     }
 
-    &__project {
-        // stylelint-disable value-no-vendor-prefix
-        position: -webkit-sticky; /* for Safari */
-        position: sticky;
-        align-self: flex-start;
-        inset-block-start: 2rem;
+    &--approved {
+      color: variables.$color--black;
+    }
+  }
+
+  &__separator {
+    position: relative;
+    font-size: 12px;
+    font-weight: variables.$weight--bold;
+    color: variables.$color--black-40;
+    text-transform: uppercase;
+
+    &::after {
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-end: 0;
+      width: calc(100% - 60px);
+      height: 1px;
+      background-color: variables.$color--black-20;
+      content: "";
     }
 
-    &__paf-approvals {
-        &--pending {
-            color: variables.$color--mid-grey;
-        }
-
-        &--approved {
-            color: variables.$color--black;
-        }
+    &--medium {
+      &::after {
+        width: calc(100% - 120px);
+      }
     }
-
-    &__separator {
-        position: relative;
-        font-size: 12px;
-        font-weight: variables.$weight--bold;
-        color: variables.$color--black-40;
-        text-transform: uppercase;
-
-        &::after {
-            position: absolute;
-            inset-block-start: 50%;
-            inset-inline-end: 0;
-            width: calc(100% - 60px);
-            height: 1px;
-            background-color: variables.$color--black-20;
-            content: "";
-        }
-
-        &--medium {
-            &::after {
-                width: calc(100% - 120px);
-            }
-        }
-    }
+  }
 }

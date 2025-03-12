@@ -2,66 +2,66 @@
 
 // $TYPOGRAPHY
 @layer base {
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    .heading-text {
-        margin-block: 0 1rem;
-        font-style: inherit;
-        font-weight: variables.$weight--semibold;
-        text-wrap: balance;
-    }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .heading-text {
+    margin-block: 0 1rem;
+    font-style: inherit;
+    font-weight: variables.$weight--semibold;
+    text-wrap: balance;
+  }
 
-    // Default sizes
-    h1,
-    %h1,
-    .alpha {
-        font-size: 2.25rem;
-        line-height: 2.5rem;
-    }
+  // Default sizes
+  h1,
+  %h1,
+  .alpha {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
 
-    h2,
-    %h2,
-    .beta {
-        font-size: 1.875rem;
-        line-height: 2.25rem;
-        font-weight: 500;
-    }
+  h2,
+  %h2,
+  .beta {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    font-weight: 500;
+  }
 
-    h3,
-    %h3,
-    .gamma {
-        font-size: 1.5rem;
-        line-height: 2rem;
-    }
+  h3,
+  %h3,
+  .gamma {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
 
-    h4,
-    %h4,
-    .delta {
-        font-size: 1.25rem;
-        line-height: 1.75rem;
-    }
+  h4,
+  %h4,
+  .delta {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
 
-    h5,
-    %h5,
-    .epsilon {
-        font-size: 1.125rem;
-        line-height: 1.75rem;
-        font-weight: 600;
-    }
+  h5,
+  %h5,
+  .epsilon {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+  }
 
-    h6,
-    %h6,
-    .zeta {
-        font-size: 1rem;
-    }
+  h6,
+  %h6,
+  .zeta {
+    font-size: 1rem;
+  }
 
-    small,
-    .milli {
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-    }
+  small,
+  .milli {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
 }

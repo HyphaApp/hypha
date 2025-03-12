@@ -1,58 +1,58 @@
 @use "../abstracts/variables";
 
 .wmd-preview {
-    background-color: #f3f4f6;
-    padding: 0 10px;
-    width: 100%;
-    overflow: hidden; /* prevent collapsing margins */
+  background-color: #f3f4f6;
+  padding: 0 10px;
+  width: 100%;
+  overflow: hidden; /* prevent collapsing margins */
 
-    ul {
-        padding-inline-start: 20px;
-        list-style: outside disc;
-    }
+  ul {
+    padding-inline-start: 20px;
+    list-style: outside disc;
+  }
 
-    ol {
-        list-style: inside decimal;
-    }
+  ol {
+    list-style: inside decimal;
+  }
 }
 
 .wmd-button-row {
-    display: flex;
-    background-color: variables.$color--white;
-    padding: 4px;
+  display: flex;
+  background-color: variables.$color--white;
+  padding: 4px;
 }
 
 .wmd-spacer {
-    background-color: variables.$color--mid-grey;
-    width: 1px;
-    height: 20px;
-    margin: 0 14px;
-    list-style: none;
+  background-color: variables.$color--mid-grey;
+  width: 1px;
+  height: 20px;
+  margin: 0 14px;
+  list-style: none;
 }
 
 .wmd-button {
+  width: 20px;
+  height: 20px;
+  margin: 0 2px;
+  list-style: none;
+  cursor: pointer;
+
+  & > span {
+    display: inline-block;
+    background-image: url("./../images/editor-buttons.png");
+    background-repeat: no-repeat;
+    background-position: 0 0;
     width: 20px;
     height: 20px;
-    margin: 0 2px;
-    list-style: none;
-    cursor: pointer;
-
-    & > span {
-        display: inline-block;
-        background-image: url("./../images/editor-buttons.png");
-        background-repeat: no-repeat;
-        background-position: 0 0;
-        width: 20px;
-        height: 20px;
-    }
+  }
 }
 
 .wmd-prompt-background {
-    background-color: variables.$color--black;
+  background-color: variables.$color--black;
 }
 
 .wmd-prompt-dialog {
-    background-color: variables.$color--light-grey;
-    padding: 0.5em;
-    border: 4px solid variables.$color--primary;
+  background-color: variables.$color--light-grey;
+  padding: 0.5em;
+  border: 4px solid variables.$color--primary;
 }

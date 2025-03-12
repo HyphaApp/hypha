@@ -2,29 +2,29 @@
 @use "../abstracts/variables";
 
 .reviews-summary {
-    display: none;
-    background-color: transparent;
+  display: none;
+  background-color: transparent;
 
-    @include mixins.media-query(lg) {
-        display: table;
-    }
+  @include mixins.media-query(lg) {
+    display: table;
+  }
 
-    &__tr {
-        vertical-align: top;
-        border-block-end: 0;
-    }
+  &__tr {
+    vertical-align: top;
+    border-block-end: 0;
+  }
 
-    &__td {
-        padding: 10px;
-        vertical-align: middle;
-        text-align: center;
-    }
+  &__td {
+    padding: 10px;
+    vertical-align: middle;
+    text-align: center;
+  }
 
-    &__td-width {
-        width: max-content;
-    }
+  &__td-width {
+    width: max-content;
+  }
 }
 
 .counts-separator {
-    color: variables.$color--mid-grey;
+  color: variables.$color--mid-grey;
 }

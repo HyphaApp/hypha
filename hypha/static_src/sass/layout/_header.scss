@@ -2,30 +2,30 @@
 @use "../abstracts/variables";
 
 .header {
-    padding-inline: variables.$gutters;
+  padding-inline: variables.$gutters;
 
-    @include mixins.media-query(xl) {
-        padding-inline: 0;
+  @include mixins.media-query(xl) {
+    padding-inline: 0;
+  }
+
+  &__logo {
+    max-width: none;
+
+    &--mobile {
+      width: 60px;
+
+      @include mixins.media-query(lg) {
+        display: none;
+      }
     }
 
-    &__logo {
-        max-width: none;
+    &--desktop {
+      display: none;
 
-        &--mobile {
-            width: 60px;
-
-            @include mixins.media-query(lg) {
-                display: none;
-            }
-        }
-
-        &--desktop {
-            display: none;
-
-            @include mixins.media-query(lg) {
-                display: block;
-                width: 215px;
-            }
-        }
+      @include mixins.media-query(lg) {
+        display: block;
+        width: 215px;
+      }
     }
+  }
 }

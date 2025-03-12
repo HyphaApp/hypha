@@ -1,78 +1,78 @@
 @use "../abstracts/mixins";
 
 .hypha-grid {
-    display: grid;
-    margin-block-end: 1rem;
+  display: grid;
+  margin-block-end: 1rem;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+  &--two {
+    grid-template-columns: 100%;
+    gap: 0.25rem;
+
+    @include mixins.media-query(md) {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    &.delete {
+      grid-template-columns: 1fr;
+    }
+
+    .form--comments & {
+      margin: 20px 0 0;
+      gap: 10px;
+      grid-template-columns: 100px 100px;
+    }
+
+    .wrapper--comments & {
+      grid-template-columns: 1fr;
+    }
+
+    + br {
+      display: none;
+    }
+  }
+
+  &--narrow {
+    text-align: center;
+
+    @include mixins.media-query(md) {
+      text-align: left;
+    }
+  }
+
+  &--no-margin {
+    margin: 0;
+  }
+
+  &--proposal-info {
+    grid-template-columns: 100%;
     gap: 10px;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    margin: 0 0 1rem;
 
-    &--two {
-        grid-template-columns: 100%;
-        gap: 0.25rem;
-
-        @include mixins.media-query(md) {
-            grid-template-columns: 1fr 1fr;
-        }
-
-        &.delete {
-            grid-template-columns: 1fr;
-        }
-
-        .form--comments & {
-            margin: 20px 0 0;
-            gap: 10px;
-            grid-template-columns: 100px 100px;
-        }
-
-        .wrapper--comments & {
-            grid-template-columns: 1fr;
-        }
-
-        + br {
-            display: none;
-        }
+    @include mixins.media-query(sm) {
+      margin: 0 0 1.5rem;
+      grid-template-columns: 1fr 1fr;
     }
 
-    &--narrow {
-        text-align: center;
-
-        @include mixins.media-query(md) {
-            text-align: left;
-        }
+    * {
+      margin: 0;
     }
+  }
 
-    &--no-margin {
-        margin: 0;
+  &--status-update {
+    grid-template-columns: 100%;
+
+    @include mixins.media-query(sm) {
+      grid-template-columns: 100%;
     }
+  }
 
-    &--proposal-info {
-        grid-template-columns: 100%;
-        gap: 10px;
-        margin: 0 0 1rem;
-
-        @include mixins.media-query(sm) {
-            margin: 0 0 1.5rem;
-            grid-template-columns: 1fr 1fr;
-        }
-
-        * {
-            margin: 0;
-        }
+  &__cell {
+    &--span-two {
+      @include mixins.media-query(sm) {
+        grid-column: auto / span 2;
+      }
     }
-
-    &--status-update {
-        grid-template-columns: 100%;
-
-        @include mixins.media-query(sm) {
-            grid-template-columns: 100%;
-        }
-    }
-
-    &__cell {
-        &--span-two {
-            @include mixins.media-query(sm) {
-                grid-column: auto / span 2;
-            }
-        }
-    }
+  }
 }

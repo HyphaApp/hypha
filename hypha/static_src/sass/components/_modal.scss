@@ -2,86 +2,86 @@
 @use "../abstracts/variables";
 
 .modal {
-    $root: &;
-    display: none;
-    width: calc(100% - 40px);
+  $root: &;
+  display: none;
+  width: calc(100% - 40px);
+  padding: 0;
+
+  @include mixins.media-query(sm) {
+    width: 580px;
+    padding: 30px;
+  }
+
+  &__header-bar {
+    color: variables.$color--white;
+    background-color: variables.$color--dark-blue;
+    margin: -24px -24px 20px;
+    padding: 15px;
+    text-align: center;
+
+    &--no-bottom-space {
+      margin-block-end: 0;
+    }
+  }
+
+  &__project-header-bar {
+    color: variables.$color--white;
+    background-color: variables.$color--dark-blue;
+    margin: -24px -24px 20px;
+    padding: 15px 24px;
+    text-align: left;
+
+    &--no-bottom-space {
+      margin-block-end: 0;
+    }
+  }
+
+  &__list {
+    max-height: 200px;
+    overflow: scroll;
+    margin: 0 -24px 20px;
     padding: 0;
+    border-block-end: 2px solid variables.$color--light-mid-grey;
+    box-shadow: inset 0 -10px 20px -10px variables.$color--mid-grey;
+    transition: max-height variables.$transition;
 
-    @include mixins.media-query(sm) {
-        width: 580px;
-        padding: 30px;
+    &.is-closed {
+      max-height: 0;
+      border-block-end: 0;
     }
+  }
 
-    &__header-bar {
-        color: variables.$color--white;
-        background-color: variables.$color--dark-blue;
-        margin: -24px -24px 20px;
-        padding: 15px;
-        text-align: center;
+  &__list-item {
+    display: block;
+    font-size: variables.$font-size--zeta;
+    padding: 12px 28px;
+    border-block-end: 2px solid variables.$color--light-mid-grey;
+    margin: 0;
+    color: variables.$color--default;
 
-        &--no-bottom-space {
-            margin-block-end: 0;
-        }
+    &--meta {
+      color: variables.$color--dark-blue;
+      font-weight: variables.$weight--semibold;
+      display: flex;
+      justify-content: space-between;
+      margin: 0 -24px;
     }
+  }
 
-    &__project-header-bar {
-        color: variables.$color--white;
-        background-color: variables.$color--dark-blue;
-        margin: -24px -24px 20px;
-        padding: 15px 24px;
-        text-align: left;
+  &__hide-link {
+    text-decoration: underline;
+  }
 
-        &--no-bottom-space {
-            margin-block-end: 0;
-        }
+  &__open-link-icon {
+    width: 20px;
+    height: 20px;
+    fill: variables.$color--dark-grey;
+    opacity: 0;
+    transition: opacity variables.$transition--quick;
+    pointer-events: none;
+
+    #{$root}__list-item:hover & {
+      opacity: 1;
     }
-
-    &__list {
-        max-height: 200px;
-        overflow: scroll;
-        margin: 0 -24px 20px;
-        padding: 0;
-        border-block-end: 2px solid variables.$color--light-mid-grey;
-        box-shadow: inset 0 -10px 20px -10px variables.$color--mid-grey;
-        transition: max-height variables.$transition;
-
-        &.is-closed {
-            max-height: 0;
-            border-block-end: 0;
-        }
-    }
-
-    &__list-item {
-        display: block;
-        font-size: variables.$font-size--zeta;
-        padding: 12px 28px;
-        border-block-end: 2px solid variables.$color--light-mid-grey;
-        margin: 0;
-        color: variables.$color--default;
-
-        &--meta {
-            color: variables.$color--dark-blue;
-            font-weight: variables.$weight--semibold;
-            display: flex;
-            justify-content: space-between;
-            margin: 0 -24px;
-        }
-    }
-
-    &__hide-link {
-        text-decoration: underline;
-    }
-
-    &__open-link-icon {
-        width: 20px;
-        height: 20px;
-        fill: variables.$color--dark-grey;
-        opacity: 0;
-        transition: opacity variables.$transition--quick;
-        pointer-events: none;
-
-        #{$root}__list-item:hover & {
-            opacity: 1;
-        }
-    }
+  }
 }

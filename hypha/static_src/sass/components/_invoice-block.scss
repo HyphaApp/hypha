@@ -2,34 +2,34 @@
 @use "../abstracts/variables";
 
 .invoice-block {
-    padding: 1rem;
+  padding: 1rem;
+  margin-block-end: 1rem;
+  border: 1px solid variables.$color--dark-blue;
+
+  @include mixins.media-query(sm) {
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem;
+  }
+
+  &__item {
     margin-block-end: 1rem;
-    border: 1px solid variables.$color--dark-blue;
+
+    &:last-child {
+      margin: 0;
+    }
 
     @include mixins.media-query(sm) {
-        display: flex;
-        justify-content: space-between;
-        padding: 2rem;
+      margin: 0 1rem 0 0;
     }
+  }
 
-    &__item {
-        margin-block-end: 1rem;
+  &__title {
+    font-weight: variables.$weight--bold;
+    margin: 0 0 0.2rem;
+  }
 
-        &:last-child {
-            margin: 0;
-        }
-
-        @include mixins.media-query(sm) {
-            margin: 0 1rem 0 0;
-        }
-    }
-
-    &__title {
-        font-weight: variables.$weight--bold;
-        margin: 0 0 0.2rem;
-    }
-
-    &__meta {
-        margin: 0;
-    }
+  &__meta {
+    margin: 0;
+  }
 }

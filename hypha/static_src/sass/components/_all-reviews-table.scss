@@ -2,46 +2,46 @@
 @use "../abstracts/variables";
 
 .all-reviews-table {
-    @include mixins.table-ordering-styles;
+  @include mixins.table-ordering-styles;
 
-    $root: &;
-    font-size: 14px;
+  $root: &;
+  font-size: 14px;
 
-    thead {
-        display: none;
+  thead {
+    display: none;
+
+    @include mixins.media-query(lg) {
+      display: table-header-group;
+    }
+
+    tr {
+      &:hover {
+        box-shadow: none;
+      }
+    }
+  }
+
+  tbody {
+    td {
+      &.title {
+        position: relative;
+        padding-block-start: 15px;
+        padding-inline-start: 10px;
+        font-weight: variables.$weight--bold;
 
         @include mixins.media-query(lg) {
-            display: table-header-group;
+          display: flex;
+          align-items: center;
         }
 
-        tr {
-            &:hover {
-                box-shadow: none;
-            }
+        @include mixins.media-query(xl) {
+          display: table-cell;
         }
+
+        a {
+          color: variables.$color--primary;
+        }
+      }
     }
-
-    tbody {
-        td {
-            &.title {
-                position: relative;
-                padding-block-start: 15px;
-                padding-inline-start: 10px;
-                font-weight: variables.$weight--bold;
-
-                @include mixins.media-query(lg) {
-                    display: flex;
-                    align-items: center;
-                }
-
-                @include mixins.media-query(xl) {
-                    display: table-cell;
-                }
-
-                a {
-                    color: variables.$color--primary;
-                }
-            }
-        }
-    }
+  }
 }
