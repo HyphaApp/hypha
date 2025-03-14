@@ -724,7 +724,7 @@ class PasswordlessSignupView(TemplateView):
 @login_required
 def send_confirm_access_email_view(request):
     """Sends email with link to login in an elevated mode."""
-    token_obj, _ = ConfirmAccessToken.objects.update_or_create(
+    token_obj, created = ConfirmAccessToken.objects.update_or_create(
         user=request.user, token=generate_numeric_token
     )
     email_context = {
