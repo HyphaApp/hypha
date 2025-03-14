@@ -38,12 +38,12 @@
             </div>
         </form>
 
-        <form id="preview-form-edit" class="form application-form" action="{% url 'funds:submissions:edit' object.id %}">
+        <form id="preview-form-edit" class="form application-form" action="{% url 'funds:submissions:edit' object.id %}" x-data="{ isFormSubmitting: false }" x-on:submit="isFormSubmitting = true">
             {% csrf_token %}
         </form>
 
         <div class="form__group">
-            <button class="button button--primary" form="preview-form-submit" name="submit" type="submit">{% trans "Submit for review" %}</button>
+            <button class="button button--primary" form="preview-form-submit" name="submit" type="submit" :disabled="isFormSubmitting">{% trans "Submit for review" %}</button>
             <button class="button button--secondary" form="preview-form-edit">{% trans "Edit" %}</button>
         </div>
 

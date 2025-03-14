@@ -49,6 +49,11 @@
   // Remove the "no javascript" messages
   document.querySelector(".message-no-js").remove();
 
+  // Block multiple form submits.
+  form.addEventListener("submit", function () {
+    button.setAttribute("disabled", "disabled");
+  });
+
   const unlockApplicationForm = function () {
     form.setAttribute("action", "");
     button.removeAttribute("disabled");
