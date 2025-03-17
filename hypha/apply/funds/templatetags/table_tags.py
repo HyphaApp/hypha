@@ -59,6 +59,11 @@ def get_field_choices(form, field_name):
 
 
 @register.filter
+def get_dropdown_heading(field):
+    return f"Filter by {field.label}"
+
+
+@register.filter
 def is_multiple(field):
     return field.widget.allow_multiple_selected
 

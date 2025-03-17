@@ -121,95 +121,93 @@
     <form method="GET" id="filter-form" class="flex sticky top-0 flex-wrap justify-end items-center py-2 px-3 mt-3 bg-gray-50 border-t border-gray-200 md:gap-5 md:text-sm md:font-medium z-[5] border-x">
         <span class="hidden items-center py-1 md:inline-flex"></span>
         {% for field_name, field in filter.form|get_filter_fields %}
-            {% with filter.form|default_if_none:'' as form %}
-                {% if form %}
-                    <nav class="flex flex-wrap gap-2 items-center menu-filters">
-                        {% if not field|is_datefilter %}
-                            {% dropdown_menu title=field.label heading="Filter by "|add:field_name enable_search=True position="right" %}
-                                <ul class="flex overflow-auto flex-col max-h-80 text-gray-700 divide-y" data-filter-list>
-                                    {% for value, label in filter.form|get_field_choices:field_name %}
-                                        {% get_item_value filter.form field_name as selected_value %}
-                                        <li>
-                                            <a
-                                                {% if value|stringformat:'s' in selected_value %}
-                                                    href="{% dup_remove_from_query "page" field_name value %}"
-                                                {% elif field|is_multiple %}
-                                                    href="{% dup_add_to_query "page" field_name value only_query_string=True %}"
-                                                {% else %}
-                                                    href="{% dup_modify_query "page" field_name value %}"
-                                                {% endif %}
-                                                role="menuitemradio"
-                                                class="flex {% if value|stringformat:'s' in selected_value %}bg-gray-100 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
-                                            >
-                                                {% if value|stringformat:'s' in selected_value %}
-                                                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-2" %}
-                                                {% endif %}
-                                                <span>{{ label }}</span>
-                                            </a>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            {% enddropdown_menu %}
-                        {% else %}
-                            <div id="{{ field_name }}"
-                                 class="flex justify-between items-center py-1 w-full font-medium text-gray-600 border cursor-pointer md:border-none hover:bg-gray-50 ps-2 pe-2 md:hover:bg-transparent md:hover:text-blue-700"
-                                 data-field-name="{{ field_name }}" data-filter-list>
-                                {{ field.label }}
-                                {% heroicon_micro attributes.icon|default:"chevron-down" aria_hidden="true" size="16" class="hidden w-4 h-4 md:inline-block ms-0.5" %}
-                            </div>
+            {% if filter.form %}
+                <nav class="flex flex-wrap gap-2 items-center menu-filters">
+                    {% if not field|is_datefilter %}
+                        {% dropdown_menu title=field.label heading=field|get_dropdown_heading enable_search=True position="right" %}
+                            <ul class="flex overflow-auto flex-col max-h-80 text-gray-700 divide-y" data-filter-list>
+                                {% for value, label in filter.form|get_field_choices:field_name %}
+                                    {% get_item_value filter.form field_name as selected_value %}
+                                    <li>
+                                        <a
+                                            {% if value|stringformat:'s' in selected_value %}
+                                                href="{% dup_remove_from_query "page" field_name value %}"
+                                            {% elif field|is_multiple %}
+                                                href="{% dup_add_to_query "page" field_name value only_query_string=True %}"
+                                            {% else %}
+                                                href="{% dup_modify_query "page" field_name value %}"
+                                            {% endif %}
+                                            role="menuitemradio"
+                                            class="flex {% if value|stringformat:'s' in selected_value %}bg-gray-100 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
+                                        >
+                                            {% if value|stringformat:'s' in selected_value %}
+                                                {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-2" %}
+                                            {% endif %}
+                                            <span>{{ label }}</span>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% enddropdown_menu %}
+                    {% else %}
+                        <div id="{{ field_name }}"
+                             class="flex justify-between items-center py-1 w-full font-medium text-gray-600 border cursor-pointer md:border-none hover:bg-gray-50 ps-2 pe-2 md:hover:bg-transparent md:hover:text-blue-700"
+                             data-field-name="{{ field_name }}" data-filter-list>
+                            {{ field.label }}
+                            {% heroicon_micro attributes.icon|default:"chevron-down" aria_hidden="true" size="16" class="hidden w-4 h-4 md:inline-block ms-0.5" %}
+                        </div>
 
-                            <script src="{% static 'js/vendor/moment.min.js' %}"></script>
-                            <script src="{% static 'js/vendor/daterangepicker.min.js' %}"></script>
-                            <script>
-                                document.addEventListener("DOMContentLoaded", function () {
-                                    function updateURL(paramStart, paramEnd, startDate, endDate) {
-                                        let url = new URL(window.location);
-                                        if (startDate) {
-                                            url.searchParams.set(paramStart, startDate);
-                                        } else {
-                                            url.searchParams.delete(paramStart);
-                                        }
-
-                                        if (endDate) {
-                                            url.searchParams.set(paramEnd, endDate);
-                                        } else {
-                                            url.searchParams.delete(paramEnd);
-                                        }
-                                        window.history.pushState({}, '', url);
-                                        location.reload(); // Reload to apply the filter
+                        <script src="{% static 'js/vendor/moment.min.js' %}"></script>
+                        <script src="{% static 'js/vendor/daterangepicker.min.js' %}"></script>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                function updateURL(paramStart, paramEnd, startDate, endDate) {
+                                    let url = new URL(window.location);
+                                    if (startDate) {
+                                        url.searchParams.set(paramStart, startDate);
+                                    } else {
+                                        url.searchParams.delete(paramStart);
                                     }
 
-                                    var fieldName = "{{ field_name }}";  // Django variable inside JS
-                                    let dateLink = $("#{{ field_name }}");
+                                    if (endDate) {
+                                        url.searchParams.set(paramEnd, endDate);
+                                    } else {
+                                        url.searchParams.delete(paramEnd);
+                                    }
+                                    window.history.pushState({}, '', url);
+                                    location.reload(); // Reload to apply the filter
+                                }
 
-                                    var start = moment().subtract(29, 'days');
-                                    var end = moment();
+                                var fieldName = "{{ field_name }}";  // Django variable inside JS
+                                let dateLink = $("#{{ field_name }}");
+
+                                var start = moment().subtract(29, 'days');
+                                var end = moment();
 
 
-                                    dateLink.daterangepicker({
-                                        startDate: start,
-                                        endDate: end,
-                                        ranges: {
-                                            'Today': [moment(), moment()],
-                                            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                                            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                                            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                                            'This Month': [moment().startOf('month'), moment().endOf('month')],
-                                            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                                        }
-                                    }, function(start, end) {
-                                        let formattedStart = start.format('YYYY-MM-DD');
-                                        let formattedEnd = end.format('YYYY-MM-DD');
-                                        dateLink.textContent = formattedStart + ' - ' + formattedEnd;
-                                        updateURL(fieldName + "_after", fieldName + "_before", formattedStart, formattedEnd);
+                                dateLink.daterangepicker({
+                                    startDate: start,
+                                    endDate: end,
+                                    ranges: {
+                                        'Today': [moment(), moment()],
+                                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                                    }
+                                }, function(start, end) {
+                                    let formattedStart = start.format('YYYY-MM-DD');
+                                    let formattedEnd = end.format('YYYY-MM-DD');
+                                    dateLink.textContent = formattedStart + ' - ' + formattedEnd;
+                                    updateURL(fieldName + "_after", fieldName + "_before", formattedStart, formattedEnd);
 
-                                    });
                                 });
-                            </script>
-                        {% endif %}
-                    </nav>
-                {% endif %}
-            {% endwith %}
+                            });
+                        </script>
+                    {% endif %}
+                </nav>
+            {% endif %}
         {% endfor %}
     </form>
 </div>
