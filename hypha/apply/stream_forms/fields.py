@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.forms import FileField
 from django_file_form.fields import MultipleUploadedFileField, UploadedFileField
@@ -13,6 +14,8 @@ class MultiFileField(MultipleUploadedFileField):
     widget = MultiFileFieldWidget
 
     def clean(self, value, initial):
+        if self.required and not value:
+            raise ValidationError(self.error_messages["required"], code="required")
         if not value:
             return []
         old_files = [
@@ -56,6 +59,8 @@ class SingleFileField(UploadedFileField):
     widget = SingleFileFieldWidget
 
     def clean(self, value, initial):
+        if self.required and not value:
+            raise ValidationError(self.error_messages["required"], code="required")
         if not value:
             return
         if hasattr(value, "is_placeholder") and value.is_placeholder and initial:
