@@ -32,7 +32,7 @@
             {% if not page.open_round and not page.start_date and not request.is_preview %}
             {# the page has no open rounds and we arent on a round page #}
                 {% verbose_name page as name %}
-                <h4>{% blocktrans %}Sorry, this {{ name }} is not currently accepting applications.{% endblocktrans %} <a href="{% url 'home' %}">{% trans "See other funds" %} {% heroicon_mini "arrow-right" class="inline mb-0.5 align-text-bottom" %} </h4>
+                <h4>{% blocktrans %}Sorry, this {{ name }} is not currently accepting applications.{% endblocktrans %} <a href="{% url 'home' %}">{% trans "See other funds" %} {% heroicon_mini "arrow-right" class="inline mb-0.5 align-text-bottom" %}</a></h4>
             {% else%}
                 {% if page.get_parent.specific.guide_link %}
                     <a href="{{ page.get_parent.specific.guide_link }}" class="print:hidden" target="_blank" rel="noopener noreferrer">
