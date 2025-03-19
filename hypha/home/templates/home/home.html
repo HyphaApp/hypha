@@ -16,11 +16,17 @@
             <p class="mb-8 text-fg-muted text-pretty">{{ settings.core.SystemSettings.home_strapline|nh3|safe }}</p>
         {% endif %}
 
-        <div class="divide-y">
-            {% for fund in funds %}
-                {% include "home/includes/fund-list-item.html" with page=fund %}
-            {% endfor %}
-        </div>
+        {% if funds %}
+            <div class="divide-y">
+                {% for fund in funds %}
+                    {% include "home/includes/fund-list-item.html" with page=fund %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="mt-8">
+                {{ settings.core.SystemSettings.home_no_applications_msg|nh3|safe }}
+            </div>
+        {% endif %}
 
     </div>
 {% endblock %}

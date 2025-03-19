@@ -9,10 +9,12 @@ class Migration(migrations.Migration):
         from hypha.home.models import ApplyHomePage
 
         if home_page := ApplyHomePage.objects.first():
-            system_settings = SystemSettings.load()
-            system_settings.home_title = home_page.title
-            system_settings.home_strapline = home_page.strapline
-            system_settings.save()
+            if system_settings := SystemSettings.objects.values(
+                "id", "home_title", "home_strapline"
+            ).first():
+                system_settings.home_title = home_page.title
+                system_settings.home_strapline = home_page.strapline
+                system_settings.save()
 
     dependencies = [
         ("core", "0006_systemsettings_home_strapline_and_more"),

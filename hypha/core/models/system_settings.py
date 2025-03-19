@@ -30,6 +30,12 @@ class SystemSettings(BaseGenericSetting):
         help_text=_("The strapline to be displayed on the homepage."),
     )
 
+    home_no_applications_msg = RichTextField(
+        _("No open applications message"),
+        help_text=_("The message to be displayed when there are no open applications."),
+        default="<h4>There are currently no open applications, check back later!</h4>",
+    )
+
     site_logo_default = models.ForeignKey(
         "images.CustomImage",
         null=True,
@@ -45,7 +51,7 @@ class SystemSettings(BaseGenericSetting):
         blank=True,
         on_delete=models.SET_NULL,
         related_name="+",
-        help_text=_("Mobil site logo (if not set default will be used)"),
+        help_text=_("Mobile site logo (if not set default will be used)"),
     )
 
     site_logo_link = models.URLField(
@@ -96,6 +102,7 @@ class SystemSettings(BaseGenericSetting):
             [
                 FieldPanel("home_title"),
                 FieldPanel("home_strapline"),
+                FieldPanel("home_no_applications_msg"),
             ],
             "Homepage",
         ),

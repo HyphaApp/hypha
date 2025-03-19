@@ -1,35 +1,31 @@
 {% load i18n nh3_tags wagtailcore_tags markdown_tags heroicons %}
 
-{% if page.open_round and page.list_on_front_page %}
-  <article class="flex gap-4 justify-between items-center py-8 px-4 transition-colors hover:bg-slate-50">
+<article class="flex gap-4 justify-between items-center py-8 px-4 transition-colors hover:bg-slate-50">
 
-    <div>
-      <h2>{{ page.title }}</h2>
+  <div>
+    <h2>{{ page.title }}</h2>
+    {% if page.next_deadline and page.show_deadline %}
+      <p class="mb-4">
+        <span class="py-2 px-3 text-sm bg-orange-100 rounded-sm">
+          {% heroicon_micro 'calendar-days' class='inline align-text-bottom' aria_hidden=true %}
+          <span class="font-medium">{% trans 'Next deadline' %}: {{ page.next_deadline|date:'M j, Y' }}</span>
+        </span>
+      </p>
+    {% endif %}
+    {% if page.description %}
+      <p>
+        {{ page.description|markdown|nh3 }}
+      </p>
+    {% endif %}
+  </div>
 
-      {% if page.next_deadline and page.show_deadline %}
-        <p class="mb-4">
-          <span class="py-2 px-3 text-sm bg-orange-100 rounded-sm">
-            {% heroicon_micro 'calendar-days' class='inline align-text-bottom' aria_hidden=true %}
-            <span class="font-medium">{% trans 'Next deadline' %}: {{ page.next_deadline|date:'M j, Y' }}</span>
-          </span>
-        </p>
-      {% endif %}
-
-      {% if page.description %}
-        <p>
-          {{ page.description|markdown|nh3 }}
-        </p>
-      {% endif %}
-    </div>
-
-    <div>
-      <a
-        class="button button--primary"
-        href="{% pageurl page %}"
-        title="Click to apply for {{ page.title }}"
-      >
-        {% trans 'Apply' %}
-      </a>
-    </div>
-  </article>
-{% endif %}
+  <div>
+    <a
+      class="button button--primary"
+      href="{% pageurl page %}"
+      title="Click to apply for {{ page.title }}"
+    >
+      {% trans 'Apply' %}
+    </a>
+  </div>
+</article>
