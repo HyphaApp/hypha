@@ -27,4 +27,24 @@ htmx.onLoad(function () {
       });
     }
   }
+
+  // Handle client side validation for required file fields
+  let fileInputs = document.querySelectorAll(
+    ".dff-uploader input[type='file'][required]"
+  );
+
+  fileInputs.forEach((input) => {
+    input.addEventListener("invalid", function (event) {
+      event.preventDefault(); // Prevent default browser behavior
+
+      // Find the closest dff-uploader wrapper and display an error
+      let container = input.closest(".dff-uploader");
+
+      let errorDiv = container.querySelector(".dff-invalid-files");
+      if (errorDiv) {
+        errorDiv.innerText = "This field is required. Please upload a file."; // Show error message
+        errorDiv.style.color = "red";
+      }
+    });
+  });
 });

@@ -45,30 +45,6 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let fileInputs = document.querySelectorAll("input[type='file'][required]");
-
-            fileInputs.forEach(input => {
-                input.addEventListener("invalid", function (event) {
-
-                    event.preventDefault(); // Prevent default browser behavior
-
-                    // Find the closest dff-uploader wrapper and display an error
-                    let container = input.closest(".dff-uploader");
-                    if (container) {
-                        let errorDiv = container.querySelector(".dff-invalid-files");
-                        if (errorDiv) {
-                            errorDiv.innerText = "This field is required. Please upload a file."; // Show error message
-                            errorDiv.style.color = "red";
-                        }
-                    } else {
-                        alert("Please upload a file."); // Fallback for direct file inputs
-                    }
-                });
-            });
-        });
-    </script>
     <script src="{% static 'js/application-form.js' %}"></script>
     <script src="{% static 'js/multi-input-fields.js' %}"></script>
     <script src="{% static 'js/submission-form-copy.js' %}"></script>
