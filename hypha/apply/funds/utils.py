@@ -118,7 +118,7 @@ def export_submissions_to_csv(submissions_list, request):
             question_field = submission.serialize(field_id)
             field_name = question_field["question"]
             field_value = question_field["answer"]
-            if field_id == "address":
+            if field_id == "address" and isinstance(field_value, dict):
                 address = []
                 for key, value in field_value.items():
                     address.append(f"{key}: {value}")
