@@ -176,6 +176,7 @@ class DurationBlock(ApplicationSingleIncludeFieldBlock):
         12: "12 months",
         18: "18 months",
         24: "24 months",
+        36: "36 months",
     }
     field_class = forms.ChoiceField
     duration_type = blocks.ChoiceBlock(
