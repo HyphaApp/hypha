@@ -27,47 +27,6 @@
 
         {# Right #}
         <div class="flex gap-4 items-center">
-            {% get_query 'archived' as archived_param %}
-            {% if show_archive %}
-                {% if request.GET.archived == '1' %}
-                    <a
-                        class="flex items-center py-1.5 px-3 rounded-sm transition-colors hover:bg-gray-100 hover:shadow-xs"
-                        href="{% modify_query archived='0' %}"
-                    >{% trans "Hide Archived" %}</a>
-                {% else %}
-                    <a
-                        class="flex items-center py-1.5 px-3 rounded-sm transition-colors hover:bg-gray-100 hover:shadow-xs"
-                        href="{% modify_query archived='1' %}"
-                    >{% trans "Show Archived" %}</a>
-                {% endif %}
-            {% endif %}
-            {% with request.get_full_path as path %}
-                {% if 'submission' in path and can_export %}
-                    <a
-                        class="flex items-center py-1.5 px-2 rounded-sm border transition-colors hover:bg-gray-100 shadow-xs"
-                        aria-label="Submissions: Download as CSV"
-                        href="{{path}}{% if '?' in path %}&{%else%}?{% endif %}export=true"
-                        onclick="return confirm('{% blocktrans %}Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.{% endblocktrans %}');"
-                        role="button"
-                        data-tippy-content="Export as CSV"
-                    >
-
-                        {% heroicon_mini "arrow-down-tray" class="inline me-1" %}
-                        Export
-                    </a>
-                {% endif %}
-            {% endwith %}
-            {% if 'filters-open' not in filter_classes %}
-                <button class="button js-toggle-filters">
-                    {% heroicon_mini "adjustments-horizontal" class="inline align-text-bottom me-1 text-dark-blue" aria_hidden=true %}
-                    {% trans "Filters" %}
-                </button>
-            {% endif %}
-
-            <button class="button button--filters js-toggle-filters" id="show-filters-button">
-                {% heroicon_mini "adjustments-horizontal" class="inline align-text-bottom me-1 text-dark-blue" aria_hidden=true %}
-                {% trans "Filters" %}
-            </button>
             {% if use_search|default:False %}
                 <form action="{{ search_action }}" method="get" role="search" class="relative form">
                     <button class="button button--search" type="submit">
@@ -90,16 +49,9 @@
             {% endif %}
         </div>
     </div>
-
 </div>
 
 <div class="filters {% if filter_classes %}{{filter_classes}}{% endif %}">
-    <div class="filters__header">
-        <button class="filters__button js-clear-filters">{% trans "Clear" %}</button>
-        <div>{% trans "Filter by" %}</div>
-        <button class="filters__button js-close-filters">{% trans "Close" %}</button>
-    </div>
-
     {% get_filtered_query request filter.form as filtered_query %}
     {% if filtered_query %}
         <div class="flex flex-wrap gap-1 mt-3">
