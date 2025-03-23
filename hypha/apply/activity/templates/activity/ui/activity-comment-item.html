@@ -96,8 +96,8 @@
                         <div class="px-3">
                             {% with url=activity.related_object.get_absolute_url %}
                                 {% if url %}
-                                    <a href="{{ url }}">
-                                        {% trans "View " %}{{ activity.related_object|model_verbose_name }} <svg class="inline icon"><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                                    <a href="{{ url }}" class="font-semibold uppercase">
+                                        {% trans "View " %}{{ activity.related_object|model_verbose_name }} {% heroicon_outline "arrow-right" aria_hidden="true" stroke_width=2 class="inline w-4 h-4 align-baseline ms-1" %}
                                     </a>
                                 {% endif %}
                             {% endwith %}
