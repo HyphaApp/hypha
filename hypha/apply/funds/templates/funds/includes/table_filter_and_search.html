@@ -60,7 +60,7 @@
                 {% for key, data in query.items %}
                     <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
                         {{ data.key_label }}: {{ data.label }}
-                        <a href="{% dup_remove_from_query "page" key data.value %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1" aria-label="Remove">
+                        <a href="{% update_filter_query_params key data.value operation='remove' %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1" aria-label="Remove">
                             {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                             <span class="sr-only">{% trans "Remove filter" %}</span>
                         </a>
@@ -83,11 +83,11 @@
                                     <li>
                                         <a
                                             {% if value|stringformat:'s' in selected_value %}
-                                                href="{% dup_remove_from_query "page" field_name value %}"
+                                                href="{% update_filter_query_params field_name value operation='remove' %}"
                                             {% elif field|is_multiple %}
-                                                href="{% dup_add_to_query "page" field_name value only_query_string=True %}"
+                                                href="{% update_filter_query_params field_name value operation='add' %}"
                                             {% else %}
-                                                href="{% dup_modify_query "page" field_name value %}"
+                                                href="{% update_filter_query_params field_name value operation='modify' %}"
                                             {% endif %}
                                             role="menuitemradio"
                                             class="flex {% if value|stringformat:'s' in selected_value %}bg-gray-100 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
