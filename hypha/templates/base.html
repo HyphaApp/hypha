@@ -169,7 +169,7 @@
             <template x-init="$nextTick(() => {$dispatch('notice', {type: '{{ message.tags }}', text: '{{ message }}'})})"></template>
         {% endfor %}
 
-        <!-- We still need jQuery for select2, daterangepicker and a few custom scripts. -->
+        <!-- We still need jQuery for daterangepicker and a few custom scripts. -->
         <!-- Please do not add new features that require jQuery! -->
         <script src="{% static 'js/vendor/jquery.min.js' %}"></script>
 
