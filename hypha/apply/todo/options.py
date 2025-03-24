@@ -62,7 +62,7 @@ template_map = {
     # :todo: actions for multiple stages of submission
     SUBMISSION_DRAFT: {
         "text": _(
-            '<span class="text-xs">{related.fund_name} #{related.application_id}</span><br>A draft application <span class="truncate inline-block max-w-32 align-bottom ">"{related.title}")</span> is waiting to be submitted'
+            '<span class="text-xs">{related.fund_name} #{related.application_id}</span><br>A draft application <span class="truncate inline-block max-w-32 align-bottom ">"{related.title}"</span> is waiting to be submitted'
         ),
         "icon": "chat-bubble-left-ellipsis",
         "url": "{link}",
