@@ -64,7 +64,7 @@ class Command(BaseCommand):
                     submission_value = 0
                 writer.writerow(
                     [
-                        submission.public_id or submission.id,
+                        submission.application_id,
                         submission.title,
                         submission.full_name,
                         submission.email,

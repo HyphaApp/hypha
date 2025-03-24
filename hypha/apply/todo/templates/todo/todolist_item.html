@@ -1,29 +1,55 @@
 {% load i18n markdown_tags nh3_tags heroicons %}
 
-<div class="flex items-center p-2 bg-white group">
-    {% heroicon_outline task.icon class="w-6 h-6 ms-1 me-2" aria_hidden=true %}
-    <div class="flex flex-1 items-center">
-        <span>{{ task.text|markdown|nh3 }}</span>
-        {% if task.type == "Draft" %}
-            <span
-                class="inline-block hidden px-2 pt-0.5 pb-1 my-2 text-sm font-medium text-gray-800 whitespace-nowrap bg-red-200 rounded-full sm:block ms-1"
-            >
-                {{ task.type }}
-            </span>
+<div
+    class="flex relative gap-2 items-center px-3 bg-white border-l-2 transition-colors hover:bg-gray-50 group text-fg-default border-l-transparent hover:border-l-light-blue"
+>
+    <a
+        class="flex flex-1 gap-2 items-center py-2 text-gray-600 hover:text-inherit"
+        href="{{ task.url }}"
+    >
+        <span class="inline-block">
+            {% heroicon_outline task.icon class="w-4 h-4 group-hover:stroke-2 stroke-fg-muted" aria_hidden=true %}
+        </span>
+        <span>
+            {{ task.text|nh3 }}
+
+            {% if task.type == "Draft" %}
+                <span
+                    class="inline-block py-1 px-2 -mt-1 text-xs font-medium text-gray-800 align-middle whitespace-nowrap bg-red-200 rounded-full"
+                >
+                    {{ task.type }}
+                </span>
+            {% endif %}
+        </span>
+    </a>
+
+    <div class="w-24 text-right">
+        <relative-time
+            datetime="{{ task.created_at|date:'c' }}"
+            prefix=""
+            format-style="narrow"
+            class="text-sm text-gray-500 group-hover:hidden"
+        >
+            {{ task.created_at }}
+        </relative-time>
+
+        {% if task.user %}
+            <div class="hidden absolute top-0 right-0 bottom-0 z-10 items-center group-hover:flex">
+                <button
+                    role="button"
+                    class="p-1.5 bg-gray-100 rounded-sm border cursor-pointer hover:bg-gray-200 shadow-xs me-2"
+                    data-tippy-content="{% trans 'Remove from your task list' %}"
+                    data-tippy-placement="left"
+                    hx-delete="{% url 'todo:delete' pk=task.id %}"
+                    hx-target="this"
+                    hx-swap="none"
+                    hx-confirm='{% trans "Are you sure you want to remove this task from your task list? This can not be undone." %}'
+                >
+                    {% heroicon_mini "x-mark" aria_hidden=true class="text-gray-500 stroke-current" %}
+                    <span class="sr-only">"{% trans 'Remove' %}"</span>
+                </button>
+            </div>
+
         {% endif %}
     </div>
-    {% if task.user %}
-        <button
-            class="hidden p-2 group-hover:block hover:bg-gray-100"
-            data-tippy-content="{% trans 'Remove this task' %}"
-            hx-delete="{% url 'todo:delete' pk=task.id %}"
-            hx-target="this"
-            hx-swap="none"
-            hx-confirm='{% trans "Are you sure you want to remove this task? It will remove this task from your task list." %}'
-        >
-            {% heroicon_solid "x-mark" aria_hidden=true %}
-            <span class="sr-only">"{% trans 'Remove this task' %}"</span>
-        </button>
-    {% endif %}
-    <a class="button {{ button_type_class }} ms-2" href="{{ task.url }}">{% trans "View" %}</a>
 </div>

@@ -185,7 +185,7 @@
                                             {{ submission.title }}
                                         </a>
                                         <div class="text-sm text-fg-muted">
-                                            <span>#{{ submission.public_id|default:submission.id }}</span>
+                                            <span>#{{ submission.application_id }}</span>
                                             <relative-time datetime='{{ submission.submit_time|date:"c" }}'>{{ submission.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
                                             in {{ submission.round|default_if_none:submission.page }}
                                             &middot;

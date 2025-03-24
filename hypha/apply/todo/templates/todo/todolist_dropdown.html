@@ -1,7 +1,7 @@
 {% load i18n %}
-<div id="nav-task-list">
+<div class="text-sm divide-y nav-task-list">
     {% for task in my_tasks.data %}
-        {% include "todo/todolist_item.html" with button_type_class=" button--transparent button--narrow" %}
+        {% include "todo/todolist_item.html" %}
     {% empty %}
         <p class="p-3 m-0 border-b-2 last:border-b-0 border-light-grey">
             {% trans "No pending task." %}

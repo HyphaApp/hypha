@@ -20,12 +20,12 @@ class TestTemplateTags(TestCase):
             "{% load submission_tags %}{{ content|submission_links|safe }}"
         )
         context = Context(
-            {"content": f"Lorem ipsum dolor #{submission.public_id} sit amet."}
+            {"content": f"Lorem ipsum dolor #{submission.application_id} sit amet."}
         )
         output = template.render(context)
         assert (
             output
-            == f'Lorem ipsum dolor <a href="{submission.get_absolute_url()}">{submission.title} <span class="text-gray-400">#{submission.public_id or submission.id}</span></a> sit amet.'
+            == f'Lorem ipsum dolor <a href="{submission.get_absolute_url()}">{submission.title} <span class="text-gray-400">#{submission.application_id}</span></a> sit amet.'
         )
 
     @override_settings(APPLICATION_TRANSLATIONS_ENABLED=True)

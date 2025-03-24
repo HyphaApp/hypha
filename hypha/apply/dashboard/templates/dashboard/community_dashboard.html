@@ -52,7 +52,7 @@
                                 <h3 class="text-base font-bold heading heading--no-margin">
                                     <a class="{% if not submission.is_active %} text-slate-500 {% endif %} hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
                                         {{ submission.title }}
-                                        <span class="text-gray-400">#{{ submission.public_id|default:submission.id }}</span>
+                                        <span class="text-gray-400">#{{ submission.application_id }}</span>
                                     </a>
                                 </h3>
                                 <p class="text-sm heading heading--no-margin text-fg-muted">

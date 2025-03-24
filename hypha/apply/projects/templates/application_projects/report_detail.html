@@ -10,7 +10,7 @@
                 {% trans "View project page" %}
             </a>
         {% endslot %}
-        {% slot header %}{{ object.project.title }} <span class="text-gray-400">#{{ object.project.submission.public_id|default:object.project.submission.id }}</span>{% endslot %}
+        {% slot header %}{{ object.project.title }} <span class="text-gray-400">#{{ object.project.application_id }}</span>{% endslot %}
         {% slot sub_heading %}{% trans "Report" %}{% endslot %}
     {% endadminbar %}
 
