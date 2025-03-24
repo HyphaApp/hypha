@@ -8,20 +8,19 @@
 <div class="mt-1 text-sm font-medium heading heading--meta">
     <span>
         {{ object.page }}
-        {% if object.round %} /
-            {% if request.user.is_apply_staff %}
-                <span>
-                    <a class="text-white hover:underline"
-                       href="{% url 'apply:submissions:list' %}?round={{ object.round.pk }}"
-                    >{{ object.round }}</a>
-                </span>
-            {% else %}
-                <span>{{ object.round }}</span>
-            {% endif %}
-        {% endif %}
-
-        #{{ object.application_id }}
     </span>
+
+    {% if object.round %}
+        {% if request.user.is_apply_staff %}
+            <span>
+                <a class="text-white hover:underline"
+                   href="{% url 'apply:submissions:list' %}?round={{ object.round.pk }}"
+                >{{ object.round }}</a>
+            </span>
+        {% else %}
+            <span>{{ object.round }}</span>
+        {% endif %}
+    {% endif %}
 
     <span>{{ object.stage }}</span>
 
