@@ -1,13 +1,13 @@
 {% load i18n %}
 
-<div class="mx-auto mb-10 max-w-3xl" id="task-list" hx-swap-oob="true">
+<section class="mx-auto mb-10 max-w-4xl" id="task-list" hx-swap-oob="true">
     {% if my_tasks.data %}
         <h2 class="font-light text-center">{% trans "My tasks" %}</h2>
 
         <div class="border divide-y shadow-xs task--list">
             {% for task in my_tasks.data %}
-                {% include "todo/todolist_item.html" with button_type_class="button--transparent" %}
+                {% include "todo/todolist_item.html" %}
             {% endfor %}
         </div>
     {% endif %}
-</div>
+</section>

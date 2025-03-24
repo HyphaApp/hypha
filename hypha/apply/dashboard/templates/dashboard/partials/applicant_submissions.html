@@ -8,7 +8,7 @@
                 <h4 class="mb-0 font-bold heading line-clamp-3 hover:line-clamp-none">
                     <a class="{% if not submission.is_active %} text-slate-500 {% endif %} hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
                         {{ submission.title }}
-                        <span class="text-gray-400">#{{ submission.public_id|default:submission.id }}</span>
+                        <span class="text-gray-400">#{{ submission.application_id }}</span>
                     </a>
                 </h4>
                 <p class="m-0 mb-4 text-sm text-fg-muted">

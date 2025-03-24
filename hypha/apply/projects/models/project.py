@@ -25,6 +25,7 @@ from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
@@ -307,6 +308,14 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     @property
     def status_display(self):
         return self.get_status_display()
+
+    @cached_property
+    def fund_name(self):
+        return self.submission.fund_name
+
+    @cached_property
+    def application_id(self):
+        return self.submission.application_id
 
     def get_address_display(self):
         return ""  # todo: need to figure out

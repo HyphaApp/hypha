@@ -1,6 +1,9 @@
 {% load i18n determination_tags workflow_tags %}
 {% if request.user|show_determination_button:submission %}
-    <a target="_blank" href="{% url 'apply:submissions:determinations:form' submission_pk=submission.id %}" class="button button--primary button--full-width {{ class }}">
+    <a
+        href="{% url 'apply:submissions:determinations:form' submission_pk=submission.id %}"
+        class="button button--primary button--full-width {{ class }}"
+    >
         {% if submission.determinations.last.is_draft %}
             {% if draft_text %}
                 {{ draft_text }}
