@@ -20,8 +20,8 @@ def submission_links(value):
             Q(id__in=numeric_ids) | Q(public_id__in=matches)
         )
         for submission in qs:
-            links[rf"\#{submission.application_id}"] = (
-                f'<a href="{submission.get_absolute_url()}">{submission.title} <span class="text-gray-400">#{submission.application_id}</span></a>'
+            links[f"#{submission.application_id}"] = (
+                f'<a href="{submission.get_absolute_url()}">{submission.title_text_display}</a>'
             )
 
     if links:
