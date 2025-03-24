@@ -71,7 +71,7 @@
 
         <div class="pt-1">
             <p class="m-0 text-xs">
-                #{{ s.public_id|default:s.id }}
+                #{{ s.application_id }}
                 submitted <relative-time datetime="{{ s.submit_time|date:"c" }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
                 {% if s|show_applicant_identity:request.user %}by <a
                     href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" applicants=s.user.id %}"
