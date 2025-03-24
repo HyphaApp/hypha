@@ -51,7 +51,7 @@
     </div>
 </div>
 
-<div class="filters {% if filter_classes %}{{filter_classes}}{% endif %}">
+<div class="fixed inset-0 w-full h-screen bg-white duration-300 delay-75 lg:relative lg:h-auto lg:bg-transparent lg:pointer-events-auto z-[9] transition-[max-height] lg:max-h-fit">
     {% get_filtered_query request filter.form as filtered_query %}
     {% if filtered_query %}
         <div class="flex flex-wrap gap-1 mt-3">
@@ -70,7 +70,7 @@
         </div>
     {% endif %}
 
-    <form method="GET" id="filter-form" class="flex sticky top-0 flex-wrap justify-end items-center py-2 px-3 mt-3 bg-gray-50 border-t border-gray-200 md:gap-5 md:text-sm md:font-medium z-[5] border-x">
+    <form method="GET" class="flex sticky top-0 flex-wrap justify-end items-center py-2 px-3 mt-3 bg-gray-50 border-t border-gray-200 md:gap-5 md:text-sm md:font-medium z-[5] border-x">
         <span class="hidden items-center py-1 md:inline-flex"></span>
         {% for field_name, field in filter.form|get_filter_fields %}
             {% if filter.form %}

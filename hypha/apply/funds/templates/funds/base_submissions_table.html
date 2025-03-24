@@ -4,7 +4,7 @@
 
 {% block content %}
     {% block table %}
-        {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action filter_classes="filters-open" can_export=can_export %}
+        {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action %}
 
         {% render_table table %}
     {% endblock %}
@@ -17,7 +17,6 @@
 {% block extra_js %}
     {{ filter.form.media.js }}
     <script src="{% static 'js/all-submissions-table.js' %}"></script>
-    <script src="{% static 'js/submission-filters.js' %}"></script>
     <script src="{% static 'js/tabs.js' %}"></script>
     <script src="{% static 'js/batch-actions.js' %}"></script>
 {% endblock %}
