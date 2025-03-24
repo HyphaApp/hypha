@@ -25,13 +25,6 @@
                         {% trans "Application" %}
                     </a>
 
-                    <a
-                        class="tab__item"
-                        href="{% url 'funds:submissions:comments' pk=object.id %}"
-                    >
-                        {% trans "Conversations" %} ({{ comments_count }})
-                    </a>
-
                     {% if PROJECTS_ENABLED and object.project %}
                         <a
                             class="tab__item"
@@ -40,6 +33,14 @@
                             {% trans "Project" %}
                         </a>
                     {% endif %}
+
+                    <a
+                        class="tab__item"
+                        href="{% url 'funds:submissions:comments' pk=object.id %}"
+                    >
+                        {% trans "Conversations" %} ({{ comments_count }})
+                    </a>
+
                     {# is_staff is only used for Django Admin. #}
                     {% if request.user.is_staff %}
                         <a class="tab__item tab__item--right js-tabs-off" href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}">
