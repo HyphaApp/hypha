@@ -519,10 +519,12 @@ class ApplicationSubmission(
 
         Use SUBMISSION_TITLE_TEXT_TEMPLATE setting to change format.
         """
+
         ctx = {
             "title": self.title,
             "public_id": self.application_id,
             "fund_name": self.fund_name,
+            "round": self.round if self.round else self.page,
             "application_id": self.application_id,
         }
         return strip_tags(settings.SUBMISSION_TITLE_TEXT_TEMPLATE.format(**ctx))

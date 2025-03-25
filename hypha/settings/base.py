@@ -63,9 +63,9 @@ SUBMISSIONS_ARCHIVED_VIEW_ACCESS_STAFF_ADMIN = env.bool(
     "SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN", True
 )
 
-# Possible values are: "application_id", "fund_name" and "title"
+# Possible values are: "application_id", "fund_name", "round" and "title"
 SUBMISSION_TITLE_TEXT_TEMPLATE = env(
-    "SUBMISSION_TITLE_TEMPLATE", default="{fund_name} #{application_id} - {title}"
+    "SUBMISSION_TITLE_TEMPLATE", default="{title} (#{application_id})"
 )
 
 # Provide permissions for archiving submissions
