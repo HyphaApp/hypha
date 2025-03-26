@@ -33,11 +33,11 @@
         <div class="docs-block__inner">
             <ul class="data-block__list">
                 {% for report in object.report_config.past_due_reports %}
-                    {% include "application_projects/includes/report_line.html" with report=report %}
+                    {% include "reports/includes/report_line.html" with report=report %}
                 {% endfor %}
                 {% with next_report=object.report_config.current_due_report %}
                     {% if next_report %}
-                        {% include "application_projects/includes/report_line.html" with report=next_report current=True %}
+                        {% include "reports/includes/report_line.html" with report=next_report current=True %}
                     {% endif %}
                 {% endwith %}
             </ul>

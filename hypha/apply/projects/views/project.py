@@ -107,13 +107,13 @@ from ..models.project import (
     ProjectSettings,
 )
 from ..permissions import has_permission
+from ..reports.views import ReportingMixin
 from ..tables import ProjectsListTable
 from ..utils import (
     get_paf_status_display,
     get_placeholder_file,
     get_project_status_choices,
 )
-from .report import ReportingMixin
 
 
 class ProjectBySubmissionIdMixin:

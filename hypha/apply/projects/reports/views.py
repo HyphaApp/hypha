@@ -15,16 +15,17 @@ from django_htmx.http import (
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.projects.models import Project
+from hypha.apply.projects.permissions import has_permission
+from hypha.apply.projects.utils import get_placeholder_file
+from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import staff_or_finance_required, staff_required
 from hypha.apply.utils.storage import PrivateMediaView
 
-from ...stream_forms.models import BaseStreamForm
-from ..filters import ReportingFilter, ReportListFilter
-from ..forms import ReportEditForm, ReportFrequencyForm
-from ..models import Project, Report, ReportConfig, ReportPrivateFiles
-from ..permissions import has_permission
-from ..tables import ReportingTable, ReportListTable
-from ..utils import get_placeholder_file
+from .filters import ReportingFilter, ReportListFilter
+from .forms import ReportEditForm, ReportFrequencyForm
+from .models import Report, ReportConfig, ReportPrivateFiles
+from .tables import ReportingTable, ReportListTable
 
 
 class ReportingMixin:
@@ -57,6 +58,7 @@ class ReportAccessMixin(UserPassesTestMixin):
 @method_decorator(login_required, name="dispatch")
 class ReportDetailView(DetailView):
     model = Report
+    template_name = "reports/report_detail.html"
 
     def dispatch(self, *args, **kwargs):
         report = self.get_object()
@@ -74,6 +76,7 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
     form_class = None
     form_fields = None
     submission_form_class = ReportEditForm
+    template_name = "reports/report_form.html"
 
     def dispatch(self, request, *args, **kwargs):
         report = self.get_object()
@@ -225,7 +228,7 @@ class ReportSkipView(SingleObjectMixin, View):
 class ReportFrequencyUpdate(View):
     form_class = ReportFrequencyForm
     model = ReportConfig
-    template_name = "application_projects/modals/report_frequency_config.html"
+    template_name = "reports/modals/report_frequency_config.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, submission__id=kwargs.get("pk"))
@@ -321,7 +324,7 @@ class ReportListView(SingleTableMixin, FilterView):
     queryset = Report.objects.submitted().for_table()
     filterset_class = ReportListFilter
     table_class = ReportListTable
-    template_name = "application_projects/report_list.html"
+    template_name = "reports/report_list.html"
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")
@@ -329,4 +332,4 @@ class ReportingView(SingleTableMixin, FilterView):
     queryset = Project.objects.for_reporting_table()
     filterset_class = ReportingFilter
     table_class = ReportingTable
-    template_name = "application_projects/reporting.html"
+    template_name = "reporting/reporting.html"

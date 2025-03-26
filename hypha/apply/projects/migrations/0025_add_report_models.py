@@ -87,7 +87,7 @@ class Migration(migrations.Migration):
                     "document",
                     models.FileField(
                         storage=django.core.files.storage.FileSystemStorage(),
-                        upload_to=hypha.apply.projects.models.report.report_path,
+                        upload_to=hypha.apply.projects.reports.models.report_path,
                     ),
                 ),
             ],
