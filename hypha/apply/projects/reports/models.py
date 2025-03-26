@@ -86,7 +86,7 @@ class Report(BaseStreamForm, AccessFormData, models.Model):
     skipped = models.BooleanField(default=False)
     end_date = models.DateField()
     project = models.ForeignKey(
-        "Project", on_delete=models.CASCADE, related_name="reports"
+        "application_projects.Project", on_delete=models.CASCADE, related_name="reports"
     )
     form_fields = StreamField(
         # Re-use the Project Custom Form class. The original fields (used at the time of response) should be required.
@@ -116,6 +116,7 @@ class Report(BaseStreamForm, AccessFormData, models.Model):
 
     class Meta:
         ordering = ("-end_date",)
+        db_table = "application_projects_report"
 
     def get_absolute_url(self):
         return reverse("apply:projects:reports:detail", kwargs={"pk": self.pk})
@@ -192,7 +193,8 @@ class ReportVersion(BaseStreamForm, AccessFormData, models.Model):
         null=True,
     )
 
-    wagtail_reference_index_ignore = True
+    class Meta:
+        db_table = "application_projects_reportversion"
 
     @property
     def form_fields(self):
@@ -205,7 +207,8 @@ class ReportPrivateFiles(models.Model):
     )
     document = models.FileField(upload_to=report_path, storage=PrivateStorage())
 
-    wagtail_reference_index_ignore = True
+    class Meta:
+        db_table = "application_projects_reportprivatefiles"
 
     @property
     def filename(self):
@@ -234,13 +237,18 @@ class ReportConfig(models.Model):
     ]
 
     project = models.OneToOneField(
-        "Project", on_delete=models.CASCADE, related_name="report_config"
+        "application_projects.Project",
+        on_delete=models.CASCADE,
+        related_name="report_config",
     )
     schedule_start = models.DateField(null=True)
     occurrence = models.PositiveSmallIntegerField(default=1)
     frequency = models.CharField(choices=FREQUENCY_CHOICES, default=MONTH, max_length=6)
     disable_reporting = models.BooleanField(default=True)
     does_not_repeat = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "application_projects_reportconfig"
 
     def get_frequency_display(self):
         if self.disable_reporting:

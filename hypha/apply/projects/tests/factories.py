@@ -28,7 +28,7 @@ from ..models.project import (
     ProjectReportForm,
     ProjectSOWForm,
 )
-from ..models.report import Report, ReportConfig, ReportVersion
+from ..reports.models import Report, ReportConfig, ReportVersion
 
 ADDRESS = {
     "country": "GB",
