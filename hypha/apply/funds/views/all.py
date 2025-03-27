@@ -120,7 +120,7 @@ def submissions_all(
     if request.htmx and not request.htmx.boosted:
         base_template = "includes/_partial-main.html"
     else:
-        base_template = "funds/base_submissions_table.html"
+        base_template = "base-apply.html"
 
     start = time.time()
 
