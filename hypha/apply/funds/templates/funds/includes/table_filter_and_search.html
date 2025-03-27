@@ -109,8 +109,8 @@
                             {% heroicon_micro attributes.icon|default:"chevron-down" aria_hidden="true" size="16" class="hidden w-4 h-4 md:inline-block ms-0.5" %}
                         </div>
 
-                        <script src="{% static 'js/vendor/moment.min.js' %}"></script>
-                        <script src="{% static 'js/vendor/daterangepicker.min.js' %}"></script>
+                        <script defer src="{% static 'js/vendor/moment.min.js' %}"></script>
+                        <script defer src="{% static 'js/vendor/daterangepicker.min.js' %}"></script>
                         <script>
                             document.addEventListener("DOMContentLoaded", function () {
                                 function updateURL(paramStart, paramEnd, startDate, endDate) {
