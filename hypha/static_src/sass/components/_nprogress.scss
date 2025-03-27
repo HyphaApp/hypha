@@ -48,7 +48,7 @@
 
     border: solid 2px transparent;
     border-top-color: variables.$color--dark-blue;
-    border-left-color: variables.$color--dark-blue;
+    border-inline-start-color: variables.$color--dark-blue;
     border-radius: 50%;
 
     animation: nprogress-spinner 400ms linear infinite;

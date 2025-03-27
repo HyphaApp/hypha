@@ -37,7 +37,7 @@
     text-align: center;
 
     @include mixins.media-query(md) {
-      text-align: left;
+      text-align: start;
     }
   }
 

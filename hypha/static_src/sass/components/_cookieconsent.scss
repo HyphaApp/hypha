@@ -23,14 +23,14 @@
 
   &__content {
     width: 200%;
-    margin-left: 0;
+    margin-inline-start: 0;
     transition: all variables.$transition;
   }
 
   &__content > div {
     width: 50%;
     height: 100%;
-    float: left;
+    float: inline-start;
     display: flex;
     justify-content: center;
 
@@ -82,7 +82,7 @@
   &__info {
     display: flex;
     flex-direction: column;
-    justify-content: left;
+    justify-content: start;
     min-width: 250px;
     margin-bottom: 0.5rem;
 
@@ -104,6 +104,6 @@
   }
 
   &-show-learnmore {
-    margin-left: -100%;
+    margin-inline-start: -100%;
   }
 }

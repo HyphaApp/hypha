@@ -27,7 +27,7 @@
         padding: 0.5rem;
 
         @include mixins.media-query(lg) {
-          text-align: left;
+          text-align: start;
         }
       }
 
