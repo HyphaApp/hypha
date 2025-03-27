@@ -1,4 +1,4 @@
-{% extends "funds/base_submissions_table.html" %}
+{% extends "base-apply.html" %}
 {% load i18n static %}
 {% load render_table from django_tables2 %}
 
@@ -11,10 +11,10 @@
         {% slot sub_heading %}{% trans "Track and explore the reviews" %}{% endslot %}
     {% endadminbar %}
 
-    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+    <div class="mt-4 wrapper wrapper--large">
         {% block table %}
             {% trans "All reviewers" as all_reviewers %}
-            {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term search_placeholder="reviewers" use_search=True filter_action=filter_action heading=all_reviewers %}
+            {% include "funds/includes/table_filter_and_search.html" with search_term=search_term search_placeholder="reviewers" use_search=True heading=all_reviewers %}
 
             {% render_table table %}
         {% endblock %}

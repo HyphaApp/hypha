@@ -21,6 +21,11 @@ from .models.report import Report
 
 User = get_user_model()
 
+REPORTING_CHOICES = (
+    (0, "Up to date"),
+    (1, "Behind schedule"),
+)
+
 
 def get_project_leads(request):
     return User.objects.filter(lead_projects__isnull=False).distinct()
@@ -43,11 +48,6 @@ class InvoiceListFilter(filters.FilterSet):
 
 
 class ProjectListFilter(filters.FilterSet):
-    REPORTING_CHOICES = (
-        (0, "Up to date"),
-        (1, "Behind schedule"),
-    )
-
     project_fund = ModelMultipleChoiceFilter(
         field_name="submission__page", label=_("Funds"), queryset=get_used_funds
     )

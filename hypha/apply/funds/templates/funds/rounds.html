@@ -10,17 +10,8 @@
         {% slot sub_heading %}{% trans "Explore current and past rounds" %}{% endslot %}
     {% endadminbar %}
 
-    <div class="wrapper wrapper--large wrapper--inner-space-medium">
-        {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term can_export=can_export %}
+    <div class="wrapper wrapper--large">
+        {% include "funds/includes/table_filter_and_search.html" with search_term=search_term %}
         {% render_table table %}
     </div>
-{% endblock %}
-
-{% block extra_css %}
-    {{ filter.form.media.css }}
-{% endblock %}
-
-{% block extra_js %}
-    {{ filter.form.media.js }}
-    <script src="{% static 'js/submission-filters.js' %}"></script>
 {% endblock %}

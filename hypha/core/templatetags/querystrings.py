@@ -107,3 +107,41 @@ def remove_from_query(context, *args, **kwargs):
     return construct_query_string(
         context=context, query_params=query_params, only_query_string=only_query_string
     )
+
+
+@register.simple_tag(takes_context=True)
+def update_filter_query_params(
+    context,
+    param_key,
+    param_value,
+    operation="remove",
+):
+    """
+    Update query params for django-filters with provided key value pair and respective operation(add, modify or remove)
+    """
+    query_params = context["request"].GET.copy()  # Make a mutable copy
+
+    if operation == "remove":
+        values = query_params.getlist(param_key)  # Get all values for the key
+        updated_values = [v for v in values if str(v) != str(param_value)]
+        if updated_values:
+            query_params.setlist(param_key, updated_values)
+        else:
+            query_params.pop(param_key, None)  # Remove key if no values left
+    elif operation == "modify":
+        query_params[param_key] = param_value  # Replace existing value
+    elif operation == "add":
+        # Add param_value only if it's not already present
+        if param_value not in query_params.getlist(param_key):
+            query_params.appendlist(param_key, param_value)
+
+    # Convert query_params to a list of tuples [(key, value), ...] for construct_query_string
+    query_params_list = [
+        (key, value) for key in query_params for value in query_params.getlist(key)
+    ]
+
+    return construct_query_string(
+        context=context,
+        query_params=query_params_list,
+        only_query_string=(operation == "add"),
+    )
