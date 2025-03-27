@@ -74,7 +74,7 @@
 
     @include mixins.media-query(md) {
       line-height: auto;
-      text-align: left;
+      text-align: start;
     }
   }
 }
