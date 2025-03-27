@@ -59,7 +59,7 @@ class SingleFileField(UploadedFileField):
     widget = SingleFileFieldWidget
 
     def clean(self, value, initial):
-        if self.required and not value:
+        if self.required and not value and not initial:
             raise ValidationError(self.error_messages["required"], code="required")
         if not value:
             return
