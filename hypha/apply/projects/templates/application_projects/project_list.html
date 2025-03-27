@@ -12,7 +12,7 @@
         {% slot sub_heading %}{% trans "View, Search and filter all projects" %}{% endslot %}
     {% endadminbar %}
 
-    <div class="mt-2 wrapper wrapper--large">
+    <div class="mt-4 wrapper wrapper--large">
         {% if table %}
             {% include "funds/includes/table_filter_and_search.html" with search_term=search_term search_placeholder="projects" use_search=True %}
             {% render_table table %}

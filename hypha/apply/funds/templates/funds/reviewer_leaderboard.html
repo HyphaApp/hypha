@@ -11,7 +11,7 @@
         {% slot sub_heading %}{% trans "Track and explore the reviews" %}{% endslot %}
     {% endadminbar %}
 
-    <div class="mt-2 wrapper wrapper--large">
+    <div class="mt-4 wrapper wrapper--large">
         {% block table %}
             {% trans "All reviewers" as all_reviewers %}
             {% include "funds/includes/table_filter_and_search.html" with search_term=search_term search_placeholder="reviewers" use_search=True heading=all_reviewers %}
