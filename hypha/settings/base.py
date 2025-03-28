@@ -487,8 +487,12 @@ HIJACK_PERMISSION_CHECK = "hijack.permissions.superusers_and_staff"
 
 
 # Celery settings
+# If not using celery workers, comment out BROKER_URL & CELERY_RESULT_BACKEND and uncomment CELERY_TASK_ALWAYS_EAGER
 
-CELERY_TASK_ALWAYS_EAGER = True
+CELERY_BROKER_URL = env.str("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = env.str("CELERY_RESULT_BACKEND")
+
+CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", True)
 
 
 # S3 settings

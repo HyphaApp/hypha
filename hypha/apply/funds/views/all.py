@@ -1,3 +1,4 @@
+import json
 import time
 
 from django.conf import settings
@@ -23,7 +24,8 @@ from hypha.apply.determinations.utils import (
     outcome_from_actions,
 )
 from hypha.apply.funds.models.screening import ScreeningStatus
-from hypha.apply.funds.utils import export_submissions_to_csv
+from hypha.apply.funds.tasks import generate_submission_csv
+from hypha.apply.funds.views.partials import submission_export_download
 from hypha.apply.funds.workflows import (
     DETERMINATION_OUTCOMES,
     PHASES,
@@ -46,7 +48,7 @@ from ..models import (
 from ..tables import (
     SubmissionFilter,
 )
-from ..utils import check_submissions_same_determination_form
+from ..utils import check_submissions_same_determination_form, get_export_polling_time
 
 User = get_user_model()
 
@@ -282,10 +284,23 @@ def submissions_all(
     if request.GET.get("format") == "csv" and permissions.can_export_submissions(
         request.user
     ):
-        csv_data = export_submissions_to_csv(qs, request)
-        response = HttpResponse(csv_data.readlines(), content_type="text/csv")
-        response["Content-Disposition"] = "attachment; filename=submissions.csv"
-        return response
+        qs_ids = list(qs.values_list("id", flat=True))
+        generate_submission_csv.delay(qs_ids, request.user.id)
+
+        if not settings.CELERY_TASK_ALWAYS_EAGER:
+            response = render(
+                request,
+                "submissions/partials/export-submission-button.html",
+                {
+                    "status": "generating",
+                    "poll_time": get_export_polling_time(len(qs_ids)),
+                },
+            )
+            response["HX-Trigger"] = json.dumps(
+                {"showMessage": _("Started CSV generation.")}
+            )
+        else:
+            return submission_export_download(request)
 
     ctx = {
         "base_template": base_template,
