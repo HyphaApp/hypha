@@ -34,6 +34,8 @@ from .views.partials import (
     sub_menu_reviewers,
     sub_menu_rounds,
     sub_menu_update_status,
+    submission_export_download,
+    submission_export_status,
 )
 from .views.reminders import ReminderCreateView, ReminderDeleteView, reminder_list
 from .views.results import SubmissionResultView
@@ -100,6 +102,16 @@ submission_urls = (
             "all/bulk_update_status/",
             bulk_update_submissions_status,
             name="bulk-update-status",
+        ),
+        path(
+            "all/submission-export-status/",
+            submission_export_status,
+            name="submission-export-status",
+        ),
+        path(
+            "all/submission-export-download/",
+            submission_export_download,
+            name="submission-export-download",
         ),
         path("all/submenu/funds/", sub_menu_funds, name="submenu-funds"),
         path("all/submenu/leads/", sub_menu_leads, name="submenu-leads"),

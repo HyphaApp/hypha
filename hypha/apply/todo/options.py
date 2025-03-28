@@ -23,6 +23,7 @@ INVOICE_WAITING_APPROVAL = "invoice_waiting_approval"
 INVOICE_WAITING_PAID = "invoice_waiting_paid"
 REPORT_DUE = "report_due"
 COMMENT_TASK = "comment_task"
+DOWNLOAD_SUBMISSIONS_EXPORT = "download_submissions_export"
 
 TASKS_CODE_CHOICES = (
     (COMMENT_TASK, "Comment Task"),
@@ -44,6 +45,7 @@ TASKS_CODE_CHOICES = (
     (INVOICE_WAITING_APPROVAL, "Invoice waiting approval"),
     (INVOICE_WAITING_PAID, "Invoice waiting paid"),
     (REPORT_DUE, "Report due"),
+    (DOWNLOAD_SUBMISSIONS_EXPORT, "Download exported submissions"),
 )
 
 
@@ -200,6 +202,12 @@ template_map = {
         "icon": "document-text",
         "url": "{link}",
         "type": _("project"),
+    },
+    DOWNLOAD_SUBMISSIONS_EXPORT: {
+        "text": _("Your generated submission export file is ready for download"),
+        "icon": "arrow-down-tray",
+        "url": "{link}",
+        "type": _("Export"),
     },
 }
 
