@@ -1,7 +1,7 @@
 {% load heroicons i18n %}
 
 <span id="app-title">{{ object.title }}</span>
-<span class="text-gray-400">#{{ object.submission.public_id|default:object.submission.id }}</span>
+<span class="text-gray-400">#{{ object.submission.application_id }}</span>
 
 {% if request.user.is_apply_staff %}
     <a class="transition-opacity hover:opacity-70 is-active"

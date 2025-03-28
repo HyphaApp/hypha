@@ -1,16 +1,19 @@
 {% load i18n statusbar_tags %}
 
 <h1 class="mb-0 font-medium">
-    <span id="app-title">{{ object.title }}</span><span class="text-gray-400"> #{{ object.public_id|default:object.id }}</span>
+    <span id="app-title">{{ object.title }}</span>
+    <span class="text-gray-400">#{{ object.application_id }}</span>
 </h1>
 
 <div class="mt-1 text-sm font-medium heading heading--meta">
-    <span>{{ object.stage }}</span>
-    <span>{{ object.page }}</span>
+    <span>
+        {{ object.page }}
+    </span>
+
     {% if object.round %}
         {% if request.user.is_apply_staff %}
             <span>
-                <a class="text-white underline"
+                <a class="text-white hover:underline"
                    href="{% url 'apply:submissions:list' %}?round={{ object.round.pk }}"
                 >{{ object.round }}</a>
             </span>
@@ -18,6 +21,8 @@
             <span>{{ object.round }}</span>
         {% endif %}
     {% endif %}
+
+    <span>{{ object.stage }}</span>
 
     <span
         hx-get="{% url "apply:submissions:partial-get-lead" object.id %}"

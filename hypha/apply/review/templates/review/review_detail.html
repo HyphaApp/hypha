@@ -6,12 +6,12 @@
     {% adminbar %}
         {% slot back_link %}
             <a class="admin-bar__back-link" href="{{ review.submission.get_absolute_url }}">
-                {% trans "View submission" %}
+                {% trans "View application" %}
             </a>
         {% endslot %}
         {% slot header %}{% trans "Review" %}{% endslot %}
         {% slot sub_heading %}
-            {% trans "For" %}: {{ review.submission.title }} {% trans "by" %}
+            {% trans "For" %} {{ review.submission.title_text_display }} {% trans "by" %}
             {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == review.author.reviewer %}
                 {% trans "Reviewer" %}
             {% else %}

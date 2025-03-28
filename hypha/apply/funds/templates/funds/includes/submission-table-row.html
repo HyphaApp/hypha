@@ -46,7 +46,7 @@
             class="text-base font-semibold break-words transition-colors hover:text-blue-600 text-[#404041] line-clamp-2"
         >{{ s.form_data.title }}</a>
         <div class="text-xs text-fg-muted">
-            #{{ s.public_id|default:s.id }}
+            #{{ s.application_id }}
             submitted <relative-time datetime="{{ s.submit_time|date:"c" }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
             • {{ s.stage }}
             {% if s.project %}

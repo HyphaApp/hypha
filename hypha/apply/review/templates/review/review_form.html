@@ -12,7 +12,7 @@
     {% adminbar %}
         {% slot header %}{{ title }}{% endslot %}
         {% slot sub_heading %}
-            {% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a>
+            <a class="text-gray-200 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>
         {% endslot %}
         {% slot buttons %}
             <button
