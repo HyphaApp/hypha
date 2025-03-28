@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ),
                 ("export_data", models.TextField()),
                 ("created_time", models.DateTimeField(auto_now_add=True)),
-                ("completed_time", models.DateTimeField()),
+                ("completed_time", models.DateTimeField(null=True)),
                 (
                     "status",
                     models.CharField(
