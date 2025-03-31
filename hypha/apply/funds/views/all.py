@@ -299,6 +299,7 @@ def submissions_all(
             response["HX-Trigger"] = json.dumps(
                 {"showMessage": _("Started CSV generation.")}
             )
+            return response
         else:
             return submission_export_download(request)
 
