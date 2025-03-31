@@ -6,7 +6,7 @@
 {% for partner in added %}
     * {{ partner }}
 {% endfor %}
-{% trans "ID" %}: {{ source.public_id|default:source.id }}
+{% trans "ID" %}: {{ source.application_id }}
 {% trans "Title" %}: {{ source.title }}
 {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% endblock %}{# fmt:on #}

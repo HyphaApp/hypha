@@ -195,7 +195,7 @@ def get_tasks_for_user(user):
     for group in user.groups.all():
         user_group_tasks = user_group_tasks.filter(user_group__id=group.id)
 
-    return user_tasks.union(user_group_tasks)
+    return user_tasks.union(user_group_tasks).order_by("-created_at")
 
 
 def render_task_templates_for_user(request, user):

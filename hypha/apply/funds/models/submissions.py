@@ -27,6 +27,7 @@ from django.db.models.functions import Cast
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.utils.html import strip_tags
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -518,9 +519,13 @@ class ApplicationSubmission(
 
         Use SUBMISSION_TITLE_TEXT_TEMPLATE setting to change format.
         """
+
         ctx = {
             "title": self.title,
-            "public_id": self.public_id or self.id,
+            "public_id": self.application_id,
+            "fund_name": self.fund_name,
+            "round": self.round if self.round else self.page,
+            "application_id": self.application_id,
         }
         return strip_tags(settings.SUBMISSION_TITLE_TEXT_TEMPLATE.format(**ctx))
 
@@ -599,6 +604,14 @@ class ApplicationSubmission(
         except AttributeError:
             # We are a lab submission
             return getattr(self.page.specific, attribute)
+
+    @cached_property
+    def fund_name(self):
+        return self.page
+
+    @cached_property
+    def application_id(self):
+        return self.public_id or self.id
 
     @property
     def is_determination_form_attached(self):
@@ -891,7 +904,7 @@ class ApplicationSubmission(
 
     def index_components(self):
         return {
-            "A": " ".join([f"id:{self.public_id or self.id}", self.title]),
+            "A": " ".join([f"id:{self.application_id}", self.title]),
             "C": " ".join([self.full_name, self.email]),
             "B": " ".join(self.get_searchable_contents()),
         }
