@@ -55,7 +55,13 @@
     {% get_filtered_query request filter.form as filtered_query %}
     {% if filtered_query %}
         <div class="flex flex-wrap gap-1 mt-3">
-            <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">Filter:</span>
+            <a
+                href="./"
+                class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2"
+            >
+                {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
+                {% trans "Clear current search query, filters and sorts" %}
+            </a>
             {% for query in filtered_query %}
                 {% for key, data in query.items %}
                     <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
