@@ -225,7 +225,7 @@ def get_task_template(request, task, **kwargs):
         # Replace all newlines with spaces and truncate to 60 characters
         message = " ".join(related_obj.message.splitlines())
         if len(message) > 60:
-            template_kwargs["msg"] = message[:57] + "..."
+            template_kwargs["msg"] = message[:57] + "…"
         else:
             template_kwargs["msg"] = message
     template["text"] = template["text"].format(**template_kwargs)
