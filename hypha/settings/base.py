@@ -6,11 +6,10 @@ import os
 
 import dj_database_url
 import djp
-from environs import Env
+from environs import env
 
 from .django import *  # noqa
 
-env = Env()
 env.read_env()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -514,9 +513,9 @@ AWS_MIGRATION_SECRET_ACCESS_KEY = env.str("AWS_MIGRATION_SECRET_ACCESS_KEY", "")
 
 # Apply nav items settings
 
-APPLY_NAV_MENU_ITEMS = env.json("APPLY_NAV_MENU_ITEMS", "{}")
-APPLY_NAV_SUBMISSIONS_ITEMS = env.json("APPLY_NAV_SUBMISSIONS_ITEMS", "{}")
-APPLY_NAV_PROJECTS_ITEMS = env.json("APPLY_NAV_PROJECTS_ITEMS", "{}")
+APPLY_NAV_MENU_ITEMS = env.json("APPLY_NAV_MENU_ITEMS", {})
+APPLY_NAV_SUBMISSIONS_ITEMS = env.json("APPLY_NAV_SUBMISSIONS_ITEMS", {})
+APPLY_NAV_PROJECTS_ITEMS = env.json("APPLY_NAV_PROJECTS_ITEMS", {})
 
 # Basic auth settings
 if env.bool("BASIC_AUTH_ENABLED", False):
