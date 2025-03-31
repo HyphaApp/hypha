@@ -623,7 +623,7 @@
 
             $('#filterupdated').on('apply.daterangepicker', function(ev, picker) {
                 $('#search-navbar').val(`updated:>=${picker.startDate.format('YYYY-MM-DD')} updated:<=${picker.endDate.format('YYYY-MM-DD')}`);
-                htmx.trigger('#search-navbar', 'search');
+                $('#search-navbar').closest('form').trigger('submit');
             });
         });
     </script>
