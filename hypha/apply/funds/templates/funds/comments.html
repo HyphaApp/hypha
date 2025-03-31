@@ -21,13 +21,6 @@
                         {% trans "Application" %}
                     </a>
 
-                    <a class="tab__item tab__item--active"
-                       href="{% url 'funds:submissions:comments' pk=object.id %}"
-                       data-tab="tab-2"
-                    >
-                        {% trans "Conversations" %} ({{ comments_count }})
-                    </a>
-
                     {% if object.project and PROJECTS_ENABLED %}
                         <a class="tab__item"
                            href="{% url 'apply:projects:detail' pk=object.id %}"
@@ -35,6 +28,13 @@
                             {% trans "Project" %}
                         </a>
                     {% endif %}
+
+                    <a class="tab__item tab__item--active"
+                       href="{% url 'funds:submissions:comments' pk=object.id %}"
+                       data-tab="tab-2"
+                    >
+                        {% trans "Conversation" %} ({{ comments_count }})
+                    </a>
 
                     {# is_staff is only used for Django Admin. #}
                     {% if request.user.is_staff %}

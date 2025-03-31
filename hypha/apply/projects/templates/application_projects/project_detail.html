@@ -23,18 +23,19 @@
                     </a>
 
                     <a
-                        class="tab__item"
-                        href="{% url 'funds:submissions:comments' pk=object.submission.id %}"
-                    >
-                        {% trans "Conversations" %} ({{ comments_count }})
-                    </a>
-
-                    <a
                         class="tab__item tab__item--active"
-                        href="{% url 'apply:projects:detail' pk=object.id %}"
+                        href="{% url 'apply:projects:detail' pk=object.submission.id %}"
                     >
                         {% trans "Project" %}
                     </a>
+
+                    <a
+                        class="tab__item"
+                        href="{% url 'funds:submissions:comments' pk=object.submission.id %}"
+                    >
+                        {% trans "Conversation" %} ({{ comments_count }})
+                    </a>
+
                 </div>
             </div>
         </div>
