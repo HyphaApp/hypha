@@ -3,6 +3,7 @@ from django.urls import include, path
 from django.views.generic import RedirectView
 
 from hypha.apply.projects import urls as projects_urls
+from hypha.apply.projects.views import ProjectDetailView
 
 from .views import (
     GroupingApplicationsListView,
@@ -167,6 +168,7 @@ submission_urls = (
             include(
                 [
                     path("", SubmissionDetailView.as_view(), name="detail"),
+                    path("project/", ProjectDetailView.as_view(), name="project"),
                     path(
                         "partial/lead/",
                         partial_submission_lead,

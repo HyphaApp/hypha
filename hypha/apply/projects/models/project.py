@@ -454,7 +454,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return False
 
     def get_absolute_url(self):
-        return reverse("apply:projects:detail", args=[self.submission.id])
+        return reverse("funds:submissions:project", args=[self.submission.id])
 
     @property
     def can_make_approval(self):
