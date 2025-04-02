@@ -70,7 +70,7 @@ template_map = {
     },
     DETERMINATION_DRAFT: {
         "text": _(
-            '<span class="text-xs">{related.fund_name} #{related.application_id}</span><br>Determination draft for submission <span class="truncate inline-block max-w-32 align-bottom">"{related.submission.title}"</span> is waiting to be submitted',
+            '<span class="text-xs">{related.submission.fund_name} #{related.submission.application_id}</span><br>Determination draft for submission <span class="truncate inline-block max-w-32 align-bottom">"{related.submission.title}"</span> is waiting to be submitted',
         ),
         "icon": "pencil-square",
         "url": "{link}",
@@ -129,7 +129,7 @@ template_map = {
     },
     PAF_WAITING_APPROVAL: {
         "text": _(
-            '<span class="text-xs">{related.submission.fund_name} #{related.submission.application_id}</span><br> Project form is waiting for your approval'
+            '<span class="text-xs">{related.fund_name} #{related.application_id}</span><br> Project form is waiting for your approval'
         ),
         "icon": "clipboard-document-list",
         "url": "{link}",
