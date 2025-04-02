@@ -27,8 +27,8 @@ from hypha.home.factories import ApplySiteFactory
 
 from ...funds.models.forms import ApplicationBaseProjectReportForm
 from ..forms import SetPendingForm
-from ..models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED, SUBMITTED
-from ..models.project import (
+from ..models.payments import CHANGES_REQUESTED_BY_STAFF, DECLINED, SUBMITTED
+from ..models.projects import (
     APPROVE,
     CLOSING,
     COMPLETE,
@@ -40,7 +40,7 @@ from ..models.project import (
     ProjectReportForm,
     ProjectSettings,
 )
-from ..views.project import ContractsMixin, ProjectDetailApprovalView
+from ..views.projects import ContractsMixin, ProjectDetailApprovalView
 from .factories import (
     ContractFactory,
     DocumentCategoryFactory,

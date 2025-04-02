@@ -1,7 +1,7 @@
 from django import template
 from django.conf import settings
 
-from hypha.apply.projects.models.project import CONTRACTING
+from hypha.apply.projects.models.projects import CONTRACTING
 
 from ..permissions import has_permission
 

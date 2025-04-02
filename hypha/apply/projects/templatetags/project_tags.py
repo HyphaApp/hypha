@@ -4,7 +4,7 @@ from django.db.models import Count
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from hypha.apply.projects.models.project import (
+from hypha.apply.projects.models.projects import (
     CLOSING,
     COMPLETE,
     CONTRACTING,
@@ -34,7 +34,7 @@ def user_can_skip_pafapproval_process(project, user):
 
 @register.simple_tag
 def user_next_step_on_project(project, user, request=None):
-    from hypha.apply.projects.models.project import PAFReviewersRole, ProjectSettings
+    from hypha.apply.projects.models.projects import PAFReviewersRole, ProjectSettings
 
     if project.status == DRAFT:
         if user.is_apply_staff:

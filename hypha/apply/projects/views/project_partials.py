@@ -13,8 +13,8 @@ from hypha.apply.activity.models import Activity
 from hypha.apply.funds.utils import get_statuses_as_params
 
 from ..constants import statuses_and_table_statuses_mapping
-from ..models.payment import Invoice
-from ..models.project import ContractDocumentCategory, DocumentCategory, Project
+from ..models.payments import Invoice
+from ..models.projects import ContractDocumentCategory, DocumentCategory, Project
 from ..utils import get_project_status_choices
 
 

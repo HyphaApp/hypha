@@ -6,7 +6,7 @@ from hypha.apply.activity.adapters.utils import get_users_for_groups
 from hypha.apply.users.models import User
 from hypha.apply.users.roles import Staff
 
-from .models.project import (
+from .models.projects import (
     CLOSING,
     COMPLETE,
     CONTRACTING,

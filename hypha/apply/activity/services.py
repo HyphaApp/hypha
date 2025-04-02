@@ -42,7 +42,7 @@ def get_related_activities_for_user(obj, user):
     ApplicationSubmission and Project.
 
     Args:
-        obj: instance of either an [`ApplicationSubmission`][hypha.apply.funds.models.submissions.ApplicationSubmission] or [`Project`][hypha.apply.projects.models.project.Project].
+        obj: instance of either an [`ApplicationSubmission`][hypha.apply.funds.models.submissions.ApplicationSubmission] or [`Project`][hypha.apply.projects.models.projects.Project].
         user: user who these actions are visible to.
 
     Returns:

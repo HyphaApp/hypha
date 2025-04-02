@@ -14,8 +14,8 @@ from hypha.apply.stream_forms.testing.factories import (
 from hypha.apply.users.roles import APPROVER_GROUP_NAME, STAFF_GROUP_NAME
 from hypha.apply.users.tests.factories import GroupFactory, StaffFactory, UserFactory
 
-from ..models.payment import Invoice, SupportingDocument
-from ..models.project import (
+from ..models.payments import Invoice, SupportingDocument
+from ..models.projects import (
     COMPLETE,
     INVOICING_AND_REPORTING,
     Contract,
@@ -28,7 +28,7 @@ from ..models.project import (
     ProjectReportForm,
     ProjectSOWForm,
 )
-from ..models.report import Report, ReportConfig, ReportVersion
+from ..models.reports import Report, ReportConfig, ReportVersion
 
 ADDRESS = {
     "country": "GB",

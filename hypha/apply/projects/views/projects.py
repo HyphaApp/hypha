@@ -89,7 +89,7 @@ from ..forms import (
     UploadContractForm,
     UploadDocumentForm,
 )
-from ..models.project import (
+from ..models.projects import (
     APPROVE,
     CONTRACTING,
     DRAFT,
@@ -113,7 +113,7 @@ from ..utils import (
     get_placeholder_file,
     get_project_status_choices,
 )
-from .report import ReportingMixin
+from .reports import ReportingMixin
 
 
 class ProjectBySubmissionIdMixin:
@@ -1298,7 +1298,7 @@ class UpdateAssignApproversView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
-        from ..forms.project import get_latest_project_paf_approval_via_roles
+        from ..forms.projects import get_latest_project_paf_approval_via_roles
 
         form = self.form_class(user=self.request.user, instance=self.project)
         paf_approval = get_latest_project_paf_approval_via_roles(
@@ -1316,7 +1316,7 @@ class UpdateAssignApproversView(View):
         )
 
     def post(self, *args, **kwargs):
-        from ..forms.project import get_latest_project_paf_approval_via_roles
+        from ..forms.projects import get_latest_project_paf_approval_via_roles
 
         form = self.form_class(
             self.request.POST, user=self.request.user, instance=self.project

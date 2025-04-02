@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
 from hypha.apply.activity.models import ALL, APPLICANT_PARTNERS, PARTNER
-from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED
+from hypha.apply.projects.models.payments import CHANGES_REQUESTED_BY_STAFF, DECLINED
 from hypha.apply.projects.templatetags.project_tags import display_project_status
 from hypha.apply.users.models import User
 from hypha.apply.users.roles import (
@@ -103,7 +103,7 @@ class EmailAdapter(AdapterBase):
                     "Contract Documents required approval for the project: {source.title}"
                 ).format(source=source)
             elif message_type == MESSAGES.PROJECT_TRANSITION:
-                from hypha.apply.projects.models.project import (
+                from hypha.apply.projects.models.projects import (
                     CONTRACTING,
                     INVOICING_AND_REPORTING,
                 )
@@ -174,7 +174,7 @@ class EmailAdapter(AdapterBase):
             )
 
     def handle_project_transition(self, source, **kwargs):
-        from hypha.apply.projects.models.project import (
+        from hypha.apply.projects.models.projects import (
             CONTRACTING,
             INVOICING_AND_REPORTING,
         )
@@ -279,7 +279,7 @@ class EmailAdapter(AdapterBase):
             return [partner.email for partner in partners]
 
         if message_type == MESSAGES.APPROVE_PAF:
-            from hypha.apply.projects.models.project import ProjectSettings
+            from hypha.apply.projects.models.projects import ProjectSettings
 
             # notify the assigned approvers
             request = kwargs.get("request")
@@ -298,7 +298,7 @@ class EmailAdapter(AdapterBase):
             )
 
         if message_type == MESSAGES.ASSIGN_PAF_APPROVER:
-            from hypha.apply.projects.models.project import ProjectSettings
+            from hypha.apply.projects.models.projects import ProjectSettings
 
             # notify PAFReviewerRole's groups' users to assign approvers
             request = kwargs.get("request")
@@ -368,7 +368,7 @@ class EmailAdapter(AdapterBase):
             return []
 
         if message_type == MESSAGES.PROJECT_TRANSITION:
-            from hypha.apply.projects.models.project import (
+            from hypha.apply.projects.models.projects import (
                 CONTRACTING,
                 INVOICING_AND_REPORTING,
             )

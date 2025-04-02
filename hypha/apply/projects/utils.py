@@ -12,7 +12,7 @@ from .constants import (
     INT_VENDOR_PENDING,
 )
 from .models import Project
-from .models.payment import (
+from .models.payments import (
     APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
@@ -24,7 +24,7 @@ from .models.payment import (
     RESUBMITTED,
     SUBMITTED,
 )
-from .models.project import (
+from .models.projects import (
     INTERNAL_APPROVAL,
     PAF_STATUS_CHOICES,
     PROJECT_PUBLIC_STATUSES,

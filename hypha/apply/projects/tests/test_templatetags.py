@@ -7,14 +7,14 @@ from hypha.apply.users.tests.factories import (
     StaffFactory,
 )
 
-from ..models.payment import (
+from ..models.payments import (
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     PAID,
     RESUBMITTED,
     SUBMITTED,
 )
-from ..models.project import (
+from ..models.projects import (
     CLOSING,
     COMPLETE,
     CONTRACTING,

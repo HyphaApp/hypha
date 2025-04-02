@@ -14,7 +14,7 @@ from hypha.apply.stream_forms.fields import SingleFileField
 from hypha.apply.stream_forms.forms import StreamBaseForm
 from hypha.apply.users.roles import STAFF_GROUP_NAME
 
-from ..models.project import (
+from ..models.projects import (
     CLOSING,
     COMPLETE,
     DRAFT,

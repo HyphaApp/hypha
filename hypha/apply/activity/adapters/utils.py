@@ -5,7 +5,7 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity.options import MESSAGES
 from hypha.apply.projects.models import ProjectSettings
-from hypha.apply.projects.models.payment import (
+from hypha.apply.projects.models.payments import (
     APPROVED_BY_FINANCE,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,

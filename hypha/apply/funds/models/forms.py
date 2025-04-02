@@ -4,7 +4,7 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.fields import StreamField
 from wagtail.models import Orderable
 
-from ...projects.models.project import ProjectReportForm
+from ...projects.models.projects import ProjectReportForm
 from ..blocks import ApplicationCustomFormFieldsBlock
 from ..edit_handlers import FilteredFieldPanel
 

@@ -1,6 +1,6 @@
 from django import template
 
-from hypha.apply.projects.models.project import (
+from hypha.apply.projects.models.projects import (
     PROJECT_PUBLIC_STATUSES,
     PROJECT_STATUS_CHOICES,
 )

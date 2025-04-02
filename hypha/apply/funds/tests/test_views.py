@@ -28,7 +28,7 @@ from hypha.apply.funds.tests.factories import (
 from hypha.apply.funds.views.submission_detail import SubmissionDetailView
 from hypha.apply.funds.workflows import INITIAL_STATE
 from hypha.apply.projects.models import Project
-from hypha.apply.projects.models.project import CONTRACTING
+from hypha.apply.projects.models.projects import CONTRACTING
 from hypha.apply.projects.tests.factories import ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory
 from hypha.apply.users.tests.factories import (

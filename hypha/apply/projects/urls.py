@@ -1,7 +1,7 @@
 from django.urls import include, path
 from django.views.generic import RedirectView
 
-from hypha.apply.projects.views.project import ProjectSOWEditView
+from hypha.apply.projects.views.projects import ProjectSOWEditView
 
 from .views import (
     ApproveContractView,

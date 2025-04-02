@@ -10,14 +10,14 @@ from hypha.apply.funds.tables import (
     get_used_funds,
 )
 
-from .models.payment import INVOICE_STATUS_CHOICES, Invoice
-from .models.project import (
+from .models.payments import INVOICE_STATUS_CHOICES, Invoice
+from .models.projects import (
     CLOSING,
     INVOICING_AND_REPORTING,
     PROJECT_STATUS_CHOICES,
     Project,
 )
-from .models.report import Report
+from .models.reports import Report
 
 User = get_user_model()
 

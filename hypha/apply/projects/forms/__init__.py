@@ -1,11 +1,11 @@
-from .payment import (
+from .payments import (
     BatchUpdateInvoiceStatusForm,
     ChangeInvoiceStatusForm,
     CreateInvoiceForm,
     EditInvoiceForm,
     SelectDocumentForm,
 )
-from .project import (
+from .projects import (
     ApproveContractForm,
     ApproversForm,
     AssignApproversForm,
@@ -24,7 +24,7 @@ from .project import (
     UploadContractForm,
     UploadDocumentForm,
 )
-from .report import ReportEditForm, ReportFrequencyForm
+from .reports import ReportEditForm, ReportFrequencyForm
 
 __all__ = [
     "UpdateProjectTitleForm",

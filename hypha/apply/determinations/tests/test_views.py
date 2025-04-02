@@ -9,7 +9,7 @@ from hypha.apply.activity.models import Activity
 from hypha.apply.determinations.options import ACCEPTED, NEEDS_MORE_INFO, REJECTED
 from hypha.apply.determinations.views import BatchDeterminationCreateView
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
-from hypha.apply.projects.models.project import CONTRACTING, DRAFT
+from hypha.apply.projects.models.projects import CONTRACTING, DRAFT
 from hypha.apply.users.tests.factories import StaffFactory, UserFactory
 from hypha.apply.utils.testing import BaseViewTestCase
 

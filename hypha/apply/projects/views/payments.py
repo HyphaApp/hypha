@@ -59,7 +59,7 @@ from ..forms import (
     CreateInvoiceForm,
     EditInvoiceForm,
 )
-from ..models.payment import (
+from ..models.payments import (
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
     CHANGES_REQUESTED_BY_STAFF,
@@ -67,7 +67,7 @@ from ..models.payment import (
     INVOICE_TRANISTION_TO_RESUBMITTED,
     Invoice,
 )
-from ..models.project import Project
+from ..models.projects import Project
 from ..service_utils import batch_update_invoices_status, handle_tasks_on_invoice_update
 from ..tables import AdminInvoiceListTable, FinanceInvoiceTable
 

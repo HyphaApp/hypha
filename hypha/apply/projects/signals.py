@@ -3,7 +3,7 @@ from django.dispatch import receiver
 
 from hypha.apply.todo.views import remove_tasks_of_related_obj
 
-from .models.project import DRAFT, INTERNAL_APPROVAL, PAFReviewersRole, Project
+from .models.projects import DRAFT, INTERNAL_APPROVAL, PAFReviewersRole, Project
 
 
 @receiver(post_delete, sender=PAFReviewersRole)

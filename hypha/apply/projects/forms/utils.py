@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 from django.conf import settings
 
-from hypha.apply.projects.models.project import (
+from hypha.apply.projects.models.projects import (
     COMPLETE,
     INTERNAL_APPROVAL,
     PROJECT_STATUS_CHOICES,

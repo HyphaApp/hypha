@@ -8,7 +8,7 @@ from django_slack import slack_message
 from hypha.apply.activity.adapters.base import AdapterBase
 from hypha.apply.activity.adapters.utils import link_to, reviewers_message
 from hypha.apply.activity.options import MESSAGES
-from hypha.apply.projects.models.payment import (
+from hypha.apply.projects.models.payments import (
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
     PAID,

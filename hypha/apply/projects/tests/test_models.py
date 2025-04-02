@@ -11,7 +11,7 @@ from hypha.apply.users.tests.factories import (
     StaffFactory,
 )
 
-from ..models.payment import (
+from ..models.payments import (
     APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
@@ -25,8 +25,8 @@ from ..models.payment import (
     Invoice,
     invoice_status_user_choices,
 )
-from ..models.project import Project
-from ..models.report import Report, ReportConfig
+from ..models.projects import Project
+from ..models.reports import Report, ReportConfig
 from .factories import (
     InvoiceFactory,
     ReportConfigFactory,

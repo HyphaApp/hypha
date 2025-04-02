@@ -15,7 +15,7 @@ from hypha.apply.users.roles import (
     FINANCE_GROUP_NAME,
 )
 
-from .models.payment import (
+from .models.payments import (
     APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,

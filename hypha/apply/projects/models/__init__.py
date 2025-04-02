@@ -1,5 +1,5 @@
-from .payment import Invoice, SupportingDocument
-from .project import (
+from .payments import Invoice, SupportingDocument
+from .projects import (
     Contract,
     ContractDocumentCategory,
     ContractPacketFile,
@@ -13,7 +13,7 @@ from .project import (
     ProjectSettings,
     ProjectSOWForm,
 )
-from .report import Report, ReportConfig, ReportPrivateFiles, ReportVersion
+from .reports import Report, ReportConfig, ReportPrivateFiles, ReportVersion
 
 __all__ = [
     "Project",

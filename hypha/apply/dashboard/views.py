@@ -19,7 +19,7 @@ from hypha.apply.funds.tables import (
 )
 from hypha.apply.projects.filters import ProjectListFilter
 from hypha.apply.projects.models import Invoice, Project, ProjectSettings
-from hypha.apply.projects.models.payment import DECLINED, PAID
+from hypha.apply.projects.models.payments import DECLINED, PAID
 from hypha.apply.projects.tables import (
     InvoiceDashboardTable,
     PAFForReviewDashboardTable,

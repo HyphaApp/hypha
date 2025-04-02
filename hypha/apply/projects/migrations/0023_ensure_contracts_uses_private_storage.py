@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name="file",
             field=models.FileField(
                 storage=django.core.files.storage.FileSystemStorage(),
-                upload_to=hypha.apply.projects.models.project.contract_path,
+                upload_to=hypha.apply.projects.models.projects.contract_path,
             ),
         ),
     ]

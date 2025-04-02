@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 (
                     "document",
                     models.FileField(
-                        upload_to=hypha.apply.projects.models.project.document_path
+                        upload_to=hypha.apply.projects.models.projects.document_path
                     ),
                 ),
                 (

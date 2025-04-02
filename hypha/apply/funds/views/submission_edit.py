@@ -37,7 +37,7 @@ from hypha.apply.determinations.views import (
     DeterminationCreateOrUpdateView,
 )
 from hypha.apply.projects.forms import ProjectCreateForm
-from hypha.apply.projects.models.project import PROJECT_STATUS_CHOICES
+from hypha.apply.projects.models.projects import PROJECT_STATUS_CHOICES
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
 from hypha.apply.todo.options import PROJECT_WAITING_PF, PROJECT_WAITING_SOW
 from hypha.apply.todo.views import add_task_to_user

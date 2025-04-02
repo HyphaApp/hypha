@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 (
                     "file",
                     models.FileField(
-                        upload_to=hypha.apply.projects.models.project.contract_path
+                        upload_to=hypha.apply.projects.models.projects.contract_path
                     ),
                 ),
                 ("is_signed", models.BooleanField("Signed?", default=False)),

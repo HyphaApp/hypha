@@ -3,14 +3,14 @@ from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     InvitedToProposalFactory,
 )
-from hypha.apply.projects.models.payment import (
+from hypha.apply.projects.models.payments import (
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     PAID,
     RESUBMITTED,
     SUBMITTED,
 )
-from hypha.apply.projects.models.project import INTERNAL_APPROVAL
+from hypha.apply.projects.models.projects import INTERNAL_APPROVAL
 from hypha.apply.projects.tests.factories import InvoiceFactory, ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
 from hypha.apply.users.tests.factories import (

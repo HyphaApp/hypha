@@ -13,19 +13,19 @@ from hypha.apply.users.tests.factories import (
 from hypha.home.factories import ApplySiteFactory
 
 from ..files import get_files
-from ..forms.payment import (
+from ..forms.payments import (
     ChangeInvoiceStatusForm,
     CreateInvoiceForm,
     EditInvoiceForm,
     SelectDocumentForm,
     filter_request_choices,
 )
-from ..forms.project import (
+from ..forms.projects import (
     ChangePAFStatusForm,
     StaffUploadContractForm,
     UploadContractForm,
 )
-from ..models.payment import (
+from ..models.payments import (
     APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
@@ -35,7 +35,7 @@ from ..models.payment import (
     SUBMITTED,
     invoice_status_user_choices,
 )
-from ..models.project import APPROVE, ProjectSettings
+from ..models.projects import APPROVE, ProjectSettings
 from .factories import (
     DocumentCategoryFactory,
     InvoiceFactory,

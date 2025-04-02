@@ -11,7 +11,7 @@ from heroicons.templatetags.heroicons import heroicon_outline
 
 from hypha.apply.funds.tables import LabeledCheckboxColumn
 
-from .forms.payment import get_invoice_possible_transition_for_user
+from .forms.payments import get_invoice_possible_transition_for_user
 from .models import Invoice, PAFApprovals, Project, Report
 
 

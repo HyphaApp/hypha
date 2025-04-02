@@ -8,7 +8,7 @@ from django.utils import timezone
 from hypha.home.factories import ApplySiteFactory
 from hypha.home.models import ApplyHomePage
 
-from ..models.project import ProjectReminderFrequency, ProjectSettings
+from ..models.projects import ProjectReminderFrequency, ProjectSettings
 from .factories import ProjectFactory, ReportConfigFactory, ReportFactory
 
 

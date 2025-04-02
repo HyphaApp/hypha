@@ -4,7 +4,7 @@ from django.utils import timezone
 
 from ...review.forms import MixedMetaClass
 from ...stream_forms.forms import StreamBaseForm
-from ..models.report import Report, ReportConfig, ReportVersion
+from ..models.reports import Report, ReportConfig, ReportVersion
 
 
 class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):

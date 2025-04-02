@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
                     "invoice",
                     models.FileField(
                         storage=django.core.files.storage.FileSystemStorage(),
-                        upload_to=hypha.apply.projects.models.payment.invoice_path,
+                        upload_to=hypha.apply.projects.models.payments.invoice_path,
                     ),
                 ),
                 (

@@ -3,7 +3,7 @@
 import django.core.files.storage
 from django.db import migrations, models
 import django.db.models.deletion
-import hypha.apply.projects.models.project
+import hypha.apply.projects.models.projects
 
 
 class Migration(migrations.Migration):
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
                     "document",
                     models.FileField(
                         storage=django.core.files.storage.FileSystemStorage(),
-                        upload_to=hypha.apply.projects.models.project.contract_document_path,
+                        upload_to=hypha.apply.projects.models.projects.contract_document_path,
                     ),
                 ),
                 ("created_at", models.DateField(auto_now_add=True, null=True)),

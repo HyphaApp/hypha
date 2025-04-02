@@ -2,7 +2,7 @@
 
 import django.core.files.storage
 from django.db import migrations, models
-import hypha.apply.projects.models.project
+import hypha.apply.projects.models.projects
 
 
 class Migration(migrations.Migration):
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 null=True,
                 storage=django.core.files.storage.FileSystemStorage(),
-                upload_to=hypha.apply.projects.models.project.contract_document_template_path,
+                upload_to=hypha.apply.projects.models.projects.contract_document_template_path,
             ),
         ),
         migrations.AddField(
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 null=True,
                 storage=django.core.files.storage.FileSystemStorage(),
-                upload_to=hypha.apply.projects.models.project.document_template_path,
+                upload_to=hypha.apply.projects.models.projects.document_template_path,
             ),
         ),
         migrations.AlterField(

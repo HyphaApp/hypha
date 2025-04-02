@@ -10,8 +10,8 @@ from hypha.apply.projects.constants import (
     INVOICE_STATUS_BG_COLORS,
     INVOICE_STATUS_FG_COLORS,
 )
-from hypha.apply.projects.models.payment import PAID
-from hypha.apply.projects.models.project import (
+from hypha.apply.projects.models.payments import PAID
+from hypha.apply.projects.models.projects import (
     CLOSING,
     COMPLETE,
     INVOICING_AND_REPORTING,
@@ -80,7 +80,7 @@ def user_can_add_invoices(project, user):
 
 @register.simple_tag
 def get_invoice_form(invoice, user):
-    from hypha.apply.projects.views.payment import ChangeInvoiceStatusForm
+    from hypha.apply.projects.views.payments import ChangeInvoiceStatusForm
 
     form = ChangeInvoiceStatusForm(instance=invoice, user=user)
     if form:

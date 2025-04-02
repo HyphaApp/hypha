@@ -10,7 +10,7 @@ from django_file_form.forms import FileFormMixin
 
 from hypha.apply.stream_forms.fields import MultiFileField, SingleFileField
 
-from ..models.payment import (
+from ..models.payments import (
     APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
@@ -25,7 +25,7 @@ from ..models.payment import (
     SupportingDocument,
     invoice_status_user_choices,
 )
-from ..models.project import PacketFile
+from ..models.projects import PacketFile
 from ..utils import get_invoice_status_display_value
 
 
