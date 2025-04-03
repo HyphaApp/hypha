@@ -489,8 +489,13 @@ HIJACK_PERMISSION_CHECK = "hijack.permissions.superusers_and_staff"
 
 
 # Celery settings
+# Sync by default - set `CELERY_TASK_ALWAYS_EAGER` to false and the celery broker URLs to the configured broker to enabled async
+# https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html
 
-CELERY_TASK_ALWAYS_EAGER = True
+CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", None)
+CELERY_RESULT_BACKEND = env.str("CELERY_RESULT_BACKEND", None)
+
+CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", True)
 
 
 # S3 settings
