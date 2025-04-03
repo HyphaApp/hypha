@@ -26,7 +26,7 @@ from ..models.payment import (
     invoice_status_user_choices,
 )
 from ..models.project import Project
-from ..models.report import Report, ReportConfig
+from ..reports.models import Report, ReportConfig
 from .factories import (
     InvoiceFactory,
     ReportConfigFactory,

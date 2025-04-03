@@ -147,7 +147,7 @@ class ProjectQuerySet(models.QuerySet):
         )
 
     def with_outstanding_reports(self):
-        Report = apps.get_model("application_projects", "Report")
+        Report = apps.get_model("project_reports", "Report")
         return self.annotate(
             outstanding_reports=Subquery(
                 Report.objects.filter(
@@ -193,7 +193,7 @@ class ProjectQuerySet(models.QuerySet):
 
     def for_reporting_table(self):
         today = timezone.now().date()
-        Report = apps.get_model("application_projects", "Report")
+        Report = apps.get_model("project_reports", "Report")
         return self.invoicing_and_reporting().annotate(
             current_report_submitted_date=Subquery(
                 Report.objects.filter(
