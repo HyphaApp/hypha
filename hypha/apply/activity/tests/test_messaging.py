@@ -511,9 +511,9 @@ class TestEmailAdapter(AdapterMixin, TestCase):
     adapter = EmailAdapter()
 
     def setUp(self):
-        patched_send_email = patch("hypha.apply.activity.tasks.send_mail")
-        self.mock_send_email = patched_send_email.start()
-        self.addCleanup(patched_send_email.stop)
+        patched_send_mail = patch("hypha.apply.activity.tasks.send_mail")
+        self.mock_send_email = patched_send_mail.start()
+        self.addCleanup(patched_send_mail.stop)
 
     def test_email_new_submission(self):
         submission = ApplicationSubmissionFactory()
@@ -709,9 +709,9 @@ class TestAnyMailBehaviour(AdapterMixin, TestCase):
     TEST_API_KEY = "TEST_API_KEY"
 
     def setUp(self):
-        patched_send_email = patch("hypha.apply.activity.tasks.send_mail")
-        self.mock_send_email = patched_send_email.start()
-        self.addCleanup(patched_send_email.stop)
+        patched_send_mail = patch("hypha.apply.activity.tasks.send_mail")
+        self.mock_send_email = patched_send_mail.start()
+        self.addCleanup(patched_send_mail.stop)
 
     # from: https://github.com/anymail/django-anymail/blob/7d8dbdace92d8addfcf0a517be0aaf481da11952/tests/test_mailgun_webhooks.py#L19
     def mailgun_sign(self, data, api_key=TEST_API_KEY):
