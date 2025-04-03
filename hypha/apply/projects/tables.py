@@ -139,7 +139,7 @@ class AdminInvoiceListTable(BaseInvoiceTable):
         }
 
     def render_project(self, record):
-        return get_project_title(record)
+        return get_project_title(record.project)
 
 
 class BaseProjectsTable(tables.Table):
