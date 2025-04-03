@@ -5,7 +5,6 @@ from unittest.mock import ANY, Mock, call, patch
 
 import responses
 from django.contrib.messages import get_messages
-from django.core import mail
 from django.test import TestCase, override_settings
 from django_slack.utils import get_backend
 
@@ -709,6 +708,11 @@ class TestAnyMailBehaviour(AdapterMixin, TestCase):
     adapter = EmailAdapter()
     TEST_API_KEY = "TEST_API_KEY"
 
+    def setUp(self):
+        patched_send_email = patch("hypha.apply.activity.tasks.send_mail")
+        self.mock_send_email = patched_send_email.start()
+        self.addCleanup(patched_send_email.stop)
+
     # from: https://github.com/anymail/django-anymail/blob/7d8dbdace92d8addfcf0a517be0aaf481da11952/tests/test_mailgun_webhooks.py#L19
     def mailgun_sign(self, data, api_key=TEST_API_KEY):
         """Add a Mailgun webhook signature to data dict"""
@@ -727,12 +731,9 @@ class TestAnyMailBehaviour(AdapterMixin, TestCase):
         submission = ApplicationSubmissionFactory()
         self.adapter_process(MESSAGES.NEW_SUBMISSION, source=submission)
 
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, [submission.user.email])
-        message = Message.objects.first()
-        self.assertEqual(message.status, "sent")
-        # Anymail test Backend uses the index of the email as id: '0'
-        self.assertEqual(message.external_id, "0")
+        self.mock_send_email.assert_called_once_with(
+            ANY, ANY, ANY, [submission.user.email], logs=ANY
+        )
 
     @override_settings(ANYMAIL_MAILGUN_API_KEY=TEST_API_KEY)
     def test_webhook_updates_status(self):
@@ -921,7 +922,8 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
         self.assertEqual(len(messages), 1)
 
     @override_settings(SEND_MESSAGES=True)
-    def test_email_staff_update_invoice(self):
+    @patch("hypha.apply.activity.tasks.send_mail")
+    def test_email_staff_update_invoice(self, mock_send_email):
         project = self.source_factory()
         invoice = InvoiceFactory(project=project)
         staff = StaffFactory()
@@ -934,5 +936,6 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
             related=invoice,
         )
 
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, [project.user.email])
+        mock_send_email.assert_called_once_with(
+            ANY, ANY, ANY, [project.user.email], logs=ANY
+        )

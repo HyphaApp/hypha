@@ -1,6 +1,7 @@
 import itertools
 import os
 from datetime import date, timedelta
+from unittest.mock import ANY, patch
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -366,17 +367,27 @@ class TestFormSubmission(TestCase):
         self.assertContains(response, "Enter a valid email address")
 
     @override_settings(SEND_MESSAGES=True)
-    def test_email_sent_to_user_on_submission_fund(self):
+    @patch("hypha.apply.activity.tasks.send_mail")
+    def test_email_sent_to_user_on_submission_fund(self, mock_send_email):
         self.submit_form()
-        # "Thank you for your submission" and "Account Creation"
-        self.assertEqual(len(mail.outbox), 2)
+
+        # Testing "Thank you for your submission" and...
+        mock_send_email.assert_called_once_with(ANY, ANY, ANY, [self.email], logs=ANY)
+
+        # ... "Account Creation" emails
+        self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to[0], self.email)
 
     @override_settings(SEND_MESSAGES=True)
-    def test_email_sent_to_user_on_submission_lab(self):
+    @patch("hypha.apply.activity.tasks.send_mail")
+    def test_email_sent_to_user_on_submission_lab(self, mock_send_email):
         self.submit_form(page=self.lab_page)
-        # "Thank you for your submission" and "Account Creation"
-        self.assertEqual(len(mail.outbox), 2)
+
+        # Testing "Thank you for your submission" and...
+        mock_send_email.assert_called_once_with(ANY, ANY, ANY, [self.email], logs=ANY)
+
+        # ... "Account Creation" emails
+        self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to[0], self.email)
 
 
