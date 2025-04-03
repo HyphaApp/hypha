@@ -285,10 +285,6 @@ class ReportingTable(tables.Table):
     current_report_status = tables.Column(
         attrs={"td": {"class": "status"}}, verbose_name="Status"
     )
-
-    def render_current_report_status(self, value):
-        return format_html("<span>{}</span>", value)
-
     current_report_submitted_date = tables.Column(
         verbose_name="Submitted date", accessor="current_report_submitted_date__date"
     )
@@ -315,6 +311,9 @@ class ReportingTable(tables.Table):
 
     def render_title(self, record):
         return get_project_title(record)
+
+    def render_current_report_status(self, value):
+        return format_html("<span>{}</span>", value)
 
 
 class ReportListTable(tables.Table):
