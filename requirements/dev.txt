@@ -28,7 +28,6 @@ asgiref==3.8.1 \
 asn1crypto==1.5.1 \
     --hash=sha256:13ae38502be632115abf8a24cbe5f4da52e3b5231990aff31123c805306ccb9c \
     --hash=sha256:db4e40728b728508912cbb3d44f19ce188f218e9eba635821bb4b68564f8fd67
-<<<<<<< HEAD
     # via
     #   oscrypto
     #   pyhanko
@@ -73,20 +72,6 @@ backports-datetime-fromisoformat==2.0.3 ; python_full_version < '3.11' \
     --hash=sha256:ee68bc8735ae5058695b76d3bb2aee1d137c052a11c8303f1e966aa23b72b65b \
     --hash=sha256:ffe5f793db59e2f1d45ec35a1cf51404fdd69df9f6952a0c87c3060af4c00e32
     # via marshmallow
-=======
-<<<<<<< HEAD
-babel==2.17.0 \
-    --hash=sha256:0c54cffb19f690cdcc52a3b50bcbf71e07a808d1c80d549f2459b9d2cf0afb9d \
-    --hash=sha256:4d0b53093fdfb4b21c92b5213dba5a1b23885afa8383709427046b21c366e5f2
-=======
-async-timeout==5.0.1 ; python_full_version < '3.11.3' \
-    --hash=sha256:39e3809566ff85354557ec2398b55e096c8364bacac9405a7a1fa429e77fe76c \
-    --hash=sha256:d9321a7a3d5a6a5e187e824d2fa0793ce379a202935782d555d6e9d2735677d3
-babel==2.16.0 \
-    --hash=sha256:368b5b98b37c06b7daf6696391c3240c938b37767d4584413e8438c5c435fa8b \
-    --hash=sha256:d1f3554ca26605fe173f3de0c65f750f5a42f924499bf134de6423582298e316
->>>>>>> 4c73c09af (Implemented async submission exports)
->>>>>>> a9f074e8b (Implemented async submission exports)
 backrefs==5.8 \
     --hash=sha256:2cab642a205ce966af3dd4b38ee36009b31fa9502a35fd61d59ccc116e40a6bd \
     --hash=sha256:2e1c15e4af0e12e45c8701bd5da0902d326b2e200cafcd25e49d9f06d44bb61b \
