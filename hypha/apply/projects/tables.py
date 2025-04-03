@@ -14,6 +14,17 @@ from hypha.apply.funds.tables import LabeledCheckboxColumn
 from .forms.payment import get_invoice_possible_transition_for_user
 from .models import Invoice, PAFApprovals, Project, Report
 
+PROJECT_TITLE_TEMPLATE = "{text} <span class='text-fg-muted'>#{application_id}</span>"
+
+
+def get_project_title(project):
+    text = textwrap.shorten(project.title, width=40, placeholder="…")
+    return format_html(
+        PROJECT_TITLE_TEMPLATE,
+        text=text,
+        application_id=project.application_id,
+    )
+
 
 def render_invoice_actions(table, record):
     user = table.context["user"]
@@ -31,10 +42,6 @@ class BaseInvoiceTable(tables.Table):
                 "class": "js-title",  # using title as class because of batch-actions.js
             },
             "a": {
-                "data-tippy-content": lambda record: record.invoice_number,
-                "data-tippy-placement": "top",
-                # Use after:content-[''] after:block to hide the default browser tooltip on Safari
-                # https://stackoverflow.com/a/43915246
                 "class": "truncate inline-block w-[calc(100%-2rem)] after:content-[''] after:block",
             },
         },
@@ -61,9 +68,8 @@ class InvoiceDashboardTable(BaseInvoiceTable):
         template_name = "application_projects/tables/table.html"
         attrs = {"class": "invoices-table"}
 
-    def render_project(self, value):
-        text = (textwrap.shorten(value.title, width=30, placeholder="..."),)
-        return text[0]
+    def render_project(self, record):
+        return get_project_title(record.project)
 
 
 class FinanceInvoiceTable(BaseInvoiceTable):
@@ -100,36 +106,14 @@ class FinanceInvoiceTable(BaseInvoiceTable):
         return record.project.user
 
 
-class InvoiceListTable(BaseInvoiceTable):
-    project = tables.Column(verbose_name=_("Project Name"))
-    fund = tables.Column(verbose_name=_("Fund"), accessor="project__submission__page")
-    lead = tables.Column(verbose_name=_("Lead"), accessor="project__lead")
-
-    class Meta:
-        fields = [
-            "requested_at",
-            "invoice_number",
-            "status",
-            "project",
-            "lead",
-            "fund",
-        ]
-        model = Invoice
-        orderable = True
-        order_by = ["-requested_at"]
-        template_name = "application_projects/tables/table.html"
-        attrs = {"class": "invoices-table"}
-
-    def render_project(self, value):
-        text = (textwrap.shorten(value.title, width=30, placeholder="..."),)
-        return text[0]
-
-
 class AdminInvoiceListTable(BaseInvoiceTable):
     project = tables.Column(verbose_name=_("Project Name"))
     selected = LabeledCheckboxColumn(
         accessor=A("pk"),
         attrs={
+            "th": {
+                "class": "w-8",
+            },
             "input": {"class": "js-batch-select"},
             "th__input": {"class": "js-batch-select-all"},
         },
@@ -154,16 +138,14 @@ class AdminInvoiceListTable(BaseInvoiceTable):
             "data-record-id": lambda record: record.id,
         }
 
-    def render_project(self, value):
-        text = (textwrap.shorten(value.title, width=30, placeholder="..."),)
-        return text[0]
+    def render_project(self, record):
+        return get_project_title(record.project)
 
 
 class BaseProjectsTable(tables.Table):
     title = tables.LinkColumn(
-        "funds:projects:detail",
-        text=lambda r: textwrap.shorten(r.title, width=30, placeholder="..."),
-        args=[tables.utils.A("submission__pk")],
+        "funds:submissions:project",
+        args=[tables.utils.A("application_id")],
     )
     status = tables.Column(
         verbose_name=_("Status"), accessor="get_status_display", order_by=("status",)
@@ -178,6 +160,9 @@ class BaseProjectsTable(tables.Table):
         qs = qs.order_by(f"{direction}outstanding_reports")
 
         return qs, True
+
+    def render_title(self, record):
+        return get_project_title(record)
 
     def render_reporting(self, record):
         if not hasattr(record, "report_config"):
@@ -234,10 +219,8 @@ class PAFForReviewDashboardTable(tables.Table):
         orderable=True,
     )
     title = tables.LinkColumn(
-        "funds:projects:detail",
-        text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
-        accessor="project__title",
-        args=[tables.utils.A("project__pk")],
+        "funds:submissions:project",
+        args=[tables.utils.A("application_id")],
         orderable=False,
     )
     status = tables.Column(verbose_name=_("Status"), accessor="pk", orderable=False)
@@ -270,6 +253,9 @@ class PAFForReviewDashboardTable(tables.Table):
         else:
             return _("Waiting for assignee")
 
+    def render_title(self, record):
+        return get_project_title(record.project)
+
 
 class ProjectsListTable(BaseProjectsTable):
     class Meta:
@@ -290,23 +276,15 @@ class ProjectsListTable(BaseProjectsTable):
 
 
 class ReportingTable(tables.Table):
-    pk = tables.Column(
-        verbose_name=_("Project #"),
+    title = tables.LinkColumn(
+        "funds:submissions:project", args=[tables.utils.A("submission_id")]
     )
-    submission_id = tables.Column(
-        verbose_name=_("Submission #"),
-    )
-    title = tables.LinkColumn("funds:projects:detail", args=[tables.utils.A("pk")])
     organization_name = tables.Column(
         accessor="submission__organization_name", verbose_name="Organization name"
     )
     current_report_status = tables.Column(
         attrs={"td": {"class": "status"}}, verbose_name="Status"
     )
-
-    def render_current_report_status(self, value):
-        return format_html("<span>{}</span>", value)
-
     current_report_submitted_date = tables.Column(
         verbose_name="Submitted date", accessor="current_report_submitted_date__date"
     )
@@ -320,9 +298,7 @@ class ReportingTable(tables.Table):
 
     class Meta:
         fields = [
-            "pk",
             "title",
-            "submission_id",
             "organization_name",
             "current_report_due_date",
             "current_report_status",
@@ -333,11 +309,16 @@ class ReportingTable(tables.Table):
         orderable = True
         attrs = {"class": "reporting-table"}
 
+    def render_title(self, record):
+        return get_project_title(record)
+
+    def render_current_report_status(self, value):
+        return format_html("<span>{}</span>", value)
+
 
 class ReportListTable(tables.Table):
     project = tables.LinkColumn(
         "funds:projects:reports:detail",
-        text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
         args=[tables.utils.A("pk")],
     )
     report_period = tables.Column(accessor="pk")
@@ -356,3 +337,6 @@ class ReportListTable(tables.Table):
 
     def render_report_period(self, record):
         return f"{record.start} to {record.end_date}"
+
+    def render_project(self, record):
+        return get_project_title(record.project)

@@ -20,7 +20,6 @@ from .views import (
     InvoiceView,
     ProjectDetailApprovalView,
     ProjectDetailDownloadView,
-    ProjectDetailView,
     ProjectFormEditView,
     ProjectListView,
     ProjectPrivateMediaView,
@@ -75,7 +74,11 @@ urlpatterns = [
         "<int:pk>/",
         include(
             [
-                path("", ProjectDetailView.as_view(), name="detail"),
+                path(
+                    "",
+                    RedirectView.as_view(pattern_name="funds:submissions:project"),
+                    name="detail",
+                ),
                 path("partial/lead/", partial_project_lead, name="project_lead"),
                 path("partial/title/", partial_project_title, name="project_title"),
                 path("lead/update/", UpdateLeadView.as_view(), name="lead_update"),
