@@ -41,7 +41,8 @@ py-test: .cache/py-packages  ## Run Python tests with pytest, including coverage
 	${UV_RUN}pytest --reuse-db --cov --cov-report term:skip-covered
 
 	@echo "Removing test files generated during test"
-	@find media/ -iname 'test_*.pdf' -o -iname 'test_image*' -o -iname '*.dat' -delete
+	@find media/ -iname 'test_*.pdf' -delete
+	@find media/ -iname '*.dat' -delete
 	@find media/ -type d -empty -delete
 	@rm -rf media/temp_uploads/*
 
