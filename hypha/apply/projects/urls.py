@@ -3,6 +3,7 @@ from django.views.generic import RedirectView
 
 from hypha.apply.projects.views.project import ProjectSOWEditView
 
+from .reports.views import ReportFrequencyUpdate
 from .views import (
     ApproveContractView,
     BatchUpdateInvoiceStatusView,
@@ -27,13 +28,6 @@ from .views import (
     ProjectSOWView,
     RemoveContractDocumentView,
     RemoveDocumentView,
-    ReportDetailView,
-    ReportFrequencyUpdate,
-    ReportingView,
-    ReportListView,
-    ReportPrivateMedia,
-    ReportSkipView,
-    ReportUpdateView,
     SendForApprovalView,
     SkipPAFApprovalProcessView,
     SubmitContractDocumentsView,
@@ -60,6 +54,7 @@ app_name = "projects"
 urlpatterns = [
     path("", RedirectView.as_view(pattern_name="apply:projects:all"), name="overview"),
     path("all/", ProjectListView.as_view(), name="all"),
+    path("reports/", include("hypha.apply.projects.reports.urls"), name="reports"),
     path("statuses/", get_project_status_counts, name="projects_status_counts"),
     path("invoices/", InvoiceListView.as_view(), name="invoices"),
     path(
@@ -260,33 +255,6 @@ urlpatterns = [
                     ),
                 ),
             ]
-        ),
-    ),
-    path(
-        "reports/",
-        include(
-            (
-                [
-                    path("", ReportListView.as_view(), name="submitted"),
-                    path("all/", ReportingView.as_view(), name="all"),
-                    path(
-                        "<int:pk>/",
-                        include(
-                            [
-                                path("", ReportDetailView.as_view(), name="detail"),
-                                path("skip/", ReportSkipView.as_view(), name="skip"),
-                                path("edit/", ReportUpdateView.as_view(), name="edit"),
-                                path(
-                                    "documents/<int:file_pk>/",
-                                    ReportPrivateMedia.as_view(),
-                                    name="document",
-                                ),
-                            ]
-                        ),
-                    ),
-                ],
-                "reports",
-            )
         ),
     ),
 ]

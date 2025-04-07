@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "hypha.apply.translate",
     "hypha.apply.utils.apps.UtilsConfig",
     "hypha.apply.projects.apps.ProjectsConfig",
+    "hypha.apply.projects.reports.apps.ReportsConfig",
     "social_django",
     "django_htmx",
     "heroicons",

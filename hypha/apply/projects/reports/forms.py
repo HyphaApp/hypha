@@ -2,9 +2,10 @@ from django import forms
 from django.db import transaction
 from django.utils import timezone
 
-from ...review.forms import MixedMetaClass
-from ...stream_forms.forms import StreamBaseForm
-from ..models.report import Report, ReportConfig, ReportVersion
+from hypha.apply.review.forms import MixedMetaClass
+from hypha.apply.stream_forms.forms import StreamBaseForm
+
+from .models import Report, ReportConfig, ReportVersion
 
 
 class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
