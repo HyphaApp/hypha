@@ -5,13 +5,11 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
-from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import (
     Case,
     Count,
-    F,
     Max,
     OuterRef,
     Q,
@@ -124,11 +122,6 @@ class ProjectQuerySet(models.QuerySet):
         return self.filter(
             status=INTERNAL_APPROVAL,
         )
-
-    def by_end_date(self, desc=False):
-        order = getattr(F("proposed_end"), "desc" if desc else "asc")(nulls_last=True)
-
-        return self.order_by(order)
 
     def with_amount_paid(self):
         return self.annotate(
@@ -251,7 +244,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         null=True,
         related_name="owned_projects",
     )
-
     title = models.TextField()
     value = models.DecimalField(
         default=0,
@@ -259,9 +251,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         decimal_places=2,
         validators=[MinValueValidator(limit_value=0)],
     )
-    proposed_start = models.DateTimeField(_("Proposed Start Date"), null=True)
-    proposed_end = models.DateTimeField(_("Proposed End Date"), null=True)
-
     status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=DRAFT)
 
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
@@ -372,13 +361,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     @property
     def end_date(self):
-        # Aiming for the proposed end date as the last day of the project
-        # If still ongoing assume today is the end
-        if self.proposed_end:
-            return max(
-                self.proposed_end.date(),
-                timezone.now().date(),
-            )
+        # Assume today is the end
         return timezone.now().date()
 
     def paid_value(self):
@@ -386,18 +369,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     def unpaid_value(self):
         return self.invoices.unpaid_value()
-
-    def clean(self):
-        if self.proposed_start is None:
-            return
-
-        if self.proposed_end is None:
-            return
-
-        if self.proposed_start > self.proposed_end:
-            raise ValidationError(
-                _("Proposed End Date must be after Proposed Start Date")
-            )
 
     def save(self, *args, **kwargs):
         creating = not self.pk

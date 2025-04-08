@@ -101,8 +101,6 @@ class ProjectFactory(factory.django.DjangoModelFactory):
     title = factory.Sequence("name {}".format)
     lead = factory.SubFactory(StaffFactory)
     value = decimal.Decimal("100")
-    proposed_start = factory.LazyFunction(timezone.now)
-    proposed_end = factory.LazyFunction(timezone.now)
 
     is_locked = False
 
