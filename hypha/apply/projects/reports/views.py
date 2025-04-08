@@ -332,4 +332,4 @@ class ReportingView(SingleTableMixin, FilterView):
     queryset = Project.objects.for_reporting_table()
     filterset_class = ReportingFilter
     table_class = ReportingTable
-    template_name = "reporting/reporting.html"
+    template_name = "reports/reporting.html"
