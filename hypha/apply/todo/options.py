@@ -163,7 +163,7 @@ template_map = {
     # invoicing and reporting (vendor/staff/finance team action)
     PROJECT_WAITING_INVOICE: {
         "text": _(
-            '<span class="text-sm">{related.project.fund_name} #{related.project.application_id}</span><br>Project <span class="truncate inline-block max-w-32 align-bottom">"{related.title}"</span> is waiting for invoice'
+            '<span class="text-sm">{related.fund_name} #{related.application_id}</span><br>Project <span class="truncate inline-block max-w-32 align-bottom">"{related.title}"</span> is waiting for invoice'
         ),
         "icon": "document-currency-dollar",
         "url": "{link}",
@@ -195,7 +195,7 @@ template_map = {
     },
     REPORT_DUE: {
         "text": _(
-            '<span class="text-xs">{related.project.fund_name} #{related.project.application_id}</span><br>Report for project <span class="truncate inline-block max-w-32 align-bottom ">"{related.title}"</span> is due'
+            '<span class="text-xs">{related.project.fund_name} #{related.project.application_id}</span><br>Report for project <span class="truncate inline-block max-w-32 align-bottom ">"{related.project.title}"</span> is due'
         ),
         "icon": "document-text",
         "url": "{link}",
