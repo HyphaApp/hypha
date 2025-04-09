@@ -742,7 +742,9 @@ class ApplicationSubmission(
     def clean_submission(self):
         self.process_form_data()
         self.ensure_user_has_account()
-        self.process_file_data(self.form_data)
+        # pass current submission data to avoid file save on every submit(if file is not updated)
+        current_submission = ApplicationSubmission.objects.get(id=self.id)
+        self.process_file_data(self.form_data, current_submission.from_draft().raw_data)
 
     def get_assigned_meta_terms(self):
         """Returns assigned meta terms excluding the 'root' term"""
@@ -791,6 +793,11 @@ class ApplicationSubmission(
         if creating:
             AssignedReviewers = apps.get_model("funds", "AssignedReviewers")
             ApplicationRevision = apps.get_model("funds", "ApplicationRevision")
+
+            if not self.public_id:
+                self.public_id = (
+                    f"{self.get_from_parent('submission_id_prefix')}{self.id}"
+                )
 
             self.process_file_data(files)
             AssignedReviewers.objects.bulk_create_reviewers(
