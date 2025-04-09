@@ -99,15 +99,16 @@ class AccessFormData:
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
                 new_file = data.get(field.id, [])
-                existing_file = latest_existing_data.get(field.id, [])
+                if latest_existing_data:
+                    existing_file = latest_existing_data.get(field.id, [])
+                else:
+                    existing_file = None
 
                 # processing files before checking because placeholder files can't be read
                 new_stream_file = self.process_file(self, field, new_file)
-                # existing_stream_file = self.process_file(self, field, existing_file)
 
                 # save only if it is not the same file(s)
-                same_file = self._is_same_file(existing_file, new_stream_file)
-                if not same_file:
+                if not self._is_same_file(existing_file, new_stream_file):
                     try:
                         new_stream_file.save()
                     except (AttributeError, FileNotFoundError):
