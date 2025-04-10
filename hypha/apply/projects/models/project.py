@@ -259,8 +259,8 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         decimal_places=2,
         validators=[MinValueValidator(limit_value=0)],
     )
-    proposed_start = models.DateTimeField(_("Proposed Start Date"), auto_now_add=True)
-    proposed_end = models.DateTimeField(_("Proposed End Date"), null=True)
+    proposed_start = models.DateTimeField(_("Proposed start date"), auto_now_add=True)
+    proposed_end = models.DateTimeField(_("Proposed end date"), null=True)
 
     status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=DRAFT)
 
