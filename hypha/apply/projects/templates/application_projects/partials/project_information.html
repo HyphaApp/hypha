@@ -1,0 +1,47 @@
+{% load i18n heroicons %}
+
+<div>
+    <h5>{% trans "Contractor" %}</h5>
+    <p>{{ object.user |default:"-" }}</p>
+</div>
+
+<div>
+    <h5>{% trans "E-mail" %}</h5>
+    {% if object.user.email %}
+        <a href="mailto:{{ object.user.email }}">{{ object.user.email }}</a>
+    {% else %}
+        -
+    {% endif %}
+</div>
+
+<div>
+    <h5>{% trans "Start date" %}</h5>
+    <p>{{ object.proposed_start|date:"SHORT_DATE_FORMAT"|default:"-" }}</p>
+</div>
+
+<div>
+    <h5>
+        {% trans "End date" %}
+        {% if request.user.is_apply_staff %}
+            <a class="transition-opacity hover:opacity-70 is-active"
+               href="{% url 'apply:projects:project_dates_update' object.submission.id %}"
+               hx-get="{% url 'apply:projects:project_dates_update' object.submission.id %}"
+               hx-target="#htmx-modal"
+            >
+                {% heroicon_solid "pencil-square" class="inline mt-2 ms-1" aria_hidden=true %}
+                <span class="sr-only">{% trans "edit dates" %}</span>
+            </a>
+        {% endif %}
+    </h5>
+    <p>{{ object.proposed_end|date:"SHORT_DATE_FORMAT"|default:"-" }}</p>
+</div>
+
+
+
+
+
+
+
+
+
+

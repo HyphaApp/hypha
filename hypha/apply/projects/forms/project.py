@@ -451,3 +451,12 @@ class UpdateProjectTitleForm(forms.ModelForm):
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class UpdateProjectDatesForm(forms.ModelForm):
+    class Meta:
+        fields = ["proposed_start", "proposed_end"]
+        model = Project
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
