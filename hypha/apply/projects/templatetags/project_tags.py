@@ -251,14 +251,6 @@ def user_next_step_instructions(project, user):
 
 
 @register.simple_tag
-def user_can_update_project_reports(project, user):
-    permission, _ = has_permission(
-        "project_reports_update", user, object=project, raise_exception=False
-    )
-    return permission
-
-
-@register.simple_tag
 def user_can_update_report_config(project, user):
     permission, _ = has_permission(
         "report_config_update", user, object=project, raise_exception=False

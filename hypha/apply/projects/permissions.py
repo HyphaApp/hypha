@@ -4,7 +4,7 @@ from rolepermissions.permissions import register_object_checker
 
 from hypha.apply.activity.adapters.utils import get_users_for_groups
 from hypha.apply.users.models import User
-from hypha.apply.users.roles import Staff
+from hypha.apply.users.roles import Staff, StaffAdmin
 
 from .models.project import (
     CLOSING,
@@ -415,6 +415,17 @@ def upload_project_documents(role, user, project) -> bool:
     return False
 
 
+@register_object_checker()
+def update_project_report(role, user, project) -> bool:
+    if not user.is_authenticated:
+        return False
+    if project.status != INVOICING_AND_REPORTING:
+        return False
+    if role == StaffAdmin or user == project.user:
+        return True
+    return False
+
+
 permissions_map = {
     "contract_approve": can_approve_contract,
     "contract_upload": can_upload_contract,
@@ -423,7 +434,6 @@ permissions_map = {
     "paf_approvers_assign": can_assign_paf_approvers,
     "update_paf_assigned_approvers": can_update_assigned_paf_approvers,  # Permission for UpdateAssignApproversView
     "project_status_update": can_update_project_status,
-    "project_reports_update": can_update_project_reports,
     "report_update": can_update_report,
     "report_config_update": can_update_report_config,
     "report_view": can_view_report,
