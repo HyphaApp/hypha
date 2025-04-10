@@ -1,4 +1,5 @@
 import logging
+from datetime import date
 
 from django import forms
 from django.apps import apps
@@ -259,8 +260,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         decimal_places=2,
         validators=[MinValueValidator(limit_value=0)],
     )
-    proposed_start = models.DateTimeField(_("Proposed Start Date"), null=True)
-    proposed_end = models.DateTimeField(_("Proposed End Date"), null=True)
+    proposed_start = models.DateField(
+        _("Proposed start date"), null=True, default=date.today
+    )
+    proposed_end = models.DateField(_("Proposed end date"), null=True)
 
     status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=DRAFT)
 
@@ -321,7 +324,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return ""  # todo: need to figure out
 
     @classmethod
-    def create_from_submission(cls, submission, lead=None, status=None):
+    def create_from_submission(cls, submission, lead=None, status=None, end_date=None):
         """
         Create a Project from the given submission.
 
@@ -357,6 +360,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             title=submission.title,
             status=status,
             lead=lead if lead else None,
+            proposed_end=end_date,
             value=submission.form_data.get("value", 0),
         )
 

@@ -86,14 +86,18 @@ class ProjectCreateForm(forms.Form):
     )
 
     project_lead = forms.ModelChoiceField(
-        label=_("Select Project Lead"), queryset=User.objects.all()
+        label=_("Select project lead"), queryset=User.objects.all()
     )
 
     # Set the initial value to the settings default if valid, otherwise fall back to draft
     project_initial_status = forms.ChoiceField(
-        label=_("Initial Project Status"),
+        label=_("Initial project status"),
         choices=get_project_status_options(),
         initial=get_project_default_status(),
+    )
+
+    project_end = forms.DateField(
+        label=_("Project end date"),
     )
 
     def __init__(self, *args, instance=None, **kwargs):
@@ -119,7 +123,10 @@ class ProjectCreateForm(forms.Form):
         submission = self.cleaned_data["submission"]
         lead = self.cleaned_data["project_lead"]
         status = self.cleaned_data["project_initial_status"]
-        return Project.create_from_submission(submission, lead=lead, status=status)
+        end_date = self.cleaned_data["project_end"]
+        return Project.create_from_submission(
+            submission, lead=lead, status=status, end_date=end_date
+        )
 
 
 class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
@@ -440,6 +447,15 @@ class UpdateProjectLeadForm(forms.ModelForm):
 class UpdateProjectTitleForm(forms.ModelForm):
     class Meta:
         fields = ["title"]
+        model = Project
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class UpdateProjectDatesForm(forms.ModelForm):
+    class Meta:
+        fields = ["proposed_start", "proposed_end"]
         model = Project
 
     def __init__(self, *args, user=None, **kwargs):
