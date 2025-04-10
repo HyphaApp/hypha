@@ -1,0 +1,16 @@
+{% extends "messages/email/applicant_base.html" %}
+
+{% load i18n %}
+
+{% block content %}{# fmt:off #}
+{% blocktrans with title=source.title %}You have assigned as an Applicant to submission "{{ title }}".{% endblocktrans %}
+{% endblock %}
+
+{% block more_info %}
+{% trans "Link to your submission" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
+
+{% trans "See our guide for more information" %}: {{ ORG_GUIDE_URL }}
+
+{% blocktrans %}If you have any issues accessing the submission or other general inquiries, please email us at {{ ORG_EMAIL }}{% endblocktrans %}
+{% endblock %}{# fmt:on #}
