@@ -70,6 +70,16 @@
                             -
                         {% endif %}
                     </div>
+
+                    <div>
+                        <h5>{% trans "Start date" %}</h5>
+                        <p>{{ object.proposed_start|date:"SHORT_DATETIME_FORMAT"|default:"-" }}</p>
+                    </div>
+
+                    <div>
+                        <h5>{% trans "End date" %}</h5>
+                        <p>{{ object.proposed_end|date:"SHORT_DATETIME_FORMAT"|default:"-" }}</p>
+                    </div>
                 </div>
 
                 {% user_can_view_invoices object user as can_view_invoices %}
