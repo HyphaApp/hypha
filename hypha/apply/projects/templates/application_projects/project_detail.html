@@ -56,30 +56,15 @@
         <div class="wrapper wrapper--sidebar">
             <article class="wrapper--sidebar--inner">
                 <h3>{% trans "Project Information" %}</h3>
-                <div class="hypha-grid hypha-grid--proposal-info">
-                    <div>
-                        <h5>{% trans "Contractor" %}</h5>
-                        <p>{{ object.user |default:"-" }}</p>
-                    </div>
-
-                    <div>
-                        <h5>{% trans "E-mail" %}</h5>
-                        {% if object.user.email %}
-                            <a href="mailto:{{ object.user.email }}">{{ object.user.email }}</a>
-                        {% else %}
-                            -
-                        {% endif %}
-                    </div>
-
-                    <div>
-                        <h5>{% trans "Start date" %}</h5>
-                        <p>{{ object.proposed_start|date:"SHORT_DATETIME_FORMAT"|default:"-" }}</p>
-                    </div>
-
-                    <div>
-                        <h5>{% trans "End date" %}</h5>
-                        <p>{{ object.proposed_end|date:"SHORT_DATETIME_FORMAT"|default:"-" }}</p>
-                    </div>
+                <div
+                    class="hypha-grid hypha-grid--proposal-info"
+                    hx-get='{% url "apply:projects:project_information" object.submission.id %}'
+                    hx-trigger="load, informationUpdated from:body"
+                >
+                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-14"></span>
+                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-14"></span>
+                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-12"></span>
+                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-12"></span>
                 </div>
 
                 {% user_can_view_invoices object user as can_view_invoices %}
@@ -109,9 +94,9 @@
                     {% user_next_step_on_project object user request=request as next_step %}
                     {% if next_step %}
                         <div class="py-3 px-5 mb-8 bg-yellow-200 shadow-sm sidebar__inner--actions">
-                            <h5 class="pb-2 border-b border-b-orange-200">
-                                {% heroicon_solid "sparkles" class="inline align-text-top me-1 fill-orange-500" aria_hidden=true %}
-                                {{ next_step.heading }}
+                            <h5 class="flex pb-2 border-b border-b-orange-200">
+                                {% heroicon_solid "sparkles" class="align-text-top me-1 fill-orange-500" aria_hidden=true %}
+                                <span>{{ next_step.heading }}</span>
                             </h5>
                             <p class="">{{ next_step.text }}</p>
                             {% user_next_step_instructions object user as instructions %}

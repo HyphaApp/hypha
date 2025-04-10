@@ -1,4 +1,5 @@
 import logging
+from datetime import date
 
 from django import forms
 from django.apps import apps
@@ -259,8 +260,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         decimal_places=2,
         validators=[MinValueValidator(limit_value=0)],
     )
-    proposed_start = models.DateTimeField(_("Proposed start date"), auto_now_add=True)
-    proposed_end = models.DateTimeField(_("Proposed end date"), null=True)
+    proposed_start = models.DateField(
+        _("Proposed start date"), null=True, default=date.today
+    )
+    proposed_end = models.DateField(_("Proposed end date"), null=True)
 
     status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=DRAFT)
 
