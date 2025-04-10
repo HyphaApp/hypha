@@ -58,8 +58,13 @@
                     {% if request.user.is_apply_staff %}
                         <a
                             class="button button--bottom-space button--primary button--full-width"
-                            href="{% url "apply:projects:reports:edit" pk=report.pk %}">
-                            {% trans "Edit" %}
+                            href="{% url "apply:projects:reports:edit" pk=report.pk %}"
+                        >
+                            {% if object.draft %}
+                                {% trans "Continue editing" %}
+                            {% else %}
+                                {% trans "Edit" %}
+                            {% endif %}
                         </a>
                     {% endif %}
                     {% if report.previous %}
