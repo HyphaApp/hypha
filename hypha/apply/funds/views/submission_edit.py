@@ -468,7 +468,7 @@ class CreateProjectView(View):
         return render(
             self.request,
             "funds/modals/create_project_form.html",
-            context={"form": form, "value": _("Confirm"), "object": self.object},
+            context={"form": form, "value": _("Confirm"), "object": self.submission},
             status=400,
         )
 
