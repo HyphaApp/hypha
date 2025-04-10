@@ -1,6 +1,6 @@
 document.addEventListener("htmx:afterRequest", function () {
   const reportDataEl = document.getElementById("reportData");
-  if (!reportDataEl) {
+  if (!reportDataEl || !reportDataEl.textContent) {
     return;
   }
   const reportData = JSON.parse(reportDataEl.textContent);
@@ -9,6 +9,7 @@ document.addEventListener("htmx:afterRequest", function () {
   const frequencyNumberInput = document.getElementById("id_occurrence");
   const frequencyPeriodSelect = document.getElementById("id_frequency");
   const startDateInput = document.getElementById("id_start");
+  const doesNotRepeatInput = document.getElementById("id_does_not_repeat");
 
   // Form slots
   const projectEndSlot = document.querySelector(".js-project-end-slot");
@@ -23,105 +24,147 @@ document.addEventListener("htmx:afterRequest", function () {
   const nextReportDueSlot = document.querySelector(".js-next-report-due-slot");
 
   /**
-   * Set initial values & setup event listeners
+   * Initialize the report frequency configuration form
+   * Sets up initial values and event listeners
    */
   function init() {
-    // Set on page load
-    setProjectEnd();
+    if (!frequencyNumberInput || !frequencyPeriodSelect || !startDateInput) {
+      return;
+    }
+    // set project end date
+    if (projectEndSlot && reportData.projectEndDate) {
+      projectEndSlot.innerHTML = reportData.projectEndDate;
+    }
     setFrequency();
     setReportPeriodStart();
     setReportPeriod();
 
-    // Add event listeners
     addFrequencyEvents();
     addReportPeriodEvents();
+    setDoesNotRepeat();
   }
 
   /**
-   * Sets the project end date in the form info box
+   * Handles the "Does not repeat" checkbox behavior
+   * Shows/hides frequency inputs based on checkbox state
    */
-  function setProjectEnd() {
-    projectEndSlot.innerHTML = reportData.projectEndDate;
+  function setDoesNotRepeat() {
+    if (!doesNotRepeatInput) {
+      return;
+    }
+    function showHideFrequencyInputs() {
+      const elements = document.querySelectorAll(
+        ".form__group--report-every, .form__group--schedule"
+      );
+      if (doesNotRepeatInput.checked) {
+        elements.forEach((element) => {
+          element.classList.add("!hidden");
+        });
+      } else {
+        elements.forEach((element) => {
+          element.classList.remove("!hidden");
+        });
+      }
+    }
+
+    showHideFrequencyInputs();
+    doesNotRepeatInput.onchange = showHideFrequencyInputs;
   }
 
   /**
-   * Set the reporting frequency
+   * Updates frequency display in the UI
+   * Sets the frequency number and period text
    */
   function setFrequency() {
-    frequencyPeriodSlot.innerHTML = `${frequencyPeriodSlot.value}`;
-    frequencyNumberSlot.innerHTML = frequencyNumberInput.value;
+    if (
+      !frequencyNumberSlot ||
+      !frequencyPeriodSlot ||
+      !frequencyPeriodSelect ||
+      !frequencyNumberInput
+    ) {
+      return;
+    }
+    frequencyPeriodSlot.innerHTML = `${frequencyPeriodSelect.value || ""}`;
+    frequencyNumberSlot.innerHTML = frequencyNumberInput.value || "";
     pluraliseTimePeriod(frequencyNumberInput.value);
   }
 
   /**
-   * Set the reporting period start date
+   * Sets the initial report period start date in the UI
    */
   function setReportPeriodStart() {
-    const startDate = new Date(reportData.startDate);
-    periodStartSlot.innerHTML = startDate.toISOString().slice(0, 10);
+    if (!periodStartSlot || !reportData.startDate) {
+      return;
+    }
+    periodStartSlot.innerHTML = new Date(reportData.startDate)
+      .toISOString()
+      .slice(0, 10);
   }
 
   /**
-   * Set the reporting period
+   * Updates the report period end date and next report due date in the UI
    */
   function setReportPeriod() {
-    // Update the reporting period end date (next report date)
+    if (
+      !periodEndSlot ||
+      !nextReportDueSlot ||
+      !startDateInput ||
+      !startDateInput.value
+    ) {
+      return;
+    }
+
     periodEndSlot.innerHTML = startDateInput.value;
 
-    // Update the reporting period range (next report date - today)
     const daysDiff = dateDiffInDays(new Date(), new Date(startDateInput.value));
-    const weeksAndDays = getWeeks(daysDiff);
-    const { weeks, days } = weeksAndDays;
+    const { weeks, days } = getWeeks(daysDiff);
     const pluraliseWeeks = weeks === 1 ? "" : "s";
     const pluraliseDays = days === 1 ? "" : "s";
 
-    nextReportDueSlot.innerHTML = `
-                ${
-                  weeks > 0 ? `${weeks} week${pluraliseWeeks}` : ""
-                } ${days} day${pluraliseDays}
-            `;
+    nextReportDueSlot.innerHTML = `${
+      weeks > 0 ? `${weeks} week${pluraliseWeeks}` : ""
+    } ${days} day${pluraliseDays}`;
   }
 
   /**
-   * Set report period once start date receives input
+   * Attaches event listeners for report period inputs
    */
   function addReportPeriodEvents() {
-    startDateInput.addEventListener("input", () => {
-      setReportPeriod();
-    });
+    if (startDateInput) {
+      startDateInput.oninput = setReportPeriod;
+    }
   }
 
   /**
-   * Update reporting frequency as the options are changed
+   * Attaches event listeners for frequency inputs
    */
   function addFrequencyEvents() {
-    frequencyNumberInput.addEventListener("input", () => {
-      setFrequency();
-    });
-
-    frequencyPeriodSelect.addEventListener("change", () => {
-      setFrequency();
-    });
+    if (frequencyNumberInput) {
+      frequencyNumberInput.oninput = setFrequency;
+    }
+    if (frequencyPeriodSelect) {
+      frequencyPeriodSelect.onchange = setFrequency;
+    }
   }
 
   /**
-   * Adds an "s" to the frequencyPeriodSelect text if plural, removes "s" otherwise.
-   *
-   * @param {number} number - number to determine plural for
+   * Adds proper pluralization to time period display
+   * @param {string|number} number - The frequency number
    */
   function pluraliseTimePeriod(number) {
-    frequencyPeriodSlot.innerHTML = `${frequencyPeriodSelect.value}${
+    if (!frequencyPeriodSlot || !frequencyPeriodSelect) {
+      return;
+    }
+    frequencyPeriodSlot.innerHTML = `${frequencyPeriodSelect.value || ""}${
       Number(number) === 1 ? "" : "s"
     }`;
   }
 
   /**
-   * Get the difference of days between two dates
-   *
-   * @param {Date} startDate - the subtrahend date
-   * @param {Date} endDate - the minuend date
-   *
-   * @returns {number} Difference of days betwen the given dates
+   * Calculates the difference in days between two dates
+   * @param {Date} startDate - The start date
+   * @param {Date} endDate - The end date
+   * @returns {number} Number of days between dates
    */
   function dateDiffInDays(startDate, endDate) {
     const msPerDay = 1000 * 60 * 60 * 24;
@@ -140,11 +183,9 @@ document.addEventListener("htmx:afterRequest", function () {
   }
 
   /**
-   * Convert days into weeks and days
-   *
-   * @param {number} days - number of days
-   *
-   * @returns {{weeks: number, days: number}} number of weeks & days
+   * Converts days to weeks and remaining days
+   * @param {number} days - Total days
+   * @returns {Object} Object containing weeks and remaining days
    */
   function getWeeks(days) {
     return {
