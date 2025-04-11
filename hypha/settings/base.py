@@ -487,6 +487,13 @@ HIJACK_LOGOUT_REDIRECT_URL = "/account/"
 HIJACK_DECORATOR = "hypha.apply.users.decorators.superuser_decorator"
 HIJACK_PERMISSION_CHECK = "hijack.permissions.superusers_and_staff"
 
+# Redis settings
+
+# Env var used by Heroku to set & update the Redis URL
+REDIS_URL = env.str("REDIS_URL", None)
+
+# Used to set the cert verification mode - needs to be `CERT_REQUIRED`, `CERT_OPTIONAL` or `CERT_NONE`
+REDIS_SSL_CERT_REQS = env.str("REDIS_SSL_CERT_REQS", "CERT_REQUIRED")
 
 # Celery settings
 # Sync by default - set `CELERY_TASK_ALWAYS_EAGER` to false and the celery broker URLs to the configured broker to enabled async
@@ -494,6 +501,15 @@ HIJACK_PERMISSION_CHECK = "hijack.permissions.superusers_and_staff"
 
 CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", None)
 CELERY_RESULT_BACKEND = env.str("CELERY_RESULT_BACKEND", None)
+
+# Logic is somewhat Heroku specific as Heroku's Key-Value Store addon auto sets the REDIS_URL env var.
+# If `CELERY_BROKER_URL` or `CELERY_RESULT_BACKEND` is set, it will ignore `REDIS_URL`
+if REDIS_URL and not (CELERY_BROKER_URL or CELERY_RESULT_BACKEND):
+    cert_param = ""
+    if REDIS_URL.startswith("rediss") and REDIS_SSL_CERT_REQS:
+        cert_param = f"?ssl_cert_reqs={REDIS_SSL_CERT_REQS}"
+    CELERY_BROKER_URL = f"{REDIS_URL}/0{cert_param}"
+    CELERY_RESULT_BACKEND = f"{REDIS_URL}{cert_param}"
 
 CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", True)
 
