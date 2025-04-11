@@ -135,6 +135,32 @@ Good for testing, might not be a good idea in production.
 
 ----
 
+Celery settings for operations such as email/slack sending
+
+When enabled (default), all celery tasks will run synchronously and do not require a broker.
+
+    CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", True)
+
+
+Env var used by Heroku to set & update the Redis URL
+
+    REDIS_URL =  env.str("REDIS_URL", None)
+
+Used to set the TLS cert verification mode - needs to be `CERT_REQUIRED`, `CERT_OPTIONAL` or `CERT_NONE`
+    
+    REDIS_SSL_CERT_REQS = env.str("REDIS_SSL_CERT_REQS", "CERT_REQUIRED")
+
+Used to specify the broker Celery should use, for more info see the [Celery getting started docs](https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html)
+
+    CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", None)
+    CELERY_RESULT_BACKEND = env.str("CELERY_RESULT_BACKEND", None)
+
+!!! note
+
+    If a `REDIS_URL` value is specified it will automatically be set as both `CELERY_BROKER_URL` and `CELERY_RESULT_BACKEND`. This can be overridden by manually setting either `CELERY_BROKER_URL` or `CELERY_RESULT_BACKEND`. `REDIS_URL` & `REDIS_SSL_CERT_REQS` is primarily intended for use with Heroku's Key-Value Store, for more complex TLS needs it is recommend to manually set the result backend and broker url and configure TLS via URL params.
+
+----
+
 Organisation name and e-mail address etc., used in e-mail templates etc.
 
     ORG_EMAIL = env.str('ORG_EMAIL', 'info@example.org')
