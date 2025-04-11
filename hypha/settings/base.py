@@ -510,6 +510,8 @@ if REDIS_URL and not (CELERY_BROKER_URL or CELERY_RESULT_BACKEND):
         cert_param = f"?ssl_cert_reqs={REDIS_SSL_CERT_REQS}"
     CELERY_BROKER_URL = f"{REDIS_URL}/0{cert_param}"
     CELERY_RESULT_BACKEND = f"{REDIS_URL}{cert_param}"
+    os.environ["CELERY_BROKER_URL"] = CELERY_BROKER_URL
+    os.environ["CELERY_RESULT_BACKEND"] = CELERY_RESULT_BACKEND
 
 CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", True)
 
