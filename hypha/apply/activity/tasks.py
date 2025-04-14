@@ -7,7 +7,8 @@ def send_mail(subject, message, from_address, recipients, logs=None):
     if settings.EMAIL_SUBJECT_PREFIX:
         subject = str(settings.EMAIL_SUBJECT_PREFIX) + str(subject)
     # Convenience method to wrap the tasks and handle the callback
-    send_mail_task.apply_async(
+    print("PRE-TASK")
+    task = send_mail_task.apply_async(
         kwargs={
             "subject": subject,
             "body": message,
@@ -16,10 +17,14 @@ def send_mail(subject, message, from_address, recipients, logs=None):
         },
         link=update_message_status.s([log.pk for log in logs]),
     )
+    print("TASK")
+    print(task)
+    print(task.result())
 
 
 @shared_task
 def send_mail_task(**kwargs):
+    print("MAIL TASK")
     response = {"status": "", "id": None}
     email = EmailMessage(**kwargs)
     try:
@@ -41,6 +46,8 @@ def send_mail_task(**kwargs):
 @shared_task
 def update_message_status(response, message_pks):
     from .models import Message
+
+    print("UPDATE STATUS")
 
     messages = Message.objects.filter(pk__in=message_pks)
     messages.update(external_id=response["id"])
