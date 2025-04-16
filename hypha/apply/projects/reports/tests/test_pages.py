@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from hypha.apply.projects.tests.factories import ReportFactory
+from .factories import ReportFactory
 
 
 class TestReportListPage(TestCase):

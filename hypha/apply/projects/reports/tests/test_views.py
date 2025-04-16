@@ -12,17 +12,18 @@ from hypha.apply.projects.models.project import (
     ProjectReportForm,
 )
 from hypha.apply.projects.reports.tests.utils import FORM_FIELDS
-from hypha.apply.projects.tests.factories import (
-    ProjectFactory,
-    ReportConfigFactory,
-    ReportFactory,
-    ReportVersionFactory,
-)
+from hypha.apply.projects.tests.factories import ProjectFactory
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     StaffFactory,
 )
 from hypha.apply.utils.testing.tests import BaseViewTestCase
+
+from .factories import (
+    ReportConfigFactory,
+    ReportFactory,
+    ReportVersionFactory,
+)
 
 
 class TestReportPrivateMedia(BaseViewTestCase):

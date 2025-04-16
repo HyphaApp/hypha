@@ -9,13 +9,11 @@ from hypha.apply.projects.models.project import (
     ProjectReminderFrequency,
     ProjectSettings,
 )
-from hypha.apply.projects.tests.factories import (
-    ProjectFactory,
-    ReportConfigFactory,
-    ReportFactory,
-)
+from hypha.apply.projects.tests.factories import ProjectFactory
 from hypha.home.factories import ApplySiteFactory
 from hypha.home.models import ApplyHomePage
+
+from .factories import ReportConfigFactory, ReportFactory
 
 
 class TestNotifyReportDue(TestCase):

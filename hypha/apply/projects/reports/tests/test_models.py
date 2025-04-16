@@ -3,7 +3,8 @@ from django.test import TestCase
 from django.utils import timezone
 
 from hypha.apply.projects.reports.models import Report, ReportConfig
-from hypha.apply.projects.tests.factories import ReportConfigFactory, ReportFactory
+
+from .factories import ReportConfigFactory, ReportFactory
 
 
 class TestReportConfig(TestCase):
