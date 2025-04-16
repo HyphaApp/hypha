@@ -79,8 +79,8 @@
                     </div>
                 {% endif %}
 
-                {% project_can_have_report object as can_have_reports %}
-                {% if can_have_reports %}
+                {% project_show_reports_section object as show_reports_section %}
+                {% if show_reports_section %}
                     <div class="wrapper wrapper--outer-space-large">
                         {% include "reports/includes/reports.html" %}
                     </div>

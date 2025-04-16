@@ -19,7 +19,7 @@ register = template.Library()
 
 
 @register.simple_tag
-def project_can_have_report(project):
+def project_show_reports_section(project):
     if project.status in [COMPLETE, CLOSING, INVOICING_AND_REPORTING]:
         return True
     return False
