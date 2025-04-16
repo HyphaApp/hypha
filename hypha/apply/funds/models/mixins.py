@@ -1,6 +1,7 @@
-import hashlib
+import json
 
 from django.core.files import File
+from django.core.files.storage import default_storage
 from django.utils.safestring import mark_safe
 from django_file_form.models import PlaceholderUploadedFile
 
@@ -13,7 +14,6 @@ from hypha.apply.stream_forms.blocks import (
     MultiInputCharFieldBlock,
     UploadableMediaBlock,
 )
-from hypha.apply.stream_forms.files import StreamFieldFile
 from hypha.apply.utils.blocks import SingleIncludeMixin
 from hypha.apply.utils.storage import PrivateStorage
 
@@ -98,17 +98,18 @@ class AccessFormData:
     def process_file_data(self, data, latest_existing_data=None):
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
-                new_file = data.get(field.id, [])
+                # check for the new file in uploads data
+                uploaded_files = data.get(field.id + "-uploads", "")
+
                 if latest_existing_data:
                     existing_file = latest_existing_data.get(field.id, [])
                 else:
                     existing_file = None
 
-                # processing files before checking because placeholder files can't be read
-                new_stream_file = self.process_file(self, field, new_file)
-
-                # save only if it is not the same file(s)
-                if not self._is_same_file(existing_file, new_stream_file):
+                # save only if there is any new file
+                if not existing_file or self.have_new_file(uploaded_files):
+                    new_file = data.get(field.id, [])
+                    new_stream_file = self.process_file(self, field, new_file)
                     try:
                         new_stream_file.save()
                     except (AttributeError, FileNotFoundError):
@@ -121,62 +122,18 @@ class AccessFormData:
                 else:
                     self.form_data[field.id] = existing_file
 
-    def _is_same_file(self, existing, new):
-        # Normalize to list for multi-file support
-        if not isinstance(existing, list):
-            existing = [existing]
-        if not isinstance(new, list):
-            new = [new]
-
-        if len(existing) != len(new):
-            return False
-
-        for e, n in zip(existing, new, strict=False):
-            e_file = self._get_file_obj(e)
-            n_file = self._get_file_obj(n)
-            if not e_file or not n_file:
-                return False
-
-            # Compare file names
-            if e_file.name != n_file.name:
-                return False
-
-            # Compare file sizes
-            if e_file.size != n_file.size:
-                return False
-
-            # Compare file hashes(keep it after other checks to avoid checking it for every file)
-            if self._hash_file(e_file) != self._hash_file(n_file):
-                return False
-
-        return True
-
-    def _get_file_obj(self, file_obj):
-        """Returns a file-like object from Wagtail or Django file field, or None."""
+    def have_new_file(self, uploads_data):
         try:
-            if isinstance(file_obj, StreamFieldFile):
-                return file_obj.file
-            if hasattr(file_obj, "file"):
-                return file_obj.file
-            elif hasattr(file_obj, "temporary_file_path"):
-                return open(file_obj.temporary_file_path(), "rb")
-            elif hasattr(file_obj, "read"):
-                return file_obj
-        except Exception:
-            pass
-        return None
+            uploads_data = json.loads(uploads_data)
+        except json.JSONDecodeError:
+            uploads_data = []
 
-    def _hash_file(self, file_obj, chunk_size=4096):
-        """Returns SHA256 hash of a file-like object"""
-        try:
-            file_obj.seek(0)
-            hash_obj = hashlib.sha256()
-            while chunk := file_obj.read(chunk_size):
-                hash_obj.update(chunk)
-            file_obj.seek(0)
-            return hash_obj.hexdigest()
-        except Exception:
-            return None
+        for data in uploads_data:
+            id_from_name = default_storage.generate_filename(data["name"])
+            if id_from_name not in data["id"]:
+                return True
+
+        return False
 
     def extract_files(self):
         files = {}
