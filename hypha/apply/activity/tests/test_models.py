@@ -1,11 +1,8 @@
 from django.test import TestCase
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
-from hypha.apply.projects.tests.factories import (
-    InvoiceFactory,
-    ProjectFactory,
-    ReportFactory,
-)
+from hypha.apply.projects.reports.tests.factories import ReportFactory
+from hypha.apply.projects.tests.factories import InvoiceFactory, ProjectFactory
 
 from ..models import Activity
 from .factories import ActivityFactory, CommentFactory
