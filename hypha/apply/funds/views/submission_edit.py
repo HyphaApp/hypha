@@ -38,7 +38,6 @@ from hypha.apply.determinations.views import (
 )
 from hypha.apply.projects.forms import ProjectCreateForm
 from hypha.apply.projects.models.project import PROJECT_STATUS_CHOICES
-from hypha.apply.stream_forms.blocks import GroupToggleBlock
 from hypha.apply.todo.options import PROJECT_WAITING_PF, PROJECT_WAITING_SOW
 from hypha.apply.todo.views import add_task_to_user
 from hypha.apply.users.decorators import (
@@ -281,9 +280,6 @@ class BaseSubmissionEditView(UpdateView):
         When trying to save as draft, this method will return a version of form
         class that doesn't validate required fields while saving.
 
-        The method also disables any group toggle fields in the form, as they
-        are not supported on edit forms.
-
         Returns:
             class: The form class for the view.
         """
@@ -291,11 +287,6 @@ class BaseSubmissionEditView(UpdateView):
         form_fields = self.object.get_form_fields(
             draft=is_draft, form_data=self.object.raw_data, user=self.request.user
         )
-        field_blocks = self.object.get_defined_fields()
-        for field_block in field_blocks:
-            if isinstance(field_block.block, GroupToggleBlock):
-                # Disable group toggle field as it is not supported on edit forms.
-                form_fields[field_block.id].disabled = True
         return type(
             "WagtailStreamForm", (self.object.submission_form_class,), form_fields
         )
