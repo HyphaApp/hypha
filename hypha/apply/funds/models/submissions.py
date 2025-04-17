@@ -785,15 +785,13 @@ class ApplicationSubmission(
 
         super().save(*args, **kwargs)
 
+        if self.id and not self.public_id:
+            self.public_id = f"{self.get_from_parent('submission_id_prefix')}{self.id}"
+
         # TODO: This functionality should be extracted and moved to a separate function, too hidden here
         if creating:
             AssignedReviewers = apps.get_model("funds", "AssignedReviewers")
             ApplicationRevision = apps.get_model("funds", "ApplicationRevision")
-
-            if not self.public_id:
-                self.public_id = (
-                    f"{self.get_from_parent('submission_id_prefix')}{self.id}"
-                )
 
             self.process_file_data(files)
             AssignedReviewers.objects.bulk_create_reviewers(
