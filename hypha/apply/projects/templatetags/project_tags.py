@@ -251,30 +251,6 @@ def user_next_step_instructions(project, user):
 
 
 @register.simple_tag
-def user_can_update_report_config(project, user):
-    permission, _ = has_permission(
-        "report_config_update", user, object=project, raise_exception=False
-    )
-    return permission
-
-
-@register.simple_tag
-def user_can_update_report(report, user):
-    permission, _ = has_permission(
-        "report_update", user, object=report, raise_exception=False
-    )
-    return permission
-
-
-@register.simple_tag
-def user_can_view_report(report, user):
-    permission, _ = has_permission(
-        "report_view", user, object=report, raise_exception=False
-    )
-    return permission
-
-
-@register.simple_tag
 def project_can_have_contracting_section(project):
     if project.status in [DRAFT, INTERNAL_APPROVAL]:
         return False
