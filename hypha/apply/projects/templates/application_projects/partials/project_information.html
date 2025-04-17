@@ -15,7 +15,19 @@
 </div>
 
 <div>
-    <h5>{% trans "Start date" %}</h5>
+    <h5>
+        {% trans "Start date" %}
+        {% if request.user.is_apply_staff %}
+            <a class="transition-opacity hover:opacity-70 is-active"
+               href="{% url 'apply:projects:project_dates_update' object.submission.id %}"
+               hx-get="{% url 'apply:projects:project_dates_update' object.submission.id %}"
+               hx-target="#htmx-modal"
+            >
+                {% heroicon_solid "pencil-square" class="inline mt-2 align-text-bottom ms-1" aria_hidden=true size=20 %}
+                <span class="sr-only">{% trans "edit dates" %}</span>
+            </a>
+        {% endif %}
+    </h5>
     <p>{{ object.proposed_start|date:"SHORT_DATE_FORMAT"|default:"-" }}</p>
 </div>
 
@@ -28,20 +40,10 @@
                hx-get="{% url 'apply:projects:project_dates_update' object.submission.id %}"
                hx-target="#htmx-modal"
             >
-                {% heroicon_solid "pencil-square" class="inline mt-2 ms-1" aria_hidden=true %}
+                {% heroicon_solid "pencil-square" class="inline mt-2 align-text-bottom ms-1" aria_hidden=true size=20 %}
                 <span class="sr-only">{% trans "edit dates" %}</span>
             </a>
         {% endif %}
     </h5>
     <p>{{ object.proposed_end|date:"SHORT_DATE_FORMAT"|default:"-" }}</p>
 </div>
-
-
-
-
-
-
-
-
-
-
