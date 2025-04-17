@@ -101,13 +101,30 @@ class AccessFormData:
                 # check for the new file in uploads data
                 uploaded_files = data.get(field.id + "-uploads", "")
 
+                try:
+                    uploads_data = json.loads(uploaded_files)
+                except json.JSONDecodeError:
+                    uploads_data = []
+
                 if latest_existing_data:
                     existing_file = latest_existing_data.get(field.id, [])
                 else:
                     existing_file = None
 
+                # handle removed/deleted files
+                uploaded_file_ids = [f["id"] for f in uploads_data if "id" in f]
+
+                if existing_file:
+                    if isinstance(existing_file, list):
+                        existing_file = [
+                            f for f in existing_file if f.name in uploaded_file_ids
+                        ]
+                    else:
+                        if existing_file.name not in uploaded_file_ids:
+                            existing_file = None
+
                 # save only if there is any new file
-                if not existing_file or self.have_new_file(uploaded_files):
+                if not existing_file or self.have_new_file(uploads_data):
                     new_file = data.get(field.id, [])
                     new_stream_file = self.process_file(self, field, new_file)
                     try:
@@ -123,11 +140,6 @@ class AccessFormData:
                     self.form_data[field.id] = existing_file
 
     def have_new_file(self, uploads_data):
-        try:
-            uploads_data = json.loads(uploads_data)
-        except json.JSONDecodeError:
-            uploads_data = []
-
         for data in uploads_data:
             id_from_name = default_storage.generate_filename(data["name"])
             if id_from_name not in data["id"]:
