@@ -21,7 +21,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Cast, Coalesce
+from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
@@ -162,21 +162,6 @@ class ProjectQuerySet(models.QuerySet):
                 )
                 .values("count"),
                 output_field=models.IntegerField(),
-            )
-        )
-
-    def with_start_date(self):
-        return self.annotate(
-            start=Cast(
-                Subquery(
-                    Contract.objects.filter(
-                        project=OuterRef("pk"),
-                    )
-                    .approved()
-                    .order_by("approved_at")
-                    .values("approved_at")[:1]
-                ),
-                models.DateField(),
             )
         )
 
@@ -324,7 +309,9 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return ""  # todo: need to figure out
 
     @classmethod
-    def create_from_submission(cls, submission, lead=None, status=None, end_date=None):
+    def create_from_submission(
+        cls, submission, lead=None, status=None, end_date=None, start_date=None
+    ):
         """
         Create a Project from the given submission.
 
@@ -361,18 +348,9 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             status=status,
             lead=lead if lead else None,
             proposed_end=end_date,
+            proposed_start=start_date,
             value=submission.form_data.get("value", 0),
         )
-
-    @property
-    def start_date(self):
-        # Assume project starts when OTF are happy with the first signed contract
-        first_approved_contract = (
-            self.contracts.approved().order_by("approved_at").first()
-        )
-        if not first_approved_contract:
-            return None
-        return first_approved_contract.approved_at.date()
 
     @property
     def end_date(self):

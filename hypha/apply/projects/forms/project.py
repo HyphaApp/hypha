@@ -1,4 +1,7 @@
+from datetime import date
+
 from django import forms
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Q
 from django.utils.text import slugify
@@ -124,8 +127,22 @@ class ProjectCreateForm(forms.Form):
         lead = self.cleaned_data["project_lead"]
         status = self.cleaned_data["project_initial_status"]
         end_date = self.cleaned_data["project_end"]
+
+        start_date = None
+
+        if not settings.PROJECTS_START_AFTER_CONTRACTING or status in [
+            INVOICING_AND_REPORTING,
+            CLOSING,
+            COMPLETE,
+        ]:
+            start_date = date.today()
+
         return Project.create_from_submission(
-            submission, lead=lead, status=status, end_date=end_date
+            submission,
+            lead=lead,
+            status=status,
+            end_date=end_date,
+            start_date=start_date,
         )
 
 
