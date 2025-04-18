@@ -1,10 +1,6 @@
-from celery import Celery
+from celery import shared_task
 from django.conf import settings
 from django.core.mail import EmailMessage
-
-app = Celery("tasks")
-
-app.config_from_object(settings, namespace="CELERY", force=True)
 
 
 def send_mail(subject, message, from_address, recipients, logs=None):
@@ -22,7 +18,7 @@ def send_mail(subject, message, from_address, recipients, logs=None):
     )
 
 
-@app.task
+@shared_task
 def send_mail_task(**kwargs):
     response = {"status": "", "id": None}
     email = EmailMessage(**kwargs)
@@ -42,7 +38,7 @@ def send_mail_task(**kwargs):
     return response
 
 
-@app.task
+@shared_task
 def update_message_status(response, message_pks):
     from .models import Message
 

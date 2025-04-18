@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
+from hypha.apply.activity import tasks
 from hypha.apply.activity.models import ALL, APPLICANT_PARTNERS, PARTNER
 from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED
 from hypha.apply.projects.templatetags.project_tags import display_project_status
@@ -23,7 +24,6 @@ from hypha.core.mail import (
 )
 
 from ..options import MESSAGES
-from ..tasks import send_mail
 from .base import AdapterBase
 from .utils import (
     get_compliance_email,
@@ -479,6 +479,6 @@ class EmailAdapter(AdapterBase):
             logger.exception(e)
 
         try:
-            send_mail(subject, message, from_email, [recipient], logs=logs)
+            tasks.send_mail(subject, message, from_email, [recipient], logs=logs)
         except Exception as e:
             return "Error: " + str(e)

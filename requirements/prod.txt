@@ -31,6 +31,10 @@ asn1crypto==1.5.1 \
     #   oscrypto
     #   pyhanko
     #   pyhanko-certvalidator
+async-timeout==5.0.1 ; python_full_version < '3.11.3' \
+    --hash=sha256:39e3809566ff85354557ec2398b55e096c8364bacac9405a7a1fa429e77fe76c \
+    --hash=sha256:d9321a7a3d5a6a5e187e824d2fa0793ce379a202935782d555d6e9d2735677d3
+    # via redis
 babel==2.17.0 \
     --hash=sha256:0c54cffb19f690cdcc52a3b50bcbf71e07a808d1c80d549f2459b9d2cf0afb9d \
     --hash=sha256:4d0b53093fdfb4b21c92b5213dba5a1b23885afa8383709427046b21c366e5f2
@@ -1019,6 +1023,10 @@ qrcode==7.4.2 \
     # via
     #   django-two-factor-auth
     #   pyhanko
+redis==5.2.1 \
+    --hash=sha256:16f2e22dff21d5125e8481515e386711a34cbec50f0e44413dd7d9c060a54e0f \
+    --hash=sha256:ee7e1056b9aea0f04c6c2ed59452947f34c4940ee025f5dd83e6a6418b6989e4
+    # via hypha
 reportlab==4.3.1 \
     --hash=sha256:0f37dd16652db3ef84363cf744632a28c38bd480d5bf94683466852d7bb678dd \
     --hash=sha256:230f78b21667194d8490ac9d12958d5c14686352db7fbe03b95140fafdf5aa97
