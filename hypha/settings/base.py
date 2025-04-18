@@ -191,6 +191,8 @@ CONN_HEALTH_CHECKS = env.bool("CONN_HEALTH_CHECKS", True)
 # Make sure the set lang code is included in LANGUAGES setting.
 LANGUAGE_CODE = env.str("LANGUAGE_CODE", "en")
 
+LOCALE_PATHS = (PROJECT_DIR + "/locale",)
+
 # Optional language switcher
 # Set LANGUAGE setting to limit the languages available.
 LANGUAGE_SWITCHER = env.bool("LANGUAGE_SWITCHER", False)
@@ -567,7 +569,7 @@ if env.bool("COOKIE_SECURE", False):
 
 # Django Elevate settings
 # https://django-elevate.readthedocs.io/en/latest/config/index.html
-
+# ------------------------------------------------------------------------------
 # How long should Elevate mode be active for?
 ELEVATE_COOKIE_AGE = env.int("ELEVATE_COOKIE_AGE", 3600)  # 1 hours
 
@@ -575,19 +577,8 @@ ELEVATE_COOKIE_AGE = env.int("ELEVATE_COOKIE_AGE", 3600)  # 1 hours
 ELEVATE_COOKIE_SALT = env.str("ELEVATE_COOKIE_SALT", SECRET_KEY)
 
 
-# Rest Framework settings
-REST_FRAMEWORK = {
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 10,
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-}
-
-
 # django-file-form settings
-
+# ------------------------------------------------------------------------------
 FILE_FORM_CACHE = "django_file_form"
 FILE_FORM_UPLOAD_DIR = "temp_uploads"
 # Ensure FILE_FORM_UPLOAD_DIR exists:
@@ -597,23 +588,11 @@ if env.str("AWS_STORAGE_BUCKET_NAME", None):
     FILE_FORM_TEMP_STORAGE = PRIVATE_FILE_STORAGE
 
 
-# Sage IntAcct integration settings
-
-INTACCT_ENABLED = env.bool("INTACCT_ENABLED", False)
-INTACCT_SENDER_ID = env.str("INTACCT_SENDER_ID", "")
-INTACCT_SENDER_PASSWORD = env.str("INTACCT_SENDER_PASSWORD", "")
-INTACCT_USER_ID = env.str("INTACCT_USER_ID", "")
-INTACCT_COMPANY_ID = env.str("INTACCT_COMPANY_ID", "")
-INTACCT_USER_PASSWORD = env.str("INTACCT_USER_PASSWORD", "")
-
-
 # Misc settings
-
+# ------------------------------------------------------------------------------
 # Use Pillow to create QR codes so they are PNG and not SVG.
 # Apples Safari on iOS and macOS can then recognise them automatically.
 # TWO_FACTOR_QR_FACTORY = 'qrcode.image.pil.PilImage'
-
-LOCALE_PATHS = (PROJECT_DIR + "/locale",)
 
 DEBUG = False
 DEBUGTOOLBAR = False
@@ -628,8 +607,6 @@ COUNTRIES_OVERRIDE = {
     "KV": "Kosovo",
 }
 
-# Google Translate
-ENABLE_GOOGLE_TRANSLATE = env.bool("ENABLE_GOOGLE_TRANSLATE", True)
 
 # Sentry configuration.
 # -----------------------------------------------------------------------------

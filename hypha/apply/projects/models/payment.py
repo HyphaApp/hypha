@@ -1,6 +1,5 @@
 import decimal
 import os
-from textwrap import wrap
 
 from django.conf import settings
 from django.core.validators import MinValueValidator
@@ -141,7 +140,7 @@ class Invoice(models.Model):
     )
     def transition_invoice_to_resubmitted(self):
         """
-        Tranistion invoice to resubmitted status.
+        Transition invoice to resubmitted status.
         This method generally gets used on invoice edit.
         """
         pass
@@ -153,16 +152,6 @@ class Invoice(models.Model):
     @property
     def status_display(self):
         return self.get_status_display()
-
-    @property
-    def vendor_document_number(self):
-        """
-        Vendor document number is a required field to create invoices in IntAcct.
-
-        Formatting should be HP###### i.e. HP000001 and so on.
-        """
-        prefix = "HP-"
-        return prefix + "-".join(wrap(f"{self.id:06}", 3))
 
     def can_user_delete(self, user):
         if user.is_applicant or user.is_apply_staff:
