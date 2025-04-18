@@ -517,6 +517,9 @@ if REDIS_URL and not (CELERY_BROKER_URL or CELERY_RESULT_BACKEND):
 
 CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", True)
 
+# Max connections allowed to Redis - defaulted to 20
+CELERY_REDIS_MAX_CONNECTIONS = env.int("CELERY_REDIS_MAX_CONNECTIONS", 20)
+
 
 # S3 settings
 

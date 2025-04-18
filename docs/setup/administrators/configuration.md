@@ -150,6 +150,10 @@ Used to set the TLS cert verification mode - needs to be `CERT_REQUIRED`, `CERT_
     
     REDIS_SSL_CERT_REQS = env.str("REDIS_SSL_CERT_REQS", "CERT_REQUIRED")
 
+Max connections allowed to Redis - defaulted to 20
+
+    CELERY_REDIS_MAX_CONNECTIONS = env.int("CELERY_REDIS_MAX_CONNECTIONS", 20)
+
 Used to specify the broker Celery should use, for more info see the [Celery getting started docs](https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html)
 
     CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", None)
