@@ -6,6 +6,15 @@ JS_ESM_DIR = ./hypha/static_src/javascript/esm
 PIP := $(shell (command -v uv > /dev/null 2>&1 && echo "uv pip") || (command -v pip > /dev/null 2>&1 && echo "pip"))
 UV_RUN := $(shell (command -v uv > /dev/null 2>&1 && echo "uv run ") || echo "")
 
+
+.PHONY: autoupdate
+autoupdate: ## Update uv, project dependencies and pre-commit hooks
+	uv self update
+	uv lock --upgrade
+	uv run pre-commit autoupdate
+	npm update
+	${MAKE} fmt
+
 .PHONY: help
 help: ## Show this help menu with a list of available commands and their descriptions
 	@echo "\nSpecify a command. The choices are:\n"
