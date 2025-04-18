@@ -59,9 +59,7 @@ class ReportQueryset(models.QuerySet):
             project_start_date=Subquery(
                 Project.objects.filter(
                     pk=OuterRef("project_id"),
-                )
-                .with_start_date()
-                .values("start")[:1]
+                ).values("proposed_start")[:1]
             ),
             start=Case(
                 When(
@@ -176,7 +174,7 @@ class Report(BaseStreamForm, AccessFormData, models.Model):
         if last_report:
             return last_report.end_date + relativedelta(days=1)
 
-        return self.project.start_date
+        return self.project.proposed_start
 
 
 class ReportVersion(BaseStreamForm, AccessFormData, models.Model):
@@ -329,14 +327,14 @@ class ReportConfig(models.Model):
             return None
 
         # Project not started - no reporting required
-        if not self.project.start_date:
+        if not self.project.proposed_start:
             return None
 
         today = timezone.now().date()
 
         last_report = self.last_report()
 
-        schedule_date = self.schedule_start or self.project.start_date
+        schedule_date = self.schedule_start or self.project.proposed_start
 
         if last_report:
             # Frequency is one time and last report exists - no reporting required anymore
