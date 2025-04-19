@@ -17,14 +17,24 @@
         </div>
     </div>
     <div class="wrapper wrapper--medium">
+
         <h2 class="heading">{% trans "This application is sealed until the round is closed" %}</h2>
+
         <h3>{% trans "The round ends on" %}: {{ object.round.specific.end_date }}</h3>
-        <a class="button button--primary" href="{% url 'apply:submissions:overview' %}">{% trans "Go back" %}</a>
+
+        <a class="button button--primary" href="{% url 'apply:submissions:overview' %}">
+            {% trans "Go back" %}
+        </a>
+
         {% if can_view_sealed %}
-            <p>{% trans "As an admin you are allowed to access the application. However, this action will be recorded." %}</p>
+            <p>
+                {% trans "As an admin you are allowed to access the application. However, this action will be recorded." %}
+            </p>
             <form method="post">
                 {% csrf_token %}
-                <button class="button button--warning" type="submit">{% trans "View application" %}</button>
+                <button class="button button--warning" type="submit">
+                    {% trans "View application" %}
+                </button>
             </form>
         {% endif %}
     </div>

@@ -47,10 +47,7 @@
 
     &:hover {
       color: variables.$color--light-blue;
-      background-color: rgba(
-        #fff,
-        0.8
-      );
+      background-color: rgba(#fff, 0.8);
     }
 
     &--alt {
@@ -85,15 +82,6 @@
 
       &:hover {
         background-color: var(--color-bg-default);
-      }
-    }
-
-    &--right {
-      display: none;
-
-      @include mixins.media-query(sm) {
-        display: block;
-        margin-inline-start: auto;
       }
     }
   }

@@ -6,7 +6,6 @@ from hypha.apply.projects import urls as projects_urls
 from hypha.apply.projects.views import ProjectDetailView
 
 from .views import (
-    GroupingApplicationsListView,
     RoundListView,
     SubmissionPrivateMediaView,
     submission_success,
@@ -136,7 +135,6 @@ submission_urls = (
             partial_reviews_decisions,
             name="partial-reviews-decisions",
         ),
-        path("summary/", GroupingApplicationsListView.as_view(), name="summary"),
         path("result/", SubmissionResultView.as_view(), name="result"),
         path(
             "reviews/",
