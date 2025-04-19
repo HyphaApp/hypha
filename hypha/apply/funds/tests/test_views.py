@@ -817,7 +817,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         # Make sure that the ex-role-reviewer is still assigned record
         self.assertCountEqual(submission.reviewers.all(), self.staff[0:2])
 
-    def test_can_be_made_role_and_not_duplciated(self):
+    def test_can_be_made_role_and_not_duplicated(self):
         submission = ApplicationSubmissionFactory()
 
         ReviewFactory(

@@ -197,7 +197,7 @@ LOCALE_PATHS = (PROJECT_DIR + "/locale",)
 # Set LANGUAGE setting to limit the languages available.
 LANGUAGE_SWITCHER = env.bool("LANGUAGE_SWITCHER", False)
 
-# By default only English is activ.
+# By default only English is active.
 # When LANGUAGE_SWITCHER is on we activate all the languages there are complete translations for.
 if LANGUAGE_SWITCHER:
     LANGUAGES = [

@@ -44,7 +44,7 @@ from hypha.apply.utils.blocks import RichTextFieldBlock, SingleIncludeMixin
 
 
 class Command(BaseCommand):
-    help = "Sanitizes the reviews, submissions, and users of identifiable inforamtion"
+    help = "Sanitizes the reviews, submissions, and users of identifiable information"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -119,7 +119,7 @@ class Command(BaseCommand):
                 update_data(self.f.name())
             elif (
                 form_field.value["field_label"].lower()
-                == "ein (for us-based organizations)"
+                == "in (for us-based organizations)"
             ):
                 update_data(self.f.ssn())
             elif form_field.value["field_label"].lower() == "additional contact email":

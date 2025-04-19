@@ -12,7 +12,7 @@ Color was used as the only visual means of conveying information, indicating an 
 #### Visual presentation
 It was noted in the report that the colors of user interface components needed to have more contrast with each other. The contrast of text to background (both for the contrast minimum and contrast enhanced) was increased as a result.
 
-#### Keyboard accessiblity 
+#### Keyboard accessibility 
 The report found that almost all functionality of the content is operable through a keyboard interface, but in order to comply with this requirement 100%, `ContentEditable` (text editor) needs to be made accessible with a keyboard.
 
 #### Name, role, value

@@ -64,7 +64,7 @@ from ..models.payment import (
     CHANGES_REQUESTED_BY_FINANCE,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
-    INVOICE_TRANISTION_TO_RESUBMITTED,
+    INVOICE_TRANSITION_TO_RESUBMITTED,
     Invoice,
 )
 from ..models.project import Project
@@ -361,7 +361,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         response = super().form_valid(form)
 
         if form.cleaned_data:
-            if self.object.status in INVOICE_TRANISTION_TO_RESUBMITTED:
+            if self.object.status in INVOICE_TRANSITION_TO_RESUBMITTED:
                 self.object.transition_invoice_to_resubmitted()
                 self.object.save()
 

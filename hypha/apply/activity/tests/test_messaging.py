@@ -107,7 +107,7 @@ class TestBaseAdapter(AdapterMixin, TestCase):
 
         self.adapter.send_message.assert_not_called()
 
-    def test_calls_method_if_avaliable(self):
+    def test_calls_method_if_available(self):
         method_name = "new_method"
         return_message = "Returned message"
         setattr(self.adapter, method_name, lambda **kw: return_message)

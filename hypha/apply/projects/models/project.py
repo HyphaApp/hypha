@@ -334,7 +334,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             )
             return None
 
-        # OneToOne relations on the targetted model cannot be accessed without
+        # OneToOne relations on the targeted model cannot be accessed without
         # an exception when the relation doesn't exist (is None).  Since we
         # want to fail fast here, we can use hasattr instead.
         if hasattr(submission, "project"):
@@ -483,7 +483,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         Wrapper to expose the pending approval state
 
         We don't want to expose a "Sent for Approval" state to the end User so
-        we infer it from the current status being "Comitted" and the Project
+        we infer it from the current status being "Committed" and the Project
         being locked.
         """
         correct_state = self.status == DRAFT and not self.is_locked
@@ -590,7 +590,7 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
     finance_gp_email = models.TextField("Finance Group Email", null=True, blank=True)
     staff_gp_email = models.TextField("Staff Group Email", null=True, blank=True)
     paf_approval_sequential = models.BooleanField(
-        default=True, help_text="Uncheck it to approve project parallely"
+        default=True, help_text="Uncheck it to approve project parallelly"
     )
 
     panels = [

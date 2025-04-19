@@ -42,7 +42,7 @@ def get_translation_params(
         url: the URL to extract the params from
 
     Returns:
-        tuple: in the format of (\<from langauge\>, \<to language\>)
+        tuple: in the format of (\<from language\>, \<to language\>)
 
     Raises:
         ValueError: If `url`/`request` are not provided OR if both are provided
