@@ -739,6 +739,9 @@ class UploadContractView(ProjectBySubmissionIdMixin, View):
                 self.project.save(update_fields=["status"])
                 old_stage = CONTRACTING
 
+                if settings.PROJECTS_START_AFTER_CONTRACTING:
+                    self.project.proposed_start = datetime.date.today()
+
                 messenger(
                     MESSAGES.PROJECT_TRANSITION,
                     request=self.request,

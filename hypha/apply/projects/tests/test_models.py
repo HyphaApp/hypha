@@ -304,7 +304,9 @@ class TestReportConfig(TestCase):
         # combined => 31th + 1 month = 30th - 1 day = 29th (wrong)
         # separate => 31th - 1 day = 30th + 1 month = 30th (correct)
         next_due = (
-            report.project.start_date - relativedelta(days=1) + relativedelta(months=1)
+            report.project.proposed_start
+            - relativedelta(days=1)
+            + relativedelta(months=1)
         )
         self.assertEqual(Report.objects.count(), 1)
         self.assertEqual(report.end_date, next_due)
