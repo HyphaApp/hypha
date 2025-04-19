@@ -30,7 +30,9 @@
 
             {% with email_context=page.specific %}
                 {% if email_context.confirmation_text_extra %}
-                    <p data-testid="db-confirmation-text-extra">{{ email_context.confirmation_text_extra|urlize }}</p>
+                    <p data-testid="db-confirmation-text-extra">
+                        {{ email_context.confirmation_text_extra|urlize }}
+                    </p>
                 {% endif %}
             {% endwith %}
 

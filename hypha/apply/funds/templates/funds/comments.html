@@ -39,7 +39,7 @@
                     {# is_staff is only used for Django Admin. #}
                     {% if request.user.is_staff %}
                         <a
-                            class="tab__item tab__item--right"
+                            class="hidden md:block tab__item ms-auto"
                             href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}"
                         >
                             {% trans "View message log" %}
