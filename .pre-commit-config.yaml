@@ -80,3 +80,8 @@ repos:
     rev: v8.24.3
     hooks:
       - id: gitleaks
+
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.31.1
+    hooks:
+      - id: typos

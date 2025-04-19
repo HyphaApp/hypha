@@ -1,4 +1,4 @@
-// We use htmx.onLoad() so it will initilise file uploads in htmx dialogs.
+// We use htmx.onLoad() so it will initialise file uploads in htmx dialogs.
 htmx.onLoad(function () {
   // Initialize django-file-form
   document.querySelectorAll("form").forEach(function (form) {

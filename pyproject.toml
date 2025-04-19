@@ -145,3 +145,13 @@ select = [
 
 [tool.ruff.lint.isort]
 known-first-party = ["hypha"]
+
+[tool.typos.files]
+extend-exclude = [
+    ".git/",
+    "*migrations*",
+    "hypha/static_src/javascript/esm/",
+    "*.min.js",
+    "*.po",
+    "*.min.json",
+]

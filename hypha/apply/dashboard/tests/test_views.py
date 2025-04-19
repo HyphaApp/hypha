@@ -83,10 +83,10 @@ class TestStaffDashboard(BaseViewTestCase):
         ApplicationSubmissionFactory(
             status="concept_review_discussion",
             workflow_stages=2,
-            form_data__title="Reviewr",
+            form_data__title="Reviewer",
         )
         response = self.get_page()
-        self.assertNotContains(response, "Reviewr")
+        self.assertNotContains(response, "Reviewer")
 
     def test_waiting_for_review_with_count(self):
         submission = ApplicationSubmissionFactory(

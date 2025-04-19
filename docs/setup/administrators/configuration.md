@@ -42,7 +42,7 @@ Be default Hypha looks for a database with the name "hypha". Set `APP_NAME` to c
 ----
 Language code in standard language id format: en, en-gb, en-us
 
-The corrosponding locale dir is named: en, en_GB, en_US
+The corresponding locale dir is named: en, en_GB, en_US
 
     LANGUAGE_CODE = env.str('LANGUAGE_CODE', 'en')
 

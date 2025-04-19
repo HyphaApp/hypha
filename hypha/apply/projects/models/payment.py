@@ -35,7 +35,7 @@ INVOICE_STATUS_CHOICES = [
 ]
 
 # All invoice statuses that allows invoice to be transition directly to RESUBMITTED.
-INVOICE_TRANISTION_TO_RESUBMITTED = [
+INVOICE_TRANSITION_TO_RESUBMITTED = [
     SUBMITTED,
     RESUBMITTED,
     CHANGES_REQUESTED_BY_STAFF,
@@ -136,7 +136,7 @@ class Invoice(models.Model):
         return _("Invoice requested for {project}").format(project=self.project)
 
     @transition(
-        field=status, source=INVOICE_TRANISTION_TO_RESUBMITTED, target=RESUBMITTED
+        field=status, source=INVOICE_TRANSITION_TO_RESUBMITTED, target=RESUBMITTED
     )
     def transition_invoice_to_resubmitted(self):
         """
@@ -177,7 +177,7 @@ class Invoice(models.Model):
 
     def can_user_change_status(self, user):
         """
-        Check user roles that can tranistion invoice status based on the current status.
+        Check user roles that can transition invoice status based on the current status.
         """
         if not (user.is_contracting or user.is_apply_staff or user.is_finance):
             return False  # Users can't change status
