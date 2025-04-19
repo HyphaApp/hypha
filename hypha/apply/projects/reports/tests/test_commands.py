@@ -5,11 +5,15 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
 
+from hypha.apply.projects.models.project import (
+    ProjectReminderFrequency,
+    ProjectSettings,
+)
+from hypha.apply.projects.tests.factories import ProjectFactory
 from hypha.home.factories import ApplySiteFactory
 from hypha.home.models import ApplyHomePage
 
-from ..models.project import ProjectReminderFrequency, ProjectSettings
-from .factories import ProjectFactory, ReportConfigFactory, ReportFactory
+from .factories import ReportConfigFactory, ReportFactory
 
 
 class TestNotifyReportDue(TestCase):
@@ -40,7 +44,7 @@ class TestNotifyReportDue(TestCase):
             ALLOWED_HOSTS=[ApplyHomePage.objects.first().get_site().hostname]
         ):
             call_command("notify_report_due", stdout=out)
-        self.assertIn("Notified project", out.getvalue())
+        assert "Notified project" in out.getvalue()
 
     def test_dont_notify_report_due_in_7_days_already_submitted(self):
         in_a_week = timezone.now() + relativedelta(days=7)
@@ -57,7 +61,7 @@ class TestNotifyReportDue(TestCase):
             ALLOWED_HOSTS=[ApplyHomePage.objects.first().get_site().hostname]
         ):
             call_command("notify_report_due", stdout=out)
-        self.assertNotIn("Notified project", out.getvalue())
+        assert "Notified project" not in out.getvalue()
 
     def test_dont_notify_already_notified(self):
         in_a_week = timezone.now() + relativedelta(days=7)
@@ -71,16 +75,16 @@ class TestNotifyReportDue(TestCase):
         )
         out = StringIO()
         call_command("notify_report_due", stdout=out)
-        self.assertNotIn("Notified project", out.getvalue())
+        assert "Notified project" not in out.getvalue()
 
     def test_dont_notify_project_not_in_progress(self):
         ProjectFactory()
         out = StringIO()
         call_command("notify_report_due", stdout=out)
-        self.assertNotIn("Notified project", out.getvalue())
+        assert "Notified project" not in out.getvalue()
 
     def test_dont_notify_project_complete(self):
         ProjectFactory(is_complete=True)
         out = StringIO()
         call_command("notify_report_due", stdout=out)
-        self.assertNotIn("Notified project", out.getvalue())
+        assert "Notified project" not in out.getvalue()
