@@ -1,6 +1,19 @@
+"""
+Module for handling project reporting functionality in the Hypha application.
+
+This module provides views and utilities for managing project reports, including
+creating, viewing, updating, and administering reports. It implements access control,
+form handling, and notification systems for the reporting workflow.
+
+Dependencies:
+- Django (including django-filters, django-htmx, django-tables2)
+- Hypha application modules (activity, projects, stream_forms, users, utils)
+"""
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
@@ -9,14 +22,12 @@ from django.views import View
 from django.views.generic import DetailView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from django_filters.views import FilterView
-from django_htmx.http import (
-    HttpResponseClientRefresh,
-)
+from django_htmx.http import HttpResponseClientRefresh
 from django_tables2 import SingleTableMixin
+from rolepermissions.checkers import has_object_permission
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.projects.models import Project
-from hypha.apply.projects.permissions import has_permission
 from hypha.apply.projects.utils import get_placeholder_file
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import staff_or_finance_required, staff_required
@@ -29,7 +40,24 @@ from .tables import ReportingTable, ReportListTable
 
 
 class ReportingMixin:
+    """
+    Mixin that ensures a project has a report configuration.
+
+    If a project is in progress but doesn't have a report_config,
+    this mixin creates one before proceeding with the view.
+    """
+
     def dispatch(self, *args, **kwargs):
+        """
+        Ensure project has a report configuration if it's in progress.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            HttpResponse: The response from the parent class's dispatch method.
+        """
         project = self.get_object()
         if project.is_in_progress:
             if not hasattr(project, "report_config"):
@@ -40,36 +68,53 @@ class ReportingMixin:
 
 @method_decorator(login_required, name="dispatch")
 class ReportAccessMixin(UserPassesTestMixin):
+    """
+    Mixin that controls access to report-related views.
+
+    Allows access to staff members, finance users, and the project owner.
+    """
+
     model = Report
+    permission_denied_message = _("You do not have permission to access this report.")
 
-    def test_func(self):
-        if self.request.user.is_apply_staff:
-            return True
+    def test_func(self) -> bool:
+        """
+        Test whether the current user has access to the report.
 
-        if self.request.user.is_finance:
-            return True
-
-        if self.request.user == self.get_object().project.user:
-            return True
-
-        return False
+        Returns:
+            bool | None: True if user has permission to view the report, False otherwise.
+        """
+        return has_object_permission(
+            "view_report", self.request.user, self.get_object()
+        )
 
 
 @method_decorator(login_required, name="dispatch")
 class ReportDetailView(DetailView):
+    """
+    View for displaying the details of a report.
+    """
+
     model = Report
     template_name = "reports/report_detail.html"
+    permission_denied_message = _("You do not have permission to access this report.")
 
     def dispatch(self, *args, **kwargs):
         report = self.get_object()
-        permission, _ = has_permission(
-            "report_view", self.request.user, object=report, raise_exception=True
-        )
+        if not has_object_permission("view_report", self.request.user, report):
+            raise PermissionDenied(self.permission_denied_message)
         return super().dispatch(*args, **kwargs)
 
 
 @method_decorator(login_required, name="dispatch")
 class ReportUpdateView(BaseStreamForm, UpdateView):
+    """
+    View for updating a report.
+
+    This view handles both creating new reports and editing existing ones.
+    It supports draft saving and manages form field population from existing data.
+    """
+
     model = Report
     # Values for `object`, `form_class`, and `form_fields` are set during `dispatch` and functions it calls.
     object = None
@@ -77,19 +122,42 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
     form_fields = None
     submission_form_class = ReportEditForm
     template_name = "reports/report_form.html"
+    permission_denied_message = _("You do not have permission to update this report.")
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        Set up the report object and check permissions before proceeding.
+
+        Args:
+            request: The HttpRequest object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            HttpResponse: The response from the parent class's dispatch method.
+
+        Raises:
+            PermissionDenied: If user doesn't have 'report_update' permission.
+        """
         report = self.get_object()
-        permission, _ = has_permission(
-            "report_update", self.request.user, object=report, raise_exception=True
-        )
         self.object = report
+        if not has_object_permission("update_report", self.request.user, report):
+            raise PermissionDenied(self.permission_denied_message)
         # super().dispatch calls get_context_data() which calls the rest to get the form fully ready for use.
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         """
+        Prepare the context data for the template.
+
         Django note: super().dispatch calls get_context_data.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            dict: The context data dictionary.
         """
         # Is this where we need to get the associated form fields? Not in the form itself but up here? Yes. But in a
         # roundabout way: get_form (here) gets fields and calls get_form_class (here) which calls get_form_fields
@@ -106,6 +174,18 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
         return context_data
 
     def get_form(self, form_class=None, draft=False):
+        """
+        Return an instance of the form to be used in this view.
+
+        Handles setting up form fields based on the report configuration or previous data.
+
+        Args:
+            form_class: The form class to use, if not using the default.
+            draft: Boolean indicating if this is a draft form.
+
+        Returns:
+            Form: An instance of the form to be used.
+        """
         if self.object.current is None or self.object.form_fields is None:
             # Here is where we get the form_fields, the ProjectReportForm associated with the Fund:
             report_form = (
@@ -124,6 +204,15 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
         return report_instance
 
     def get_initial(self):
+        """
+        Get initial data for the form.
+
+        Populates the form with existing data from draft or current report version.
+        Handles file fields specially to properly display them.
+
+        Returns:
+            dict: Initial data for the form.
+        """
         initial = {}
         if self.object.draft:
             current = self.object.draft
@@ -142,14 +231,34 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
 
         return initial
 
-    def get_form_kwargs(self):
-        form_kwargs = {
-            "user": self.request.user,
-            **super().get_form_kwargs(),
-        }
-        return form_kwargs
+    def get_form_kwargs(self) -> dict:
+        """
+        Get the keyword arguments for instantiating the form.
+
+        Adds the current user to the form kwargs.
+
+        Returns:
+            dict: The keyword arguments for the form.
+        """
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
     def post(self, request, *args, **kwargs):
+        """
+        Handle POST requests: instantiate a form instance with the passed
+        POST variables and then check if it's valid.
+
+        Handles saving drafts, form validation, and sending notifications.
+
+        Args:
+            request: The HttpRequest object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            HttpResponse: Redirect to success URL or redisplay form if invalid.
+        """
         save_draft = "save" in request.POST  # clicked on save button?
         form = self.get_form(draft=save_draft)
         if form.is_valid():
@@ -178,12 +287,18 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
             response = self.form_invalid(form)
         return response
 
-    def get_success_url(self):
-        success_url = self.object.project.get_absolute_url()
-        return success_url
+    def get_success_url(self) -> str:
+        return self.object.project.get_absolute_url()
 
 
 class ReportPrivateMedia(ReportAccessMixin, PrivateMediaView):
+    """
+    View for handling private media files attached to reports.
+
+    Ensures proper access control and redirects users to the latest report version
+    if they try to access an outdated document.
+    """
+
     def dispatch(self, *args, **kwargs):
         report_pk = self.kwargs["pk"]
         self.report = get_object_or_404(Report, pk=report_pk)
@@ -205,9 +320,26 @@ class ReportPrivateMedia(ReportAccessMixin, PrivateMediaView):
 
 @method_decorator(staff_required, name="dispatch")
 class ReportSkipView(SingleObjectMixin, View):
+    """
+    View for marking a report as skipped.
+
+    Only staff can skip reports, and only unsubmitted reports that aren't
+    the current due report can be skipped.
+    """
+
     model = Report
 
     def post(self, *args, **kwargs):
+        """
+        Handle POST requests to toggle the skipped status of a report.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            HttpResponseClientRefresh: A response that refreshes the client.
+        """
         report = self.get_object()
         unsubmitted = not report.current
         not_current = report.project.report_config.current_due_report() != report
@@ -226,16 +358,48 @@ class ReportSkipView(SingleObjectMixin, View):
 
 @method_decorator(staff_required, name="dispatch")
 class ReportFrequencyUpdate(View):
+    """
+    View for updating the reporting frequency configuration for a project.
+
+    Allows staff to set when reports are due and to enable/disable reporting
+    for a project.
+    """
+
     form_class = ReportFrequencyForm
     model = ReportConfig
     template_name = "reports/modals/report_frequency_config.html"
+    permission_denied_message = _(
+        "You do not have permission to update reporting configurations."
+    )
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        Set up the project and report configuration objects.
+
+        Args:
+            request: The HttpRequest object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            HttpResponse: The response from the parent class's dispatch method.
+        """
         self.project = get_object_or_404(Project, submission__id=kwargs.get("pk"))
+        if not has_object_permission(
+            "update_report_config", self.request.user, self.project
+        ):
+            raise PermissionDenied(self.permission_denied_message)
         self.object = self.project.report_config
         return super().dispatch(request, *args, **kwargs)
 
     def get_due_report_data(self):
+        """
+        Get data about the current due report for the project.
+
+        Returns:
+            dict: Data containing start date and project end date if reporting is enabled,
+                  empty dict otherwise.
+        """
         report_data = {}
         if not self.object.disable_reporting:
             project_end_date = self.project.end_date
@@ -247,6 +411,16 @@ class ReportFrequencyUpdate(View):
         return report_data
 
     def get(self, *args, **kwargs):
+        """
+        Handle GET requests to display the form.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            HttpResponse: Rendered template with form and context data.
+        """
         form = self.get_form()
         report_data = self.get_due_report_data()
 
@@ -261,6 +435,17 @@ class ReportFrequencyUpdate(View):
         )
 
     def get_form_kwargs(self, **kwargs):
+        """
+        Get the keyword arguments for instantiating the form.
+
+        Sets initial start date based on current reporting configuration.
+
+        Args:
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            dict: The keyword arguments for the form.
+        """
         kwargs = kwargs or {}
         kwargs["instance"] = self.object
         if not self.object.disable_reporting:
@@ -287,6 +472,16 @@ class ReportFrequencyUpdate(View):
         return None
 
     def post(self, *args, **kwargs):
+        """
+        Handle POST requests to update reporting configuration.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            HttpResponse: Client refresh response or form with errors.
+        """
         form = self.get_form(self.request.POST)
         if form.is_valid():
             if "disable-reporting" in self.request.POST:
@@ -321,6 +516,12 @@ class ReportFrequencyUpdate(View):
 
 @method_decorator(staff_or_finance_required, name="dispatch")
 class ReportListView(SingleTableMixin, FilterView):
+    """
+    View for displaying a table of submitted reports.
+
+    Only accessible to staff and finance users.
+    """
+
     queryset = Report.objects.submitted().for_table()
     filterset_class = ReportListFilter
     table_class = ReportListTable
@@ -329,6 +530,12 @@ class ReportListView(SingleTableMixin, FilterView):
 
 @method_decorator(staff_or_finance_required, name="dispatch")
 class ReportingView(SingleTableMixin, FilterView):
+    """
+    View for displaying a table of projects with reporting information.
+
+    Only accessible to staff and finance users.
+    """
+
     queryset = Project.objects.for_reporting_table()
     filterset_class = ReportingFilter
     table_class = ReportingTable
