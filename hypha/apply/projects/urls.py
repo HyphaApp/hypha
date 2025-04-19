@@ -43,9 +43,11 @@ from .views import (
     partial_get_invoice_detail_actions,
     partial_get_invoice_status,
     partial_get_invoice_status_table,
+    partial_project_information,
     partial_project_lead,
     partial_project_title,
     partial_supporting_documents,
+    update_project_dates,
     update_project_title,
 )
 
@@ -76,6 +78,11 @@ urlpatterns = [
                 ),
                 path("partial/lead/", partial_project_lead, name="project_lead"),
                 path("partial/title/", partial_project_title, name="project_title"),
+                path(
+                    "partial/information/",
+                    partial_project_information,
+                    name="project_information",
+                ),
                 path("lead/update/", UpdateLeadView.as_view(), name="lead_update"),
                 path(
                     "status/update/",
@@ -86,6 +93,11 @@ urlpatterns = [
                     "title/update/",
                     update_project_title,
                     name="project_title_update",
+                ),
+                path(
+                    "dates/update/",
+                    update_project_dates,
+                    name="project_dates_update",
                 ),
                 path(
                     "edit/project-form", ProjectFormEditView.as_view(), name="edit_pf"

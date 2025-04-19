@@ -85,6 +85,8 @@ ORG_LONG_NAME = env.str("ORG_LONG_NAME", "Acme Corporation")
 ORG_SHORT_NAME = env.str("ORG_SHORT_NAME", "ACME")
 ORG_URL = env.str("ORG_URL", "https://www.example.org/")
 
+# Project settings.
+
 # Enable Projects in Hypha. Contracts and invoicing that comes after a submission is approved.
 PROJECTS_ENABLED = env.bool("PROJECTS_ENABLED", False)
 
@@ -94,6 +96,9 @@ PROJECTS_AUTO_CREATE = env.bool("PROJECTS_AUTO_CREATE", False)
 # Default status for projects, must be a string literal of "draft" (default), "contracting", "invoicing_and_reporting" or "closing"
 # Will be used for auto-create or be the default selection in the project creation form
 PROJECTS_DEFAULT_STATUS = env.str("PROJECTS_DEFAULT_STATUS", "draft")
+
+# When enabled, the project start date will be set and displayed after the contracting phase, if disabled it is set on project creation
+PROJECTS_START_AFTER_CONTRACTING = env.bool("PROJECTS_START_AFTER_CONTRACTING", True)
 
 # Send out e-mail, slack messages etc. from Hypha. Set to true for production.
 SEND_MESSAGES = env.bool("SEND_MESSAGES", False)
@@ -165,8 +170,6 @@ REVIEW_VISIBILITY_DEFAULT = env.str("REVIEW_VISIBILITY_DEFAULT", "private")
 
 # Require an applicant to view their rendered application before submitting
 SUBMISSION_PREVIEW_REQUIRED = env.bool("SUBMISSION_PREVIEW_REQUIRED", True)
-
-# Project settings.
 
 # SECRET_KEY is required
 SECRET_KEY = env.str("SECRET_KEY", None)

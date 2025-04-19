@@ -329,6 +329,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
                 "project_create_form": "",
                 "project_lead": self.user.id,
                 "project_initial_status": CONTRACTING,
+                "project_end": timezone.now().date(),
                 "submission": self.submission.id,
             },
             view_name="create_project",
