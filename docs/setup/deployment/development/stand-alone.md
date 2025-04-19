@@ -90,9 +90,9 @@ NOTE: In production media is stored on AWS S3 but for local development you need
 uv sync
 ```
 
-This vill create a `.venv` directory (if it does not exist) and install all python dependencies there.
+This will create a `.venv` directory (if it does not exist) and install all python dependencies there.
 
-All `uv …` commands will automatically use this virtual envionment.
+All `uv …` commands will automatically use this virtual environment.
 
 If you want other commands to use it you need to run this command to activate it.
 

@@ -53,7 +53,7 @@ To start the docker containers you use the "up --watch" command. This command yo
 docker compose --file docker/compose.yaml  up --watch
 ```
 
-This will run "npm watch" as well as the "runserver_plus". All code changes to hypha will be synced in to the conatiner thanks to the docker watch functionality.
+This will run "npm watch" as well as the "runserver_plus". All code changes to hypha will be synced in to the container thanks to the docker watch functionality.
 
 ### Access the docker environment
 

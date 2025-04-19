@@ -16,7 +16,7 @@ We use pull requests for all changes. No commits are done directly in to the mai
 
 ### Creating a new branch from main
 
-First check out main and do a git pull ot get all the latest updates.
+First check out main and do a git pull to get all the latest updates.
 
 Then create a new branch and do a checkout of it.
 

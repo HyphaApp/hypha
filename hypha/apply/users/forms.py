@@ -106,9 +106,9 @@ class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
 
     @classmethod
     def get_group_mmcf(
-        cls, model_mulitple_choice_field: forms.ModelMultipleChoiceField
+        cls, model_multiple_choice_field: forms.ModelMultipleChoiceField
     ):  # Handle the insertion of group help text
-        group_field_dict = model_mulitple_choice_field.__dict__
+        group_field_dict = model_multiple_choice_field.__dict__
         queryset = group_field_dict[
             "_queryset"
         ]  # Pull the queryset form the group field

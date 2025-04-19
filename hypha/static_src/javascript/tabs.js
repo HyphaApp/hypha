@@ -115,7 +115,7 @@
       const tabContentId = $(tab).closest(".js-tabs").data("tabs");
       const parents = $(`.js-tabs-content[data-tabs=${tabContentId}]`);
 
-      // add active classes to tabs and their respecitve content
+      // add active classes to tabs and their respective content
       tab.classList.add(this.tabActiveClass);
       $(parents).find(`#${tabId}`).addClass(this.tabContentActiveClass);
     }
