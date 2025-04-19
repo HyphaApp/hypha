@@ -1,7 +1,7 @@
 (function () {
   const form = document.querySelector(".application-form");
   const links = form.querySelectorAll("a");
-  const button = form.querySelector("[type=submit]");
+  const submitButtons = form.querySelectorAll("[type=submit]");
   const required = form.querySelectorAll("input[required]");
   const groups = form.querySelectorAll(".form__group");
   const errors = form.querySelectorAll(".form__error");
@@ -51,12 +51,24 @@
 
   // Block multiple form submits.
   form.addEventListener("submit", function () {
-    button.setAttribute("disabled", "disabled");
+    // Use setTimeout with 0 delay to ensure form submission begins
+    // before the buttons are disabled, allowing their values to be included
+    setTimeout(function () {
+      submitButtons.forEach(function (button) {
+        button.setAttribute("disabled", "disabled");
+        if (button.textContent) {
+          button.dataset.originalText = button.textContent;
+          button.textContent = "Submitting...";
+        }
+      });
+    }, 0);
   });
 
   const unlockApplicationForm = function () {
     form.setAttribute("action", "");
-    button.removeAttribute("disabled");
+    submitButtons.forEach(function (button) {
+      button.removeAttribute("disabled");
+    });
   };
 
   // Unlock form on
@@ -65,9 +77,11 @@
   // 3. tab or enter key pressed
   document.body.addEventListener("mousemove", unlockApplicationForm, {
     once: true,
+    passive: true,
   });
   document.body.addEventListener("touchmove", unlockApplicationForm, {
     once: true,
+    passive: true,
   });
   document.body.addEventListener(
     "keydown",
@@ -76,6 +90,6 @@
         unlockApplicationForm();
       }
     },
-    { once: true }
+    { once: true, passive: true }
   );
 })();
