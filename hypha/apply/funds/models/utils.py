@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -25,6 +26,8 @@ from hypha.apply.users.roles import (
 )
 
 from ..workflows import DRAFT_STATE, WORKFLOWS
+
+User = get_user_model()
 
 REVIEW_GROUPS = [
     STAFF_GROUP_NAME,
@@ -200,3 +203,50 @@ class EmailForm(AbstractEmailForm):
     ]
 
     email_tab = ObjectList(email_confirmation_panels, heading=_("Confirmation email"))
+
+
+class SubmissionCoApplicantRole(models.Model):
+    code = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class SubmissionCoApplicantInviteStatus(models.TextChoices):
+    PENDING = "pending", "Pending"
+    ACCEPTED = "accepted", "Accepted"
+    REJECTED = "rejected", "Rejected"
+    EXPIRED = "expired", "Expired"
+
+
+class SubmissionCoApplicant(models.Model):
+    submission = models.ForeignKey(
+        "funds.ApplicationSubmission",
+        on_delete=models.CASCADE,
+        related_name="co-applicants",
+    )
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="co-applicants"
+    )
+    role = models.ManyToManyField(
+        SubmissionCoApplicantRole, related_name="co-applicants"
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=SubmissionCoApplicantInviteStatus.choices,
+        default=SubmissionCoApplicantInviteStatus.PENDING,
+    )
+    # invited_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="co-applicant_invites")
+    invited_on = models.DateTimeField(auto_now_add=True)
+    responded_on = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ("submission", "user")
+
+    def __str__(self):
+        return (
+            f"{self.user} invited to {self.submission} as {self.role} ({self.status})"
+        )
