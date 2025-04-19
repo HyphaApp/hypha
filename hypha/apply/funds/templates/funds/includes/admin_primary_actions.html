@@ -47,9 +47,7 @@
                 <a
                     class="button button--primary button--full-width button--bottom-space"
                     href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}"
-                >
-                    {% trans "View determination" %}
-                </a>
+                >{% trans "View determination" %}</a>
             {% endif %}
         {% endwith %}
     {% endif %}
