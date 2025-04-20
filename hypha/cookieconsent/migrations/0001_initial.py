@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 (
                     "cookieconsent_active",
                     models.BooleanField(
-                        default=False, verbose_name="Activate cookie concent feature"
+                        default=False, verbose_name="Activate cookie consent feature"
                     ),
                 ),
                 (
@@ -36,14 +36,14 @@ class Migration(migrations.Migration):
                     models.CharField(
                         default="Your cookie settings",
                         max_length=255,
-                        verbose_name="cookie concent title",
+                        verbose_name="cookie consent title",
                     ),
                 ),
                 (
                     "cookieconsent_message",
                     wagtail.fields.RichTextField(
                         default='<p>This website deploys cookies for basic functionality and to keep it secure. These cookies are strictly necessary. Optional analysis cookies which provide us with statistical information about the use of the website may also be deployed, but only with your consent. Please review our <a href="/data-privacy-policy/">Privacy &amp; Data Policy</a> for more information.</p>',
-                        verbose_name="cookie concent message",
+                        verbose_name="cookie consent message",
                     ),
                 ),
                 (
