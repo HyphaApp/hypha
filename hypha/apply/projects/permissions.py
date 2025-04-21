@@ -4,7 +4,7 @@ from rolepermissions.permissions import register_object_checker
 
 from hypha.apply.activity.adapters.utils import get_users_for_groups
 from hypha.apply.users.models import User
-from hypha.apply.users.roles import Staff, StaffAdmin
+from hypha.apply.users.roles import Staff
 
 from .models.project import (
     CLOSING,
@@ -284,52 +284,6 @@ def can_update_project_status(user, project, **kwargs):
     return False, "Forbidden Error"
 
 
-def can_update_report(user, report, **kwargs):
-    if not user.is_authenticated:
-        return False, "Login Required"
-    if report.project.status != INVOICING_AND_REPORTING:
-        return False, "Report can be updated only in Invoicing and reporting state"
-    if report.skipped:
-        return False, "Skipped reports are not editable"
-    if not report.can_submit:
-        return False, "Future reports are not editable"
-
-    if user.is_apply_staff or (user == report.project.user and not report.current):
-        return True, "Staff and Project Owner can edit the editable reports"
-
-    return False, "Forbidden Error"
-
-
-def can_update_report_config(user, project, **kwargs):
-    if not user.is_authenticated:
-        return False, "Login Required"
-    if project.status != INVOICING_AND_REPORTING:
-        return (
-            False,
-            "Report Config can be changed only in Invoicing and reporting state",
-        )
-    if user.is_apply_staff:
-        return (
-            True,
-            "Only Staff can update report config for Invoicing and reporting projects",
-        )
-    return False, "Forbidden Error"
-
-
-def can_view_report(user, report, **kwargs):
-    if not user.is_authenticated:
-        return False, "Login Required"
-    if report.project.status not in [COMPLETE, CLOSING, INVOICING_AND_REPORTING]:
-        return False, "Report are not available at this state"
-    if not report.current:
-        return False, "Only current reports can be viewed"
-    if report.skipped:
-        return False, "Skipped reports are not available"
-    if user.is_apply_staff or user.is_finance or user == report.project.user:
-        return True, "Staff, Finance, and Project owner can view the report"
-    return False, "Forbidden Error"
-
-
 def can_access_project(user, project):
     if not user.is_authenticated:
         return False, "Login Required"
@@ -399,17 +353,6 @@ def upload_project_documents(role, user, project) -> bool:
     return False
 
 
-@register_object_checker()
-def update_project_report(role, user, project) -> bool:
-    if not user.is_authenticated:
-        return False
-    if project.status != INVOICING_AND_REPORTING:
-        return False
-    if role == StaffAdmin or user == project.user:
-        return True
-    return False
-
-
 permissions_map = {
     "contract_approve": can_approve_contract,
     "contract_upload": can_upload_contract,
@@ -418,9 +361,6 @@ permissions_map = {
     "paf_approvers_assign": can_assign_paf_approvers,
     "update_paf_assigned_approvers": can_update_assigned_paf_approvers,  # Permission for UpdateAssignApproversView
     "project_status_update": can_update_project_status,
-    "report_update": can_update_report,
-    "report_config_update": can_update_report_config,
-    "report_view": can_view_report,
     "submit_contract_documents": can_submit_contract_documents,
     "project_access": can_access_project,
     "paf_edit": can_edit_paf,
