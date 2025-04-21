@@ -70,6 +70,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.REPORT_NOTIFY: "messages/email/report_notify.html",
         MESSAGES.REVIEW_REMINDER: "messages/email/ready_to_review.html",
         MESSAGES.PROJECT_TRANSITION: "handle_project_transition",
+        MESSAGES.UPDATED_AUTHOR: "messages/email/author_updated.html",
     }
 
     def get_subject(self, message_type, source):

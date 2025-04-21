@@ -1,0 +1,37 @@
+{% load i18n static %}
+{% modal_title %}{% trans "Update Author" %}{% endmodal_title %}
+
+<form
+    class="p-4 form"
+    id="author_form"
+    hx-target="this"
+    hx-swap="outerHTML"
+    method="POST"
+    hx-post="{% url 'funds:submissions:change_author' pk=object.pk %}"
+>
+    <div>
+        <dl class="mb-4">
+            <dt class="font-semibold">{% trans "Current Author" %}</dt>
+            <dd class="truncate">{{ object.user }} &lt;{{object.user.email}}&gt;</dd>
+        </dl>
+    </div>
+
+    {% url 'funds:submissions:change_author' pk=object.pk as author_update_url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value %}
+</form>
+
+
+<script type="module">
+    {% comment %} Do this here as the select elements for partners are dynamically generated. {% endcomment %}
+    import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+
+    const selectElements = document.querySelectorAll('#author_form select');
+
+    // add choices to all select elements
+    selectElements.forEach((selectElement) => {
+        new Choices(selectElement, {
+            removeItemButton: true,
+            allowHTML: true,
+        });
+    });
+</script>
