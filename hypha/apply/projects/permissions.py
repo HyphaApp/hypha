@@ -316,22 +316,6 @@ def can_update_report_config(user, project, **kwargs):
     return False, "Forbidden Error"
 
 
-def can_update_project_reports(user, project, **kwargs):
-    if not user.is_authenticated:
-        return False, "Login Required"
-    if project.status != INVOICING_AND_REPORTING:
-        return (
-            False,
-            "Report Config can be changed only in Invoicing and reporting state",
-        )
-    if user.is_apply_staff or user == project.user:
-        return (
-            True,
-            "Only Staff and project owner can update report config for Invoicing and reporting projects",
-        )
-    return False, "Forbidden Error"
-
-
 def can_view_report(user, report, **kwargs):
     if not user.is_authenticated:
         return False, "Login Required"
