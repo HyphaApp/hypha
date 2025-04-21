@@ -27,7 +27,6 @@ from django.db.models.functions import Cast
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.functional import cached_property
 from django.utils.html import strip_tags
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -605,11 +604,11 @@ class ApplicationSubmission(
             # We are a lab submission
             return getattr(self.page.specific, attribute)
 
-    @cached_property
+    @property
     def fund_name(self):
         return self.page
 
-    @cached_property
+    @property
     def application_id(self):
         return self.public_id or self.id
 
@@ -785,15 +784,13 @@ class ApplicationSubmission(
 
         super().save(*args, **kwargs)
 
+        if self.id and not self.public_id:
+            self.public_id = f"{self.get_from_parent('submission_id_prefix')}{self.id}"
+
         # TODO: This functionality should be extracted and moved to a separate function, too hidden here
         if creating:
             AssignedReviewers = apps.get_model("funds", "AssignedReviewers")
             ApplicationRevision = apps.get_model("funds", "ApplicationRevision")
-
-            if not self.public_id:
-                self.public_id = (
-                    f"{self.get_from_parent('submission_id_prefix')}{self.id}"
-                )
 
             self.process_file_data(files)
             AssignedReviewers.objects.bulk_create_reviewers(
