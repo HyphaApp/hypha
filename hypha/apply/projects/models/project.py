@@ -358,7 +358,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         # If still ongoing assume today is the end
         if self.proposed_end:
             return max(
-                self.proposed_end.date(),
+                self.proposed_end,
                 timezone.now().date(),
             )
         return timezone.now().date()

@@ -741,6 +741,7 @@ class UploadContractView(ProjectBySubmissionIdMixin, View):
 
                 if settings.PROJECTS_START_AFTER_CONTRACTING:
                     self.project.proposed_start = datetime.date.today()
+                    self.project.save()
 
                 messenger(
                     MESSAGES.PROJECT_TRANSITION,

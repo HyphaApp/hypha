@@ -1,4 +1,4 @@
-{% load i18n heroicons %}
+{% load i18n heroicons project_tags %}
 
 <div>
     <h5>{% trans "Contractor" %}</h5>
@@ -15,9 +15,10 @@
 </div>
 
 <div>
+    {% show_start_date object as show_start %}
     <h5>
         {% trans "Start date" %}
-        {% if request.user.is_apply_staff %}
+        {% if request.user.is_apply_staff and show_start %}
             <a class="transition-opacity hover:opacity-70 is-active"
                href="{% url 'apply:projects:project_dates_update' object.submission.id %}"
                hx-get="{% url 'apply:projects:project_dates_update' object.submission.id %}"
@@ -28,7 +29,13 @@
             </a>
         {% endif %}
     </h5>
-    <p>{{ object.proposed_start|date:"SHORT_DATE_FORMAT"|default:"-" }}</p>
+    <p {% if not show_start %} class="text-gray-400"{% endif %}>
+        {% if show_start %}
+            {{ object.proposed_start|date:"SHORT_DATE_FORMAT"|default:"-" }}
+        {% else %}
+            {% trans "Awaiting contract finalization..." %}
+        {% endif %}
+    </p>
 </div>
 
 <div>

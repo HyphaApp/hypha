@@ -341,3 +341,12 @@ def display_project_status(project, user):
     if user.is_apply_staff or user.is_contracting or user.is_finance:
         return project.status_display
     return get_project_public_status(project_status=project.status)
+
+
+@register.simple_tag
+def show_start_date(project) -> bool:
+    return not settings.PROJECTS_START_AFTER_CONTRACTING or project.status in [
+        INVOICING_AND_REPORTING,
+        CLOSING,
+        COMPLETE,
+    ]
