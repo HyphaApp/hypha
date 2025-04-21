@@ -2,7 +2,10 @@
 {% load i18n static workflow_tags review_tags determination_tags translate_tags heroicons %}
 
 {% block sidebar_top %}
-    <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions" data-testid="sidebar-primary-actions">
+    <div
+        class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions"
+        data-testid="sidebar-primary-actions"
+    >
         {% include "funds/includes/admin_primary_actions.html" %}
     </div>
 {% endblock %}
@@ -19,7 +22,11 @@
     <div class="sidebar__inner">
         <h5>{% trans "Reviews & assignees" %}</h5>
 
-        <div hx-trigger="revealed, reviewerUpdated from:body" hx-get="{% url "funds:submissions:partial-reviews-card" object.id %}" hx-target="this">
+        <div
+            hx-trigger="revealed, reviewerUpdated from:body"
+            hx-get="{% url 'funds:submissions:partial-reviews-card' object.id %}"
+            hx-target="this"
+        >
             <div class="animate-pulse min-h-30">
                 <div class="mb-3 w-full h-9 bg-gray-200"></div>
                 <div class="mb-1 w-full h-6 bg-gray-200"></div>
@@ -31,7 +38,12 @@
         <div class="gap-4 wrapper wrapper--sidebar-buttons">
             {% include 'review/includes/review_button.html' with submission=object class="button--half-width" %}
             {% if request.user.is_apply_staff and object.reviews.exists %}
-                <a href="{% url 'apply:submissions:reviews:list' submission_pk=object.id %}" class="button button--white button--half-width">{% trans "View all" %}</a>
+                <a
+                    href="{% url 'apply:submissions:reviews:list' submission_pk=object.id %}"
+                    class="button button--white button--half-width"
+                >
+                    {% trans "View all" %}
+                </a>
             {% endif %}
         </div>
     </div>
@@ -76,7 +88,11 @@
             </button>
         </div>
 
-        <div hx-trigger="load, remindersUpdated from:body" hx-get="{% url "funds:submissions:partial-reminder-card" object.id %}" hx-target="this">
+        <div
+            hx-trigger="load, remindersUpdated from:body"
+            hx-get="{% url 'funds:submissions:partial-reminder-card' object.id %}"
+            hx-target="this"
+        >
             <div class="animate-pulse min-h-30">
                 <div class="mb-3 w-full h-9 bg-gray-200"></div>
                 <div class="mb-1 w-full h-6 bg-gray-200"></div>

@@ -43,7 +43,10 @@
 
                     {# is_staff is only used for Django Admin. #}
                     {% if request.user.is_staff %}
-                        <a class="tab__item tab__item--right js-tabs-off" href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}">
+                        <a
+                            class="hidden md:block tab__item ms-auto"
+                            href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}"
+                        >
                             {% trans "View message log" %}
                         </a>
                     {% endif %}
@@ -58,7 +61,9 @@
                 <div class="wrapper--sidebar--inner">
                     <h4>{% trans "Congratulations!" %}</h4>
                     <h5>{% blocktrans with stage=object.previous.stage %}Your {{ stage }} application has been accepted.{% endblocktrans %}</h5>
-                    <a class="button button--primary" href="{% url 'funds:submissions:edit' object.id %}">{% blocktrans with stage=object.stage %}Start your {{ stage }} application.{% endblocktrans %}</a>
+                    <a class="button button--primary" href="{% url 'funds:submissions:edit' object.id %}">
+                        {% blocktrans with stage=object.stage %}Start your {{ stage }} application.{% endblocktrans %}
+                    </a>
                 </div>
             {% else %}
                 <article class="wrapper--sidebar--inner">
@@ -83,14 +88,20 @@
                             {% else %}
                                 {% trans "Submitted " %}
                             {% endif %}
-                            <strong><relative-time datetime={{ object.submit_time|date:"c" }}>{{ object.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong>
-                            {% trans "by" %}
                             <strong>
-                                {% display_submission_author %}
+                                <relative-time datetime={{ object.submit_time|date:"c" }}>
+                                    {{ object.submit_time|date:"SHORT_DATETIME_FORMAT" }}
+                                </relative-time>
                             </strong>
+                            {% trans "by" %}
+                            <strong>{% display_submission_author %}</strong>
                         </span>
-                        <span>{% trans "Updated" %} <strong>
-                            <relative-time datetime={{ object.live_revision.timestamp|date:"c" }}>{{ object.live_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong>
+                        <span>{% trans "Updated" %}
+                            <strong>
+                                <relative-time datetime={{ object.live_revision.timestamp|date:"c" }}>
+                                    {{ object.live_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}
+                                </relative-time>
+                            </strong>
                             {% trans "by" %}
                             <strong>
                                 {% display_submission_author True %}
@@ -122,7 +133,13 @@
                         </div>
                     </header>
                     {% if request.user|can_translate_submission %}
-                        <div class="wrapper" hx-get="{% url 'funds:submissions:partial-translate-answers' object.id %}" hx-trigger="translateSubmission from:body" hx-indicator="#translate-card-loading" hx-vals='js:{fl: event.detail.from_lang, tl: event.detail.to_lang}'>
+                        <div
+                            class="wrapper"
+                            hx-get="{% url 'funds:submissions:partial-translate-answers' object.id %}"
+                            hx-trigger="translateSubmission from:body"
+                            hx-indicator="#translate-card-loading"
+                            hx-vals='js:{fl: event.detail.from_lang, tl: event.detail.to_lang}'
+                        >
                             {% include "funds/includes/rendered_answers.html" %}
                         </div>
                     {% else %}
@@ -166,11 +183,25 @@
                             <h5>{% trans "Related submissions" %}</h5>
 
                             {% if object.previous %}
-                                <p class="mb-4"><a class="font-bold underline" href="{% url 'funds:submissions:detail' object.previous.id %}">{% trans "View linked" %} {{ object.previous.stage }}</a></p>
+                                <p class="mb-4">
+                                    <a
+                                        class="font-bold underline"
+                                        href="{% url 'funds:submissions:detail' object.previous.id %}"
+                                    >
+                                        {% trans "View linked" %} {{ object.previous.stage }}
+                                    </a>
+                                </p>
                             {% endif %}
 
                             {% if object.next %}
-                                <p class="mb-4"><a class="font-bold underline" href="{% url 'funds:submissions:detail' object.next.id %}">{% trans "View linked" %} {{ object.next.stage }}</a></p>
+                                <p class="mb-4">
+                                    <a
+                                        class="font-bold underline"
+                                        href="{% url 'funds:submissions:detail' object.next.id %}"
+                                    >
+                                        {% trans "View linked" %} {{ object.next.stage }}
+                                    </a>
+                                </p>
                             {% endif %}
 
                             <section class="flex flex-col gap-2" data-js-collapse>
@@ -181,12 +212,17 @@
                                         </h6>
                                     {% endif %}
                                     <div>
-                                        <a class="font-bold hover:underline line-clamp-2" href="{% url 'funds:submissions:detail' submission.id %}">
+                                        <a
+                                            class="font-bold hover:underline line-clamp-2"
+                                            href="{% url 'funds:submissions:detail' submission.id %}"
+                                        >
                                             {{ submission.title }}
                                         </a>
                                         <div class="text-sm text-fg-muted">
                                             <span>#{{ submission.application_id }}</span>
-                                            <relative-time datetime='{{ submission.submit_time|date:"c" }}'>{{ submission.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
+                                            <relative-time datetime='{{ submission.submit_time|date:"c" }}'>
+                                                {{ submission.submit_time|date:"SHORT_DATETIME_FORMAT" }}
+                                            </relative-time>
                                             in {{ submission.round|default_if_none:submission.page }}
                                             &middot;
                                             <span>{{ submission.phase }}</span>

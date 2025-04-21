@@ -5,7 +5,9 @@
 
 {% block content %}
     {% adminbar %}
-        {% slot header %}{% trans "Editing" %}: {{ object.title }} <span class="text-gray-400">#{{ object.application_id }}</span>{% endslot %}
+        {% slot header %}
+            {% trans "Editing" %}: {{ object.title }} <span class="text-gray-400">#{{ object.application_id }}</span>
+        {% endslot %}
     {% endadminbar %}
 
     {% include "forms/includes/form_errors.html" with form=form %}
@@ -34,14 +36,22 @@
                 <div class="form__group">
                     {% trans "Save draft" as save_draft %}
                     {% for button_name, button_type, button_value in buttons %}
-                        <button class="button button--submit button--{{ button_type }}" type="submit" name="{{ button_name }}" {% if button_value == save_draft %}formnovalidate{% endif %}>{{ button_value }}</button>
+                        <button
+                            class="button button--submit button--{{ button_type }}"
+                            type="submit"
+                            name="{{ button_name }}"
+                            {% if button_value == save_draft %}formnovalidate{% endif %}
+                        >
+                            {{ button_value }}
+                        </button>
                     {% endfor %}
                 </div>
             </form>
-            <p class="wrapper--error message-no-js js-hidden">{% trans "You must have Javascript enabled to use this form." %}</p>
+            <p class="wrapper--error message-no-js js-hidden">
+                {% trans "You must have Javascript enabled to use this form." %}
+            </p>
         </div>
     </div>
-
 {% endblock %}
 
 {% block extra_js %}

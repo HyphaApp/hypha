@@ -2,7 +2,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
-from django.views.generic.base import TemplateView
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
@@ -30,15 +29,6 @@ def submission_success(request, pk):
             "form_submission": submission,
         },
     )
-
-
-@method_decorator(staff_required, name="dispatch")
-class GroupingApplicationsListView(TemplateView):
-    """
-    Template view for grouped submissions
-    """
-
-    template_name = "funds/grouped_application_list.html"
 
 
 @method_decorator(staff_required, name="dispatch")

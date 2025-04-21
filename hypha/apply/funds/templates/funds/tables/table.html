@@ -46,7 +46,9 @@
                                             {{ reviewer }}
                                             {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
                                         </span>
-                                        <span class="list__item list__item--reviewer-outcome">{{ reviewer.review.get_recommendation_display }}</span>
+                                        <span class="list__item list__item--reviewer-outcome">
+                                            {{ reviewer.review.get_recommendation_display }}
+                                        </span>
                                     </li>
                                     {% for opinion in reviewer.review.opinions.all %}
                                         {% if forloop.first %}
@@ -56,9 +58,13 @@
                                         <li class="list__item list__item--reviewer list__item--opinion">
                                             <span class="list__item--reviewer-name">
                                                 {{ opinion.author }}
-                                                {% if opinion.author.role %}{% image opinion.author.role.icon max-12x12 %}{% endif %}
+                                                {% if opinion.author.role %}
+                                                    {% image opinion.author.role.icon max-12x12 %}
+                                                {% endif %}
                                             </span>
-                                            <span class="list__item list__item--reviewer-outcome {{ opinion.get_opinion_display|lower }}">{{ opinion.get_opinion_display }}</span>
+                                            <span class="list__item list__item--reviewer-outcome {{ opinion.get_opinion_display|lower }}">
+                                                {{ opinion.get_opinion_display }}
+                                            </span>
                                         </li>
 
                                         {% if forloop.last %}
@@ -104,7 +110,9 @@
                         <tr {{ row.attrs.as_html }}>
                             {% for column, cell in row.items %}
                                 {% if column.name != "selected" %}
-                                    <td {{ column.attrs.td.as_html }}>{% if column.localize == None %}{{ cell }}{% else %}{% if column.localize %}{{ cell|localize }}{% else %}{{ cell|unlocalize }}{% endif %}{% endif %}</td>
+                                    <td {{ column.attrs.td.as_html }}>
+                                        {% if column.localize == None %}{{ cell }}{% else %}{% if column.localize %}{{ cell|localize }}{% else %}{{ cell|unlocalize }}{% endif %}{% endif %}
+                                    </td>
                                 {% endif %}
                             {% endfor %}
                         </tr>
@@ -117,7 +125,9 @@
 {% endblock %}
 
 {% block table.tbody.empty_text %}
-    <tr class="all-submissions-table__empty"><td colspan="{{ table.columns|length }}">{{ table.empty_text }}</td></tr>
+    <tr class="all-submissions-table__empty">
+        <td colspan="{{ table.columns|length }}">{{ table.empty_text }}</td>
+    </tr>
 {% endblock table.tbody.empty_text %}
 
 {% block pagination %}
