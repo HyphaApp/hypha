@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-24 09:03+0000\n"
+"POT-Creation-Date: 2025-04-21 08:45+0000\n"
 "PO-Revision-Date: 2024-07-11 01:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -102,7 +102,7 @@ msgstr "请求了批准"
 #: hypha/apply/activity/adapters/activity_feed.py:61
 #: hypha/apply/determinations/options.py:12
 #: hypha/apply/projects/templates/application_projects/paf_export.html:22
-#: hypha/apply/projects/utils.py:76
+#: hypha/apply/projects/utils.py:90
 msgid "Approved"
 msgstr "批准"
 
@@ -212,7 +212,7 @@ msgstr ""
 #: hypha/apply/activity/adapters/activity_feed.py:208
 #, fuzzy
 #| msgid "Project Information"
-msgid "Project form assigned to {}"
+msgid "assigned Project form to {}"
 msgstr "项目信息"
 
 #: hypha/apply/activity/adapters/activity_feed.py:214
@@ -678,15 +678,21 @@ msgstr "过去 7 天"
 msgid "This month"
 msgstr "这个月"
 
+#: hypha/apply/activity/filters.py:17
+#, fuzzy
+#| msgid "Months"
+msgid "Last 3 months"
+msgstr "月"
+
 #: hypha/apply/activity/forms.py:16
-#: hypha/apply/projects/templates/application_projects/report_detail.html:42
+#: hypha/apply/projects/reports/templates/reports/report_detail.html:42
 #, fuzzy
 #| msgid "Attachements"
 msgid "Attachments"
 msgstr "附件"
 
-#: hypha/apply/activity/forms.py:20 hypha/apply/funds/forms.py:99
-#: hypha/apply/funds/forms.py:239 hypha/apply/funds/forms.py:337
+#: hypha/apply/activity/forms.py:20 hypha/apply/funds/forms.py:100
+#: hypha/apply/funds/forms.py:240 hypha/apply/funds/forms.py:338
 #, fuzzy
 #| msgid "Selected"
 msgid "Select..."
@@ -759,18 +765,18 @@ msgid "Staff only"
 msgstr "员工标记"
 
 #: hypha/apply/activity/models.py:43 hypha/apply/funds/tables.py:347
-#: hypha/apply/funds/tables.py:598
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:68
+#: hypha/apply/funds/tables.py:592
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:71
 msgid "Reviewers"
 msgstr "审核人"
 
-#: hypha/apply/activity/models.py:44 hypha/apply/funds/forms.py:333
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:74
+#: hypha/apply/activity/models.py:44 hypha/apply/funds/forms.py:334
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:77
 msgid "Partners"
 msgstr "合作者"
 
 #: hypha/apply/activity/models.py:45
-#: hypha/apply/funds/templates/funds/submissions_result.html:55
+#: hypha/apply/funds/templates/funds/submissions_result.html:63
 msgid "All"
 msgstr "所有"
 
@@ -780,7 +786,7 @@ msgstr "所有"
 msgid "Applicants & Partners"
 msgstr "更新"
 
-#: hypha/apply/activity/models.py:367
+#: hypha/apply/activity/models.py:373
 msgid "verb"
 msgstr ""
 
@@ -1124,57 +1130,43 @@ msgstr "没有操作。"
 msgid "No comments available"
 msgstr "无可用投资"
 
-#: hypha/apply/activity/templates/activity/include/comment_form.html:29
-#, fuzzy
-#| msgid "Comments"
-msgid "Add Comment"
-msgstr "评论"
-
-#: hypha/apply/activity/templates/activity/include/notifications_dropdown.html:7
-#: hypha/apply/activity/templates/activity/notifications.html:44
-msgid "made a comment"
-msgstr "留下了评论"
-
-#: hypha/apply/activity/templates/activity/include/notifications_dropdown.html:12
-#, fuzzy
-#| msgid "No Invoices available"
-msgid "No notifications available."
-msgstr "无可用发票"
-
-#: hypha/apply/activity/templates/activity/notifications.html:7
+#: hypha/apply/activity/templates/activity/notifications.html:3
+#: hypha/apply/activity/templates/activity/notifications.html:8
 msgid "Notifications"
 msgstr "通知"
 
-#: hypha/apply/activity/templates/activity/notifications.html:10
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:103
+#: hypha/apply/activity/templates/activity/notifications.html:11
+msgid "Activity feed across all applications and projects"
+msgstr ""
+
+#: hypha/apply/activity/templates/activity/notifications.html:13
+msgid "Activity feed across all the applications"
+msgstr ""
+
+#: hypha/apply/activity/templates/activity/notifications.html:23
 #: hypha/core/templates/components/dropdown-menu.html:64
 msgid "Filter"
 msgstr "筛选"
 
-#: hypha/apply/activity/templates/activity/notifications.html:17
-msgid "Communications"
-msgstr "交流"
-
-#: hypha/apply/activity/templates/activity/notifications.html:21
-msgid "Activity Feed"
-msgstr "活动订阅"
-
-#: hypha/apply/activity/templates/activity/notifications.html:74
+#: hypha/apply/activity/templates/activity/notifications.html:82
 #: hypha/apply/activity/templates/activity/ui/activity-action-item.html:44
 #: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:31
 #: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:39
 #: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:46
 #: hypha/apply/funds/templates/funds/includes/round-block-listing.html:26
-#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:63
+#: hypha/apply/projects/reports/templates/reports/includes/reports.html:73
+#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:67
 #: hypha/apply/projects/templates/application_projects/includes/project_documents.html:102
-#: hypha/apply/projects/templates/application_projects/includes/project_documents.html:132
-#: hypha/apply/projects/templates/application_projects/includes/reports.html:72
-#: hypha/apply/projects/templates/application_projects/partials/contracting_category_documents.html:58
+#: hypha/apply/projects/templates/application_projects/includes/project_documents.html:135
+#: hypha/apply/projects/templates/application_projects/partials/contracting_category_documents.html:62
 #: hypha/apply/projects/templates/application_projects/partials/invoice_status_table.html:13
-#: hypha/apply/projects/templates/application_projects/partials/supporting_documents.html:61
-#: hypha/apply/todo/templates/todo/todolist_item.html:18
+#: hypha/apply/projects/templates/application_projects/partials/supporting_documents.html:65
 msgid "View"
 msgstr "查看"
+
+#: hypha/apply/activity/templates/activity/notifications.html:96
+msgid "No activities found, try updating your filters."
+msgstr ""
 
 #: hypha/apply/activity/templates/activity/ui/activity-comment-item.html:55
 #, fuzzy
@@ -1192,19 +1184,19 @@ msgstr ""
 #: hypha/apply/dashboard/templates/dashboard/partials/applicant_submissions.html:28
 #: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:46
 #: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:68
-#: hypha/apply/determinations/templates/determinations/determination_detail.html:26
-#: hypha/apply/funds/templates/funds/admin/widgets/read_only.html:2
+#: hypha/apply/determinations/templates/determinations/determination_detail.html:28
+#: hypha/apply/funds/templates/funds/admin/widgets/read_only.html:10
 #: hypha/apply/funds/templates/funds/application_preview.html:47
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:147
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:130
 #: hypha/apply/funds/templates/funds/includes/rendered_answers.html:40
+#: hypha/apply/projects/reports/templates/reports/includes/reports.html:84
+#: hypha/apply/projects/reports/templates/reports/report_detail.html:66
 #: hypha/apply/projects/templates/application_projects/includes/project_documents.html:93
-#: hypha/apply/projects/templates/application_projects/includes/project_documents.html:123
-#: hypha/apply/projects/templates/application_projects/includes/reports.html:80
+#: hypha/apply/projects/templates/application_projects/includes/project_documents.html:126
 #: hypha/apply/projects/templates/application_projects/invoice_form.html:4
-#: hypha/apply/projects/templates/application_projects/partials/invoice_status_table.html:20
+#: hypha/apply/projects/templates/application_projects/partials/invoice_status_table.html:23
 #: hypha/apply/projects/templates/application_projects/project_approval_detail.html:99
-#: hypha/apply/projects/templates/application_projects/project_sow_detail.html:43
-#: hypha/apply/projects/templates/application_projects/report_detail.html:62
+#: hypha/apply/projects/templates/application_projects/project_sow_detail.html:47
 #: hypha/apply/review/templates/review/review_detail.html:60
 msgid "Edit"
 msgstr "编辑"
@@ -1244,19 +1236,19 @@ msgstr "查看"
 #: hypha/apply/funds/workflows/definitions/single_stage_same.py:20
 #: hypha/apply/funds/workflows/definitions/single_stage_same.py:47
 #: hypha/apply/funds/workflows/definitions/single_stage_same.py:92
-#: hypha/apply/projects/templates/application_projects/report_form.html:57
-#: hypha/apply/projects/views/project.py:302
-#: hypha/apply/projects/views/project.py:338
-#: hypha/apply/projects/views/project.py:664
-#: hypha/apply/projects/views/project.py:783
-#: hypha/apply/projects/views/project.py:871
-#: hypha/apply/projects/views/project.py:910
-#: hypha/apply/projects/views/project.py:941
-#: hypha/apply/projects/views/project.py:974
-#: hypha/apply/projects/views/project.py:1327
-#: hypha/apply/projects/views/project.py:1400
-#: hypha/apply/projects/views/project.py:1431
-#: hypha/apply/projects/views/project.py:1586
+#: hypha/apply/projects/reports/templates/reports/report_form.html:57
+#: hypha/apply/projects/views/project.py:307
+#: hypha/apply/projects/views/project.py:343
+#: hypha/apply/projects/views/project.py:650
+#: hypha/apply/projects/views/project.py:769
+#: hypha/apply/projects/views/project.py:857
+#: hypha/apply/projects/views/project.py:896
+#: hypha/apply/projects/views/project.py:927
+#: hypha/apply/projects/views/project.py:960
+#: hypha/apply/projects/views/project.py:1312
+#: hypha/apply/projects/views/project.py:1385
+#: hypha/apply/projects/views/project.py:1416
+#: hypha/apply/projects/views/project.py:1571
 #: hypha/apply/review/templates/review/review_edit_form.html:64
 #: hypha/apply/review/templates/review/review_form.html:75
 #: hypha/apply/users/templates/two_factor/_wizard_actions.html:4
@@ -1267,13 +1259,13 @@ msgstr "提交"
 #: hypha/apply/activity/templates/activity/ui/edit_comment_form.html:26
 #: hypha/apply/funds/templates/funds/applicationsubmission_confirm_delete.html:47
 #: hypha/apply/funds/templates/funds/includes/delegated_form_base.html:30
-#: hypha/apply/funds/templates/funds/includes/dialog_form_base.html:39
 #: hypha/apply/funds/templates/funds/includes/modal_archive_submission_confirm.html:32
 #: hypha/apply/funds/templates/funds/includes/modal_unarchive_submission_confirm.html:34
 #: hypha/apply/funds/templates/funds/includes/translate_application_form.html:56
 #: hypha/apply/funds/templates/funds/includes/update_reviewer_form.html:59
 #: hypha/apply/projects/templates/application_projects/project_form.html:28
 #: hypha/apply/users/templates/users/become.html:33
+#: hypha/templates/includes/dialog_form_base.html:39
 msgid "Cancel"
 msgstr "取消"
 
@@ -1335,7 +1327,8 @@ msgstr ""
 #: hypha/apply/activity/templates/messages/email/report_skipped.html:12
 #: hypha/apply/activity/templates/messages/email/sent_to_compliance.html:9
 #: hypha/apply/activity/templates/messages/email/submit_contract_documents.html:11
-#: hypha/apply/funds/templates/funds/revisions_compare.html:34
+#: hypha/apply/funds/templates/funds/revisions_compare.html:39
+#: hypha/apply/funds/templates/funds/revisions_compare.html:40
 #: hypha/core/models/system_settings.py:21
 msgid "Title"
 msgstr "标题"
@@ -1495,8 +1488,11 @@ msgstr "有项目正等待您的审核。"
 #: hypha/apply/activity/templates/messages/email/invoice_approved.html:11
 #: hypha/apply/activity/templates/messages/email/project_created.html:10
 #: hypha/apply/activity/templates/messages/email/report_submitted.html:10
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:67
-#: hypha/apply/projects/templates/application_projects/project_detail.html:83
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:33
+#: hypha/apply/funds/templates/funds/comments.html:28
+#: hypha/apply/funds/templates/funds/includes/submission-list-row.html:128
+#: hypha/apply/funds/templates/funds/includes/submission-table-row.html:53
+#: hypha/apply/projects/templates/application_projects/project_detail.html:29
 msgid "Project"
 msgstr "项目"
 
@@ -1551,7 +1547,7 @@ msgid "No action needed for now, wait until contract is ready for you to sign."
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/project_created.html:12
-#: hypha/apply/funds/tables.py:651
+#: hypha/apply/funds/tables.py:645
 msgid "Submission"
 msgstr "提交"
 
@@ -1758,7 +1754,7 @@ msgid "Please submit any questions related to your application here"
 msgstr "请在这里提交与您的申请有关的任何问题"
 
 #: hypha/apply/activity/templatetags/activity_tags.py:42
-#: hypha/apply/funds/tables.py:627
+#: hypha/apply/funds/tables.py:621
 #: hypha/apply/funds/templates/funds/includes/review_sidebar_item.html:11
 #: hypha/apply/funds/templates/funds/includes/review_sidebar_item.html:27
 #: hypha/apply/funds/templates/funds/includes/review_sidebar_item.html:41
@@ -1829,9 +1825,9 @@ msgstr "设为对申请人可用"
 msgid "Tag"
 msgstr ""
 
-#: hypha/apply/categories/models.py:140 hypha/apply/funds/forms.py:409
+#: hypha/apply/categories/models.py:140 hypha/apply/funds/forms.py:410
 #: hypha/apply/funds/tables.py:352
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:98
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:111
 #: hypha/apply/funds/templates/submissions/partials/meta-terms-card.html:4
 msgid "Tags"
 msgstr ""
@@ -1881,7 +1877,7 @@ msgstr "现在申请参与我们的公开选拔"
 #: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:20
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:16
 #: hypha/apply/users/templates/users/account.html:24
-#: hypha/home/templates/home/includes/fund-list-item.html:31
+#: hypha/home/templates/home/includes/fund-list-item.html:28
 msgid "Apply"
 msgstr "申请"
 
@@ -1903,26 +1899,26 @@ msgstr "您的项目"
 msgid "My active invoices"
 msgstr "无活跃发票。"
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:76
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:78
 #, fuzzy
 #| msgid "Date field"
 msgid "Date added: "
 msgstr "日期字段"
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:91
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:95
 #, fuzzy
 #| msgid "No active Invoices."
 msgid "No active invoices"
 msgstr "无活跃发票。"
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:99
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:103
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:89
 #: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:58
 #: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:80
 msgid "Submission history"
 msgstr "提交历史"
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:106
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:110
 msgid "Project history"
 msgstr "项目历史"
 
@@ -1940,6 +1936,8 @@ msgid "No submissions"
 msgstr "无提交"
 
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:37
+#: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:37
+#: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:59
 #: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:120
 msgid "Your previous reviews"
 msgstr "您的既往审核"
@@ -1954,11 +1952,12 @@ msgstr "您的活动提交"
 #: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:37
 #: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:59
 #: hypha/apply/funds/tables.py:84
-#: hypha/apply/funds/templates/funds/revisions_compare.html:24
 #: hypha/apply/funds/templates/funds/revisions_compare.html:28
-#: hypha/apply/projects/models/payment.py:27 hypha/apply/projects/tables.py:45
-#: hypha/apply/projects/templates/application_projects/includes/reports.html:53
-#: hypha/apply/projects/templates/application_projects/includes/reports.html:64
+#: hypha/apply/funds/templates/funds/revisions_compare.html:32
+#: hypha/apply/projects/models/payment.py:26
+#: hypha/apply/projects/reports/templates/reports/includes/reports.html:54
+#: hypha/apply/projects/reports/templates/reports/includes/reports.html:65
+#: hypha/apply/projects/tables.py:40
 msgid "Submitted"
 msgstr "已提交"
 
@@ -1968,9 +1967,9 @@ msgstr "已提交"
 #: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:59
 #: hypha/apply/determinations/templates/determinations/includes/applicant_determination_block.html:10
 #: hypha/apply/determinations/templates/determinations/includes/determination_block.html:9
-#: hypha/apply/funds/templates/funds/applicationrevision_list.html:17
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:115
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:122
+#: hypha/apply/funds/templates/funds/applicationrevision_list.html:25
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:96
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:105
 #: hypha/apply/funds/templates/funds/tables/table.html:30
 #: hypha/apply/review/templates/review/review_detail.html:14
 msgid "by"
@@ -2017,7 +2016,7 @@ msgstr "提交供审核"
 #: hypha/apply/dashboard/templates/dashboard/finance_dashboard.html:37
 #: hypha/apply/dashboard/templates/dashboard/finance_dashboard.html:38
 #: hypha/apply/dashboard/templates/dashboard/finance_dashboard.html:60
-#: hypha/apply/funds/tables.py:568
+#: hypha/apply/funds/tables.py:562
 #: hypha/apply/users/templates/wagtailusers/users/list.html:58
 msgid "Active"
 msgstr "活跃"
@@ -2065,22 +2064,6 @@ msgstr "无可用发票"
 msgid "No Invoices for Conversion "
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/includes/flagged.html:5
-#: hypha/apply/funds/templates/submissions/all.html:85
-#, fuzzy
-#| msgid "Your Flagged Submissions"
-msgid "Your flagged submissions"
-msgstr "您的已标记提交"
-
-#: hypha/apply/dashboard/templates/dashboard/includes/flagged.html:14
-#: hypha/apply/dashboard/templates/dashboard/includes/submissions-waiting-for-review.html:16
-#: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:43
-#: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:106
-#: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:125
-#: hypha/apply/funds/templates/funds/includes/round-block-listing.html:34
-msgid "Show all"
-msgstr "显示所有"
-
 #: hypha/apply/dashboard/templates/dashboard/includes/my-tasks.html:5
 msgid "My tasks"
 msgstr ""
@@ -2123,6 +2106,14 @@ msgstr "等待批准的项目"
 msgid "Submissions waiting for your review"
 msgstr "等待您审核的提交"
 
+#: hypha/apply/dashboard/templates/dashboard/includes/submissions-waiting-for-review.html:16
+#: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:43
+#: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:106
+#: hypha/apply/dashboard/templates/dashboard/staff_dashboard.html:125
+#: hypha/apply/funds/templates/funds/includes/round-block-listing.html:34
+msgid "Show all"
+msgstr "显示所有"
+
 #: hypha/apply/dashboard/templates/dashboard/includes/submissions-waiting-for-review.html:22
 msgid "Nice! You're all caught up. 🎉"
 msgstr ""
@@ -2157,15 +2148,15 @@ msgstr "已提交"
 
 #: hypha/apply/dashboard/templates/dashboard/partials/applicant_submissions.html:36
 #: hypha/apply/funds/templates/funds/applicationsubmission_confirm_delete.html:42
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:138
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:121
 #: hypha/apply/funds/templates/funds/includes/delegated_form_base.html:33
-#: hypha/apply/funds/templates/funds/includes/dialog_form_base.html:28
 #: hypha/apply/funds/templates/funds/includes/reminders_block.html:20
 #: hypha/apply/funds/templates/funds/includes/reminders_block.html:25
 #: hypha/apply/funds/templates/submissions/all.html:533
-#: hypha/apply/projects/templates/application_projects/partials/invoice_status_table.html:28
+#: hypha/apply/projects/templates/application_projects/partials/invoice_status_table.html:34
 #: hypha/apply/projects/views/payment.py:331
 #: hypha/apply/review/templates/review/review_detail.html:50
+#: hypha/templates/includes/dialog_form_base.html:28
 msgid "Delete"
 msgstr "删除"
 
@@ -2211,7 +2202,7 @@ msgstr "发送通知"
 #: hypha/apply/determinations/blocks.py:77
 #: hypha/apply/determinations/blocks.py:78
 #: hypha/apply/determinations/blocks.py:79
-#: hypha/apply/determinations/blocks.py:80 hypha/apply/funds/blocks.py:215
+#: hypha/apply/determinations/blocks.py:80 hypha/apply/funds/blocks.py:216
 #: hypha/apply/review/blocks.py:169 hypha/apply/review/blocks.py:170
 #: hypha/apply/review/blocks.py:171 hypha/apply/review/blocks.py:172
 #: hypha/apply/review/blocks.py:173 hypha/apply/review/blocks.py:174
@@ -2248,14 +2239,14 @@ msgstr "-- 未选择决策 -- "
 #: hypha/apply/determinations/forms.py:580
 #: hypha/apply/determinations/models.py:108
 #: hypha/apply/determinations/templates/determinations/determination_detail.html:14
-#: hypha/apply/determinations/templates/determinations/determination_detail.html:21
+#: hypha/apply/determinations/templates/determinations/determination_detail.html:23
 msgid "Determination"
 msgstr "决策"
 
 #: hypha/apply/determinations/forms.py:184
 #: hypha/apply/determinations/forms.py:262
 #: hypha/apply/determinations/models.py:110
-#: hypha/apply/determinations/templates/determinations/determination_detail.html:33
+#: hypha/apply/determinations/templates/determinations/determination_detail.html:35
 msgid "Determination message"
 msgstr "决策消息"
 
@@ -2364,8 +2355,8 @@ msgstr "提案表单"
 #: hypha/apply/funds/workflows/definitions/single_stage_community.py:27
 #: hypha/apply/funds/workflows/definitions/single_stage_external.py:26
 #: hypha/apply/funds/workflows/definitions/single_stage_same.py:26
-#: hypha/apply/projects/models/project.py:82
-#: hypha/apply/projects/models/project.py:90 hypha/apply/review/models.py:172
+#: hypha/apply/projects/models/project.py:83
+#: hypha/apply/projects/models/project.py:91 hypha/apply/review/models.py:172
 #: hypha/apply/todo/options.py:69 hypha/apply/todo/options.py:77
 #: hypha/apply/todo/options.py:85
 msgid "Draft"
@@ -2424,7 +2415,7 @@ msgstr "编辑决策"
 
 #: hypha/apply/determinations/templates/determinations/base_determination_form.html:3
 #: hypha/apply/determinations/templates/determinations/determination_form.html:6
-#: hypha/apply/funds/templates/funds/applicationrevision_list.html:22
+#: hypha/apply/funds/templates/funds/applicationrevision_list.html:31
 msgid "draft"
 msgstr "草稿"
 
@@ -2442,16 +2433,15 @@ msgid "Create Determination"
 msgstr "创建决策"
 
 #: hypha/apply/determinations/templates/determinations/base_determination_form.html:9
-#: hypha/apply/determinations/templates/determinations/determination_detail.html:15
+#: hypha/apply/determinations/templates/determinations/determination_detail.html:16
 #: hypha/apply/determinations/templates/determinations/determination_form.html:8
-#: hypha/apply/funds/templates/funds/applicationrevision_list.html:8
-#: hypha/apply/funds/templates/funds/revisions_compare.html:15
+#: hypha/apply/funds/templates/funds/applicationrevision_list.html:9
+#: hypha/apply/funds/templates/funds/revisions_compare.html:16
 #: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:15
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:16
 #: hypha/apply/projects/templates/application_projects/invoice_form.html:25
 #: hypha/apply/review/templates/review/review_detail.html:14
 #: hypha/apply/review/templates/review/review_edit_form.html:15
-#: hypha/apply/review/templates/review/review_form.html:15
 #: hypha/apply/review/templates/review/review_list.html:11
 msgid "For"
 msgstr "为"
@@ -2471,22 +2461,21 @@ msgid "Hide application"
 msgstr "查看申请"
 
 #: hypha/apply/determinations/templates/determinations/base_determination_form.html:57
-#: hypha/apply/funds/templates/funds/application_base.html:75
-#: hypha/apply/funds/templates/funds/applicationsubmission_form.html:35
+#: hypha/apply/funds/templates/funds/application_base.html:117
+#: hypha/apply/funds/templates/funds/applicationsubmission_form.html:37
 #: hypha/apply/funds/views/submission_edit.py:130
 #: hypha/apply/funds/views/submission_edit.py:133
 #: hypha/apply/funds/views/submission_edit.py:318
+#: hypha/apply/projects/reports/templates/reports/report_form.html:56
 #: hypha/apply/projects/templates/application_projects/project_approval_form.html:41
 #: hypha/apply/projects/templates/application_projects/project_sow_form.html:39
-#: hypha/apply/projects/templates/application_projects/report_form.html:56
 #: hypha/apply/review/templates/review/review_edit_form.html:72
 #: hypha/apply/review/templates/review/review_form.html:71
 msgid "Save draft"
 msgstr "保存草稿"
 
 #: hypha/apply/determinations/templates/determinations/base_determination_form.html:82
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:246
-#: hypha/apply/projects/templates/application_projects/project_detail.html:218
+#: hypha/apply/funds/templates/funds/comments.html:101
 #: hypha/apply/review/templates/review/review_form.html:96
 #: hypha/core/templates/components/dropdown-menu.html:90
 msgid "Loading…"
@@ -2511,8 +2500,8 @@ msgid "as"
 msgstr "作为"
 
 #: hypha/apply/determinations/templates/determinations/batch_determination_form.html:18
-#: hypha/apply/funds/templates/funds/tables/table.html:127
-#: hypha/apply/projects/templates/application_projects/partials/invoice_status.html:35
+#: hypha/apply/funds/templates/funds/tables/table.html:137
+#: hypha/apply/projects/templates/application_projects/partials/invoice_status.html:42
 #: hypha/apply/projects/templates/application_projects/tables/table.html:21
 msgid "Show"
 msgstr "显示"
@@ -2524,7 +2513,7 @@ msgstr "显示"
 #| "<strong>cannot be undone.</strong>"
 msgid ""
 "This determination message will be emailed to applicants and cannot be "
-"undone. Do you wish to contiune?"
+"undone. Do you wish to continue?"
 msgstr ""
 "这条决策消息将会通过电子邮件发送给 %(count)s 位申请者，且<strong>无法撤销。</"
 "strong>"
@@ -2538,11 +2527,10 @@ msgid "Determination for"
 msgstr "决策目标"
 
 #: hypha/apply/determinations/templates/determinations/determination_detail.html:10
+#: hypha/apply/funds/templates/funds/submission_sealed.html:36
 #: hypha/apply/review/templates/review/review_detail.html:9
-#, fuzzy
-#| msgid "submission"
-msgid "View submission"
-msgstr "提交"
+msgid "View application"
+msgstr "查看申请"
 
 #: hypha/apply/determinations/templates/determinations/determination_detail.html:14
 msgid "DRAFT"
@@ -2564,11 +2552,11 @@ msgstr "决策"
 msgid "Awaiting determination"
 msgstr "等待决策"
 
-#: hypha/apply/determinations/templates/determinations/includes/determination_button.html:8
+#: hypha/apply/determinations/templates/determinations/includes/determination_button.html:11
 msgid "Update draft"
 msgstr "更新草稿"
 
-#: hypha/apply/determinations/templates/determinations/includes/determination_button.html:11
+#: hypha/apply/determinations/templates/determinations/includes/determination_button.html:14
 msgid "Add determination"
 msgstr "添加决策"
 
@@ -2653,7 +2641,7 @@ msgstr "轮次与已锁定轮次"
 msgid "Labs"
 msgstr "实验室"
 
-#: hypha/apply/funds/admin_helpers.py:90 hypha/apply/funds/tables.py:569
+#: hypha/apply/funds/admin_helpers.py:90 hypha/apply/funds/tables.py:563
 #: hypha/apply/funds/templates/funds/includes/round-block-listing.html:16
 #: hypha/apply/funds/templates/funds/includes/round-block.html:16
 #: hypha/apply/funds/templates/submissions/submenu/rounds.html:32
@@ -2710,7 +2698,8 @@ msgstr "我们会用此电子邮箱地址与您沟通提案相关事宜。"
 
 #: hypha/apply/funds/blocks.py:97
 #: hypha/apply/funds/templates/funds/includes/rendered_answers.html:49
-#: hypha/apply/funds/templates/funds/revisions_compare.html:40
+#: hypha/apply/funds/templates/funds/revisions_compare.html:54
+#: hypha/apply/funds/templates/funds/revisions_compare.html:55
 msgid "Address"
 msgstr "地址"
 
@@ -2726,7 +2715,7 @@ msgstr "当与您沟通提案相关事宜时，我们会使用此名字。"
 msgid "Full name"
 msgstr "全名"
 
-#: hypha/apply/funds/blocks.py:214 hypha/apply/stream_forms/blocks.py:472
+#: hypha/apply/funds/blocks.py:215 hypha/apply/stream_forms/blocks.py:472
 #: hypha/apply/stream_forms/blocks.py:473
 #: hypha/apply/stream_forms/blocks.py:488
 #: hypha/apply/stream_forms/blocks.py:489 hypha/apply/utils/blocks.py:85
@@ -2742,42 +2731,41 @@ msgstr "进行操作"
 msgid "Update lead from {lead} to"
 msgstr "将领导人由 {lead} 更新到"
 
-#: hypha/apply/funds/forms.py:95 hypha/apply/funds/forms.py:240
+#: hypha/apply/funds/forms.py:96 hypha/apply/funds/forms.py:241
 msgid "External Reviewers"
 msgstr "外部审核人"
 
-#: hypha/apply/funds/forms.py:174
+#: hypha/apply/funds/forms.py:175
 msgid "Can't unassign, just change, because review already submitted"
 msgstr "无法取消分派，只能更改，因为审核已被提交"
 
-#: hypha/apply/funds/forms.py:180 hypha/apply/funds/forms.py:292
+#: hypha/apply/funds/forms.py:181 hypha/apply/funds/forms.py:293
 msgid "Users cannot be assigned to multiple roles."
 msgstr "用户无法分配到多个角色。"
 
-#: hypha/apply/funds/forms.py:280
+#: hypha/apply/funds/forms.py:281
 msgid ""
 "Make sure all submissions support external reviewers and you are lead for "
 "all the selected submissions."
 msgstr ""
 
-#: hypha/apply/funds/forms.py:312
+#: hypha/apply/funds/forms.py:313
 msgid "---"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:316
+#: hypha/apply/funds/forms.py:317
 #, python-brace-format
 msgid "{role_name} Reviewer"
 msgstr "{role_name} 审核人"
 
-#: hypha/apply/funds/forms.py:412
+#: hypha/apply/funds/forms.py:413
 #, fuzzy
 #| msgid "Meta terms are hierarchical in nature."
 msgid "Tags are hierarchical in nature."
 msgstr "元条款本身具有层次。"
 
 #: hypha/apply/funds/models/__init__.py:36 hypha/apply/funds/tables.py:91
-#: hypha/apply/projects/tables.py:105 hypha/apply/projects/tables.py:171
-#: hypha/apply/projects/tables.py:246
+#: hypha/apply/projects/tables.py:141 hypha/apply/projects/tables.py:216
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:32
 msgid "Fund"
 msgstr "基金"
@@ -2999,12 +2987,13 @@ msgid "Batch reviewers updated: {reviewers_text} on "
 msgstr "批次审核人添加了：{reviewers_text} 到 "
 
 #: hypha/apply/funds/tables.py:86
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:17
-#: hypha/apply/projects/filters.py:35 hypha/apply/projects/filters.py:58
-#: hypha/apply/projects/filters.py:99 hypha/apply/projects/forms/payment.py:208
-#: hypha/apply/projects/tables.py:169 hypha/apply/projects/tables.py:244
-#: hypha/apply/projects/templates/application_projects/includes/invoices.html:22
-#: hypha/apply/projects/templates/application_projects/includes/invoices.html:46
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:21
+#: hypha/apply/projects/filters.py:39 hypha/apply/projects/filters.py:57
+#: hypha/apply/projects/forms/payment.py:208
+#: hypha/apply/projects/reports/filters.py:28
+#: hypha/apply/projects/tables.py:139 hypha/apply/projects/tables.py:214
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:24
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:56
 #: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:22
 #: hypha/apply/projects/templates/application_projects/partials/invoice_status.html:4
 #: hypha/apply/projects/templates/application_projects/partials/invoice_status_table.html:9
@@ -3043,19 +3032,19 @@ msgid "Statuses"
 msgstr "状态"
 
 #: hypha/apply/funds/tables.py:339 hypha/apply/funds/tables.py:454
-#: hypha/apply/funds/tables.py:566 hypha/apply/funds/tables.py:603
-#: hypha/apply/projects/filters.py:31 hypha/apply/projects/filters.py:52
+#: hypha/apply/funds/tables.py:560 hypha/apply/funds/tables.py:597
+#: hypha/apply/projects/filters.py:35 hypha/apply/projects/filters.py:51
 msgid "Funds"
 msgstr "基金"
 
 #: hypha/apply/funds/tables.py:341 hypha/apply/funds/tables.py:452
-#: hypha/apply/funds/tables.py:608
+#: hypha/apply/funds/tables.py:602
 #: hypha/apply/funds/templates/funds/rounds.html:5
 #: hypha/apply/funds/templates/funds/rounds.html:9
 msgid "Rounds"
 msgstr "轮次"
 
-#: hypha/apply/funds/tables.py:342 hypha/apply/funds/tables.py:567
+#: hypha/apply/funds/tables.py:342 hypha/apply/funds/tables.py:561
 msgid "Leads"
 msgstr "领导人"
 
@@ -3069,20 +3058,20 @@ msgstr "无状态"
 msgid "Category"
 msgstr "类别"
 
-#: hypha/apply/funds/tables.py:488
+#: hypha/apply/funds/tables.py:482
 #: hypha/apply/funds/templates/funds/includes/round-block-listing.html:23
 msgid "Determined"
 msgstr "已决策"
 
-#: hypha/apply/funds/tables.py:642 hypha/apply/funds/tables.py:676
+#: hypha/apply/funds/tables.py:636 hypha/apply/funds/tables.py:670
 msgid "No reviews available"
 msgstr "无可用审核"
 
-#: hypha/apply/funds/tables.py:683 hypha/apply/users/roles.py:6
+#: hypha/apply/funds/tables.py:677 hypha/apply/users/roles.py:6
 msgid "Staff"
 msgstr "员工"
 
-#: hypha/apply/funds/tables.py:693
+#: hypha/apply/funds/tables.py:687
 msgid "No staff available"
 msgstr "无可用员工"
 
@@ -3102,37 +3091,45 @@ msgid "Continue"
 msgstr "继续"
 
 #: hypha/apply/funds/templates/funds/application_base.html:13
-#: hypha/home/templates/home/includes/fund-list-item.html:13
+#: hypha/home/templates/home/includes/fund-list-item.html:11
 msgid "Next deadline"
 msgstr "下个截止时间"
 
-#: hypha/apply/funds/templates/funds/application_base.html:27
+#: hypha/apply/funds/templates/funds/application_base.html:30
 msgid ""
 "There were some errors with your form. Please amend the fields highlighted "
 "below"
 msgstr "您的表单中有错误。请修正下方高亮的字段"
 
-#: hypha/apply/funds/templates/funds/application_base.html:34
-#, python-format
-msgid ""
-"Sorry this %(page|verbose_name)s is not accepting applications at the moment"
+#: hypha/apply/funds/templates/funds/application_base.html:40
+#, fuzzy, python-format
+#| msgid ""
+#| "Sorry this %(page|verbose_name)s is not accepting applications at the "
+#| "moment"
+msgid "Sorry, this %(name)s is not currently accepting applications."
 msgstr "抱歉，这个 %(page|verbose_name)s 目前未在接收申请"
 
-#: hypha/apply/funds/templates/funds/application_base.html:38
+#: hypha/apply/funds/templates/funds/application_base.html:42
+#, fuzzy
+#| msgid "Copied from the fund."
+msgid "See other funds"
+msgstr "已从基金复制。"
+
+#: hypha/apply/funds/templates/funds/application_base.html:53
 msgid "Application guide"
 msgstr "申请指南"
 
-#: hypha/apply/funds/templates/funds/application_base.html:71
+#: hypha/apply/funds/templates/funds/application_base.html:98
 #: hypha/apply/funds/views/submission_edit.py:129
 msgid "Preview and submit"
 msgstr ""
 
-#: hypha/apply/funds/templates/funds/application_base.html:73
+#: hypha/apply/funds/templates/funds/application_base.html:106
 #: hypha/apply/funds/templates/funds/application_preview.html:46
 msgid "Submit for review"
 msgstr "提交供审核"
 
-#: hypha/apply/funds/templates/funds/application_base.html:77
+#: hypha/apply/funds/templates/funds/application_base.html:127
 #: hypha/apply/funds/views/submission_edit.py:134
 #: hypha/apply/funds/views/submission_edit.py:319
 #, fuzzy
@@ -3140,8 +3137,8 @@ msgstr "提交供审核"
 msgid "Preview"
 msgstr "审核"
 
-#: hypha/apply/funds/templates/funds/application_base.html:81
-#: hypha/apply/funds/templates/funds/applicationsubmission_form.html:41
+#: hypha/apply/funds/templates/funds/application_base.html:132
+#: hypha/apply/funds/templates/funds/applicationsubmission_form.html:51
 msgid "You must have Javascript enabled to use this form."
 msgstr "您必须启用 Javascript 以使用此表单。"
 
@@ -3158,143 +3155,138 @@ msgid "Revisions for %(title)s"
 msgstr "%(title)s 的修订"
 
 #: hypha/apply/funds/templates/funds/applicationrevision_list.html:7
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:85
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:94
 msgid "Revisions"
 msgstr "修订"
 
-#: hypha/apply/funds/templates/funds/applicationrevision_list.html:19
-#: hypha/apply/projects/templates/application_projects/includes/report_line.html:5
+#: hypha/apply/funds/templates/funds/applicationrevision_list.html:27
+#: hypha/apply/projects/reports/templates/reports/includes/report_line.html:5
 msgid "current"
 msgstr "当前"
 
-#: hypha/apply/funds/templates/funds/applicationrevision_list.html:26
+#: hypha/apply/funds/templates/funds/applicationrevision_list.html:41
 #: hypha/apply/funds/templates/funds/revisions_compare.html:3
 #: hypha/apply/review/templates/review/review_detail.html:70
 msgid "Compare"
 msgstr "操作"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_admin_detail.html:12
+#: hypha/apply/funds/templates/funds/applicationsubmission_admin_detail.html:15
 #: hypha/apply/funds/templates/funds/applicationsubmission_reviewer_detail.html:6
 msgid "Flags"
 msgstr "标记"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_admin_detail.html:20
+#: hypha/apply/funds/templates/funds/applicationsubmission_admin_detail.html:23
 #: hypha/apply/funds/templates/funds/applicationsubmission_community_detail.html:6
 #: hypha/apply/funds/templates/funds/applicationsubmission_reviewer_detail.html:13
 msgid "Reviews & assignees"
 msgstr "审核人 & 被分配者"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_admin_detail.html:34
+#: hypha/apply/funds/templates/funds/applicationsubmission_admin_detail.html:45
 msgid "View all"
 msgstr "查看所有"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_admin_detail.html:66
+#: hypha/apply/funds/templates/funds/applicationsubmission_admin_detail.html:78
 msgid "Reminders"
 msgstr "提醒"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_admin_detail.html:72
+#: hypha/apply/funds/templates/funds/applicationsubmission_admin_detail.html:84
+#: hypha/apply/funds/templates/funds/modals/create_reminder_form.html:2
 #, fuzzy
 #| msgid "Create Reminder"
 msgid "Create reminder"
 msgstr "创建提醒"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:17
-#, fuzzy
-#| msgid "No submissions"
-msgid "Back to submissions"
-msgstr "无提交"
-
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:51
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:25
+#: hypha/apply/funds/templates/funds/comments.html:21
 #: hypha/apply/projects/templates/application_projects/paf_export.html:76
 #: hypha/apply/projects/templates/application_projects/project_approval_detail.html:85
-#: hypha/apply/projects/templates/application_projects/project_detail.html:72
+#: hypha/apply/projects/templates/application_projects/project_detail.html:22
 #, fuzzy
 #| msgid "application"
 msgid "Application"
 msgstr "申请"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:60
-#: hypha/apply/projects/templates/application_projects/project_detail.html:79
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:41
+#: hypha/apply/funds/templates/funds/comments.html:36
+#: hypha/apply/projects/templates/application_projects/project_detail.html:36
 #, fuzzy
 #| msgid "Congratulations!"
-msgid "Conversations"
+msgid "Conversation"
 msgstr "恭喜！"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:73
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:50
+#: hypha/apply/funds/templates/funds/comments.html:45
 msgid "View message log"
 msgstr "查看消息日志"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:84
-msgid "This submission has been archived. This is visible to the roles "
-msgstr ""
-
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:91
-msgid "This submission is sealed"
-msgstr "此提交已被锁定"
-
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:101
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:62
 msgid "Congratulations!"
 msgstr "恭喜！"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:102
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:63
 #, python-format
 msgid "Your %(stage)s application has been accepted."
 msgstr "您的 %(stage)s 申请已被通过。"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:103
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:65
 #, python-format
 msgid "Start your %(stage)s application."
 msgstr "开始您的 %(stage)s 申请。"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:110
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:73
+#, fuzzy
+#| msgid "Your application has been reviewed and the outcome is"
+msgid "This application has been archived. This is visible to the roles "
+msgstr "您的申请已被审核，结果为"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:80
+#, fuzzy
+#| msgid "This submission is sealed"
+msgid "This application is sealed."
+msgstr "此提交已被锁定"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:87
 #, fuzzy
 #| msgid "Draft"
 msgid "Drafted "
 msgstr "草稿"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:112
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:89
 #, fuzzy
 #| msgid "Submitted"
 msgid "Submitted "
 msgstr "已提交"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:120
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:99
 #: hypha/apply/funds/templates/submissions/all.html:370
 #, fuzzy
 #| msgid "Update"
 msgid "Updated"
 msgstr "更新"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:135
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:118
 #, fuzzy
 #| msgid "Delete Submissions"
 msgid "Delete Submission"
 msgstr "删除提交"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:194
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:183
 msgid "Related submissions"
 msgstr "相关提交"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:197
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:201
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:191
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:202
 msgid "View linked"
 msgstr "查看已链接"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:208
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:211
 #, fuzzy
 #| msgid "Delete Submissions"
 msgid "Other Submissions"
 msgstr "删除提交"
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:236
-#: hypha/apply/projects/templates/application_projects/project_detail.html:208
-#, fuzzy
-#| msgid "Communications"
-msgid "Add communication"
-msgstr "交流"
-
 #: hypha/apply/funds/templates/funds/applicationsubmission_form.html:3
-#: hypha/apply/funds/templates/funds/applicationsubmission_form.html:8
+#: hypha/apply/funds/templates/funds/applicationsubmission_form.html:9
 #: hypha/apply/projects/templates/application_projects/invoice_form.html:15
 #: hypha/apply/projects/templates/application_projects/project_approval_form.html:3
 #: hypha/apply/projects/templates/application_projects/project_approval_form.html:12
@@ -3306,9 +3298,17 @@ msgstr "交流"
 msgid "Editing"
 msgstr "编辑"
 
-#: hypha/apply/funds/templates/funds/grouped_application_list.html:7
-msgid "List of Submissions summary"
-msgstr "提交概要列表"
+#: hypha/apply/funds/templates/funds/comments.html:56
+#, fuzzy
+#| msgid "Communications"
+msgid "Add communication"
+msgstr "交流"
+
+#: hypha/apply/funds/templates/funds/comments.html:79
+#, fuzzy
+#| msgid "Comments"
+msgid "Add Comment"
+msgstr "评论"
 
 #: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:4
 #: hypha/apply/funds/templates/funds/includes/generic_primary_actions.html:5
@@ -3343,27 +3343,26 @@ msgstr "完成草稿审核"
 msgid "Assign reviewers"
 msgstr "分配审核人"
 
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:47
-#: hypha/apply/funds/templates/funds/includes/generic_primary_actions.html:15
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:50
+#: hypha/apply/funds/templates/funds/includes/generic_primary_actions.html:18
 msgid "View determination"
 msgstr "查看决策"
 
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:58
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:61
 #: hypha/apply/projects/templates/application_projects/modals/batch_invoice_status_update.html:20
 #: hypha/apply/projects/views/payment.py:119
 msgid "Update status"
 msgstr "更新状态"
 
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:61
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:64
 msgid "Assign"
 msgstr "分配"
 
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:80
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:83
 #: hypha/apply/funds/templates/funds/submission_sealed.html:14
 #: hypha/apply/funds/templates/submissions/partials/submission-lead.html:8
 #: hypha/apply/funds/templates/submissions/partials/submission-lead.html:12
-#: hypha/apply/projects/filters.py:37 hypha/apply/projects/filters.py:55
-#: hypha/apply/projects/tables.py:106
+#: hypha/apply/projects/filters.py:41 hypha/apply/projects/filters.py:54
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:30
 #: hypha/apply/projects/templates/application_projects/partials/project-lead.html:9
 #: hypha/apply/projects/templates/application_projects/partials/project-lead.html:13
@@ -3372,42 +3371,33 @@ msgstr "分配"
 msgid "Lead"
 msgstr "领导人"
 
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:84
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:88
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:24
 msgid "More actions"
 msgstr "更多操作"
 
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:90
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:103
 #: hypha/apply/funds/templates/funds/includes/translate_application_form.html:2
-#: hypha/apply/funds/templates/funds/includes/translate_application_form.html:68
+#: hypha/apply/funds/templates/funds/includes/translate_application_form.html:73
 msgid "Translate"
 msgstr ""
 
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:104
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:117
 #: hypha/apply/funds/views/reminders.py:69
 msgid "Create Reminder"
 msgstr "创建提醒"
 
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:109
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:123
 msgid "Download PDF"
 msgstr "下载 PDF"
 
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:115
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:133
 #, fuzzy
 #| msgid "Your active submissions"
 msgid "Archive Submission"
 msgstr "您的活动提交"
 
-#: hypha/apply/funds/templates/funds/includes/create_project_form.html:10
-#, fuzzy
-#| msgid "Are you sure you want to delete selected submissions?"
-msgid ""
-"Are you sure you want create a project from this submission? This cannot be "
-"undone."
-msgstr "您确定要删除所选提交吗？"
-
 #: hypha/apply/funds/templates/funds/includes/delegated_form_base.html:29
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:96
 msgid "Close"
 msgstr "关闭"
 
@@ -3447,24 +3437,6 @@ msgstr "已归档"
 msgid "You have no %(type)s rounds or labs assigned to you."
 msgstr "没有分配给您的 %(type)s 轮次或实验室。"
 
-#: hypha/apply/funds/templates/funds/includes/progress_form.html:5
-#: hypha/apply/projects/templates/application_projects/includes/project_documents.html:63
-#: hypha/apply/projects/templates/application_projects/partials/invoice_detail_actions.html:33
-#: hypha/apply/projects/templates/application_projects/partials/invoice_detail_actions.html:38
-#: hypha/apply/projects/templates/application_projects/partials/invoice_detail_actions.html:43
-#: hypha/apply/projects/templates/application_projects/partials/invoice_status_table.html:34
-#: hypha/apply/projects/templates/application_projects/project_approval_detail.html:140
-#: hypha/apply/projects/views/project.py:1008
-#: hypha/apply/projects/views/project.py:1224
-msgid "Update Status"
-msgstr "更新状态"
-
-#: hypha/apply/funds/templates/funds/includes/progress_form.html:10
-#: hypha/apply/projects/templates/application_projects/modals/invoice_status_update.html:5
-#: hypha/apply/projects/templates/application_projects/partials/invoice_detail_actions.html:37
-msgid "Current status"
-msgstr "当前状态"
-
 #: hypha/apply/funds/templates/funds/includes/reminders_block.html:14
 msgid "Expired"
 msgstr ""
@@ -3489,23 +3461,27 @@ msgid "Proposal Information"
 msgstr "提案信息"
 
 #: hypha/apply/funds/templates/funds/includes/rendered_answers.html:25
-#: hypha/apply/funds/templates/funds/revisions_compare.html:44
+#: hypha/apply/funds/templates/funds/revisions_compare.html:64
+#: hypha/apply/funds/templates/funds/revisions_compare.html:65
 msgid "Requested Funding"
 msgstr "已请求基金"
 
 #: hypha/apply/funds/templates/funds/includes/rendered_answers.html:32
-#: hypha/apply/funds/templates/funds/revisions_compare.html:42
+#: hypha/apply/funds/templates/funds/revisions_compare.html:59
+#: hypha/apply/funds/templates/funds/revisions_compare.html:60
 msgid "Project Duration"
 msgstr "项目时长"
 
 #: hypha/apply/funds/templates/funds/includes/rendered_answers.html:40
-#: hypha/apply/funds/templates/funds/revisions_compare.html:36
+#: hypha/apply/funds/templates/funds/revisions_compare.html:44
+#: hypha/apply/funds/templates/funds/revisions_compare.html:45
 msgid "Legal Name"
 msgstr "法定名称"
 
 #: hypha/apply/funds/templates/funds/includes/rendered_answers.html:44
-#: hypha/apply/funds/templates/funds/revisions_compare.html:38
-#: hypha/apply/projects/templates/application_projects/project_detail.html:111
+#: hypha/apply/funds/templates/funds/revisions_compare.html:49
+#: hypha/apply/funds/templates/funds/revisions_compare.html:50
+#: hypha/apply/projects/templates/application_projects/project_detail.html:66
 msgid "E-mail"
 msgstr "电子邮件"
 
@@ -3532,7 +3508,6 @@ msgid "Show less..."
 msgstr "显示代码"
 
 #: hypha/apply/funds/templates/funds/includes/round-block-listing.html:29
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:46
 #: hypha/apply/funds/templates/submissions/all.html:181
 msgid ""
 "Are you sure you want to download the submissions as a csv file? This file "
@@ -3571,8 +3546,8 @@ msgstr "删除提交"
 msgid "Archived Submission"
 msgstr "您的活动提交"
 
-#: hypha/apply/funds/templates/funds/includes/submission-list-row.html:198
-#: hypha/apply/funds/templates/funds/includes/submission-table-row.html:163
+#: hypha/apply/funds/templates/funds/includes/submission-list-row.html:202
+#: hypha/apply/funds/templates/funds/includes/submission-table-row.html:167
 #, fuzzy
 #| msgid "Communications"
 msgid "View communications"
@@ -3582,48 +3557,37 @@ msgstr "交流"
 msgid "Selected"
 msgstr "已选中"
 
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:32
-#, fuzzy
-#| msgid "Archived"
-msgid "Hide Archived"
-msgstr "已归档"
-
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:37
-#, fuzzy
-#| msgid "Archived"
-msgid "Show Archived"
-msgstr "已归档"
-
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:59
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:65
-msgid "Filters"
-msgstr "筛选器"
-
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:70
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:80
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:33
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:43
 msgid "Search"
 msgstr "搜索"
 
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:76
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:39
 msgid "submissions"
 msgstr "提交"
 
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:83
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:46
 msgid "Search input"
 msgstr "搜索输入"
 
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:94
-#: hypha/apply/funds/templates/funds/includes/translate_application_form.html:67
-msgid "Clear"
-msgstr "清空"
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:63
+#: hypha/apply/funds/templates/submissions/all.html:204
+msgid "Clear current search query, filters and sorts"
+msgstr ""
 
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:95
-msgid "Filter by"
-msgstr "筛选条件"
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:71
+#, fuzzy
+#| msgid "Remove"
+msgid "Remove filter"
+msgstr "移除"
 
-#: hypha/apply/funds/templates/funds/includes/translate_application_form.html:57
+#: hypha/apply/funds/templates/funds/includes/translate_application_form.html:59
 msgid "Translations are an experimental feature and may be inaccurate"
 msgstr ""
+
+#: hypha/apply/funds/templates/funds/includes/translate_application_form.html:72
+msgid "Clear"
+msgstr "清空"
 
 #: hypha/apply/funds/templates/funds/includes/update_reviewer_form.html:2
 #, fuzzy
@@ -3644,21 +3608,53 @@ msgstr "更新审核人"
 #: hypha/apply/funds/views/submission_edit.py:788
 #: hypha/apply/funds/views/translate.py:62
 #: hypha/apply/funds/views/translate.py:97
-#: hypha/apply/projects/views/project.py:414
-#: hypha/apply/projects/views/project.py:453
-#: hypha/apply/projects/views/project.py:476
-#: hypha/apply/projects/views/project.py:514
-#: hypha/apply/projects/views/project.py:1253
-#: hypha/apply/projects/views/project.py:1292
+#: hypha/apply/projects/reports/templates/reports/includes/reports.html:27
+#: hypha/apply/projects/views/project.py:417
+#: hypha/apply/projects/views/project.py:456
+#: hypha/apply/projects/views/project.py:500
+#: hypha/apply/projects/views/project.py:1238
+#: hypha/apply/projects/views/project.py:1277
 msgid "Update"
 msgstr "更新"
+
+#: hypha/apply/funds/templates/funds/modals/create_project_form.html:2
+#, fuzzy
+#| msgid "Create Project"
+msgid "Create project"
+msgstr "创建项目"
+
+#: hypha/apply/funds/templates/funds/modals/create_project_form.html:5
+#, fuzzy
+#| msgid "Are you sure you want to delete selected submissions?"
+msgid ""
+"Are you sure you want create a project from this submission? This cannot be "
+"undone."
+msgstr "您确定要删除所选提交吗？"
+
+#: hypha/apply/funds/templates/funds/modals/progress_form.html:5
+#: hypha/apply/projects/templates/application_projects/includes/project_documents.html:63
+#: hypha/apply/projects/templates/application_projects/partials/invoice_detail_actions.html:33
+#: hypha/apply/projects/templates/application_projects/partials/invoice_detail_actions.html:38
+#: hypha/apply/projects/templates/application_projects/partials/invoice_detail_actions.html:43
+#: hypha/apply/projects/templates/application_projects/partials/invoice_status_table.html:40
+#: hypha/apply/projects/templates/application_projects/project_approval_detail.html:140
+#: hypha/apply/projects/views/project.py:994
+#: hypha/apply/projects/views/project.py:1209
+msgid "Update Status"
+msgstr "更新状态"
+
+#: hypha/apply/funds/templates/funds/modals/progress_form.html:10
+#: hypha/apply/projects/templates/application_projects/modals/invoice_status_update.html:5
+#: hypha/apply/projects/templates/application_projects/partials/invoice_detail_actions.html:37
+msgid "Current status"
+msgstr "当前状态"
 
 #: hypha/apply/funds/templates/funds/modals/update_lead_form.html:2
 #: hypha/apply/projects/templates/application_projects/modals/lead_update.html:2
 msgid "Update Lead"
 msgstr "更新领导人"
 
-#: hypha/apply/funds/templates/funds/modals/update_lead_form.html:7
+#: hypha/apply/funds/templates/funds/modals/update_lead_form.html:6
 #: hypha/apply/projects/templates/application_projects/modals/lead_update.html:7
 #, fuzzy
 #| msgid "Current status"
@@ -3674,17 +3670,17 @@ msgstr "当前状态"
 msgid "Deleting"
 msgstr "删除"
 
-#: hypha/apply/funds/templates/funds/reminder_confirm_delete.html:16
-#, python-format
-msgid ">Are you sure you want to delete \"%(object)s\"?"
-msgstr ">您确定要删除“%(object)s”吗？"
-
 #: hypha/apply/funds/templates/funds/reminder_confirm_delete.html:17
+#, python-format
+msgid "Are you sure you want to delete \"%(object)s\"?"
+msgstr "您确定要删除“%(object)s”吗？"
+
+#: hypha/apply/funds/templates/funds/reminder_confirm_delete.html:25
 #: hypha/apply/funds/views/submission_edit.py:429
 #: hypha/apply/funds/views/submission_edit.py:471
 #: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:30
-#: hypha/apply/projects/views/project.py:577
-#: hypha/apply/projects/views/project.py:636
+#: hypha/apply/projects/views/project.py:563
+#: hypha/apply/projects/views/project.py:622
 #: hypha/apply/review/templates/review/review_confirm_delete.html:17
 #: hypha/apply/review/templates/review/reviewopinion_confirm_delete.html:17
 #: hypha/apply/users/templates/elevate/elevate.html:32
@@ -3696,7 +3692,7 @@ msgstr "确定"
 
 #: hypha/apply/funds/templates/funds/reviewer_leaderboard.html:5
 #: hypha/apply/funds/templates/funds/reviewer_leaderboard_detail.html:5
-#: hypha/apply/funds/templates/funds/submissions_result.html:51
+#: hypha/apply/funds/templates/funds/submissions_result.html:59
 #: hypha/apply/projects/templates/application_projects/paf_export.html:31
 #: hypha/apply/projects/templates/application_projects/project_approval_detail.html:56
 #: hypha/apply/review/templates/review/review_list.html:4
@@ -3723,23 +3719,23 @@ msgstr "所有审核人"
 msgid "Reviews by %(object)s"
 msgstr "%(object)s 的审核"
 
-#: hypha/apply/funds/templates/funds/revisions_compare.html:9
+#: hypha/apply/funds/templates/funds/revisions_compare.html:10
 #, fuzzy
 #| msgid "Revisions"
 msgid "View revisions"
 msgstr "修订"
 
-#: hypha/apply/funds/templates/funds/revisions_compare.html:13
+#: hypha/apply/funds/templates/funds/revisions_compare.html:14
 msgid "Comparing revisions"
 msgstr "比较修订"
 
-#: hypha/apply/funds/templates/funds/revisions_compare.html:23
+#: hypha/apply/funds/templates/funds/revisions_compare.html:27
 #, fuzzy
 #| msgid "Proposal Information"
 msgid "Proposal Information (Old)"
 msgstr "提案信息"
 
-#: hypha/apply/funds/templates/funds/revisions_compare.html:27
+#: hypha/apply/funds/templates/funds/revisions_compare.html:31
 #, fuzzy
 #| msgid "Proposal Information"
 msgid "Proposal Information (New)"
@@ -3754,7 +3750,7 @@ msgstr "探索当前与既往轮次"
 msgid "Staff assignments"
 msgstr "员工分配"
 
-#: hypha/apply/funds/templates/funds/staff_assignments.html:11
+#: hypha/apply/funds/templates/funds/staff_assignments.html:12
 msgid "Track and explore the staff assignments"
 msgstr "跟踪并探索员工分配"
 
@@ -3802,25 +3798,27 @@ msgid ""
 "                "
 msgstr ""
 
-#: hypha/apply/funds/templates/funds/submission-success.html:55
+#: hypha/apply/funds/templates/funds/submission-success.html:57
 #, fuzzy
 #| msgid "Go to my dashboard"
 msgid "Go to your dashboard"
 msgstr "转到我的仪表板"
 
-#: hypha/apply/funds/templates/funds/submission-success.html:62
+#: hypha/apply/funds/templates/funds/submission-success.html:64
+#: hypha/apply/projects/reports/templates/reports/includes/reports.html:82
+#: hypha/apply/projects/reports/templates/reports/report_detail.html:64
 #, fuzzy
 #| msgid "Continue Editing"
 msgid "Continue editing"
 msgstr "继续编辑"
 
-#: hypha/apply/funds/templates/funds/submission-success.html:69
+#: hypha/apply/funds/templates/funds/submission-success.html:71
 #, fuzzy
 #| msgid "No submissions"
 msgid "View your submission"
 msgstr "无提交"
 
-#: hypha/apply/funds/templates/funds/submission-success.html:77
+#: hypha/apply/funds/templates/funds/submission-success.html:79
 #: hypha/apply/users/templates/users/login.html:4
 #: hypha/apply/users/templates/users/login.html:64
 #: hypha/apply/users/templates/users/password_reset/complete.html:13
@@ -3833,27 +3831,23 @@ msgstr "登录"
 msgid "Sealed"
 msgstr "已锁定"
 
-#: hypha/apply/funds/templates/funds/submission_sealed.html:20
+#: hypha/apply/funds/templates/funds/submission_sealed.html:21
 msgid "This application is sealed until the round is closed"
 msgstr "此申请已被锁定，直到轮次关闭"
 
-#: hypha/apply/funds/templates/funds/submission_sealed.html:21
+#: hypha/apply/funds/templates/funds/submission_sealed.html:23
 msgid "The round ends on"
 msgstr "轮次结束于"
 
-#: hypha/apply/funds/templates/funds/submission_sealed.html:22
+#: hypha/apply/funds/templates/funds/submission_sealed.html:26
 msgid "Go back"
 msgstr "返回"
 
-#: hypha/apply/funds/templates/funds/submission_sealed.html:24
+#: hypha/apply/funds/templates/funds/submission_sealed.html:31
 msgid ""
 "As an admin you are allowed to access the application. However, this action "
 "will be recorded."
 msgstr "作为管理员，您可以访问申请。但此操作会被记录。"
-
-#: hypha/apply/funds/templates/funds/submission_sealed.html:27
-msgid "View application"
-msgstr "查看申请"
 
 #: hypha/apply/funds/templates/funds/submissions_result.html:3
 #: hypha/apply/funds/templates/funds/submissions_result.html:8
@@ -3880,19 +3874,19 @@ msgstr "数目"
 msgid "Applied amounts"
 msgstr "申请者"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:22
-#: hypha/apply/funds/templates/funds/submissions_result.html:36
+#: hypha/apply/funds/templates/funds/submissions_result.html:23
+#: hypha/apply/funds/templates/funds/submissions_result.html:44
 msgid "Applied"
 msgstr "已申请"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:25
+#: hypha/apply/funds/templates/funds/submissions_result.html:29
 #, fuzzy
 #| msgid "Requested amount"
 msgid "Accepted amounts"
 msgstr "请求数目"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:26
-#: hypha/apply/funds/templates/funds/submissions_result.html:40
+#: hypha/apply/funds/templates/funds/submissions_result.html:31
+#: hypha/apply/funds/templates/funds/submissions_result.html:48
 #: hypha/apply/funds/workflows/constants.py:89
 #: hypha/apply/funds/workflows/definitions/double_stage.py:311
 #: hypha/apply/funds/workflows/definitions/single_stage.py:134
@@ -3902,82 +3896,82 @@ msgstr "请求数目"
 msgid "Accepted"
 msgstr "已通过"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:33
+#: hypha/apply/funds/templates/funds/submissions_result.html:41
 #: hypha/apply/funds/templates/submissions/all.html:7
 #: hypha/core/navigation.py:38
 msgid "Submissions"
 msgstr "提交"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:35
+#: hypha/apply/funds/templates/funds/submissions_result.html:43
 #, fuzzy
 #| msgid "Related submissions"
 msgid "Applied submissions"
 msgstr "相关提交"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:39
+#: hypha/apply/funds/templates/funds/submissions_result.html:47
 #, fuzzy
 #| msgid "Related submissions"
 msgid "Accepted submissions"
 msgstr "相关提交"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:43
+#: hypha/apply/funds/templates/funds/submissions_result.html:51
 #, fuzzy
 #| msgid "Related submissions"
 msgid "Pending submissions"
 msgstr "相关提交"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:44
+#: hypha/apply/funds/templates/funds/submissions_result.html:52
 #: hypha/apply/projects/templates/application_projects/paf_export.html:22
 msgid "Pending"
 msgstr "等待中"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:54
+#: hypha/apply/funds/templates/funds/submissions_result.html:62
 #, fuzzy
 #| msgid "All reviewers"
 msgid "All reviews"
 msgstr "所有审核人"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:58
+#: hypha/apply/funds/templates/funds/submissions_result.html:66
 #, fuzzy
 #| msgid "No reviews"
 msgid "Your reviews"
 msgstr "无审核"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:59
+#: hypha/apply/funds/templates/funds/submissions_result.html:68
 msgid "You"
 msgstr "您"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:62
+#: hypha/apply/funds/templates/funds/submissions_result.html:74
 #, fuzzy
 #| msgid "Your avg. score"
 msgid "Your average score"
 msgstr "您的平均分数"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:63
+#: hypha/apply/funds/templates/funds/submissions_result.html:76
 msgid "Your avg. score"
 msgstr "您的平均分数"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:73
+#: hypha/apply/funds/templates/funds/submissions_result.html:89
 #, fuzzy
 #| msgid "Submission details"
 msgid "Submission value totals"
 msgstr "提交详情"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:79
+#: hypha/apply/funds/templates/funds/submissions_result.html:95
 #, fuzzy
 #| msgid "Number of submission"
 msgid "Number of submissions"
 msgstr "提交数"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:85
+#: hypha/apply/funds/templates/funds/submissions_result.html:101
 msgid "Average value"
 msgstr "平均值"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:92
+#: hypha/apply/funds/templates/funds/submissions_result.html:108
 msgid "Total value"
 msgstr "总数值"
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:101
+#: hypha/apply/funds/templates/funds/submissions_result.html:117
 #, fuzzy, python-format
 #| msgid "Some submissions lack values and are not included."
 msgid ""
@@ -3997,28 +3991,28 @@ msgstr "审核结果"
 msgid "Awaiting"
 msgstr "等待中"
 
-#: hypha/apply/funds/templates/funds/tables/table.html:95
+#: hypha/apply/funds/templates/funds/tables/table.html:101
 msgid "Linked"
 msgstr "已链接"
 
-#: hypha/apply/funds/templates/funds/tables/table.html:131
+#: hypha/apply/funds/templates/funds/tables/table.html:141
 #: hypha/apply/projects/templates/application_projects/tables/table.html:25
 msgid "items"
 msgstr "项目"
 
-#: hypha/apply/funds/templates/funds/tables/table.html:139
+#: hypha/apply/funds/templates/funds/tables/table.html:149
 #: hypha/apply/projects/templates/application_projects/tables/table.html:32
 #: hypha/templates/includes/pagination.html:6
 msgid "previous"
 msgstr "上一页"
 
-#: hypha/apply/funds/templates/funds/tables/table.html:147
+#: hypha/apply/funds/templates/funds/tables/table.html:157
 #: hypha/apply/projects/templates/application_projects/tables/table.html:40
 msgid "Page"
 msgstr "页面"
 
-#: hypha/apply/funds/templates/funds/tables/table.html:154
-#: hypha/apply/projects/templates/application_projects/includes/report_line.html:5
+#: hypha/apply/funds/templates/funds/tables/table.html:164
+#: hypha/apply/projects/reports/templates/reports/includes/report_line.html:5
 #: hypha/apply/projects/templates/application_projects/tables/table.html:47
 #: hypha/templates/includes/pagination.html:14
 msgid "next"
@@ -4058,6 +4052,12 @@ msgstr "提交"
 #| msgid "Your active submissions"
 msgid "Your assigned submissions (lead)"
 msgstr "您的活动提交"
+
+#: hypha/apply/funds/templates/submissions/all.html:85
+#, fuzzy
+#| msgid "Your Flagged Submissions"
+msgid "Your flagged submissions"
+msgstr "您的已标记提交"
 
 #: hypha/apply/funds/templates/submissions/all.html:97
 #, fuzzy
@@ -4103,10 +4103,6 @@ msgstr "提交领导人"
 
 #: hypha/apply/funds/templates/submissions/all.html:182
 msgid "Export as CSV"
-msgstr ""
-
-#: hypha/apply/funds/templates/submissions/all.html:204
-msgid "Clear current search query, filters and sorts"
 msgstr ""
 
 #: hypha/apply/funds/templates/submissions/all.html:209
@@ -4993,17 +4989,17 @@ msgid "Vendor pending"
 msgstr "供应商"
 
 #: hypha/apply/projects/constants.py:22
-#: hypha/apply/projects/models/payment.py:35 hypha/apply/projects/utils.py:80
+#: hypha/apply/projects/models/payment.py:34 hypha/apply/projects/utils.py:94
 msgid "Declined"
 msgstr "已拒绝"
 
 #: hypha/apply/projects/constants.py:23
-#: hypha/apply/projects/models/payment.py:33 hypha/apply/projects/utils.py:82
+#: hypha/apply/projects/models/payment.py:32 hypha/apply/projects/utils.py:96
 msgid "Paid"
 msgstr "已付款"
 
 #: hypha/apply/projects/constants.py:24
-#: hypha/apply/projects/models/payment.py:34 hypha/apply/projects/utils.py:84
+#: hypha/apply/projects/models/payment.py:33 hypha/apply/projects/utils.py:98
 msgid "Payment failed"
 msgstr ""
 
@@ -5018,10 +5014,6 @@ msgstr "等待中"
 #| msgid "Request More Information"
 msgid "Request for change"
 msgstr "请求更多信息"
-
-#: hypha/apply/projects/filters.py:110
-msgid "Reporting Period"
-msgstr "报告间隔"
 
 #: hypha/apply/projects/forms/payment.py:108
 #, fuzzy
@@ -5112,50 +5104,50 @@ msgstr ""
 msgid "Contract Document"
 msgstr "合同号"
 
-#: hypha/apply/projects/models/payment.py:28
+#: hypha/apply/projects/models/payment.py:27
 msgid "Resubmitted"
 msgstr "已重新提交"
 
-#: hypha/apply/projects/models/payment.py:29
+#: hypha/apply/projects/models/payment.py:28
 msgid "Changes requested by staff"
 msgstr ""
 
-#: hypha/apply/projects/models/payment.py:30
+#: hypha/apply/projects/models/payment.py:29
 msgid "Changes requested by finance"
 msgstr ""
 
-#: hypha/apply/projects/models/payment.py:31
+#: hypha/apply/projects/models/payment.py:30
 #, fuzzy
 #| msgid "Approved contract"
 msgid "Approved by staff"
 msgstr "批准了合同"
 
-#: hypha/apply/projects/models/payment.py:32
+#: hypha/apply/projects/models/payment.py:31
 #, fuzzy
 #| msgid "Approved contract"
 msgid "Approved by finance"
 msgstr "批准了合同"
 
-#: hypha/apply/projects/models/payment.py:117
+#: hypha/apply/projects/models/payment.py:116
 msgid "Message"
 msgstr "消息"
 
-#: hypha/apply/projects/models/payment.py:120
+#: hypha/apply/projects/models/payment.py:119
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:22
 #, fuzzy
 #| msgid "Invoice Number"
 msgid "Invoice number"
 msgstr "发票号"
 
-#: hypha/apply/projects/models/payment.py:127
+#: hypha/apply/projects/models/payment.py:126
 #, fuzzy
 #| msgid "Invoice Link"
 msgid "Invoice amount"
 msgstr "发票链接"
 
-#: hypha/apply/projects/models/payment.py:129 hypha/apply/projects/tables.py:46
-#: hypha/apply/projects/templates/application_projects/includes/invoices.html:20
-#: hypha/apply/projects/templates/application_projects/includes/invoices.html:44
+#: hypha/apply/projects/models/payment.py:128 hypha/apply/projects/tables.py:41
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:22
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:54
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:23
 #: hypha/apply/projects/templates/application_projects/partials/invoice_status_table.html:7
 #, fuzzy
@@ -5163,306 +5155,537 @@ msgstr "发票链接"
 msgid "Invoice date"
 msgstr "发票文件"
 
-#: hypha/apply/projects/models/payment.py:130
+#: hypha/apply/projects/models/payment.py:129
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:25
 #, fuzzy
 #| msgid "Paid"
 msgid "Paid date"
 msgstr "已付款"
 
-#: hypha/apply/projects/models/payment.py:137
+#: hypha/apply/projects/models/payment.py:136
 #, python-brace-format
 msgid "Invoice requested for {project}"
 msgstr "已为 {project} 请求发票"
 
-#: hypha/apply/projects/models/project.py:83
+#: hypha/apply/projects/models/project.py:84
 #, fuzzy
 #| msgid "Requested approval"
 msgid "Internal approval"
 msgstr "请求了批准"
 
-#: hypha/apply/projects/models/project.py:84
-#: hypha/apply/projects/models/project.py:92 hypha/apply/users/roles.py:13
+#: hypha/apply/projects/models/project.py:85
+#: hypha/apply/projects/models/project.py:93 hypha/apply/users/roles.py:13
 msgid "Contracting"
 msgstr "签订合同中"
 
-#: hypha/apply/projects/models/project.py:85
-#: hypha/apply/projects/models/project.py:93
+#: hypha/apply/projects/models/project.py:86
+#: hypha/apply/projects/models/project.py:94
 msgid "Invoicing and reporting"
 msgstr ""
 
-#: hypha/apply/projects/models/project.py:86
-#: hypha/apply/projects/models/project.py:94
+#: hypha/apply/projects/models/project.py:87
+#: hypha/apply/projects/models/project.py:95
 msgid "Closing"
 msgstr "关闭"
 
-#: hypha/apply/projects/models/project.py:87
-#: hypha/apply/projects/models/project.py:95
+#: hypha/apply/projects/models/project.py:88
+#: hypha/apply/projects/models/project.py:96
 msgid "Complete"
 msgstr "完成"
 
-#: hypha/apply/projects/models/project.py:91
+#: hypha/apply/projects/models/project.py:92
 #, fuzzy
 #| msgid "Approvals"
 msgid "{} approval"
 msgstr "批准"
 
-#: hypha/apply/projects/models/project.py:261
+#: hypha/apply/projects/models/project.py:262
 msgid "Proposed Start Date"
 msgstr "提议开始日期"
 
-#: hypha/apply/projects/models/project.py:262
+#: hypha/apply/projects/models/project.py:263
 msgid "Proposed End Date"
 msgstr "提议结束日期"
 
-#: hypha/apply/projects/models/project.py:390
+#: hypha/apply/projects/models/project.py:399
 msgid "Proposed End Date must be after Proposed Start Date"
 msgstr "提议的结束日期必须晚于开始日期"
 
-#: hypha/apply/projects/models/project.py:539
+#: hypha/apply/projects/models/project.py:548
 msgid "user groups"
 msgstr ""
 
-#: hypha/apply/projects/models/project.py:541
+#: hypha/apply/projects/models/project.py:550
 msgid ""
 "Only selected group's users will be listed for this ProjectFormReviewerRole"
 msgstr ""
 
-#: hypha/apply/projects/models/project.py:561
+#: hypha/apply/projects/models/project.py:570
 msgid "Before"
 msgstr ""
 
-#: hypha/apply/projects/models/project.py:562
+#: hypha/apply/projects/models/project.py:571
 msgid "After"
 msgstr ""
 
-#: hypha/apply/projects/models/project.py:571
+#: hypha/apply/projects/models/project.py:580
 #, fuzzy
 #| msgid "Number field"
 msgid "Number of days"
 msgstr "数字字段"
 
-#: hypha/apply/projects/models/project.py:572
+#: hypha/apply/projects/models/project.py:581
 msgid "Relation to report due date"
 msgstr ""
 
-#: hypha/apply/projects/models/project.py:597
+#: hypha/apply/projects/models/project.py:606
 #, fuzzy
 #| msgid "PAF Reviewers Roles"
 msgid "Project Form Reviewers Roles"
 msgstr "PAF 审核人角色"
 
-#: hypha/apply/projects/models/project.py:600
+#: hypha/apply/projects/models/project.py:609
 #, fuzzy
 #| msgid "PAF Reviewers Roles"
 msgid "Project Reviewers Roles"
 msgstr "PAF 审核人角色"
 
-#: hypha/apply/projects/models/project.py:602
+#: hypha/apply/projects/models/project.py:611
 msgid ""
 "Reviewer Roles are needed to move projects to 'Internal Approval' stage. "
 "Delete all roles to skip internal approval process and to move all internal "
 "approval projects back to the 'Draft' stage with all approvals removed."
 msgstr ""
 
-#: hypha/apply/projects/models/project.py:609
-#: hypha/apply/projects/models/project.py:610
+#: hypha/apply/projects/models/project.py:618
+#: hypha/apply/projects/models/project.py:619
 #, fuzzy
 #| msgid "Report frequency"
 msgid "Report reminder frequency"
 msgstr "报告频率"
 
-#: hypha/apply/projects/models/project.py:612
+#: hypha/apply/projects/models/project.py:621
 msgid ""
 "Set up a cron job to run `notify_report_due.py`. The script will use these "
 "reminder settings."
 msgstr ""
 
-#: hypha/apply/projects/models/project.py:642
+#: hypha/apply/projects/models/project.py:651
 #, python-brace-format
 msgid "Approval of {project} by {user}"
 msgstr "{user} 批准了 {project}"
 
-#: hypha/apply/projects/models/project.py:688
+#: hypha/apply/projects/models/project.py:697
 msgid "Counter Signed"
 msgstr ""
 
-#: hypha/apply/projects/models/project.py:688
+#: hypha/apply/projects/models/project.py:697
 msgid "Unsigned"
 msgstr "未签名"
 
-#: hypha/apply/projects/models/project.py:691
+#: hypha/apply/projects/models/project.py:700
 #, python-brace-format
 msgid "Contract for {project} ({state})"
 msgstr "{project}（{state}）的合同"
 
-#: hypha/apply/projects/models/project.py:715
+#: hypha/apply/projects/models/project.py:726
 #, python-brace-format
 msgid "Project file: {title}"
 msgstr "项目档案：{title}"
 
-#: hypha/apply/projects/models/project.py:745
+#: hypha/apply/projects/models/project.py:756
 #, fuzzy, python-brace-format
 #| msgid "Project file: {title}"
 msgid "Contract file: {title}"
 msgstr "项目档案：{title}"
 
-#: hypha/apply/projects/models/project.py:785
+#: hypha/apply/projects/models/project.py:796
 msgid "Allow document access for groups"
 msgstr ""
 
-#: hypha/apply/projects/models/project.py:786
+#: hypha/apply/projects/models/project.py:797
 msgid "Only selected group's users can access the document"
 msgstr ""
 
-#: hypha/apply/projects/models/report.py:227
+#: hypha/apply/projects/reports/filters.py:39
+msgid "Reporting Period"
+msgstr "报告间隔"
+
+#: hypha/apply/projects/reports/models.py:230
 msgid "week"
 msgstr "周"
 
-#: hypha/apply/projects/models/report.py:228
+#: hypha/apply/projects/reports/models.py:231
 msgid "month"
 msgstr "月"
 
-#: hypha/apply/projects/models/report.py:229
+#: hypha/apply/projects/reports/models.py:232
 msgid "year"
 msgstr ""
 
-#: hypha/apply/projects/models/report.py:231
+#: hypha/apply/projects/reports/models.py:234
 msgid "Weeks"
 msgstr "周"
 
-#: hypha/apply/projects/models/report.py:232
+#: hypha/apply/projects/reports/models.py:235
 msgid "Months"
 msgstr "月"
 
-#: hypha/apply/projects/models/report.py:233
+#: hypha/apply/projects/reports/models.py:236
 msgid "Years"
 msgstr "年数"
 
-#: hypha/apply/projects/models/report.py:247
+#: hypha/apply/projects/reports/models.py:255
 #, fuzzy
 #| msgid "Reporting Period"
 msgid "Reporting Disabled"
 msgstr "报告间隔"
 
-#: hypha/apply/projects/models/report.py:252
+#: hypha/apply/projects/reports/models.py:260
 #, python-brace-format
 msgid "One time, that already has reported on {date}"
 msgstr ""
 
-#: hypha/apply/projects/models/report.py:257
+#: hypha/apply/projects/reports/models.py:265
 #, python-brace-format
 msgid "One time on {date}"
 msgstr ""
 
-#: hypha/apply/projects/models/report.py:265
-#: hypha/apply/projects/models/report.py:280
+#: hypha/apply/projects/reports/models.py:273
+#: hypha/apply/projects/reports/models.py:288
 msgid "last day"
 msgstr "一天前"
 
-#: hypha/apply/projects/models/report.py:271
+#: hypha/apply/projects/reports/models.py:279
 #, python-brace-format
 msgid "Once a year on {month} {day}"
 msgstr ""
 
-#: hypha/apply/projects/models/report.py:274
+#: hypha/apply/projects/reports/models.py:282
 #, fuzzy, python-brace-format
 #| msgid "Every {occurrence} weeks on {weekday}"
 msgid "Every {occurrence} years on {month} {day}"
 msgstr "在每 {occurrence} 周的 {weekday}"
 
-#: hypha/apply/projects/models/report.py:284
+#: hypha/apply/projects/reports/models.py:292
 #, python-brace-format
 msgid "Once a month on the {day}"
 msgstr ""
 
-#: hypha/apply/projects/models/report.py:285
+#: hypha/apply/projects/reports/models.py:293
 #, fuzzy, python-brace-format
 #| msgid "Every {occurrence} weeks on {weekday}"
 msgid "Every {occurrence} months on the {day}"
 msgstr "在每 {occurrence} 周的 {weekday}"
 
-#: hypha/apply/projects/models/report.py:292
+#: hypha/apply/projects/reports/models.py:300
 #, fuzzy, python-brace-format
 #| msgid "Every {occurrence} weeks on {weekday}"
 msgid "Once a week on {weekday}"
 msgstr "在每 {occurrence} 周的 {weekday}"
 
-#: hypha/apply/projects/models/report.py:293
+#: hypha/apply/projects/reports/models.py:301
 #, python-brace-format
 msgid "Every {occurrence} weeks on {weekday}"
 msgstr "在每 {occurrence} 周的 {weekday}"
 
-#: hypha/apply/projects/tables.py:27
+#: hypha/apply/projects/reports/templates/reports/includes/report_line.html:5
+msgid "The"
+msgstr "此"
+
+#: hypha/apply/projects/reports/templates/reports/includes/report_line.html:5
+msgid "reporting period is"
+msgstr "报告间隔为"
+
+#: hypha/apply/projects/reports/templates/reports/includes/report_line.html:7
+msgid "A report is due for the period"
+msgstr "此阶段应提交报告"
+
+#: hypha/apply/projects/reports/templates/reports/includes/report_line.html:9
+#: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:25
+#: hypha/apply/projects/reports/templates/reports/report_detail.html:23
+#: hypha/apply/projects/reports/templates/reports/report_form.html:31
+#: hypha/apply/projects/templates/application_projects/filters/widgets/date_range_input_widget.html:5
+msgid "to"
+msgstr "到"
+
+#: hypha/apply/projects/reports/templates/reports/includes/report_line.html:16
+#, fuzzy, python-format
+#| msgid ""
+#| "This will result in a gap in reporting for the project. You can undo this "
+#| "at any time."
+msgid ""
+" You're skipping the report for %(start_date)s - %(end_date)s. This will "
+"result in a gap in reporting for the project. You can undo this at any time. "
+msgstr "这将导致项目报告中的空白。您可随时撤销此操作。"
+
+#: hypha/apply/projects/reports/templates/reports/includes/report_line.html:17
+#: hypha/apply/projects/reports/templates/reports/includes/report_line.html:20
+msgid "Skip"
+msgstr "跳过"
+
+#: hypha/apply/projects/reports/templates/reports/includes/report_line.html:31
+msgid "Continue Editing"
+msgstr "继续编辑"
+
+#: hypha/apply/projects/reports/templates/reports/includes/report_line.html:31
+msgid "Add Report"
+msgstr "添加报告"
+
+#: hypha/apply/projects/reports/templates/reports/includes/reports.html:10
+#: hypha/apply/projects/reports/templates/reports/report_list.html:6
+#: hypha/core/navigation.py:93
+msgid "Reports"
+msgstr "报告"
+
+#: hypha/apply/projects/reports/templates/reports/includes/reports.html:25
+msgid "ENABLE"
+msgstr ""
+
+#: hypha/apply/projects/reports/templates/reports/includes/reports.html:53
+#: hypha/apply/projects/reports/templates/reports/includes/reports.html:62
+msgid "Period End"
+msgstr "阶段结束"
+
+#: hypha/apply/projects/reports/templates/reports/includes/reports.html:90
+msgid "Unskip"
+msgstr "取消跳过"
+
+#: hypha/apply/projects/reports/templates/reports/includes/reports.html:100
+msgid "Show more"
+msgstr "显示更多"
+
+#: hypha/apply/projects/reports/templates/reports/includes/reports.html:104
+#, fuzzy
+#| msgid "No reports submitted"
+msgid "No reports submitted yet."
+msgstr "没有已提交报告"
+
+#: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:2
+msgid "Change reporting frequency"
+msgstr "更改报告频率"
+
+#: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:10
+msgid ""
+"Reporting has been disabled, just save the form with appropriate report date "
+"and frequency to enable it again."
+msgstr ""
+
+#: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:13
+msgid "No next report is due, One time reporting has already reported on "
+msgstr ""
+
+#: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:16
+#, fuzzy
+#| msgid "Next report will be due in"
+msgid "Next report will be due on "
+msgstr "下一次报告预定于"
+
+#: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:18
+msgid "and it will be one-time reporting."
+msgstr ""
+
+#: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:21
+msgid "Next report will be due in"
+msgstr "下一次报告预定于"
+
+#: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:23
+msgid "and the report period will be"
+msgstr "报告间隔为"
+
+#: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:27
+msgid "and then every"
+msgstr "及在此之后每"
+
+#: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:30
+msgid "after until the project end date"
+msgstr "直至项目终止日期"
+
+#: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:52
+#, fuzzy
+#| msgid "Report frequency"
+msgid "Report every:"
+msgstr "报告频率"
+
+#: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:68
+#: hypha/apply/projects/templates/application_projects/project_form.html:32
+#: hypha/apply/projects/views/payment.py:260
+#: hypha/apply/projects/views/payment.py:329
+#: hypha/apply/projects/views/project.py:1962
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:70
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:98
+msgid "Save"
+msgstr "保存"
+
+#: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:69
+#, fuzzy
+#| msgid "Disable 2FA"
+msgid "Disable"
+msgstr "禁用 2FA"
+
+#: hypha/apply/projects/reports/templates/reports/report_detail.html:4
+#: hypha/apply/projects/reports/templates/reports/report_detail.html:14
+msgid "Report"
+msgstr "报告"
+
+#: hypha/apply/projects/reports/templates/reports/report_detail.html:10
+#: hypha/apply/projects/reports/templates/reports/report_form.html:14
+#: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:11
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:12
+#: hypha/apply/projects/templates/application_projects/invoice_form.html:10
+#: hypha/apply/projects/templates/application_projects/project_approval_form.html:9
+#: hypha/apply/projects/templates/application_projects/project_sow_form.html:9
+#, fuzzy
+#| msgid "Project name"
+msgid "View project page"
+msgstr "项目名称"
+
+#: hypha/apply/projects/reports/templates/reports/report_detail.html:23
+#: hypha/apply/projects/reports/templates/reports/report_form.html:31
+msgid "This report is for the period"
+msgstr "此报告针对阶段"
+
+#: hypha/apply/projects/reports/templates/reports/report_detail.html:29
+msgid "Report Skipped"
+msgstr "已跳过报告"
+
+#: hypha/apply/projects/reports/templates/reports/report_detail.html:31
+msgid "Public Report"
+msgstr "公开报告"
+
+#: hypha/apply/projects/reports/templates/reports/report_detail.html:74
+msgid "View previous report"
+msgstr "查看上一个报告"
+
+#: hypha/apply/projects/reports/templates/reports/report_detail.html:81
+msgid "View next report"
+msgstr "查看下一个报告"
+
+#: hypha/apply/projects/reports/templates/reports/report_form.html:8
+msgid "Edit Report"
+msgstr "编辑报告"
+
+#: hypha/apply/projects/reports/templates/reports/report_form.html:18
+msgid "Submit a report"
+msgstr "提交报告"
+
+#: hypha/apply/projects/reports/templates/reports/report_form.html:56
+msgid ""
+"Saving a draft means this report will be visible to you and staff from your "
+"project page."
+msgstr "保存草稿后，此报告将对您与项目页面人员可见。"
+
+#: hypha/apply/projects/reports/templates/reports/report_form.html:66
+#, fuzzy
+#| msgid "Approval form not configured. Please add an approval form in the"
+msgid ""
+"Project Report Form not configured. Please add a project report form in the"
+msgstr "未配置好批准表单，请在如下位置添加"
+
+#: hypha/apply/projects/reports/templates/reports/report_form.html:67
+#: hypha/apply/projects/templates/application_projects/project_approval_form.html:64
+#: hypha/apply/projects/templates/application_projects/project_sow_form.html:61
+msgid "fund settings"
+msgstr "基金设置"
+
+#: hypha/apply/projects/reports/templates/reports/report_form.html:71
+msgid "Project Report Form not configured yet. Please contact us at "
+msgstr ""
+
+#: hypha/apply/projects/reports/templates/reports/report_list.html:11
+msgid "Submitted Reports"
+msgstr "已提交报告"
+
+#: hypha/apply/projects/reports/templates/reports/report_list.html:13
+#, fuzzy
+#| msgid "Submitted Reports"
+msgid "View and filter all Submitted Reports"
+msgstr "已提交报告"
+
+#: hypha/apply/projects/reports/templates/reports/report_list.html:23
+msgid "No Reports Available."
+msgstr "无可用报告。"
+
+#: hypha/apply/projects/reports/templates/reports/reporting.html:6
+#: hypha/apply/projects/reports/templates/reports/reporting.html:11
+#: hypha/apply/projects/tables.py:142
+msgid "Reporting"
+msgstr "报告"
+
+#: hypha/apply/projects/reports/templates/reports/reporting.html:13
+msgid "View, Search and filter reporting statuses"
+msgstr ""
+
+#: hypha/apply/projects/reports/templates/reports/reporting.html:23
+#, fuzzy
+#| msgid "Project's current status"
+msgid "No Projects Currently Reporting."
+msgstr "项目当前状态"
+
+#: hypha/apply/projects/reports/views.py:78
+#: hypha/apply/projects/reports/views.py:100
+#, fuzzy
+#| msgid "You do not have permission to create that determination."
+msgid "You do not have permission to access this report."
+msgstr "您没有创建决策的权限。"
+
+#: hypha/apply/projects/reports/views.py:125
+#, fuzzy
+#| msgid "You do not have permission to create that determination."
+msgid "You do not have permission to update this report."
+msgstr "您没有创建决策的权限。"
+
+#: hypha/apply/projects/reports/views.py:372
+#, fuzzy
+#| msgid "You do not have permission to create that determination."
+msgid "You do not have permission to update reporting configurations."
+msgstr "您没有创建决策的权限。"
+
+#: hypha/apply/projects/reports/views.py:491
+#, fuzzy
+#| msgid "Reporting Period"
+msgid "Reporting disabled"
+msgstr "报告间隔"
+
+#: hypha/apply/projects/tables.py:26
 #: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:24
 msgid "Invoice Number"
 msgstr "发票号"
 
-#: hypha/apply/projects/tables.py:50 hypha/apply/projects/tables.py:104
-#: hypha/apply/projects/tables.py:129
+#: hypha/apply/projects/tables.py:45 hypha/apply/projects/tables.py:98
 msgid "Project Name"
 msgstr "项目名称"
 
-#: hypha/apply/projects/tables.py:70
+#: hypha/apply/projects/tables.py:64
 #, fuzzy
 #| msgid "Vendor"
 msgid "Vendor Name"
 msgstr "供应商"
 
-#: hypha/apply/projects/tables.py:172
-#: hypha/apply/projects/templates/application_projects/reporting.html:6
-#: hypha/apply/projects/templates/application_projects/reporting.html:11
-msgid "Reporting"
-msgstr "报告"
-
-#: hypha/apply/projects/tables.py:174
-msgid "End Date"
-msgstr "结束日期"
-
-#: hypha/apply/projects/tables.py:233
+#: hypha/apply/projects/tables.py:205
 #, fuzzy
 #| msgid "More information requested"
 msgid "Date requested"
 msgstr "需要更多信息"
 
-#: hypha/apply/projects/tables.py:250
+#: hypha/apply/projects/tables.py:220
 #, fuzzy
 #| msgid "Assign"
 msgid "Assignee"
 msgstr "分配"
 
-#: hypha/apply/projects/tables.py:270
+#: hypha/apply/projects/tables.py:240
 #, fuzzy
 #| msgid "Submit for Approval"
 msgid "Waiting for approval"
 msgstr "提交以批准"
 
-#: hypha/apply/projects/tables.py:272
+#: hypha/apply/projects/tables.py:242
 msgid "Waiting for assignee"
 msgstr ""
 
-#: hypha/apply/projects/tables.py:298
-#, fuzzy
-#| msgid "Project"
-msgid "Project #"
-msgstr "项目"
-
-#: hypha/apply/projects/tables.py:301
-#, fuzzy
-#| msgid "Submission"
-msgid "Submission #"
-msgstr "提交"
-
-#: hypha/apply/projects/templates/application_projects/filters/widgets/date_range_input_widget.html:5
-#: hypha/apply/projects/templates/application_projects/includes/report_line.html:9
-#: hypha/apply/projects/templates/application_projects/modals/report_frequency_config.html:25
-#: hypha/apply/projects/templates/application_projects/report_detail.html:23
-#: hypha/apply/projects/templates/application_projects/report_form.html:31
-msgid "to"
-msgstr "到"
-
 #: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:8
-#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:143
+#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:150
 #: hypha/apply/projects/templates/application_projects/partials/contracting_category_documents.html:10
 #, fuzzy
 #| msgid "Supporting documents"
@@ -5475,7 +5698,7 @@ msgid "expand"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:29
-#: hypha/apply/projects/templates/application_projects/partials/contracting_category_documents.html:92
+#: hypha/apply/projects/templates/application_projects/partials/contracting_category_documents.html:97
 #, fuzzy
 #| msgid "Supporting documents"
 msgid "Submit contract documents"
@@ -5487,106 +5710,94 @@ msgstr "支持文档"
 msgid "Approve contract documents"
 msgstr "批准了合同"
 
-#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:74
+#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:81
 msgid "Corrections/amendments?"
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:89
+#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:96
 #, fuzzy
 #| msgid "Upload Signed Contract"
 msgid "Pending signed contract by "
 msgstr "上传已签名合同"
 
-#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:89
+#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:96
 #, fuzzy
 #| msgid "Upload Signed Contract"
 msgid "Signed contract by "
 msgstr "上传已签名合同"
 
-#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:89
+#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:96
 #, fuzzy
 #| msgid "Contracting"
 msgid "Contracting team "
 msgstr "签订合同中"
 
-#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:102
-#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:125
+#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:109
+#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:132
 #: hypha/apply/projects/templates/application_projects/partials/contracting_category_documents.html:49
 #: hypha/apply/projects/templates/application_projects/partials/supporting_documents.html:51
-#: hypha/apply/projects/views/project.py:664
-#: hypha/apply/projects/views/project.py:783
+#: hypha/apply/projects/views/project.py:650
+#: hypha/apply/projects/views/project.py:769
 #: hypha/apply/templates/forms/includes/field.html:32
 msgid "Upload"
 msgstr "上传"
 
-#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:104
-#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:127
+#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:111
+#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:134
 #, fuzzy
 #| msgid "Upload"
 msgid "Reupload"
 msgstr "上传"
 
-#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:113
+#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:120
 msgid "Pending countersigned contract by "
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:113
+#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:120
 msgid "Countersigned contract by "
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:113
+#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:120
 msgid "you "
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:113
+#: hypha/apply/projects/templates/application_projects/includes/contracting_documents.html:120
 #, fuzzy
 #| msgid "Vendor"
 msgid "Vendor "
 msgstr "供应商"
 
-#: hypha/apply/projects/templates/application_projects/includes/invoice_block.html:4
-msgid "Contract number"
-msgstr "合同号"
-
-#: hypha/apply/projects/templates/application_projects/includes/invoice_block.html:8
-msgid "Pay to"
-msgstr "付款到"
-
-#: hypha/apply/projects/templates/application_projects/includes/invoice_block.html:12
-msgid "Some details"
-msgstr "一些详情"
-
-#: hypha/apply/projects/templates/application_projects/includes/invoices.html:10
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:12
 msgid "Add Invoice"
 msgstr "添加发票"
 
-#: hypha/apply/projects/templates/application_projects/includes/invoices.html:19
-#: hypha/apply/projects/templates/application_projects/includes/invoices.html:43
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:21
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:53
 #: hypha/apply/projects/templates/application_projects/partials/invoice_status_table.html:6
 #, fuzzy
 #| msgid "Resubmitted"
 msgid "Date submitted"
 msgstr "已重新提交"
 
-#: hypha/apply/projects/templates/application_projects/includes/invoices.html:21
-#: hypha/apply/projects/templates/application_projects/includes/invoices.html:45
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:23
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:55
 #: hypha/apply/projects/templates/application_projects/partials/invoice_status_table.html:8
 #, fuzzy
 #| msgid "Invoice Link"
 msgid "Invoice no."
 msgstr "发票链接"
 
-#: hypha/apply/projects/templates/application_projects/includes/invoices.html:31
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:33
 #, fuzzy
 #| msgid "No active Invoices."
 msgid "No active invoices yet."
 msgstr "无活跃发票。"
 
-#: hypha/apply/projects/templates/application_projects/includes/invoices.html:36
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:38
 msgid "Show rejected"
 msgstr "显示已拒绝"
 
-#: hypha/apply/projects/templates/application_projects/includes/invoices.html:36
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:39
 #, fuzzy
 #| msgid "Show rejected"
 msgid "Hide rejected"
@@ -5636,7 +5847,7 @@ msgid "Project form"
 msgstr "项目信息"
 
 #: hypha/apply/projects/templates/application_projects/includes/project_documents.html:95
-#: hypha/apply/projects/templates/application_projects/includes/project_documents.html:125
+#: hypha/apply/projects/templates/application_projects/includes/project_documents.html:128
 msgid "Fill in"
 msgstr "填写"
 
@@ -5644,85 +5855,10 @@ msgstr "填写"
 msgid "Scope of work"
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/includes/project_documents.html:147
+#: hypha/apply/projects/templates/application_projects/includes/project_documents.html:150
 #: hypha/apply/projects/templates/application_projects/partials/supporting_documents.html:11
 msgid "Supporting documents"
 msgstr "支持文档"
-
-#: hypha/apply/projects/templates/application_projects/includes/report_line.html:5
-msgid "The"
-msgstr "此"
-
-#: hypha/apply/projects/templates/application_projects/includes/report_line.html:5
-msgid "reporting period is"
-msgstr "报告间隔为"
-
-#: hypha/apply/projects/templates/application_projects/includes/report_line.html:7
-msgid "A report is due for the period"
-msgstr "此阶段应提交报告"
-
-#: hypha/apply/projects/templates/application_projects/includes/report_line.html:21
-msgid "Continue Editing"
-msgstr "继续编辑"
-
-#: hypha/apply/projects/templates/application_projects/includes/report_line.html:21
-msgid "Add Report"
-msgstr "添加报告"
-
-#: hypha/apply/projects/templates/application_projects/includes/report_line.html:29
-#, fuzzy, python-format
-#| msgid ""
-#| "This will result in a gap in reporting for the project. You can undo this "
-#| "at any time."
-msgid ""
-" You're skipping the report for %(start_date)s - %(end_date)s. This will "
-"result in a gap in reporting for the project. You can undo this at any time. "
-msgstr "这将导致项目报告中的空白。您可随时撤销此操作。"
-
-#: hypha/apply/projects/templates/application_projects/includes/report_line.html:31
-msgid "Skip"
-msgstr "跳过"
-
-#: hypha/apply/projects/templates/application_projects/includes/reports.html:8
-#: hypha/apply/projects/templates/application_projects/report_list.html:6
-#: hypha/core/navigation.py:93
-msgid "Reports"
-msgstr "报告"
-
-#: hypha/apply/projects/templates/application_projects/includes/reports.html:14
-msgid "Report frequency"
-msgstr "报告频率"
-
-#: hypha/apply/projects/templates/application_projects/includes/reports.html:22
-#, fuzzy
-#| msgid "Enable 2FA"
-msgid "Enable"
-msgstr "启用双重验证"
-
-#: hypha/apply/projects/templates/application_projects/includes/reports.html:22
-msgid "Change"
-msgstr "更改"
-
-#: hypha/apply/projects/templates/application_projects/includes/reports.html:46
-msgid "Past reports"
-msgstr "既往报告"
-
-#: hypha/apply/projects/templates/application_projects/includes/reports.html:52
-#: hypha/apply/projects/templates/application_projects/includes/reports.html:61
-msgid "Period End"
-msgstr "阶段结束"
-
-#: hypha/apply/projects/templates/application_projects/includes/reports.html:85
-msgid "Unskip"
-msgstr "取消跳过"
-
-#: hypha/apply/projects/templates/application_projects/includes/reports.html:92
-msgid "No reports submitted"
-msgstr "没有已提交报告"
-
-#: hypha/apply/projects/templates/application_projects/includes/reports.html:99
-msgid "Show more"
-msgstr "显示更多"
 
 #: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:4
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:4
@@ -5732,18 +5868,6 @@ msgstr "显示更多"
 #: hypha/apply/projects/templates/application_projects/invoice_form.html:19
 msgid "Invoice"
 msgstr "发票"
-
-#: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:11
-#: hypha/apply/projects/templates/application_projects/invoice_detail.html:12
-#: hypha/apply/projects/templates/application_projects/invoice_form.html:10
-#: hypha/apply/projects/templates/application_projects/project_approval_form.html:9
-#: hypha/apply/projects/templates/application_projects/project_sow_form.html:9
-#: hypha/apply/projects/templates/application_projects/report_detail.html:11
-#: hypha/apply/projects/templates/application_projects/report_form.html:14
-#, fuzzy
-#| msgid "Project name"
-msgid "View project page"
-msgstr "项目名称"
 
 #: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:14
 #: hypha/apply/projects/templates/application_projects/partials/invoice_detail_actions.html:25
@@ -5773,11 +5897,11 @@ msgstr "所有发票"
 msgid "View, search and filter all project invoices"
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/invoice_list.html:23
+#: hypha/apply/projects/templates/application_projects/invoice_list.html:17
 msgid "invoices"
 msgstr "发票"
 
-#: hypha/apply/projects/templates/application_projects/invoice_list.html:27
+#: hypha/apply/projects/templates/application_projects/invoice_list.html:21
 msgid "No Invoices available"
 msgstr "无可用发票"
 
@@ -5785,13 +5909,17 @@ msgstr "无可用发票"
 msgid "Approve Contract"
 msgstr "批准合同"
 
-#: hypha/apply/projects/templates/application_projects/modals/approve_contract.html:5
-msgid ""
-"You confirm that the uploaded contract is acceptable for commencing the "
-"project."
-msgstr "您确定上传的合同可用于启动项目。"
-
 #: hypha/apply/projects/templates/application_projects/modals/approve_contract.html:6
+#, fuzzy
+#| msgid ""
+#| "Are you sure you want to disable the Two Factor Authentication for this "
+#| "user? Please type your password to confirm."
+msgid ""
+"Are you sure you want to accept and approve the contract for commencing the "
+"project?"
+msgstr "您确定要为此用户禁用双重认证吗？请输入您的密码进行确认。"
+
+#: hypha/apply/projects/templates/application_projects/modals/approve_contract.html:7
 msgid "This cannot be undone."
 msgstr "此操作无法撤销。"
 
@@ -5850,70 +5978,8 @@ msgstr "更新项目状态"
 #: hypha/apply/projects/templates/application_projects/modals/project_title_update.html:2
 #, fuzzy
 #| msgid "Update time"
-msgid "Update Title"
+msgid "Update title"
 msgstr "更新时间"
-
-#: hypha/apply/projects/templates/application_projects/modals/report_frequency_config.html:2
-msgid "Change reporting frequency"
-msgstr "更改报告频率"
-
-#: hypha/apply/projects/templates/application_projects/modals/report_frequency_config.html:10
-msgid ""
-"Reporting has been disabled, just save the form with appropriate report date "
-"and frequency to enable it again."
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/modals/report_frequency_config.html:13
-msgid "No next report is due, One time reporting has already reported on "
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/modals/report_frequency_config.html:16
-#, fuzzy
-#| msgid "Next report will be due in"
-msgid "Next report will be due on "
-msgstr "下一次报告预定于"
-
-#: hypha/apply/projects/templates/application_projects/modals/report_frequency_config.html:18
-msgid "and it will be one-time reporting."
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/modals/report_frequency_config.html:21
-msgid "Next report will be due in"
-msgstr "下一次报告预定于"
-
-#: hypha/apply/projects/templates/application_projects/modals/report_frequency_config.html:23
-msgid "and the report period will be"
-msgstr "报告间隔为"
-
-#: hypha/apply/projects/templates/application_projects/modals/report_frequency_config.html:27
-msgid "and then every"
-msgstr "及在此之后每"
-
-#: hypha/apply/projects/templates/application_projects/modals/report_frequency_config.html:30
-msgid "after until the project end date"
-msgstr "直至项目终止日期"
-
-#: hypha/apply/projects/templates/application_projects/modals/report_frequency_config.html:52
-#, fuzzy
-#| msgid "Report frequency"
-msgid "Report every:"
-msgstr "报告频率"
-
-#: hypha/apply/projects/templates/application_projects/modals/report_frequency_config.html:68
-#: hypha/apply/projects/templates/application_projects/project_form.html:32
-#: hypha/apply/projects/views/payment.py:260
-#: hypha/apply/projects/views/payment.py:329
-#: hypha/apply/projects/views/project.py:1982
-#: hypha/apply/users/templates/wagtailusers/users/edit.html:70
-#: hypha/apply/users/templates/wagtailusers/users/edit.html:98
-msgid "Save"
-msgstr "保存"
-
-#: hypha/apply/projects/templates/application_projects/modals/report_frequency_config.html:69
-#, fuzzy
-#| msgid "Reporting"
-msgid "Disable Reporting"
-msgstr "报告"
 
 #: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:2
 #, fuzzy
@@ -5963,13 +6029,13 @@ msgstr "已选中"
 msgid "Optional"
 msgstr "设置"
 
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:39
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:38
 #, fuzzy
 #| msgid "Approval form not configured. Please add an approval form in the"
 msgid "No reviewer roles configured. Please add roles in "
 msgstr "未配置好批准表单，请在如下位置添加"
 
-#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:40
+#: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:39
 #, fuzzy
 #| msgid "Project Link"
 msgid "project settings"
@@ -5981,13 +6047,13 @@ msgstr "项目链接"
 msgid "Submit contracting documents"
 msgstr "支持文档"
 
-#: hypha/apply/projects/templates/application_projects/modals/submit_contracting_documents.html:5
+#: hypha/apply/projects/templates/application_projects/modals/submit_contracting_documents.html:6
 #, fuzzy
 #| msgid "Are you sure you want to submit your report?"
 msgid "Are you sure you want to submit contracting documents?"
 msgstr "您确定要提交报告吗？"
 
-#: hypha/apply/projects/templates/application_projects/modals/submit_contracting_documents.html:6
+#: hypha/apply/projects/templates/application_projects/modals/submit_contracting_documents.html:7
 msgid ""
 "Make sure you have uploaded correct contract and all required contracting "
 "documents."
@@ -6014,12 +6080,12 @@ msgstr ""
 msgid "All approvers will be notified via email."
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/modals/update_pafapprovers.html:11
+#: hypha/apply/projects/templates/application_projects/modals/update_pafapprovers.html:10
 msgid ""
 "No project form reviewer roles has been created yet, please create these in "
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/modals/update_pafapprovers.html:12
+#: hypha/apply/projects/templates/application_projects/modals/update_pafapprovers.html:11
 #, fuzzy
 #| msgid "Project Link"
 msgid " project settings"
@@ -6090,8 +6156,9 @@ msgstr "查看报告"
 msgid "Upload Contracting Documents"
 msgstr "支持文档"
 
-#: hypha/apply/projects/templates/application_projects/partials/contracting_category_documents.html:68
-#: hypha/apply/projects/templates/application_projects/partials/supporting_documents.html:72
+#: hypha/apply/projects/templates/application_projects/partials/contracting_category_documents.html:73
+#: hypha/apply/projects/templates/application_projects/partials/supporting_documents.html:76
+#: hypha/apply/todo/templates/todo/todolist_item.html:49
 msgid "Remove"
 msgstr "移除"
 
@@ -6106,15 +6173,15 @@ msgstr "仅在“已提交”或您被请求更改时才可编辑"
 msgid "Edit Invoice"
 msgstr "添加发票"
 
-#: hypha/apply/projects/templates/application_projects/partials/invoice_status.html:13
-#: hypha/apply/projects/templates/application_projects/partials/invoice_status.html:23
-#: hypha/apply/projects/templates/application_projects/project_detail.html:179
+#: hypha/apply/projects/templates/application_projects/partials/invoice_status.html:17
+#: hypha/apply/projects/templates/application_projects/partials/invoice_status.html:30
+#: hypha/apply/projects/templates/application_projects/project_detail.html:137
 #, fuzzy
 #| msgid "made a comment"
 msgid "View comment"
 msgstr "留下了评论"
 
-#: hypha/apply/projects/templates/application_projects/partials/invoice_status.html:39
+#: hypha/apply/projects/templates/application_projects/partials/invoice_status.html:46
 msgid "Hide"
 msgstr ""
 
@@ -6150,7 +6217,7 @@ msgid "Back to Project"
 msgstr "创建项目"
 
 #: hypha/apply/projects/templates/application_projects/project_approval_detail.html:29
-#: hypha/apply/projects/templates/application_projects/project_detail.html:103
+#: hypha/apply/projects/templates/application_projects/project_detail.html:58
 msgid "Project Information"
 msgstr "项目信息"
 
@@ -6172,14 +6239,14 @@ msgid "Download Project Form"
 msgstr "下载 PDF"
 
 #: hypha/apply/projects/templates/application_projects/project_approval_detail.html:107
-#: hypha/apply/projects/templates/application_projects/project_sow_detail.html:51
+#: hypha/apply/projects/templates/application_projects/project_sow_detail.html:57
 #, fuzzy
 #| msgid "Download PDF"
 msgid "Download as PDF"
 msgstr "下载 PDF"
 
 #: hypha/apply/projects/templates/application_projects/project_approval_detail.html:109
-#: hypha/apply/projects/templates/application_projects/project_sow_detail.html:53
+#: hypha/apply/projects/templates/application_projects/project_sow_detail.html:60
 #, fuzzy
 #| msgid "Download PDF"
 msgid "Download as DOCX"
@@ -6198,47 +6265,43 @@ msgstr "附件"
 msgid "Project Form not configured. Please add an project form in the"
 msgstr "未配置好批准表单，请在如下位置添加"
 
-#: hypha/apply/projects/templates/application_projects/project_approval_form.html:64
-#: hypha/apply/projects/templates/application_projects/project_sow_form.html:61
-#: hypha/apply/projects/templates/application_projects/report_form.html:67
-msgid "fund settings"
-msgstr "基金设置"
-
-#: hypha/apply/projects/templates/application_projects/project_detail.html:93
+#: hypha/apply/projects/templates/application_projects/project_detail.html:48
 #, python-format
 msgid " This project is in %(status)s state. "
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/project_detail.html:106
+#: hypha/apply/projects/templates/application_projects/project_detail.html:61
 msgid "Contractor"
 msgstr "合约"
 
-#: hypha/apply/projects/templates/application_projects/project_detail.html:167
+#: hypha/apply/projects/templates/application_projects/project_detail.html:121
 #, fuzzy
 #| msgid "Projects awaiting approval"
 msgid "Project form approvals"
 msgstr "等待批准的项目"
 
-#: hypha/apply/projects/templates/application_projects/project_detail.html:176
+#: hypha/apply/projects/templates/application_projects/project_detail.html:132
 #, fuzzy
 #| msgid "Request More Information"
 msgid "Request changes or more information by "
 msgstr "请求更多信息"
 
-#: hypha/apply/projects/templates/application_projects/project_detail.html:184
+#: hypha/apply/projects/templates/application_projects/project_detail.html:147
 #, fuzzy
 #| msgid "Project Approval Form"
 msgid "Pending approval from "
 msgstr "项目批准表单"
 
-#: hypha/apply/projects/templates/application_projects/project_detail.html:184
-msgid " (nobody assigned yet)"
-msgstr ""
+#: hypha/apply/projects/templates/application_projects/project_detail.html:151
+#, fuzzy
+#| msgid "Unsigned"
+msgid "nobody assigned yet"
+msgstr "未签名"
 
-#: hypha/apply/projects/templates/application_projects/project_detail.html:187
+#: hypha/apply/projects/templates/application_projects/project_detail.html:159
 #, fuzzy
 #| msgid "Approved"
-msgid "Approved by "
+msgid "approved"
 msgstr "批准"
 
 #: hypha/apply/projects/templates/application_projects/project_list.html:6
@@ -6256,7 +6319,7 @@ msgstr "所有项目"
 msgid "View, Search and filter all projects"
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/project_list.html:27
+#: hypha/apply/projects/templates/application_projects/project_list.html:20
 msgid "No Projects Available."
 msgstr "无可用项目。"
 
@@ -6265,7 +6328,7 @@ msgstr "无可用项目。"
 msgid "Scope of Work"
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/project_sow_detail.html:47
+#: hypha/apply/projects/templates/application_projects/project_sow_detail.html:52
 #, fuzzy
 #| msgid "Download PDF"
 msgid "Download SOW"
@@ -6276,87 +6339,6 @@ msgstr "下载 PDF"
 #| msgid "Approval form not configured. Please add an approval form in the"
 msgid "Scope of work form not configured. Please add it in the"
 msgstr "未配置好批准表单，请在如下位置添加"
-
-#: hypha/apply/projects/templates/application_projects/report_detail.html:4
-msgid "Report"
-msgstr "报告"
-
-#: hypha/apply/projects/templates/application_projects/report_detail.html:15
-msgid "View report"
-msgstr "查看报告"
-
-#: hypha/apply/projects/templates/application_projects/report_detail.html:23
-msgid "This report is for the period"
-msgstr "此报告针对阶段"
-
-#: hypha/apply/projects/templates/application_projects/report_detail.html:29
-msgid "Report Skipped"
-msgstr "已跳过报告"
-
-#: hypha/apply/projects/templates/application_projects/report_detail.html:31
-msgid "Public Report"
-msgstr "公开报告"
-
-#: hypha/apply/projects/templates/application_projects/report_detail.html:69
-msgid "View previous report"
-msgstr "查看上一个报告"
-
-#: hypha/apply/projects/templates/application_projects/report_detail.html:76
-msgid "View next report"
-msgstr "查看下一个报告"
-
-#: hypha/apply/projects/templates/application_projects/report_form.html:8
-msgid "Edit Report"
-msgstr "编辑报告"
-
-#: hypha/apply/projects/templates/application_projects/report_form.html:18
-msgid "Submit a report"
-msgstr "提交报告"
-
-#: hypha/apply/projects/templates/application_projects/report_form.html:31
-msgid "You are reporting for the period running from"
-msgstr "您正为如下阶段进行报告"
-
-#: hypha/apply/projects/templates/application_projects/report_form.html:56
-msgid ""
-"Saving a draft means this report will be visible to you and staff from your "
-"project page."
-msgstr "保存草稿后，此报告将对您与项目页面人员可见。"
-
-#: hypha/apply/projects/templates/application_projects/report_form.html:66
-#, fuzzy
-#| msgid "Approval form not configured. Please add an approval form in the"
-msgid ""
-"Project Report Form not configured. Please add a project report form in the"
-msgstr "未配置好批准表单，请在如下位置添加"
-
-#: hypha/apply/projects/templates/application_projects/report_form.html:71
-msgid "Project Report Form not configured yet. Please contact us at "
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/report_list.html:11
-msgid "Submitted Reports"
-msgstr "已提交报告"
-
-#: hypha/apply/projects/templates/application_projects/report_list.html:13
-#, fuzzy
-#| msgid "Submitted Reports"
-msgid "View and filter all Submitted Reports"
-msgstr "已提交报告"
-
-#: hypha/apply/projects/templates/application_projects/report_list.html:23
-msgid "No Reports Available."
-msgstr "无可用报告。"
-
-#: hypha/apply/projects/templates/application_projects/reporting.html:13
-msgid "View, Search and filter reporting statuses"
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/reporting.html:23
-#, fuzzy
-#| msgid "Project's current status"
-msgid "No Projects Currently Reporting."
-msgstr "项目当前状态"
 
 #: hypha/apply/projects/templatetags/invoice_tools.py:111
 #, python-brace-format
@@ -6528,13 +6510,13 @@ msgstr "上传已签名合同"
 msgid "Please also make sure to upload other required contracting documents"
 msgstr ""
 
-#: hypha/apply/projects/utils.py:74
+#: hypha/apply/projects/utils.py:88
 #, fuzzy
 #| msgid "Projects awaiting approval"
 msgid "Pending approval"
 msgstr "等待批准的项目"
 
-#: hypha/apply/projects/utils.py:78
+#: hypha/apply/projects/utils.py:92
 #, fuzzy
 #| msgid "See our guide for more information"
 msgid "Request for change or more information"
@@ -6558,105 +6540,99 @@ msgstr "审核人已更新。"
 msgid "<p>Invoice added.</p>"
 msgstr "<p>发票状态已更新至：{status}。</p>"
 
-#: hypha/apply/projects/views/payment.py:533
+#: hypha/apply/projects/views/payment.py:532
 msgid "Sorry something went wrong"
 msgstr "抱歉，出了些问题"
 
-#: hypha/apply/projects/views/project.py:258
+#: hypha/apply/projects/views/project.py:263
 #, fuzzy
 #| msgid "Submit for Approval"
 msgid "PAF has been submitted for approval"
 msgstr "提交以批准"
 
-#: hypha/apply/projects/views/project.py:330
+#: hypha/apply/projects/views/project.py:335
 msgid "Document has been uploaded"
 msgstr ""
 
-#: hypha/apply/projects/views/project.py:358
+#: hypha/apply/projects/views/project.py:363
 msgid "Document has been removed"
 msgstr ""
 
-#: hypha/apply/projects/views/project.py:387
+#: hypha/apply/projects/views/project.py:390
 #, fuzzy
 #| msgid "Contracting Information has been updated on %(title)s."
 msgid "Contracting document has been removed"
 msgstr "合同信息已于 %(title)s 更新。"
 
-#: hypha/apply/projects/views/project.py:434
+#: hypha/apply/projects/views/project.py:437
 #, fuzzy
 #| msgid "Unsigned"
 msgid "Unassigned"
 msgstr "未签名"
 
-#: hypha/apply/projects/views/project.py:443
+#: hypha/apply/projects/views/project.py:446
 #, fuzzy
 #| msgid "Last updated"
 msgid "Lead has been updated."
 msgstr "上次更新于"
 
-#: hypha/apply/projects/views/project.py:504
+#: hypha/apply/projects/views/project.py:492
 msgid "Title has been updated"
 msgstr ""
 
-#: hypha/apply/projects/views/project.py:627
+#: hypha/apply/projects/views/project.py:613
 msgid ""
 "Contractor documents have been approved.  You can receive invoices from "
 "vendor now."
 msgstr ""
 
-#: hypha/apply/projects/views/project.py:693
+#: hypha/apply/projects/views/project.py:679
 msgid "Countersigned contract uploaded"
 msgstr ""
 
-#: hypha/apply/projects/views/project.py:696
+#: hypha/apply/projects/views/project.py:682
 #, fuzzy
 #| msgid "Upload Signed Contract"
 msgid "Signed contract uploaded"
 msgstr "上传已签名合同"
 
-#: hypha/apply/projects/views/project.py:903
+#: hypha/apply/projects/views/project.py:889
 #, fuzzy
 #| msgid "No reports submitted"
 msgid "Contract documents submitted"
 msgstr "没有已提交报告"
 
-#: hypha/apply/projects/views/project.py:964
+#: hypha/apply/projects/views/project.py:950
 #, fuzzy
 #| msgid "Contracting Information has been updated on %(title)s."
 msgid "Contracting document has been uploaded"
 msgstr "合同信息已于 %(title)s 更新。"
 
-#: hypha/apply/projects/views/project.py:1048
+#: hypha/apply/projects/views/project.py:1034
 #, fuzzy, python-brace-format
 #| msgid "<p>{role} has updated PAF status to {paf_status}.</p>"
-msgid "<p>{role} has updated project form status to {paf_status}.</p>"
+msgid "updated project form status to {paf_status}."
 msgstr "<p>{role} 已将 PAF 状态更新至 {paf_status}。</p>"
 
-#: hypha/apply/projects/views/project.py:1123
+#: hypha/apply/projects/views/project.py:1108
 #, fuzzy
 #| msgid "Contracting Information has been updated on %(title)s."
 msgid "Project form status has been updated"
 msgstr "合同信息已于 %(title)s 更新。"
 
-#: hypha/apply/projects/views/project.py:1176
+#: hypha/apply/projects/views/project.py:1161
 #, fuzzy
 #| msgid "Projects awaiting approval"
 msgid "Project form has been approved"
 msgstr "等待批准的项目"
 
-#: hypha/apply/projects/views/project.py:1285
+#: hypha/apply/projects/views/project.py:1270
 msgid "Project status has been updated"
 msgstr ""
 
-#: hypha/apply/projects/views/project.py:1578
+#: hypha/apply/projects/views/project.py:1563
 msgid "Project form approvers have been updated"
 msgstr ""
-
-#: hypha/apply/projects/views/report.py:304
-#, fuzzy
-#| msgid "Reporting Period"
-msgid "Reporting disabled"
-msgstr "报告间隔"
 
 #: hypha/apply/review/blocks.py:34
 #: hypha/apply/review/templates/review/review_detail.html:33
@@ -6920,12 +6896,12 @@ msgstr "页眉"
 msgid "Form fields"
 msgstr "表单字段"
 
-#: hypha/apply/stream_forms/models.py:74
+#: hypha/apply/stream_forms/models.py:127
 msgid ""
 "You are logged in so this information is fetched from your user account."
 msgstr "您已登录，此信息是从您的账户获取的。"
 
-#: hypha/apply/stream_forms/models.py:83
+#: hypha/apply/stream_forms/models.py:136
 msgid ""
 "You are logged in but your user account does not have a full name. We'll "
 "update your user account with the name you provide here."
@@ -6946,42 +6922,42 @@ msgstr "您的表单中有错误。请修正下方高亮的字段。"
 #: hypha/apply/todo/options.py:55
 #, python-brace-format
 msgid ""
-"{related.user} assigned you a comment on [<span class=\"truncate inline-"
-"block max-w-32 align-bottom \">{related.source.title}</span>]({link} "
-"\"{related.source.title}\"):\n"
-"<span class=\"line-clamp-2 italic align-bottom \">{msg}</span>"
+"<span class=\"text-xs\">{related.source.fund_name} "
+"#{related.source.application_id}</span><br>{related.user} assigned you a "
+"comment: <q class=\"text-fg-muted italic align-bottom\">{msg}</q>"
 msgstr ""
 
 #: hypha/apply/todo/options.py:65
 #, python-brace-format
 msgid ""
-"A Submission draft [<span class=\"truncate inline-block max-w-32 align-"
-"bottom \">{related.title}</span>]({link} \"{related.title}\") is waiting to "
-"be submitted"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>A draft application <span class=\"truncate inline-block max-w-32 "
+"align-bottom \">\"{related.title}\"</span> is waiting to be submitted"
 msgstr ""
 
 #: hypha/apply/todo/options.py:73
 #, python-brace-format
 msgid ""
-"Determination draft for submission [<span class=\"truncate inline-block max-"
-"w-32 align-bottom \">{related.submission.title}</span>]({link} "
-"\"{related.submission.title}\") is waiting to be submitted"
+"<span class=\"text-xs\">{related.submission.fund_name} "
+"#{related.submission.application_id}</span><br>Determination draft for "
+"submission <span class=\"truncate inline-block max-w-32 align-"
+"bottom\">\"{related.submission.title}\"</span> is waiting to be submitted"
 msgstr ""
 
 #: hypha/apply/todo/options.py:81
 #, python-brace-format
 msgid ""
-"Review draft for submission [<span class=\"truncate inline-block max-w-32 "
-"align-bottom \">{related.submission.title}</span>]({link} "
-"\"{related.submission.title}\") is waiting to be submitted"
+"<span class=\"text-xs\">{related.submission.fund_name} "
+"#{related.submission.application_id}</span><br>Review draft for submission "
+"<span class=\"truncate inline-block max-w-32 align-"
+"bottom\">\"{related.submission.title}\"</span> is waiting to be submitted"
 msgstr ""
 
 #: hypha/apply/todo/options.py:91
 #, python-brace-format
 msgid ""
-"Project [<span class=\"truncate inline-block max-w-32 align-bottom "
-"\">{related.title}</span>]({link} \"{related.title}\") is waiting for "
-"project form"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Project is waiting for project form"
 msgstr ""
 
 #: hypha/apply/todo/options.py:95 hypha/apply/todo/options.py:103
@@ -6990,7 +6966,7 @@ msgstr ""
 #: hypha/apply/todo/options.py:145 hypha/apply/todo/options.py:153
 #: hypha/apply/todo/options.py:161 hypha/apply/todo/options.py:170
 #: hypha/apply/todo/options.py:178 hypha/apply/todo/options.py:186
-#: hypha/apply/todo/options.py:192 hypha/apply/todo/options.py:200
+#: hypha/apply/todo/options.py:194 hypha/apply/todo/options.py:202
 #, fuzzy
 #| msgid "Project"
 msgid "project"
@@ -6999,107 +6975,115 @@ msgstr "项目"
 #: hypha/apply/todo/options.py:99
 #, python-brace-format
 msgid ""
-"Project [<span class=\"truncate inline-block max-w-32 align-bottom "
-"\">{related.title}</span>]({link} \"{related.title}\") is waiting for scope "
-"of work"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Project is waiting for scope of work"
 msgstr ""
 
 #: hypha/apply/todo/options.py:107
 #, python-brace-format
 msgid ""
-"Project [<span class=\"truncate inline-block max-w-32 align-bottom "
-"\">{related.title}</span>]({link} \"{related.title}\") is waiting for "
-"project form(s) submission"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Project is waiting for project form(s) submission"
 msgstr ""
 
 #: hypha/apply/todo/options.py:115
 #, python-brace-format
 msgid ""
-"Project form for project [<span class=\"truncate inline-block max-w-32 align-"
-"bottom \">{related.title}</span>]({link} \"{related.title}\") required "
-"changes or more information"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Project form requires changes or more information"
 msgstr ""
 
 #: hypha/apply/todo/options.py:124
 #, python-brace-format
 msgid ""
-"Project form for project [<span class=\"truncate inline-block max-w-32 align-"
-"bottom \">{related.title}</span>]({link} \"{related.title}\") is waiting for "
-"assignee"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Project form is waiting for assignee"
 msgstr ""
 
 #: hypha/apply/todo/options.py:132
 #, python-brace-format
 msgid ""
-"Project form for project [<span class=\"truncate inline-block max-w-32 align-"
-"bottom \">{related.title}</span>]({link} \"{related.title}\") is waiting for "
-"your approval"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br> Project form is waiting for your approval"
 msgstr ""
 
 #: hypha/apply/todo/options.py:141
 #, python-brace-format
 msgid ""
-"Project [<span class=\"truncate inline-block max-w-32 align-bottom "
-"\">{related.title}</span>]({link} \"{related.title}\") is waiting for "
-"contract"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Project is waiting for contract"
 msgstr ""
 
 #: hypha/apply/todo/options.py:149
 #, python-brace-format
 msgid ""
-"Project [<span class=\"truncate inline-block max-w-32 align-bottom "
-"\">{related.title}</span>]({link} \"{related.title}\") is waiting for "
-"contracting documents"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Project is waiting for contracting documents"
 msgstr ""
 
 #: hypha/apply/todo/options.py:157
 #, python-brace-format
 msgid ""
-"Contract for project [<span class=\"truncate inline-block max-w-32 align-"
-"bottom \">{related.title}</span>]({link} \"{related.title}\") is waiting for "
-"review"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Contract for project is waiting for review"
 msgstr ""
 
 #: hypha/apply/todo/options.py:166
 #, python-brace-format
 msgid ""
-"Project [<span class=\"truncate inline-block max-w-32 align-bottom "
-"\">{related.title}</span>]({link} \"{related.title}\") is waiting for invoice"
+"<span class=\"text-sm\">{related.fund_name} #{related.application_id}</"
+"span><br>Project <span class=\"truncate inline-block max-w-32 align-"
+"bottom\">\"{related.title}\"</span> is waiting for invoice"
 msgstr ""
 
 #: hypha/apply/todo/options.py:174
 #, python-brace-format
 msgid ""
-"Invoice [{related.invoice_number}]({link}) required changes or more "
-"information"
+"<span class='text-xs'>{related.project.fund_name} "
+"#{related.project.application_id}</span><br>Invoice no. "
+"{related.invoice_number} required changes or more information"
 msgstr ""
 
 #: hypha/apply/todo/options.py:182
 #, python-brace-format
-msgid "Invoice [{related.invoice_number}]({link}) is waiting for your approval"
+msgid ""
+"<span class='text-xs'>{related.project.fund_name} "
+"#{related.project.application_id}</span><br>Invoice no. "
+"{related.invoice_number} is waiting for your approval"
 msgstr ""
 
-#: hypha/apply/todo/options.py:189
-#, python-brace-format
-msgid "Invoice [{related.invoice_number}]({link}) is waiting to be paid"
-msgstr ""
-
-#: hypha/apply/todo/options.py:196
+#: hypha/apply/todo/options.py:190
 #, python-brace-format
 msgid ""
-"Report for project [<span class=\"truncate inline-block max-w-32 align-"
-"bottom \">{related.title}</span>]({link} \"{related.title}\") is due"
+"<span class='text-xs'>{related.project.fund_name} "
+"#{related.project.application_id}</span><br>Invoice no. "
+"{related.invoice_number} is waiting to be paid"
+msgstr ""
+
+#: hypha/apply/todo/options.py:198
+#, python-brace-format
+msgid ""
+"<span class=\"text-xs\">{related.project.fund_name} "
+"#{related.project.application_id}</span><br>Report for project <span "
+"class=\"truncate inline-block max-w-32 align-bottom "
+"\">\"{related.project.title}\"</span> is due"
 msgstr ""
 
 #: hypha/apply/todo/templates/todo/todolist_dropdown.html:7
 msgid "No pending task."
 msgstr ""
 
-#: hypha/apply/todo/templates/todo/todolist_item.html:16
-msgid ""
-"Are you sure you want to remove this task? It will remove this task from "
-"your task list."
+#: hypha/apply/todo/templates/todo/todolist_item.html:41
+msgid "Remove from your task list"
 msgstr ""
+
+#: hypha/apply/todo/templates/todo/todolist_item.html:46
+#, fuzzy
+#| msgid "Are you sure you want to delete selected submissions?"
+msgid ""
+"Are you sure you want to remove this task from your task list? This can not "
+"be undone."
+msgstr "您确定要删除所选提交吗？"
 
 #: hypha/apply/users/forms.py:27 hypha/apply/users/forms.py:63
 msgid "Remember me"
@@ -7433,8 +7417,8 @@ msgstr ""
 
 #: hypha/apply/users/templates/two_factor/core/setup.html:17
 msgid ""
-"<strong>Step 1:</strong> Open the Authencator app on your phone and scan the "
-"QR code displayed below."
+"<strong>Step 1:</strong> Open the Authenticator app on your phone and scan "
+"the QR code displayed below."
 msgstr ""
 
 #: hypha/apply/users/templates/two_factor/core/setup.html:20
@@ -8194,13 +8178,7 @@ msgstr "您的电子邮箱已成功更新为 {email}！"
 msgid "Please correct the errors below."
 msgstr "<li>请修正以下错误。</li>"
 
-#: hypha/apply/users/views.py:740
-#, fuzzy, python-brace-format
-#| msgid "Your application to {org_long_name}: {source.title}"
-msgid "Confirmation code for {org_long_name}: {token}"
-msgstr "您给 {org_long_name} 的项目：{source.title}"
-
-#: hypha/apply/users/views.py:801
+#: hypha/apply/users/views.py:799
 msgid "✓ Check your email for password set link."
 msgstr ""
 
@@ -8303,15 +8281,31 @@ msgstr ""
 msgid "The strapline to be displayed on the homepage."
 msgstr ""
 
-#: hypha/core/models/system_settings.py:39
+#: hypha/core/models/system_settings.py:34
+#, fuzzy
+#| msgid "Determination message"
+msgid "No open applications message"
+msgstr "决策消息"
+
+#: hypha/core/models/system_settings.py:35
+#, fuzzy
+#| msgid ""
+#| "Choose the image you wish to be displayed when this page appears in "
+#| "listings"
+msgid "The message to be displayed when there are no open applications."
+msgstr "选择页面在列表中显示的图像"
+
+#: hypha/core/models/system_settings.py:45
 msgid "Default site logo"
 msgstr "默认网站标识"
 
-#: hypha/core/models/system_settings.py:48
-msgid "Mobil site logo (if not set default will be used)"
+#: hypha/core/models/system_settings.py:54
+#, fuzzy
+#| msgid "Mobil site logo (if not set default will be used)"
+msgid "Mobile site logo (if not set default will be used)"
 msgstr "移动网站标识（若未设置，则会使用默认）"
 
-#: hypha/core/models/system_settings.py:55
+#: hypha/core/models/system_settings.py:61
 msgid ""
 "Link for the site logo, e.g. \"https://www.example.org/\". If not set, "
 "defaults to page with slug set to \"home\"."
@@ -8319,7 +8313,7 @@ msgstr ""
 "网站标识（logo）的链接，例如“https://www.example.org/”。如果没有设置，则默认"
 "是 Slug 为“home”的页面。"
 
-#: hypha/core/models/system_settings.py:62
+#: hypha/core/models/system_settings.py:68
 #, fuzzy
 #| msgid "This will be added to the footer, html tags is allowed."
 msgid ""
@@ -8327,7 +8321,7 @@ msgid ""
 "allowed."
 msgstr "会将此添加到页脚，允许使用 HTML 标签。"
 
-#: hypha/core/models/system_settings.py:70
+#: hypha/core/models/system_settings.py:76
 msgid "This will be added to the footer, html tags is allowed."
 msgstr "会将此添加到页脚，允许使用 HTML 标签。"
 
@@ -8369,13 +8363,13 @@ msgstr "返回账户"
 msgid "Menu Item"
 msgstr ""
 
-#: hypha/settings/django.py:161 hypha/settings/local.py:95
+#: hypha/settings/django.py:162 hypha/settings/local.py:95
 msgid ""
 "This password has previously appeared in a data breach and should not be "
 "used. Please choose a different password."
 msgstr ""
 
-#: hypha/settings/django.py:164 hypha/settings/local.py:98
+#: hypha/settings/django.py:165 hypha/settings/local.py:98
 msgid "Your password must not have been detected in a major security breach."
 msgstr ""
 
@@ -8487,6 +8481,115 @@ msgstr "需要密码"
 msgid "Please enter the password to proceed."
 msgstr "请输入密码以继续。"
 
+#~ msgid "made a comment"
+#~ msgstr "留下了评论"
+
+#, fuzzy
+#~| msgid "No Invoices available"
+#~ msgid "No notifications available."
+#~ msgstr "无可用发票"
+
+#~ msgid "Communications"
+#~ msgstr "交流"
+
+#~ msgid "Activity Feed"
+#~ msgstr "活动订阅"
+
+#, fuzzy
+#~| msgid "submission"
+#~ msgid "View submission"
+#~ msgstr "提交"
+
+#, fuzzy
+#~| msgid "No submissions"
+#~ msgid "Back to submissions"
+#~ msgstr "无提交"
+
+#~ msgid "List of Submissions summary"
+#~ msgstr "提交概要列表"
+
+#, fuzzy
+#~| msgid "Archived"
+#~ msgid "Hide Archived"
+#~ msgstr "已归档"
+
+#, fuzzy
+#~| msgid "Archived"
+#~ msgid "Show Archived"
+#~ msgstr "已归档"
+
+#~ msgid "Filters"
+#~ msgstr "筛选器"
+
+#~ msgid "Filter by"
+#~ msgstr "筛选条件"
+
+#, python-format
+#~ msgid ">Are you sure you want to delete \"%(object)s\"?"
+#~ msgstr ">您确定要删除“%(object)s”吗？"
+
+#~ msgid "End Date"
+#~ msgstr "结束日期"
+
+#, fuzzy
+#~| msgid "Project"
+#~ msgid "Project #"
+#~ msgstr "项目"
+
+#, fuzzy
+#~| msgid "Submission"
+#~ msgid "Submission #"
+#~ msgstr "提交"
+
+#~ msgid "Contract number"
+#~ msgstr "合同号"
+
+#~ msgid "Pay to"
+#~ msgstr "付款到"
+
+#~ msgid "Some details"
+#~ msgstr "一些详情"
+
+#~ msgid "Report frequency"
+#~ msgstr "报告频率"
+
+#, fuzzy
+#~| msgid "Enable 2FA"
+#~ msgid "Enable"
+#~ msgstr "启用双重验证"
+
+#~ msgid "Change"
+#~ msgstr "更改"
+
+#~ msgid "Past reports"
+#~ msgstr "既往报告"
+
+#~ msgid ""
+#~ "You confirm that the uploaded contract is acceptable for commencing the "
+#~ "project."
+#~ msgstr "您确定上传的合同可用于启动项目。"
+
+#, fuzzy
+#~| msgid "Reporting"
+#~ msgid "Disable Reporting"
+#~ msgstr "报告"
+
+#, fuzzy
+#~| msgid "Approved"
+#~ msgid "Approved by "
+#~ msgstr "批准"
+
+#~ msgid "View report"
+#~ msgstr "查看报告"
+
+#~ msgid "You are reporting for the period running from"
+#~ msgstr "您正为如下阶段进行报告"
+
+#, fuzzy, python-brace-format
+#~| msgid "Your application to {org_long_name}: {source.title}"
+#~ msgid "Confirmation code for {org_long_name}: {token}"
+#~ msgstr "您给 {org_long_name} 的项目：{source.title}"
+
 #~ msgid "Submit for Approval"
 #~ msgstr "提交以批准"
 
@@ -8555,10 +8658,6 @@ msgstr "请输入密码以继续。"
 
 #~ msgid "Terms"
 #~ msgstr "条款"
-
-#, python-format
-#~ msgid "Are you sure you want to delete \"%(object)s\"?"
-#~ msgstr "您确定要删除“%(object)s”吗？"
 
 #~ msgid ""
 #~ "All content related to this submission will also be deleted. This "
@@ -8969,11 +9068,6 @@ msgstr "请输入密码以继续。"
 
 #~ msgid "Contact Details"
 #~ msgstr "联系人详情"
-
-#~ msgid ""
-#~ "Choose the image you wish to be displayed when this page appears in "
-#~ "listings"
-#~ msgstr "选择页面在列表中显示的图像"
 
 #~ msgid "Override the page title used when this page appears in listings"
 #~ msgstr "当此页面出现在列表中时，覆盖页面标题"
