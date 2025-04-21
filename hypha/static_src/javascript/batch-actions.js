@@ -38,7 +38,7 @@
     // see how many checkboxes are :checked
     toggleBatchActions();
 
-    // updates selected checbox count
+    // updates selected checkbox count
     updateCount();
 
     // reset the check all input

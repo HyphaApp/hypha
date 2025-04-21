@@ -378,7 +378,7 @@ class ApplicationSubmissionMetaclass(AddTransitions):
     def __new__(cls, name, bases, attrs, **kwargs):
         cls = super().__new__(cls, name, bases, attrs, **kwargs)
 
-        # We want to access the redered display of the required fields.
+        # We want to access the rendered display of the required fields.
         # Treat in similar way to django's get_FIELD_display
         for block_name in NAMED_BLOCKS:
             partial_method_name = f"_{block_name}_method"
@@ -684,7 +684,7 @@ class ApplicationSubmission(
             draft: if the revision is a draft
             force: force a revision even if form data is the same
             by: the author of the revision
-            preview: if the revision is being used to save befor a preview
+            preview: if the revision is being used to save before a preview
 
         Returns:
             Returns the [`ApplicationRevision`][hypha.apply.funds.models.ApplicationRevision] if it was created, otherwise returns `None`

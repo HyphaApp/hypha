@@ -12,12 +12,6 @@
       border-block-end: 0;
     }
 
-    &--collaps {
-      position: relative;
-      max-height: 300px;
-      overflow: hidden;
-    }
-
     ul {
       padding-inline-start: 20px;
       list-style: outside disc;
@@ -135,11 +129,7 @@
       span {
         &:first-child {
           &::after {
-            @include mixins.triangle(
-              right,
-              variables.$color--black-50,
-              4px
-            );
+            @include mixins.triangle(right, variables.$color--black-50, 4px);
             display: inline-block;
             margin: 0 5px 0 10px;
           }

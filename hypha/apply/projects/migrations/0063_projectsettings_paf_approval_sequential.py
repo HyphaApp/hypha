@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
             model_name="projectsettings",
             name="paf_approval_sequential",
             field=models.BooleanField(
-                default=True, help_text="Uncheck it to approve PAF parallely"
+                default=True, help_text="Uncheck it to approve PAF parallelly"
             ),
         ),
     ]

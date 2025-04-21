@@ -45,7 +45,7 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 
 This workflow is a single stage process with an advisory council review or external review stage -- includes functionalties for external reviewers like advisory board members to access applications and submit reviews.
 
-It is very simlar to the "Request with external review" workflow, see below, but the internal and external review step happens at the same step.
+It is very similar to the "Request with external review" workflow, see below, but the internal and external review step happens at the same step.
 
 Beware if you opt to customise the "Reviewer Settings" (in Wagtail admin). Only the "All states" option in the "State" setting will work with this workflow.
 

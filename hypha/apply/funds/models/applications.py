@@ -77,7 +77,7 @@ class ApplicationBaseManager(PageQuerySet):
     ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"), name="serve"
 )
 class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
-    is_createable = False
+    is_creatable = False
 
     # Adds validation around forms & workflows. Isn't on Workflow class due to not displaying workflow field on Round
     base_form_class = WorkflowFormAdminForm
@@ -556,7 +556,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"), name="serve"
 )
 class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
-    is_createable = False
+    is_creatable = False
     submission_class = ApplicationSubmission
 
     # Adds validation around forms & workflows.

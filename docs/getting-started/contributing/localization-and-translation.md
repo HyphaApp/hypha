@@ -1,6 +1,6 @@
 # Translate Hypha in to your own language
 
-There are two resons organisations make use of translations. They need Hypha in another language, like Spanish or Chinese. Another common need is to translate Hypha to suit a organisations vocabulary.  A combination of both works as well of course.
+There are two reasons organisations make use of translations. They need Hypha in another language, like Spanish or Chinese. Another common need is to translate Hypha to suit a organisations vocabulary.  A combination of both works as well of course.
 
 Our team is currently using [Weblate](https://weblate.org/) to manage translations of this project. Please visit Hypha's Weblate https://hosted.weblate.org/projects/hypha/ to start the translation process. You will need a Weblate account, and take it from there. [Weblate instructions and related documentation](https://docs.weblate.org/en/latest/user/basic.html) on translation is a great introductory resource. project on Weblate to contribute. If you are experiencing issues while you are working on translations, please open an issue on \[GitHub}.
 
@@ -46,7 +46,7 @@ It is the `django.po` file that contain all the translations. You can start to t
 
 If you already have a translated version, replace that files with the generated one. Make sure the name and path stay the same.
 
-It is then nessesery to complile the .po files in to binary .mo files. This command takes care of that.
+It is then necessary to compile the .po files in to binary .mo files. This command takes care of that.
 
 ```shell
 python manage.py compilemessages --ignore .venv

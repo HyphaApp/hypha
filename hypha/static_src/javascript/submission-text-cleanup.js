@@ -2,7 +2,7 @@
   // Select all rich text answers.
   const richtextanswers = document.querySelector(".rich-text--answers");
 
-  // Select all rich text answers paragraphes.
+  // Select all rich text answers paragraphs.
   const richtextanswers_paras = richtextanswers.querySelectorAll("p");
   richtextanswers_paras.forEach(function (para) {
     // Remove p tags with only whitespace inside.

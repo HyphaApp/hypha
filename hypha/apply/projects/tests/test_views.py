@@ -958,7 +958,7 @@ class TestStaffEditInvoiceView(BaseViewTestCase):
 
         self.assertFalse(invoice.supporting_documents.exists())
 
-    def test_editing_invoice_keeps_supprting_document(self):
+    def test_editing_invoice_keeps_supporting_document(self):
         project = ProjectFactory()
         invoice = InvoiceFactory(project=project)
         supporting_document = SupportingDocumentFactory(invoice=invoice)

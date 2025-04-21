@@ -174,7 +174,7 @@ def is_filter_empty(filter: filters.FilterSet) -> bool:
 def get_copied_form_name(original_form_name: str) -> str:
     """Create the name of the form to be copied
 
-    By default, takes the orginal forms name and adds `(Copied on %Y-%m-%d %H:%M:%S.%f)`
+    By default, takes the original forms name and adds `(Copied on %Y-%m-%d %H:%M:%S.%f)`
 
     If a timestamp exists on the original_form_name, it will be replaced.
     This works even if the `Copied on` string is translated.

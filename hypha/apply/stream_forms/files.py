@@ -84,7 +84,7 @@ class StreamFieldFile(File):
 
     @property
     def modification_time(self):
-        # Wrap in a try for local developemnt where files might not always exist.
+        # Wrap in a try for local developments where files might not always exist.
         try:
             modified_time = self.storage.get_modified_time(self.name).date()
         except FileNotFoundError:
