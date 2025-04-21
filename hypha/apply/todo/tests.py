@@ -4,10 +4,10 @@ from django.test import TestCase
 from hypha.apply.activity.tests.factories import ActivityFactory
 from hypha.apply.determinations.tests.factories import DeterminationFactory
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.projects.reports.tests.factories import ReportFactory
 from hypha.apply.projects.tests.factories import (
     InvoiceFactory,
     ProjectFactory,
-    ReportFactory,
 )
 from hypha.apply.review.tests.factories import ReviewFactory
 from hypha.apply.users.roles import CONTRACTING_GROUP_NAME, STAFF_GROUP_NAME
