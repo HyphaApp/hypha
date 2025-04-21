@@ -83,28 +83,7 @@
         >{% trans "Lead" %}</button>
     </div>
 
-    <details
-        class="mt-4"
-        {# fmt:off #}
-        x-data="{
-            closeArchiveOutside(e){
-                if (e.currentTarget == e.target){
-                    $refs.dialogArchive.close()
-                }
-            },
-            closeReminderOutside(e){
-                if (e.currentTarget == e.target){
-                    $refs.dialogReminder.close()
-                }
-            },
-            closeMetaTermsOutside(e){
-                if (e.currentTarget == e.target){
-                    $refs.dialogMetaTerms.close()
-                }
-            }
-        }"
-        {# fmt:on #}
-    >
+    <details class="mt-4">
         <summary class="sidebar__separator sidebar__separator--medium">
             {% trans "More actions" %}
         </summary>
