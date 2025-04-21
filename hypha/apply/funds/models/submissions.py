@@ -27,6 +27,7 @@ from django.db.models.functions import Cast
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.utils.html import strip_tags
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -521,10 +522,10 @@ class ApplicationSubmission(
 
         ctx = {
             "title": self.title,
-            "public_id": self.application_id,
+            "public_id": self.application_id_nc,
             "fund_name": self.fund_name,
             "round": self.round if self.round else self.page,
-            "application_id": self.application_id,
+            "application_id": self.application_id_nc,
         }
         return strip_tags(settings.SUBMISSION_TITLE_TEXT_TEMPLATE.format(**ctx))
 
@@ -608,8 +609,15 @@ class ApplicationSubmission(
     def fund_name(self):
         return self.page
 
-    @property
+    @cached_property
     def application_id(self):
+        return self.public_id or self.id
+
+    @property
+    def application_id_nc(self):
+        """
+        Only used in e-mail and other notifications where a cached_property gives a None value.
+        """
         return self.public_id or self.id
 
     @property
