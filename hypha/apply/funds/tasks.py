@@ -13,7 +13,7 @@ from hypha.apply.users.models import User
 
 @shared_task
 def generate_submission_csv(qs_ids: List[int], request_user_id: int) -> None:
-    """Celery task to generate a CSV file contining the given submission IDs
+    """Celery task to generate a CSV file containing the given submission IDs
 
     Integer IDs have to be used as QuerySets are not simple data types & can't be
     passed to workers.

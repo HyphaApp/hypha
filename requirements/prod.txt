@@ -38,7 +38,6 @@ async-timeout==5.0.1 ; python_full_version < '3.11.3' \
 babel==2.17.0 \
     --hash=sha256:0c54cffb19f690cdcc52a3b50bcbf71e07a808d1c80d549f2459b9d2cf0afb9d \
     --hash=sha256:4d0b53093fdfb4b21c92b5213dba5a1b23885afa8383709427046b21c366e5f2
-<<<<<<< HEAD
     # via hypha
 backports-datetime-fromisoformat==2.0.3 ; python_full_version < '3.11' \
     --hash=sha256:24a4da5ab3aa0cc293dc0662a0c6d1da1a011dc1edcbc3122a288cfed13a0b45 \
@@ -69,11 +68,6 @@ backports-datetime-fromisoformat==2.0.3 ; python_full_version < '3.11' \
     --hash=sha256:ee68bc8735ae5058695b76d3bb2aee1d137c052a11c8303f1e966aa23b72b65b \
     --hash=sha256:ffe5f793db59e2f1d45ec35a1cf51404fdd69df9f6952a0c87c3060af4c00e32
     # via marshmallow
-=======
-async-timeout==5.0.1 ; python_full_version < '3.11.3' \
-    --hash=sha256:39e3809566ff85354557ec2398b55e096c8364bacac9405a7a1fa429e77fe76c \
-    --hash=sha256:d9321a7a3d5a6a5e187e824d2fa0793ce379a202935782d555d6e9d2735677d3
->>>>>>> a9f074e8b (Implemented async submission exports)
 beautifulsoup4==4.11.2 \
     --hash=sha256:0e79446b10b3ecb499c1556f7e228a53e64a2bfcebd455f370d8927cb5b59e39 \
     --hash=sha256:bc4bdda6717de5a2987436fb8d72f45dc90dd856bdfd512a1314ce90349a0106
