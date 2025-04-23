@@ -6,7 +6,7 @@
 {% block content %}{# fmt:off #}
 {% trans "A Project is waiting for contract" %}
 
-{% trans "Title" %}: {{ source.title }}
+{% trans "Title" %}: {{ source.title_text_display }}
 {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% trans "Project Form" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:approval' pk=source.submission.pk %}
 

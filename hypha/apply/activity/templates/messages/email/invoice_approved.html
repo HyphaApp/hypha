@@ -6,7 +6,7 @@
 {% block content %}{# fmt:off #}
 {% trans "An Invoice is waiting for your approval." %}
 
-{% trans "Title" %}: {{ source.title }}
+{% trans "Title" %}: {{ source.title_text_display }}
 {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ invoice.get_absolute_url }}
 {% trans "Project" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 

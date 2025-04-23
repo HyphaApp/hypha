@@ -6,6 +6,6 @@
 {% block content %}{# fmt:off #}
 {% trans "A Project has been rejected by project form reviewers, please update it accordingly and resubmit it to the reviewers." %}
 
-{% trans "Title" %}: {{ source.title }}
+{% trans "Title" %}: {{ source.title_text_display }}
 {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% endblock %}{# fmt:on #}
