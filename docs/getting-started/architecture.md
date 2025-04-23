@@ -1,25 +1,19 @@
-
-## Diagram
-
-```
-                            Integrations                           
-                            ┌────────────┐ ┌────────────┐          
-                            │   Email    │ │   Slack    │          
-                            └────────────┘ └────────────┘          
-                            ┌────────────┐ ┌────────────┐          
-                            │ Amazon S3  │ │   Sentry   │          
-                            └────────────┘ └────────────┘          
-                                                                    
-                                                                    
-
-    ┌────────────┐                                  Databases
-    │ APPLY SITE │◀────┐                            ┌ ─ ─ ─ ─ ─ ─ ─ ─┐
-    └────────────┘     │      ┌────────────┐        ╎ ┌────────────┐ ╎
-                       ├──────│  Django /  │◀───────╎ │ PostgreSQL │ ╎
-    ┌────────────┐     │      │  Wagtail   │        ╎ └────────────┘ ╎
-    │   WAGTAIL  │◀────┘      └────────────┘        └─ ─ ─ ─ ─ ─ ─ ─ ┘
-    │   ADMIN    │                                  
-    └────────────┘
+```mermaid
+---
+title: Hypha Architecture Diagram
+---
+flowchart LR
+    subgraph integrations[Integrations]
+    email[Email]
+    slack[Slack]
+    amazon[Amazon S3]
+    sentry[Sentry]
+    redis[Redis]
+    end
+    postgres[(PostgreSQL)] --> django[Django/Wagtail]
+    django --> apply[Apply Site]
+    django --> wagtail[Wagtail Admin]
+    django --> |"(Optional)"|celery[Celery]
 ```
 
 -----------
@@ -54,6 +48,10 @@ Media is encouraged to be split into two distinct storage locations. A Public an
 
 Media should also be served from a view that inherits from the [PrivateMediaView](https://github.com/HyphaApp/hypha/blob/main/hypha/apply/utils/storage.py) which will confirm that the file isn't made public and can be configured to return the file object from an authenticated view.
 
+### Celery
+
+An optional addition to allow certain tasks (ie. email/slack sending, other slower operations) to run asynchronously. Requires a separate celery worker to be running
+
 
 ## External Integrations
 
@@ -68,3 +66,7 @@ If configured, Hypha is able to send out notifications to different slack channe
 ### Email
 
 Emails in Hypha are used for password recovery and sending out important notifications to the users.
+
+### Redis
+
+Hypha uses Redis as a message broker for Celery

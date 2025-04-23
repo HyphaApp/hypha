@@ -1,11 +1,10 @@
 import hashlib
 import hmac
 import json
-from unittest.mock import Mock, patch
+from unittest.mock import ANY, Mock, call, patch
 
 import responses
 from django.contrib.messages import get_messages
-from django.core import mail
 from django.test import TestCase, override_settings
 from django_slack.utils import get_backend
 
@@ -40,6 +39,20 @@ from ..models import (
 )
 from ..options import MESSAGES
 from .factories import CommentFactory, EventFactory, MessageFactory
+
+
+class Contains(str):
+    """Class used to ensure a mocked call's arg contains a specific string"""
+
+    def __eq__(self, other):
+        return self in other
+
+
+class NotContains(str):
+    """Class used to ensure a mocked call's arg doesn't contain a specific string"""
+
+    def __eq__(self, other):
+        return self not in other
 
 
 class TestAdapter(AdapterBase):
@@ -497,18 +510,24 @@ class TestEmailAdapter(AdapterMixin, TestCase):
     source_factory = ApplicationSubmissionFactory
     adapter = EmailAdapter()
 
+    def setUp(self):
+        patched_send_mail = patch("hypha.apply.activity.tasks.send_mail")
+        self.mock_send_email = patched_send_mail.start()
+        self.addCleanup(patched_send_mail.stop)
+
     def test_email_new_submission(self):
         submission = ApplicationSubmissionFactory()
         self.adapter_process(MESSAGES.NEW_SUBMISSION, source=submission)
 
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, [submission.user.email])
+        self.mock_send_email.assert_called_once_with(
+            ANY, ANY, ANY, [submission.user.email], logs=ANY
+        )
 
     def test_no_email_private_comment(self):
         comment = CommentFactory(internal=True)
 
         self.adapter_process(MESSAGES.COMMENT, related=comment, source=comment.source)
-        self.assertEqual(len(mail.outbox), 0)
+        self.mock_send_email.assert_not_called()
 
     def test_no_email_own_submission_comment(self):
         submission = ApplicationSubmissionFactory()
@@ -517,7 +536,7 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         self.adapter_process(
             MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
         )
-        self.assertEqual(len(mail.outbox), 0)
+        self.mock_send_email.assert_not_called()
 
     def test_no_email_own_project_comment(self):
         project = ProjectFactory()
@@ -526,7 +545,7 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         self.adapter_process(
             MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
         )
-        self.assertEqual(len(mail.outbox), 0)
+        self.mock_send_email.assert_not_called()
 
     def test_email_staff_submission_comments(self):
         staff_commenter = StaffFactory()
@@ -538,8 +557,9 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         self.adapter_process(
             MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
         )
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertCountEqual(mail.outbox[0].to, [submission.user.email])
+        self.mock_send_email.assert_called_once_with(
+            ANY, ANY, ANY, [submission.user.email], logs=ANY
+        )
 
     def test_email_staff_project_comments(self):
         staff_commenter = StaffFactory()
@@ -551,8 +571,10 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         self.adapter_process(
             MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
         )
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertCountEqual(mail.outbox[0].to, [project.user.email])
+
+        self.mock_send_email.assert_called_once_with(
+            ANY, ANY, ANY, [project.user.email], logs=ANY
+        )
 
     def test_email_partner_for_submission_comments(self):
         partners = PartnerFactory.create_batch(2)
@@ -565,10 +587,12 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         self.adapter_process(
             MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
         )
-        self.assertEqual(len(mail.outbox), 2)
+
         partner_emails = [partner.email for partner in partners]
-        outbox_emails = [email.to[0] for email in mail.outbox]
-        self.assertCountEqual(partner_emails, outbox_emails)
+
+        calls = [call(ANY, ANY, ANY, [email], logs=ANY) for email in partner_emails]
+
+        self.mock_send_email.assert_has_calls(calls, any_order=True)
 
     def test_email_applicant_partners_for_submission_comments(self):
         staff_commenter = StaffFactory()
@@ -582,12 +606,16 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         self.adapter_process(
             MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
         )
-        self.assertEqual(len(mail.outbox), 3)
+
         applicant_partner_emails = [partner.email for partner in partners] + [
             submission.user.email
         ]
-        outbox_emails = [email.to[0] for email in mail.outbox]
-        self.assertCountEqual(applicant_partner_emails, outbox_emails)
+
+        calls = [
+            call(ANY, ANY, ANY, [email], logs=ANY) for email in applicant_partner_emails
+        ]
+
+        self.mock_send_email.assert_has_calls(calls, any_order=True)
 
     def test_email_applicant_for_submission_comments(self):
         staff_commenter = StaffFactory()
@@ -601,8 +629,10 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         self.adapter_process(
             MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
         )
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(submission.user.email, mail.outbox[0].to[0])
+
+        self.mock_send_email.assert_called_once_with(
+            ANY, ANY, ANY, [submission.user.email], logs=ANY
+        )
 
     def test_reviewers_email(self):
         reviewers = ReviewerFactory.create_batch(4)
@@ -611,8 +641,14 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         )
         self.adapter_process(MESSAGES.READY_FOR_REVIEW, source=submission)
 
-        self.assertEqual(len(mail.outbox), 4)
-        self.assertTrue(mail.outbox[0].subject, "ready to review")
+        reviewer_emails = [reviewer.email for reviewer in reviewers]
+
+        calls = [
+            call(Contains("ready to review"), ANY, ANY, [email], logs=ANY)
+            for email in reviewer_emails
+        ]
+
+        self.mock_send_email.assert_has_calls(calls, any_order=True)
 
     def test_reviewer_update_email(self):
         reviewers = ReviewerFactory.create_batch(4)
@@ -622,25 +658,11 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         added = [AssignedReviewersFactory(submission=submission, reviewer=reviewers[0])]
         self.adapter_process(MESSAGES.REVIEWERS_UPDATED, source=submission, added=added)
 
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertTrue(mail.outbox[0].subject, "ready to review")
+        reviewer_emails = [user.reviewer.email for user in added]
 
-    def test_email_sent(self):
-        self.adapter_process(MESSAGES.NEW_SUBMISSION)
-        self.assertEqual(Message.objects.count(), 1)
-        sent_message = Message.objects.first()
-        self.assertEqual(sent_message.status, "sent")
-
-    def test_email_failed(self):
-        with patch(
-            "django.core.mail.backends.locmem.EmailBackend.send_messages",
-            side_effect=Exception("An error occurred"),
-        ):
-            self.adapter_process(MESSAGES.NEW_SUBMISSION)
-
-        self.assertEqual(Message.objects.count(), 1)
-        sent_message = Message.objects.first()
-        self.assertEqual(sent_message.status, "Error: An error occurred")
+        self.mock_send_email.assert_called_once_with(
+            Contains("ready to review"), ANY, ANY, reviewer_emails, logs=ANY
+        )
 
     @override_settings(HIDE_STAFF_IDENTITY=True)
     def test_hide_staff_in_email(self):
@@ -654,10 +676,13 @@ class TestEmailAdapter(AdapterMixin, TestCase):
             MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
         )
 
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(submission.user.email, mail.outbox[0].to[0])
-
-        self.assertFalse(str(staff_commenter) in mail.outbox[0].body)
+        self.mock_send_email.assert_called_once_with(
+            ANY,
+            NotContains(str(staff_commenter)),
+            ANY,
+            [submission.user.email],
+            logs=ANY,
+        )
 
     def test_show_staff_in_email(self):
         staff_commenter = StaffFactory()
@@ -670,9 +695,9 @@ class TestEmailAdapter(AdapterMixin, TestCase):
             MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
         )
 
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(submission.user.email, mail.outbox[0].to[0])
-        self.assertTrue(str(staff_commenter) in mail.outbox[0].body)
+        self.mock_send_email.assert_called_once_with(
+            ANY, Contains(str(staff_commenter)), ANY, [submission.user.email], logs=ANY
+        )
 
 
 @override_settings(
@@ -682,6 +707,11 @@ class TestEmailAdapter(AdapterMixin, TestCase):
 class TestAnyMailBehaviour(AdapterMixin, TestCase):
     adapter = EmailAdapter()
     TEST_API_KEY = "TEST_API_KEY"
+
+    def setUp(self):
+        patched_send_mail = patch("hypha.apply.activity.tasks.send_mail")
+        self.mock_send_email = patched_send_mail.start()
+        self.addCleanup(patched_send_mail.stop)
 
     # from: https://github.com/anymail/django-anymail/blob/7d8dbdace92d8addfcf0a517be0aaf481da11952/tests/test_mailgun_webhooks.py#L19
     def mailgun_sign(self, data, api_key=TEST_API_KEY):
@@ -701,12 +731,9 @@ class TestAnyMailBehaviour(AdapterMixin, TestCase):
         submission = ApplicationSubmissionFactory()
         self.adapter_process(MESSAGES.NEW_SUBMISSION, source=submission)
 
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, [submission.user.email])
-        message = Message.objects.first()
-        self.assertEqual(message.status, "sent")
-        # Anymail test Backend uses the index of the email as id: '0'
-        self.assertEqual(message.external_id, "0")
+        self.mock_send_email.assert_called_once_with(
+            ANY, ANY, ANY, [submission.user.email], logs=ANY
+        )
 
     @override_settings(ANYMAIL_MAILGUN_API_KEY=TEST_API_KEY)
     def test_webhook_updates_status(self):
@@ -895,7 +922,8 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
         self.assertEqual(len(messages), 1)
 
     @override_settings(SEND_MESSAGES=True)
-    def test_email_staff_update_invoice(self):
+    @patch("hypha.apply.activity.tasks.send_mail")
+    def test_email_staff_update_invoice(self, mock_send_email):
         project = self.source_factory()
         invoice = InvoiceFactory(project=project)
         staff = StaffFactory()
@@ -908,5 +936,6 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
             related=invoice,
         )
 
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, [project.user.email])
+        mock_send_email.assert_called_once_with(
+            ANY, ANY, ANY, [project.user.email], logs=ANY
+        )

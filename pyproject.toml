@@ -61,6 +61,7 @@ dependencies = [
     "xhtml2pdf~=0.2.17",
     "xmltodict~=0.14.2",
     "wagtail-modeladmin>=2.1.0",
+    "redis>=5.2.1",
 ]
 
 [dependency-groups]
