@@ -1,4 +1,7 @@
+from datetime import date
+
 from django import forms
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Q
 from django.utils.text import slugify
@@ -10,6 +13,7 @@ from hypha.apply.projects.forms.utils import (
     get_project_default_status,
     get_project_status_options,
 )
+from hypha.apply.projects.templatetags.project_tags import show_start_date
 from hypha.apply.stream_forms.fields import SingleFileField
 from hypha.apply.stream_forms.forms import StreamBaseForm
 from hypha.apply.users.roles import STAFF_GROUP_NAME
@@ -86,14 +90,18 @@ class ProjectCreateForm(forms.Form):
     )
 
     project_lead = forms.ModelChoiceField(
-        label=_("Select Project Lead"), queryset=User.objects.all()
+        label=_("Select project lead"), queryset=User.objects.all()
     )
 
     # Set the initial value to the settings default if valid, otherwise fall back to draft
     project_initial_status = forms.ChoiceField(
-        label=_("Initial Project Status"),
+        label=_("Initial project status"),
         choices=get_project_status_options(),
         initial=get_project_default_status(),
+    )
+
+    project_end = forms.DateField(
+        label=_("Project end date"),
     )
 
     def __init__(self, *args, instance=None, **kwargs):
@@ -119,7 +127,24 @@ class ProjectCreateForm(forms.Form):
         submission = self.cleaned_data["submission"]
         lead = self.cleaned_data["project_lead"]
         status = self.cleaned_data["project_initial_status"]
-        return Project.create_from_submission(submission, lead=lead, status=status)
+        end_date = self.cleaned_data["project_end"]
+
+        start_date = None
+
+        if not settings.PROJECTS_START_AFTER_CONTRACTING or status in [
+            INVOICING_AND_REPORTING,
+            CLOSING,
+            COMPLETE,
+        ]:
+            start_date = date.today()
+
+        return Project.create_from_submission(
+            submission,
+            lead=lead,
+            status=status,
+            end_date=end_date,
+            start_date=start_date,
+        )
 
 
 class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
@@ -444,3 +469,28 @@ class UpdateProjectTitleForm(forms.ModelForm):
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class UpdateProjectDatesForm(forms.ModelForm):
+    class Meta:
+        fields = ["proposed_start", "proposed_end"]
+        model = Project
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if (
+            show_start_date(self.instance)
+            and cleaned_data["proposed_start"] >= cleaned_data["proposed_end"]
+        ):
+            self.add_error(
+                "proposed_end", _("The end date must be after the start date.")
+            )
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Only show the start date field if relevant
+        if not show_start_date(self.instance):
+            proposed_start = self.fields["proposed_start"]
+            proposed_start.disabled = True
+            proposed_start.required = False
+            proposed_start.widget = proposed_start.hidden_widget()

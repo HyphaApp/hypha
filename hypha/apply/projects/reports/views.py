@@ -462,7 +462,7 @@ class ReportFrequencyUpdate(View):
                 }
         else:
             kwargs["initial"] = {
-                "start": self.project.start_date,
+                "start": self.project.proposed_start,
             }
         return kwargs
 
