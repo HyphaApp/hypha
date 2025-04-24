@@ -15,7 +15,6 @@ COAPPLICANT_ROLE_CHOICES = (
 
 
 class CoApplicantInviteStatus(models.TextChoices):
-    PENDING = "pending", "Pending"
     ACCEPTED = "accepted", "Accepted"
     REJECTED = "rejected", "Rejected"
     EXPIRED = "expired", "Expired"
