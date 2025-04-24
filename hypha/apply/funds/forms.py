@@ -1,3 +1,4 @@
+import uuid
 from collections import OrderedDict
 from functools import partial
 from itertools import groupby
@@ -16,6 +17,7 @@ from hypha.apply.users.models import User
 from .models import (
     ApplicationSubmission,
     AssignedReviewers,
+    CoApplicantInvite,
     Reminder,
     ReviewerRole,
 )
@@ -456,3 +458,29 @@ class CreateReminderForm(forms.ModelForm):
     class Meta:
         model = Reminder
         fields = ["title", "description", "time", "action"]
+
+
+class InviteCoApplicantForm(forms.ModelForm):
+    invited_user_email = forms.EmailField(required=True, label="Email")
+
+    submission = forms.ModelChoiceField(
+        queryset=ApplicationSubmission.objects.filter(),
+        widget=forms.HiddenInput(),
+    )
+
+    def __init__(self, *args, submission, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.invited_by = user
+
+        if submission:
+            self.fields["submission"].initial = submission.id
+
+    class Meta:
+        model = CoApplicantInvite
+        fields = ["invited_user_email", "submission"]
+
+    def save(self, *args, **kwargs):
+        self.instance.submission = self.cleaned_data["submission"]
+        self.instance.token = str(uuid.uuid4())
+        self.instance.invited_user_email = self.cleaned_data["invited_user_email"]
+        return super().save(*args, **kwargs)

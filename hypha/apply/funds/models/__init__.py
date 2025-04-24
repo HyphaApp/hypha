@@ -9,7 +9,7 @@ from .applications import (
     RoundsAndLabs,
 )
 from .assigned_reviewers import AssignedReviewers
-from .co_applicants import CoApplicant
+from .co_applicants import CoApplicant, CoApplicantInvite
 from .forms import ApplicationForm
 from .reminders import Reminder
 from .reviewer_role import ReviewerRole, ReviewerSettings
@@ -28,6 +28,7 @@ __all__ = [
     "RoundsAndLabs",
     "ScreeningStatus",
     "CoApplicant",
+    "CoApplicantInvite",
 ]
 
 

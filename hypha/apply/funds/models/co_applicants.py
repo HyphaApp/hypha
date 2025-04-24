@@ -12,10 +12,34 @@ COAPPLICANT_ROLE_PERM = {
 
 
 class CoApplicantInviteStatus(models.TextChoices):
-    PENDING = "pending", "Pending"
     ACCEPTED = "accepted", "Accepted"
     REJECTED = "rejected", "Rejected"
     EXPIRED = "expired", "Expired"
+
+
+class CoApplicantInvite(models.Model):
+    submission = models.ForeignKey(
+        "funds.ApplicationSubmission",
+        on_delete=models.CASCADE,
+        related_name="co_applicant_invites",
+    )
+    invited_user_email = models.EmailField()
+    token = models.CharField(max_length=256, unique=True)
+    is_used = models.BooleanField(default=False)
+    invited_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="co_applicant_invites",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("submission", "invited_user_email")
+
+    def __str__(self):
+        return f"{self.invited_user_email} invited to {self.submission})"
 
 
 class CoApplicant(models.Model):
@@ -27,27 +51,19 @@ class CoApplicant(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="co_applicants"
     )
+    invite = models.OneToOneField(
+        CoApplicantInvite, on_delete=models.CASCADE, related_name="co_applicant"
+    )
     role = models.JSONField(default=list)
-
     status = models.CharField(
         max_length=20,
         choices=CoApplicantInviteStatus.choices,
-        default=CoApplicantInviteStatus.PENDING,
+        default=CoApplicantInviteStatus.ACCEPTED,
     )
-    invited_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="co_applicant_invites",
-    )
-    invited_on = models.DateTimeField(auto_now_add=True)
-    responded_on = models.DateTimeField(null=True, blank=True)
+    accepted_on = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         unique_together = ("submission", "user")
 
     def __str__(self):
-        return (
-            f"{self.user} invited to {self.submission} as {self.role} ({self.status})"
-        )
+        return self.user

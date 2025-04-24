@@ -15,6 +15,11 @@ from .views.all import (
     bulk_update_submissions_status,
     submissions_all,
 )
+from .views.co_applicants import (
+    CoApplicantInviteAcceptView,
+    CoApplicantInviteView,
+    list_invites,
+)
 from .views.comments import comments_view
 from .views.partials import (
     get_applications_status_counts,
@@ -215,6 +220,21 @@ submission_urls = (
                         "reminder/create/",
                         ReminderCreateView.as_view(),
                         name="create_reminder",
+                    ),
+                    path(
+                        "coapplicant/invite/",
+                        CoApplicantInviteView.as_view(),
+                        name="invite_co_applicant",
+                    ),
+                    path(
+                        "coapplicant/invite/accept/<str:token>/",
+                        CoApplicantInviteAcceptView.as_view(),
+                        name="accept_coapplicant_invite",
+                    ),
+                    path(
+                        "coapplicant/invites/",
+                        list_invites,
+                        name="list_coapplicant_invites",
                     ),
                     path(
                         "translate/",
