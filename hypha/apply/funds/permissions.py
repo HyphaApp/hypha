@@ -209,9 +209,16 @@ def can_view_submission_screening(user, submission):
     return True, ""
 
 
+def can_invite_co_applicants(user, submission):
+    if user.is_applicant and user == submission.user:
+        return True, "Applicants can invite co-applicants to their application"
+    return False, "Forbidden Error"
+
+
 permissions_map = {
     "submission_view": is_user_has_access_to_view_submission,
     "submission_edit": can_edit_submission,
     "can_view_submission_screening": can_view_submission_screening,
     "archive_alter": can_alter_archived_submissions,
+    "co_applicant_invite": can_invite_co_applicants,
 }

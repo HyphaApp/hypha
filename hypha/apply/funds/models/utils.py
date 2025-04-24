@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -25,6 +26,8 @@ from hypha.apply.users.roles import (
 )
 
 from ..workflows import DRAFT_STATE, WORKFLOWS
+
+User = get_user_model()
 
 REVIEW_GROUPS = [
     STAFF_GROUP_NAME,

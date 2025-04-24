@@ -1,0 +1,11 @@
+{% extends "messages/email/applicant_base.html" %}
+
+{% load i18n %}
+{% block content %}{# fmt:off #}
+{% blocktrans %}You have been invited as a co-applicant to an application on {{ ORG_SHORT_NAME }} by {{ user }}.{% endblocktrans %}
+{% if not can_accept %}
+{% trans "But You can't accept this invite because you already hold a responsible position in" %} {{ ORG_SHORT_NAME }}
+{% endif %}
+{% blocktrans %} Click on link if you want to accept it, otherwise leave it.{% endblocktrans %}
+{% trans "Link" %}: {{ accept_link }}
+{% endblock %}{# fmt:on #}
