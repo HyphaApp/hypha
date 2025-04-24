@@ -11,6 +11,7 @@ neat_related = {
     MESSAGES.TRANSITION: "old_phase",
     MESSAGES.BATCH_TRANSITION: "transitions",
     MESSAGES.APPLICANT_EDIT: "revision",
+    MESSAGES.INVITE_COAPPLICANT: "co_applicant_invite",
     MESSAGES.EDIT_SUBMISSION: "revision",
     MESSAGES.COMMENT: "comment",
     MESSAGES.SCREENING: "old_status",
