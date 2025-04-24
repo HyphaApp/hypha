@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-21 08:43+0000\n"
-"PO-Revision-Date: 2025-02-27 01:43+0000\n"
+"PO-Revision-Date: 2025-04-22 15:03+0000\n"
 "Last-Translator: Jiří Podhorecký <j.podhorecky@volny.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "cs/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
-"X-Generator: Weblate 5.10.2-dev\n"
+"X-Generator: Weblate 5.11.1-dev\n"
 
 #: hypha/apply/activity/adapters/activity_feed.py:28
 #, python-brace-format
@@ -184,10 +184,8 @@ msgstr ""
 "{invoice_numbers}"
 
 #: hypha/apply/activity/adapters/activity_feed.py:208
-#, fuzzy
-#| msgid "assign project form approver"
 msgid "assigned Project form to {}"
-msgstr "přiřadit schvalovatele formuláře projektu"
+msgstr "přiřazen formulář projektu k {}"
 
 #: hypha/apply/activity/adapters/activity_feed.py:214
 #, python-brace-format
@@ -632,10 +630,8 @@ msgid "This month"
 msgstr "Tento měsíc"
 
 #: hypha/apply/activity/filters.py:17
-#, fuzzy
-#| msgid "Last Month"
 msgid "Last 3 months"
-msgstr "Poslední měsíc"
+msgstr "Poslední 3 měsíce"
 
 #: hypha/apply/activity/forms.py:16
 #: hypha/apply/projects/reports/templates/reports/report_detail.html:42
@@ -970,11 +966,11 @@ msgstr "Oznámení"
 
 #: hypha/apply/activity/templates/activity/notifications.html:11
 msgid "Activity feed across all applications and projects"
-msgstr ""
+msgstr "Průběh aktivit ve všech aplikacích a projektech"
 
 #: hypha/apply/activity/templates/activity/notifications.html:13
 msgid "Activity feed across all the applications"
-msgstr ""
+msgstr "Informace o aktivitách ve všech aplikacích"
 
 #: hypha/apply/activity/templates/activity/notifications.html:23
 #: hypha/core/templates/components/dropdown-menu.html:64
@@ -999,7 +995,7 @@ msgstr "Zobrazit"
 
 #: hypha/apply/activity/templates/activity/notifications.html:96
 msgid "No activities found, try updating your filters."
-msgstr ""
+msgstr "Nebyly nalezeny žádné aktivity, zkuste aktualizovat filtry."
 
 #: hypha/apply/activity/templates/activity/ui/activity-comment-item.html:55
 msgid "Assigned to you"
@@ -2290,16 +2286,12 @@ msgid "Show"
 msgstr "Zobrazit"
 
 #: hypha/apply/determinations/templates/determinations/batch_determination_form.html:32
-#, fuzzy
-#| msgid ""
-#| "This determination message will be emailed to applicants and cannot be "
-#| "undone. Do you wish to contiune?"
 msgid ""
 "This determination message will be emailed to applicants and cannot be "
 "undone. Do you wish to continue?"
 msgstr ""
 "Tato zpráva o určení bude žadatelům zaslána e-mailem a nelze ji vzít zpět. "
-"Chcete se připojit?"
+"Přejete si pokračovat?"
 
 #: hypha/apply/determinations/templates/determinations/batch_determination_form.html:33
 msgid "Send"
@@ -2883,19 +2875,13 @@ msgstr ""
 "Ve vašem formuláři se vyskytly chyby. Opravte prosím níže zvýrazněná pole"
 
 #: hypha/apply/funds/templates/funds/application_base.html:40
-#, fuzzy, python-format
-#| msgid ""
-#| "Sorry this %(page|verbose_name)s is not accepting applications at the "
-#| "moment"
+#, python-format
 msgid "Sorry, this %(name)s is not currently accepting applications."
-msgstr ""
-"Omlouváme se, ale tato %(page|verbose_name)s momentálně nepřijímá žádosti"
+msgstr "Omlouváme se, ale tato %(name)s v současné době nepřijímá žádosti."
 
 #: hypha/apply/funds/templates/funds/application_base.html:42
-#, fuzzy
-#| msgid "Copied from the fund."
 msgid "See other funds"
-msgstr "Zkopírováno z fondu."
+msgstr "Viz další fondy"
 
 #: hypha/apply/funds/templates/funds/application_base.html:53
 msgid "Application guide"
@@ -2983,8 +2969,6 @@ msgstr "Žádost"
 #: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:41
 #: hypha/apply/funds/templates/funds/comments.html:36
 #: hypha/apply/projects/templates/application_projects/project_detail.html:36
-#, fuzzy
-#| msgid "Conversations"
 msgid "Conversation"
 msgstr "Konverzace"
 
@@ -3008,16 +2992,12 @@ msgid "Start your %(stage)s application."
 msgstr "Zahajte %(stage)s žádosti."
 
 #: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:73
-#, fuzzy
-#| msgid "This submission has been archived. This is visible to the roles "
 msgid "This application has been archived. This is visible to the roles "
-msgstr "Toto podání bylo archivováno. Toto je viditelné pro role "
+msgstr "Tato žádost byla archivována. To je viditelné pro role "
 
 #: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:80
-#, fuzzy
-#| msgid "This submission is sealed"
 msgid "This application is sealed."
-msgstr "Toto podání je zapečetěno"
+msgstr "Tato žádost je zapečetěná."
 
 #: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:87
 msgid "Drafted "
@@ -3326,10 +3306,8 @@ msgid "Clear current search query, filters and sorts"
 msgstr "Vymazat aktuální vyhledávací dotaz, filtry a řazení"
 
 #: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:71
-#, fuzzy
-#| msgid "Remove tag filter"
 msgid "Remove filter"
-msgstr "Odebrat filtr štítků"
+msgstr "Odebrat filtr"
 
 #: hypha/apply/funds/templates/funds/includes/translate_application_form.html:59
 msgid "Translations are an experimental feature and may be inaccurate"
@@ -3366,8 +3344,6 @@ msgid "Update"
 msgstr "Aktualizovat"
 
 #: hypha/apply/funds/templates/funds/modals/create_project_form.html:2
-#, fuzzy
-#| msgid "Create Project"
 msgid "Create project"
 msgstr "Vytvořit projekt"
 
@@ -4992,7 +4968,7 @@ msgstr "Zprávy"
 
 #: hypha/apply/projects/reports/templates/reports/includes/reports.html:25
 msgid "ENABLE"
-msgstr ""
+msgstr "POVOLIT"
 
 #: hypha/apply/projects/reports/templates/reports/includes/reports.html:53
 #: hypha/apply/projects/reports/templates/reports/includes/reports.html:62
@@ -5008,10 +4984,8 @@ msgid "Show more"
 msgstr "Zobrazit více"
 
 #: hypha/apply/projects/reports/templates/reports/includes/reports.html:104
-#, fuzzy
-#| msgid "No reports submitted"
 msgid "No reports submitted yet."
-msgstr "Nebyly předloženy žádné zprávy"
+msgstr "Zatím nebyly podány žádné zprávy."
 
 #: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:2
 msgid "Change reporting frequency"
@@ -5069,10 +5043,8 @@ msgid "Save"
 msgstr "Uložit"
 
 #: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:69
-#, fuzzy
-#| msgid "Disable 2FA"
 msgid "Disable"
-msgstr "Vypnout 2FA"
+msgstr "Vypnout"
 
 #: hypha/apply/projects/reports/templates/reports/report_detail.html:4
 #: hypha/apply/projects/reports/templates/reports/report_detail.html:14
@@ -5172,22 +5144,16 @@ msgstr "V současné době nemají hlášení žádné projekty."
 
 #: hypha/apply/projects/reports/views.py:78
 #: hypha/apply/projects/reports/views.py:100
-#, fuzzy
-#| msgid "You do not have permission to create that determination."
 msgid "You do not have permission to access this report."
-msgstr "K vytvoření tohoto rozhodnutí nemáte oprávnění."
+msgstr "K přístupu k této zprávě nemáte oprávnění."
 
 #: hypha/apply/projects/reports/views.py:125
-#, fuzzy
-#| msgid "You do not have permission to create that determination."
 msgid "You do not have permission to update this report."
-msgstr "K vytvoření tohoto rozhodnutí nemáte oprávnění."
+msgstr "K aktualizaci této zprávy nemáte oprávnění."
 
 #: hypha/apply/projects/reports/views.py:372
-#, fuzzy
-#| msgid "You do not have permission to create that determination."
 msgid "You do not have permission to update reporting configurations."
-msgstr "K vytvoření tohoto rozhodnutí nemáte oprávnění."
+msgstr "Nemáte oprávnění aktualizovat konfigurace hlášení."
 
 #: hypha/apply/projects/reports/views.py:491
 msgid "Reporting disabled"
@@ -5412,14 +5378,10 @@ msgid "Approve Contract"
 msgstr "Schválit smlouvu"
 
 #: hypha/apply/projects/templates/application_projects/modals/approve_contract.html:6
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to disable the Two Factor Authentication for this "
-#| "user?"
 msgid ""
 "Are you sure you want to accept and approve the contract for commencing the "
 "project?"
-msgstr "Opravdu chcete pro tohoto uživatele zakázat dvoufaktorové ověřování?"
+msgstr "Opravdu chcete přijmout a schválit smlouvu o zahájení projektu?"
 
 #: hypha/apply/projects/templates/application_projects/modals/approve_contract.html:7
 msgid "This cannot be undone."
@@ -5468,8 +5430,6 @@ msgid "Update Project Status"
 msgstr "Aktualizovat stav projektu"
 
 #: hypha/apply/projects/templates/application_projects/modals/project_title_update.html:2
-#, fuzzy
-#| msgid "Update Title"
 msgid "Update title"
 msgstr "Aktualizovat název"
 
@@ -5734,16 +5694,12 @@ msgid "Pending approval from "
 msgstr "Čeká se na schválení od "
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:151
-#, fuzzy
-#| msgid " (nobody assigned yet)"
 msgid "nobody assigned yet"
-msgstr " (zatím nebyl nikdo přidělen)"
+msgstr "zatím nebyl nikdo přidělen"
 
 #: hypha/apply/projects/templates/application_projects/project_detail.html:159
-#, fuzzy
-#| msgid "Approved"
 msgid "approved"
-msgstr "Schváleno"
+msgstr "schváleno"
 
 #: hypha/apply/projects/templates/application_projects/project_list.html:6
 #: hypha/apply/projects/views/project_partials.py:110
@@ -6023,10 +5979,9 @@ msgid "Contracting document has been uploaded"
 msgstr "Zadávací dokument byl nahrán"
 
 #: hypha/apply/projects/views/project.py:1034
-#, fuzzy, python-brace-format
-#| msgid "<p>{role} has updated project form status to {paf_status}.</p>"
+#, python-brace-format
 msgid "updated project form status to {paf_status}."
-msgstr "<p>{role} aktualizoval stav formuláře projektu na {paf_status}.</p>"
+msgstr "aktualizován stav formuláře projektu na {paf_status}."
 
 #: hypha/apply/projects/views/project.py:1108
 msgid "Project form status has been updated"
@@ -6333,52 +6288,47 @@ msgid ""
 "#{related.source.application_id}</span><br>{related.user} assigned you a "
 "comment: <q class=\"text-fg-muted italic align-bottom\">{msg}</q>"
 msgstr ""
+"<span class=\"text-xs\">{related.source.fund_name} "
+"#{related.source.application_id}</span><br>{related.user} vám přidělil "
+"komentář: <q class=\"text-fg-muted italic align-bottom\">{msg}</q>"
 
 #: hypha/apply/todo/options.py:65
-#, fuzzy, python-brace-format
-#| msgid ""
-#| "A Submission draft [<span class=\"truncate inline-block max-w-32 align-"
-#| "bottom \">{related.title}</span>]({link} \"{related.title}\") is waiting "
-#| "to be submitted"
+#, python-brace-format
 msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>A draft application <span class=\"truncate inline-block max-w-32 "
 "align-bottom \">\"{related.title}\"</span> is waiting to be submitted"
 msgstr ""
-"Návrh podání [<span class=\"truncate inline-block max-w-32 align-bottom "
-"\">{related.title}</span>]({link} \"{related.title}\") čeká na odeslání"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Koncept žádosti <span class="
+"\"truncate inline-block max-w-32 align-bottom \">\"{related.title}\"</span> "
+"čeká na odeslání"
 
 #: hypha/apply/todo/options.py:73
-#, fuzzy, python-brace-format
-#| msgid ""
-#| "Determination draft for submission [<span class=\"truncate inline-block "
-#| "max-w-32 align-bottom \">{related.submission.title}</span>]({link} "
-#| "\"{related.submission.title}\") is waiting to be submitted"
+#, python-brace-format
 msgid ""
 "<span class=\"text-xs\">{related.submission.fund_name} "
 "#{related.submission.application_id}</span><br>Determination draft for "
 "submission <span class=\"truncate inline-block max-w-32 align-"
 "bottom\">\"{related.submission.title}\"</span> is waiting to be submitted"
 msgstr ""
-"Návrh určení k předložení [<span class=\"truncate inline-block max-w-32 "
-"align-bottom \">{related.submission.title}</span>]({link} "
-"\"{related.submission.title}\") čeká na předložení"
+"<span class=\"text-xs\">{related.submission.fund_name} "
+"#{related.submission.application_id}</span><br>Koncept rozhodnutí k odeslání "
+"<span class=\"truncate inline-block max-w-32 align-bottom\">"
+"\"{related.submission.title}\"</span> čeká na odeslání"
 
 #: hypha/apply/todo/options.py:81
-#, fuzzy, python-brace-format
-#| msgid ""
-#| "Determination draft for submission [<span class=\"truncate inline-block "
-#| "max-w-32 align-bottom \">{related.submission.title}</span>]({link} "
-#| "\"{related.submission.title}\") is waiting to be submitted"
+#, python-brace-format
 msgid ""
 "<span class=\"text-xs\">{related.submission.fund_name} "
 "#{related.submission.application_id}</span><br>Review draft for submission "
 "<span class=\"truncate inline-block max-w-32 align-"
 "bottom\">\"{related.submission.title}\"</span> is waiting to be submitted"
 msgstr ""
-"Návrh určení k předložení [<span class=\"truncate inline-block max-w-32 "
-"align-bottom \">{related.submission.title}</span>]({link} "
-"\"{related.submission.title}\") čeká na předložení"
+"<span class=\"text-xs\">{related.submission.fund_name} "
+"#{related.submission.application_id}</span><br>Koncept recenze pro odeslání "
+"<span class=\"truncate inline-block max-w-32 align-bottom\">"
+"\"{related.submission.title}\"</span> čeká na odeslání"
 
 #: hypha/apply/todo/options.py:91
 #, python-brace-format
@@ -6386,6 +6336,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for project form"
 msgstr ""
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Projekt čeká na formulář projektu"
 
 #: hypha/apply/todo/options.py:95 hypha/apply/todo/options.py:103
 #: hypha/apply/todo/options.py:111 hypha/apply/todo/options.py:119
@@ -6403,20 +6355,17 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for scope of work"
 msgstr ""
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Projekt čeká na rozsah práce"
 
 #: hypha/apply/todo/options.py:107
-#, fuzzy, python-brace-format
-#| msgid ""
-#| "Project [<span class=\"truncate inline-block max-w-32 align-bottom "
-#| "\">{related.title}</span>]({link} \"{related.title}\") is waiting for "
-#| "project form(s) submission"
+#, python-brace-format
 msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for project form(s) submission"
 msgstr ""
-"Projekt [<span class=\"truncate inline-block max-w-32 align-bottom "
-"\">{related.title}</span>]({link} \"{related.title}\") čeká na podání "
-"formuláře projektu"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Projekt čeká na odeslání projektových formulářů"
 
 #: hypha/apply/todo/options.py:115
 #, python-brace-format
@@ -6424,6 +6373,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project form requires changes or more information"
 msgstr ""
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Formulář projektu vyžaduje změny nebo další informace"
 
 #: hypha/apply/todo/options.py:124
 #, python-brace-format
@@ -6431,6 +6382,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project form is waiting for assignee"
 msgstr ""
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Formulář projektu čeká na příjemce"
 
 #: hypha/apply/todo/options.py:132
 #, python-brace-format
@@ -6438,6 +6391,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br> Project form is waiting for your approval"
 msgstr ""
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br> Formulář projektu čeká na vaše schválení"
 
 #: hypha/apply/todo/options.py:141
 #, python-brace-format
@@ -6445,6 +6400,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for contract"
 msgstr ""
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Projekt čeká na smlouvu"
 
 #: hypha/apply/todo/options.py:149
 #, python-brace-format
@@ -6452,6 +6409,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for contracting documents"
 msgstr ""
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Projekt čeká na smluvní dokumenty"
 
 #: hypha/apply/todo/options.py:157
 #, python-brace-format
@@ -6459,20 +6418,19 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Contract for project is waiting for review"
 msgstr ""
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
+"span><br>Smlouva na projekt čeká na kontrolu"
 
 #: hypha/apply/todo/options.py:166
-#, fuzzy, python-brace-format
-#| msgid ""
-#| "Project [<span class=\"truncate inline-block max-w-32 align-bottom "
-#| "\">{related.title}</span>]({link} \"{related.title}\") is waiting for "
-#| "invoice"
+#, python-brace-format
 msgid ""
 "<span class=\"text-sm\">{related.fund_name} #{related.application_id}</"
 "span><br>Project <span class=\"truncate inline-block max-w-32 align-"
 "bottom\">\"{related.title}\"</span> is waiting for invoice"
 msgstr ""
-"Projekt [<span class=\"truncate inline-block max-w-32 align-bottom "
-"\">{related.title}</span>]({link} \"{related.title}\") čeká na fakturu"
+"<span class=\"text-sm\">{related.fund_name} #{related.application_id}</"
+"span><br>Projekt <span class=\"truncate inline-block max-w-32 align-bottom\">"
+"\"{related.title}\"</span> čeká na fakturu"
 
 #: hypha/apply/todo/options.py:174
 #, python-brace-format
@@ -6481,6 +6439,9 @@ msgid ""
 "#{related.project.application_id}</span><br>Invoice no. "
 "{related.invoice_number} required changes or more information"
 msgstr ""
+"<span class='text-xs'>{related.project.fund_name} "
+"#{related.project.application_id}</span><br>Č. faktury "
+"{related.invoice_number} vyžaduje změny nebo další informace"
 
 #: hypha/apply/todo/options.py:182
 #, python-brace-format
@@ -6489,6 +6450,9 @@ msgid ""
 "#{related.project.application_id}</span><br>Invoice no. "
 "{related.invoice_number} is waiting for your approval"
 msgstr ""
+"<span class='text-xs'>{related.project.fund_name} "
+"#{related.project.application_id}</span><br>Č. faktury "
+"{related.invoice_number} čeká na vaše schválení"
 
 #: hypha/apply/todo/options.py:190
 #, python-brace-format
@@ -6497,40 +6461,37 @@ msgid ""
 "#{related.project.application_id}</span><br>Invoice no. "
 "{related.invoice_number} is waiting to be paid"
 msgstr ""
+"<span class='text-xs'>{related.project.fund_name} "
+"#{related.project.application_id}</span><br>Č. faktury "
+"{related.invoice_number} čeká na zaplacení"
 
 #: hypha/apply/todo/options.py:198
-#, fuzzy, python-brace-format
-#| msgid ""
-#| "Report for project [<span class=\"truncate inline-block max-w-32 align-"
-#| "bottom \">{related.title}</span>]({link} \"{related.title}\") is due"
+#, python-brace-format
 msgid ""
 "<span class=\"text-xs\">{related.project.fund_name} "
 "#{related.project.application_id}</span><br>Report for project <span "
 "class=\"truncate inline-block max-w-32 align-bottom "
 "\">\"{related.project.title}\"</span> is due"
 msgstr ""
-"Zpráva za projekt [<span class=\"truncate inline-block max-w-32 align-bottom "
-"\">{related.title}</span>]({link} \"{related.title}\") je po termínu"
+"<span class=\"text-xs\">{related.project.fund_name} "
+"#{related.project.application_id}</span><br>Zpráva pro projekt <span class="
+"\"truncate inline-block max-w-32 align-bottom \">\"{related.project.title}\""
+"</span> je po termínu"
 
 #: hypha/apply/todo/templates/todo/todolist_dropdown.html:7
 msgid "No pending task."
 msgstr "Žádný nevyřízený úkol."
 
 #: hypha/apply/todo/templates/todo/todolist_item.html:41
-#, fuzzy
-#| msgid "Click to open your task list"
 msgid "Remove from your task list"
-msgstr "Kliknutím otevřete seznam úkolů"
+msgstr "Odebrat ze seznamu úkolů"
 
 #: hypha/apply/todo/templates/todo/todolist_item.html:46
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want create a project from this submission? This cannot "
-#| "be undone."
 msgid ""
 "Are you sure you want to remove this task from your task list? This can not "
 "be undone."
-msgstr "Opravdu chcete vytvořit projekt z tohoto podání? To nelze vzít zpět."
+msgstr ""
+"Opravdu chcete tento úkol odstranit ze seznamu úkolů? Toto nelze vrátit zpět."
 
 #: hypha/apply/users/forms.py:27 hypha/apply/users/forms.py:63
 msgid "Remember me"
@@ -6890,15 +6851,11 @@ msgid ""
 msgstr "2FA vyžaduje ověřovací kód pro spárování smartphonu s účtem."
 
 #: hypha/apply/users/templates/two_factor/core/setup.html:17
-#, fuzzy
-#| msgid ""
-#| "<strong>Step 1:</strong> Open the Authencator app on your phone and scan "
-#| "the QR code displayed below."
 msgid ""
 "<strong>Step 1:</strong> Open the Authenticator app on your phone and scan "
 "the QR code displayed below."
 msgstr ""
-"<strong>Krok 1:</strong> Otevřete v telefonu aplikaci Authencator a "
+"<strong>Krok 1:</strong> Otevřete v telefonu aplikaci Authenticator a "
 "naskenujte níže zobrazený QR kód."
 
 #: hypha/apply/users/templates/two_factor/core/setup.html:20
@@ -7744,30 +7701,21 @@ msgid "The strapline to be displayed on the homepage."
 msgstr "Slogan, který se zobrazí na domovské stránce."
 
 #: hypha/core/models/system_settings.py:34
-#, fuzzy
-#| msgid "Determination message"
 msgid "No open applications message"
-msgstr "Zpráva o určení"
+msgstr "Žádná zpráva o otevřených žádostech"
 
 #: hypha/core/models/system_settings.py:35
-#, fuzzy
-#| msgid ""
-#| "Choose the image you wish to be displayed when this page appears in "
-#| "listings"
 msgid "The message to be displayed when there are no open applications."
 msgstr ""
-"Vyberte obrázek, který se má zobrazit, když se tato stránka zobrazí ve "
-"výpisech"
+"Zpráva, která se zobrazí, když nejsou k dispozici žádné otevřené žádosti."
 
 #: hypha/core/models/system_settings.py:45
 msgid "Default site logo"
 msgstr "Výchozí logo webu"
 
 #: hypha/core/models/system_settings.py:54
-#, fuzzy
-#| msgid "Mobil site logo (if not set default will be used)"
 msgid "Mobile site logo (if not set default will be used)"
-msgstr "Mobilní logo webu (pokud není nastaveno, použije se výchozí)"
+msgstr "Logo mobilního webu (pokud není nastaveno, použije se výchozí)"
 
 #: hypha/core/models/system_settings.py:61
 msgid ""

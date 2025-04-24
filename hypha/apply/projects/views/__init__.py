@@ -37,6 +37,7 @@ from .project import (
     UploadContractDocumentView,
     UploadContractView,
     UploadDocumentView,
+    update_project_dates,
     update_project_title,
 )
 from .project_partials import (
@@ -46,12 +47,14 @@ from .project_partials import (
     partial_get_invoice_detail_actions,
     partial_get_invoice_status,
     partial_get_invoice_status_table,
+    partial_project_information,
     partial_project_lead,
     partial_project_title,
     partial_supporting_documents,
 )
 
 __all__ = [
+    "partial_project_information",
     "partial_project_lead",
     "partial_project_title",
     "partial_supporting_documents",
@@ -69,6 +72,7 @@ __all__ = [
     "SubmitContractDocumentsView",
     "UpdatePAFApproversView",
     "update_project_title",
+    "update_project_dates",
     "UploadContractDocumentView",
     "ChangePAFStatusView",
     "UploadDocumentView",

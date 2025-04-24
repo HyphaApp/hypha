@@ -83,6 +83,7 @@ from ..forms import (
     SetPendingForm,
     SkipPAFApprovalProcessForm,
     SubmitContractDocumentsForm,
+    UpdateProjectDatesForm,
     UpdateProjectLeadForm,
     UpdateProjectTitleForm,
     UploadContractDocumentForm,
@@ -503,6 +504,42 @@ def update_project_title(request, pk):
     return render(request, template_name, ctx)
 
 
+@login_required
+def update_project_dates(request, pk):
+    if not request.user.is_apply_staff:
+        raise PermissionDenied
+
+    project = get_object_or_404(Project, submission__id=pk)
+    template_name = "application_projects/modals/project_dates_update.html"
+
+    form = UpdateProjectDatesForm(instance=project)
+
+    if request.method == "POST":
+        form = UpdateProjectDatesForm(request.POST, instance=project)
+
+        if form.is_valid():
+            form.save()
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "informationUpdated": None,
+                            "showMessage": _("Dates has been updated"),
+                        }
+                    ),
+                },
+            )
+
+    ctx = {
+        "form": form,
+        "value": _("Update"),
+        "object": project,
+    }
+    return render(request, template_name, ctx)
+
+
 # CONTRACTS
 
 
@@ -701,6 +738,10 @@ class UploadContractView(ProjectBySubmissionIdMixin, View):
                 self.project.status = INVOICING_AND_REPORTING
                 self.project.save(update_fields=["status"])
                 old_stage = CONTRACTING
+
+                if settings.PROJECTS_START_AFTER_CONTRACTING:
+                    self.project.proposed_start = datetime.date.today()
+                    self.project.save()
 
                 messenger(
                     MESSAGES.PROJECT_TRANSITION,

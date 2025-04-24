@@ -1,4 +1,5 @@
 import logging
+from datetime import date
 
 from django import forms
 from django.apps import apps
@@ -20,7 +21,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Cast, Coalesce
+from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
@@ -164,21 +165,6 @@ class ProjectQuerySet(models.QuerySet):
             )
         )
 
-    def with_start_date(self):
-        return self.annotate(
-            start=Cast(
-                Subquery(
-                    Contract.objects.filter(
-                        project=OuterRef("pk"),
-                    )
-                    .approved()
-                    .order_by("approved_at")
-                    .values("approved_at")[:1]
-                ),
-                models.DateField(),
-            )
-        )
-
     def for_table(self):
         return (
             self.with_amount_paid()
@@ -259,8 +245,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         decimal_places=2,
         validators=[MinValueValidator(limit_value=0)],
     )
-    proposed_start = models.DateTimeField(_("Proposed Start Date"), null=True)
-    proposed_end = models.DateTimeField(_("Proposed End Date"), null=True)
+    proposed_start = models.DateField(
+        _("Proposed start date"), null=True, default=date.today
+    )
+    proposed_end = models.DateField(_("Proposed end date"), null=True)
 
     status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=DRAFT)
 
@@ -321,7 +309,9 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return ""  # todo: need to figure out
 
     @classmethod
-    def create_from_submission(cls, submission, lead=None, status=None):
+    def create_from_submission(
+        cls, submission, lead=None, status=None, end_date=None, start_date=None
+    ):
         """
         Create a Project from the given submission.
 
@@ -357,18 +347,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             title=submission.title,
             status=status,
             lead=lead if lead else None,
+            proposed_end=end_date,
+            proposed_start=start_date,
             value=submission.form_data.get("value", 0),
         )
-
-    @property
-    def start_date(self):
-        # Assume project starts when OTF are happy with the first signed contract
-        first_approved_contract = (
-            self.contracts.approved().order_by("approved_at").first()
-        )
-        if not first_approved_contract:
-            return None
-        return first_approved_contract.approved_at.date()
 
     @property
     def end_date(self):
@@ -376,7 +358,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         # If still ongoing assume today is the end
         if self.proposed_end:
             return max(
-                self.proposed_end.date(),
+                self.proposed_end,
                 timezone.now().date(),
             )
         return timezone.now().date()
