@@ -241,8 +241,8 @@ class SubmissionExportManager(models.Model):
         self.save()
 
     def get_absolute_url(self) -> str:
-        """Returns the download URL of the generated file
+        """Returns the submissions all page where the user can download the file
 
-        Will result in a 404 if generation failed
+        Primarily used for tasks
         """
-        return reverse("apply:submissions:submission-export-download")
+        return reverse("apply:submissions:list")
