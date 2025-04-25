@@ -7,7 +7,7 @@
     <div class="form__info-box">
         <p>
             {% if object.disable_reporting %}
-                {% trans "Reporting has been disabled, just save the form with appropriate report date and frequency to enable it again." %}
+                {% trans "You'll need to configure reporting before you can use it. Please set the report date and frequency, then save the form." %}
             {% elif object.does_not_repeat %}
                 {% if object.last_report %}
                     {% trans "No next report is due, One time reporting has already reported on " %}
