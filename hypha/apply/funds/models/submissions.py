@@ -661,9 +661,10 @@ class ApplicationSubmission(
         Returns:
             Self with the `form_data` attribute updated.
         """
-        self.form_data = self.deserialised_data(
-            self, self.draft_revision.form_data, self.form_fields
-        )
+        if self.draft_revision:
+            self.form_data = self.deserialised_data(
+                self, self.draft_revision.form_data, self.form_fields
+            )
 
         return self
 
@@ -742,7 +743,14 @@ class ApplicationSubmission(
     def clean_submission(self):
         self.process_form_data()
         self.ensure_user_has_account()
-        self.process_file_data(self.form_data)
+        # pass current submission data to avoid file save on every submit(if file is not updated)
+        if self.id:
+            current_submission = ApplicationSubmission.objects.get(id=self.id)
+            self.process_file_data(
+                self.form_data, current_submission.from_draft().raw_data
+            )
+        else:
+            self.process_file_data(self.form_data)
 
     def get_assigned_meta_terms(self):
         """Returns assigned meta terms excluding the 'root' term"""

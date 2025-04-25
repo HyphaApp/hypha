@@ -1,3 +1,6 @@
+import json
+import uuid
+
 from django.core.files import File
 from django.utils.safestring import mark_safe
 from django_file_form.models import PlaceholderUploadedFile
@@ -92,19 +95,66 @@ class AccessFormData:
         else:
             return cls.stream_file(instance, field, file)
 
-    def process_file_data(self, data):
+    def process_file_data(self, data, latest_existing_data=None):
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
-                file = self.process_file(self, field, data.get(field.id, []))
+                # {field_id}-uploads contains all files data for that field
+                # get all uploaded files(existing + new)
+                uploaded_files = data.get(field.id + "-uploads", "")
+
                 try:
-                    file.save()
-                except (AttributeError, FileNotFoundError):
+                    uploads_data = json.loads(uploaded_files)
+                except json.JSONDecodeError:
+                    uploads_data = []
+
+                new_file_upload = False
+                for file_data in uploads_data:
+                    # id can be a path or a uuid, where path can exist only for existing files so uuid means a new file
+                    if self._is_valid_uuid(file_data["id"]):
+                        new_file_upload = True  # if any new file is uploaded we have to process and save the files
+
+                # get existing files from instance
+                if latest_existing_data:
+                    existing_file = latest_existing_data.get(field.id, [])
+                else:
+                    existing_file = None
+
+                # uploaded file ids to check for removed/deleted files
+                uploaded_file_ids = [f["id"] for f in uploads_data if "id" in f]
+
+                # if any existing file id is not in uploaded file ids that means it has been deleted
+                # remove deleted files from existing files
+                if existing_file:
+                    if isinstance(existing_file, list):
+                        existing_file = [
+                            f for f in existing_file if f.name in uploaded_file_ids
+                        ]
+                    else:
+                        if existing_file.name not in uploaded_file_ids:
+                            existing_file = None
+
+                # save only if there is any new file uploaded or no existing file
+                if not existing_file or new_file_upload:
+                    new_file = data.get(field.id, [])
+                    new_stream_file = self.process_file(self, field, new_file)
                     try:
-                        for f in file:
-                            f.save()
-                    except FileNotFoundError:
-                        pass
-                self.form_data[field.id] = file
+                        new_stream_file.save()
+                    except (AttributeError, FileNotFoundError):
+                        try:
+                            for f in new_stream_file:
+                                f.save()
+                        except FileNotFoundError:
+                            pass
+                    self.form_data[field.id] = new_stream_file
+                else:
+                    self.form_data[field.id] = existing_file
+
+    def _is_valid_uuid(self, value):
+        try:
+            uuid.UUID(value)
+            return True
+        except ValueError:
+            return False
 
     def extract_files(self):
         files = {}
