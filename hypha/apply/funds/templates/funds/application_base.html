@@ -58,9 +58,9 @@
                     {% for field in form %}
                         {% if field.field %}
                             {% if field.field.multi_input_field %}
-                                {% include "forms/includes/multi_input_field.html" with is_application=True %}
+                                {% include "forms/includes/multi_input_field.html" %}
                             {% else %}
-                                {% include "forms/includes/field.html" with is_application=True %}
+                                {% include "forms/includes/field.html" %}
                             {% endif %}
                         {% else %}
                             {% if field.group_number > 1 %}
