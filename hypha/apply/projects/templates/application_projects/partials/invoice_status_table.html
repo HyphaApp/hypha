@@ -17,7 +17,7 @@
                 {% if user_can_edit_request %}
                     <a
                         class="data-block__action-icon-link"
-                        href="{% url "apply:projects:invoice-edit" pk=object.submission.pk invoice_pk=invoice.pk %}"
+                        href="{% url 'apply:projects:invoice-edit' pk=invoice.project.submission.pk invoice_pk=invoice.pk %}"
                     >
                         {% heroicon_micro "pencil-square" aria_hidden=true class="me-1" %}
                         {% trans "Edit" %}
