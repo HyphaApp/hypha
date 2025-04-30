@@ -178,6 +178,8 @@ class EmailAdapter(AdapterBase):
             )
 
     def handle_co_applicant_invite(self, source, related, **kwargs):
+        from hypha.apply.funds.utils import generate_signed_token
+
         invited_user = User.objects.filter(email=related.invited_user_email).first()
         can_accept = True
         if invited_user and (
@@ -185,9 +187,16 @@ class EmailAdapter(AdapterBase):
         ):
             can_accept = False
 
+        token = generate_signed_token(
+            data={
+                "email": related.invited_user_email,
+                "submission": related.submission.pk,
+            },
+            salt="co-applicant-invite-token",
+        )
         accept_link = reverse(
             "apply:submissions:accept_coapplicant_invite",
-            kwargs={"pk": source.id, "token": related.token},
+            kwargs={"pk": source.id, "token": token},
         )
         return self.render_message(
             "messages/email/invite_co_applicant.html",

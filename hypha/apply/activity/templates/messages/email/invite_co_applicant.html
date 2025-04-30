@@ -7,5 +7,5 @@
 {% trans "But You can't accept this invite because you already hold a responsible position in" %} {{ ORG_SHORT_NAME }}
 {% endif %}
 {% blocktrans %} Click on link if you want to accept it, otherwise leave it.{% endblocktrans %}
-{% trans "Link" %}: {{ accept_link }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ accept_link }}
 {% endblock %}{# fmt:on #}

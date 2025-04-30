@@ -20,17 +20,20 @@
             {% endif %}
         {% endblock %}
 
-        <div class="flex gap-2 no-print">
-            {% if request.user.is_authenticated and request.user.is_apply_staff %}
-                {% include "includes/menu-notifications.html" %}
-            {% endif %}
+        {% block user_menu %}
+            <div class="flex gap-2 no-print">
+                {% if request.user.is_authenticated and request.user.is_apply_staff %}
+                    {% include "includes/menu-notifications.html" %}
+                {% endif %}
 
-            {% if LANGUAGE_SWITCHER %}
-                {% include "includes/language-switcher.html" %}
-            {% endif %}
+                {% if LANGUAGE_SWITCHER %}
+                    {% include "includes/language-switcher.html" %}
+                {% endif %}
 
-            {% if request.path != '/auth/' and request.path != '/login/' %}
-                {% include "includes/user_menu.html" %}
+
+                {% if request.path != '/auth/' and request.path != '/login/' %}
+                    {% include "includes/user_menu.html" %}
+                {% endif %}
 
                 <button
                     class="p-1.5 text-center rounded-sm border transition-colors md:hidden hover:bg-slate-100"
@@ -39,8 +42,8 @@
                     <span class="sr-only">{% trans "Menu" %}</span>
                     {% heroicon_outline "bars-3" aria_hidden="true" class="inline align-bottom" %}
                 </button>
-            {% endif %}
-        </div>
+            </div>
+        {% endblock user_menu %}
     </header>
 {% endblock header %}
 

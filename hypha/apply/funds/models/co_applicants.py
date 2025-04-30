@@ -12,6 +12,7 @@ COAPPLICANT_ROLE_PERM = {
 
 
 class CoApplicantInviteStatus(models.TextChoices):
+    PENDING = "pending", "Pending"
     ACCEPTED = "accepted", "Accepted"
     REJECTED = "rejected", "Rejected"
     EXPIRED = "expired", "Expired"
@@ -24,8 +25,6 @@ class CoApplicantInvite(models.Model):
         related_name="co_applicant_invites",
     )
     invited_user_email = models.EmailField()
-    token = models.CharField(max_length=256, unique=True)
-    is_used = models.BooleanField(default=False)
     invited_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -33,6 +32,12 @@ class CoApplicantInvite(models.Model):
         blank=True,
         related_name="co_applicant_invites",
     )
+    status = models.CharField(
+        max_length=20,
+        choices=CoApplicantInviteStatus.choices,
+        default=CoApplicantInviteStatus.PENDING,
+    )
+    responded_on = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -55,12 +60,7 @@ class CoApplicant(models.Model):
         CoApplicantInvite, on_delete=models.CASCADE, related_name="co_applicant"
     )
     role = models.JSONField(default=list)
-    status = models.CharField(
-        max_length=20,
-        choices=CoApplicantInviteStatus.choices,
-        default=CoApplicantInviteStatus.ACCEPTED,
-    )
-    accepted_on = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     class Meta:
         unique_together = ("submission", "user")
