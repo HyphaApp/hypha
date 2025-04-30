@@ -31,15 +31,15 @@
 
             {% if request.path != '/auth/' and request.path != '/login/' %}
                 {% include "includes/user_menu.html" %}
-            {% endif %}
 
-            <button
-                class="p-1.5 text-center rounded-sm border transition-colors md:hidden hover:bg-slate-100"
-                @click="showDesktopMenu = true"
-            >
-                <span class="sr-only">{% trans "Menu" %}</span>
-                {% heroicon_outline "bars-3" aria_hidden="true" class="inline align-bottom" %}
-            </button>
+                <button
+                    class="p-1.5 text-center rounded-sm border transition-colors md:hidden hover:bg-slate-100"
+                    @click="showDesktopMenu = true"
+                >
+                    <span class="sr-only">{% trans "Menu" %}</span>
+                    {% heroicon_outline "bars-3" aria_hidden="true" class="inline align-bottom" %}
+                </button>
+            {% endif %}
         </div>
     </header>
 {% endblock header %}
