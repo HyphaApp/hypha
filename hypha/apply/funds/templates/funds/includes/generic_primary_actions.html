@@ -1,4 +1,4 @@
-{% load i18n primaryactions_tags %}
+{% load i18n primaryactions_tags heroicons %}
 
 {% if request.user|should_display_primary_actions_block:object %}
     <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions" data-testid="sidebar-primary-actions">
@@ -27,13 +27,23 @@
     <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions" data-testid="sidebar-primary-actions">
         <h5>{% trans "Manage Co-applicants" %}</h5>
         {% for invite in object.co_applicant_invites.all %}
-            <p> {{ invite.invited_user_email }}</p>
+            <p>
+                <span title="{{ invite.get_status_display }}">
+                    {% if invite.status == "pending" %}
+                        {% heroicon_solid "exclamation-triangle" size=20 class="inline align-text-bottom me-1 fill-yellow-400" aria_hidden=true %}
+                    {% elif invite.status == "accepted" %}
+                        {% heroicon_solid "check-circle" size=20 class="inline align-text-bottom me-1 fill-green-400" aria_hidden=true %}
+                    {% elif invite.status == "rejected" %}
+                        {% heroicon_solid "x-circle" size=20 class="inline align-text-bottom me-1 fill-red-400" aria_hidden=true %}
+                    {% endif %}
+                </span>
+                {{ invite.invited_user_email }}</p>
         {% endfor %}
         <button
             class="button button--primary button--full-width button--bottom-space"
             hx-get="{% url 'apply:submissions:invite_co_applicant' pk=object.id %}"
             hx-target="#htmx-modal"
-            {% if object.co_applicant_invites.count >= 5 %}disabled{% endif %}
+            {% if object.co_applicant_invites.count >= 10 %}disabled{% endif %}
             role="button"
             aria-label="{% trans "Invite CoApplicant" %}"
         >{% trans "Invite Co-applicant" %}</button>
