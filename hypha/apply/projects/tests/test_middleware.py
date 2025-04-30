@@ -40,30 +40,37 @@ def test_projects_middleware_access_control(
     request = rf.get(path)
 
     with patch("hypha.apply.projects.middleware.resolve") as mock_resolve:
-        mock_resolve.return_value = Mock(
-            namespaces=namespaces, url_name="project-detail"
-        )
+        resolver_match = Mock(namespaces=namespaces, url_name="project-detail")
+        mock_resolve.return_value = resolver_match
 
         # Execute
         if should_raise_404:
-            with pytest.raises(Http404):
+            with pytest.raises(Http404) as excinfo:
                 middleware_instance(request)
+            assert str(excinfo.value) == "Projects functionality is disabled"
             get_response_mock.assert_not_called()
         else:
             response = middleware_instance(request)
             get_response_mock.assert_called_once_with(request)
             assert response == get_response_mock.return_value
 
-        mock_resolve.assert_called_once_with(request.path)
+        # Verify resolve was called only if projects are disabled
+        if projects_enabled:
+            mock_resolve.assert_not_called()
+        else:
+            mock_resolve.assert_called_once_with(request.path)
 
 
-def test_resolver404_passes_through(middleware, rf):
+def test_resolver404_passes_through(middleware, rf, settings):
     """
     Test that Resolver404 exceptions are caught and handled properly
     (letting Django handle them as it normally would).
     """
     middleware_instance, get_response_mock = middleware
     request = rf.get("/nonexistent/path/")
+
+    # We need to set this explicitly since the middleware now checks this first
+    settings.PROJECTS_ENABLED = False
 
     with patch("hypha.apply.projects.middleware.resolve") as mock_resolve:
         mock_resolve.side_effect = Resolver404()
@@ -95,15 +102,35 @@ def test_non_project_routes_allowed(middleware, rf, settings, namespaces_value):
     with patch("hypha.apply.projects.middleware.resolve") as mock_resolve:
         if namespaces_value is None:
             # Create a mock without namespaces attribute
-            mock_resolve_result = Mock(spec=["url_name"])
+            resolver_match = Mock(spec=["url_name"])
         else:
-            mock_resolve_result = Mock()
-            mock_resolve_result.namespaces = namespaces_value
+            resolver_match = Mock()
+            resolver_match.namespaces = namespaces_value
 
-        mock_resolve.return_value = mock_resolve_result
+        mock_resolve.return_value = resolver_match
 
         response = middleware_instance(request)
 
         mock_resolve.assert_called_once_with(request.path)
+        get_response_mock.assert_called_once_with(request)
+        assert response == get_response_mock.return_value
+
+
+def test_projects_enabled_skips_url_resolution(middleware, rf, settings):
+    """
+    Test that when PROJECTS_ENABLED is True, the middleware doesn't
+    attempt to resolve the URL at all, optimizing performance.
+    """
+    # Setup
+    settings.PROJECTS_ENABLED = True
+    middleware_instance, get_response_mock = middleware
+    request = rf.get("/projects/some/path/")
+
+    with patch("hypha.apply.projects.middleware.resolve") as mock_resolve:
+        # Execute
+        response = middleware_instance(request)
+
+        # Verify
+        mock_resolve.assert_not_called()
         get_response_mock.assert_called_once_with(request)
         assert response == get_response_mock.return_value
