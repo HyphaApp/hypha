@@ -7,6 +7,7 @@ from itertools import chain
 from operator import iconcat
 
 import django_filters as filters
+from django.core import signing
 from django.utils.html import strip_tags
 from django.utils.translation import gettext as _
 
@@ -223,3 +224,18 @@ def check_submissions_same_determination_form(submissions):
     if any(d_id != determination_form_ids[0] for d_id in determination_form_ids):
         same_form = False
     return same_form
+
+
+def generate_signed_token(data, salt):
+    token = signing.dumps(data, salt=salt)
+    return token
+
+
+def verify_signed_token(token, salt, max_age=86400):  # default max_age 1 day in sec
+    try:
+        data = signing.loads(token, salt=salt, max_age=max_age)
+        return data
+    except signing.BadSignature:
+        return None  # invalid token
+    except signing.SignatureExpired:
+        return None  # expired token

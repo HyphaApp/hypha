@@ -1,4 +1,3 @@
-import uuid
 from collections import OrderedDict
 from functools import partial
 from itertools import groupby
@@ -478,9 +477,3 @@ class InviteCoApplicantForm(forms.ModelForm):
     class Meta:
         model = CoApplicantInvite
         fields = ["invited_user_email", "submission"]
-
-    def save(self, *args, **kwargs):
-        self.instance.submission = self.cleaned_data["submission"]
-        self.instance.token = str(uuid.uuid4())
-        self.instance.invited_user_email = self.cleaned_data["invited_user_email"]
-        return super().save(*args, **kwargs)
