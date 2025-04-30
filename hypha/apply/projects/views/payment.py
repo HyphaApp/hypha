@@ -60,11 +60,14 @@ from ..forms import (
     EditInvoiceForm,
 )
 from ..models.payment import (
+    APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     INVOICE_TRANSITION_TO_RESUBMITTED,
+    PAID,
+    PAYMENT_FAILED,
     Invoice,
 )
 from ..models.project import Project
@@ -446,10 +449,12 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
             return document.document
 
         # if not, then it's for invoice document
-        if (
-            self.invoice.status == APPROVED_BY_STAFF
-            and self.invoice.document.file.name.endswith(".pdf")
-        ):
+        if self.invoice.status in [
+            APPROVED_BY_STAFF,
+            APPROVED_BY_FINANCE,
+            PAID,
+            PAYMENT_FAILED,
+        ] and self.invoice.document.file.name.endswith(".pdf"):
             if activities := Activity.actions.filter(
                 related_content_type__model="invoice",
                 related_object_id=self.invoice.id,
