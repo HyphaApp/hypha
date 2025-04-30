@@ -15,14 +15,14 @@ class ProjectsEnabledMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        # Skip processing if PROJECTS_ENABLED is true
+        if settings.PROJECTS_ENABLED:
+            return self.get_response(request)
+
         # Check if the current URL is in the projects namespace
         try:
             resolver_match = resolve(request.path)
-            if (
-                "projects" in getattr(resolver_match, "namespaces", [])
-                and not settings.PROJECTS_ENABLED
-            ):
-                # Projects are disabled, so return 404
+            if "projects" in getattr(resolver_match, "namespaces", []):
                 raise Http404("Projects functionality is disabled")
         except Resolver404:
             # Not a URL we can resolve, let Django handle it
