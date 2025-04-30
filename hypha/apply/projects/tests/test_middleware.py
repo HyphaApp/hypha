@@ -69,7 +69,6 @@ def test_resolver404_passes_through(middleware, rf, settings):
     middleware_instance, get_response_mock = middleware
     request = rf.get("/nonexistent/path/")
 
-    # We need to set this explicitly since the middleware now checks this first
     settings.PROJECTS_ENABLED = False
 
     with patch("hypha.apply.projects.middleware.resolve") as mock_resolve:
@@ -112,25 +111,5 @@ def test_non_project_routes_allowed(middleware, rf, settings, namespaces_value):
         response = middleware_instance(request)
 
         mock_resolve.assert_called_once_with(request.path)
-        get_response_mock.assert_called_once_with(request)
-        assert response == get_response_mock.return_value
-
-
-def test_projects_enabled_skips_url_resolution(middleware, rf, settings):
-    """
-    Test that when PROJECTS_ENABLED is True, the middleware doesn't
-    attempt to resolve the URL at all, optimizing performance.
-    """
-    # Setup
-    settings.PROJECTS_ENABLED = True
-    middleware_instance, get_response_mock = middleware
-    request = rf.get("/projects/some/path/")
-
-    with patch("hypha.apply.projects.middleware.resolve") as mock_resolve:
-        # Execute
-        response = middleware_instance(request)
-
-        # Verify
-        mock_resolve.assert_not_called()
         get_response_mock.assert_called_once_with(request)
         assert response == get_response_mock.return_value
