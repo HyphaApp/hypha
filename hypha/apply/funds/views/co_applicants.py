@@ -1,18 +1,23 @@
+import datetime
 import json
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views import View
+from django_htmx.http import HttpResponseClientRedirect
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 
 from ..forms import InviteCoApplicantForm
 from ..models import ApplicationSubmission, CoApplicantInvite
+from ..models.co_applicants import CoApplicantInviteStatus
 from ..permissions import has_permission
+from ..utils import verify_signed_token
 
 
 @method_decorator(login_required, name="dispatch")
@@ -51,6 +56,9 @@ class CoApplicantInviteView(View):
             user=self.request.user,
         )
         if form.is_valid():
+            form.instance.submission = self.submission
+            form.instance.invited_user_email = form.cleaned_data["invited_user_email"]
+            form.instance.invited_by = self.request.user
             co_applicant_invite = form.save()
 
             messenger(
@@ -80,7 +88,50 @@ class CoApplicantInviteView(View):
 
 
 class CoApplicantInviteAcceptView(View):
-    pass
+    def dispatch(self, request, *args, **kwargs):
+        token = kwargs.get("token")
+        data = verify_signed_token(
+            token=token, salt="co-applicant-invite-token", max_age=7 * 86400
+        )  # 7 days as expiry
+        if data:
+            email = data.get("email")
+            submission_pk = data.get("submission")
+            self.invite = get_object_or_404(
+                CoApplicantInvite,
+                invited_user_email=email,
+                submission__id=submission_pk,
+            )
+            if self.invite.status != CoApplicantInviteStatus.PENDING:
+                raise Http404("Invalid: Invite already used")
+            return super().dispatch(request, *args, **kwargs)
+        raise Http404("Invalid: Invite not found")
+
+    def get(self, *args, **kwargs):
+        return render(
+            self.request,
+            "funds/coapplicant_invite_landing_page.html",
+            context={"submission": self.invite.submission},
+            status=200,
+        )
+
+    def post(self, args, **kwargs):
+        action = self.request.POST.get("action")
+        if action == "accept":
+            self.invite.status = CoApplicantInviteStatus.ACCEPTED
+            self.invite.responded_on = datetime.datetime.now()
+            self.invite.save(update_fields=["status", "responded_on"])
+
+            # handle auto login/signup
+
+            return HttpResponseClientRedirect(
+                reverse_lazy(
+                    "apply:submissions:detail", args=(self.invite.submission.pk,)
+                )
+            )
+        self.invite.status = CoApplicantInviteStatus.REJECTED
+        self.invite.responded_on = datetime.datetime.now()
+        self.invite.save(update_fields=["status", "responded_on"])
+        return HttpResponseClientRedirect("/")
 
 
 @login_required
