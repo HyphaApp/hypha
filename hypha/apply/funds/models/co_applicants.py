@@ -66,4 +66,4 @@ class CoApplicant(models.Model):
         unique_together = ("submission", "user")
 
     def __str__(self):
-        return self.user
+        return self.user.get_display_name()

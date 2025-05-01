@@ -1,8 +1,11 @@
 import datetime
 import json
 
+from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
@@ -12,10 +15,12 @@ from django.views import View
 from django_htmx.http import HttpResponseClientRedirect
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.users.models import User
+from hypha.apply.users.roles import APPLICANT_GROUP_NAME
 
 from ..forms import InviteCoApplicantForm
-from ..models import ApplicationSubmission, CoApplicantInvite
-from ..models.co_applicants import CoApplicantInviteStatus
+from ..models import ApplicationSubmission, CoApplicant, CoApplicantInvite
+from ..models.co_applicants import READ_ONLY, CoApplicantInviteStatus
 from ..permissions import has_permission
 from ..utils import verify_signed_token
 
@@ -107,6 +112,9 @@ class CoApplicantInviteAcceptView(View):
         raise Http404("Invalid: Invite not found")
 
     def get(self, *args, **kwargs):
+        user = User.objects.filter(email=self.invite.invited_user_email).first()
+        if user and (user.is_apply_staff or user.is_apply_staff_admin):
+            return HttpResponseRedirect(reverse_lazy("dashboard:dashboard"))
         return render(
             self.request,
             "funds/coapplicant_invite_landing_page.html",
@@ -122,6 +130,25 @@ class CoApplicantInviteAcceptView(View):
             self.invite.save(update_fields=["status", "responded_on"])
 
             # handle auto login/signup
+            user, created = User.objects.get_or_create(
+                email=self.invite.invited_user_email, is_active=True
+            )
+            if created:
+                applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
+                user.groups.add(applicant_group)
+                user.set_unusable_password()
+                user.save()
+
+            # create Co-applicant and add to submission
+            co_applicant, created = CoApplicant.objects.get_or_create(
+                invite=self.invite,
+                submission=self.invite.submission,
+                user=user,
+                role=[READ_ONLY],
+            )
+
+            user.backend = settings.CUSTOM_AUTH_BACKEND
+            login(self.request, user)
 
             return HttpResponseClientRedirect(
                 reverse_lazy(

@@ -19,7 +19,6 @@
             <a
                 class="button button--submit button--primary"
                 type="button"
-                href="{% url 'apply:submissions:invite_co_applicant' pk=submission.id %}"
                 hx-post="."
                 hx-vals='{"action": "accept"}'
                 hx-trigger="click"

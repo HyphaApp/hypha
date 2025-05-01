@@ -188,7 +188,12 @@ def is_user_has_access_to_view_submission(user, submission):
     if submission.is_archive and not can_view_archived_submissions(user):
         return False, "Archived Submission"
 
-    if user.is_apply_staff or submission.user == user or user.is_reviewer:
+    if (
+        user.is_apply_staff
+        or submission.user == user
+        or user.is_reviewer
+        or submission.co_applicants.filter(user=user).exists()
+    ):
         return True, ""
 
     if user.is_partner and submission.partners.filter(pk=user.pk).exists():
