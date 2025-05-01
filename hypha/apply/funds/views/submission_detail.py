@@ -193,8 +193,11 @@ class ApplicantSubmissionDetailView(ActivityContextMixin, DetailView):
         permission, _ = has_permission(
             "submission_view", request.user, object=submission, raise_exception=True
         )
-        # This view is only for applicants.
-        if submission.user != request.user:
+        # This view is only for applicants and co-applicants.
+        if (
+            submission.user != request.user
+            and not submission.co_applicants.filter(user=request.user).exists()
+        ):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
