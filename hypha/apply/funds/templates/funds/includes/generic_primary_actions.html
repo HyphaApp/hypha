@@ -43,7 +43,7 @@
             class="button button--primary button--full-width button--bottom-space"
             hx-get="{% url 'apply:submissions:invite_co_applicant' pk=object.id %}"
             hx-target="#htmx-modal"
-            {% if object.co_applicant_invites.count >= 10 %}disabled{% endif %}
+            {% if object.co_applicant_invites.count >= 100 %}disabled{% endif %}
             role="button"
             aria-label="{% trans "Invite CoApplicant" %}"
         >{% trans "Invite Co-applicant" %}</button>
