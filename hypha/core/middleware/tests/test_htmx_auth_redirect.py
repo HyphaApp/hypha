@@ -82,7 +82,7 @@ def test_htmx_auth_redirect(request_factory, middleware, settings_with_login_url
 
     # Check that the response is modified with HX-Redirect
     assert response.status_code == 204
-    assert response.headers["HX-Redirect"] == "/accounts/login/?next=/private/"
+    assert response.headers["HX-Redirect"] == "/accounts/login/?next=%2Fprivate%2F"
 
 
 def test_htmx_auth_redirect_with_referer(
@@ -102,7 +102,7 @@ def test_htmx_auth_redirect_with_referer(
 
     # Check that the response uses the Referer's path in the next parameter
     assert response.status_code == 204
-    assert response.headers["HX-Redirect"] == "/accounts/login/?next=/some/page/"
+    assert response.headers["HX-Redirect"] == "/accounts/login/?next=%2Fsome%2Fpage%2F"
 
 
 def test_non_htmx_request_not_redirected(
@@ -137,7 +137,7 @@ def test_htmx_non_auth_redirect_not_affected(
 
     # Assert that the middleware handles the redirect with HX-Redirect
     assert response.status_code == 204
-    assert response.headers["HX-Redirect"] == "/other-page/?next=/redirect/"
+    assert response.headers["HX-Redirect"] == "/other-page/?next=%2Fredirect%2F"
 
 
 def test_htmx_normal_request(request_factory, middleware, settings_with_login_url):
