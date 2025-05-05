@@ -21,15 +21,25 @@
 
     {% endadminbar %}
 
-    <table class="mb-8 max-w-none prose prose-h4:mt-0">
+    <table class="mb-8 w-full max-w-none prose prose-h4:mt-0">
         <tr>
             <td>
                 <h3>{% trans "Proposal Information (Old)" %}</h3>
-                <p>{% trans "Submitted" %}: <strong>{{ timestamps.0|date:"DATETIME_FORMAT"}}</strong></p>
+                <p>
+                    {% trans "Submitted" %}
+                    <relative-time datetime='{{ timestamps.0|date:"c" }}' class="font-semibold">
+                        {{ timestamps.0|date:"SHORT_DATETIME_FORMAT" }}
+                    </relative-time>
+                </p>
             </td>
             <td>
                 <h3>{% trans "Proposal Information (New)" %}</h3>
-                <p>{% trans "Submitted" %}: <strong>{{ timestamps.1|date:"DATETIME_FORMAT"}}</strong></p>
+                <p>
+                    {% trans "Submitted" %}
+                    <relative-time datetime='{{ timestamps.1|date:"c" }}' class="font-semibold">
+                        {{ timestamps.0|date:"SHORT_DATETIME_FORMAT" }}
+                    </relative-time>
+                </p>
             </td>
         </tr>
 

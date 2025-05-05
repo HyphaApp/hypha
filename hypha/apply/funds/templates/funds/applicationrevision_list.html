@@ -20,14 +20,18 @@
         <ul class="my-8 border border-slate-300">
             {% for revision in object_list %}
                 <li class="flex flex-col justify-between p-4 border-b border-dashed md:flex-row last:border-0 first:bg-sky-blue">
-                    <p class="m-0">
-                        <span class="font-semibold">{{ revision.timestamp|date:"Y-m-d H:i e"}} </span>
-                        {% trans "by" %} {{ revision.author }}
+                    <p class="m-0 font-semibold">
+                        {% trans "Edited by" %} {{ revision.author }}
+
+                        <relative-time datetime={{ revision.timestamp|date:"c" }}>
+                            {{ revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}
+                        </relative-time>
+
                         {% if forloop.first %}
-                            <span class="font-semibold">({% trans "current" %})</span>
+                            ({% trans "current" %})
                         {% endif %}
                         {% if revision.is_draft %}
-                            <span class="font-semibold text-red-600">
+                            <span class="text-red-600">
                                 ({% trans "draft" %})
                             </span>
                         {% endif %}
