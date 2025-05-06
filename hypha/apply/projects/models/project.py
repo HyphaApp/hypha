@@ -27,6 +27,7 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
@@ -297,7 +298,25 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def status_display(self):
         return self.get_status_display()
 
-    @cached_property
+    @property
+    def title_text_display(self):
+        """Return the title text for display across the site.
+
+        Use SUBMISSION_TITLE_TEXT_TEMPLATE setting to change format.
+        """
+
+        ctx = {
+            "title": self.title,
+            "public_id": self.submission.application_id_nc,
+            "fund_name": self.fund_name,
+            "round": self.submission.round
+            if self.submission.round
+            else self.submission.page,
+            "application_id": self.submission.application_id_nc,
+        }
+        return strip_tags(settings.SUBMISSION_TITLE_TEXT_TEMPLATE.format(**ctx))
+
+    @property
     def fund_name(self):
         return self.submission.fund_name
 

@@ -15,6 +15,6 @@
 {% endif %}
 
 {% trans "Invoice Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ invoice.get_absolute_url }}
-{% trans "Title" %}: {{ source.title }}
+{% trans "Title" %}: {{ source.title_text_display }}
 {% trans "Project Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% endblock %}{# fmt:on #}
