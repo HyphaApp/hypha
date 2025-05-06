@@ -95,6 +95,7 @@ MIDDLEWARE = [
     "hypha.apply.middleware.HandleProtectionErrorMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "hypha.core.middleware.htmx.HtmxMessageMiddleware",
+    "hypha.core.middleware.htmx.HtmxAuthRedirectMiddleware",
     "hypha.apply.projects.middleware.ProjectsEnabledMiddleware",
 ]
 
