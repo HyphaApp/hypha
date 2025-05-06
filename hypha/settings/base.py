@@ -504,6 +504,7 @@ REDIS_SSL_CERT_REQS = env.str("REDIS_SSL_CERT_REQS", "CERT_REQUIRED")
 
 CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", None)
 CELERY_RESULT_BACKEND = env.str("CELERY_RESULT_BACKEND", None)
+CELERY_WORKER_MAX_TASKS_PER_CHILD = env.int("CELERY_WORKER_MAX_TASKS_PER_CHILD", 1000)
 
 # Logic is somewhat Heroku specific as Heroku's Key-Value Store addon auto sets the REDIS_URL env var.
 # If `CELERY_BROKER_URL` or `CELERY_RESULT_BACKEND` is set, it will ignore `REDIS_URL`
