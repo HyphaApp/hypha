@@ -285,7 +285,9 @@ def submissions_all(
         request.user
     ):
         qs_ids = list(qs.values_list("id", flat=True))
-        generate_submission_csv.delay(qs_ids, request.user.id)
+        generate_submission_csv.delay(
+            qs_ids, request.user.id, request.build_absolute_uri("/")
+        )
 
         if not settings.CELERY_TASK_ALWAYS_EAGER:
             response = render(

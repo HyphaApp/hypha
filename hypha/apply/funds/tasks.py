@@ -15,7 +15,9 @@ from hypha.apply.users.models import User
 
 
 @shared_task
-def generate_submission_csv(qs_ids: List[int], request_user_id: int) -> None:
+def generate_submission_csv(
+    qs_ids: List[int], request_user_id: int, base_uri: str
+) -> None:
     """Celery task to generate a CSV file containing the given submission IDs
 
     Integer IDs have to be used as QuerySets are not simple data types & can't be
@@ -39,25 +41,16 @@ def generate_submission_csv(qs_ids: List[int], request_user_id: int) -> None:
         export_manager = SubmissionExportManager.objects.create(
             user=request_user, total_export=len(qs_ids)
         )
-        csv_string = export_submissions_to_csv(qs)  # , request)
+        csv_string = export_submissions_to_csv(qs, base_uri)
         export_manager.export_data = "".join(csv_string.readlines())
         export_manager.set_completed_and_save()
 
-        # When the download is ready, add a task to the user's dashboard (only if async)
-        if not settings.CELERY_TASK_ALWAYS_EAGER:
-            add_task_to_user(
-                code=DOWNLOAD_SUBMISSIONS_EXPORT,
-                user=request_user,
-                related_obj=export_manager,
-            )
+        user_task = DOWNLOAD_SUBMISSIONS_EXPORT
+
     except Exception as exc:
         # Update the status to failed
         export_manager.set_failed_and_save()
-        add_task_to_user(
-            code=FAILED_SUBMISSIONS_EXPORT,
-            user=request_user,
-            related_obj=export_manager,
-        )
+        user_task = FAILED_SUBMISSIONS_EXPORT
 
         if settings.SENTRY_DSN:
             # If sentry is enabled, pass the exception to sentry
@@ -67,3 +60,11 @@ def generate_submission_csv(qs_ids: List[int], request_user_id: int) -> None:
         else:
             # Otherwise re-raise it
             raise exc
+    finally:
+        # When the generation is complete or failed, add a task to the user's dashboard (only if async)
+        if not settings.CELERY_TASK_ALWAYS_EAGER:
+            add_task_to_user(
+                code=user_task,
+                user=request_user,
+                related_obj=export_manager,
+            )
