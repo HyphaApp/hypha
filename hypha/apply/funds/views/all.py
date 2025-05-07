@@ -292,7 +292,7 @@ def submissions_all(
                 request,
                 "submissions/partials/export-submission-button.html",
                 {
-                    "status": "generating",
+                    "generating": True,
                     "poll_time": get_export_polling_time(len(qs_ids)),
                 },
             )

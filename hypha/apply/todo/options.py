@@ -24,6 +24,7 @@ INVOICE_WAITING_PAID = "invoice_waiting_paid"
 REPORT_DUE = "report_due"
 COMMENT_TASK = "comment_task"
 DOWNLOAD_SUBMISSIONS_EXPORT = "download_submissions_export"
+FAILED_SUBMISSIONS_EXPORT = "failed_submission_export"
 
 TASKS_CODE_CHOICES = (
     (COMMENT_TASK, "Comment Task"),
@@ -46,6 +47,7 @@ TASKS_CODE_CHOICES = (
     (INVOICE_WAITING_PAID, "Invoice waiting paid"),
     (REPORT_DUE, "Report due"),
     (DOWNLOAD_SUBMISSIONS_EXPORT, "Download exported submissions"),
+    (FAILED_SUBMISSIONS_EXPORT, "Failed to generate submissions export file"),
 )
 
 
@@ -86,7 +88,7 @@ template_map = {
         "url": "{link}",
         "type": _("Draft"),
     },
-    # PROJECT actions
+    # PROJECT ACTIONS
     # draft state (staff action)
     PROJECT_WAITING_PF: {
         "text": _(
@@ -203,11 +205,20 @@ template_map = {
         "url": "{link}",
         "type": _("project"),
     },
+    # SUBMISSION EXPORT ACTIONS
     DOWNLOAD_SUBMISSIONS_EXPORT: {
         "text": _("Your generated submission export file is ready for download"),
         "icon": "arrow-down-tray",
         "url": "{link}",
-        "type": _("Export"),
+        "type": _("export"),
+    },
+    FAILED_SUBMISSIONS_EXPORT: {
+        "text": _(
+            "There was an issue generating your submission export file, please try again."
+        ),
+        "icon": "exclamation-circle",
+        "url": "{link}",
+        "type": _("export"),
     },
 }
 

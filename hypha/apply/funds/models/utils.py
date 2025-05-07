@@ -205,10 +205,14 @@ class EmailForm(AbstractEmailForm):
 
 # Managing async submission exports
 
+STATUS_ERROR = "error"
+STATUS_SUCCESS = "success"
+STATUS_GENERATING = "generating"
+
 STATUS_CHOICES = [
-    ("error", _("Failed")),
-    ("success", _("Success")),
-    ("generating", _("In Progress")),
+    (STATUS_ERROR, _("Failed")),
+    (STATUS_SUCCESS, _("Success")),
+    (STATUS_GENERATING, _("In Progress")),
 ]
 
 
@@ -225,7 +229,7 @@ class SubmissionExportManager(models.Model):
 
     completed_time = models.DateTimeField(null=True)
 
-    status = models.CharField(choices=STATUS_CHOICES, default="generating")
+    status = models.CharField(choices=STATUS_CHOICES, default=STATUS_GENERATING)
 
     total_export = models.IntegerField(null=True)
 

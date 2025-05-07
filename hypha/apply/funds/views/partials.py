@@ -20,7 +20,12 @@ from hypha.apply.categories.models import MetaTerm, Option
 from hypha.apply.funds.forms import BatchUpdateReviewersForm
 from hypha.apply.funds.models.reviewer_role import ReviewerRole
 from hypha.apply.funds.models.screening import ScreeningStatus
-from hypha.apply.funds.models.utils import SubmissionExportManager
+from hypha.apply.funds.models.utils import (
+    STATUS_ERROR,
+    STATUS_GENERATING,
+    STATUS_SUCCESS,
+    SubmissionExportManager,
+)
 from hypha.apply.funds.permissions import has_permission
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.funds.services import annotate_review_recommendation_and_count
@@ -530,12 +535,12 @@ def submission_export_status(request: HttpRequest) -> HttpResponse:
         ).first():
             # If there's an existing/active export, show it's status
             status = export_manager.status
-            if status == "generating":
+            if status == STATUS_GENERATING:
                 ctx["poll_time"] = get_export_polling_time(export_manager.total_export)
     else:
         ctx["not_async"] = True
 
-    if status is None:
+    if status is None or status == STATUS_ERROR:
         # There's not an active job or we're running in sync, extract all submissions
         # view URL to pass the query params to the `submissions_all` view for
         # generation, appending `&format=csv`
@@ -546,7 +551,9 @@ def submission_export_status(request: HttpRequest) -> HttpResponse:
         )
         ctx["start_export_url"] = urlunparse(url_list)
 
-    ctx["status"] = status
+    ctx["generating"] = status == STATUS_GENERATING
+    ctx["failed"] = status == STATUS_ERROR
+    ctx["success"] = status == STATUS_SUCCESS
 
     return render(request, "submissions/partials/export-submission-button.html", ctx)
 

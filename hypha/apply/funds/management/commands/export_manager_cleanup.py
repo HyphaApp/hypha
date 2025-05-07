@@ -80,7 +80,7 @@ class Command(BaseCommand):
         if confirm == "yes":
             old_exports.delete()
             self.stdout.write(
-                f"{export_count} generate export{'s' if export_count != 1 else ''} deleted."
+                f"{export_count} generated export{'s' if export_count != 1 else ''} deleted."
             )
         else:
             self.stdout.write("Deletion cancelled.")
