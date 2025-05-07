@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db.models import CharField, Q, Value
 from django.db.models.functions import Coalesce, Lower, NullIf
-from django.template.defaultfilters import mark_safe
+from django.utils.safestring import mark_safe
 from rolepermissions import roles
 from wagtail.admin.filters import WagtailFilterSet
 from wagtail.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME

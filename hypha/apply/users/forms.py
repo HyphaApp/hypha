@@ -2,7 +2,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
-from django.template.defaultfilters import mark_safe
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from rolepermissions import roles
 from wagtail.users.forms import UserCreationForm, UserEditForm
@@ -39,7 +39,7 @@ class CustomAuthenticationForm(AuthenticationForm):
         if self.user_settings.consent_show:
             self.fields["consent"] = forms.BooleanField(
                 label=self.user_settings.consent_text,
-                help_text=self.user_settings.consent_help,
+                help_text=mark_safe(self.user_settings.consent_help),
                 required=True,
             )
 
@@ -76,7 +76,7 @@ class PasswordlessAuthForm(forms.Form):
         if self.user_settings.consent_show:
             self.fields["consent"] = forms.BooleanField(
                 label=self.user_settings.consent_text,
-                help_text=self.user_settings.consent_help,
+                help_text=mark_safe(self.user_settings.consent_help),
                 required=True,
             )
 
@@ -159,7 +159,7 @@ class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
         if register_view and self.user_settings.consent_show:
             self.fields["consent"] = forms.BooleanField(
                 label=self.user_settings.consent_text,
-                help_text=self.user_settings.consent_help,
+                help_text=mark_safe(self.user_settings.consent_help),
                 required=True,
             )
 
