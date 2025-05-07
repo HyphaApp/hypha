@@ -1,12 +1,19 @@
 {% load i18n humanize determination_tags %}
+
 <div class="sidebar__inner">
     <h5>{% trans "Determinations" %}</h5>
     {% for determination in object.determinations.staff %}
         <p>
-            <a class="font-bold" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">
+            <a
+                class="font-bold"
+                href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}"
+            >
                 {% if determination.is_draft %}[{% trans "Draft" %}] {% endif %}{{ determination.get_outcome_display }}
             </a>
-            - <time datetime="{{ determination.updated_at|date:"c" }}" title="{{ determination.updated_at|naturaltime }}">{{ determination.updated_at|date:"SHORT_DATETIME_FORMAT" }}</time>{% if not HIDE_STAFF_IDENTITY or request.user.is_org_faculty %} {% trans "by" %} {{ determination.author }}{% endif %}
+            <relative-time datetime={{ determination.updated_at|date:"c" }}>
+                {{ determination.updated_at|date:"SHORT_DATETIME_FORMAT" }}
+            </relative-time>
+            {% if not HIDE_STAFF_IDENTITY or request.user.is_org_faculty %} {% trans "by" %} {{ determination.author }}{% endif %}
         </p>
     {% empty %}
         <p>{% trans "Awaiting determination" %}</p>

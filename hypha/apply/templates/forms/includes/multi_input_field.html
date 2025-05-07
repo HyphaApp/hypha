@@ -1,7 +1,7 @@
 {% load heroicons %}
 <div
-    class="form__item{% if field.help_text %} form__group--wrap{% endif %}{% if field.errors %} form__error{% endif %}{% if not field.initial %} multi-input-field-hidden{% endif %}{% if is_application and field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}"
-    {% if is_application and field.field.group_number > 1 %} data-hidden="{% if not show_all_group_fields %}true{% else %}false{% endif %}"{% endif %}
+    class="form__item{% if field.help_text %} form__group--wrap{% endif %}{% if field.errors %} form__error{% endif %}{% if not field.initial %} multi-input-field-hidden{% endif %}{% if field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}"
+    {% if field.field.group_number > 1 %} data-hidden="{% if not show_all_group_fields %}true{% else %}false{% endif %}"{% endif %}
     data-multi-field-for="{{ field.field.multi_input_id }}"
 >
     {{ field }}
@@ -11,7 +11,7 @@
 
 {% if field.field.multi_input_add_button %}
     <button
-        class="button button--primary button--narrow multi-input-add-btn my-2{% if is_application and field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}"
+        class="button button--primary button--narrow multi-input-add-btn my-2{% if field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}"
         type="button" data-multi-field-id="{{ field.field.multi_input_id }}"
         data-multi-visibility-index="{{ field.field.visibility_index }}"
         data-multi-max-index="{{ field.field.max_index }}"
