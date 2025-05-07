@@ -40,6 +40,10 @@ class Migration(migrations.Migration):
                     ("invoice_waiting_paid", "Invoice waiting paid"),
                     ("report_due", "Report due"),
                     ("download_submissions_export", "Download exported submissions"),
+                    (
+                        "failed_submission_export",
+                        "Failed to generate submissions export file",
+                    ),
                 ],
                 max_length=50,
             ),
