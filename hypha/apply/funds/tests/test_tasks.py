@@ -16,7 +16,11 @@ class TestTasks(TestCase):
         req_user = StaffFactory()
 
         generate_submission_csv.apply(
-            args=[[submission.id for submission in submissions], req_user.id]
+            args=[
+                [submission.id for submission in submissions],
+                req_user.id,
+                "https://test.com/",
+            ]
         )
 
         gen_csv = SubmissionExportManager.objects.all().first()
@@ -37,7 +41,11 @@ class TestTasks(TestCase):
         )
 
         generate_submission_csv.apply(
-            args=[[submission.id for submission in submissions], req_user.id]
+            args=[
+                [submission.id for submission in submissions],
+                req_user.id,
+                "https://test.com/",
+            ]
         )
 
         gen_csv = SubmissionExportManager.objects.all().first()
@@ -56,7 +64,11 @@ class TestTasks(TestCase):
         req_user = StaffFactory()
 
         generate_submission_csv.apply(
-            args=[[submission.id for submission in submissions], req_user.id]
+            args=[
+                [submission.id for submission in submissions],
+                req_user.id,
+                "https://test.com/",
+            ]
         )
         self.assertEqual(Task.objects.all().count(), 1)
 
@@ -65,6 +77,10 @@ class TestTasks(TestCase):
         req_user = StaffFactory()
 
         generate_submission_csv.apply(
-            args=[[submission.id for submission in submissions], req_user.id]
+            args=[
+                [submission.id for submission in submissions],
+                req_user.id,
+                "https://test.com/",
+            ]
         )
         self.assertEqual(Task.objects.all().count(), 0)
