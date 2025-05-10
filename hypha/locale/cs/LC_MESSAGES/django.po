@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-05-07 08:27+0000\n"
-"PO-Revision-Date: 2025-04-22 15:03+0000\n"
+"PO-Revision-Date: 2025-05-10 00:03+0000\n"
 "Last-Translator: Jiří Podhorecký <j.podhorecky@volny.cz>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "cs/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
-"X-Generator: Weblate 5.11.1-dev\n"
+"X-Generator: Weblate 5.12-dev\n"
 
 #: hypha/apply/activity/adapters/activity_feed.py:28
 #, python-brace-format
@@ -1095,24 +1095,26 @@ msgid "Cancel"
 msgstr "Zrušit"
 
 #: hypha/apply/activity/templates/messages/email/activity_summary.md:4
-#, fuzzy
-#| msgid "Activities Summary - "
 msgid "Activities Summary"
-msgstr "Shrnutí aktivit - "
+msgstr "Shrnutí aktivit"
 
 #: hypha/apply/activity/templates/messages/email/activity_summary.md:7
-#, fuzzy, python-format
-#| msgid "There is %(counter)s match"
-#| msgid_plural "There are %(counter)s matches"
+#, python-format
 msgid ""
 "\n"
 "There is %(total_count_apnumber)s new activity:\n"
 msgid_plural ""
 "\n"
 "There are %(total_count_apnumber)s new activities:\n"
-msgstr[0] "Je zde %(counter)s shoda"
-msgstr[1] "Jsou zde %(counter)s shody"
-msgstr[2] "Je zde %(counter)s shod"
+msgstr[0] ""
+"\n"
+"Je zde %(total_count_apnumber)s nová aktivita:\n"
+msgstr[1] ""
+"\n"
+"Jsou zde %(total_count_apnumber)s nové aktivity:\n"
+msgstr[2] ""
+"\n"
+"Je zde %(total_count_apnumber)s nových aktivit:\n"
 
 #: hypha/apply/activity/templates/messages/email/activity_summary.md:13
 #: hypha/apply/funds/templates/funds/submissions_result.html:41
@@ -1139,10 +1141,8 @@ msgid "Reviews"
 msgstr "Hodnocení"
 
 #: hypha/apply/activity/templates/messages/email/activity_summary.md:25
-#, fuzzy
-#| msgid "Other comments"
 msgid "Other activities"
-msgstr "Další připomínky"
+msgstr "Další aktivity"
 
 #: hypha/apply/activity/templates/messages/email/applicant_base.html:4
 #: hypha/apply/activity/templates/messages/email/contract_uploaded.html:7
@@ -1480,15 +1480,12 @@ msgid "Reminder Description"
 msgstr "Popis připomenutí"
 
 #: hypha/apply/activity/templates/messages/email/report_frequency.html:6
-#, fuzzy, python-format
-#| msgid ""
-#| "An %(ORG_SHORT_NAME)s staff member has changed the reporting frequency of "
-#| "%(title)s."
+#, python-format
 msgid ""
 "An %(ORG_SHORT_NAME)s staff member has changed the reporting frequency of "
 "\"%(title)s\"."
 msgstr ""
-"Zaměstnanec %(ORG_SHORT_NAME)s změnil frekvenci hlášení zpráv %(title)s."
+"Zaměstnanec %(ORG_SHORT_NAME)s změnil frekvenci hlášení zpráv \"%(title)s\"."
 
 #: hypha/apply/activity/templates/messages/email/report_frequency.html:8
 msgid "The new schedule is"
@@ -1499,10 +1496,9 @@ msgid "The next report is due"
 msgstr "Příští zpráva má být předložena"
 
 #: hypha/apply/activity/templates/messages/email/report_notify.html:6
-#, fuzzy, python-format
-#| msgid "A report is due for %(title)s on %(end_date)s."
+#, python-format
 msgid "A report is due for \"%(title)s\" on %(end_date)s."
-msgstr "Dne %(end_date)s je třeba podat zprávu pro %(title)s."
+msgstr "Dne %(end_date)s je třeba podat zprávu pro \"%(title)s\"."
 
 #: hypha/apply/activity/templates/messages/email/report_notify.html:8
 msgid "More information can be found on the project page:"
@@ -1522,10 +1518,9 @@ msgid "required"
 msgstr "vyžadováno"
 
 #: hypha/apply/activity/templates/messages/email/report_skipped.html:6
-#, fuzzy, python-format
-#| msgid " for %(title)s for period %(start_date)s to %(end_date)s."
+#, python-format
 msgid " for \"%(title)s\" for period %(start_date)s to %(end_date)s."
-msgstr " pro %(title)s pro období %(start_date)s až %(end_date)s."
+msgstr " pro \"%(title)s\" za období %(start_date)s až %(end_date)s."
 
 #: hypha/apply/activity/templates/messages/email/report_skipped.html:9
 msgid ""
@@ -1536,15 +1531,12 @@ msgstr ""
 "vyplnili."
 
 #: hypha/apply/activity/templates/messages/email/report_submitted.html:6
-#, fuzzy, python-format
-#| msgid ""
-#| "An %(ORG_SHORT_NAME)s staff member has submitted a report for %(title)s "
-#| "for period %(start_date)s to %(end_date)s."
+#, python-format
 msgid ""
 "An %(ORG_SHORT_NAME)s staff member has submitted a report for \"%(title)s\" "
 "for period %(start_date)s to %(end_date)s."
 msgstr ""
-"Člen týmu %(ORG_SHORT_NAME)s předložil zprávu pro %(title)s za období od "
+"Člen týmu %(ORG_SHORT_NAME)s předložil zprávu pro \"%(title)s\" za období od "
 "%(start_date)s do %(end_date)s."
 
 #: hypha/apply/activity/templates/messages/email/report_submitted.html:8
@@ -1552,15 +1544,12 @@ msgid "You can review the report here"
 msgstr "Zprávu si můžete přečíst zde"
 
 #: hypha/apply/activity/templates/messages/email/submission_confirmation.html:6
-#, fuzzy, python-format
-#| msgid ""
-#| "We appreciate your %(title)s application submission to the "
-#| "%(ORG_LONG_NAME)s."
+#, python-format
 msgid ""
 "We appreciate your \"%(title)s\" application submission to the "
 "%(ORG_LONG_NAME)s."
 msgstr ""
-"Vážíme si toho, že jste %(title)s podali přihlášku do %(ORG_LONG_NAME)s."
+"Vážíme si toho, že jste \"%(title)s\" podali přihlášku do %(ORG_LONG_NAME)s."
 
 #: hypha/apply/activity/templates/messages/email/submission_confirmation.html:8
 msgid ""
@@ -2194,7 +2183,7 @@ msgstr "Formulář pro návrh"
 #: hypha/apply/todo/options.py:69 hypha/apply/todo/options.py:77
 #: hypha/apply/todo/options.py:85
 msgid "Draft"
-msgstr "Návrh"
+msgstr "Pracovní"
 
 #: hypha/apply/determinations/models.py:119 hypha/apply/review/models.py:174
 msgid "Creation time"
@@ -2971,10 +2960,8 @@ msgid "Revisions"
 msgstr "Revize"
 
 #: hypha/apply/funds/templates/funds/applicationrevision_list.html:24
-#, fuzzy
-#| msgid "Edited"
 msgid "Edited by"
-msgstr "Upraveno"
+msgstr "Upraveno od"
 
 #: hypha/apply/funds/templates/funds/applicationrevision_list.html:31
 #: hypha/apply/projects/reports/templates/reports/includes/report_line.html:5
@@ -4658,22 +4645,16 @@ msgid "You can only approve a signed contract"
 msgstr "Schválit můžete pouze podepsanou smlouvu"
 
 #: hypha/apply/projects/forms/project.py:93
-#, fuzzy
-#| msgid "Select Project Lead"
 msgid "Select project lead"
 msgstr "Vyberte vedení projektu"
 
 #: hypha/apply/projects/forms/project.py:98
-#, fuzzy
-#| msgid "Initial Project Status"
 msgid "Initial project status"
 msgstr "Počáteční stav projektu"
 
 #: hypha/apply/projects/forms/project.py:104
-#, fuzzy
-#| msgid "Project name"
 msgid "Project end date"
-msgstr "Název projektu"
+msgstr "Konečné datum projektu"
 
 #: hypha/apply/projects/forms/project.py:123
 msgid "Project lead is a required field"
@@ -4702,10 +4683,8 @@ msgid "Contract Document"
 msgstr "Smluvní dokument"
 
 #: hypha/apply/projects/forms/project.py:486
-#, fuzzy
-#| msgid "Proposed End Date must be after Proposed Start Date"
 msgid "The end date must be after the start date."
-msgstr "Navrhované datum ukončení musí následovat po navrhovaném datu zahájení"
+msgstr "Datum ukončení musí být po datu zahájení."
 
 #: hypha/apply/projects/models/payment.py:27
 msgid "Resubmitted"
@@ -4787,14 +4766,10 @@ msgid "{} approval"
 msgstr "{} schvalování"
 
 #: hypha/apply/projects/models/project.py:250
-#, fuzzy
-#| msgid "Proposed Start Date"
 msgid "Proposed start date"
 msgstr "Navrhované datum zahájení"
 
 #: hypha/apply/projects/models/project.py:252
-#, fuzzy
-#| msgid "Proposed End Date"
 msgid "Proposed end date"
 msgstr "Navrhované datum ukončení"
 
@@ -5053,6 +5028,8 @@ msgid ""
 "You'll need to configure reporting before you can use it. Please set the "
 "report date and frequency, then save the form."
 msgstr ""
+"Před použitím je třeba nakonfigurovat hlášení. Nastavte datum a frekvenci "
+"hlášení a poté formulář uložte."
 
 #: hypha/apply/projects/reports/templates/reports/modals/report_frequency_config.html:13
 msgid "No next report is due, One time reporting has already reported on "
@@ -5229,8 +5206,6 @@ msgstr "Název dodavatele"
 
 #: hypha/apply/projects/tables.py:144
 #: hypha/apply/projects/templates/application_projects/partials/project_information.html:43
-#, fuzzy
-#| msgid "End Date"
 msgid "End date"
 msgstr "Datum ukončení"
 
@@ -5487,10 +5462,8 @@ msgid "Update Project Form Status"
 msgstr "Aktualizovat stav projektového formuláře"
 
 #: hypha/apply/projects/templates/application_projects/modals/project_dates_update.html:2
-#, fuzzy
-#| msgid "Update Project Status"
 msgid "Update project dates"
-msgstr "Aktualizovat stav projektu"
+msgstr "Aktualizovat datumy projektu"
 
 #: hypha/apply/projects/templates/application_projects/modals/project_status_update.html:2
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:31
@@ -5691,23 +5664,17 @@ msgid "Contractor"
 msgstr "Dodavatel"
 
 #: hypha/apply/projects/templates/application_projects/partials/project_information.html:20
-#, fuzzy
-#| msgid "Last updated"
 msgid "Start date"
-msgstr "Naposledy aktualizováno"
+msgstr "Datum zahájení"
 
 #: hypha/apply/projects/templates/application_projects/partials/project_information.html:28
 #: hypha/apply/projects/templates/application_projects/partials/project_information.html:51
-#, fuzzy
-#| msgid "edit title"
 msgid "edit dates"
-msgstr "upravit název"
+msgstr "upravit datumy"
 
 #: hypha/apply/projects/templates/application_projects/partials/project_information.html:36
-#, fuzzy
-#| msgid "Awaiting determination"
 msgid "Awaiting contract finalization..."
-msgstr "Čeká se na rozhodnutí"
+msgstr "Čeká se na dokončení smlouvy..."
 
 #: hypha/apply/projects/templates/application_projects/partials/project_title.html:13
 msgid "edit title"
@@ -6047,10 +6014,8 @@ msgid "Title has been updated"
 msgstr "Název byl aktualizován"
 
 #: hypha/apply/projects/views/project.py:529
-#, fuzzy
-#| msgid "Title has been updated"
 msgid "Dates has been updated"
-msgstr "Název byl aktualizován"
+msgstr "Data byla aktualizována"
 
 #: hypha/apply/projects/views/project.py:650
 msgid ""
@@ -7351,32 +7316,30 @@ msgid ""
 "To confirm access at %(org_long_name)s use the code below (valid for "
 "%(timeout_minutes)s minutes):"
 msgstr ""
+"Pro potvrzení přístupu na %(org_long_name)s použijte níže uvedený kód ("
+"platný po dobu %(timeout_minutes)s minut):"
 
 #: hypha/apply/users/templates/users/emails/confirm_access.md:8
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:15
 #: hypha/apply/users/templates/users/emails/passwordless_new_account_login.md:10
 msgid "If you did not request this email, please ignore it."
-msgstr ""
+msgstr "Pokud jste si tento e-mail nevyžádali, ignorujte jej."
 
 #: hypha/apply/users/templates/users/emails/confirm_access.md:11
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:18
 #: hypha/apply/users/templates/users/emails/passwordless_login_no_account_found.md:8
 #: hypha/apply/users/templates/users/emails/passwordless_new_account_login.md:13
-#, fuzzy, python-format
-#| msgid "If you have any questions, please submit them here"
+#, python-format
 msgid "If you have any questions, please contact us at %(org_email)s."
-msgstr "Pokud máte nějaké dotazy, napište je sem"
+msgstr "V případě jakýchkoli dotazů nás prosím kontaktujte na %(org_email)s."
 
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:5
-#, fuzzy, python-format
-#| msgid ""
-#| "Activate your account on the %(org_long_name)s web site by clicking this "
-#| "link or copying and pasting it to your browser:"
+#, python-format
 msgid ""
 "Login to your account on the %(org_long_name)s web site by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
-"Aktivujte si účet na webových stránkách %(org_long_name)s kliknutím na tento "
+"Přihlaste se ke svému účtu na webu %(org_long_name)s kliknutím na tento "
 "odkaz nebo jeho zkopírováním a vložením do prohlížeče:"
 
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:9
@@ -7386,25 +7349,22 @@ msgid ""
 "This link will valid for %(timeout_minutes)s minutes and can be used only "
 "once."
 msgstr ""
+"Tento odkaz bude platný po dobu %(timeout_minutes)s minut a lze jej použít "
+"pouze jednou."
 
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:12
-#, fuzzy, python-format
-#| msgid ""
-#| "Activate your account on the %(org_long_name)s web site by clicking this "
-#| "link or copying and pasting it to your browser:"
+#, python-format
 msgid ""
 "Your account on the %(org_long_name)s web site is deactivated. Please "
 "contact site administrators."
 msgstr ""
-"Aktivujte si účet na webových stránkách %(org_long_name)s kliknutím na tento "
-"odkaz nebo jeho zkopírováním a vložením do prohlížeče:"
+"Váš účet na webu %(org_long_name)s je deaktivován. Kontaktujte prosím "
+"správce stránek."
 
 #: hypha/apply/users/templates/users/emails/passwordless_login_no_account_found.md:3
 #: hypha/apply/users/templates/users/emails/passwordless_new_account_login.md:2
-#, fuzzy
-#| msgid "Dear"
 msgid "Dear,"
-msgstr "Vážený"
+msgstr "Vážený,"
 
 #: hypha/apply/users/templates/users/emails/passwordless_login_no_account_found.md:5
 #, python-format
@@ -7412,17 +7372,16 @@ msgid ""
 "It looks like you are trying to login on %(org_long_name)s web site, but we "
 "could not find any account with the email provided."
 msgstr ""
+"Vypadá to, že se snažíte přihlásit na webové stránky %(org_long_name)s, ale "
+"nepodařilo se nám najít žádný účet se zadaným e-mailem."
 
 #: hypha/apply/users/templates/users/emails/passwordless_new_account_login.md:4
-#, fuzzy, python-format
-#| msgid ""
-#| "Activate your account on the %(org_long_name)s web site by clicking this "
-#| "link or copying and pasting it to your browser:"
+#, python-format
 msgid ""
 "Welcome to %(org_long_name)s web site. Create your account by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
-"Aktivujte si účet na webových stránkách %(org_long_name)s kliknutím na tento "
+"Vítejte na stránkách %(org_long_name)s. Vytvořte si účet kliknutím na tento "
 "odkaz nebo jeho zkopírováním a vložením do prohlížeče:"
 
 #: hypha/apply/users/templates/users/emails/set_password.txt:4
