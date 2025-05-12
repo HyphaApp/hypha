@@ -1,7 +1,7 @@
 {% load i18n activity_tags heroicons %}
 
 {% with activity|display_for:request.user as activity_text %}
-    <div class="relative timeline-item" id="communications#{{ activity.id }}">
+    <div class="relative h-timeline-item" id="communications#{{ activity.id }}">
         <div
             class="flex items-center py-2 -ml-3 before:block before:-z-10 before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-slate-300"
         >

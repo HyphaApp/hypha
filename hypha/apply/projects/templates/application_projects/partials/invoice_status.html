@@ -7,7 +7,7 @@
     {% extract_status latest_activity user as latest_activity_status %}
     {% get_comment_for_invoice_action object latest_activity as latest_activity_comment %}
     <p>{{ latest_activity_status }} {% if user.is_applicant and latest_activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ latest_activity.user }}){% endif %}
-        <span class="text-gray-400">{{ latest_activity.timestamp }}</span>
+        <span class="text-fg-muted">{{ latest_activity.timestamp }}</span>
 
         {% if latest_activity_comment %}
             {% heroicon_outline "exclamation-circle" stroke_width=2 size=22 class="inline stroke-red-500" aria_hidden=true %}
@@ -21,7 +21,7 @@
         {% extract_status activity user as activity_status %}
         {% get_comment_for_invoice_action object activity as activity_comment %}
         <p x-show="!collapsed">{{ activity_status }} {% if user.is_applicant and activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ activity.user }}){% endif %}
-            <span class="text-gray-400">{{ activity.timestamp }}</span>
+            <span class="text-fg-muted">{{ activity.timestamp }}</span>
             {% if activity_comment %}
                 {% heroicon_outline "exclamation-circle" stroke_width=2 size=22 class="inline stroke-red-500" aria_hidden=true %}
                 <a

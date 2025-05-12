@@ -9,33 +9,29 @@
   h5,
   h6,
   .heading-text {
-    margin-block: 0 1rem;
     font-style: inherit;
     font-weight: variables.$weight--semibold;
     text-wrap: balance;
   }
 
   // Default sizes
-  h1,
-  %h1,
-  .alpha {
+  .body-h1 {
     font-size: 2.25rem;
     line-height: 2.5rem;
+    margin-block: 0 0.5rem;
   }
 
-  h2,
-  %h2,
-  .beta {
-    font-size: 1.875rem;
-    line-height: 2.25rem;
-    font-weight: 500;
+  .body-h2 {
+    font-size: 1.5em;
+    line-height: 1.3333;
+    font-weight: 700;
+    margin-block: 0 0.5rem;
   }
 
-  h3,
-  %h3,
-  .gamma {
+  .body-h3 {
     font-size: 1.5rem;
     line-height: 2rem;
+    margin-block: 0 0.5rem;
   }
 
   h4,

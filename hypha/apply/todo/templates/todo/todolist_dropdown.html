@@ -3,8 +3,8 @@
     {% for task in my_tasks.data %}
         {% include "todo/todolist_item.html" %}
     {% empty %}
-        <p class="p-3 m-0 border-b-2 last:border-b-0 border-light-grey">
-            {% trans "No pending task." %}
+        <p class="p-3 m-0 border-b-2 last:border-b-0 border-base-300 text-fg-muted">
+            {% trans "You don't have any pending task." %}
         </p>
     {% endfor %}
 </div>

@@ -1,14 +1,17 @@
 {% load i18n submission_tags heroicons %}
 
-<div class="sidebar__inner" id="screening-status-{{ object.id }}">
-    <h2 class="text-lg font-medium">
-        {% trans "Screening decision" %}
-    </h2>
-    <div class="grid grid-cols-2 gap-4">
-        <!-- thumbs-up -->
-        {% include "funds/includes/screening_status_block-button.html" with default_status=default_yes current_status=current_yes screening_options=yes_screening_options type="yes" submission=object %}
+<section
+    class="card card-border bg-base-100 text-base-content"
+    id="screening-status-{{ object.id }}"
+>
+    <div class="card-body">
+        <h2 class="card-title">{% trans "Screening decision" %}</h2>
+        <div class="grid grid-cols-2 gap-4">
+            <!-- thumbs-up -->
+            {% include "funds/includes/screening_status_block-button.html" with default_status=default_yes current_status=current_yes screening_options=yes_screening_options type="yes" submission=object %}
 
-        <!-- thumbs-down -->
-        {% include "funds/includes/screening_status_block-button.html" with default_status=default_no current_status=current_no screening_options=no_screening_options type="no" submission=object %}
+            <!-- thumbs-down -->
+            {% include "funds/includes/screening_status_block-button.html" with default_status=default_no current_status=current_no screening_options=no_screening_options type="no" submission=object %}
+        </div>
     </div>
-</div>
+</section>

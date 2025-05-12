@@ -29,7 +29,7 @@
 {% endblock %}
 
 {% block form_buttons %}
-    <button class="button button--submit button--top-space button--primary" type="submit" onclick="return confirm('{% blocktrans %}This determination message will be emailed to applicants and cannot be undone. Do you wish to continue?{% endblocktrans %}')">
+    <button class="mt-4 btn btn-primary" type="submit" onclick="return confirm('{% blocktrans %}This determination message will be emailed to applicants and cannot be undone. Do you wish to continue?{% endblocktrans %}')">
         {% trans "Send" %}
     </button>
 {% endblock %}

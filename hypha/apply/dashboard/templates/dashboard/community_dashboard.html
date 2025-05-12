@@ -13,7 +13,7 @@
         <div class="wrapper wrapper--cta-box">
             <h3 class="mb-0 text-xl">{% trans "Submit a new application" %}</h3>
             <p class="mt-0 mb-4 text-sm text-fg-muted">{% trans "Apply now for our open rounds" %}</p>
-            <a class="button button--primary" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
+            <a class="btn btn-primary" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
         </div>
     {% endadminbar %}
 
@@ -49,10 +49,10 @@
                     <div class="wrapper wrapper--status-bar-inner">
                         <div class="flex flex-col gap-2 max-w-sm sm:max-w-lg md:flex-row md:justify-between md:w-full md:max-w-none lg:flex-col lg:justify-start lg:w-auto lg:max-w-sm">
                             <div>
-                                <h3 class="text-base font-bold heading heading--no-margin">
+                                <h3 class="text-base font-bold">
                                     <a class="{% if not submission.is_active %} text-slate-500 {% endif %} hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
                                         {{ submission.title }}
-                                        <span class="text-gray-400">#{{ submission.application_id }}</span>
+                                        <span class="text-fg-muted">#{{ submission.application_id }}</span>
                                     </a>
                                 </h3>
                                 <p class="text-sm heading heading--no-margin text-fg-muted">
@@ -61,7 +61,7 @@
                             </div>
                             {% if request.user|has_edit_perm:submission %}
                                 <div>
-                                    <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
+                                    <a class="btn btn-primary" href="{% url 'funds:submissions:edit' submission.id %}">
                                         {% if submission.status == 'draft_proposal' %}
                                             {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
                                         {% else %}

@@ -30,7 +30,7 @@
         <div class="wrapper wrapper--bottom-space">
             <h4 class="heading heading--normal">{% trans "Your active submissions" %}</h4>
             {% for submission in my_submissions %}
-                <div class="wrapper wrapper--status-bar-outer">
+                <div class="list-row">
                     <div class="wrapper wrapper--status-bar-inner">
                         <div>
                             <h5 class="heading heading--no-margin"><a class="underline" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title_text_display }}</a></h5>
@@ -39,7 +39,7 @@
                         {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
                     </div>
                     {% if request.user|has_edit_perm:submission %}
-                        <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
+                        <a class="btn btn-primary" href="{% url 'funds:submissions:edit' submission.id %}">
                             {% if submission.status == 'draft_proposal' %}
                                 {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
                             {% else %}

@@ -1,6 +1,6 @@
 {% load i18n heroicons %}
 <a
-    class="mb-4 button button--secondary button--login"
+    class="mb-4 btn btn-secondary btn-wide btn-outline"
     href="{% url "social:begin" "google-oauth2" %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
 >
     {% heroicon_mini "building-office" size=18 class="inline align-text-bottom me-1" aria_hidden=true %}

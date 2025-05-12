@@ -22,15 +22,15 @@
 
         {% include "forms/includes/form_errors.html" with form=form %}
 
-        <div class="wrapper wrapper--default-bg wrapper--form">
+        <div class="wrapper wrapper--form">
             <div class="wrapper--sidebar--inner">
 
-                <p class="flex items-center py-2 px-3 mt-0 mb-8 text-sm border bg-(--color-light-blue-90)">
-                    {% heroicon_outline 'exclamation-circle' stroke_width=2 size=18 class="inline me-1 stroke-dark-blue" aria_hidden=true %}
+                <div role="alert" class="mb-4 alert alert-info">
+                    {% heroicon_outline 'exclamation-circle' stroke_width=2 size=18 aria_hidden=true %}
                     <span>
                         {% trans "This report is for the period" %} <strong class="font-semibold">{{ object.start_date }}</strong> {% trans "to" %} <strong class="font-semibold">{{ object.end_date }}</strong>
                     </span>
-                </p>
+                </div>
 
                 <form class="form" action="" method="post" enctype="multipart/form-data" novalidate>
                     {% csrf_token %}
@@ -51,15 +51,18 @@
                     {% for hidden_field in form.hidden_fields %}
                         {{ hidden_field }}
                     {% endfor %}
-                    <input type="submit" id="submit-report-form-submit" name="submit" class="hidden" />
-                    <input type="submit" id="submit-report-form-save" name="save" class="hidden" />
-                    <label class="button button--submit button--top-space button--white" for="submit-report-form-save" onclick="return confirm('{% blocktrans %}Saving a draft means this report will be visible to you and staff from your project page.{% endblocktrans %}')">{% trans "Save draft" %}</label>
-                    <label class="button button--submit button--top-space button--primary" for="submit-report-form-submit" onclick="return confirm('Are you sure you want to submit your report?')">{% trans "Submit" %}</label>
+
+                    <div class="flex flex-col-reverse gap-2 mt-4 sm:flex-row">
+                        <input type="submit" id="submit-report-form-submit" name="submit" class="hidden" />
+                        <input type="submit" id="submit-report-form-save" name="save" class="hidden" />
+                        <label class="sm:w-auto btn btn-block btn-secondary btn-outline" for="submit-report-form-save" onclick="return confirm('{% blocktrans %}Saving a draft means this report will be visible to you and staff from your project page.{% endblocktrans %}')">{% trans "Save draft" %}</label>
+                        <label class="sm:w-auto btn btn-block btn-primary" for="submit-report-form-submit" onclick="return confirm('Are you sure you want to submit your report?')">{% trans "Submit" %}</label>
+                    </div>
                 </form>
             </div>
         </div>
     {% else %}
-        <div class="wrapper wrapper--default-bg wrapper--form wrapper--sidebar">
+        <div class="wrapper wrapper--form wrapper--sidebar">
             <div class="wrapper--sidebar--inner">
                 {% if request.user.is_apply_staff %}
                     <p>

@@ -39,7 +39,7 @@ class ReportingTable(tables.Table):
         ]
         model = Project
         orderable = True
-        attrs = {"class": "reporting-table"}
+        attrs = {"class": "table overflow-x-auto reporting-table"}
 
     def render_title(self, record):
         return get_project_title(record)
@@ -65,7 +65,7 @@ class ReportListTable(tables.Table):
         sequence = ["project", "report_period", "..."]
         model = Report
         template_name = "application_projects/tables/table.html"
-        attrs = {"class": "projects-table"}
+        attrs = {"class": "table overflow-x-auto projects-table"}
 
     def render_report_period(self, record):
         return f"{record.start} to {record.end_date}"
