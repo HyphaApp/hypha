@@ -510,7 +510,7 @@ CELERY_RESULT_BACKEND = env.str("CELERY_RESULT_BACKEND", None)
 if REDIS_URL and not (CELERY_BROKER_URL or CELERY_RESULT_BACKEND):
     cert_param = ""
     if REDIS_URL.startswith("rediss") and REDIS_SSL_CERT_REQS:
-        check_hostname = REDIS_SSL_CERT_REQS != "CERT_NONE"
+        check_hostname = str(REDIS_SSL_CERT_REQS != "CERT_NONE").lower()
         cert_param = (
             f"?ssl_cert_reqs={REDIS_SSL_CERT_REQS}&ssl_check_hostname={check_hostname}"
         )
