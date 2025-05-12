@@ -7,10 +7,13 @@ from itertools import chain
 from operator import iconcat
 
 import django_filters as filters
-from django.core import signing
+from django.urls import reverse
+from django.utils.encoding import force_bytes
 from django.utils.html import strip_tags
+from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext as _
 
+from hypha.apply.users.tokens import CoApplicantInviteTokenGenerator
 from hypha.apply.utils.image import generate_image_tag
 
 from .models.screening import ScreeningStatus
@@ -226,16 +229,11 @@ def check_submissions_same_determination_form(submissions):
     return same_form
 
 
-def generate_signed_token(data, salt):
-    token = signing.dumps(data, salt=salt)
-    return token
-
-
-def verify_signed_token(token, salt, max_age=86400):  # default max_age 1 day in sec
-    try:
-        data = signing.loads(token, salt=salt, max_age=max_age)
-        return data
-    except signing.BadSignature:
-        return None  # invalid token
-    except signing.SignatureExpired:
-        return None  # expired token
+def generate_invite_path(invite):
+    token = CoApplicantInviteTokenGenerator().make_token(invite)
+    uid = urlsafe_base64_encode(force_bytes(invite.pk))
+    login_path = reverse(
+        "apply:submissions:accept_coapplicant_invite",
+        kwargs={"uidb64": uid, "token": token},
+    )
+    return login_path

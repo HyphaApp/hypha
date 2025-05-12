@@ -16,10 +16,12 @@ from hypha.apply.users.models import User
 from .models import (
     ApplicationSubmission,
     AssignedReviewers,
+    CoApplicant,
     CoApplicantInvite,
     Reminder,
     ReviewerRole,
 )
+from .models.co_applicants import COAPPLICANT_ROLE_CHOICES
 from .permissions import can_change_external_reviewers
 from .utils import model_form_initial, render_icon
 from .widgets import MetaTermWidget, MultiCheckboxesWidget
@@ -477,3 +479,16 @@ class InviteCoApplicantForm(forms.ModelForm):
     class Meta:
         model = CoApplicantInvite
         fields = ["invited_user_email", "submission"]
+
+
+class EditCoApplicantForm(forms.ModelForm):
+    role = forms.ChoiceField(
+        choices=COAPPLICANT_ROLE_CHOICES, label="Role", required=False
+    )
+
+    def __int__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = CoApplicant
+        fields = ("role",)
