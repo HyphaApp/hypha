@@ -6,23 +6,27 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext as _
 from django.views import View
 from django_htmx.http import HttpResponseClientRedirect
+from two_factor.utils import default_device
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.users.models import User
 from hypha.apply.users.roles import APPLICANT_GROUP_NAME
+from hypha.apply.users.services import PasswordlessAuthService
+from hypha.apply.users.tokens import CoApplicantInviteTokenGenerator
 
-from ..forms import InviteCoApplicantForm
+from ..forms import EditCoApplicantForm, InviteCoApplicantForm
 from ..models import ApplicationSubmission, CoApplicant, CoApplicantInvite
 from ..models.co_applicants import READ_ONLY, CoApplicantInviteStatus
 from ..permissions import has_permission
-from ..utils import verify_signed_token
 
 
 @method_decorator(login_required, name="dispatch")
@@ -41,14 +45,14 @@ class CoApplicantInviteView(View):
         return super(CoApplicantInviteView, self).dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
-        reminder_form = InviteCoApplicantForm(
+        invite_form = InviteCoApplicantForm(
             submission=self.submission, user=self.request.user
         )
         return render(
             self.request,
             "funds/modals/invite_co_applicant_form.html",
             context={
-                "form": reminder_form,
+                "form": invite_form,
                 "value": _("Invite"),
                 "object": self.submission,
             },
@@ -95,21 +99,33 @@ class CoApplicantInviteView(View):
 class CoApplicantInviteAcceptView(View):
     def dispatch(self, request, *args, **kwargs):
         token = kwargs.get("token")
-        data = verify_signed_token(
-            token=token, salt="co-applicant-invite-token", max_age=7 * 86400
-        )  # 7 days as expiry
-        if data:
-            email = data.get("email")
-            submission_pk = data.get("submission")
-            self.invite = get_object_or_404(
-                CoApplicantInvite,
-                invited_user_email=email,
-                submission__id=submission_pk,
+        try:
+            self.invite = CoApplicantInvite.objects.get(
+                pk=force_str(urlsafe_base64_decode(kwargs.get("uidb64")))
             )
-            if self.invite.status != CoApplicantInviteStatus.PENDING:
-                raise Http404("Invalid: Invite already used")
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return render(
+                self.request,
+                "funds/coapplicant_invite_landing_page.html",
+                context={"is_valid": False},
+                status=200,
+            )
+        if (
+            self.invite
+            and self.check_token(self.invite, token)
+            and self.invite.status == CoApplicantInviteStatus.PENDING
+        ):
             return super().dispatch(request, *args, **kwargs)
-        raise Http404("Invalid: Invite not found")
+        return render(
+            self.request,
+            "funds/coapplicant_invite_landing_page.html",
+            context={"is_valid": False},
+            status=200,
+        )
+
+    def check_token(self, invite, token):
+        token_generator = CoApplicantInviteTokenGenerator()
+        return token_generator.check_token(invite, token)
 
     def get(self, *args, **kwargs):
         user = User.objects.filter(email=self.invite.invited_user_email).first()
@@ -118,7 +134,11 @@ class CoApplicantInviteAcceptView(View):
         return render(
             self.request,
             "funds/coapplicant_invite_landing_page.html",
-            context={"submission": self.invite.submission},
+            context={
+                "invite": self.invite,
+                "is_valid": True,
+                "two_factor_required": settings.ENFORCE_TWO_FACTOR,
+            },
             status=200,
         )
 
@@ -144,23 +164,150 @@ class CoApplicantInviteAcceptView(View):
                 invite=self.invite,
                 submission=self.invite.submission,
                 user=user,
-                role=[READ_ONLY],
+                role=READ_ONLY,
             )
 
-            user.backend = settings.CUSTOM_AUTH_BACKEND
-            login(self.request, user)
+            if not self.request.user.is_authenticated:
+                user.backend = settings.CUSTOM_AUTH_BACKEND
+                if settings.ENFORCE_TWO_FACTOR:
+                    if default_device(user):
+                        service = PasswordlessAuthService(
+                            self.request,
+                            redirect_field_name=self.get_success_url(),
+                        )
+                        login_path = service._get_login_path(user)
+                        return HttpResponseClientRedirect(login_path)
+                    login(self.request, user)
+                    return HttpResponseClientRedirect(
+                        reverse_lazy("two_factor:setup")
+                        + f"?next={self.get_success_url()}"
+                    )
 
-            return HttpResponseClientRedirect(
-                reverse_lazy(
-                    "apply:submissions:detail", args=(self.invite.submission.pk,)
-                )
-            )
+                login(self.request, user)
+            return HttpResponseClientRedirect(self.get_success_url())
         self.invite.status = CoApplicantInviteStatus.REJECTED
         self.invite.responded_on = datetime.datetime.now()
         self.invite.save(update_fields=["status", "responded_on"])
+        if self.request.user.is_authenticated:
+            return HttpResponseClientRedirect(reverse_lazy("dashboard:dashboard"))
         return HttpResponseClientRedirect("/")
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "apply:submissions:detail", args=(self.invite.submission.pk,)
+        )
+
+
+class EditCoApplicantView(View):
+    def dispatch(self, request, *args, **kwargs):
+        self.invite = get_object_or_404(CoApplicantInvite, id=kwargs.get("invite_pk"))
+        has_permission(
+            "co_applicants_update",
+            user=request.user,
+            object=self.invite,
+            raise_exception=True,
+        )
+        return super(EditCoApplicantView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        if self.invite.status == CoApplicantInviteStatus.ACCEPTED:
+            form = EditCoApplicantForm(instance=self.invite.co_applicant)
+            co_applicant_exists = True
+        else:
+            form = EditCoApplicantForm(instance=self.invite)
+            co_applicant_exists = False
+        return render(
+            request,
+            "funds/modals/edit_co_applicant_form.html",
+            context={
+                "form": form,
+                "invite": self.invite,
+                "value": _("Save"),
+                "co_applicant_exists": co_applicant_exists,
+            },
+            status=200,
+        )
+
+    def post(self, request, *args, **kwargs):
+        if self.invite.status == CoApplicantInviteStatus.ACCEPTED:
+            form = EditCoApplicantForm(
+                self.request.POST, instance=self.invite.co_applicant
+            )
+            if form.is_valid():
+                form.save()
+
+        return HttpResponse(
+            status=204,
+            headers={
+                "HX-Trigger": json.dumps(
+                    {
+                        "coApplicantUpdated": None,
+                        "showMessage": _("Co-applicant updated"),
+                    }
+                ),
+            },
+        )
+
+
+def co_applicant_re_invite_view(request, invite_pk):
+    invite = get_object_or_404(CoApplicantInvite, id=invite_pk)
+    has_permission(
+        "co_applicants_update", user=request.user, object=invite, raise_exception=True
+    )
+    invite.status = CoApplicantInviteStatus.PENDING
+    invite.save(update_fields=["status"])
+    messenger(
+        MESSAGES.INVITE_COAPPLICANT,
+        request=request,
+        user=request.user,
+        source=invite.submission,
+        related=invite,
+    )
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {
+                    "coApplicantUpdated": None,
+                    "showMessage": _("Co-applicant re-invited"),
+                }
+            ),
+        },
+    )
+
+
+def co_applicant_invite_delete_view(request, invite_pk):
+    invite = get_object_or_404(CoApplicantInvite, id=invite_pk)
+    has_permission(
+        "co_applicants_update", user=request.user, object=invite, raise_exception=True
+    )
+    if hasattr(invite, "co_applicant"):
+        invite.co_applicant.delete()
+    invite.delete()
+
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {
+                    "coApplicantUpdated": None,
+                    "showMessage": _("Co-applicant deleted"),
+                }
+            ),
+        },
+    )
 
 
 @login_required
-def list_invites(request):
-    return CoApplicantInvite.objects.all()
+def list_coapplicant_invites(request, pk):
+    submission = get_object_or_404(ApplicationSubmission, pk=pk)
+    has_permission(
+        "co_applicants_view", user=request.user, object=submission, raise_exception=True
+    )
+    co_applicant_invites = CoApplicantInvite.objects.filter(submission=submission)
+    return render(
+        request,
+        "funds/includes/co-applicant-block.html",
+        context={"co_applicants": co_applicant_invites, "object": submission},
+        status=200,
+    )

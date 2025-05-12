@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from rolepermissions.permissions import register_object_checker
 
+from hypha.apply.funds.models.co_applicants import COMMENT, READ_ONLY, CoApplicant
 from hypha.apply.funds.models.submissions import DRAFT_STATE
 
 from ..users.roles import STAFF_GROUP_NAME, SUPERADMIN, TEAMADMIN_GROUP_NAME, StaffAdmin
@@ -24,7 +25,17 @@ def can_edit_submission(user, submission):
     if submission.is_archive:
         return False, "Archived Submission"
 
-    return True, ""
+    if submission.phase.permissions.can_edit(user):
+        co_applicant = submission.co_applicants.filter(user=user).first()
+        if co_applicant:
+            if co_applicant.role not in [READ_ONLY, COMMENT]:
+                return (
+                    True,
+                    "Co-applicant with read only or comment access can't edit submission",
+                )
+            return False, ""
+        return True, "User can edit in current phase"
+    return False, ""
 
 
 @register_object_checker()
@@ -220,10 +231,37 @@ def can_invite_co_applicants(user, submission):
     return False, "Forbidden Error"
 
 
+def can_view_co_applicants(user, submission):
+    if user.is_applicant and user == submission.user:
+        return True, "Submission user can access their submission's co-applicants"
+    if user.is_apply_staff:
+        return True, "Staff can access each submissions' co-applicants"
+    return False, "Forbidden Error"
+
+
+def can_update_co_applicant(user, invite):
+    if invite.invited_by == user:
+        return True, "Same user who invited can delete the co-applicant"
+    if invite.submission.user == user:
+        return True, "Submission owner can delete the co-applicant"
+    if user.is_apply_staff:
+        return True, "Staff can delete any co-applicant of any submission"
+    return False, "Forbidden Error"
+
+
+def user_can_view_post_comment_form(user, submission):
+    co_applicant = CoApplicant.objects.filter(user=user, submission=submission).first()
+    if co_applicant and co_applicant.role == READ_ONLY:
+        return False
+    return True
+
+
 permissions_map = {
     "submission_view": is_user_has_access_to_view_submission,
     "submission_edit": can_edit_submission,
     "can_view_submission_screening": can_view_submission_screening,
     "archive_alter": can_alter_archived_submissions,
     "co_applicant_invite": can_invite_co_applicants,
+    "co_applicants_view": can_view_co_applicants,
+    "co_applicants_update": can_update_co_applicant,
 }

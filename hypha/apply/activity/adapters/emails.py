@@ -6,7 +6,6 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.template.loader import render_to_string
-from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from hypha.apply.activity import tasks
@@ -178,26 +177,14 @@ class EmailAdapter(AdapterBase):
             )
 
     def handle_co_applicant_invite(self, source, related, **kwargs):
-        from hypha.apply.funds.utils import generate_signed_token
+        from hypha.apply.funds.utils import generate_invite_path
 
         invited_user = User.objects.filter(email=related.invited_user_email).first()
         can_accept = True
-        if invited_user and (
-            invited_user.is_apply_staff or invited_user.is_apply_staff_admin
-        ):
+        if invited_user and (invited_user.is_org_faculty):
             can_accept = False
 
-        token = generate_signed_token(
-            data={
-                "email": related.invited_user_email,
-                "submission": related.submission.pk,
-            },
-            salt="co-applicant-invite-token",
-        )
-        accept_link = reverse(
-            "apply:submissions:accept_coapplicant_invite",
-            kwargs={"pk": source.id, "token": token},
-        )
+        accept_link = generate_invite_path(invite=related)
         return self.render_message(
             "messages/email/invite_co_applicant.html",
             source=source,

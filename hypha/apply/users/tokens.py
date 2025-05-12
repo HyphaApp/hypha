@@ -79,3 +79,34 @@ class PasswordlessSignupTokenGenerator(PasswordlessLoginTokenGenerator):
         # database doesn't support microseconds.
         modified_timestamp = user.modified.replace(microsecond=0, tzinfo=None)
         return f"{user.pk}{user.token}{modified_timestamp}{timestamp}{user.email}"
+
+
+class CoApplicantInviteTokenGenerator(PasswordlessLoginTokenGenerator):
+    key_salt = None
+    TIMEOUT = None
+
+    def __init__(self) -> None:
+        self.key_salt = (
+            self.key_salt or "hypha.apply.users.tokens.CoApplicantInviteTokenGenerator"
+        )
+        self.TIMEOUT = self.TIMEOUT or settings.PASSWORDLESS_SIGNUP_TIMEOUT
+        super().__init__()
+
+    def _make_hash_value(self, invite, timestamp):
+        """
+        Hash the signup request's primary key, email, and some user state
+        that's sure to change after a signup is completed produce a token that is
+        invalidated when it's used.
+
+        The token field and modified field will be updated after creating or
+        updating the signup request.
+
+        Failing those things, settings.PASSWORDLESS_SIGNUP_TIMEOUT eventually
+        invalidates the token.
+
+        Running this data through salted_hmac() prevents password cracking
+        attempts using the reset token, provided the secret isn't compromised.
+        """
+        return (
+            f"{invite.pk}{invite.submission.pk}{timestamp}{invite.invited_user_email}"
+        )

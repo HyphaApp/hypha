@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import Q
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
@@ -462,7 +463,7 @@ class ApplicantDashboardView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["my_submissions_exists"] = ApplicationSubmission.objects.filter(
-            user=self.request.user
+            Q(user=self.request.user) | Q(co_applicants__user=self.request.user)
         ).exists()
 
         # Number of items to show in skeleton in each section of lazy loading

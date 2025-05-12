@@ -18,7 +18,10 @@ from .views.all import (
 from .views.co_applicants import (
     CoApplicantInviteAcceptView,
     CoApplicantInviteView,
-    list_invites,
+    EditCoApplicantView,
+    co_applicant_invite_delete_view,
+    co_applicant_re_invite_view,
+    list_coapplicant_invites,
 )
 from .views.comments import comments_view
 from .views.partials import (
@@ -178,6 +181,33 @@ submission_urls = (
             ),
         ),
         path(
+            "coapplicants/",
+            include(
+                [
+                    path(
+                        "invite/accept/<str:uidb64>/<str:token>/",
+                        CoApplicantInviteAcceptView.as_view(),
+                        name="accept_coapplicant_invite",
+                    ),
+                    path(
+                        "<int:invite_pk>/edit/",
+                        EditCoApplicantView.as_view(),
+                        name="edit_co_applicant",
+                    ),
+                    path(
+                        "<int:invite_pk>/reinvite/",
+                        co_applicant_re_invite_view,
+                        name="re_invite_co_applicant",
+                    ),
+                    path(
+                        "<int:invite_pk>/delete/",
+                        co_applicant_invite_delete_view,
+                        name="delete_co_applicant_invite",
+                    ),
+                ]
+            ),
+        ),
+        path(
             "<int:pk>/",
             include(
                 [
@@ -217,24 +247,14 @@ submission_urls = (
                         name="partial-reminder-card",
                     ),
                     path(
+                        "partial/invites/",
+                        list_coapplicant_invites,
+                        name="partial_coapplicant_invites",
+                    ),
+                    path(
                         "reminder/create/",
                         ReminderCreateView.as_view(),
                         name="create_reminder",
-                    ),
-                    path(
-                        "coapplicant/invite/",
-                        CoApplicantInviteView.as_view(),
-                        name="invite_co_applicant",
-                    ),
-                    path(
-                        "coapplicant/invite/accept/<str:token>/",
-                        CoApplicantInviteAcceptView.as_view(),
-                        name="accept_coapplicant_invite",
-                    ),
-                    path(
-                        "coapplicant/invites/",
-                        list_invites,
-                        name="list_coapplicant_invites",
                     ),
                     path(
                         "translate/",
@@ -270,6 +290,11 @@ submission_urls = (
                         name="partial-answers",
                     ),
                     path("edit/", SubmissionEditView.as_view(), name="edit"),
+                    path(
+                        "coapplicant/invite/",
+                        CoApplicantInviteView.as_view(),
+                        name="invite_co_applicant",
+                    ),
                     path("sealed/", SubmissionSealedView.as_view(), name="sealed"),
                     path(
                         "download/", SubmissionDetailPDFView.as_view(), name="download"

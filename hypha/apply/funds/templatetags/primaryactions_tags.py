@@ -1,5 +1,7 @@
 from django import template
 
+from ..permissions import has_permission
+
 register = template.Library()
 
 
@@ -23,5 +25,7 @@ def show_progress_button(user, submission):
 
 @register.simple_tag
 def display_coapplicant_section(user, submission):
-    if user.is_applicant and user == submission.user:
-        return True
+    permission, reason = has_permission(
+        "co_applicants_view", user=user, object=submission, raise_exception=False
+    )
+    return permission

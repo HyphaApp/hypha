@@ -1,9 +1,17 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.users.models import User
 
 READ_ONLY = "read_only"
 COMMENT = "comment"
+FULL_ACCESS = "full_access"
+
+COAPPLICANT_ROLE_CHOICES = (
+    (READ_ONLY, _("Read Only")),
+    (COMMENT, _("Comment")),
+    (FULL_ACCESS, _("Full Access")),
+)
 
 COAPPLICANT_ROLE_PERM = {
     READ_ONLY: "can_view",
@@ -59,7 +67,7 @@ class CoApplicant(models.Model):
     invite = models.OneToOneField(
         CoApplicantInvite, on_delete=models.CASCADE, related_name="co_applicant"
     )
-    role = models.JSONField(default=list)
+    role = models.CharField(choices=COAPPLICANT_ROLE_CHOICES, default=READ_ONLY)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     class Meta:

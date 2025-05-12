@@ -111,8 +111,6 @@ class BaseSubmissionEditView(UpdateView):
             object=self.get_object(),
             raise_exception=True,
         )
-        if not self.get_object().phase.permissions.can_edit(request.user):
-            raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
     def buttons(
@@ -314,7 +312,10 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
 class ApplicantSubmissionEditView(BaseSubmissionEditView):
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
-        if request.user != submission.user:
+        if (
+            request.user != submission.user
+            and not submission.co_applicants.filter(user=request.user).exists()
+        ):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 

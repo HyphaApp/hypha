@@ -199,3 +199,10 @@ def get_project_creation_message(project) -> str | None:
 
     # If a project is created in any other state that wouldn't be useful to have a message for
     return None
+
+
+@register.filter
+def email_name(email):
+    if isinstance(email, str) and "@" in email:
+        return email.split("@")[0]
+    return email

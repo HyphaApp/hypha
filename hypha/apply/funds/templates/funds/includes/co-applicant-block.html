@@ -1,0 +1,50 @@
+{% load i18n heroicons %}
+
+<div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions" data-testid="sidebar-primary-actions">
+    <div class="flex gap-4 justify-between items-center">
+        <p class="text-lg font-bold">{% trans "Co-applicants" %}</p>
+        <button
+            class="flex items-center py-1 px-2 font-bold rounded-sm transition-colors hover:bg-gray-100 text-dark-blue -me-2"
+            hx-get="{% url 'apply:submissions:invite_co_applicant' pk=object.id %}"
+            hx-target="#htmx-modal"
+            {% if object.co_applicant_invites.count >= 100 %}disabled{% endif %}
+            role="button"
+            aria-label="{% trans "Invite CoApplicant" %}"
+        >
+            {% heroicon_micro "plus" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
+            {% trans "Invite" %}
+        </button>
+    </div>
+    <div class="flex flex-col gap-2 justify-between">
+        {% for invite in object.co_applicant_invites.all %}
+
+            <div>
+                <a
+                    class="font-bold line-clamp-2"
+                    href="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
+                    hx-get="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
+                    hx-target="#htmx-modal"
+                >
+                    <div class="flex justify-between">
+                        {% if invite.status == "accepted" %}
+                            {{ invite.co_applicant.user }}
+                        {% else %}
+                            {{ invite.invited_user_email }}
+                        {% endif %}
+
+                        {% heroicon_solid "pencil" class="inline align-middle me-1" width=16 height=16 stroke_width=2 aria_hidden=true %}
+
+                    </div>
+                </a>
+                {% if invite.status == "accepted" %}
+                    <div class="text-xs text-fg-muted" >{{ invite.co_applicant.get_role_display }}</div>
+                {% else %}
+                    <div class="text-xs text-fg-muted" >{{ invite.get_status_display }}</div>
+                {% endif %}
+            </div>
+
+
+        {% endfor %}
+    </div>
+
+</div>

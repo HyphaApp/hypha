@@ -1,30 +1,43 @@
 {% extends 'base-apply.html' %}
 
+{% load i18n %}
+
 {% block user_menu %}
+    <div></div>
 {% endblock user_menu %}
 
 {% block content %}
     <div class="bg-gray-100 max-w-[70%] mx-auto mt-6 px-10 pt-6 pb-4 border border-gray-300 rounded-sm">
-        You are invited as a co-applicant to submission "{{ submission.title }}", Please respond to the invitation by accept or reject the invite.
-        <br>
-        You will be auto signup/login to system and redirected to the submission on accept the invite. We strongly recommend you to update password after accept the invite. You may also update the email.
-        <div class="flex justify-end mt-10">
-            <a
-                class="button button--submit button--white"
-                hx-post="."
-                hx-vals='{"action": "reject"}'
-                hx-trigger="click"
-                hx-swap="none"
-            >Reject</a>
-            <a
-                class="button button--submit button--primary"
-                type="button"
-                hx-post="."
-                hx-vals='{"action": "accept"}'
-                hx-trigger="click"
-                hx-swap="none"
-            >Accept </a>
-        </div>
+        {% if is_valid %}
+            You've been invited to join the submission "{{ invite.submission.title }}" as a co-applicant with email <i>{{ invite.invited_user_email }}</i>. Please respond to the invitation by choosing accept or decline.
+            <br>
+            If you accept, you’ll be automatically signed up or logged in and taken directly to {% if two_factor_required %}two factor authentication and then to {% endif %} the submission.
+            <br>
+            We recommend updating your profile after accepting the invite. You’ll also have the option to update your name and email in "My account" section.
+            <div class="flex justify-end mt-10">
+                <a
+                    class="button button--submit button--white"
+                    hx-post="."
+                    hx-vals='{"action": "reject"}'
+                    hx-trigger="click"
+                    hx-swap="none"
+                >Decline</a>
+                <a
+                    class="button button--submit button--primary"
+                    type="button"
+                    hx-post="."
+                    hx-vals='{"action": "accept"}'
+                    hx-trigger="click"
+                    hx-swap="none"
+                >Accept </a>
+            </div>
+        {% else %}
+            <div class="flex justify-center my-8 text-xl font-bold text-red-500" >{% trans "Invalid Invite" %}</div>
+            <div class="flex justify-center">{% trans "Oops! The invite you are using is no longer valid " %}</div>
+            <div class="flex justify-center">
+                {% trans "Please try again with another invite." %}
+            </div>
+        {% endif %}
     </div>
 
 {% endblock %}
