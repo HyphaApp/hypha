@@ -7,7 +7,7 @@
             class="flex items-center py-1 px-2 font-bold rounded-sm transition-colors hover:bg-gray-100 text-dark-blue -me-2"
             hx-get="{% url 'apply:submissions:invite_co_applicant' pk=object.id %}"
             hx-target="#htmx-modal"
-            {% if object.co_applicant_invites.count >= 100 %}disabled{% endif %}
+            {% if object.co_applicant_invites.count >= 20 %}disabled{% endif %}
             role="button"
             aria-label="{% trans "Invite CoApplicant" %}"
         >
@@ -16,7 +16,7 @@
         </button>
     </div>
     <div class="flex flex-col gap-2 justify-between">
-        {% for invite in object.co_applicant_invites.all %}
+        {% for invite in co_applicants %}
 
             <div>
                 <a

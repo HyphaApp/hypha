@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from django.db.models import Case, IntegerField, Value, When
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
@@ -304,7 +305,19 @@ def list_coapplicant_invites(request, pk):
     has_permission(
         "co_applicants_view", user=request.user, object=submission, raise_exception=True
     )
-    co_applicant_invites = CoApplicantInvite.objects.filter(submission=submission)
+    status_order = Case(
+        When(status="accepted", then=Value(0)),
+        When(status="pending", then=Value(1)),
+        When(status="rejected", then=Value(2)),
+        When(status="expired", then=Value(3)),
+        default=Value(4),
+        output_field=IntegerField(),
+    )
+    co_applicant_invites = (
+        CoApplicantInvite.objects.filter(submission=submission)
+        .annotate(status_priority=status_order)
+        .order_by("status_priority", "-responded_on", "-created_at")
+    )
     return render(
         request,
         "funds/includes/co-applicant-block.html",
