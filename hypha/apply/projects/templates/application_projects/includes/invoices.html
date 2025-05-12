@@ -1,12 +1,12 @@
 {% load i18n invoice_tools humanize heroicons %}
 
-<section id="invoices" class="docs-block wrapper--outer-space-large">
+<section id="invoices" class="border rounded-box border-base-300 wrapper--outer-space-large">
     <div class="docs-block__header">
         <h2 class="m-0 text-lg font-semibold">{% trans "Invoices" %}</h2>
         {% user_can_add_invoices object user as can_add_invoice %}
         {% if can_add_invoice %}
             <a
-                class="button button--project-action button--project-action--white"
+                class="btn btn-secondary btn-outline"
                 href="{% url "apply:projects:invoice" pk=object.submission.pk %}"
             >
                 {% trans "Add Invoice" %}
@@ -15,7 +15,7 @@
     </div>
     <div class="docs-block__inner"  x-data="{ showrejected: false }">
         {% if object.invoices.not_rejected %}
-            <table class="data-block__table">
+            <table class="table">
                 <thead>
                     <tr>
                         <th class="data-block__table-date">{% trans "Date submitted" %}</th>
@@ -47,7 +47,7 @@
                 </a>
             </p>
 
-            <table class="data-block__table"  x-show="showrejected">
+            <table class="table"  x-show="showrejected">
                 <thead>
                     <tr>
                         <th class="data-block__table-date">{% trans "Date submitted" %}</th>

@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block title %}{% trans "Reset password" %}{% endblock %}
-{% block body_class %}bg-white{% endblock %}
+{% block body_class %}bg-base-100{% endblock %}
 
 {% block content %}
 
@@ -36,7 +36,7 @@
             <p>{{ form.email.label_tag }}</p>
             <p>{{ form.email }}</p>
 
-            <button class="button button--primary button--login" type="submit">{% trans "Send reset email" %}</button>
+            <button class="btn btn-primary btn-wide" type="submit">{% trans "Send reset email" %}</button>
         </form>
     </div>
 {% endblock %}

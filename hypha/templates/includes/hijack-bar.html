@@ -2,7 +2,7 @@
 
 <form action="{% url 'hijack:release' %}"
       method="POST"
-      class="py-2 px-4 text-center text-black bg-yellow-500 border-t-4 border-warning border-stripe"
+      class="py-2 px-4 text-center border-t-4 bg-warning text-warning-content border-warning border-stripe"
 >
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ request.path }}">

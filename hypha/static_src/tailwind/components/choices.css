@@ -3,7 +3,7 @@
 =   For the select component rendered with choices.js
 =============================== */
 .choices {
-  @apply relative mb-6 overflow-hidden text-base focus:outline-hidden;
+  @apply relative overflow-hidden text-base focus:outline-hidden;
 }
 
 .choices:last-child {
@@ -38,7 +38,7 @@
 }
 
 .choices[data-type*="select-one"] .choices__input {
-  @apply block w-full p-2 m-0 bg-white border-b border-gray-400;
+  @apply block w-full p-2 m-0 bg-base-100 border-b border-gray-400;
 }
 
 .choices[data-type*="select-one"] .choices__button {
@@ -107,7 +107,7 @@
 .choices__inner {
   min-height: 40px;
 
-  @apply inline-block w-full p-1 overflow-hidden text-sm text-gray-900 align-top border border-gray-300 rounded-xs;
+  @apply inline-block w-full p-1 overflow-hidden text-sm text-base-content align-top border border-gray-300 rounded-xs;
 }
 
 .is-focused .choices__inner {
@@ -177,7 +177,7 @@
   border-bottom-right-radius: 2.5px;
   will-change: visibility;
 
-  @apply absolute z-10 invisible w-full mt-1 overflow-hidden break-all bg-white border shadow-md top-full;
+  @apply absolute z-10 invisible w-full mt-1 overflow-hidden break-all bg-base-100 border shadow-md top-full;
 }
 
 .is-active.choices__list--dropdown,
@@ -241,7 +241,7 @@
 
 .choices__list--dropdown .choices__item--selectable.is-highlighted,
 .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
-  @apply bg-gray-100;
+  @apply bg-base-200;
 }
 
 .choices__list--dropdown .choices__item--selectable.is-highlighted::after,
@@ -262,7 +262,7 @@
 }
 
 .choices__heading {
-  @apply py-2 text-sm font-semibold text-gray-600 border-b border-gray-300;
+  @apply py-2 text-sm font-semibold text-base-content/70 border-b border-gray-300;
 }
 
 .choices__button {

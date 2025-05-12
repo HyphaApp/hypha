@@ -1,22 +1,26 @@
 {% load i18n humanize determination_tags %}
 
-<div class="sidebar__inner">
-    <h5>{% trans "Determinations" %}</h5>
-    {% for determination in object.determinations.staff %}
-        <p>
-            <a
-                class="font-bold"
-                href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}"
-            >
-                {% if determination.is_draft %}[{% trans "Draft" %}] {% endif %}{{ determination.get_outcome_display }}
-            </a>
-            <relative-time datetime={{ determination.updated_at|date:"c" }}>
-                {{ determination.updated_at|date:"SHORT_DATETIME_FORMAT" }}
-            </relative-time>
-            {% if not HIDE_STAFF_IDENTITY or request.user.is_org_faculty %} {% trans "by" %} {{ determination.author }}{% endif %}
-        </p>
-    {% empty %}
-        <p>{% trans "Awaiting determination" %}</p>
-    {% endfor %}
-    {% include 'determinations/includes/determination_button.html' with submission=object %}
+<div class="card card-border bg-base-100 shadow-xs">
+    <div class="card-body">
+        <h2 class="card-title">{% trans "Determinations" %}</h2>
+        {% for determination in object.determinations.staff %}
+            <p>
+                <a
+                    class="font-bold"
+                    href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}"
+                >
+                    {% if determination.is_draft %}[{% trans "Draft" %}] {% endif %}{{ determination.get_outcome_display }}
+                </a>
+                <relative-time datetime={{ determination.updated_at|date:"c" }}>
+                    {{ determination.updated_at|date:"SHORT_DATETIME_FORMAT" }}
+                </relative-time>
+                {% if not HIDE_STAFF_IDENTITY or request.user.is_org_faculty %}
+                    {% trans "by" %} {{ determination.author }}
+                {% endif %}
+            </p>
+        {% empty %}
+            <p>{% trans "Awaiting determination" %}</p>
+        {% endfor %}
+        {% include 'determinations/includes/determination_button.html' with submission=object %}
+    </div>
 </div>

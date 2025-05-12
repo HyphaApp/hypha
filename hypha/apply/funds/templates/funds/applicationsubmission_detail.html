@@ -16,41 +16,41 @@
                 {% include "funds/includes/application_header.html" %}
             {% endif %}
 
-            <div class="tabs">
-                <div class="tabs__container">
+            <div role="tablist" class="font-semibold tabs tabs-lg tabs-lift">
+
+                <a
+                    class="tab tab-active"
+                    href="{% url 'funds:submissions:detail' pk=object.id %}"
+                >
+                    {% trans "Application" %}
+                </a>
+
+                {% if PROJECTS_ENABLED and object.project %}
                     <a
-                        class="tab__item tab__item--active"
-                        href="{% url 'funds:submissions:detail' pk=object.id %}"
+                        class="tab [--color-base-content:var(--color-neutral-content)]"
+                        href="{% url 'funds:submissions:project' pk=object.id %}"
                     >
-                        {% trans "Application" %}
+                        {% trans "Project" %}
                     </a>
+                {% endif %}
 
-                    {% if PROJECTS_ENABLED and object.project %}
-                        <a
-                            class="tab__item"
-                            href="{% url 'funds:submissions:project' pk=object.id %}"
-                        >
-                            {% trans "Project" %}
-                        </a>
-                    {% endif %}
+                <a
+                    class="tab [--color-base-content:var(--color-neutral-content)]"
+                    href="{% url 'funds:submissions:comments' pk=object.id %}"
+                >
+                    {% trans "Conversation" %} ({{ comments_count }})
+                </a>
 
+                {# is_staff is only used for Django Admin. #}
+                {% if request.user.is_staff %}
                     <a
-                        class="tab__item"
-                        href="{% url 'funds:submissions:comments' pk=object.id %}"
+                        class="hidden md:block tab ms-auto [--color-base-content:var(--color-neutral-content)]"
+                        href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}"
                     >
-                        {% trans "Conversation" %} ({{ comments_count }})
+                        {% trans "View message log" %}
                     </a>
+                {% endif %}
 
-                    {# is_staff is only used for Django Admin. #}
-                    {% if request.user.is_staff %}
-                        <a
-                            class="hidden md:block tab__item ms-auto"
-                            href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}"
-                        >
-                            {% trans "View message log" %}
-                        </a>
-                    {% endif %}
-                </div>
             </div>
         </div>
     </div>
@@ -61,23 +61,23 @@
                 <div class="wrapper--sidebar--inner">
                     <h4>{% trans "Congratulations!" %}</h4>
                     <h5>{% blocktrans with stage=object.previous.stage %}Your {{ stage }} application has been accepted.{% endblocktrans %}</h5>
-                    <a class="button button--primary" href="{% url 'funds:submissions:edit' object.id %}">
+                    <a class="btn btn-primary" href="{% url 'funds:submissions:edit' object.id %}">
                         {% blocktrans with stage=object.stage %}Start your {{ stage }} application.{% endblocktrans %}
                     </a>
                 </div>
             {% else %}
                 <article class="wrapper--sidebar--inner">
                     {% if object.is_archive %}
-                        <div class="flex gap-2 justify-center items-center py-2 mb-4 font-semibold text-center text-white bg-red-600 rounded-xs">
-                            {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
-                            {% trans "This application has been archived. This is visible to the roles " %} {{ archive_access_groups|join_with_commas }}.
+                        <div role="alert" class="mb-4 alert alert-warning">
+                            {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 %}
+                            <span>{% trans "This application has been archived. This is visible to accounts with " %} {{ archive_access_groups|join_with_commas }} roles.</span>
                         </div>
                     {% endif %}
 
                     {% if object.round.specific.is_sealed %}
-                        <div class="flex gap-2 justify-center items-center py-2 mb-4 font-semibold text-center text-white bg-red-600 rounded-xs">
-                            {% heroicon_outline "clock" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
-                            {% trans "This application is sealed." %}
+                        <div role="alert" class="mb-4 alert alert-warning">
+                            {% heroicon_outline "clock" aria_hidden="true" size=16 stroke_width=2 %}
+                            <span>{% trans "This application is sealed." %}</span>
                         </div>
                     {% endif %}
 
@@ -186,57 +186,59 @@
 
                 {% block related %}
                     {% if other_submissions or object.previous or object.next %}
-                        <div class="sidebar__inner">
-                            <h5>{% trans "Related submissions" %}</h5>
+                        <div class="card card-border bg-base-100 shadow-xs">
+                            <div class="card-body">
+                                <h2 class="card-title">{% trans "Related submissions" %}</h2>
 
-                            {% if object.previous %}
-                                <p class="mb-4">
-                                    <a
-                                        class="font-bold underline"
-                                        href="{% url 'funds:submissions:detail' object.previous.id %}"
-                                    >
-                                        {% trans "View linked" %} {{ object.previous.stage }}
-                                    </a>
-                                </p>
-                            {% endif %}
-
-                            {% if object.next %}
-                                <p class="mb-4">
-                                    <a
-                                        class="font-bold underline"
-                                        href="{% url 'funds:submissions:detail' object.next.id %}"
-                                    >
-                                        {% trans "View linked" %} {{ object.next.stage }}
-                                    </a>
-                                </p>
-                            {% endif %}
-
-                            <section class="flex flex-col gap-2" data-js-collapse>
-                                {% for submission in other_submissions %}
-                                    {% if forloop.first %}
-                                        <h6 class="pb-2 mb-0 font-semibold uppercase border-b text-fg-muted">
-                                            {% trans "Other Submissions" %}
-                                        </h6>
-                                    {% endif %}
-                                    <div>
+                                {% if object.previous %}
+                                    <p class="mb-4">
                                         <a
-                                            class="font-bold hover:underline line-clamp-2"
-                                            href="{% url 'funds:submissions:detail' submission.id %}"
+                                            class="font-bold underline"
+                                            href="{% url 'funds:submissions:detail' object.previous.id %}"
                                         >
-                                            {{ submission.title }}
+                                            {% trans "View linked" %} {{ object.previous.stage }}
                                         </a>
-                                        <div class="text-sm text-fg-muted">
-                                            <span>#{{ submission.application_id }}</span>
-                                            <relative-time datetime='{{ submission.submit_time|date:"c" }}'>
-                                                {{ submission.submit_time|date:"SHORT_DATETIME_FORMAT" }}
-                                            </relative-time>
-                                            in {{ submission.round|default_if_none:submission.page }}
-                                            &middot;
-                                            <span>{{ submission.phase }}</span>
+                                    </p>
+                                {% endif %}
+
+                                {% if object.next %}
+                                    <p class="mb-4">
+                                        <a
+                                            class="font-bold underline"
+                                            href="{% url 'funds:submissions:detail' object.next.id %}"
+                                        >
+                                            {% trans "View linked" %} {{ object.next.stage }}
+                                        </a>
+                                    </p>
+                                {% endif %}
+
+                                <section class="flex flex-col gap-2" data-js-collapse>
+                                    {% for submission in other_submissions %}
+                                        {% if forloop.first %}
+                                            <h6 class="pb-2 mb-0 font-semibold uppercase border-b text-fg-muted">
+                                                {% trans "Other Submissions" %}
+                                            </h6>
+                                        {% endif %}
+                                        <div>
+                                            <a
+                                                class="font-bold hover:underline line-clamp-2"
+                                                href="{% url 'funds:submissions:detail' submission.id %}"
+                                            >
+                                                {{ submission.title }}
+                                            </a>
+                                            <div class="text-sm text-fg-muted">
+                                                <span>#{{ submission.application_id }}</span>
+                                                <relative-time datetime='{{ submission.submit_time|date:"c" }}'>
+                                                    {{ submission.submit_time|date:"SHORT_DATETIME_FORMAT" }}
+                                                </relative-time>
+                                                in {{ submission.round|default_if_none:submission.page }}
+                                                &middot;
+                                                <span>{{ submission.phase }}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                {% endfor %}
-                            </section>
+                                    {% endfor %}
+                                </section>
+                            </div>
                         </div>
                     {% endif %}
                 {% endblock %}
