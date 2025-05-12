@@ -510,7 +510,10 @@ CELERY_RESULT_BACKEND = env.str("CELERY_RESULT_BACKEND", None)
 if REDIS_URL and not (CELERY_BROKER_URL or CELERY_RESULT_BACKEND):
     cert_param = ""
     if REDIS_URL.startswith("rediss") and REDIS_SSL_CERT_REQS:
-        cert_param = f"?ssl_cert_reqs={REDIS_SSL_CERT_REQS}"
+        check_hostname = REDIS_SSL_CERT_REQS != "CERT_NONE"
+        cert_param = (
+            f"?ssl_cert_reqs={REDIS_SSL_CERT_REQS}&ssl_check_hostname={check_hostname}"
+        )
     CELERY_BROKER_URL = f"{REDIS_URL}/0{cert_param}"
     CELERY_RESULT_BACKEND = f"{REDIS_URL}{cert_param}"
     # Manipulation of the environ vars is needed due to how celery processes & prioritizes settings
