@@ -3,9 +3,7 @@
 @use "base/typography";
 
 // Components
-@use "components/nprogress";
 @use "components/all-submissions-table";
-@use "components/all-reviews-table";
 @use "components/admin-bar";
 @use "components/actions-bar";
 @use "components/card";
@@ -20,13 +18,9 @@
 @use "components/modal";
 @use "components/rich-text";
 @use "components/sidebar";
-@use "components/tabs";
 @use "components/status-bar";
 @use "components/form";
 @use "components/nav";
-@use "components/pagination";
-@use "components/projects-table";
-@use "components/responsive-table";
 @use "components/reviews-list";
 @use "components/reviews-summary";
 @use "components/reviews-sidebar";
@@ -37,13 +31,11 @@
 @use "components/traffic-light";
 @use "components/wrapper";
 @use "components/revisions";
-@use "components/stat-block";
 @use "components/docs-block";
 @use "components/data-block";
 @use "components/invoice-block";
 @use "components/two-factor";
 @use "components/dropdown";
-@use "components/dashboard-table";
 
 // Layout
 @use "layout/header";

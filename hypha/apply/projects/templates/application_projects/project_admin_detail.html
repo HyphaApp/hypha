@@ -12,7 +12,7 @@
 
             {% user_can_skip_pafapproval_process project user as can_skip_paf %}
             {% if can_skip_paf %}
-                <a class="button button--white button--full-width button--bottom-space"
+                <a class="btn btn-secondary btn-outline btn-block"
                    hx-confirm="Please ensure the Project Form is completed and you are ready to proceed to the next stage. This action cannot be reverted."
                    hx-post="{% url 'apply:projects:paf_skip' object.id %}"
                 >
@@ -20,10 +20,12 @@
                 </a>
             {% else %}
                 <!-- Move the condition below to link if add more than one link to 'More Actions'-->
-                <details>
-                    <summary class="sidebar__separator sidebar__separator--medium">{% trans "More actions" %}</summary>
+                <details class="mt-4">
+                    <summary class="font-semibold uppercase text-fg-muted">
+                        {% trans "More actions" %}
+                    </summary>
 
-                    <a class="button button--white button--full-width button--bottom-space"
+                    <a class="btn btn-secondary btn-outline btn-block"
                        href="{% url 'apply:projects:project_status_update' object.submission.id %}"
                        hx-get="{% url 'apply:projects:project_status_update' object.submission.id %}"
                        hx-target="#htmx-modal"

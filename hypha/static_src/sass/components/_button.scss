@@ -1,7 +1,6 @@
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
-.btn,
 .button {
   padding: 0;
   background-color: transparent;
@@ -32,38 +31,6 @@
       width: 100%;
       text-align: center;
       height: 45px;
-    }
-  }
-
-  &--project-action {
-    @include mixins.button(
-      variables.$color--light-blue,
-      variables.$color--dark-blue
-    );
-    display: inline-block;
-    padding: 0.5rem 1.2rem;
-
-    &--white {
-      @include mixins.button(
-        variables.$color--white,
-        variables.$color--light-blue
-      );
-      display: inline-block;
-      color: variables.$color--light-blue;
-      border: 1px solid variables.$color--mid-grey;
-      padding: 0.5rem 1.2rem;
-
-      &:active,
-      &:focus,
-      &:hover {
-        color: variables.$color--white;
-      }
-    }
-  }
-
-  &--login {
-    @media (min-width: variables.$input-box-max-width) {
-      width: 20rem;
     }
   }
 
@@ -117,30 +84,9 @@
     }
   }
 
-  &--blue-white {
-    @include mixins.button(
-      variables.$color--white,
-      variables.$color--light-blue
-    );
-    display: inline-block;
-    color: variables.$color--light-blue;
-    border: 1px solid variables.$color--light-blue;
-
-    &:focus {
-      color: variables.$color--light-blue;
-    }
-
-    &:hover {
-      color: variables.$color--white;
-    }
-  }
-
   &-danger,
   &--warning {
-    @include mixins.button(
-      variables.$color--error,
-      variables.$color--error
-    );
+    @include mixins.button(variables.$color--error, variables.$color--error);
 
     &:focus {
       background-color: variables.$color--pastel-red;
@@ -256,8 +202,6 @@
 
   &--submit {
     min-width: 200px;
-    margin-inline-end: 10px;
-    text-align: center;
   }
 
   &--compare {
@@ -269,8 +213,7 @@
     text-align: center;
     text-transform: uppercase;
     border: 1px solid currentcolor;
-    transition: background-color, color, border,
-      variables.$transition--quick;
+    transition: background-color, color, border, variables.$transition--quick;
 
     @include mixins.media-query(md) {
       margin-block-start: 0;
@@ -337,11 +280,7 @@
       }
 
       &::after {
-        @include mixins.triangle(
-          bottom,
-          variables.$color--primary,
-          7px
-        );
+        @include mixins.triangle(bottom, variables.$color--primary, 7px);
         position: absolute;
         inset-block-start: -22px;
         inset-inline-start: 50%;
@@ -450,17 +389,5 @@
     );
     display: inline-block;
     line-height: 1.15;
-  }
-
-  &--like-active {
-    svg {
-      fill: variables.$color--dark-blue;
-    }
-  }
-
-  &--dislike-active {
-    svg {
-      fill: variables.$color--tomato;
-    }
   }
 }

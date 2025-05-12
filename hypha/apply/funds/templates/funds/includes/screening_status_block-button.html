@@ -12,7 +12,7 @@
                hover:border-light-blue focus-visible:border-light-blue
                {% if current_status %}
                    font-bold
-                   {% if type == "yes" %}button--like-active bg-light-blue/10{% else %} button--dislike-active bg-tomato/10 border-red-100{% endif %}
+                   {% if type == "yes" %}text-info bg-info/10{% else %} text-error bg-error/10 border-red-100{% endif %}
                {% endif %}"
 
         hx-post="{% url 'funds:submissions:partial-screening-card' submission.id %}"
@@ -38,20 +38,19 @@
         {% endif %}
     >
         {% if type == "yes" %}
-            {% heroicon_solid "hand-thumb-up" size=30 class="mb-2 transition-colors fill-gray-800" aria_hidden=true %}
+            {% heroicon_solid "hand-thumb-up" size=30 class="mb-2 transition-colors" aria_hidden=true %}
         {% else %}
             {% heroicon_solid "hand-thumb-down" size=30 class="mb-2 transition-colors" aria_hidden=true %}
         {% endif %}
-        <span class="{% if current_status %}{% if type == "yes" %}text-dark-blue{% else %}text-tomato{% endif %}{% endif %} ">
+        <span>
             {{ current_status|default_if_none:default_status }}
         </span>
-
     </button>
 
     <!-- panel -->
     {% if can_screen and screening_options.count > 1 %}
         <div
-            class=" bg-white tras min-w-48 text-sm top absolute {% if type == 'yes' %}md:start-0 {% else %}end-0{% endif %} divide-y rounded-sm border shadow-lg group-hover:absolute z-20"
+            class=" bg-base-100 tras min-w-48 text-sm top absolute {% if type == 'yes' %}md:start-0 {% else %}end-0{% endif %} divide-y rounded-sm border shadow-lg group-hover:absolute z-20"
             x-cloak
             role="menu"
             x-show="isOpen || openedWithKeyboard"
@@ -67,16 +66,16 @@
             @keydown.down.prevent="$focus.wrap().next()"
             @keydown.up.prevent="$focus.wrap().previous()"
         >
-            <header class="flex gap-2 justify-between items-center py-2 px-3 border-b subheading">
+            <header class="flex gap-2 justify-between items-center py-2 px-3 border-b subheading bg-base-200">
                 <span class="font-medium SubMenuHeading text-inherit">Options</span>
                 <button type="button" @click='isOpen = false' class="appearance-none">
                     {% heroicon_mini "x-mark" aria_hidden="true" width=16 height=16 class="stroke-1 hover:stroke-2" %}
                 </button>
             </header>
-            <div class="font-semibold divide-y text-inherit">
+            <div class="font-semibold divide-y text-inherit menu">
                 {% for status in screening_options  %}
                     {% if current_status.id == status.id %}
-                        <span class="flex gap-2 items-center py-2 font-medium text-gray-800 bg-gray-100 pe-2 ps-2">
+                        <span class="flex gap-2 items-center py-2 font-medium bg-base-200 pe-2 ps-2">
                             <span class="w-4">
                                 {% heroicon_mini "check" aria_hidden="true" size=18 class="stroke-2 me-1" %}
                             </span>
@@ -84,7 +83,7 @@
                         </span>
                     {% else %}
                         <a
-                            class="cursor-pointer text-gray-800 flex items-center gap-2 pe-2 py-2 hover:bg-gray-100 focus:bg-gray-100 {% if status.id == current_status.id %}ps-2 font-medium bg-gray-100{% else %} ps-8 font-normal {% endif %}"
+                            class="cursor-pointer flex items-center gap-2 pe-2 py-2 hover:bg-base-200 text-base-content focus:bg-base-200 {% if status.id == current_status.id %}ps-2 font-medium bg-base-200{% else %} ps-8 font-normal {% endif %}"
                             role='button'
                             hx-post="{% url 'funds:submissions:partial-screening-card' object.id %}"
                             hx-swap="outerHTML transition:true"
@@ -98,7 +97,7 @@
                 {% endfor %}
                 {% if current_status %}
                     <a
-                        class="flex py-3 font-normal text-red-600 whitespace-nowrap cursor-pointer ps-8 pe-3 hover:bg-light-blue/10"
+                        class="flex py-3 font-normal whitespace-nowrap cursor-pointer text-warning ps-8 pe-3 hover:bg-light-blue/10"
                         role='button'
                         hx-post="{% url 'funds:submissions:partial-screening-card' object.id %}"
                         hx-swap="outerHTML transition:true"
@@ -111,4 +110,3 @@
         </div>
     {% endif %}
 </div>
-

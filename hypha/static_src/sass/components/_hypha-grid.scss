@@ -3,12 +3,11 @@
 .hypha-grid {
   display: grid;
   margin-block-end: 1rem;
-  gap: 10px;
+  gap: calc(var(--spacing) * 2);
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 
   &--two {
     grid-template-columns: 100%;
-    gap: 0.25rem;
 
     @include mixins.media-query(md) {
       grid-template-columns: 1fr 1fr;

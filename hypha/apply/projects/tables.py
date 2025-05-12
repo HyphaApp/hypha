@@ -54,7 +54,7 @@ class InvoiceDashboardTable(BaseInvoiceTable):
         model = Invoice
         order_by = ["-requested_at"]
         template_name = "application_projects/tables/table.html"
-        attrs = {"class": "invoices-table"}
+        attrs = {"class": "table overflow-x-auto invoices-table"}
 
     def render_project(self, record):
         return get_project_title(record.project)
@@ -85,7 +85,7 @@ class FinanceInvoiceTable(BaseInvoiceTable):
         sequence = fields
         order_by = ["-requested_at", "invoice_date"]
         template_name = "application_projects/tables/table.html"
-        attrs = {"class": "invoices-table"}
+        attrs = {"class": "table overflow-x-auto invoices-table"}
         row_attrs = {
             "data-record-id": lambda record: record.id,
         }
@@ -121,7 +121,7 @@ class AdminInvoiceListTable(BaseInvoiceTable):
         sequence = fields
         order_by = ["-requested_at"]
         template_name = "application_projects/tables/table.html"
-        attrs = {"class": "invoices-table"}
+        attrs = {"class": "table overflow-x-auto invoices-table"}
         row_attrs = {
             "data-record-id": lambda record: record.id,
         }
@@ -182,7 +182,7 @@ class ProjectsDashboardTable(BaseProjectsTable):
         model = Project
         template_name = "application_projects/tables/table.html"
         orderable = False
-        attrs = {"class": "projects-table"}
+        attrs = {"class": "table overflow-x-auto projects-table"}
 
 
 class ProjectsAssigneeDashboardTable(BaseProjectsTable):
@@ -198,7 +198,7 @@ class ProjectsAssigneeDashboardTable(BaseProjectsTable):
         model = Project
         orderable = False
         exclude = ["status"]
-        attrs = {"class": "projects-table"}
+        attrs = {"class": "table overflow-x-auto projects-table"}
 
 
 class PAFForReviewDashboardTable(tables.Table):
@@ -227,7 +227,7 @@ class PAFForReviewDashboardTable(tables.Table):
         template_name = (
             "funds/tables/table.html"  # todo: update it with Project table template
         )
-        attrs = {"class": "paf-review-table"}
+        attrs = {"class": "table paf-review-table"}
 
     def order_date_requested(self, qs, is_descending):
         direction = "-" if is_descending else ""
@@ -261,4 +261,4 @@ class ProjectsListTable(BaseProjectsTable):
         orderable = True
         order_by = ("end_date",)
         template_name = "application_projects/tables/table.html"
-        attrs = {"class": "projects-table"}
+        attrs = {"class": "table overflow-x-auto projects-table"}

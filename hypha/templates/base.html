@@ -67,7 +67,7 @@
     <body
         hx-ext="multi-swap"
         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-        class="antialiased min-h-full flex flex-col {% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}"
+        class="antialiased bg-base-100 min-h-full flex flex-col {% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}"
     >
         {% if request.user.is_hijacked %}
             {% include "includes/hijack-bar.html" %}

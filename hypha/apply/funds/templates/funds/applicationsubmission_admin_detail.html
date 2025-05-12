@@ -2,51 +2,56 @@
 {% load i18n static workflow_tags review_tags determination_tags translate_tags heroicons %}
 
 {% block sidebar_top %}
-    <div
-        class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions"
+    <section
+        class="card card-border border-primary/10 bg-primary/10 shadow-xs sidebar__inner--actions"
         data-testid="sidebar-primary-actions"
     >
-        {% include "funds/includes/admin_primary_actions.html" %}
-    </div>
+        <div class="card-body">
+            {% include "funds/includes/admin_primary_actions.html" %}
+        </div>
+    </section>
 {% endblock %}
 
 {% block flags %}
-    <div class="sidebar__inner">
-        <h5>{% trans "Flags" %}</h5>
-
-        {% include 'flags/flags.html' with submission=object user=request.user %}
-    </div>
+    <section class="card card-border bg-base-100 text-base-content" id="screening-status-{{ object.id }}">
+        <div class="card-body">
+            <h2 class="card-title">{% trans "Flags" %}</h2>
+            {% include 'flags/flags.html' with submission=object user=request.user %}
+        </div>
+    </section>
 {% endblock %}
 
 {% block reviews %}
-    <div class="sidebar__inner">
-        <h5>{% trans "Reviews & assignees" %}</h5>
+    <section class="card card-border bg-base-100 shadow-xs">
+        <div class="card-body">
+            <h2 class="card-title">{% trans "Reviews & assignees" %}</h2>
 
-        <div
-            hx-trigger="revealed, reviewerUpdated from:body"
-            hx-get="{% url 'funds:submissions:partial-reviews-card' object.id %}"
-            hx-target="this"
-        >
-            <div class="animate-pulse min-h-30">
-                <div class="mb-3 w-full h-9 bg-gray-200"></div>
-                <div class="mb-1 w-full h-6 bg-gray-200"></div>
-                <div class="mb-3 w-full h-1 bg-gray-200"></div>
-                <div class="mb-3 w-20 h-6 bg-gray-200"></div>
+            <div
+                hx-trigger="revealed, reviewerUpdated from:body"
+                hx-get="{% url 'funds:submissions:partial-reviews-card' object.id %}"
+                hx-target="this"
+            >
+                <div class="animate-pulse min-h-30">
+                    <div class="mb-3 w-full h-9 bg-gray-200"></div>
+                    <div class="mb-1 w-full h-6 bg-gray-200"></div>
+                    <div class="mb-3 w-full h-1 bg-gray-200"></div>
+                    <div class="mb-3 w-20 h-6 bg-gray-200"></div>
+                </div>
+            </div>
+
+            <div class="gap-4 wrapper wrapper--sidebar-buttons">
+                {% include 'review/includes/review_button.html' with submission=object class="w-1/2" %}
+                {% if request.user.is_apply_staff and object.reviews.exists %}
+                    <a
+                        href="{% url 'apply:submissions:reviews:list' submission_pk=object.id %}"
+                        class="btn btn-secondary btn-outline button--half-width"
+                    >
+                        {% trans "View all" %}
+                    </a>
+                {% endif %}
             </div>
         </div>
-
-        <div class="gap-4 wrapper wrapper--sidebar-buttons">
-            {% include 'review/includes/review_button.html' with submission=object class="button--half-width" %}
-            {% if request.user.is_apply_staff and object.reviews.exists %}
-                <a
-                    href="{% url 'apply:submissions:reviews:list' submission_pk=object.id %}"
-                    class="button button--white button--half-width"
-                >
-                    {% trans "View all" %}
-                </a>
-            {% endif %}
-        </div>
-    </div>
+    </section>
 {% endblock %}
 
 {% block screening_status %}
@@ -54,16 +59,18 @@
 {% endblock %}
 
 {% block meta_terms %}
-    <div class="sidebar__inner"
+    <div class="card card-border bg-base-100 shadow-xs"
          hx-trigger="load, metaTermsUpdated from:body"
          hx-get="{% url "funds:submissions:partial-meta-terms-card" object.id %}"
          hx-target="this"
     >
-        <div class="animate-pulse min-h-30">
-            <div class="mb-3 w-full h-9 bg-gray-200"></div>
-            <div class="mb-1 w-full h-6 bg-gray-200"></div>
-            <div class="mb-3 w-full h-1 bg-gray-200"></div>
-            <div class="mb-3 w-20 h-6 bg-gray-200"></div>
+        <div class="card-body">
+            <div class="animate-pulse min-h-30">
+                <div class="mb-3 w-full h-9 bg-gray-200"></div>
+                <div class="mb-1 w-full h-6 bg-gray-200"></div>
+                <div class="mb-3 w-full h-1 bg-gray-200"></div>
+                <div class="mb-3 w-20 h-6 bg-gray-200"></div>
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -73,31 +80,33 @@
 {% endblock %}
 
 {% block reminders %}
-    <div class="sidebar__inner">
-        <div class="flex gap-4 justify-between pb-4">
-            <h5 class="m-0">{% trans "Reminders" %}</h5>
-            <button
-                class="flex items-center py-1 px-2 font-bold rounded-sm transition-colors hover:bg-gray-100 text-dark-blue -me-2"
-                hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}"
-                hx-target="#htmx-modal"
-                role="button"
-                aria-label="{% trans "Create reminder" %}"
-            >
-                {% heroicon_micro "plus" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
-                Add
-            </button>
-        </div>
+    <div class="card card-border bg-base-100 shadow-xs">
+        <div class="card-body">
+            <div class="flex gap-4 justify-between pb-4">
+                <h2 class="card-title">{% trans "Reminders" %}</h2>
+                <button
+                    class="flex items-center py-1 px-2 font-bold rounded-sm transition-colors text-dark-blue -me-2 hover:bg-base-200"
+                    hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}"
+                    hx-target="#htmx-modal"
+                    role="button"
+                    aria-label="{% trans "Create reminder" %}"
+                >
+                    {% heroicon_micro "plus" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
+                    Add
+                </button>
+            </div>
 
-        <div
-            hx-trigger="load, remindersUpdated from:body"
-            hx-get="{% url 'funds:submissions:partial-reminder-card' object.id %}"
-            hx-target="this"
-        >
-            <div class="animate-pulse min-h-30">
-                <div class="mb-3 w-full h-9 bg-gray-200"></div>
-                <div class="mb-1 w-full h-6 bg-gray-200"></div>
-                <div class="mb-3 w-full h-1 bg-gray-200"></div>
-                <div class="mb-3 w-20 h-6 bg-gray-200"></div>
+            <div
+                hx-trigger="load, remindersUpdated from:body"
+                hx-get="{% url 'funds:submissions:partial-reminder-card' object.id %}"
+                hx-target="this"
+            >
+                <div class="animate-pulse min-h-30">
+                    <div class="mb-3 w-full h-9 bg-gray-200"></div>
+                    <div class="mb-1 w-full h-6 bg-gray-200"></div>
+                    <div class="mb-3 w-full h-1 bg-gray-200"></div>
+                    <div class="mb-3 w-20 h-6 bg-gray-200"></div>
+                </div>
             </div>
         </div>
     </div>

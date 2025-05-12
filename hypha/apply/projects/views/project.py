@@ -2002,7 +2002,7 @@ class ProjectFormsEditView(BaseStreamForm, ProjectBySubmissionIdMixin, UpdateVie
     model = Project
 
     def buttons(self):
-        yield ("submit", "primary", _("Save"))
+        yield ("submit", "btn-primary", _("Save"))
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()

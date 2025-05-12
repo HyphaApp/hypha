@@ -40,20 +40,12 @@
           }
 
           &::after {
-            @include mixins.triangle(
-              top,
-              variables.$color--white,
-              8px
-            );
+            @include mixins.triangle(top, variables.$color--white, 8px);
             inset-block-start: -21px;
           }
 
           &::before {
-            @include mixins.triangle(
-              top,
-              variables.$color--mid-grey,
-              8px
-            );
+            @include mixins.triangle(top, variables.$color--mid-grey, 8px);
           }
         }
       }
@@ -90,7 +82,6 @@
     align-items: center;
     overflow: hidden;
     text-overflow: ellipsis;
-    background: variables.$color--white;
 
     &:hover {
       display: inline-flex;

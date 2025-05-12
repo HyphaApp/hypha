@@ -9,7 +9,7 @@
         :class="open ? 'bg-gray-900 text-white' : 'hover:bg-slate-200'"
         :aria-expanded="open"
         title="{% trans "Language switcher" %}"
-        class="flex p-2 text-gray-900 rounded-full transition-all group"
+        class="flex p-2 rounded-full transition-all text-base-content group"
     >
         {% heroicon_outline "language" class="inline transition-transform group-hover:scale-110" aria_hidden="true" %}
     </button>
@@ -24,7 +24,7 @@
         role="dialog"
         aria-labelledby="dialogtitle"
         @click.outside="open = false"
-        class="overflow-y-auto absolute right-0 z-30 bg-white rounded-sm border shadow-md"
+        class="overflow-y-auto absolute right-0 z-30 rounded-sm border shadow-md bg-base-100"
     >
 
         <div id="id-language-switcher" class="">

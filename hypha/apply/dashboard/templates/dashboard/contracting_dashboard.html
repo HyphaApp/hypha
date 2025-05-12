@@ -9,7 +9,7 @@
         {% slot header %}{% trans "Dashboard" %}{% endslot %}
 
         {% if perms.wagtailadmin.access_admin %}
-            <a href="{% url 'wagtailadmin_home' %}" class="button button--primary">
+            <a href="{% url 'wagtailadmin_home' %}" class="btn btn-primary">
                 {% heroicon_solid "cog-6-tooth" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
                 {% trans "Administration" %}
             </a>

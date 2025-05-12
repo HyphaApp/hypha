@@ -61,7 +61,7 @@
                             {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
                         </div>
                         {% if request.user|has_edit_perm:submission %}
-                            <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
+                            <a class="btn btn-primary" href="{% url 'funds:submissions:edit' submission.id %}">
                                 {% if submission.status == 'draft_proposal' %}
                                     {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
                                 {% else %}

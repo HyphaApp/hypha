@@ -6,22 +6,22 @@
     x-on:keydown.escape="open = false"
     x-init="$watch('open', value => { if (value) { document.getElementById('id-task-list').dispatchEvent(new Event('htmx:fetch')); } })"
 >
-    <a href="{% url "todo:list" %}"
-       class="flex p-2 text-gray-900 rounded-full transition-all group"
-       aria-label="{% trans "Task List" %}"
+    <a href="{% url 'todo:list' %}"
+       class="btn btn-circle btn-soft btn-secondary group"
+       aria-label="{% trans 'Task List' %}"
        aria-haspopup="task_list"
        aria-expanded="false"
        role="button"
-       title="{% trans "Click to open your task list" %}"
+       title="{% trans 'Click to open your task list' %}"
        @click.prevent="open = ! open"
-       :class="open ? 'bg-gray-900 text-white' : 'hover:bg-slate-200'"
+       :class="open && 'btn-active'"
     >
-        {% heroicon_outline "bell-alert" class="inline transition-transform group-hover:scale-110" aria_hidden="true" %}
+        {% heroicon_outline "bell-alert" aria_hidden="true" %}
     </a>
 
     <!-- panel -->
     <div
-        class="overflow-y-scroll fixed top-0 z-30 bg-white rounded-sm border shadow-md md:absolute md:top-auto start-0 end-0 md:start-auto md:min-w-[400px] md:max-h-[500px]"
+        class="overflow-y-scroll fixed top-0 z-30 rounded-sm border shadow-md md:absolute md:top-auto bg-base-100 start-0 end-0 md:start-auto md:min-w-[400px] md:max-h-[500px]"
         x-cloak
         x-show="open"
         x-trap="open"
@@ -31,7 +31,7 @@
         class="relative"
         role="task_list"
     >
-        <header class="flex gap-2 justify-between items-center py-2 px-3 bg-gray-100 border-b subheading">
+        <header class="flex gap-2 justify-between items-center py-2 px-3 border-b bg-base-200 subheading">
             <span class="font-medium SubMenuHeading text-inherit">
                 {% trans "Your Tasks" %}
             </span>

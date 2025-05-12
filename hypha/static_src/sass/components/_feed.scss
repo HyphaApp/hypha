@@ -174,10 +174,6 @@
     background-color: variables.$color--sky-blue;
   }
 
-  &__company {
-    @extend %h6;
-  }
-
   &__show-button {
     position: absolute;
     inset-block-end: 0;

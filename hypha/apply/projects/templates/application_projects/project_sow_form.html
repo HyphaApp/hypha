@@ -14,7 +14,7 @@
 
     {% if sow_form_exists %}
         {% include "forms/includes/form_errors.html" with form=sow_form %}
-        <div class="pt-8 pb-8 mx-auto mt-4 mb-12 wrapper wrapper--default-bg wrapper--sidebar ps-20">
+        <div class="pt-8 pb-8 mx-auto mt-4 mb-12 wrapper wrapper--sidebar">
             <div class="wrapper--sidebar--inner">
                 <form class="form application-form" action="" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
@@ -38,7 +38,14 @@
                     {% endfor %}
                     {% trans "Save draft" as save_draft %}
                     {% for button_name, button_type, button_value in buttons %}
-                        <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }}" {% if button_value == save_draft %}formnovalidate{% endif %}>{{ button_value }}</button>
+                        <button
+                            class="btn button--{{ button_type }}"
+                            type="submit"
+                            name="{{ button_name }}"
+                            {% if button_value == save_draft %}formnovalidate{% endif %}
+                        >
+                            {{ button_value }}
+                        </button>
                     {% endfor %}
                 </form>
             </div>
@@ -54,7 +61,7 @@
             </aside>
         </div>
     {% else %}
-        <div class="wrapper wrapper--default-bg wrapper--form wrapper--sidebar">
+        <div class="wrapper wrapper--form wrapper--sidebar">
             <div class="wrapper--sidebar--inner">
                 <p>
                     {% trans "Scope of work form not configured. Please add it in the" %}

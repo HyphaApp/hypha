@@ -13,32 +13,32 @@
 
             {% include "application_projects/includes/project_header.html" %}
 
-            <div class="tabs">
-                <div class="tabs__container">
-                    <a
-                        class="tab__item"
-                        href="{{ project.submission.get_absolute_url }}"
-                    >
-                        {% trans "Application" %}
-                    </a>
+            <div role="tablist" class="font-semibold tabs tabs-lg tabs-lift">
 
-                    <a
-                        class="tab__item tab__item--active"
-                        href="{% url 'funds:submissions:project' pk=object.submission.id %}"
-                    >
-                        {% trans "Project" %}
-                    </a>
+                <a
+                    class="tab [--color-base-content:var(--color-neutral-content)]"
+                    href="{{ project.submission.get_absolute_url }}"
+                >
+                    {% trans "Application" %}
+                </a>
 
-                    <a
-                        class="tab__item"
-                        href="{% url 'funds:submissions:comments' pk=object.submission.id %}"
-                    >
-                        {% trans "Conversation" %} ({{ comments_count }})
-                    </a>
+                <a
+                    class="tab tab-active"
+                    href="{% url 'funds:submissions:project' pk=object.submission.id %}"
+                >
+                    {% trans "Project" %}
+                </a>
 
-                </div>
+                <a
+                    class="tab [--color-base-content:var(--color-neutral-content)]"
+                    href="{% url 'funds:submissions:comments' pk=object.submission.id %}"
+                >
+                    {% trans "Conversation" %} ({{ comments_count }})
+                </a>
+
             </div>
         </div>
+    </div>
     </div>
 
     {% show_closing_banner object as show_banner %}
@@ -55,17 +55,14 @@
 
         <div class="wrapper wrapper--sidebar">
             <article class="wrapper--sidebar--inner">
-                <h3>{% trans "Project Information" %}</h3>
-                <div
+                <h2 class="text-xl font-bold">{% trans "Project Information" %}</h2>
+                <dl
                     class="hypha-grid hypha-grid--proposal-info"
                     hx-get='{% url "apply:projects:project_information" object.submission.id %}'
-                    hx-trigger="load, informationUpdated from:body"
+                    hx-trigger="informationUpdated from:body"
                 >
-                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-14"></span>
-                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-14"></span>
-                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-12"></span>
-                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-12"></span>
-                </div>
+                    {% include "application_projects/partials/project_information.html" %}
+                </dl>
 
                 {% user_can_view_invoices object user as can_view_invoices %}
                 {% if can_view_invoices %}
@@ -93,21 +90,24 @@
                 <aside class="sidebar">
                     {% user_next_step_on_project object user request=request as next_step %}
                     {% if next_step %}
-                        <div class="py-3 px-5 mb-8 bg-yellow-200 shadow-sm sidebar__inner--actions">
-                            <h5 class="flex pb-2 border-b border-b-orange-200">
-                                {% heroicon_solid "sparkles" class="align-text-top me-1 fill-orange-500" aria_hidden=true %}
-                                <span>{{ next_step.heading }}</span>
-                            </h5>
-                            <p class="">{{ next_step.text }}</p>
-                            {% user_next_step_instructions object user as instructions %}
-                            {% if instructions %}
-                                <div class="sidebar__inner--actions--instructions">
-                                    {% for instruction in instructions %}
-                                        <p>{{forloop.counter}}. {{ instruction }}</p>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
+                        <div class="card [--card-fs:1rem] bg-info text-info-content shadow-xs sidebar__inner--actions">
+                            <div class="card-body">
+                                <h2 class="card-title">
+                                    {% heroicon_solid "sparkles" class="align-text-top" aria_hidden=true %}
+                                    <span>{{ next_step.heading }}</span>
+                                </h2>
 
+                                <p>{{ next_step.text }}</p>
+
+                                {% user_next_step_instructions object user as instructions %}
+                                {% if instructions %}
+                                    <div class="sidebar__inner--actions--instructions">
+                                        {% for instruction in instructions %}
+                                            <p>{{forloop.counter}}. {{ instruction }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
                     {% endif %}
                     {% if object.paf_approvals.exists and not user.is_applicant %}

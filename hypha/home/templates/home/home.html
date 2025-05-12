@@ -17,7 +17,7 @@
         {% endif %}
 
         {% if funds %}
-            <div class="divide-y">
+            <div class="list">
                 {% for fund in funds %}
                     {% include "home/includes/fund-list-item.html" with page=fund %}
                 {% endfor %}

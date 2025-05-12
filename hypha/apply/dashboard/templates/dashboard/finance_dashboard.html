@@ -9,7 +9,7 @@
         {% slot header %}{% trans "Dashboard" %}{% endslot %}
 
         {% if perms.wagtailadmin.access_admin %}
-            <a href="{% url 'wagtailadmin_home' %}" class="button button--primary">
+            <a href="{% url 'wagtailadmin_home' %}" class="btn btn-primary">
                 {% heroicon_solid "cog-6-tooth" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
                 {% trans "Administration" %}
             </a>
@@ -22,71 +22,67 @@
             {% include "dashboard/includes/my-tasks.html" with mytasks=mytasks %}
         {% endif %}
 
-        <div class="wrapper wrapper--bottom-space"
-             role="tablist" aria-label="Invoice Tabs"
-             x-data="{ tab: '{% trans "Active" %}' }"
-        >
-            <section class="flex flex-col justify-between items-center md:flex-row">
-                <h4 class="heading heading--normal heading--no-margin">{% trans 'Invoices' %} </h4>
-                <nav>
-                    <a class="tab__item tab__item--alt"
-                       role="tab"
-                       href="#"
+        <div class="wrapper wrapper--bottom-space" >
+            <h2 class="mb-2 card-title">{% trans 'Invoices' %} </h2>
+
+            <div class="tabs tabs-lift">
+                <input type="radio"
+                       name="invoice_tabs"
+                       class="tab"
                        id="tab-invoices-active"
-                       aria-controls="panel-invoices-active"
-                       :class="{ 'tab__item--active': tab === '{% trans "Active" %}' }"
-                       @click.prevent="tab = '{% trans "Active" %}'"
-                    >{% trans "Active Invoices" %}</a>
-                    <a class="tab__item tab__item--alt"
-                       role="tab"
-                       href="#"
+                       aria-label="{% trans 'Active Invoices' %}"
+                       checked="checked" />
+                <div class="tab-content border-base-300 bg-base-100"
+                     role="tabpanel"
+                     tabindex="0"
+                     aria-labelledby="tab-invoices-active"
+                     id="panel-invoices-active">
+                    {% if active_invoices.count %}
+                        {% render_table active_invoices.table %}
+                    {% else %}
+                        <span class="block p-4">
+                            {% trans "No active invoices" %}
+                        </span>
+                    {% endif %}
+                </div>
+
+                <input type="radio"
+                       name="invoice_tabs"
+                       class="tab"
                        id="tab-invoices-for-approval"
-                       aria-controls="panel-invoices-for-approval"
-                       :class="{ 'tab__item--active': tab === '{% trans "For Approval" %}' }"
-                       @click.prevent="tab = '{% trans "For Approval" %}'"
-                    >{% trans "For Approval" %}</a>
-                    <a class="tab__item tab__item--alt"
-                       role="tab"
-                       href="#"
+                       aria-label="{% trans 'For Approval' %}" />
+                <div class="tab-content border-base-300 bg-base-100"
+                     role="tabpanel"
+                     tabindex="0"
+                     aria-labelledby="tab-invoices-for-approval"
+                     id="panel-invoices-for-approval">
+                    {% if invoices_for_approval.count %}
+                        {% render_table invoices_for_approval.table %}
+                    {% else %}
+                        <span class="block p-4">
+                            {% trans "No invoices for Approval " %}
+                        </span>
+                    {% endif %}
+                </div>
+
+                <input type="radio"
+                       name="invoice_tabs"
+                       class="tab"
                        id="tab-invoices-for-conversion"
-                       aria-controls="panel-invoices-for-conversion"
-                       :class="{ 'tab__item--active': tab === '{% trans "For Conversion" %}' }"
-                       @click.prevent="tab = '{% trans "For Conversion" %}'"
-                    >{% trans "For Conversion" %}</a>
-                </nav>
-            </section>
-
-            {# Active invoices tab #}
-            <div x-show="tab === '{% trans "Active" %}'" role="tabpanel" tabindex="0" aria-labelledby="tab-invoices-active" id="panel-invoices-active">
-                {% if active_invoices.count %}
-                    {% render_table active_invoices.table %}
-                {% else %}
-                    <div class="py-4 px-2 border">
-                        {% trans "No Active Invoices" %}
-                    </div>
-                {% endif %}
-            </div>
-
-            {# Waiting for approval tab #}
-            <div x-show="tab === '{% trans "For Approval" %}'" role="tabpanel" tabindex="0" aria-labelledby="tab-invoices-for-approval" id="panel-invoices-for-approval">
-                {% if invoices_for_approval.count %}
-                    {% render_table invoices_for_approval.table %}
-                {% else %}
-                    <div class="py-4 px-2 border">
-                        {% trans "No Invoices for Approval " %}
-                    </div>
-                {% endif %}
-            </div>
-
-            {# Waiting for conversion tab #}
-            <div x-show="tab === '{% trans "For Conversion" %}'" role="tabpanel" tabindex="0" aria-labelledby="tab-invoices-for-conversion" id="panel-invoices-for-conversion">
-                {% if invoices_to_convert.count %}
-                    {% render_table invoices_to_convert.table %}
-                {% else %}
-                    <div class="py-4 px-2 border">
-                        {% trans "No Invoices for Conversion " %}
-                    </div>
-                {% endif %}
+                       aria-label="{% trans 'For Conversion' %}" />
+                <div class="tab-content border-base-300 bg-base-100"
+                     role="tabpanel"
+                     tabindex="0"
+                     aria-labelledby="tab-invoices-for-conversion"
+                     id="panel-invoices-for-conversion">
+                    {% if invoices_to_convert.count %}
+                        {% render_table invoices_to_convert.table %}
+                    {% else %}
+                        <span class="block p-4">
+                            {% trans "No invoices for conversion " %}
+                        </span>
+                    {% endif %}
+                </div>
             </div>
 
         </div>

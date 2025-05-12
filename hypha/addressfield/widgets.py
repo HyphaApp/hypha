@@ -95,6 +95,6 @@ class AddressWidget(NestedMultiWidget):
 
     def __init__(self, *args, **kwargs):
         attrs = kwargs.get("attrs", {})
-        attrs["class"] = "address"
+        attrs["class"] = ""
         kwargs["attrs"] = attrs
         super().__init__(*args, **kwargs)

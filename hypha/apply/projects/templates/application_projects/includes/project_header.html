@@ -1,7 +1,7 @@
 {% load dashboard_statusbar_tags %}
 
 <h1
-    class="mb-0 font-medium"
+    class="mb-2 text-3xl font-medium"
     hx-get='{% url "apply:projects:project_title" object.submission.id %}'
     hx-trigger="load, titleUpdated from:body"
 >

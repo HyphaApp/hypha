@@ -1,8 +1,8 @@
 {% load i18n statusbar_tags %}
 
-<h1 class="mb-0 font-medium">
+<h1 class="body-h1">
     <span id="app-title">{{ object.title }}</span>
-    <span class="text-gray-400">#{{ object.application_id }}</span>
+    <span class="text-fg-muted">#{{ object.application_id }}</span>
 </h1>
 
 <div class="mt-1 text-sm font-medium heading heading--meta">
@@ -32,4 +32,6 @@
     </span>
 </div>
 
-{% status_bar object.workflow object.phase request.user author=object.user same_stage=True %}
+<div>
+    {% status_bar object.workflow object.phase request.user author=object.user same_stage=True %}
+</div>

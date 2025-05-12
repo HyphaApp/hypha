@@ -1,0 +1,6 @@
+<input
+    class="validator {% if widget.type == 'text' or widget.type == 'email' or widget.type == 'password' %}input{% endif %}{% if widget.type == 'checkbox' %}checkbox{% endif %}{% if widget.type == 'radio' %}radio{% endif %}"
+    type="{{ widget.type }}"
+    name="{{ widget.name }}"{% if widget.value != None %}
+        value="{{ widget.value|stringformat:'s' }}"{% endif %}{% include "django/forms/widgets/attrs.html" %}
+>

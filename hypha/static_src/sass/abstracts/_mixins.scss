@@ -116,41 +116,6 @@
   }
 }
 
-@mixin table-ordering-styles {
-  thead {
-    th {
-      // ordering
-      &.desc,
-      &.asc {
-        position: relative;
-        color: variables.$color--dark-grey;
-
-        &::after {
-          position: absolute;
-          inset-block-start: 50%;
-          margin-inline-start: 3px;
-        }
-
-        a {
-          color: inherit;
-        }
-      }
-
-      &.desc {
-        &::after {
-          @include triangle(top);
-        }
-      }
-
-      &.asc {
-        &::after {
-          @include triangle(bottom);
-        }
-      }
-    }
-  }
-}
-
 @mixin table-checkbox {
   input[type="checkbox"] {
     margin: 0 auto;

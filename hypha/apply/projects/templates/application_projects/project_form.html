@@ -12,7 +12,7 @@
 
     {% include "forms/includes/form_errors.html" with form=form %}
 
-    <div class="wrapper wrapper--default-bg wrapper--form wrapper--sidebar">
+    <div class="wrapper wrapper--form wrapper--sidebar">
         <div class="wrapper--sidebar--inner">
             <form class="form" method="post">
                 {% csrf_token %}
@@ -28,7 +28,7 @@
                     {% trans "Cancel" %}
                 </a>
 
-                <button class="button button--submit button--top-space button--primary" type="submit">
+                <button class="mt-4 btn btn-primary" type="submit">
                     {% trans "Save" %}
                 </button>
 

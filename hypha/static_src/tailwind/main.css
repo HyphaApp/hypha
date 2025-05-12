@@ -1,13 +1,15 @@
 @import "tailwindcss";
 @import "./base/variables.css" layer(base);
 @import "./base/core.css" layer(base);
-@import "./base/forms.css" layer(components);
+@import "./base/forms.css" layer(utility);
 @import "./components/choices.css" layer(components);
 @import "./components/daterangepicker.css" layer(components);
 @import "./components/django-file-field.css" layer(components);
+@import "./components/nprogress";
 
-@plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+@plugin 'daisyui' {
+}
 
 @theme {
   --color-light-blue: #0d7db0;
@@ -15,10 +17,9 @@
   --color-sky-blue: #e7f2f6;
   --color-tomato: #f05e54;
   --color-mid-grey: #cfcfcf;
-  --color-light-grey: #f7f7f7;
   --color-arsenic: #404041;
-  --color-fg-muted: var(--color-fg-muted);
-  --color-fg-default: var(--color-fg-default);
+  --color-fg-default: var(--color-base-content);
+  --color-fg-muted: color-mix(in oklab, currentColor 60%, transparent);
 }
 
 /*
@@ -35,7 +36,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--color-base-300, currentColor);
   }
 
   /* Transitioning page view. */
@@ -46,6 +47,10 @@
   :root {
     /* Activate transition to intrinsic sizes like auto and fit-content. */
     interpolate-size: allow-keywords;
+  }
+
+  .table-container {
+    @apply overflow-x-auto;
   }
 }
 

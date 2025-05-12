@@ -28,7 +28,8 @@ INSTALLED_APPS = [
     "social_django",
     "django_htmx",
     "heroicons",
-    "django_web_components",
+    "django_web_components",  # Depreciated in favour of django-cotton.
+    "django_cotton.apps.SimpleAppConfig",
     "wagtail_modeladmin",
     "wagtail.contrib.settings",
     "wagtail.contrib.forms",

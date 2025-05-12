@@ -1,13 +1,10 @@
 :root {
-  --color-fg-muted: #656d76;
-  --color-fg-default: #1f2328;
   --color-bg-default: #fff;
   --color-header-bg: #fff;
 
   /* Default */
   --color-white: #fff;
   --color-black: #1f2328;
-  --color-light-grey: #f7f7f7;
   --color-light-mid-grey: #e8e8e8;
   --color-mid-grey: #cfcfcf;
   --color-mid-dark-grey: #919191;
@@ -51,7 +48,6 @@
   /* Assignment */
   --color-default: var(--color-black);
   --color-primary: var(--color-light-blue);
-  --color-error: var(--color-tomato);
   --color-correct: var(--color-mint);
   --color-button-disabled: var(--color-lighter-blue);
 
@@ -61,8 +57,6 @@
   --font-size-gamma: 28px;
   --font-size-delta: 24px;
   --font-size-epsilon: 18px;
-  --font-size-zeta: 14px;
-  --font-size-milli: 12px;
 
   /* Wrappers */
   --site-width: 1280px;

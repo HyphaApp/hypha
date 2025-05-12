@@ -1,7 +1,7 @@
 {% extends "base-apply.html" %}
 {% load wagtailcore_tags static i18n util_tags heroicons %}
 {% block title %}{% trans "Previewing" %}: {{object.title }}{% endblock %}
-{% block body_class %}bg-white{% endblock %}
+{% block body_class %}bg-base-100{% endblock %}
 
 {% block content %}
 
@@ -43,7 +43,7 @@
         </form>
 
         <div class="form__group">
-            <button class="button button--primary" form="preview-form-submit" name="submit" type="submit" :disabled="isFormSubmitting">{% trans "Submit for review" %}</button>
+            <button class="btn btn-primary" form="preview-form-submit" name="submit" type="submit" :disabled="isFormSubmitting">{% trans "Submit for review" %}</button>
             <button class="button button--secondary" form="preview-form-edit">{% trans "Edit" %}</button>
         </div>
 

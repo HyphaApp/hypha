@@ -1,0 +1,23 @@
+{% load i18n heroicons %}
+
+<form
+    action="{{ search_action }}"
+    method="get"
+    role="search"
+    class="relative"
+>
+    <label class="flex gap-2 items-center w-auto input input-sm input-border">
+        {% heroicon_mini "magnifying-glass" size=20 class="opacity-50 h-[1em]" aria_hidden=true %}
+
+        {% if show_archive and archived_param is not None %}
+            <input type="hidden" value="{{ archived_param }}" name="archived">
+        {% endif %}
+        <input
+            type="search"
+            placeholder="{% trans 'Search...' %}"
+            name="query"
+            {% if search_term %}value="{{ request.GET.query }}"{% endif %}
+            aria-label="{% trans 'Search input' %}"
+        >
+    </label>
+</form>

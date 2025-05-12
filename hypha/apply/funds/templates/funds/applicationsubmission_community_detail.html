@@ -2,20 +2,22 @@
 {% load i18n static workflow_tags review_tags determination_tags %}
 
 {% block reviews %}
-    <div class="sidebar__inner">
-        <h5>{% trans "Reviews & assignees" %}</h5>
+    <div class="card card-border bg-base-100 shadow-xs">
+        <div class="card-header">
+            <h2 class="card-title">{% trans "Reviews & assignees" %}</h2>
 
-        <div hx-trigger="revealed" hx-get="{% url "funds:submissions:partial-reviews-card" object.id %}" hx-target="this">
-            <div class="animate-pulse min-h-30">
-                <div class="mb-3 w-full h-9 bg-gray-200"></div>
-                <div class="mb-1 w-full h-6 bg-gray-200"></div>
-                <div class="mb-3 w-full h-1 bg-gray-200"></div>
-                <div class="mb-3 w-20 h-6 bg-gray-200"></div>
+            <div hx-trigger="revealed" hx-get="{% url "funds:submissions:partial-reviews-card" object.id %}" hx-target="this">
+                <div class="animate-pulse min-h-30">
+                    <div class="mb-3 w-full h-9 bg-gray-200"></div>
+                    <div class="mb-1 w-full h-6 bg-gray-200"></div>
+                    <div class="mb-3 w-full h-1 bg-gray-200"></div>
+                    <div class="mb-3 w-20 h-6 bg-gray-200"></div>
+                </div>
             </div>
-        </div>
 
-        <div class="wrapper wrapper--sidebar-buttons">
-            {% include 'review/includes/review_button.html' with submission=object class="button--half-width" %}
+            <div class="wrapper wrapper--sidebar-buttons">
+                {% include 'review/includes/review_button.html' with submission=object class="w-1/2" %}
+            </div>
         </div>
     </div>
 {% endblock %}

@@ -26,10 +26,11 @@
     "@babel/core": "^7.25.9",
     "@babel/preset-env": "^7.25.9",
     "@biomejs/biome": "^1.9.4",
-    "@tailwindcss/forms": "^0.5.9",
-    "@tailwindcss/typography": "^0.5.15",
+    "@tailwindcss/cli": "^4.1.7",
+    "@tailwindcss/typography": "^0.5.16",
     "alpinejs": "^3.14.6",
     "core-js": "^3.39.0",
+    "daisyui": "^5.0.0",
     "daterangepicker": "^3.1.0",
     "htmx.org": "^2.0.3",
     "nodemon": "^3.1.7",
@@ -37,8 +38,7 @@
     "sass": "^1.81.1",
     "stylelint": "^16.11.0",
     "stylelint-config-standard": "^36.0.1",
-    "stylelint-config-standard-scss": "^13.1.0",
-    "@tailwindcss/cli": "^4.0.13"
+    "stylelint-config-standard-scss": "^13.1.0"
   },
   "scripts": {
     "heroku-postbuild": "npm run build",

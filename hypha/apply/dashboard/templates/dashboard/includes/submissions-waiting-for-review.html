@@ -17,9 +17,19 @@
     {% endif %}
 
 {% else %}
-    <div class="py-10 px-2 w-full text-center bg-white border shadow-xs">
-        <p class="my-2 text-base">{% trans "Nice! You're all caught up. 🎉" %}</p>
-        <a class="button button--primary" href="{% url 'apply:submissions:list' %}" hx-boost='true'>{% trans "Find new applications to review" %}</a>
+    <div class="py-10 w-full text-center card card-border bg-base-100 shadow-xs">
+        <div class="card-body">
+            <p class="my-2 text-base">
+                {% trans "Nice! You're all caught up. 🎉" %} <br>
+                <a
+                    class="mt-2 btn btn-primary"
+                    href="{% url 'apply:submissions:list' %}"
+                    hx-boost='true'
+                >{% trans "Find new applications to review" %}
+                </a>
+            </p>
+        </div>
+
     </div>
     {# TODO Fill in data and update styles in future ticket #}
     <div>{# Since you last logged in #}</div>

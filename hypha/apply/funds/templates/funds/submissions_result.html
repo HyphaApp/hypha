@@ -11,109 +11,125 @@
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
         <section class="wrapper wrapper--bottom-space">
-            <h3>{% trans "Summary" %}</h3>
+            <div class="flex flex-wrap gap-4 lg:gap-8">
 
-            <div class="grid gap-4 lg:gap-8 grid-cols-[repeat(auto-fit,minmax(300px,1fr))]">
-                <section class="p-4 border shadow-sm" aria-labelledby="amounts-heading">
-                    <h5 id="amounts-heading">{% trans "Amounts" %}</h5>
-
-                    <div class="flex flex-wrap gap-4">
-                        <dl role="list" aria-label="{% trans 'Applied amounts' %}" class="grow">
-                            <dt class="pb-2 border-b text-fg-muted">
+                <section aria-labelledby="amounts-heading">
+                    <h3 id="amounts-heading" class="mb-2 card-title">{% trans "Amounts" %}</h3>
+                    <div class="shadow lg:w-full stats">
+                        <dl role="list" aria-label="{% trans 'Applied amounts' %}" class="stat">
+                            <dt class="stat-title">
                                 {% trans "Applied" %} ({% get_currency_symbol %})
                             </dt>
-                            <dd class="pt-2 text-xl font-semibold">
+                            <dd class="stat-value">
                                 {{ submission_sum|default:"0"|format_number_as_currency }}
                             </dd>
                         </dl>
-                        <dl role="list" aria-label="{% trans 'Accepted amounts' %}" class="grow">
-                            <dt class="pb-2 border-b text-fg-muted">
+                        <dl role="list" aria-label="{% trans 'Accepted amounts' %}" class="stat">
+                            <dt class="stat-title">
                                 {% trans "Accepted" %} ({% get_currency_symbol %})
                             </dt>
-                            <dd class="pt-2 text-xl font-semibold">
+                            <dd class="stat-value">
                                 {{ submission_accepted_sum|default:"0"|format_number_as_currency }}
+                            </dd>
+
+                        </dl>
+                    </div>
+                </section>
+
+                <section aria-labelledby="submissions-heading">
+                    <h3 id="submissions-heading" class="mb-2 card-title">{% trans "Submissions" %}</h3>
+                    <div class="w-full shadow stats">
+                        <dl role="list" aria-label="{% trans 'Applied submissions' %}" class="stat">
+                            <dt class="stat-title">
+                                {% trans "Applied" %}
+                            </dt>
+                            <dd class="stat-value">
+                                {{ object_list.count }}
+                            </dd>
+
+                        </dl>
+                        <dl role="list" aria-label="{% trans 'Accepted submissions' %}" class="stat">
+                            <dt class="stat-title">
+                                {% trans "Accepted" %}
+                            </dt>
+                            <dd class="stat-value">
+                                {{ submission_accepted_count|default:"0" }}
+                            </dd>
+                        </dl>
+                        <dl role="list" aria-label="{% trans 'Pending submissions' %}" class="stat">
+                            <dt class="stat-title">
+                                {% trans "Pending" %}
+                            </dt>
+                            <dd class="stat-value">
+                                {{ submission_undetermined_count|default:"0" }}
                             </dd>
                         </dl>
                     </div>
                 </section>
 
-                <section class="p-4 border shadow-sm" aria-labelledby="submissions-heading">
-                    <h5 id="submissions-heading">{% trans "Submissions" %}</h5>
-                    <div class="grid grid-cols-3 gap-4">
-                        <dl role="list" aria-label="{% trans 'Applied submissions' %}">
-                            <dt class="pb-2 border-b text-fg-muted">{% trans "Applied" %}</dt>
-                            <dd class="pt-2 text-xl font-semibold">{{ object_list.count }}</dd>
+                <section aria-labelledby="reviews-heading">
+                    <h3 id="reviews-heading" class="mb-2 card-title">{% trans "Reviews" %}</h3>
+                    <div class="w-full shadow stats">
+                        <dl role="list" aria-label="{% trans 'All reviews' %}" class="stat">
+                            <dt class="stat-title">
+                                {% trans "All" %}
+                            </dt>
+                            <dd class="stat-value">
+                                {{ review_count|default:"0" }}
+                            </dd>
                         </dl>
-                        <dl role="list" aria-label="{% trans 'Accepted submissions' %}">
-                            <dt class="pb-2 border-b text-fg-muted">{% trans "Accepted" %}</dt>
-                            <dd class="pt-2 text-xl font-semibold">{{ submission_accepted_count|default:"0" }}</dd>
+                        <dl role="list" aria-label="{% trans 'Your reviews' %}" class="stat">
+                            <dt class="stat-title">
+                                {% trans "You" %}
+                            </dt>
+                            <dd class="stat-value">
+                                {{ review_my_count|default:"0" }}
+                            </dd>
                         </dl>
-                        <dl role="list" aria-label="{% trans 'Pending submissions' %}">
-                            <dt class="pb-2 border-b text-fg-muted">{% trans "Pending" %}</dt>
-                            <dd class="pt-2 text-xl font-semibold">{{ submission_undetermined_count|default:"0" }}</dd>
+                        <dl role="list" aria-label="{% trans 'Your average score' %}" class="stat">
+                            <dt class="stat-title">
+                                {% trans "Your avg. score" %}
+                            </dt>
+                            <dd class="stat-value">
+                                {{ review_my_score|floatformat:"0"|default:"0" }}
+                            </dd>
                         </dl>
-                    </div>
-                </section>
-
-                <section class="p-4 border shadow-sm" aria-labelledby="reviews-heading">
-                    <h5 id="reviews-heading">{% trans "Reviews" %}</h5>
-                    <div class="mt-2 mb-0">
-                        <div class="grid grid-cols-4 gap-4">
-                            <dl role="list" aria-label="{% trans 'All reviews' %}">
-                                <dt class="pb-2 border-b text-fg-muted">{% trans "All" %}</dt>
-                                <dd class="pt-2 text-xl font-semibold">{{ review_count|default:"0" }}</dd>
-                            </dl>
-                            <dl role="list" aria-label="{% trans 'Your reviews' %}">
-                                <dt class="pb-2 border-b text-fg-muted">
-                                    {% trans "You" %}
-                                </dt>
-                                <dd class="pt-2 text-xl font-semibold">
-                                    {{ review_my_count|default:"0" }}
-                                </dd>
-                            </dl>
-                            <dl role="list" aria-label="{% trans 'Your average score' %}" class="col-span-2">
-                                <dt class="pb-2 border-b text-fg-muted">
-                                    {% trans "Your avg. score" %}
-                                </dt>
-                                <dd class="pt-2 text-xl font-semibold">
-                                    {{ review_my_score|floatformat:"0"|default:"0" }}
-                                </dd>
-                            </dl>
-                        </div>
                     </div>
                 </section>
             </div>
         </section>
 
         <section class="wrapper wrapper--bottom-space" aria-labelledby="submission-value-total">
-            <h3 id="submission-value-total">{% trans "Submission value totals" %}</h3>
+            <h3 id="submission-value-total" class="card-title">{% trans "Totals" %}</h3>
+
 
             {% include "funds/includes/table_filter_and_search.html" with search_term=search_term %}
 
-            <div class="grid gap-4 pt-6 max-w-none border-t lg:gap-8 prose grid-cols-[repeat(auto-fit,minmax(300px,1fr))]">
-                <section class='flex flex-col gap-4 p-4 border shadow-sm' aria-labelledby="submissions-count-heading">
-                    <span id="submissions-count-heading" class="text-fg-muted">{% trans "Number of submissions" %}</span>
-                    <span class="text-2xl font-semibold">
+            <div class="w-full rounded-none border stats border-base-300">
+                <section class='stat' aria-labelledby="submissions-count-heading">
+                    <span id="submissions-count-heading" class="stat-title">{% trans "Number of submissions" %}</span>
+                    <span class="stat-value">
                         {{ count_values }}<sup>{% if not count_values == object_list.count %}*{% endif %}</sup>
                     </span>
                 </section>
-                <section class='flex flex-col gap-4 p-4 border shadow-sm' aria-labelledby="average-value-heading">
-                    <span id="average-value-heading" class="text-fg-muted">{% trans "Average value" %}</span>
-                    <span class="text-2xl font-semibold">
+                <section class='stat' aria-labelledby="average-value-heading">
+                    <span id="average-value-heading" class="stat-title">{% trans "Average value" %}</span>
+                    <span class="stat-value">
                         {{ average_value|format_number_as_currency }}
                     </span>
                 </section>
 
-                <section class='flex flex-col gap-4 p-4 border shadow-sm' aria-labelledby="total-value-heading">
-                    <span id="total-value-heading" class="text-fg-muted">{% trans "Total value" %}</span>
-                    <span class="text-2xl font-semibold">
+                <section class='stat' aria-labelledby="total-value-heading">
+                    <span id="total-value-heading" class="stat-title">{% trans "Total value" %}</span>
+                    <span class="stat-value">
                         {{ total_value|format_number_as_currency }}
                     </span>
                 </section>
             </div>
+
             {% if not count_values == object_list.count %}
                 {% with object_list.count|subtract:count_values as count_diff %}
-                    <p class="text-xs text-fg-muted" aria-live="polite">
+                    <p class="text-xs text-base-content/60" aria-live="polite">
                         {% blocktrans %}*{{ count_diff }} submission(s) lack requested amount fields or data and are not included.{% endblocktrans %}
                     </p>
                 {% endwith %}

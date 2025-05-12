@@ -2,20 +2,11 @@
 @use "../abstracts/variables";
 
 // stylelint-disable selector-class-pattern
-
 .all-submissions-table {
-  @include mixins.table-ordering-styles;
-
   $root: &;
   font-size: 14px;
 
   thead {
-    display: none;
-
-    @include mixins.media-query(lg) {
-      display: table-header-group;
-    }
-
     th {
       &.reviews_stats {
         color: variables.$color--black-60;
@@ -42,14 +33,14 @@
         }
       }
 
-      &.selected {
+      /* &.selected {
         @include mixins.table-checkbox;
 
         @include mixins.media-query(lg) {
           width: 50px;
           padding-inline-end: 0;
         }
-      }
+      } */
 
       &.comments {
         @include mixins.media-query(lg) {
@@ -61,12 +52,6 @@
         @include mixins.media-query(lg) {
           width: 110px;
         }
-      }
-    }
-
-    tr {
-      &:hover {
-        box-shadow: none;
       }
     }
   }
@@ -114,17 +99,13 @@
 
       // comments
       &.comments {
-        display: none;
-
-        @include mixins.media-query(lg) {
-          display: table-cell;
-          font-size: 13px;
-          text-align: center;
-          vertical-align: middle;
-          background: url("./../images/quote-outline.svg") transparent
-            no-repeat center center;
-          background-size: 24px;
-        }
+        display: table-cell;
+        font-size: 13px;
+        text-align: center;
+        vertical-align: middle;
+        background: url("./../images/quote-outline.svg") transparent
+          no-repeat center center;
+        background-size: 24px;
       }
 
       &.reviews_stats {
