@@ -2,13 +2,16 @@
 @use "../abstracts/variables";
 
 .sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
   @include mixins.media-query(md) {
     width: 345px;
   }
 
   &__inner {
     padding: 20px;
-    margin-block-end: 20px;
     border: 1px solid variables.$color--mid-grey;
 
     &--light-blue {

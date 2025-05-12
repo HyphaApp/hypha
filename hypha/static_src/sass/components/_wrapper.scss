@@ -104,7 +104,7 @@
     padding: 20px 0;
 
     @include mixins.media-query(md) {
-      padding: 3rem 0;
+      padding: 2rem 0;
     }
   }
 
@@ -133,7 +133,7 @@
     margin: 20px 0;
 
     @include mixins.media-query(md) {
-      margin: 3rem 0;
+      margin: 2rem 0;
     }
   }
 
@@ -189,7 +189,7 @@
 
   &--status-bar-outer {
     padding: 20px 0;
-    background-color: variables.$color--white;
+    background-color: var(--color-base-100);
     border-block-end: 3px solid variables.$color--light-grey;
   }
 

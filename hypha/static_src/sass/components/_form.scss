@@ -347,6 +347,8 @@
   input[type="datetime-local"] {
     width: 100%;
     max-width: 385px;
+    background-color: var(--color-base-100);
+    border-color: var(--input-color);
 
     &.invalid {
       border: 2px solid variables.$color--error;
@@ -356,7 +358,7 @@
 
   &__error {
     select,
-    textarea,
+    /* textarea, */
     input[type="url"],
     input[type="text"],
     input[type="date"],
@@ -412,14 +414,6 @@
     .no-js & {
       @extend %on-screen;
     }
-  }
-
-  textarea,
-  &__textarea {
-    display: block;
-    width: 100%;
-    padding: 0.4em;
-    border: 1px solid variables.$color--mid-grey;
   }
 
   .wmd-preview {

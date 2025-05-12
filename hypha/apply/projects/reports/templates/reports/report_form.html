@@ -22,7 +22,7 @@
 
         {% include "forms/includes/form_errors.html" with form=form %}
 
-        <div class="wrapper wrapper--default-bg wrapper--form">
+        <div class="wrapper wrapper--form">
             <div class="wrapper--sidebar--inner">
 
                 <p class="flex items-center py-2 px-3 mt-0 mb-8 text-sm border bg-(--color-light-blue-90)">
@@ -59,7 +59,7 @@
             </div>
         </div>
     {% else %}
-        <div class="wrapper wrapper--default-bg wrapper--form wrapper--sidebar">
+        <div class="wrapper wrapper--form wrapper--sidebar">
             <div class="wrapper--sidebar--inner">
                 {% if request.user.is_apply_staff %}
                     <p>

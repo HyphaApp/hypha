@@ -3,7 +3,7 @@
 <div class="border-b-2 border-b-slate-300">
     <section class="ml-4 max-w-3xl md:ml-20">
 
-        <div class="timeline">
+        <div class="h-timeline">
             {% for activity in activities %}
                 {% if activity.type == "comment" %}
                     {% include "activity/ui/activity-comment-item.html" with activity=activity %}
@@ -20,7 +20,7 @@
                     hx-trigger="intersect"
                     hx-target="this"
                     hx-swap="outerHTML transition:true"
-                    hx-select=".timeline"
+                    hx-select=".h-timeline"
                 >Show more...</a>
             {% endif %}
         </div>

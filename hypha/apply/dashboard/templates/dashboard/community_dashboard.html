@@ -13,7 +13,7 @@
         <div class="wrapper wrapper--cta-box">
             <h3 class="mb-0 text-xl">{% trans "Submit a new application" %}</h3>
             <p class="mt-0 mb-4 text-sm text-fg-muted">{% trans "Apply now for our open rounds" %}</p>
-            <a class="button button--primary" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
+            <a class="btn btn-primary" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
         </div>
     {% endadminbar %}
 
@@ -61,7 +61,7 @@
                             </div>
                             {% if request.user|has_edit_perm:submission %}
                                 <div>
-                                    <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
+                                    <a class="btn btn-primary" href="{% url 'funds:submissions:edit' submission.id %}">
                                         {% if submission.status == 'draft_proposal' %}
                                             {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
                                         {% else %}

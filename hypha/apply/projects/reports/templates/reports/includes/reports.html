@@ -4,7 +4,7 @@
 {% can "update_project_reports" object as can_update_project_reports %}
 {% can "update_report_config" object as can_update_report_config %}
 
-<section class="docs-block wrapper--outer-space-large">
+<section class="border rounded-box border-base-300 wrapper--outer-space-large">
     <header class="docs-block__header">
         <h2 class="m-0 text-lg font-semibold">
             {% trans "Reports" %}
@@ -87,7 +87,7 @@
                                         {% endif %}
                                     {% else %}
                                         {% if can_update_project_reports %}
-                                            <button type="button" class="btn data-block__action-link" hx-post="{% url "apply:projects:reports:skip" pk=report.pk %}">{% trans "Unskip" %}</button>
+                                            <button type="button" class="btn btn-link" hx-post="{% url "apply:projects:reports:skip" pk=report.pk %}">{% trans "Unskip" %}</button>
                                         {% endif %}
                                     {% endif %}
                                 </td>

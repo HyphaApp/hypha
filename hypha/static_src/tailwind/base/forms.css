@@ -16,7 +16,12 @@ select {
   @apply border-gray-300 focus:ring-dark-blue disabled:opacity-75 disabled:cursor-not-allowed;
 }
 
-[type="checkbox"],
+textarea {
+  @apply textarea w-full;
+}
 [type="radio"] {
-  @apply w-5 h-5 border-dark-blue text-dark-blue focus:ring-dark-blue;
+  @apply radio;
+}
+[type="checkbox"] {
+  @apply checkbox;
 }

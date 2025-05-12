@@ -5,7 +5,8 @@
 // Components
 @use "components/nprogress";
 @use "components/all-submissions-table";
-@use "components/all-reviews-table";
+
+/* @use "components/all-reviews-table"; */
 @use "components/admin-bar";
 @use "components/actions-bar";
 @use "components/card";
@@ -37,7 +38,6 @@
 @use "components/traffic-light";
 @use "components/wrapper";
 @use "components/revisions";
-@use "components/stat-block";
 @use "components/docs-block";
 @use "components/data-block";
 @use "components/invoice-block";

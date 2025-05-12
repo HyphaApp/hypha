@@ -76,7 +76,7 @@
         </div>
     {% endif %}
 
-    <form method="GET" class="flex sticky top-0 flex-wrap gap-2 justify-end items-center py-2 px-3 mt-3 bg-gray-50 border-t border-gray-200 md:gap-5 md:text-sm md:font-medium z-[5] border-x">
+    <form method="GET" class="flex sticky top-0 flex-wrap gap-2 justify-end items-center py-2 px-3 mt-3 border-t md:gap-5 md:text-sm md:font-medium bg-base-200 border-base-300 z-[5] border-x">
         <span class="hidden items-center py-1 md:inline-flex"></span>
         {% for field_name, field in filter.form|get_filter_fields %}
             {% if filter.form %}

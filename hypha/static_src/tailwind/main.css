@@ -6,8 +6,10 @@
 @import "./components/daterangepicker.css" layer(components);
 @import "./components/django-file-field.css" layer(components);
 
-@plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+@plugin '@tailwindcss/forms';
+@plugin 'daisyui' {
+}
 
 @theme {
   --color-light-blue: #0d7db0;

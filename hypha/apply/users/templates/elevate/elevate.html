@@ -17,7 +17,7 @@
 
             {% if request.user.has_usable_password %}
                 <form
-                    class="px-4 pt-4 mb-4 bg-gray-50 border rounded-xs form form--error-inline"
+                    class="px-4 pt-4 mb-4 border bg-base-200 rounded-xs form form--error-inline"
                     method="post"
                     action="./"
                     data-test-id="section-password-input"
@@ -29,14 +29,14 @@
                     {% endfor %}
 
                     <div class="form__group">
-                        <button class="button button--primary" type="submit">{% trans "Confirm" %}</button>
+                        <button class="btn btn-primary" type="submit">{% trans "Confirm" %}</button>
                     </div>
                 </form>
             {% else %}
                 <section data-test-id="section-confirm" id="confirm-code-input" class="px-4 pt-4 mb-4 text-center">
 
                     <button
-                        class="button button--primary"
+                        class="btn btn-primary"
                         type="submit"
                         hx-post="{% url 'users:elevate_send_confirm_access_email' %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}"
                         hx-swap="outerHTML transition:true"

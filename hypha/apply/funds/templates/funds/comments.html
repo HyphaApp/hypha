@@ -71,9 +71,9 @@
                             <div class="-mt-4 w-full lg:flex-1 max-w-[53rem]">
                                 {% include "forms/includes/field.html" with field=form.message label_classes="sr-only" %}
 
-                                <div class="text-right">
+                                <div class="hidden mt-4 text-right lg:block">
                                     <button
-                                        class="w-full lg:w-auto button button--primary"
+                                        class="w-full lg:w-auto btn btn-primary"
                                         type="submit"
                                     >
                                         {% trans "Add Comment" %}
@@ -86,6 +86,12 @@
                                 {% include "forms/includes/field.html" with field=form.assign_to %}
                                 {% include "forms/includes/field.html" with field=form.attachments %}
                             </div>
+                            <button
+                                class="mt-4 w-full lg:hidden lg:w-auto btn btn-primary"
+                                type="submit"
+                            >
+                                {% trans "Add Comment" %}
+                            </button>
                         </div>
                     </form>
                 </div>

@@ -2,14 +2,16 @@
 {% load i18n static workflow_tags review_tags determination_tags %}
 
 {% block flags %}
-    <div class="sidebar__inner">
-        <h5>{% trans "Flags" %}</h5>
-        {% include 'flags/flags.html' with submission=object user=request.user %}
-    </div>
+    <section class="card card-border bg-base-100 text-base-content" id="screening-status-{{ object.id }}">
+        <div class="card-body">
+            <h2 class="card-title">{% trans "Flags" %}</h2>
+            {% include 'flags/flags.html' with submission=object user=request.user %}
+        </div>
+    </section>
 {% endblock %}
 
 {% block reviews %}
-    <div class="sidebar__inner">
+    <div class="card card-border bg-base-100 text-base-content">
         <h5>{% trans "Reviews & assignees" %}</h5>
 
         <div
@@ -26,7 +28,7 @@
         </div>
 
         <div class="wrapper wrapper--sidebar-buttons">
-            {% include 'review/includes/review_button.html' with submission=object class="button--half-width" %}
+            {% include 'review/includes/review_button.html' with submission=object class="w-1/2" %}
         </div>
     </div>
 {% endblock %}

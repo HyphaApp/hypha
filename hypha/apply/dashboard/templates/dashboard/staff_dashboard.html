@@ -10,7 +10,7 @@
         {% slot sub_heading %}{% trans "Welcome" %}, {{ request.user }}!{% endslot %}
 
         {% if perms.wagtailadmin.access_admin %}
-            <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="button button--primary">
+            <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="btn btn-primary">
                 {% heroicon_solid "cog-6-tooth" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
                 {% trans "Administration" %}
             </a>
@@ -22,43 +22,44 @@
             {% if my_tasks.count %}
                 {% include "dashboard/includes/my-tasks.html" with mytasks=mytasks %}
             {% endif %}
-
-            <div class="stat-block">
-                <a href="#submissions-awaiting-review" class="border shadow-xs stat-block__item">
-                    <p class="stat-block__number">{{ awaiting_reviews.count }}</p>
-                    <p class="stat-block__text">{% trans "Submissions waiting for your review" %}</p>
-                    {% if awaiting_reviews.count %}
-                        <div class="stat-block__view">{% trans "View" %}</div>
+            <div class="w-full shadow stats">
+                <div class="stat relative {% if awaiting_reviews.count > 0 %}hover:bg-primary/10 transition-colors{% endif %}" role="region" aria-labelledby="awaiting-reviews-title">
+                    <h4 id="awaiting-reviews-title" class="m-0 stat-title">{% trans "Submissions waiting for your review" %}</h4>
+                    <div class="stat-value" aria-live="polite">{{ awaiting_reviews.count }}</div>
+                    {% if awaiting_reviews.count > 0 %}
+                        <a href="#submissions-awaiting-review" class="absolute inset-0" aria-label="{% trans 'View submissions waiting for your review' %}"></a>
                     {% endif %}
-                </a>
+                </div>
                 {% if PROJECTS_ENABLED %}
-                    <a href="#active-projects" class="border shadow-xs stat-block__item">
-                        <p class="stat-block__number">{{ projects.count }}</p>
-                        <p class="stat-block__text">{% trans "Live projects under your management" %}</p>
-                        {% if projects.count %}
-                            <div class="stat-block__view">{% trans "View" %}</div>
+                    <div class="stat relative {% if projects.count > 0 %}hover:bg-primary/10 transition-colors{% endif %}" role="region" aria-labelledby="projects-title">
+                        <h4 id="projects-title" class="m-0 stat-title">{% trans "Live projects under your management" %}</h4>
+                        <div class="stat-value" aria-live="polite">{{ projects.count }}</div>
+                        {% if projects.count > 0 %}
+                            <a href="#active-projects" class="absolute inset-0" aria-label="{% trans 'View live projects under your management' %}"></a>
                         {% endif %}
-                    </a>
-                    <a href="#active-invoices" class="border shadow-xs stat-block__item">
-                        <p class="stat-block__number">{{ active_invoices.count }}</p>
-                        <p class="stat-block__text">{% trans "Requests for invoices requiring your attention" %}</p>
-                        {% if active_invoices.count %}
-                            <div class="stat-block__view">{% trans "View" %}</div>
+                    </div>
+                    <div class="stat relative {% if active_invoices.count > 0 %}hover:bg-primary/10 transition-colors{% endif %}" role="region" aria-labelledby="invoices-title">
+                        <h4 id="invoices-title" class="m-0 stat-title">{% trans "Requests for invoices requiring your attention" %}</h4>
+                        <div class="stat-value" aria-live="polite">{{ active_invoices.count }}</div>
+                        {% if active_invoices.count > 0 %}
+                            <a href="#active-invoices" class="absolute inset-0" aria-label="{% trans 'View invoice requests requiring your attention' %}"></a>
                         {% endif %}
-                    </a>
+                    </div>
                 {% else %}
-                    {% if my_flagged.count %}
-                        <a href="#submissions-flagged" class="border shadow-xs stat-block__item">
-                            <p class="stat-block__number">{{ my_flagged.count }}</p>
-                            <p class="stat-block__text">Your flagged submissions</p>
-                        </a>
-                    {% endif %}
-                    {% if my_reviewed.count %}
-                        <a href="#my-review" class="border shadow-xs stat-block__item">
-                            <p class="stat-block__number">{{ my_reviewed.count }}</p>
-                            <p class="stat-block__text">{% trans "Your previous reviews" %}</p>
-                        </a>
-                    {% endif %}
+                    <div class="stat relative {% if my_flagged.count > 0 %}hover:bg-primary/10 transition-colors{% endif %}" role="region" aria-labelledby="flagged-title">
+                        <h4 id="flagged-title" class="m-0 stat-title">{% trans "Submissions flagged by you" %}</h4>
+                        <div class="stat-value" aria-live="polite">{{ my_flagged.count }}</div>
+                        {% if my_flagged.count > 0 %}
+                            <a href="#submissions-flagged" class="absolute inset-0" aria-label="{% trans 'View submissions flagged by you' %}"></a>
+                        {% endif %}
+                    </div>
+                    <div class="stat relative {% if my_reviewed.count > 0 %}hover:bg-primary/10 transition-colors{% endif %}" role="region" aria-labelledby="my-reviews-title">
+                        <h4 id="my-reviews-title" class="m-0 stat-title">{% trans "Your previous reviews" %}</h4>
+                        <div class="stat-value" aria-live="polite">{{ my_reviewed.count }}</div>
+                        {% if my_reviewed.count > 0 %}
+                            <a href="#my-review" class="absolute inset-0" aria-label="{% trans 'View your previous reviews' %}"></a>
+                        {% endif %}
+                    </div>
                 {% endif %}
             </div>
         </div>

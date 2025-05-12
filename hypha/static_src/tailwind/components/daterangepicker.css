@@ -303,11 +303,11 @@
 }
 
 .daterangepicker.show-ranges.rtl .drp-calendar.right {
-  @apply border-r border-gray-200;
+  @apply border-r border-base-300;
 }
 
 .daterangepicker.show-ranges.ltr .drp-calendar.left {
-  @apply border-l border-gray-200;
+  @apply border-l border-base-300;
 }
 
 .daterangepicker .ranges {
