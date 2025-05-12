@@ -13,39 +13,38 @@
                 {% include "funds/includes/application_header.html" %}
             {% endif %}
 
-            <div class="tabs">
-                <div class="tabs__container">
+            <div role="tablist" class="font-semibold tabs tabs-lg tabs-lift">
+                <a
+                    class="tab [--color-base-content:var(--color-neutral-content)]"
+                    href="{% url 'funds:submissions:detail' pk=object.id %}">
+                    {% trans "Application" %}
+                </a>
+
+                {% if object.project and PROJECTS_ENABLED %}
                     <a
-                        class="tab__item"
-                        href="{% url 'funds:submissions:detail' pk=object.id %}">
-                        {% trans "Application" %}
-                    </a>
-
-                    {% if object.project and PROJECTS_ENABLED %}
-                        <a class="tab__item"
-                           href="{% url 'funds:submissions:project' pk=object.id %}"
-                        >
-                            {% trans "Project" %}
-                        </a>
-                    {% endif %}
-
-                    <a class="tab__item tab__item--active"
-                       href="{% url 'funds:submissions:comments' pk=object.id %}"
-                       data-tab="tab-2"
+                        class="tab [--color-base-content:var(--color-neutral-content)]"
+                        href="{% url 'funds:submissions:project' pk=object.id %}"
                     >
-                        {% trans "Conversation" %} ({{ comments_count }})
+                        {% trans "Project" %}
                     </a>
+                {% endif %}
 
-                    {# is_staff is only used for Django Admin. #}
-                    {% if request.user.is_staff %}
-                        <a
-                            class="hidden md:block tab__item ms-auto"
-                            href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}"
-                        >
-                            {% trans "View message log" %}
-                        </a>
-                    {% endif %}
-                </div>
+                <a class="tab tab-active"
+                   href="{% url 'funds:submissions:comments' pk=object.id %}"
+                   data-tab="tab-2"
+                >
+                    {% trans "Conversation" %} ({{ comments_count }})
+                </a>
+
+                {# is_staff is only used for Django Admin. #}
+                {% if request.user.is_staff %}
+                    <a
+                        class="hidden md:block tab ms-auto [--color-base-content:var(--color-neutral-content)]"
+                        href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}"
+                    >
+                        {% trans "View message log" %}
+                    </a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -71,9 +70,9 @@
                             <div class="-mt-4 w-full lg:flex-1 max-w-[53rem]">
                                 {% include "forms/includes/field.html" with field=form.message label_classes="sr-only" %}
 
-                                <div class="text-right">
+                                <div class="hidden mt-4 text-right lg:block">
                                     <button
-                                        class="w-full lg:w-auto button button--primary"
+                                        class="w-full lg:w-auto btn btn-primary"
                                         type="submit"
                                     >
                                         {% trans "Add Comment" %}
@@ -86,6 +85,12 @@
                                 {% include "forms/includes/field.html" with field=form.assign_to %}
                                 {% include "forms/includes/field.html" with field=form.attachments %}
                             </div>
+                            <button
+                                class="mt-4 w-full lg:hidden lg:w-auto btn btn-primary"
+                                type="submit"
+                            >
+                                {% trans "Add Comment" %}
+                            </button>
                         </div>
                     </form>
                 </div>

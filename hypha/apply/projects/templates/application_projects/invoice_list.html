@@ -11,11 +11,22 @@
         {% slot sub_heading %}{% trans "View, search and filter all project invoices" %}{% endslot %}
     {% endadminbar %}
 
+    <div class="flex justify-between mt-2">
+        <div class="text-sm breadcrumbs">
+            <ul>
+                <li><a href="{% url 'dashboard:dashboard' %}">Home</a></li>
+                <li><a href="{% url 'apply:projects:all' %}">Projects</a></li>
+                <li>Invoices</li>
+            </ul>
+        </div>
+        {% include "funds/includes/search-input.html" %}
+    </div>
+
     <div class="mt-4 wrapper wrapper--large">
 
         {% if table %}
             {% trans "invoices" as search_placeholder %}
-            {% include "funds/includes/table_filter_and_search.html" with search_term=search_term use_search=True invoice_batch_actions=True search_placeholder=search_placeholder %}
+            {% include "funds/includes/table_filter_and_search.html" with search_term=search_term use_search=false invoice_batch_actions=True search_placeholder=search_placeholder %}
             {% render_table table %}
         {% else %}
             <p>{% trans "No Invoices available" %}</p>

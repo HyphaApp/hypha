@@ -3,12 +3,18 @@
 {% for invoice in invoices %}
     <tr>
         {% display_invoice_status_for_user user invoice as invoice_status %}
-        <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
-        <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Invoice date" %}: </span>{% if invoice.invoice_date %}{{ invoice.invoice_date }}{% else %} {{ invoice.requested_at.date }} {% endif %}</td>
-        <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Invoice no." %}: </span>{{ invoice.invoice_number }}</td>
-        <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
-        <td class="flex flex-wrap gap-2 justify-center py-4 px-0 xl:flex-nowrap">
-            <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" >
+        <td>{{ invoice.requested_at.date }}</td>
+        <td>
+            {% if invoice.invoice_date %}
+                {{ invoice.invoice_date }}
+            {% else %}
+                {{ invoice.requested_at.date }}
+            {% endif %}
+        </td>
+        <td>{{ invoice.invoice_number }}</td>
+        <td>{{ invoice_status }}</td>
+        <td class="flex flex-wrap gap-2 justify-end py-4 xl:flex-nowrap">
+            <a class="btn btn-sm btn-outline btn-primary" href="{{ invoice.get_absolute_url }}" >
                 {% heroicon_micro "eye" aria_hidden=true class="me-1" %}
                 {% trans "View" %}
             </a>
@@ -16,27 +22,27 @@
                 {% can_edit invoice user as user_can_edit_request %}
                 {% if user_can_edit_request %}
                     <a
-                        class="data-block__action-icon-link"
+                        class="btn btn-sm btn-outline btn-secondary btn-square"
                         href="{% url 'apply:projects:invoice-edit' pk=invoice.project.submission.pk invoice_pk=invoice.pk %}"
                     >
-                        {% heroicon_micro "pencil-square" aria_hidden=true class="me-1" %}
-                        {% trans "Edit" %}
+                        {% heroicon_micro "pencil-square" aria_hidden=true %}
+                        <span class="sr-only">{% trans "Edit" %}</span>
                     </a>
                 {% endif %}
 
                 {% can_delete invoice user as user_can_delete_request %}
                 {% if user.is_applicant and user_can_delete_request %}
                     <a
-                        class="text-red-500 data-block__action-icon-link"
+                        class="btn btn-sm btn-outline btn-warning btn-square"
                         href="{% url 'apply:projects:invoice-delete' pk=invoice.project.submission.pk invoice_pk=invoice.pk %}"
                     >
-                        {% heroicon_micro "trash" aria_hidden=true class="me-1" %}
-                        {% trans "Delete" %}
+                        {% heroicon_micro "trash" aria_hidden=true %}
+                        <span class="sr-only">{% trans "Delete" %}</span>
                     </a>
                 {% endif %}
                 {% can_change_status invoice user as can_change_invoice_status %}
                 {% if can_change_invoice_status %}
-                    <button class="button button--project-action" hx-get="{% url 'apply:projects:invoice-update' pk=invoice.project.pk invoice_pk=invoice.pk %}" hx-target="#htmx-modal">
+                    <button class="btn btn-primary" hx-get="{% url 'apply:projects:invoice-update' pk=invoice.project.pk invoice_pk=invoice.pk %}" hx-target="#htmx-modal">
                         {% trans "Update Status" %}
                     </button>
                 {% endif %}

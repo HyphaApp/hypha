@@ -1,7 +1,7 @@
 @use "../abstracts/variables";
 
 .wmd-preview {
-  background-color: #f3f4f6;
+  background-color: var(--color-base-200);
   padding: 0 10px;
   width: 100%;
   overflow: hidden; /* prevent collapsing margins */

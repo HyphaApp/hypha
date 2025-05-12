@@ -47,11 +47,11 @@
     <div class="mt-5 sm:flex sm:flex-row-reverse sm:gap-4 sm:mt-4">
 
         {# Button text inserted below to prevent redundant translations #}
-        <button id="translate-btn" class="w-full sm:w-auto button button--primary" type="submit"></button>
+        <button id="translate-btn" class="w-full sm:w-auto btn btn-primary" type="submit"></button>
 
         <button
             type="button"
-            class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 rounded-xs shadow-xs"
+            class="btn btn-secondary btn-outline"
             @click="show = false"
         >{% trans "Cancel" %}</button>
         <span

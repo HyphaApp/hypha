@@ -70,7 +70,7 @@ class SubmissionsTable(tables.Table):
         orderable=True,
         attrs={
             "td": {
-                "class": "js-title",
+                "class": "js-title max-w-sm",
             },
             "a": {
                 "data-tippy-content": lambda record: render_title(record),
@@ -113,7 +113,7 @@ class SubmissionsTable(tables.Table):
             "data-record-id": lambda record: record.id,
             "data-archived": lambda record: record.is_archive,
         }
-        attrs = {"class": "all-submissions-table"}
+        attrs = {"class": "table all-submissions-table"}
         empty_text = _("No submissions available")
 
     def render_user(self, value):
@@ -479,16 +479,20 @@ class RoundsTable(tables.Table):
     lead = tables.Column()
     start_date = tables.Column()
     end_date = tables.Column()
-    progress = tables.Column(verbose_name=_("Determined"))
+    deterrmined = tables.Column(verbose_name=_("Determined"), accessor="progress")
+
+    def __init__(self, *args, **kwargs):
+        self.prefix = kwargs.pop("prefix", "rounds")
+        super().__init__(*args, **kwargs)
 
     class Meta:
-        fields = ("title", "fund", "lead", "start_date", "end_date", "progress")
-        attrs = {"class": "responsive-table"}
+        fields = ("title", "fund", "lead", "start_date", "end_date", "deterrmined")
+        attrs = {"class": "table"}
 
     def render_lead(self, value):
         return format_html("<span>{}</span>", value)
 
-    def render_progress(self, record):
+    def render_deterrmined(self, record):
         return f"{record.progress}%"
 
     def _field_order(self, field, desc):
@@ -632,7 +636,7 @@ class ReviewerLeaderboardTable(tables.Table):
             "total",
         ]
         order_by = ("-ninety_days",)
-        attrs = {"class": "all-reviews-table"}
+        attrs = {"class": "table"}
         empty_text = _("No reviews available")
 
 
@@ -666,7 +670,7 @@ class ReviewerLeaderboardDetailTable(tables.Table):
             "created_at",
         ]
         order_by = ("-created_at",)
-        attrs = {"class": "all-reviews-table"}
+        attrs = {"class": "table"}
         empty_text = _("No reviews available")
 
 
@@ -683,5 +687,5 @@ class StaffAssignmentsTable(tables.Table):
         fields = [
             "full_name",
         ]
-        attrs = {"class": "all-reviews-table"}
+        attrs = {"class": "table"}
         empty_text = _("No staff available")

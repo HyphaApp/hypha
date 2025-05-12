@@ -1,7 +1,7 @@
 {% load i18n approval_tools project_tags heroicons %}
 {% allow_collapsible_header object header_type='project_documents' as collapsible_header %}
 
-<div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
+<div class="border rounded-box border-base-300 wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
     <div class="docs-block__header" id="project-documents-section" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" role="button" aria-label="Toggle Project documents visibility" aria-controls="project-documents-elements" {% endif %}>
         <div class="flex gap-2 justify-between items-center w-full">
             <h2 class="m-0 text-lg font-semibold">
@@ -11,7 +11,7 @@
             <div class="flex flex-wrap gap-2">
                 {% user_can_send_for_approval object user as can_send_to_approve %}
                 {% if can_send_to_approve %}
-                    <a class="button button--project-action"
+                    <a class="btn btn-primary"
                        href="{% url 'apply:projects:submit_project_for_approval' object.submission.id %}"
                        hx-get="{% url 'apply:projects:submit_project_for_approval' object.submission.id %}"
                        hx-target="#htmx-modal"
@@ -27,7 +27,7 @@
                 {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
                 {% if can_update_paf_approvers %}
                     {% if user == project.lead %}
-                        <a class="button button--project-action button--project-action--white ms-2"
+                        <a class="btn btn-secondary btn-outline ms-2"
                            href="{% url 'apply:projects:update_pafapprovers' object.submission.id %}"
                            hx-get="{% url 'apply:projects:update_pafapprovers' object.submission.id %}"
                            hx-target="#htmx-modal"
@@ -35,7 +35,7 @@
                             {% trans "View/Update Approvers" %}
                         </a>
                     {% else %}
-                        <a class="button button--project-action button--project-action--white ms-2"
+                        <a class="btn btn-secondary btn-outline ms-2"
                            href="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
                            hx-get="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
                            hx-target="#htmx-modal"
@@ -45,7 +45,7 @@
                     {% endif %}
                 {% endif %}
                 {% if can_assign_paf_approvers %}
-                    <a class="button button--project-action"
+                    <a class="btn btn-primary"
                        href="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
                        hx-get="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
                        hx-target="#htmx-modal"
@@ -55,7 +55,7 @@
                 {% endif %}
                 {% user_can_update_paf_status object user request=request as can_update_paf_status %}
                 {% if object.can_make_approval and can_update_paf_status %}
-                    <a class="button button--project-action ms-2"
+                    <a class="btn btn-primary ms-2"
                        href="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
                        hx-get="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
                        hx-target="#htmx-modal"
@@ -87,9 +87,9 @@
                 <div class="docs-block__row-inner">
                     {% user_can_edit_pfs object user as can_edit_pfs %}
                     {% if can_edit_pfs %}
-                        <a class="{% if not object.user_has_updated_pf_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit_pf' pk=object.submission.pk %}">
+                        <a class="{% if not object.user_has_updated_pf_details %}btn btn-primary{% else %}btn{% endif %}" href="{% url 'apply:projects:edit_pf' pk=object.submission.pk %}">
                             {% if object.user_has_updated_pf_details %}
-                                {% heroicon_micro "pencil-square" class="inline w-4 h-4 me-1" aria_hidden=true %}
+                                {% heroicon_micro "pencil-square" class="inline w-4 h-4" aria_hidden=true %}
                                 {% trans "Edit" %}
                             {% else %}
                                 {% trans "Fill in" %}
@@ -97,8 +97,8 @@
                         </a>
                     {% endif %}
                     {% if object.user_has_updated_pf_details and not user.is_applicant %}
-                        <a class="docs-block__icon-link" href="{% url 'apply:projects:approval' pk=project.submission.pk %}">
-                            {% heroicon_micro "eye" class="inline w-4 h-4 me-1" aria_hidden=true %}
+                        <a class="btn btn-outline btn-secondary" href="{% url 'apply:projects:approval' pk=project.submission.pk %}">
+                            {% heroicon_micro "eye" class="inline w-4 h-4" aria_hidden=true %}
                             {% trans "View" %}
                         </a>
                     {% endif %}
@@ -115,10 +115,10 @@
                             <div class="docs-block__document-inner">
                                 <p class="docs-block__document-info">{% trans "Scope of work" %}</p>
                             </div>
-                            <div class="docs-block__document-inner__actions">
+                            <div class="flex gap-2 items-center ms-auto">
                                 {% if can_edit_pfs %}
                                     <a
-                                        class="{% if not object.user_has_updated_sow_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}"
+                                        class="{% if not object.user_has_updated_sow_details %}btn btn-primary{% else %}btn{% endif %}"
                                         href="{% url 'apply:projects:edit_sow' pk=object.submission.pk %}"
                                     >
                                         {% if object.user_has_updated_sow_details %}
@@ -130,8 +130,8 @@
                                     </a>
                                 {% endif %}
                                 {% if object.user_has_updated_sow_details %}
-                                    <a class="docs-block__icon-link" href="{% url 'apply:projects:sow' pk=project.submission.pk %}">
-                                        {% heroicon_micro "eye" class="inline w-4 h-4 me-1" aria_hidden=true %}
+                                    <a class="btn btn-outline btn-secondary" href="{% url 'apply:projects:sow' pk=project.submission.pk %}">
+                                        {% heroicon_micro "eye" class="inline w-4 h-4" aria_hidden=true %}
                                         {% trans "View" %}
                                     </a>
                                 {% endif %}

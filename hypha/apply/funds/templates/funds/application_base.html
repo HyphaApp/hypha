@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <div class="wrapper wrapper--default-bg wrapper--form wrapper--sidebar">
+    <div class="wrapper wrapper--form wrapper--sidebar">
         <div class="wrapper--sidebar--inner">
 
             {% if page.end_date and page.get_parent.specific.show_deadline %}
@@ -14,21 +14,21 @@
                 </p>
             {% endif %}
 
-            <h1 class="text-5xl font-bold">{{ page.title }}</h1>
+            <h1 class="mb-4 text-5xl font-bold">{{ page.title }}</h1>
 
             {% if form.errors or form.non_field_errors %}
-                <div class="wrapper wrapper--error">
-                    {% heroicon_solid "exclamation-triangle" aria_hidden="true" class="inline me-2 fill-red-500" %}
+                <div class="mb-4 alert alert-warning" role="alert">
+                    {% heroicon_solid "exclamation-triangle" aria_hidden="true" %}
                     {% if form.non_field_errors %}
                         <ul>
                             {% for error in form.non_field_errors %}
-                                <li class="error">{{ error }}</li>
+                                <li>{{ error }}</li>
                             {% endfor %}
                         </ul>
                     {% else %}
-                        <h5 class="heading heading--no-margin heading--regular">
-                            {% trans "There were some errors with your form. Please amend the fields highlighted below" %}
-                        </h5>
+                        <span>
+                            {% trans "Please fix the errors in your form. Review and update the highlighted fields below to continue." %}
+                        </span>
                     {% endif %}
                 </div>
             {% endif %}
@@ -80,7 +80,7 @@
                         {{ hidden_field }}
                     {% endfor %}
 
-                    <div class="form__group">
+                    <div class="flex gap-2 items-center pt-8">
                         {% comment %}
                             If a preview is required for this application,
                             don't allow submitting yet (via name="preview").
@@ -88,7 +88,7 @@
                         {% endcomment %}
                         {% if require_preview and request.user.is_authenticated %}
                             <button
-                                class="button button--submit button--primary"
+                                class="btn btn-primary"
                                 type="submit"
                                 name="preview"
                                 value="Preview and Submit"
@@ -98,7 +98,7 @@
                             </button>
                         {% else %}
                             <button
-                                class="button button--submit button--primary"
+                                class="btn btn-primary"
                                 type="submit"
                                 disabled
                             >
@@ -107,7 +107,7 @@
                         {% endif %}
 
                         <button
-                            class="button button--submit button--white"
+                            class="btn btn-secondary btn-outline"
                             type="submit"
                             name="draft"
                             value="Save draft"
@@ -118,7 +118,7 @@
 
                         {% if not require_preview and request.user.is_authenticated %}
                             <button
-                                class="button button--submit button--white"
+                                class="btn btn-secondary btn-outline"
                                 type="submit"
                                 name="preview"
                                 value="Preview"
@@ -128,7 +128,9 @@
                         {% endif %}
                     </div>
                 </form>
-                <p class="wrapper--error message-no-js js-hidden">{% trans "You must have Javascript enabled to use this form." %}</p>
+                <p class="wrapper--error message-no-js js-hidden">
+                    {% trans "You must have Javascript enabled to use this form." %}
+                </p>
             {% endif %}
         </div>
     </div>

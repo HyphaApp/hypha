@@ -14,15 +14,15 @@
 
         <textarea
             id="wmd-input-edit-comment-{{ activity.id }}"
-            class="w-full wmd-input not-prose"
+            class="w-full wmd-input not-prose textarea"
             rows="10" name="message"
         >{{ activity.message }}</textarea>
 
-        <div id="wmd-preview-edit-comment-{{ activity.id }}" class="p-4 w-full max-w-none bg-gray-100 shadow-xs prose"></div>
+        <div id="wmd-preview-edit-comment-{{ activity.id }}" class="p-4 w-full max-w-none bg-base-200 shadow-xs prose"></div>
     </div>
 
     <div class="flex gap-2">
-        <button class="button button--primary" role="button" type="submit">{% trans "Submit" %}</button>
+        <button class="btn btn-primary" role="button" type="submit">{% trans "Submit" %}</button>
         <button class="button" hx-get="{{ request.path}}?action=cancel">{% trans "Cancel" %}</button>
     </div>
 
@@ -38,4 +38,3 @@
     </script>
 
 </form>
-
