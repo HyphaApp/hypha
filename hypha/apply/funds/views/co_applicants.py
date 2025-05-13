@@ -10,6 +10,7 @@ from django.db.models import Case, IntegerField, Value, When
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
@@ -26,7 +27,7 @@ from hypha.apply.users.tokens import CoApplicantInviteTokenGenerator
 
 from ..forms import EditCoApplicantForm, InviteCoApplicantForm
 from ..models import ApplicationSubmission, CoApplicant, CoApplicantInvite
-from ..models.co_applicants import READ_ONLY, CoApplicantInviteStatus
+from ..models.co_applicants import CoApplicantInviteStatus
 from ..permissions import has_permission
 
 
@@ -56,6 +57,7 @@ class CoApplicantInviteView(View):
                 "form": invite_form,
                 "value": _("Invite"),
                 "object": self.submission,
+                "expiry": settings.PASSWORD_RESET_TIMEOUT // (60 * 60 * 24),
             },
         )
 
@@ -68,7 +70,9 @@ class CoApplicantInviteView(View):
         if form.is_valid():
             form.instance.submission = self.submission
             form.instance.invited_user_email = form.cleaned_data["invited_user_email"]
+            form.instance.role = form.cleaned_data["role"]
             form.instance.invited_by = self.request.user
+            form.instance.invited_at = timezone.now()
             co_applicant_invite = form.save()
 
             messenger(
@@ -165,7 +169,7 @@ class CoApplicantInviteAcceptView(View):
                 invite=self.invite,
                 submission=self.invite.submission,
                 user=user,
-                role=READ_ONLY,
+                role=self.invite.role,
             )
 
             if not self.request.user.is_authenticated:
@@ -256,7 +260,8 @@ def co_applicant_re_invite_view(request, invite_pk):
         "co_applicants_update", user=request.user, object=invite, raise_exception=True
     )
     invite.status = CoApplicantInviteStatus.PENDING
-    invite.save(update_fields=["status"])
+    invite.invited_at = timezone.now()
+    invite.save(update_fields=["status", "invited_at"])
     messenger(
         MESSAGES.INVITE_COAPPLICANT,
         request=request,
@@ -318,6 +323,16 @@ def list_coapplicant_invites(request, pk):
         .annotate(status_priority=status_order)
         .order_by("status_priority", "-responded_on", "-created_at")
     )
+
+    # check if pending invites have expired, update status
+    for invite in co_applicant_invites.filter(status=CoApplicantInviteStatus.PENDING):
+        if (
+            int((timezone.now() - invite.invited_at).total_seconds())
+            > CoApplicantInviteTokenGenerator().TIMEOUT
+        ):
+            invite.status = CoApplicantInviteStatus.EXPIRED
+            invite.save(update_fields=["status"])
+
     return render(
         request,
         "funds/includes/co-applicant-block.html",

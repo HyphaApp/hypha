@@ -89,7 +89,7 @@ class CoApplicantInviteTokenGenerator(PasswordlessLoginTokenGenerator):
         self.key_salt = (
             self.key_salt or "hypha.apply.users.tokens.CoApplicantInviteTokenGenerator"
         )
-        self.TIMEOUT = self.TIMEOUT or settings.PASSWORDLESS_SIGNUP_TIMEOUT
+        self.TIMEOUT = self.TIMEOUT or settings.PASSWORD_RESET_TIMEOUT
         super().__init__()
 
     def _make_hash_value(self, invite, timestamp):
