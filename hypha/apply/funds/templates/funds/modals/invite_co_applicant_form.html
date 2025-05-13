@@ -2,6 +2,14 @@
 {% modal_title %}{% trans "Invite Co-Applicant" %}{% endmodal_title %}
 
 <div class="p-4">
-    <p class="text-sm text-gray-500">{% trans "Enter a valid email address to invite a co-applicant. It'll send an email invite to provided email address that can be used one time only. Invite will have the expiry of 7 days." %}</p>
+    <p class="text-sm text-gray-500">{% trans "Enter a valid email address to invite a co-applicant. It'll send an email invite to provided email address that can be used one time only. Invite will have the expiry of" %} {{ expiry }} {% trans "days." %}</p>
+    <p class="text-sm text-gray-500">{% trans "You may also assign the appropriate roles:" %}
+        <br>
+        {% trans "1. Read Only: Co-applicant can only view the submission." %}
+        <br>
+        {% trans "2. Comment: Co-applicant can view and write comment." %}
+        <br>
+        {% trans "3. Full Access: Co-applicant can view, comment and edit the submission." %}
+    </p>
     {% include 'includes/dialog_form_base.html' with form=form value=value %}
 </div>

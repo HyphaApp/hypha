@@ -228,6 +228,8 @@ def can_view_submission_screening(user, submission):
 def can_invite_co_applicants(user, submission):
     if user.is_applicant and user == submission.user:
         return True, "Applicants can invite co-applicants to their application"
+    if user.is_apply_staff:
+        return True, "Staff can invite co-applicant on behalf of applicant"
     return False, "Forbidden Error"
 
 

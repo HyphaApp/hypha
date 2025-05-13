@@ -45,7 +45,9 @@ class CoApplicantInvite(models.Model):
         choices=CoApplicantInviteStatus.choices,
         default=CoApplicantInviteStatus.PENDING,
     )
+    role = models.CharField(choices=COAPPLICANT_ROLE_CHOICES, default=READ_ONLY)
     responded_on = models.DateTimeField(blank=True, null=True)
+    invited_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

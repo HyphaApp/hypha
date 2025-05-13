@@ -463,6 +463,9 @@ class CreateReminderForm(forms.ModelForm):
 
 class InviteCoApplicantForm(forms.ModelForm):
     invited_user_email = forms.EmailField(required=True, label="Email")
+    role = forms.ChoiceField(
+        choices=COAPPLICANT_ROLE_CHOICES, label="Role", required=False
+    )
 
     submission = forms.ModelChoiceField(
         queryset=ApplicationSubmission.objects.filter(),
