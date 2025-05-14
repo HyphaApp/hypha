@@ -336,6 +336,10 @@ def list_coapplicant_invites(request, pk):
     return render(
         request,
         "funds/includes/co-applicant-block.html",
-        context={"co_applicants": co_applicant_invites, "object": submission},
+        context={
+            "co_applicants": co_applicant_invites,
+            "object": submission,
+            "invite_max_limit": settings.SUBMISSIONS_COAPPLICANT_INVITES_LIMIT,
+        },
         status=200,
     )
