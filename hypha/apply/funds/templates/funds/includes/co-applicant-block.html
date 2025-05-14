@@ -1,7 +1,7 @@
 {% load i18n heroicons %}
 
 <div class="sidebar__inner sidebar__inner--actions" data-testid="sidebar-primary-actions">
-    <details>
+    <details {% if user.is_applicant %} open {% endif %}>
         <summary class="flex gap-4 justify-between items-center">
             <p class="flex items-center text-lg font-bold">
                 {% trans "Co-applicants" %}
