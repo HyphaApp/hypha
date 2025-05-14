@@ -19,7 +19,7 @@ from hypha.apply.projects.models.payment import (
     PAYMENT_FAILED,
     RESUBMITTED,
 )
-from hypha.apply.funds.models.co_applicants import COMMENT, FULL_ACCESS
+from hypha.apply.funds.models.co_applicants import COMMENT, EDIT
 from hypha.apply.projects.templatetags.project_tags import display_project_status
 from hypha.apply.users.models import User
 from hypha.apply.users.roles import (
@@ -458,7 +458,7 @@ class EmailAdapter(AdapterBase):
             if isinstance(source, ApplicationSubmission):
                 # add co-applicants with Comment or edit access
                 co_applicants = source.co_applicants.filter(
-                    role__in=[COMMENT, FULL_ACCESS]
+                    role__in=[COMMENT, EDIT]
                 ).values_list("user__email", flat=True)
                 recipients: List[str] = [source.user.email, *co_applicants]
 
@@ -481,7 +481,7 @@ class EmailAdapter(AdapterBase):
                 return []
 
         # co-applicants edit/full-access access
-        co_applicants = source.co_applicants.filter(role__in=[FULL_ACCESS]).values_list(
+        co_applicants = source.co_applicants.filter(role__in=[EDIT]).values_list(
             "user__email", flat=True
         )
         return [source.user.email, *co_applicants]

@@ -5,18 +5,13 @@ from hypha.apply.users.models import User
 
 READ_ONLY = "read_only"
 COMMENT = "comment"
-FULL_ACCESS = "full_access"
+EDIT = "edit"
 
 COAPPLICANT_ROLE_CHOICES = (
     (READ_ONLY, _("Read Only")),
     (COMMENT, _("Comment")),
-    (FULL_ACCESS, _("Full Access")),
+    (EDIT, _("Edit")),
 )
-
-COAPPLICANT_ROLE_PERM = {
-    READ_ONLY: "can_view",
-    COMMENT: "can_comment",
-}
 
 
 class CoApplicantInviteStatus(models.TextChoices):
