@@ -480,11 +480,13 @@ class EmailAdapter(AdapterBase):
             if isinstance(source, Project) and user == source.user:
                 return []
 
-        # co-applicants edit/full-access access
-        co_applicants = source.co_applicants.filter(role__in=[EDIT]).values_list(
-            "user__email", flat=True
-        )
-        return [source.user.email, *co_applicants]
+        if isinstance(source, ApplicationSubmission):
+            # co-applicants edit/full-access access
+            co_applicants = source.co_applicants.filter(role__in=[EDIT]).values_list(
+                "user__email", flat=True
+            )
+            return [source.user.email, *co_applicants]
+        return [source.user.email]
 
     def batch_recipients(self, message_type, sources, **kwargs):
         if not (is_ready_for_review(message_type) or is_reviewer_update(message_type)):
