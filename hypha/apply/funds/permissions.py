@@ -226,6 +226,11 @@ def can_view_submission_screening(user, submission):
 
 
 def can_invite_co_applicants(user, submission):
+    if (
+        submission.co_applicant_invites.all().count()
+        >= settings.SUBMISSIONS_COAPPLICANT_INVITES_LIMIT
+    ):
+        return False, "Limit reached for this submission"
     if user.is_applicant and user == submission.user:
         return True, "Applicants can invite co-applicants to their application"
     if user.is_apply_staff:

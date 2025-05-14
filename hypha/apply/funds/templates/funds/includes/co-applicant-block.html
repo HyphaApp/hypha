@@ -8,10 +8,10 @@
                 {% heroicon_solid "chevron-down" size="16" class="w-4 h-4 ms-2" %}
             </p>
             <button
-                class="flex items-center py-1 pr-4 pl-2 font-bold rounded-sm transition-colors cursor-pointer text-dark-blue -me-2 hover:bg-slate-200"
+                class="flex items-center py-1 pr-4 pl-2 font-bold rounded-sm -me-2 {% if object.co_applicant_invites.count >= invite_max_limit %} text-blue-200 {% else %}transition-colors cursor-pointer text-dark-blue hover:bg-slate-200{% endif %}"
                 hx-get="{% url 'apply:submissions:invite_co_applicant' pk=object.id %}"
                 hx-target="#htmx-modal"
-                {% if object.co_applicant_invites.count >= 20 %}disabled{% endif %}
+                {% if object.co_applicant_invites.count >= invite_max_limit %}disabled title='{% trans "Max limit reached" %}'{% endif %}
                 role="button"
                 aria-label="{% trans "Invite CoApplicant" %}"
             >
