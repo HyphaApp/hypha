@@ -4,8 +4,11 @@
 {% block salutation %}{% endblock %}
 
 {% block content %}{# fmt:off #}
-{% trans "A Project has been rejected by project form reviewers, please update it accordingly and resubmit it to the reviewers." %}
+{% blocktrans with title=source.title_text_display %}The project forms for "{{ title }}" was rejected by project form reviewers, please update it accordingly and resubmit it to the reviewers. {% endblocktrans %}
 
-{% trans "Title" %}: {{ source.title_text_display }}
-{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% if comment_url %}
+{% trans "A comment was left that can be viewed here" %}: {{ request.scheme }}://{{ request.get_host }}{{ comment_url }}
+{% endif %}
+
+{% trans "View the project here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% endblock %}{# fmt:on #}

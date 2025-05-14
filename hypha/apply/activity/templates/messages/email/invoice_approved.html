@@ -2,13 +2,10 @@
 
 {% load i18n %}
 {% block salutation %}{% endblock %}
-
 {% block content %}{# fmt:off #}
-{% trans "An Invoice is waiting for your approval." %}
+{% blocktrans with title=source.title_text_display %}An invoice on project "{{title}}" is waiting for your approval. {% endblocktrans %}
 
-{% trans "Title" %}: {{ source.title_text_display }}
-{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ invoice.get_absolute_url }}
-{% trans "Project" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "View the invoice here" %}: {{ request.scheme }}://{{ request.get_host }}{{ invoice.get_absolute_url }}
 
 {% blocktrans with lead=source.lead email=source.lead.email %}Please contact {{ lead }} - {{ email }} if you have any questions.{% endblocktrans %}
 {% endblock %}{# fmt:on #}

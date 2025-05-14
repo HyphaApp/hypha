@@ -2,14 +2,12 @@
 
 {% load i18n %}
 
-{% block salutation %}
-{% endblock %}
+{% block salutation %}{% endblock %}
 
 {% block content %}{# fmt:off #}
-{% trans "A Project's contract is awaiting your review." %}
+{% blocktrans with title=source.title_text_display %}The contract for project "{{ title }}" is awaiting your review.{% endblocktrans %}
 
-{% trans "Title" %}: {{ source.title_text_display }}
-{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "View the project here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 
 {% blocktrans with lead=source.lead email=source.lead.email %}Please contact {{ lead }} - {{ email }} if you have any questions.{% endblocktrans %}
 {% endblock %}{# fmt:on #}
