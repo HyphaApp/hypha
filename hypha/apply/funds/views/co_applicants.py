@@ -172,7 +172,7 @@ class CoApplicantInviteAcceptView(View):
                 role=self.invite.role,
             )
 
-            if not self.request.user.is_authenticated:
+            if not self.request.user.is_authenticated or self.request.user != user:
                 user.backend = settings.CUSTOM_AUTH_BACKEND
                 if settings.ENFORCE_TWO_FACTOR:
                     if default_device(user):
