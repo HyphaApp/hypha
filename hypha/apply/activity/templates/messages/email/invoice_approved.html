@@ -3,7 +3,7 @@
 {% load i18n %}
 {% block salutation %}{% endblock %}
 {% block content %}{# fmt:off #}
-{% blocktrans with title=source.title_text_display %}An invoice on project "{{title}}" is waiting for your approval. {% endblocktrans %}
+{% blocktrans with title=source.title_text_display %}An invoice on project "{{title}}" is waiting for your approval.{% endblocktrans %}
 
 {% trans "View the invoice here" %}: {{ request.scheme }}://{{ request.get_host }}{{ invoice.get_absolute_url }}
 

@@ -4,7 +4,7 @@
 {% block salutation %}{% endblock %}
 
 {% block content %}{# fmt:off #}
-{% blocktrans with title=source.title_text_display%}The project "{{ title }}" is waiting for contract{% endblocktrans %}
+{% blocktrans with title=source.title_text_display%}The project "{{ title }}" is waiting for contract.{% endblocktrans %}
 
 {% trans "View the project here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 
