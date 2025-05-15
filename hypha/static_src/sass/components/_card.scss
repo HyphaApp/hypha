@@ -4,10 +4,9 @@
 .h-card {
   padding: 20px;
   margin-block-end: 20px;
-  border: 1px solid variables.$color--mid-grey;
 
   &--solid {
-    background-color: variables.$color--white;
+    background-color: var(--color-base-200);
   }
 
   &__text {

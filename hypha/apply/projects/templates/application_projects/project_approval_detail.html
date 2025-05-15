@@ -27,7 +27,7 @@
         <div class="wrapper wrapper--sidebar">
             <article class="wrapper--sidebar--inner">
                 <h4 class="mb-2">{% trans "Project Information" %}</h4>
-                <div class="h-card h-card--solid">
+                <div class="h-card h-card--solid card card-border">
                     {% if object.output_answers %}
                         <div class="rich-text rich-text--answers">
                             {{ object.output_answers }}
@@ -43,7 +43,7 @@
                 </div>
 
                 <h4 class="mb-2">{% trans "Approvals" %}</h4>
-                <div class="h-card h-card--solid">
+                <div class="h-card h-card--solid card card-border">
                     {% for approval in project.paf_approvals.all %}
                         {% if approval.approved %}
                             <p><b>{{ approval.paf_reviewer_role.label }}</b> - {{ approval.user }} ({{ approval.approved_at|date:"DATE_FORMAT" }})</p>
@@ -54,7 +54,7 @@
                 </div>
 
                 <h4 class="mb-2">{% trans "Reviews" %}</h4>
-                <div class="h-card h-card--solid">
+                <div class="h-card h-card--solid card card-border">
                     <p class="mt-0 mb-0 font-bold">{% trans "Submission lead" %}</p>
                     <p class="mt-2 mb-0">{{ project.submission.lead }}</p>
 
@@ -81,7 +81,7 @@
                 </div>
 
                 <h4 class="mb-2">{% trans "Supporting Documents" %}</h4>
-                <div class="h-card h-card--solid">
+                <div class="h-card h-card--solid card card-border">
                     <p><a href="{{ object.submission.get_absolute_url }}">{% trans "Application" %}</a></p>
                     {% for packet_file in object.packet_files.all %}
                         <p><a href="{% url 'apply:projects:document' pk=object.pk file_pk=packet_file.pk %}">{{ packet_file.title }}</a></p>

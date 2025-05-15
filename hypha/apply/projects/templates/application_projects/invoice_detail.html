@@ -18,7 +18,7 @@
 
     <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
         <div class="wrapper--sidebar--inner">
-            <div class="h-card h-card--solid">
+            <div class="h-card h-card--solid card card-border">
                 <p class="h-card__text"><b>{% trans "Invoice number" %}:</b> {{ object.invoice_number }}</p>
                 <p class="h-card__text"><b>{% trans "Invoice date" %}:</b> {% if invoice.invoice_date %}{{ invoice.invoice_date }}{% else %} {{ invoice.requested_at.date }} {% endif %}</p>
                 {% if show_paid_date %}
@@ -31,12 +31,12 @@
                 {% endif %}
                 <p class="h-card__text"><b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}</p>
             </div>
-            <div hx-get="{% url 'apply:projects:partial-invoice-status' pk=object.project.pk invoice_pk=object.pk %}" hx-trigger="load, invoicesUpdated from:body" class="flex h-card h-card--solid" x-data="{ collapsed: true }">
+            <div hx-get="{% url 'apply:projects:partial-invoice-status' pk=object.project.pk invoice_pk=object.pk %}" hx-trigger="load, invoicesUpdated from:body" class="flex h-card h-card--solid card card-border" x-data="{ collapsed: true } card-border">
                 <div class="flex-none content-center min-h-10"><div class="h-4 bg-gray-400 rounded-full animate-pulse min-w-96"></div></div>
                 <div class="ps-2"></div>
             </div>
 
-            <div class="h-card h-card--solid">
+            <div class="h-card h-card--solid card card-border">
                 <div class="h-card__inner">
                     <h5 class="h-card__heading">{% trans "Invoice" %}</h5>
                     <p class="h-card__text"><a target="_blank" href="{% url "apply:projects:invoice-document" pk=object.project.submission.id invoice_pk=object.pk %}">{{object.filename}}</a></p>
