@@ -19,9 +19,7 @@ select {
 textarea {
   @apply textarea w-full;
 }
-[type="radio"] {
-  @apply radio;
-}
+
 [type="checkbox"] {
   @apply checkbox;
 }

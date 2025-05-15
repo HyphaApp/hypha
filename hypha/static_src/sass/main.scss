@@ -25,7 +25,6 @@
 @use "components/form";
 @use "components/nav";
 @use "components/pagination";
-@use "components/projects-table";
 @use "components/responsive-table";
 @use "components/reviews-list";
 @use "components/reviews-summary";
@@ -42,7 +41,6 @@
 @use "components/invoice-block";
 @use "components/two-factor";
 @use "components/dropdown";
-@use "components/dashboard-table";
 
 // Layout
 @use "layout/header";

@@ -7,7 +7,6 @@
 @import "./components/django-file-field.css" layer(components);
 
 @plugin '@tailwindcss/typography';
-@plugin '@tailwindcss/forms';
 @plugin 'daisyui' {
 }
 
@@ -48,6 +47,10 @@
   :root {
     /* Activate transition to intrinsic sizes like auto and fit-content. */
     interpolate-size: allow-keywords;
+  }
+
+  .table-container {
+    @apply overflow-x-auto;
   }
 }
 

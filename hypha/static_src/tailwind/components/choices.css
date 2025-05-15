@@ -3,7 +3,7 @@
 =   For the select component rendered with choices.js
 =============================== */
 .choices {
-  @apply relative mb-6 overflow-hidden text-base focus:outline-hidden;
+  @apply relative overflow-hidden text-base focus:outline-hidden;
 }
 
 .choices:last-child {

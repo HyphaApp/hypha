@@ -26,7 +26,6 @@
     "@babel/core": "^7.25.9",
     "@babel/preset-env": "^7.25.9",
     "@biomejs/biome": "^1.9.4",
-    "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.15",
     "alpinejs": "^3.14.6",
     "core-js": "^3.39.0",
