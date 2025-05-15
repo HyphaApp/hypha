@@ -33,7 +33,7 @@
 
         <div class="p-4">
             {% if can_update_project_reports %}
-                <ul class="data-block__list">
+                <ul class="list">
                     {% for report in object.report_config.past_due_reports %}
                         {% include "reports/includes/report_line.html" with report=report %}
                     {% endfor %}
@@ -47,7 +47,7 @@
 
 
             {% if object.reports.done %}
-                <table class="data-block__table js-past-reports-table">
+                <table class="table js-past-reports-table">
                     <thead>
                         <tr>
                             <th class="data-block__table-date">{% trans "Period End" %}</th>

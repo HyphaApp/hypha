@@ -15,7 +15,7 @@
     </div>
     <div class="docs-block__inner"  x-data="{ showrejected: false }">
         {% if object.invoices.not_rejected %}
-            <table class="data-block__table">
+            <table class="table">
                 <thead>
                     <tr>
                         <th class="data-block__table-date">{% trans "Date submitted" %}</th>
@@ -47,7 +47,7 @@
                 </a>
             </p>
 
-            <table class="data-block__table"  x-show="showrejected">
+            <table class="table"  x-show="showrejected">
                 <thead>
                     <tr>
                         <th class="data-block__table-date">{% trans "Date submitted" %}</th>
