@@ -12,15 +12,15 @@
     <span>{{ object.fund_name }}</span>
 
     {% if object.submission.round %}
-        {% if request.user.is_apply_staff %}
-            <span>
+        <span>
+            {% if request.user.is_apply_staff %}
                 <a class="text-white underline"
                    href="{% url 'apply:submissions:list' %}?round={{ object.submission.round.pk }}"
                 >{{ object.submission.round }}</a>
-            </span>
-        {% else %}
-            {{ object.submission.round }}
-        {% endif %}
+            {% else %}
+                {{ object.submission.round }}
+            {% endif %}
+        </span>
     {% endif %}
 
     {% if not HIDE_STAFF_IDENTITY or request.user.is_apply_staff %}
