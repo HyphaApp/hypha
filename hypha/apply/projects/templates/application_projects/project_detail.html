@@ -13,32 +13,32 @@
 
             {% include "application_projects/includes/project_header.html" %}
 
-            <div class="tabs">
-                <div class="tabs__container">
-                    <a
-                        class="tab__item"
-                        href="{{ project.submission.get_absolute_url }}"
-                    >
-                        {% trans "Application" %}
-                    </a>
+            <div role="tablist" class="font-semibold tabs tabs-lg tabs-lift">
 
-                    <a
-                        class="tab__item tab__item--active"
-                        href="{% url 'funds:submissions:project' pk=object.submission.id %}"
-                    >
-                        {% trans "Project" %}
-                    </a>
+                <a
+                    class="tab [--color-base-content:var(--color-neutral-content)]"
+                    href="{{ project.submission.get_absolute_url }}"
+                >
+                    {% trans "Application" %}
+                </a>
 
-                    <a
-                        class="tab__item"
-                        href="{% url 'funds:submissions:comments' pk=object.submission.id %}"
-                    >
-                        {% trans "Conversation" %} ({{ comments_count }})
-                    </a>
+                <a
+                    class="tab tab-active"
+                    href="{% url 'funds:submissions:project' pk=object.submission.id %}"
+                >
+                    {% trans "Project" %}
+                </a>
 
-                </div>
+                <a
+                    class="tab [--color-base-content:var(--color-neutral-content)]"
+                    href="{% url 'funds:submissions:comments' pk=object.submission.id %}"
+                >
+                    {% trans "Conversation" %} ({{ comments_count }})
+                </a>
+
             </div>
         </div>
+    </div>
     </div>
 
     {% show_closing_banner object as show_banner %}

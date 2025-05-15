@@ -92,7 +92,9 @@
         {% endif %}
 
         {% if field.help_text %}
-            <p class="m-0 h-help-text label">{{ field.help_text }}</p>
+            <div class="label">
+                {{ field.help_text }}
+            </div>
         {% endif %}
 
         {% if widget_type == 'checkbox_select_multiple' or widget_type == 'radio_select' %}

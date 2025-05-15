@@ -16,41 +16,41 @@
                 {% include "funds/includes/application_header.html" %}
             {% endif %}
 
-            <div class="tabs">
-                <div class="tabs__container">
+            <div role="tablist" class="font-semibold tabs tabs-lg tabs-lift">
+
+                <a
+                    class="tab tab-active"
+                    href="{% url 'funds:submissions:detail' pk=object.id %}"
+                >
+                    {% trans "Application" %}
+                </a>
+
+                {% if PROJECTS_ENABLED and object.project %}
                     <a
-                        class="tab__item tab__item--active"
-                        href="{% url 'funds:submissions:detail' pk=object.id %}"
+                        class="tab [--color-base-content:var(--color-neutral-content)]"
+                        href="{% url 'funds:submissions:project' pk=object.id %}"
                     >
-                        {% trans "Application" %}
+                        {% trans "Project" %}
                     </a>
+                {% endif %}
 
-                    {% if PROJECTS_ENABLED and object.project %}
-                        <a
-                            class="tab__item"
-                            href="{% url 'funds:submissions:project' pk=object.id %}"
-                        >
-                            {% trans "Project" %}
-                        </a>
-                    {% endif %}
+                <a
+                    class="tab [--color-base-content:var(--color-neutral-content)]"
+                    href="{% url 'funds:submissions:comments' pk=object.id %}"
+                >
+                    {% trans "Conversation" %} ({{ comments_count }})
+                </a>
 
+                {# is_staff is only used for Django Admin. #}
+                {% if request.user.is_staff %}
                     <a
-                        class="tab__item"
-                        href="{% url 'funds:submissions:comments' pk=object.id %}"
+                        class="hidden md:block tab ms-auto"
+                        href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}"
                     >
-                        {% trans "Conversation" %} ({{ comments_count }})
+                        {% trans "View message log" %}
                     </a>
+                {% endif %}
 
-                    {# is_staff is only used for Django Admin. #}
-                    {% if request.user.is_staff %}
-                        <a
-                            class="hidden md:block tab__item ms-auto"
-                            href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}"
-                        >
-                            {% trans "View message log" %}
-                        </a>
-                    {% endif %}
-                </div>
             </div>
         </div>
     </div>
