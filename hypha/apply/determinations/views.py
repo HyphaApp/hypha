@@ -615,7 +615,10 @@ class ApplicantDeterminationDetailView(DetailView):
         )
         determination = self.get_object()
 
-        if request.user != self.submission.user:
+        if (
+            request.user != self.submission.user
+            and not self.submission.co_applicants.filter(user=request.user).exists
+        ):
             raise PermissionDenied
 
         if determination.is_draft:

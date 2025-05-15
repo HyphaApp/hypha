@@ -14,6 +14,7 @@ from hypha.apply.activity.services import (
     get_related_activities_for_user,
 )
 from hypha.apply.funds.models.submissions import ApplicationSubmission
+from hypha.apply.funds.permissions import user_can_view_post_comment_form
 
 
 @login_required
@@ -27,26 +28,28 @@ def comments_view(request, pk):
     activities = get_related_activities_for_user(submission, request.user)
     comments_count = get_comment_count(submission, request.user)
 
-    form = CommentForm(
-        user=request.user,
-        submission_partner_list=submission.partners.all(),
-        data=request.POST or None,
-    )
-    if request.method == "POST":
-        form.instance.user = request.user
-        form.instance.source = submission
-        form.instance.type = COMMENT
-        form.instance.timestamp = timezone.now()
-        if form.is_valid():
-            obj = form.save()
-            messenger(
-                MESSAGES.COMMENT,
-                request=request,
-                user=request.user,
-                source=submission,
-                related=obj,
-            )
-            return redirect("funds:submissions:comments", pk=submission.pk)
+    form = None
+    if user_can_view_post_comment_form(user=request.user, submission=submission):
+        form = CommentForm(
+            user=request.user,
+            submission_partner_list=submission.partners.all(),
+            data=request.POST or None,
+        )
+        if request.method == "POST":
+            form.instance.user = request.user
+            form.instance.source = submission
+            form.instance.type = COMMENT
+            form.instance.timestamp = timezone.now()
+            if form.is_valid():
+                obj = form.save()
+                messenger(
+                    MESSAGES.COMMENT,
+                    request=request,
+                    user=request.user,
+                    source=submission,
+                    related=obj,
+                )
+                return redirect("funds:submissions:comments", pk=submission.pk)
 
     ctx = {
         "object": submission,

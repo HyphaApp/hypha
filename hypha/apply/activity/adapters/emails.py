@@ -10,6 +10,7 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity import tasks
 from hypha.apply.activity.models import ALL, APPLICANT_PARTNERS, PARTNER
+from hypha.apply.funds.models.co_applicants import COMMENT, EDIT
 from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED
 from hypha.apply.projects.templatetags.project_tags import display_project_status
 from hypha.apply.users.models import User
@@ -41,6 +42,7 @@ class EmailAdapter(AdapterBase):
     messages = {
         MESSAGES.NEW_SUBMISSION: "messages/email/submission_confirmation.html",
         MESSAGES.DRAFT_SUBMISSION: "messages/email/submission_confirmation.html",
+        MESSAGES.INVITE_COAPPLICANT: "handle_co_applicant_invite",
         MESSAGES.COMMENT: "notify_comment",
         MESSAGES.EDIT_SUBMISSION: "messages/email/submission_edit.html",
         MESSAGES.TRANSITION: "handle_transition",
@@ -87,6 +89,8 @@ class EmailAdapter(AdapterBase):
                 subject = _(
                     "Reminder: Application ready to review: {source.title_text_display}"
                 ).format(source=source)
+            elif message_type == MESSAGES.INVITE_COAPPLICANT:
+                subject = _("You are invited as a co-applicant")
             elif message_type in [
                 MESSAGES.SENT_TO_COMPLIANCE,
                 MESSAGES.APPROVE_PAF,
@@ -163,6 +167,24 @@ class EmailAdapter(AdapterBase):
                 old_phase=old_phase,
                 **kwargs,
             )
+
+    def handle_co_applicant_invite(self, source, related, **kwargs):
+        from hypha.apply.funds.utils import generate_invite_path
+
+        invited_user = User.objects.filter(email=related.invited_user_email).first()
+        can_accept = True
+        if invited_user and (invited_user.is_org_faculty):
+            can_accept = False
+
+        accept_link = generate_invite_path(invite=related)
+        return self.render_message(
+            "messages/email/invite_co_applicant.html",
+            source=source,
+            can_accept=can_accept,
+            accept_link=accept_link,
+            related=related,
+            **kwargs,
+        )
 
     def handle_batch_transition(self, transitions, sources, **kwargs):
         submissions = sources
@@ -273,6 +295,10 @@ class EmailAdapter(AdapterBase):
             # Only notify the applicant if the new phase can be seen within the workflow
             if not source.phase.permissions.can_view(source.user):
                 return []
+
+        if message_type == MESSAGES.INVITE_COAPPLICANT:
+            related = kwargs.get("related", None)
+            return [related.invited_user_email]
 
         if message_type == MESSAGES.PARTNERS_UPDATED_PARTNER:
             partners = kwargs["added"]
@@ -395,7 +421,11 @@ class EmailAdapter(AdapterBase):
         if message_type == MESSAGES.COMMENT:
             # Comment handling for Submissions
             if isinstance(source, ApplicationSubmission):
-                recipients: List[str] = [source.user.email]
+                # add co-applicants with Comment or edit access
+                co_applicants = source.co_applicants.filter(
+                    role__in=[COMMENT, EDIT]
+                ).values_list("user__email", flat=True)
+                recipients: List[str] = [source.user.email, *co_applicants]
 
                 comment = kwargs["related"]
                 if partners := list(source.partners.values_list("email", flat=True)):
@@ -415,6 +445,12 @@ class EmailAdapter(AdapterBase):
             if isinstance(source, Project) and user == source.user:
                 return []
 
+        if isinstance(source, ApplicationSubmission):
+            # co-applicants edit/full-access access
+            co_applicants = source.co_applicants.filter(role__in=[EDIT]).values_list(
+                "user__email", flat=True
+            )
+            return [source.user.email, *co_applicants]
         return [source.user.email]
 
     def batch_recipients(self, message_type, sources, **kwargs):

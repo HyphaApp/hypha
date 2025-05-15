@@ -180,3 +180,10 @@ def source_type(value) -> str:
 def lowerfirst(value):
     """Lowercase the first character of the value."""
     return value and value[0].lower() + value[1:]
+
+
+@register.filter
+def email_name(email):
+    if isinstance(email, str) and "@" in email:
+        return email.split("@")[0]
+    return email

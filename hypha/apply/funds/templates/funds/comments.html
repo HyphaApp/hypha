@@ -52,7 +52,7 @@
 
     <div class="wrapper wrapper--large wrapper--tabs">
         <div class="feed">
-            {% if not object.is_archive or object.project %}
+            {% if form and not object.is_archive or object.project %}
                 <h4 class="m-0 sr-only">{% trans "Add communication" %}</h4>
                 <div class="pb-4 wrapper wrapper--comments">
                     <form

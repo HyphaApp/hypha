@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Case, When
+from django.db.models import Case, Q, When
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
 
@@ -12,13 +12,14 @@ from hypha.apply.projects.models import Project
 def my_active_submissions(user):
     active_subs = (
         ApplicationSubmission.objects.filter(
-            user=user,
+            Q(user=user) | Q(co_applicants__user=user),
         )
         .annotate(
             is_active=Case(When(status__in=active_statuses, then=True), default=False)
         )
         .select_related("draft_revision")
         .order_by("-is_active", "-submit_time")
+        .distinct()
     )
     for submission in active_subs:
         yield submission.from_draft()
