@@ -20,7 +20,7 @@
             x-transition
             x-transition.origin.top
             @click.outside="show = false"
-            class="block absolute top-10 bg-white shadow-xl rounded-xs min-w-48 z-100000 border-y end-0"
+            class="block absolute top-10 shadow-xl bg-base-100 rounded-xs min-w-48 z-100000 border-y end-0"
         >
             <a
                 href="{% url 'users:account' %}"
@@ -96,7 +96,7 @@
     </div>
 {% else %}
     <a
-        class="button button--transparent button--narrow"
+        class="btn btn-outline btn-secondary"
         href="{{ APPLY_SITE.root_url }}{% url 'users:passwordless_login_signup' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
     >
         {% heroicon_micro "user" class="inline w-4 h-4 align-text-bottom me-1" aria_hidden=true %}

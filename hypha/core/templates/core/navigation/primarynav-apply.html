@@ -9,7 +9,7 @@
     x-transition:leave="transition ease-in duration-150"
     x-transition:leave-start="transform opacity-100 translate-x-0"
     x-transition:leave-end="transform opacity-0 translate-x-full"
-    class="overflow-y-auto fixed top-0 bottom-0 z-20 pt-10 bg-white shadow-xl md:static md:top-auto md:z-auto md:pt-0 md:bg-transparent md:shadow-none end-0 md:overflow-clip"
+    class="overflow-y-auto fixed top-0 bottom-0 z-20 pt-10 shadow-xl md:static md:top-auto md:z-auto md:pt-0 md:bg-transparent md:shadow-none bg-base-100 end-0 md:overflow-clip"
 >
     <!-- Mobile Menu Opener -->
     <button
@@ -60,7 +60,7 @@
                         x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
                         x-transition:leave-end="transform opacity-0 scale-95 -translate-y-3"
                         @click.outside="open = false"
-                        class="block relative z-20 bg-white md:absolute md:shadow-xl rounded-xs min-w-48 md:border-y"
+                        class="block relative z-20 md:absolute md:shadow-xl bg-base-100 rounded-xs min-w-48 md:border-y"
                     >
                         {% for sub_item in item.sub_items %}
                             <a

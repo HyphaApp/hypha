@@ -38,7 +38,7 @@
 }
 
 .choices[data-type*="select-one"] .choices__input {
-  @apply block w-full p-2 m-0 bg-white border-b border-gray-400;
+  @apply block w-full p-2 m-0 bg-base-100 border-b border-gray-400;
 }
 
 .choices[data-type*="select-one"] .choices__button {
@@ -177,7 +177,7 @@
   border-bottom-right-radius: 2.5px;
   will-change: visibility;
 
-  @apply absolute z-10 invisible w-full mt-1 overflow-hidden break-all bg-white border shadow-md top-full;
+  @apply absolute z-10 invisible w-full mt-1 overflow-hidden break-all bg-base-100 border shadow-md top-full;
 }
 
 .is-active.choices__list--dropdown,

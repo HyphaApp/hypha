@@ -2,10 +2,10 @@
 {% load i18n wagtailcore_tags heroicons %}
 
 {% block title %}{% trans "Log in" %}{% endblock %}
-{% block body_class %}bg-white{% endblock %}
+{% block body_class %}bg-base-100{% endblock %}
 
 {% block content %}
-    <div class="my-5 max-w-2xl bg-white">
+    <div class="my-5 max-w-2xl">
 
         <section>
             <div class="px-4 pt-4">
@@ -48,14 +48,20 @@
                                 {% include "forms/includes/field.html" %}
                                 {% if field.auto_id == "id_auth-password" %}
                                     <div class="text-end">
-                                        <a class="text-sm hover:opacity-75 link" href="{% url 'users:password_reset' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true">{% trans "Forgot your password?" %}</a>
+                                        <a
+                                            class="link"
+                                            href="{% url 'users:password_reset' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
+                                            hx-boost="true"
+                                        >
+                                            {% trans "Forgot your password?" %}
+                                        </a>
                                     </div>
                                 {% endif %}
                             </div>
                         {% endfor %}
 
                         {% if settings.users.AuthSettings.extra_text %}
-                            <div class="p-4 mb-6 rounded-xs prose prose-sm bg-slate-50">
+                            <div class="p-4 mb-6 rounded-xs prose prose-sm bg-base-200">
                                 {{ settings.users.AuthSettings.extra_text|richtext }}
                             </div>
                         {% endif %}
@@ -76,6 +82,7 @@
                             {% endif %}
                             {% include "includes/passwordless_login_button.html" %}
                             </section
+
                     {% else %}
 
                         <div class="form__group">

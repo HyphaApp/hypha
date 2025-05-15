@@ -39,7 +39,7 @@ class ReportingTable(tables.Table):
         ]
         model = Project
         orderable = True
-        attrs = {"class": "reporting-table"}
+        attrs = {"class": "table reporting-table"}
 
     def render_title(self, record):
         return get_project_title(record)

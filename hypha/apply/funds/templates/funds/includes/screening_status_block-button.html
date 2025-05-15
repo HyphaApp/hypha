@@ -51,7 +51,7 @@
     <!-- panel -->
     {% if can_screen and screening_options.count > 1 %}
         <div
-            class=" bg-white tras min-w-48 text-sm top absolute {% if type == 'yes' %}md:start-0 {% else %}end-0{% endif %} divide-y rounded-sm border shadow-lg group-hover:absolute z-20"
+            class=" bg-base-100 tras min-w-48 text-sm top absolute {% if type == 'yes' %}md:start-0 {% else %}end-0{% endif %} divide-y rounded-sm border shadow-lg group-hover:absolute z-20"
             x-cloak
             role="menu"
             x-show="isOpen || openedWithKeyboard"
@@ -67,7 +67,7 @@
             @keydown.down.prevent="$focus.wrap().next()"
             @keydown.up.prevent="$focus.wrap().previous()"
         >
-            <header class="flex gap-2 justify-between items-center py-2 px-3 border-b subheading">
+            <header class="flex gap-2 justify-between items-center py-2 px-3 border-b subheading bg-base-200">
                 <span class="font-medium SubMenuHeading text-inherit">Options</span>
                 <button type="button" @click='isOpen = false' class="appearance-none">
                     {% heroicon_mini "x-mark" aria_hidden="true" width=16 height=16 class="stroke-1 hover:stroke-2" %}
@@ -111,4 +111,3 @@
         </div>
     {% endif %}
 </div>
-

@@ -151,7 +151,7 @@
                            name="archived"
                     >
                     <div
-                        class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[ dark:peer-focus:ring-blue-800''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                        class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[ dark:peer-focus:ring-blue-800''] after:absolute after:top-[2px] after:start-[2px] after:bg-base-100 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
                     </div>
                     <span class="text-sm font-medium text-gray-600 ms-3">{% trans "Archived" %}</span>
                 </label>
@@ -166,7 +166,7 @@
                            name="drafts"
                     >
                     <div
-                        class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[ dark:peer-focus:ring-blue-800''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                        class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[ dark:peer-focus:ring-blue-800''] after:absolute after:top-[2px] after:start-[2px] after:bg-base-100 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
                     </div>
                     <span class="text-sm font-medium text-gray-600 ms-3">{% trans "Drafts" %}</span>
                 </label>
@@ -539,7 +539,7 @@
         Load reviews using htmx multi-swap extension, the reviewers for all the submission
         on the page are fetched after the pages is loaded
         {% endcomment %}
-        <section class="w-full bg-white">
+        <section class="w-full bg-base-100">
             {% if submissions %}
                 {% include "submissions/partials/submissions-inline.html" with submissions=submissions row_layout=request.GET.format enable_selection=enable_selection %}
             {% else %}
