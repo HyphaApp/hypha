@@ -107,7 +107,7 @@
 .choices__inner {
   min-height: 40px;
 
-  @apply inline-block w-full p-1 overflow-hidden text-sm text-gray-900 align-top border border-gray-300 rounded-xs;
+  @apply inline-block w-full p-1 overflow-hidden text-sm text-base-content align-top border border-gray-300 rounded-xs;
 }
 
 .is-focused .choices__inner {
@@ -262,7 +262,7 @@
 }
 
 .choices__heading {
-  @apply py-2 text-sm font-semibold text-gray-600 border-b border-gray-300;
+  @apply py-2 text-sm font-semibold text-base-content/70 border-b border-gray-300;
 }
 
 .choices__button {

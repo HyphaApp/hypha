@@ -67,7 +67,7 @@
                                                 href="{% update_filter_query_params field_name value operation='modify' %}"
                                             {% endif %}
                                             role="menuitemradio"
-                                            class="flex {% if value|stringformat:'s' in selected_value %}bg-base-200 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-base-200 focus:bg-base-200"
+                                            class="flex {% if value|stringformat:'s' in selected_value %}bg-base-200 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/70 items-center hover:bg-base-200 focus:bg-base-200"
                                         >
                                             {% if value|stringformat:'s' in selected_value %}
                                                 {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-2" %}
@@ -80,7 +80,7 @@
                         {% enddropdown_menu %}
                     {% else %}
                         <div id="{{ field_name }}"
-                             class="flex justify-between items-center py-1 w-full font-medium text-gray-600 border cursor-pointer md:border-none hover:bg-gray-50 ps-2 pe-2 md:hover:bg-transparent md:hover:text-blue-700"
+                             class="flex justify-between items-center py-1 w-full font-medium border cursor-pointer md:border-none hover:bg-gray-50 text-base-content/70 ps-2 pe-2 md:hover:bg-transparent md:hover:text-blue-700"
                              data-field-name="{{ field_name }}" data-filter-list>
                             {{ field.label }}
                             {% heroicon_micro attributes.icon|default:"chevron-down" aria_hidden="true" size="16" class="hidden w-4 h-4 md:inline-block ms-0.5" %}

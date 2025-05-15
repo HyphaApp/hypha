@@ -11,7 +11,7 @@
             </svg> {% endcomment %}
         </div>
         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-            <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Delete submission</h3>
+            <h3 class="text-base font-semibold leading-6 text-base-content" id="modal-title">Delete submission</h3>
             <div class="mt-2">
                 {% if request.user.is_applicant %}
                     <p class="text-sm text-gray-500">
@@ -27,7 +27,7 @@
                 {% endif %}
             </div>
             <div>
-                <label for="delete-confirmation" class="block mb-2 text-sm font-semibold text-gray-600">Type "<em>delete</em>" below to confirm</label>
+                <label for="delete-confirmation" class="block mb-2 text-sm font-semibold text-base-content/70">Type "<em>delete</em>" below to confirm</label>
                 <input type="text" autocomplete="off" x-model='value' class="italic" id="delete-confirmation">
             </div>
         </div>

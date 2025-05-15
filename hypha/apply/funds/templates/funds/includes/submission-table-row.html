@@ -13,7 +13,7 @@
                        value="{{ s.id }}"
                        x-model="selectedSubmissions"
                        name="selectedSubmissionIds"
-                       class="w-4 h-4 text-blue-600 rounded-sm border-gray-300 focus:ring-2 focus:ring-blue-500"
+                       class="checkbox checkbox-sm"
                 >
                 <span class="sr-only">{% trans "Select submission" %} #{{ s.id }}</span>
             </label>
@@ -43,7 +43,7 @@
         <a
             title="{{ s.form_data.title }}"
             href="{% url "funds:submissions:detail" s.id %}?ref=table-view"
-            class="text-base font-semibold break-words transition-colors hover:text-blue-600 text-[#404041] line-clamp-2"
+            class="text-base font-semibold break-words transition-colors text-base-content line-clamp-2 hover:text-primary"
         >{{ s.form_data.title }}</a>
         <div class="text-xs text-fg-muted">
             #{{ s.application_id }}
@@ -160,7 +160,7 @@
                 </span>
             {% endif %}
             {% if s.comment_count %}
-                <a class="flex items-center text-gray-900 transition-colors group hover:text-light-blue"
+                <a class="flex items-center transition-colors text-inherit group hover:text-primary"
                    title="{% trans "View communications" %}"
                    href="{% url "funds:submissions:comments" s.id %}"
                 >
