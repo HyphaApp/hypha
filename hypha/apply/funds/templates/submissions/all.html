@@ -54,7 +54,7 @@
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "is:open" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex {% if request.GET.query == "is:open" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-base-200 focus:bg-base-200">
                 {% if request.GET.query == "is:open" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
@@ -66,7 +66,7 @@
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "lead:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex {% if request.GET.query == "lead:@me" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-base-200 focus:bg-base-200">
                 {% if request.GET.query == "lead:@me" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
@@ -78,7 +78,7 @@
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "flagged:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex {% if request.GET.query == "flagged:@me" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-base-200 focus:bg-base-200">
                 {% if request.GET.query == "flagged:@me" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
@@ -90,7 +90,7 @@
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "flagged:@staff" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex {% if request.GET.query == "flagged:@staff" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-base-200 focus:bg-base-200">
                 {% if request.GET.query == "flagged:@staff" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
@@ -102,7 +102,7 @@
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "reviewer:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex {% if request.GET.query == "reviewer:@me" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-base-200 focus:bg-base-200">
                 {% if request.GET.query == "reviewer:@me" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
@@ -114,7 +114,7 @@
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "reviewed-by:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex {% if request.GET.query == "reviewed-by:@me" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-base-200 focus:bg-base-200">
                 {% if request.GET.query == "reviewed-by:@me" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
@@ -175,7 +175,7 @@
 
         {% if can_export_submissions %}
             <a
-                class="py-1.5 px-2 rounded-sm border transition-colors hover:bg-gray-100 shadow-xs"
+                class="py-1.5 px-2 rounded-sm border transition-colors shadow-xs hover:bg-base-200"
                 aria-label="{% trans 'Submissions: Download as CSV' %}"
                 href="{% modify_query "page" format="csv" %}"
                 onclick="return confirm('{% blocktrans %}Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.{% endblocktrans %}');"
@@ -380,7 +380,7 @@
                             <li>
                                 <a hx-get="{% remove_from_query "page" "status" %}"
                                    href="{% remove_from_query "page" "status" %}"
-                                   class="flex px-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
+                                   class="flex px-3 py-2 text-gray-600 items-center hover:bg-base-200 focus:bg-base-200{% if s.selected %}bg-base-200{% endif %}">
                                     {% trans "All statuses" %}
                                 </a>
                             </li>
@@ -394,7 +394,7 @@
                                         href="{% modify_query "page" status=s.slug %}"
                                     {% endif %}
                                     role="menuitemradio" aria-checked="{{ s.selected }}"
-                                    class="flex {% if s.selected %}bg-gray-100 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
+                                    class="flex {% if s.selected %}bg-base-200 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-base-200 focus:bg-base-200"
                                 >
                                     {% if s.selected %}
                                         {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-2" %}
@@ -423,7 +423,7 @@
                                         href="{% modify_query "page" screening_statuses=s.slug %}"
                                     {% endif %}
                                     role="menuitemradio" aria-checked="{{ s.selected }}"
-                                    class="flex {% if s.selected %}bg-gray-100 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
+                                    class="flex {% if s.selected %}bg-base-200 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-base-200 focus:bg-base-200"
                                 >
                                     {% if s.selected %}
                                         {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-2" %}
@@ -481,7 +481,7 @@
                             {% endif %}
                             hx-push-url="true"
                             aria-selected="{% if sort_option.selected %}true{% else %}false{% endif %}"
-                            class="flex {% if sort_option.selected %}ps-3 font-bold{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                            class="flex {% if sort_option.selected %}ps-3 font-bold{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 border-b items-center hover:bg-base-200 focus:bg-base-200">
                             {% if sort_option.selected %}
                                 {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                             {% endif %}
@@ -514,7 +514,7 @@
                         hx-post="{% url 'apply:submissions:bulk-archive' %}"
                         hx-include="[name='selectedSubmissionIds']"
                         hx-confirm="{% trans 'Are you sure you want to archive the selected submissions?' %}"
-                        class="flex items-center py-1 px-2 bg-gray-100 border hover:bg-gray-200"
+                        class="flex items-center py-1 px-2 border hover:bg-gray-200 bg-base-200"
                     >
                         {% heroicon_outline "lock-closed" aria_hidden="true" size=14 class="inline stroke-gray-600 me-1" %}
                         {% trans "Archive" %}
@@ -526,7 +526,7 @@
                         hx-post="{% url 'apply:submissions:bulk-delete' %}"
                         hx-include="[name='selectedSubmissionIds']"
                         hx-confirm="{% trans 'Are you sure you want to delete the selected submissions? This action cannot be undone.' %}"
-                        class="flex items-center py-1 px-2 bg-gray-100 border hover:bg-red-300"
+                        class="flex items-center py-1 px-2 border hover:bg-red-300 bg-base-200"
                     >
                         {% heroicon_outline "trash" aria_hidden="true" size=14 class="inline stroke-gray-600 me-1" %}
                         {% trans "Delete" %}

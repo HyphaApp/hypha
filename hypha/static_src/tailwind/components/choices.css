@@ -241,7 +241,7 @@
 
 .choices__list--dropdown .choices__item--selectable.is-highlighted,
 .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
-  @apply bg-gray-100;
+  @apply bg-base-200;
 }
 
 .choices__list--dropdown .choices__item--selectable.is-highlighted::after,

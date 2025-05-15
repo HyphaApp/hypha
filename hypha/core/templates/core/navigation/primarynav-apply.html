@@ -13,7 +13,7 @@
 >
     <!-- Mobile Menu Opener -->
     <button
-        class="absolute top-6 z-30 p-1.5 rounded-sm border transition-colors md:hidden end-4 hover:bg-slate-100"
+        class="absolute top-6 z-30 p-1.5 rounded-sm border transition-colors md:hidden end-4 hover:bg-base-200"
         @click="showDesktopMenu = false"
     >
         {% heroicon_outline "x-mark" aria_hidden="true" size=24 stroke_width=3 class="inline" %}
@@ -66,7 +66,7 @@
                             <a
                                 href="{{ sub_item.url }}"
                                 role="menuitem"
-                                class="pr-4 py-2 block font-normal hover:bg-slate-100
+                                class="pr-4 py-2 block font-normal hover:bg-base-200
                                        focus-visible:outline-dashed transition-colors
                                        {% if sub_item.url == request.path %}
                                            border-l-dark-blue bg-slate-100 pl-3 border-l-4 border-r text-dark-blue font-semibold

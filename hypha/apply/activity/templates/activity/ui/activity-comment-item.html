@@ -6,7 +6,7 @@
     >
         {% with activity|display_activity_author:request.user as author_name %}
             <div class="inline-flex relative justify-center items-start me-4">
-                <div class="relative rounded-full inline-flex items-center justify-center border-white border-2 -ms-0.5 {% if activity.user.is_staff %}bg-slate-200 {% else %}bg-gray-100{% endif %}">
+                <div class="relative rounded-full inline-flex items-center justify-center border-white border-2 -ms-0.5 {% if activity.user.is_staff %}bg-slate-200 {% else %}bg-base-200{% endif %}">
                     <div class="hidden p-2 md:block">
                         {% user_image author_name size=25 %}
                     </div>

@@ -37,7 +37,7 @@
             <div class="hidden absolute top-0 right-0 bottom-0 z-10 items-center group-hover:flex">
                 <button
                     role="button"
-                    class="p-1.5 bg-gray-100 rounded-sm border cursor-pointer hover:bg-gray-200 shadow-xs me-2"
+                    class="p-1.5 rounded-sm border cursor-pointer hover:bg-gray-200 bg-base-200 shadow-xs me-2"
                     data-tippy-content="{% trans 'Remove from your task list' %}"
                     data-tippy-placement="left"
                     hx-delete="{% url 'todo:delete' pk=task.id %}"

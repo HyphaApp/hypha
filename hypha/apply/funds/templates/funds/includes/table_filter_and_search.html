@@ -67,7 +67,7 @@
                                                 href="{% update_filter_query_params field_name value operation='modify' %}"
                                             {% endif %}
                                             role="menuitemradio"
-                                            class="flex {% if value|stringformat:'s' in selected_value %}bg-gray-100 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
+                                            class="flex {% if value|stringformat:'s' in selected_value %}bg-base-200 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-base-200 focus:bg-base-200"
                                         >
                                             {% if value|stringformat:'s' in selected_value %}
                                                 {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-2" %}
