@@ -113,7 +113,11 @@ class Invoice(models.Model):
     )
     document = models.FileField(upload_to=invoice_path, storage=PrivateStorage())
     requested_at = models.DateTimeField(auto_now_add=True)
-    message_for_pm = models.TextField(blank=True, verbose_name=_("Message"))
+    message_for_pm = models.TextField(
+        blank=True,
+        verbose_name=_("Comment"),
+        help_text="This will be displayed as a comment in the conversations tab",
+    )
     comment = models.TextField(blank=True)
     invoice_number = models.CharField(
         max_length=50, null=True, verbose_name=_("Invoice number")
@@ -147,7 +151,7 @@ class Invoice(models.Model):
 
     @property
     def has_changes_requested(self):
-        return self.status == CHANGES_REQUESTED_BY_STAFF
+        return self.status in {CHANGES_REQUESTED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE}
 
     @property
     def status_display(self):

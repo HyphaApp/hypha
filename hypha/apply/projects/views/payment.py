@@ -144,15 +144,16 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
         )
         if form.is_valid():
             form.save()
+            message_kwargs = {}
             if form.cleaned_data["comment"]:
                 invoice_status_change = _(
                     "<p>Invoice status updated to: {status}.</p>"
                 ).format(status=self.object.get_status_display())
-                comment = f"<p>{self.object.comment}</p>"
+                comment = f'<p>"{self.object.comment}"</p>'
 
                 message = invoice_status_change + comment
 
-                Activity.objects.create(
+                comment_activity = Activity.objects.create(
                     user=self.request.user,
                     type=COMMENT,
                     source=self.object.project,
@@ -161,6 +162,8 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
                     visibility=APPLICANT,
                     related_object=self.object,
                 )
+
+                message_kwargs["comment_url"] = comment_activity.get_absolute_url()
 
             if (
                 self.request.user.is_apply_staff
@@ -181,6 +184,7 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
                 user=self.request.user,
                 source=self.object.project,
                 related=self.object,
+                **message_kwargs,
             )
 
             handle_tasks_on_invoice_update(old_status=old_status, invoice=self.object)
@@ -276,7 +280,7 @@ class CreateInvoiceView(SuccessMessageMixin, CreateView):
         if form.cleaned_data["message_for_pm"]:
             invoice_status_change = _("<p>Invoice added.</p>")
 
-            message_for_pm = f"<p>{form.cleaned_data['message_for_pm']}</p>"
+            message_for_pm = f'<p>"{form.cleaned_data["message_for_pm"]}"</p>'
 
             message = invoice_status_change + message_for_pm
 
@@ -362,6 +366,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
     def form_valid(self, form):
         old_status = self.object.status
         response = super().form_valid(form)
+        message_kwargs = {}
 
         if form.cleaned_data:
             if self.object.status in INVOICE_TRANSITION_TO_RESUBMITTED:
@@ -372,10 +377,10 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
                 invoice_status_change = _(
                     "<p>Invoice status updated to: {status}.</p>"
                 ).format(status=self.object.get_status_display())
-                message_for_pm = f"<p>{form.cleaned_data['message_for_pm']}</p>"
+                message_for_pm = f'<p>"{form.cleaned_data["message_for_pm"]}"</p>'
                 message = invoice_status_change + message_for_pm
 
-                Activity.objects.create(
+                comment_activity = Activity.objects.create(
                     user=self.request.user,
                     type=COMMENT,
                     source=self.object.project,
@@ -385,12 +390,15 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
                     related_object=self.object,
                 )
 
+                message_kwargs["comment_url"] = comment_activity.get_absolute_url()
+
         messenger(
             MESSAGES.UPDATE_INVOICE_STATUS,
             request=self.request,
             user=self.request.user,
             source=self.object.project,
             related=self.object,
+            **message_kwargs,
         )
 
         if self.request.user.is_applicant and old_status == CHANGES_REQUESTED_BY_STAFF:

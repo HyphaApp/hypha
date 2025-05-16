@@ -10,7 +10,15 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity import tasks
 from hypha.apply.activity.models import ALL, APPLICANT_PARTNERS, PARTNER
-from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED
+from hypha.apply.projects.models.payment import (
+    APPROVED_BY_FINANCE,
+    CHANGES_REQUESTED_BY_FINANCE,
+    CHANGES_REQUESTED_BY_STAFF,
+    DECLINED,
+    PAID,
+    PAYMENT_FAILED,
+    RESUBMITTED,
+)
 from hypha.apply.projects.templatetags.project_tags import display_project_status
 from hypha.apply.users.models import User
 from hypha.apply.users.roles import (
@@ -61,6 +69,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.REQUEST_PROJECT_CHANGE: "messages/email/project_request_change.html",
         MESSAGES.ASSIGN_PAF_APPROVER: "messages/email/assign_paf_approvers.html",
         MESSAGES.APPROVE_PAF: "messages/email/paf_for_approval.html",
+        MESSAGES.CREATE_INVOICE: "messages/email/invoice_created.html",
         MESSAGES.UPDATE_INVOICE: "handle_invoice_updated",
         MESSAGES.UPDATE_INVOICE_STATUS: "handle_invoice_status_updated",
         MESSAGES.APPROVE_INVOICE: "messages/email/invoice_approved.html",
@@ -194,11 +203,23 @@ class EmailAdapter(AdapterBase):
             )
 
     def handle_invoice_status_updated(self, related, **kwargs):
-        return self.render_message(
-            "messages/email/invoice_status_updated.html",
-            has_changes_requested=related.has_changes_requested,
-            **kwargs,
-        )
+        if kwargs.get("recipient") and (
+            user := User.objects.get(email=kwargs["recipient"])
+        ):
+            if user.is_applicant:
+                return self.render_message(
+                    "messages/email/invoice_status_updated_applicant.html",
+                    has_changes_requested=related.has_changes_requested,
+                    **kwargs,
+                )
+            elif user.is_org_faculty:
+                kwargs["source_user"] = kwargs["user"]
+                kwargs["user"] = user
+                return self.render_message(
+                    "messages/email/invoice_status_updated_staff.html",
+                    has_changes_requested=related.has_changes_requested,
+                    **kwargs,
+                )
 
     def handle_invoice_updated(self, **kwargs):
         return self.render_message(
@@ -362,9 +383,17 @@ class EmailAdapter(AdapterBase):
 
         if message_type == MESSAGES.UPDATE_INVOICE_STATUS:
             related = kwargs.get("related", None)
-            if related:
-                if related.status in {CHANGES_REQUESTED_BY_STAFF, DECLINED}:
+            if related and (status := related.status):
+                if status in {
+                    CHANGES_REQUESTED_BY_STAFF,
+                    DECLINED,
+                    PAID,
+                    APPROVED_BY_FINANCE,
+                    PAYMENT_FAILED,
+                }:
                     return [source.user.email]
+                elif status in {CHANGES_REQUESTED_BY_FINANCE, RESUBMITTED}:
+                    return [source.lead.email]
             return []
 
         if message_type == MESSAGES.PROJECT_TRANSITION:
@@ -386,6 +415,12 @@ class EmailAdapter(AdapterBase):
             if user.is_apply_staff:
                 return get_compliance_email(target_user_gps=[FINANCE_GROUP_NAME])
             return []
+
+        if message_type == MESSAGES.CREATE_INVOICE:
+            if user == source.user:
+                return [source.lead.email]
+            else:
+                return [source.user.email]
 
         if isinstance(source, get_user_model()):
             return user.email

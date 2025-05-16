@@ -2,11 +2,8 @@
 
 {% load i18n invoice_tools %}
 {% block content %}{# fmt:off #}
-{% display_invoice_status_for_user source.user invoice as invoice_status %}
 
-{% blocktrans with title=source.title date_from=invoice.date_from date_to=invoice.date_to %}An {{ ORG_SHORT_NAME }} staff member has updated your invoice for {{ title }} for period {{ date_from }} to {{ date_to }}.{% endblocktrans %}
-{% blocktrans %}It is now {{ invoice_status }}.{% endblocktrans %}
+{% blocktrans with title=source.title_text_display %}An {{ ORG_SHORT_NAME }} staff member has updated an invoice on your project "{{ title }}".{% endblocktrans %}
 
-{% trans "Title" %}: {{ source.title_text_display }}
-{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "View the invoice here:" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% endblock %}{# fmt:on #}

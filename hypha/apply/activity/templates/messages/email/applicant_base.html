@@ -4,7 +4,7 @@
 {% block salutation %}{% blocktrans with name=source.user.get_full_name|default:"applicant" %}Dear {{ name }},{% endblocktrans %}{% endblock %}
 
 {# fmt:off #}
-{% block more_info %}{% trans "Link to your application" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% block more_info %}{% if source.submission %}{% trans "View your project here" %}{% else %}{% trans "View your submission here" %}{% endif %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 
 {% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{% if source.submission %}{% url 'funds:submissions:comments' pk=source.submission.pk %}{% else %}{% url 'funds:submissions:comments' pk=source.pk %}{% endif %}
 
