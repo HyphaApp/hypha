@@ -57,9 +57,14 @@
             </div>
         </div>
         <aside class="sidebar">
-            <div hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}" hx-trigger="invoicesUpdated from:body" class="sticky top-8 sidebar__inner sidebar__inner--light-blue sidebar__inner--actions" data-testid="sidebar-primary-actions">
+            <section
+                class="sticky top-8 card card-border border-primary/10 bg-primary/10 shadow-xs sidebar__inner--actions"
+                hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}"
+                hx-trigger="invoicesUpdated from:body"
+                data-testid="sidebar-primary-actions"
+            >
                 {% include "application_projects/partials/invoice_detail_actions.html" %}
-            </div>
+            </>
         </aside>
     </div>
 {% endblock %}

@@ -40,9 +40,18 @@
                         {{ field }}
                     {% endif %}
                 {% endfor %}
-                {% for button_name, button_type, button_value in buttons %}
-                    <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }} {% if button_value == delete %}formnovalidate{% endif %}">{{ button_value }}</button>
-                {% endfor %}
+
+                <div class="flex flex-wrap gap-2 mt-4">
+                    {% for button_name, button_type, button_value in buttons %}
+                        <button
+                            class="btn {{ button_type }}"
+                            type="submit"
+                            name="{{ button_name }} {% if button_value == delete %}formnovalidate{% endif %}"
+                        >
+                            {{ button_value }}
+                        </button>
+                    {% endfor %}
+                </div>
             </form>
         </div>
     </div>

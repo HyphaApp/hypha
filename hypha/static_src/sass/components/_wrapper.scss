@@ -89,11 +89,7 @@
   }
 
   &--inner-space-medium {
-    padding: 20px 0;
-
-    @include mixins.media-query(sm) {
-      padding: 2rem 0;
-    }
+    padding: calc(var(--spacing) * 2) 0;
 
     + .wrapper--inner-space-medium {
       padding: 0;
@@ -122,11 +118,7 @@
   }
 
   &--outer-space-medium {
-    margin: 20px 0;
-
-    @include mixins.media-query(sm) {
-      margin: 2rem 0;
-    }
+    padding-block: calc(var(--spacing) * 4);
   }
 
   &--outer-space-large {
