@@ -62,6 +62,7 @@ dependencies = [
     "xmltodict~=0.14.2",
     "wagtail-modeladmin>=2.1.0",
     "redis>=5.2.1",
+    "crispy-tailwind>=1.0.3",
 ]
 
 [dependency-groups]

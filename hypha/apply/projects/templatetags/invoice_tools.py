@@ -137,7 +137,7 @@ def get_comment_for_invoice_action(invoice, action):
 
 @register.filter
 def invoice_status_bg_color(invoice_status):
-    return INVOICE_STATUS_BG_COLORS.get(invoice_status, "bg-gray-100")
+    return INVOICE_STATUS_BG_COLORS.get(invoice_status, "bg-base-200")
 
 
 @register.filter

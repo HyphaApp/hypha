@@ -54,10 +54,10 @@
                     </div>
                 {% endif %}
             {% endfor %}
-            <div class="flex flex-wrap gap-4 items-center">
+            <div class="flex flex-wrap gap-2 items-center mt-4">
 
                 <button
-                    class="button button--primary min-w-48"
+                    class="btn btn-primary"
                     type="submit"
                     name="submit"
                 >
@@ -65,7 +65,7 @@
                 </button>
 
                 {% if not object.id or object.is_draft %}
-                    <button class="button button--white"
+                    <button class="btn btn-secondary btn-outline"
                             type="submit"
                             name="{{ form.draft_button_name }}"
                     >

@@ -17,6 +17,7 @@ With this user can enter any text and get a feedback why it's wrong.
            inputmode="numeric"
            pattern="[0-9.]*"  {% comment %} Allow for digit with a decimal{% endcomment %}
            name="{{ widget.name }}"
+           class="input"
            {% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}
            {% include "django/forms/widgets/attrs.html" %}>
     <span x-cloak x-show="error" x-text="error" class="form__error-text"></span>

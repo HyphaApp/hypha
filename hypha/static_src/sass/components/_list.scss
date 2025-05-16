@@ -2,7 +2,7 @@
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 
-.list {
+.h-list {
   $root: &;
   max-width: 290px;
 
@@ -33,11 +33,7 @@
         }
 
         &::before {
-          @include mixins.triangle(
-            top,
-            variables.$color--mid-grey,
-            6px
-          );
+          @include mixins.triangle(top, variables.$color--mid-grey, 6px);
         }
       }
     }

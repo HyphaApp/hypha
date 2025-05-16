@@ -2,7 +2,7 @@
 {% load show_applicant_identity from workflow_tags %}
 
 <tr
-    class="relative py-1 px-2 border hover:bg-gray-100"
+    class="relative py-1 px-2 border hover:bg-base-200"
 >
     {% if enable_selection %}
         <td class="hidden p-2 text-center align-top md:table-cell">
@@ -13,7 +13,7 @@
                        value="{{ s.id }}"
                        x-model="selectedSubmissions"
                        name="selectedSubmissionIds"
-                       class="w-4 h-4 text-blue-600 rounded-sm border-gray-300 focus:ring-2 focus:ring-blue-500"
+                       class="checkbox checkbox-sm"
                 >
                 <span class="sr-only">{% trans "Select submission" %} #{{ s.id }}</span>
             </label>
@@ -43,7 +43,7 @@
         <a
             title="{{ s.form_data.title }}"
             href="{% url "funds:submissions:detail" s.id %}?ref=table-view"
-            class="text-base font-semibold break-words transition-colors hover:text-blue-600 text-[#404041] line-clamp-2"
+            class="text-base font-semibold break-words transition-colors text-base-content line-clamp-2 hover:text-primary"
         >{{ s.form_data.title }}</a>
         <div class="text-xs text-fg-muted">
             #{{ s.application_id }}
@@ -146,7 +146,7 @@
                         </span>
 
                         <div
-                            class="hidden absolute bottom-6 z-10 p-2 w-64 bg-white rounded-sm border shadow-lg group-hover:block review-hovercard -end-1/2 md:-end-4"
+                            class="hidden absolute bottom-6 z-10 p-2 w-64 rounded-sm border shadow-lg group-hover:block bg-base-100 review-hovercard -end-1/2 md:-end-4"
                         >
                                 {% comment %} pre-loading animation {% endcomment %}
                             <div class="animate-pulse min-h-30">
@@ -160,7 +160,7 @@
                 </span>
             {% endif %}
             {% if s.comment_count %}
-                <a class="flex items-center text-gray-900 transition-colors group hover:text-light-blue"
+                <a class="flex items-center transition-colors text-inherit group hover:text-primary"
                    title="{% trans "View communications" %}"
                    href="{% url "funds:submissions:comments" s.id %}"
                 >

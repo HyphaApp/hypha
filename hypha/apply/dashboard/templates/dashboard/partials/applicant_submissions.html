@@ -3,8 +3,8 @@
 
 {% for submission in page.object_list %}
     <div class="wrapper wrapper--status-bar-outer">
-        <div class="wrapper wrapper--status-bar-inner ms-4">
-            <div class="mt-5 lg:max-w-[30%]">
+        <div class="flex flex-wrap gap-2 sm:flex-nowrap">
+            <div class="mt-5 w-full sm:w-sm">
                 <h4 class="mb-0 font-bold heading line-clamp-3 hover:line-clamp-none">
                     <a class="{% if not submission.is_active %} text-slate-500 {% endif %} hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
                         {{ submission.title }}
@@ -19,23 +19,30 @@
                     {% endif %}
                     {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}
                 </p>
-                {% if request.user|has_edit_perm:submission %}
-                    <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
-                        {% if submission.status == 'draft_proposal' %}
-                            {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
-                        {% else %}
-                            {% heroicon_micro "pencil" class="inline w-4 h-4 align-middle me-1" aria_hidden=true %}
-                            {% trans "Edit" %}
-                        {% endif %}
-                    </a>
-                {% endif %}
-                {% can "delete_submission" submission as can_delete_submission %}
-                {% if can_delete_submission %}
-                    <a class="button button--white" href="{% url 'funds:submissions:delete' submission.id %}" hx-get="{% url 'funds:submissions:delete' submission.id %}" hx-target="#htmx-modal">
-                        {% heroicon_micro "trash" class="inline mt-1 me-1 fill-red-600" aria_hidden=true %}
-                        {% trans "Delete" %}
-                    </a>
-                {% endif %}
+                <div class="flex gap-2">
+                    {% if request.user|has_edit_perm:submission %}
+                        <a class="btn btn-primary" href="{% url 'funds:submissions:edit' submission.id %}">
+                            {% if submission.status == 'draft_proposal' %}
+                                {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
+                            {% else %}
+                                {% heroicon_micro "pencil" class="inline w-4 h-4 align-middle me-1" aria_hidden=true %}
+                                {% trans "Edit" %}
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                    {% can "delete_submission" submission as can_delete_submission %}
+                    {% if can_delete_submission %}
+                        <a
+                            class="btn btn-error btn-outline"
+                            href="{% url 'funds:submissions:delete' submission.id %}"
+                            hx-get="{% url 'funds:submissions:delete' submission.id %}"
+                            hx-target="#htmx-modal"
+                        >
+                            {% heroicon_micro "trash" aria_hidden=true %}
+                            {% trans "Delete" %}
+                        </a>
+                    {% endif %}
+                </div>
             </div>
             {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
         </div>

@@ -1,6 +1,6 @@
 {% load i18n heroicons %}
 <form
-    class="py-4 px-4 mb-4 w-full text-center bg-gray-50 border rounded-xs form form--error-inline"
+    class="py-4 px-4 mb-4 w-full text-center border bg-base-200 rounded-xs form form--error-inline"
     id="elevate-check-code-form"
     x-data="{ code: '' }"
 >
@@ -33,7 +33,7 @@
 
     <div>
         <button
-            class="block mb-4 button button--primary"
+            class="block mb-4 btn btn-primary"
             type="submit"
             hx-post="{% url 'users:elevate_check_code' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
             hx-validate="true"
@@ -71,4 +71,3 @@
         </ul>
     </section>
 {% endif %}
-

@@ -16,7 +16,7 @@
         <div class="w-full ps-7">
             <ul class="pt-3 space-y-2">
                 {% for document_category in all_document_categories %}
-                    <li class="flex justify-between py-2 px-3 bg-gray-100 rounded-sm">
+                    <li class="flex justify-between py-2 px-3 rounded-sm bg-base-200">
                         <div class="docs-block__document-inner">
                             <span>{{ document_category.name }}
                                 {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
@@ -57,32 +57,32 @@
                             {% if latest_file %}
                                 <div class="docs-block__document-inner__actions">
                                     <a
-                                        class="docs-block__icon-link"
+                                        class="btn btn-outline btn-secondary"
                                         href="{% url 'apply:projects:document' pk=object.submission.pk file_pk=latest_file.pk %}"
                                         target="_blank"
                                     >
-                                        {% heroicon_micro "eye" class="inline me-1" aria_hidden=true %}
+                                        {% heroicon_micro "eye" class="inline" aria_hidden=true %}
                                         {% trans "View" %}
                                     </a>
                                     {% user_can_remove_supporting_documents object user as can_remove_supporting_doc %}
                                     {% if can_remove_supporting_doc %}
                                         <button
-                                            class="docs-block__icon-link button button--link button--remove"
-                                            hx-delete="{% url "apply:projects:remove_supporting_document" object.submission.pk latest_file.pk %}"
-                                            hx-swap="none"
-                                            hx-confirm="Are you sure you want to remove this document?"
-                                        >
-                                            {% heroicon_micro "trash" class="inline me-1 fill-red-500" aria_hidden=true %}
-                                            {% trans "Remove" %}
-                                        </button>
-                                    {% endif %}
-                                </div>
-                            {% endif %}
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
+                                            class=btn button--remove"
+                                                                     hx-delete="{% url "apply:projects:remove_supporting_document" object.submission.pk latest_file.pk %}"
+                                                                                                                                                 hx-swap="none"
+                                                          hx-confirm="Are you sure you want to remove this document?"
+                                                                                                       >
+                                                                                                       {% heroicon_micro "trash" class="inline fill-red-500" aria_hidden=true %}
+                                                                                                       {% trans "Remove" %}
+                                                                                                       </button>
+                                                                                               {% endif %}
+                                                                                               </div>
+                                                                                       {% endif %}
+                                                                                   {% endif %}
+                                                                                   </li>
+                                                                           {% endfor %}
+                                                                           </ul>
+                                                                           </div>
+                                                               {% endif %}
 
-</li>
+                                                               </li>

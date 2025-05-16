@@ -18,35 +18,35 @@
 
     <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
         <div class="wrapper--sidebar--inner">
-            <div class="card card--solid">
-                <p class="card__text"><b>{% trans "Invoice number" %}:</b> {{ object.invoice_number }}</p>
-                <p class="card__text"><b>{% trans "Invoice date" %}:</b> {% if invoice.invoice_date %}{{ invoice.invoice_date }}{% else %} {{ invoice.requested_at.date }} {% endif %}</p>
+            <div class="h-card h-card--solid card card-border">
+                <p class="h-card__text"><b>{% trans "Invoice number" %}:</b> {{ object.invoice_number }}</p>
+                <p class="h-card__text"><b>{% trans "Invoice date" %}:</b> {% if invoice.invoice_date %}{{ invoice.invoice_date }}{% else %} {{ invoice.requested_at.date }} {% endif %}</p>
                 {% if show_paid_date %}
-                    <p class="card__text"><b>{% trans "Paid date" %}:</b> {{ invoice.paid_date }}</p>
+                    <p class="h-card__text"><b>{% trans "Paid date" %}:</b> {{ invoice.paid_date }}</p>
                 {% endif %}
-                <p class="card__text"><b>{% trans "Vendor" %}:</b>
+                <p class="h-card__text"><b>{% trans "Vendor" %}:</b>
                     {{ object.project.user }}</p>
                 {% if not HIDE_STAFF_IDENTITY or request.user.is_org_faculty %}
-                    <p class="card__text"><b>{% trans "Lead" %}:</b> {{ object.project.lead }}</p>
+                    <p class="h-card__text"><b>{% trans "Lead" %}:</b> {{ object.project.lead }}</p>
                 {% endif %}
-                <p class="card__text"><b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}</p>
+                <p class="h-card__text"><b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}</p>
             </div>
-            <div hx-get="{% url 'apply:projects:partial-invoice-status' pk=object.project.pk invoice_pk=object.pk %}" hx-trigger="load, invoicesUpdated from:body" class="flex card card--solid" x-data="{ collapsed: true }">
+            <div hx-get="{% url 'apply:projects:partial-invoice-status' pk=object.project.pk invoice_pk=object.pk %}" hx-trigger="load, invoicesUpdated from:body" class="flex h-card h-card--solid card card-border" x-data="{ collapsed: true } card-border">
                 <div class="flex-none content-center min-h-10"><div class="h-4 bg-gray-400 rounded-full animate-pulse min-w-96"></div></div>
                 <div class="ps-2"></div>
             </div>
 
-            <div class="card card--solid">
-                <div class="card__inner">
-                    <h5 class="card__heading">{% trans "Invoice" %}</h5>
-                    <p class="card__text"><a target="_blank" href="{% url "apply:projects:invoice-document" pk=object.project.submission.id invoice_pk=object.pk %}">{{object.filename}}</a></p>
+            <div class="h-card h-card--solid card card-border">
+                <div class="h-card__inner">
+                    <h5 class="h-card__heading">{% trans "Invoice" %}</h5>
+                    <p class="h-card__text"><a target="_blank" href="{% url "apply:projects:invoice-document" pk=object.project.submission.id invoice_pk=object.pk %}">{{object.filename}}</a></p>
                     <embed src="{% url "apply:projects:invoice-document" pk=object.project.submission.id invoice_pk=object.pk %}" width="800px" height="800px" />
                 </div>
                 {% if object.supporting_documents.exists %}
-                    <div class="card__inner">
-                        <h5 class="card__heading">{% trans "Supporting Documents" %}</h5>
+                    <div class="h-card__inner">
+                        <h5 class="h-card__heading">{% trans "Supporting Documents" %}</h5>
                         {% for document in object.supporting_documents.all %}
-                            <p class="card__text">
+                            <p class="h-card__text">
                                 <a href="{{ document.get_absolute_url }}">
                                     {{document.filename}}
                                 </a>
@@ -57,9 +57,14 @@
             </div>
         </div>
         <aside class="sidebar">
-            <div hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}" hx-trigger="invoicesUpdated from:body" class="sticky top-8 sidebar__inner sidebar__inner--light-blue sidebar__inner--actions" data-testid="sidebar-primary-actions">
+            <section
+                class="sticky top-8 card card-border border-primary/10 bg-primary/10 shadow-xs sidebar__inner--actions"
+                hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}"
+                hx-trigger="invoicesUpdated from:body"
+                data-testid="sidebar-primary-actions"
+            >
                 {% include "application_projects/partials/invoice_detail_actions.html" %}
-            </div>
+            </>
         </aside>
     </div>
 {% endblock %}

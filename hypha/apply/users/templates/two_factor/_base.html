@@ -14,7 +14,7 @@
         {% comment %} {% slot sub_heading %}{% trans "All submissions ready for discussion." %}{% endslot %} {% endcomment %}
 
         {% if user.can_access_dashboard %}
-            <a href="{% url 'dashboard:dashboard' %}" class="button button--primary" hx-boost='true'>
+            <a href="{% url 'dashboard:dashboard' %}" class="btn btn-primary" hx-boost='true'>
                 {% heroicon_mini "squares-2x2" size=20 class="inline mr-1 align-text-bottom" %}
                 {% trans "Go to my dashboard" %}
             </a>

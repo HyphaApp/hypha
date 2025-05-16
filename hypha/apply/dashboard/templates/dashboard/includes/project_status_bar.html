@@ -1,16 +1,18 @@
 {% load dashboard_statusbar_tags %}
 
-<div class="status-bar my-6 {{ class }}">
-    {% for status, text in statuses %}
+<ul class="pt-4 pb-8 w-full steps {{ class }}">
+    {% for status, display_text in statuses %}
         {% if forloop.counter0 == current_status_index %}
-            {% include "funds/includes/status_bar_item.html" with is_current=True is_complete=False label=text %}
+            <li data-content="●" class="step step-primary">
+                <span class="block py-1 px-2 text-sm font-semibold rounded-box bg-primary text-primary-content">{{ display_text }}</span>
+            </li>
         {% elif forloop.counter0 < current_status_index %}
-            {% include "funds/includes/status_bar_item.html" with is_current=False is_complete=True label=text %}
+            <li data-content="✓" class="step step-primary">{{ display_text }}</li>
         {% else %}
-            {% include "funds/includes/status_bar_item.html" with is_current=False is_complete=False label=text %}
+            <li data-content="" class="step">{{ display_text }}</li>
         {% endif %}
     {% endfor %}
-</div>
+</ul>
 
 <div class="mt-5 status-bar--mobile">
     <div class="status-bar__subheading status-bar__text">

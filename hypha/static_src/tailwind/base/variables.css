@@ -51,7 +51,6 @@
   /* Assignment */
   --color-default: var(--color-black);
   --color-primary: var(--color-light-blue);
-  --color-error: var(--color-tomato);
   --color-correct: var(--color-mint);
   --color-button-disabled: var(--color-lighter-blue);
 
