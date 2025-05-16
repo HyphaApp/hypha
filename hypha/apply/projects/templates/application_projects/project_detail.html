@@ -93,21 +93,24 @@
                 <aside class="sidebar">
                     {% user_next_step_on_project object user request=request as next_step %}
                     {% if next_step %}
-                        <div class="py-3 px-5 mb-8 bg-yellow-200 shadow-sm sidebar__inner--actions">
-                            <h5 class="flex pb-2 border-b border-b-orange-200">
-                                {% heroicon_solid "sparkles" class="align-text-top me-1 fill-orange-500" aria_hidden=true %}
-                                <span>{{ next_step.heading }}</span>
-                            </h5>
-                            <p class="">{{ next_step.text }}</p>
-                            {% user_next_step_instructions object user as instructions %}
-                            {% if instructions %}
-                                <div class="sidebar__inner--actions--instructions">
-                                    {% for instruction in instructions %}
-                                        <p>{{forloop.counter}}. {{ instruction }}</p>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
+                        <div class="card [--card-fs:1rem] bg-info text-info-content shadow-xs sidebar__inner--actions">
+                            <div class="card-body">
+                                <h2 class="card-title">
+                                    {% heroicon_solid "sparkles" class="align-text-top" aria_hidden=true %}
+                                    <span>{{ next_step.heading }}</span>
+                                </h2>
 
+                                <p>{{ next_step.text }}</p>
+
+                                {% user_next_step_instructions object user as instructions %}
+                                {% if instructions %}
+                                    <div class="sidebar__inner--actions--instructions">
+                                        {% for instruction in instructions %}
+                                            <p>{{forloop.counter}}. {{ instruction }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
                     {% endif %}
                     {% if object.paf_approvals.exists and not user.is_applicant %}

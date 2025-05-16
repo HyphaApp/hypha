@@ -41,14 +41,18 @@
                         {% user_can_edit_pfs object user as can_edit_pfs %}
                         {% if can_edit_pfs %}
                             <a
-                                class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}"
+                                class="btn btn-primary btn-block {% if user_can_approve %} is-disabled {% endif %}"
                                 href="{% url 'apply:projects:edit_sow' pk=object.submission.pk %}"
                             >
                                 {% trans "Edit" %}
                             </a>
                         {% endif %}
                         <div x-data="{ show: false }" class="relative">
-                            <button x-on:click="show = ! show" class="button button--bottom-space button--primary button--full-width" type="button">
+                            <button
+                                x-on:click="show = ! show"
+                                class="btn btn-primary btn-block"
+                                type="button"
+                            >
                                 {% trans 'Download SOW' %}
                             </button>
                             <div x-show="show" x-transition class="dropdown__content">

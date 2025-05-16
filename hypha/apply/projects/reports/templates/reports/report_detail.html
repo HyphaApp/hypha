@@ -57,7 +57,7 @@
                 <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
                     {% if request.user.is_apply_staff %}
                         <a
-                            class="button button--bottom-space button--primary button--full-width"
+                            class="btn btn-primary btn-block"
                             href="{% url "apply:projects:reports:edit" pk=report.pk %}"
                         >
                             {% if object.draft %}
@@ -69,14 +69,14 @@
                     {% endif %}
                     {% if report.previous %}
                         <a
-                            class="button button--bottom-space button--primary button--full-width"
+                            class="btn btn-primary btn-block"
                             href="{% url "apply:projects:reports:detail" pk=report.previous.pk %}">
                             {% trans "View previous report" %}
                         </a>
                     {% endif %}
                     {% if report.next %}
                         <a
-                            class="button button--bottom-space button--primary button--full-width"
+                            class="btn btn-primary btn-block"
                             href="{% url "apply:projects:reports:detail" pk=report.next.pk %}">
                             {% trans "View next report" %}
                         </a>
