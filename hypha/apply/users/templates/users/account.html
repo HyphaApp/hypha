@@ -15,13 +15,13 @@
                     {% trans "Go to my dashboard" %}
                 </a>
             {% else %}
-                <div class="flex items-center wrapper wrapper--cta-box">
+                <div class="flex items-center p-4 w-lg bg-base-100 text-base-content rounded-box">
                     <div class="flex-1">
-                        <h3 class="font-bold heading heading--no-margin">{% trans "Submit a new application" %}</h3>
-                        <p class="m-0 text-base">{% trans "Apply now for our open rounds" %}</p>
+                        <h3 class="font-bold">{% trans "Submit a new application" %}</h3>
+                        <p class="m-0 text-sm">{% trans "Apply now for our open rounds" %}</p>
                     </div>
                     <div>
-                        <a class="button button--blue-white" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
+                        <a class="btn btn-primary btn-outline" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
                     </div>
                 </div>
 

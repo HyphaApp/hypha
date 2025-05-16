@@ -2,12 +2,12 @@
 
 {% for project in page.object_list %}
     <div class="wrapper wrapper--status-bar-outer">
-        <div class="wrapper wrapper--status-bar-inner ms-4">
-            <div class="mt-5 lg:max-w-[30%]">
+        <div class="flex flex-wrap sm:flex-nowrap grap-2">
+            <div class="mt-5 sm:w-sm">
                 <h4 class="mb-0 font-bold heading line-clamp-3 hover:line-clamp-none"><a class="link" href="{{ project.get_absolute_url }}">{{ project.title }}</a></h4>
                 <p class="m-0 text-sm text-fg-muted">{% trans "Project start date: " %} {{ project.created_at.date }}</p>
             </div>
-            {% project_status_bar project.status request.user css_class="status-bar--small" %}
+            {% project_status_bar project.status request.user css_class="w-full" %}
         </div>
     </div>
 {% empty %}

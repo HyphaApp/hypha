@@ -84,24 +84,6 @@
     }
   }
 
-  &--blue-white {
-    @include mixins.button(
-      variables.$color--white,
-      variables.$color--light-blue
-    );
-    display: inline-block;
-    color: variables.$color--light-blue;
-    border: 1px solid variables.$color--light-blue;
-
-    &:focus {
-      color: variables.$color--light-blue;
-    }
-
-    &:hover {
-      color: variables.$color--white;
-    }
-  }
-
   &-danger,
   &--warning {
     @include mixins.button(variables.$color--error, variables.$color--error);
