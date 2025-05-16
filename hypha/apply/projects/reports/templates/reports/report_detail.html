@@ -15,27 +15,27 @@
     {% endadminbar %}
 
     <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
-
         <div class="wrapper--sidebar--inner">
-            <p class="flex items-center py-2 px-3 mt-0 mb-8 text-sm border bg-(--color-light-blue-90)">
-                {% heroicon_outline 'exclamation-circle' stroke_width=2 size=18 class="inline me-1 stroke-dark-blue" aria_hidden=true %}
+            <div role="alert" class="mb-4 alert alert-info">
+                {% heroicon_outline 'exclamation-circle' stroke_width=2 size=18 aria_hidden=true %}
                 <span>
                     {% trans "This report is for the period" %} <strong class="font-semibold">{{ object.start_date }}</strong> {% trans "to" %} <strong class="font-semibold">{{ object.end_date }}</strong>
                 </span>
-            </p>
+            </div>
 
             <section>
                 {% if report.skipped %}
                     <h2>{% trans "Report Skipped" %}</h2>
                 {% else %}
-                    <h4>{% trans "Public Report" %}</h4>
-                    <div class="h-card h-card--solid card card-border">
-                        {% if object.current %}
-                            <div class="rich-text rich-text--answers">
+                    <h2 class="mb-4 text-xl">{% trans "Public Report" %}</h2>
+
+                    {% if object.current %}
+                        <div class="card card-border shadow-xs">
+                            <div class="card-body">
                                 {{ object.current.output_answers }}
                             </div>
-                        {% endif %}
-                    </div>
+                        </div>
+                    {% endif %}
 
                     {% for file in object.current.files.all %}
                         {% if forloop.first %}
