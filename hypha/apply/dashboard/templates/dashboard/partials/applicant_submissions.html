@@ -3,8 +3,8 @@
 
 {% for submission in page.object_list %}
     <div class="wrapper wrapper--status-bar-outer">
-        <div class="wrapper wrapper--status-bar-inner ms-4">
-            <div class="mt-5 lg:max-w-[30%]">
+        <div class="flex flex-wrap gap-2 sm:flex-nowrap">
+            <div class="mt-5 w-full sm:w-sm">
                 <h4 class="mb-0 font-bold heading line-clamp-3 hover:line-clamp-none">
                     <a class="{% if not submission.is_active %} text-slate-500 {% endif %} hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
                         {{ submission.title }}

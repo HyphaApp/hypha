@@ -70,7 +70,7 @@ class SubmissionsTable(tables.Table):
         orderable=True,
         attrs={
             "td": {
-                "class": "js-title",
+                "class": "js-title max-w-sm",
             },
             "a": {
                 "data-tippy-content": lambda record: render_title(record),
@@ -113,7 +113,7 @@ class SubmissionsTable(tables.Table):
             "data-record-id": lambda record: record.id,
             "data-archived": lambda record: record.is_archive,
         }
-        attrs = {"class": "all-submissions-table"}
+        attrs = {"class": "table all-submissions-table"}
         empty_text = _("No submissions available")
 
     def render_user(self, value):
