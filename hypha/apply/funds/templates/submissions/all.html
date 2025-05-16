@@ -174,15 +174,16 @@
         {% endif %}
 
         {% if can_export_submissions %}
-            <a
+            <button
                 class="py-1.5 px-2 rounded-sm border transition-colors hover:bg-gray-100 shadow-xs"
-                aria-label="{% trans 'Submissions: Download as CSV' %}"
-                href="{% modify_query "page" format="csv" %}"
-                onclick="return confirm('{% blocktrans %}Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.{% endblocktrans %}');"
-                data-tippy-content="{% trans 'Export as CSV' %}"
+                hx-get="{% url 'apply:submissions:submission-export-status' %}"
+                hx-swap="outerHTML"
+                hx-target="this"
+                hx-push-url="false"
+                hx-trigger="load"
             >
                 {% heroicon_mini "arrow-down-tray" %}
-            </a>
+            </button>
         {% endif %}
     </form>
 

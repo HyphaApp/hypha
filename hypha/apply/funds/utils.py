@@ -5,11 +5,14 @@ from functools import reduce
 from io import StringIO
 from itertools import chain
 from operator import iconcat
+from typing import Iterable
 
 import django_filters as filters
 from django.utils.html import strip_tags
 from django.utils.translation import gettext as _
 
+# from django.contrib.sites.models import Site
+from hypha.apply.funds.models.submissions import ApplicationSubmission
 from hypha.apply.utils.image import generate_image_tag
 
 from .models.screening import ScreeningStatus
@@ -104,7 +107,9 @@ def get_statuses_as_params(statuses):
     return params
 
 
-def export_submissions_to_csv(submissions_list, request):
+def export_submissions_to_csv(
+    submissions_list: Iterable[ApplicationSubmission], base_uri: str
+):
     csv_stream = StringIO()
     header_row = ["Application #", "URL"]
     index = 2
@@ -113,7 +118,7 @@ def export_submissions_to_csv(submissions_list, request):
     for submission in submissions_list:
         values = {}
         values["Application #"] = submission.id
-        values["URL"] = request.build_absolute_uri(submission.get_absolute_url())
+        values["URL"] = f"{base_uri}{submission.get_absolute_url().lstrip('/')}"
         for field_id in submission.question_text_field_ids:
             question_field = submission.serialize(field_id)
             field_name = question_field["question"]
@@ -223,3 +228,28 @@ def check_submissions_same_determination_form(submissions):
     if any(d_id != determination_form_ids[0] for d_id in determination_form_ids):
         same_form = False
     return same_form
+
+
+def get_export_polling_time(submission_count: int) -> int:
+    """Get the export polling interval based on the amount of submissions being exported
+
+    Used for checking on the completion of an export while trying to prevent unneeded
+    traffic with larger exports. Division constant is based on timing trials of
+    different submission sets
+
+    Args:
+        submission_count: The number of submissions being exported
+
+    Returns:
+        A polling interval in seconds, which is never smaller than 2 or larger than 45
+    """
+    min_interval = 2
+    max_interval = 45
+    interval = round(submission_count / 150)
+
+    if min_interval < interval < max_interval:
+        return interval
+    elif min_interval > interval:
+        return min_interval
+    else:
+        return max_interval
