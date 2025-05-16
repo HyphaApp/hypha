@@ -1,0 +1,17 @@
+{% extends "messages/email/applicant_base.html" %}
+
+{% load i18n invoice_tools %}
+
+{% block content %}{# fmt:off #}
+{% display_invoice_status_for_user source.user invoice as invoice_status %}
+{% blocktrans with title=source.title_text_display %}An {{ ORG_SHORT_NAME }} staff member has updated the status for an invoice on your project "{{ title }}".{% endblocktrans %}
+
+{% blocktrans with status=invoice_status %}It's status is now "{{ status }}".{% endblocktrans %}
+
+{% if invoice.comment %}
+{% trans "A staff member left a comment that can be read here" %}: {{ request.scheme }}://{{ request.get_host }}{{ comment_url }}
+{% endif %}
+
+{% trans "View your invoice here" %}: {{ request.scheme }}://{{ request.get_host }}{{ invoice.get_absolute_url }}
+
+{% endblock %}{# fmt:on #}

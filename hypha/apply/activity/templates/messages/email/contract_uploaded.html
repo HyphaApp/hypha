@@ -18,14 +18,14 @@
 {% if contract.is_signed %}
 {% trans "This contract has already been signed and there is no action for you to take." %}
 {% else %}
-{% blocktrans %}Please review the contract and sign it before reuploading it to your Project page for the {{ ORG_SHORT_NAME }} Team to approve.{% endblocktrans %}
+{% blocktrans %}Please review the contract and sign it before reuploading it to your project page for the {{ ORG_SHORT_NAME }} team to approve.{% endblocktrans %}
 {% endif %}
 {% endblock %}
 
 
 {% block more_info %}
 {% if request.user != source.user %}
-{% trans "Link to your application" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "View your project here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'funds:submissions:comments' pk=source.submission.pk %}
 
 {% trans "See our guide for more information" %}: {{ ORG_GUIDE_URL }}
