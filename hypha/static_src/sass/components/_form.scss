@@ -371,7 +371,7 @@
     max-width: 200px;
     padding: 5px;
     margin: 20px 0 0;
-    color: variables.$color--white;
+    color: var(--color-error-content);
     background: variables.$color--error;
     z-index: 2;
 

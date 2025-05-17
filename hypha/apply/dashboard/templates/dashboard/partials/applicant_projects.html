@@ -1,17 +1,20 @@
 {% load i18n dashboard_statusbar_tags statusbar_tags workflow_tags %}
 
 {% for project in page.object_list %}
-    <div class="wrapper wrapper--status-bar-outer">
-        <div class="flex flex-wrap sm:flex-nowrap grap-2">
-            <div class="mt-5 sm:w-sm">
-                <h4 class="mb-0 font-bold heading line-clamp-3 hover:line-clamp-none"><a class="link" href="{{ project.get_absolute_url }}">{{ project.title }}</a></h4>
-                <p class="m-0 text-sm text-fg-muted">{% trans "Project start date: " %} {{ project.created_at.date }}</p>
-            </div>
+    <div class="list-row">
+        <div class="mt-5 sm:w-sm">
+            <h4 class="mb-0 font-bold heading line-clamp-3 hover:line-clamp-none"><a class="link" href="{{ project.get_absolute_url }}">{{ project.title }}</a></h4>
+            <p class="m-0 text-sm text-fg-muted">{% trans "Project start date: " %} {{ project.created_at.date }}</p>
+        </div>
+
+        <div class="list-col-grow">
             {% project_status_bar project.status request.user css_class="w-full" %}
         </div>
     </div>
 {% empty %}
-    {% trans "No active projects" %}
+    <div class="list-row">
+        {% trans "No active projects" %}
+    </div>
 {% endfor %}
 
 <nav class="mt-5 mb-20" aria-label="Pagination">

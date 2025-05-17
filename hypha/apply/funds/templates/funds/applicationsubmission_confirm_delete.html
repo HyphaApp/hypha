@@ -26,9 +26,17 @@
                     </p>
                 {% endif %}
             </div>
-            <div>
-                <label for="delete-confirmation" class="block mb-2 text-sm font-semibold text-base-content/70">Type "<em>delete</em>" below to confirm</label>
-                <input type="text" autocomplete="off" x-model='value' class="italic" id="delete-confirmation">
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">
+                    Type <em>delete</em> below to confirm
+                </legend>
+                <input
+                    type="text"
+                    autocomplete="off"
+                    x-model='value'
+                    class="italic input"
+                    id="delete-confirmation"
+                >
             </div>
         </div>
     </div>

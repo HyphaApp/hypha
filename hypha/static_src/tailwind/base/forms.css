@@ -23,3 +23,7 @@ textarea {
 [type="checkbox"] {
   @apply checkbox;
 }
+
+.fieldset {
+  @apply text-sm;
+}
