@@ -27,6 +27,7 @@ class ApplicationMustIncludeFieldBlock(MustIncludeFieldBlock):
 class TitleBlock(ApplicationMustIncludeFieldBlock):
     name = "title"
     description = "The title of the project"
+    widget = forms.TextInput(attrs={"x-model.fill": "titleblock"})
     field_label = blocks.CharBlock(
         label=_("Label"), default=_("What is the title of your application?")
     )
@@ -35,10 +36,16 @@ class TitleBlock(ApplicationMustIncludeFieldBlock):
         label=_("Help text"),
         default=_("This project name can be changed if a full proposal is requested."),
     )
+    max_length = blocks.IntegerBlock(required=False, label=_("Max length"))
 
     class Meta:
         label = _("Application title")
         icon = "tag"
+
+    def get_field_kwargs(self, struct_value):
+        kwargs = super().get_field_kwargs(struct_value)
+        kwargs["max_length"] = struct_value["max_length"]
+        return kwargs
 
 
 class ValueBlock(ApplicationSingleIncludeFieldBlock):
