@@ -4,10 +4,9 @@
 {% block salutation %}{% endblock %}
 
 {% block content %}{# fmt:off #}
-{% trans "A Project is awaiting final approval." %}
+{% blocktrans with title=source.title_text_display %}The project "{{title}}" is awaiting final approval.{% blocktrans %}
 
-{% trans "Title" %}: {{ source.title_text_display }}
-{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:approval' pk=source.submission.pk %}
+{% trans "Approve the project here" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:approval' pk=source.submission.pk %}
 
 {% blocktrans with lead=source.lead email=source.lead.email %}Please contact {{ lead }} - {{ email }} if you have any questions.{% endblocktrans %}
 {% endblock %}{# fmt:on #}

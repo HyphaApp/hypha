@@ -1041,6 +1041,7 @@ class ChangePAFStatusView(View):
         form = self.form_class(self.request.POST, instance=self.object)
         if form.is_valid():
             form.save()
+            message_kwargs = {}
             project_settings = ProjectSettings.for_request(self.request)
             paf_approval = self.request.user.paf_approvals.filter(
                 project=self.object, approved=False
@@ -1069,13 +1070,28 @@ class ChangePAFStatusView(View):
                         )
 
             paf_status = form.cleaned_data.get("paf_status")
-            comment = form.cleaned_data.get("comment", "")
 
             paf_status_update_message = _(
-                "updated project form status to {paf_status}."
+                "Updated project form status to: {paf_status}"
             ).format(
                 paf_status=get_paf_status_display(paf_status).lower(),
             )
+
+            if form.cleaned_data["comment"]:
+                comment = f'<p>"{form.cleaned_data["comment"]}"</p>'
+
+                message = paf_status_update_message + comment
+
+                comment_activity = Activity.objects.create(
+                    user=self.request.user,
+                    type=COMMENT,
+                    source=self.object,
+                    timestamp=timezone.now(),
+                    message=message,
+                    visibility=TEAM,
+                )
+
+                message_kwargs["comment_url"] = comment_activity.get_absolute_url()
             Activity.objects.create(
                 user=self.request.user,
                 type=ACTION,
@@ -1129,7 +1145,7 @@ class ChangePAFStatusView(View):
                     request=self.request,
                     user=self.request.user,
                     source=self.object,
-                    comment=comment,
+                    **message_kwargs,
                 )
                 messenger(
                     MESSAGES.PROJECT_TRANSITION,
@@ -1200,20 +1216,6 @@ class ChangePAFStatusView(View):
                                 related_obj=self.object,
                             )
                 messages.success(self.request, _("Project form has been approved"))
-
-            if form.cleaned_data["comment"]:
-                comment = f'<p>"{form.cleaned_data["comment"]}."</p>'
-
-                message = paf_status_update_message + comment
-
-                Activity.objects.create(
-                    user=self.request.user,
-                    type=COMMENT,
-                    source=self.object,
-                    timestamp=timezone.now(),
-                    message=message,
-                    visibility=TEAM,
-                )
 
             if self.object.is_approved_by_all_paf_reviewers:
                 old_stage = self.object.status

@@ -8,6 +8,12 @@ from django.utils.translation import gettext_lazy as _
 from hypha.apply.determinations.models import Determination
 from hypha.apply.funds.models.submissions import ApplicationSubmission
 from hypha.apply.projects.models import Contract
+from hypha.apply.projects.models.project import (
+    CONTRACTING,
+    DRAFT,
+    INTERNAL_APPROVAL,
+    INVOICING_AND_REPORTING,
+)
 from hypha.apply.review.models import Review
 from hypha.apply.users.models import User
 
@@ -180,3 +186,16 @@ def source_type(value) -> str:
 def lowerfirst(value):
     """Lowercase the first character of the value."""
     return value and value[0].lower() + value[1:]
+
+
+@register.simple_tag
+def get_project_creation_message(project) -> str | None:
+    if project.status in [DRAFT, INTERNAL_APPROVAL, CONTRACTING]:
+        return _(
+            "No action is needed for now, you will be notified when a contract is ready for you to sign."
+        )
+    elif project.status == INVOICING_AND_REPORTING:
+        return _("You can begin submitting invoices and reports for your project.")
+
+    # If a project is created in any other state that wouldn't be useful to have a message for
+    return None

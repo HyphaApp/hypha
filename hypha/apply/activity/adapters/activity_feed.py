@@ -59,9 +59,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.SEND_FOR_APPROVAL: _("Requested approval"),
         MESSAGES.APPROVE_PAF: "handle_paf_assignment",
         MESSAGES.APPROVE_PROJECT: _("Approved"),
-        MESSAGES.REQUEST_PROJECT_CHANGE: _(
-            'requested changes for acceptance: "{comment}"'
-        ),
+        MESSAGES.REQUEST_PROJECT_CHANGE: _("requested changes for acceptance"),
         MESSAGES.SUBMIT_CONTRACT_DOCUMENTS: _("Submitted Contract Documents"),
         MESSAGES.UPLOAD_CONTRACT: _("Uploaded a {contract.state} contract"),
         MESSAGES.APPROVE_CONTRACT: _("Approved contract"),
