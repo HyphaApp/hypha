@@ -29,18 +29,6 @@
   &--submission-meta {
     display: flex;
     flex-direction: column;
-    margin-block-start: 20px;
-    font-weight: variables.$weight--normal;
-    color: variables.$color--black-40;
-
-    @include mixins.media-query(lg) {
-      flex-direction: row;
-      margin-block-start: 0;
-    }
-
-    span {
-      margin-inline-end: 15px;
-    }
   }
 
   &--light-grey {
