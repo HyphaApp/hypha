@@ -66,4 +66,4 @@ def date_filter_tokens_to_q_obj(tokens: list, field: str) -> Q:
                 return Q(**{f"{field}__year": year})
             else:
                 return Q(**{f"{field}__year": year})
-    return Q(None)
+    return Q()
