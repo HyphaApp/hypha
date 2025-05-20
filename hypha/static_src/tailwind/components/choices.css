@@ -262,7 +262,7 @@
 }
 
 .choices__heading {
-  @apply py-2 text-sm font-semibold text-base-content/70 border-b border-gray-300;
+  @apply py-2 text-sm font-semibold text-base-content/80 border-b border-gray-300;
 }
 
 .choices__button {

@@ -7,7 +7,7 @@
             <a href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "fund" %}"
                hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "fund" %}"
                hx-push-url="true"
-               class="flex px-3 py-2 text-base-content/70 items-center hover:bg-base-200 focus:bg-base-200{% if s.selected %}bg-base-200{% endif %}">
+               class="flex px-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200{% if s.selected %}bg-base-200{% endif %}">
                 {% trans "All Funds &amp; Labs" %}
             </a>
         </li>
@@ -23,7 +23,7 @@
                     hx-get="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" "round" fund=f.id %}"
                 {% endif %}
                 hx-push-url="true"
-                class="flex {% if f.selected %}ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/70 items-center hover:bg-base-200 focus:bg-base-200{% if f.selected %}bg-base-200{% endif %}">
+                class="flex {% if f.selected %}ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200{% if f.selected %}bg-base-200{% endif %}">
                 {% if f.selected %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
@@ -31,7 +31,7 @@
             </a>
         </li>
     {% empty %}
-        <li class="py-2 max-w-xs text-base-content/70 ps-4 pe-3">
+        <li class="py-2 max-w-xs text-base-content/80 ps-4 pe-3">
             {% trans "No funds found." %}
         </li>
     {% endfor %}

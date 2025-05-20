@@ -1,7 +1,6 @@
 @use "../abstracts/variables";
 
 .rich-text {
-  margin-block-end: 2rem;
   word-break: break-word;
   max-width: variables.$max-text-line-length;
 

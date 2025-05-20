@@ -25,23 +25,19 @@
 <div>
     {% get_filtered_query request filter.form as filtered_query %}
     {% if filtered_query %}
-        <div class="flex flex-wrap gap-2 mt-3">
+        <div class="flex flex-wrap gap-2 items-center mt-2">
             <a
                 href="./"
-                class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none"
+                class="btn btn-ghost btn-sm btn-link link-hover"
             >
                 {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                {% trans "Clear current search query, filters and sorts" %}
+                {% trans "Clear current filters and sorts" %}
             </a>
             {% for query in filtered_query %}
                 {% for key, data in query.items %}
-                    <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none">
+                    <c-badge.action btn_url="{% update_filter_query_params key data.value operation='remove' %}">
                         {{ data.key_label }}: {{ data.label }}
-                        <a href="{% update_filter_query_params key data.value operation='remove' %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1" aria-label="Remove">
-                            {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                            <span class="sr-only">{% trans "Remove filter" %}</span>
-                        </a>
-                    </span>
+                    </c-badge.action>
                 {% endfor %}
             {% endfor %}
         </div>
@@ -67,7 +63,7 @@
                                                 href="{% update_filter_query_params field_name value operation='modify' %}"
                                             {% endif %}
                                             role="menuitemradio"
-                                            class="flex {% if value|stringformat:'s' in selected_value %}bg-base-200 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/70 items-center hover:bg-base-200 focus:bg-base-200"
+                                            class="flex {% if value|stringformat:'s' in selected_value %}bg-base-200 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200"
                                         >
                                             {% if value|stringformat:'s' in selected_value %}
                                                 {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-2" %}
@@ -80,7 +76,7 @@
                         {% enddropdown_menu %}
                     {% else %}
                         <div id="{{ field_name }}"
-                             class="flex justify-between items-center py-1 w-full font-medium border cursor-pointer md:border-none hover:bg-gray-50 text-base-content/70 ps-2 pe-2 md:hover:bg-transparent md:hover:text-blue-700"
+                             class="flex justify-between items-center py-1 w-full font-medium border cursor-pointer md:border-none hover:bg-gray-50 text-base-content/80 ps-2 pe-2 md:hover:bg-transparent md:hover:text-blue-700"
                              data-field-name="{{ field_name }}" data-filter-list>
                             {{ field.label }}
                             {% heroicon_micro attributes.icon|default:"chevron-down" aria_hidden="true" size="16" class="hidden w-4 h-4 md:inline-block ms-0.5" %}

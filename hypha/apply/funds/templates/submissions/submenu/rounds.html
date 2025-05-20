@@ -10,7 +10,7 @@
                 href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "round" %}"
                 hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "round" %}"
                 hx-push-url="true"
-                class="flex px-3 py-2 text-base-content/70 border-b items-center hover:bg-base-200 focus:bg-base-200{% if s.selected %}bg-base-200{% endif %}">
+                class="flex px-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200{% if s.selected %}bg-base-200{% endif %}">
                 {% trans "All Rounds" %}
             </a>
         {% endif %}
@@ -58,7 +58,7 @@
                                {% endif %}
 
                                hx-push-url="true"
-                               class="flex {% if f.selected %}ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/70 items-center hover:bg-base-200 focus:bg-base-200{% if f.selected %}bg-base-200{% endif %}">
+                               class="flex {% if f.selected %}ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200{% if f.selected %}bg-base-200{% endif %}">
                                 {% if f.selected %}
                                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                                 {% endif %}
@@ -85,7 +85,7 @@
                                     hx-get="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" round=f.id %}"
                                 {% endif %}
                                 hx-push-url="true"
-                                class="flex {% if f.selected %}ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/70 items-center hover:bg-base-200 focus:bg-base-200{% if f.selected %}bg-base-200{% endif %}">
+                                class="flex {% if f.selected %}ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200{% if f.selected %}bg-base-200{% endif %}">
                                 {% if f.selected %}
                                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                                 {% endif %}
@@ -97,7 +97,7 @@
                 {% endif %}
             </div>
     {% else %}
-        <div class="block py-2 px-3 text-base-content/70">
+        <div class="block py-2 px-3 text-base-content/80">
             {% trans "No rounds available" %}
         </div>
     {% endif %}

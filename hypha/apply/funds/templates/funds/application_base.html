@@ -80,7 +80,7 @@
                         {{ hidden_field }}
                     {% endfor %}
 
-                    <div class="flex gap-2 items-center pt-8">
+                    <div class="items-center mt-4 card-actions">
                         {% comment %}
                             If a preview is required for this application,
                             don't allow submitting yet (via name="preview").
@@ -88,7 +88,7 @@
                         {% endcomment %}
                         {% if require_preview and request.user.is_authenticated %}
                             <button
-                                class="btn btn-primary"
+                                class="w-full sm:w-auto btn btn-primary"
                                 type="submit"
                                 name="preview"
                                 value="Preview and Submit"
@@ -98,7 +98,7 @@
                             </button>
                         {% else %}
                             <button
-                                class="btn btn-primary"
+                                class="w-full sm:w-auto btn btn-primary"
                                 type="submit"
                                 disabled
                             >
@@ -107,7 +107,7 @@
                         {% endif %}
 
                         <button
-                            class="btn btn-secondary btn-outline"
+                            class="w-full sm:w-auto btn btn-secondary btn-outline"
                             type="submit"
                             name="draft"
                             value="Save draft"
