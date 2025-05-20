@@ -192,6 +192,7 @@ class EmailAdapter(AdapterBase):
             can_accept=can_accept,
             accept_link=accept_link,
             related=related,
+            invited_user=invited_user,
             **kwargs,
         )
 

@@ -9,26 +9,25 @@
 {% block content %}
     <div class="bg-gray-100 max-w-[70%] mx-auto mt-6 px-10 pt-6 pb-4 border border-gray-300 rounded-sm">
         {% if is_valid %}
-            <p>{% trans "You've been invited to join the submission" %} "{{ invite.submission.title }}" {% trans "as a co-applicant with email" %} <i>{{ invite.invited_user_email }}</i>. {% trans "Please respond to the invitation by choosing accept or decline." %}</p>
-            <p>{% trans "If you accept, you’ll be automatically signed up or logged in and taken directly to" %} {% if two_factor_required %}{% trans "two factor authentication and then to" %} {% endif %} {% trans "the submission." %}</p>
-            <p>{% trans "We recommend updating your profile after accepting the invite. You’ll also have the option to update your name and email in 'My account' section." %}</p>
-            <div class="flex justify-end mt-10">
-                <a
-                    class="button button--submit button--white"
-                    hx-post="."
-                    hx-vals='{"action": "reject"}'
-                    hx-trigger="click"
-                    hx-swap="none"
-                >{% trans "Decline" %}</a>
-                <a
-                    class="button button--submit button--primary"
-                    type="button"
-                    hx-post="."
-                    hx-vals='{"action": "accept"}'
-                    hx-trigger="click"
-                    hx-swap="none"
-                >{% trans "Accept" %} </a>
-            </div>
+            <p>{% trans "You've been invited to join the application" %} "{{ invite.submission.title }}" {% trans "as a co-applicant with email" %} <i>{{ invite.invited_user_email }}</i>. {% trans "Please respond to the invitation by choosing accept or decline." %}</p>
+            <p>{% trans "If you accept, you’ll be automatically signed up or logged in and taken directly to" %} {% if two_factor_required %}{% trans "two factor authentication and then to" %} {% endif %} {% trans "the application. We recommend updating your profile after accepting the invite. You’ll also have the option to update your name and email in 'My account' section." %}
+                <div class="flex justify-end mt-10">
+                    <a
+                        class="button button--submit button--white"
+                        hx-post="."
+                        hx-vals='{"action": "reject"}'
+                        hx-trigger="click"
+                        hx-swap="none"
+                    >{% trans "Decline" %}</a>
+                    <a
+                        class="button button--submit button--primary"
+                        type="button"
+                        hx-post="."
+                        hx-vals='{"action": "accept"}'
+                        hx-trigger="click"
+                        hx-swap="none"
+                    >{% trans "Accept" %} </a>
+                </div>
         {% else %}
             <div class="flex justify-center my-8 text-xl font-bold text-red-500" >{% trans "Invalid Invite" %}</div>
             <div class="flex justify-center">{% trans "Oops! The invite you are using is no longer valid " %}</div>

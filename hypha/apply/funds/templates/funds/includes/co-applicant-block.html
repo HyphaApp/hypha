@@ -1,11 +1,11 @@
 {% load i18n heroicons %}
 
 <div class="sidebar__inner sidebar__inner--actions" data-testid="sidebar-primary-actions">
-    <details {% if user.is_applicant %} open {% endif %}>
-        <summary class="flex gap-4 justify-between items-center">
+    <details {% if user.is_applicant or not co_applicants %} open {% endif %} class="group">
+        <summary class="flex gap-4 justify-between items-center list-none">
             <p class="flex items-center text-lg font-bold">
-                {% trans "Co-applicants" %}
-                {% heroicon_solid "chevron-down" size="16" class="w-4 h-4 ms-2" %}
+                {% trans "Co-applicants" %} <span class="text-base font-medium"> ({{ co_applicants.count }})</span>
+                {% heroicon_solid "chevron-down" size="16" class="w-4 h-4 transition-transform rotate-90 ms-2 group-open:rotate-0" %}
             </p>
             <button
                 class="flex items-center py-1 pr-4 pl-2 font-bold rounded-sm -me-2 {% if object.co_applicant_invites.count >= invite_max_limit %} text-blue-200 {% else %}transition-colors cursor-pointer text-dark-blue hover:bg-slate-200{% endif %}"
@@ -13,7 +13,7 @@
                 hx-target="#htmx-modal"
                 {% if object.co_applicant_invites.count >= invite_max_limit %}disabled title='{% trans "Max limit reached" %}'{% endif %}
                 role="button"
-                aria-label="{% trans "Invite CoApplicant" %}"
+                aria-label="{% trans "Invite co-applicant" %}"
             >
                 {% heroicon_micro "plus" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
                 {% trans "Invite" %}
@@ -25,7 +25,7 @@
 
                     <div>
                         <a
-                            class="font-bold line-clamp-2"
+                            class="font-bold line-clamp-2 group/coapplicant"
                             href="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
                             hx-get="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
                             hx-target="#htmx-modal"
@@ -37,7 +37,7 @@
                                     {{ invite.invited_user_email }}
                                 {% endif %}
 
-                                {% heroicon_solid "pencil" class="inline align-middle me-1" width=16 height=16 stroke_width=2 aria_hidden=true %}
+                                {% heroicon_solid "pencil" class="hidden align-middle me-1 group-hover/coapplicant:inline" width=16 height=16 stroke_width=2 aria_hidden=true %}
 
                             </div>
                         </a>
@@ -52,7 +52,7 @@
             </div>
         {% else %}
             <div>
-                {% trans "No co-applicant yet" %}
+                {% trans "No co-applicants yet." %}
             </div>
         {% endif %}
     </details>

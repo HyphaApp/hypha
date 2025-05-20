@@ -1,13 +1,21 @@
 {% extends "messages/email/base.html" %}
 {% load i18n activity_tags %}
-{% block salutation %}{% blocktrans with name=related.invited_user_email|email_name %}Dear {{ name }},{% endblocktrans %}{% endblock %}
+
+{% block salutation %}
+    {% if invited_user %}
+        {% blocktrans with name=invited_user.get_display_name %}Dear {{ name }},{% endblocktrans %}
+    {% else %}
+        {% blocktrans with name=related.invited_user_email|email_name %}Dear {{ name }},{% endblocktrans %}
+    {% endif %}
+{% endblock %}
 
 {% block content %}{# fmt:off #}
 {% blocktrans %}You have been invited as a co-applicant to an application on {{ ORG_SHORT_NAME }} by {{ user }}.{% endblocktrans %}
 {% if not can_accept %}
 {% trans "But You can't accept this invite because you already hold a responsible position in" %} {{ ORG_SHORT_NAME }}
 {% else %}
-{% blocktrans %} Click on link if you want to accept it.{% endblocktrans %}
+{% blocktrans %}Click on link if you want to accept it.{% endblocktrans %}
+
 {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ accept_link }}
 {% endif %}
 {% endblock %}{# fmt:on #}
