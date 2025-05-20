@@ -81,8 +81,8 @@
                         </div>
                     {% endif %}
 
-                    <header class="mb-4 heading heading--submission-meta heading-text">
-                        <div class="grid grid-cols-1 gap-4 text-sm md:grid-cols-2 text-fg-muted">
+                    <header class="flex justify-between @container mb-2">
+                        <div class="grid grid-cols-1 @md:grid-cols-2 w-full text-fg-muted text-sm gap-x-4 gap-y-2">
                             <span>
                                 {% if object.is_draft %}
                                     {% trans "Drafted " %}
@@ -109,27 +109,29 @@
                                 </strong>
                             </span>
                         </div>
-                        <div class="flex flex-1 gap-4 justify-end items-center no-print">
+                        <div class="flex flex-1 gap-2 justify-end items-center no-print">
+
+                            {% if request.user|has_edit_perm:object %}
+                                <a
+                                    class="btn btn-ghost btn-secondary btn-sm"
+                                    href="{% url 'funds:submissions:edit' object.id %}"
+                                >
+                                    {% heroicon_micro "pencil-square" class="inline me-1" aria_hidden=true %}
+                                    {% trans "Edit" %}
+                                </a>
+                            {% endif %}
+
                             {% can "delete_submission" object as can_delete_submission %}
                             {% if can_delete_submission %}
                                 <a
-                                    class="flex items-center font-bold text-red-600 transition-opacity hover:opacity-70"
+                                    class="btn btn-ghost btn-warning btn-sm btn-square"
                                     href="{% url 'funds:submissions:delete' object.id %}"
                                     hx-get="{% url 'funds:submissions:delete' object.id %}"
                                     hx-target="#htmx-modal"
                                     aria-label="{% trans "Delete Submission" %}"
                                 >
-                                    {% heroicon_micro "trash" class="inline me-1 fill-red-600" aria_hidden=true %}
-                                    {% trans "Delete" %}
-                                </a>
-                            {% endif %}
-                            {% if request.user|has_edit_perm:object %}
-                                <a
-                                    class="flex items-center font-bold transition-opacity hover:opacity-70"
-                                    href="{% url 'funds:submissions:edit' object.id %}"
-                                >
-                                    {% heroicon_micro "pencil-square" class="inline me-1" aria_hidden=true %}
-                                    {% trans "Edit" %}
+                                    {% heroicon_micro "trash" class="w-4 h-4" aria_hidden=true %}
+                                    <span class="sr-only">{% trans "Delete" %}</span>
                                 </a>
                             {% endif %}
                         </div>
