@@ -168,8 +168,8 @@
         {% endif %}
 
         {% if can_export_submissions %}
-            <button
-                class="py-1.5 px-2 rounded-sm border transition-colors hover:bg-gray-100 shadow-xs"
+            <a
+                class="btn btn-square"
                 hx-get="{% url 'apply:submissions:submission-export-status' %}"
                 hx-swap="outerHTML"
                 hx-target="this"
@@ -177,7 +177,7 @@
                 hx-trigger="load"
             >
                 {% heroicon_mini "arrow-down-tray" %}
-            </button>
+            </a>
         {% endif %}
     </form>
 
