@@ -14,6 +14,8 @@ def apply_date_filter(qs, field, values):
 
         if q := date_filter_tokens_to_q_obj(tokens=tokens, field=field):
             q_obj &= q
+        else:
+            return qs.none()
 
     return qs.filter(q_obj)
 
@@ -66,4 +68,4 @@ def date_filter_tokens_to_q_obj(tokens: list, field: str) -> Q:
                 return Q(**{f"{field}__year": year})
             else:
                 return Q(**{f"{field}__year": year})
-    return Q()
+    return None
