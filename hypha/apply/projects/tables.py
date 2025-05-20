@@ -65,8 +65,8 @@ class FinanceInvoiceTable(BaseInvoiceTable):
     selected = LabeledCheckboxColumn(
         accessor=A("pk"),
         attrs={
-            "input": {"class": "js-batch-select"},
-            "th__input": {"class": "js-batch-select-all"},
+            "input": {"class": "js-batch-select checkbox"},
+            "th__input": {"class": "js-batch-select-all checkbox"},
         },
     )
 
@@ -102,8 +102,8 @@ class AdminInvoiceListTable(BaseInvoiceTable):
             "th": {
                 "class": "w-8",
             },
-            "input": {"class": "js-batch-select"},
-            "th__input": {"class": "js-batch-select-all"},
+            "input": {"class": "js-batch-select checkbox"},
+            "th__input": {"class": "js-batch-select-all checkbox"},
         },
     )
 
