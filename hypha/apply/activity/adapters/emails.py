@@ -10,6 +10,7 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity import tasks
 from hypha.apply.activity.models import ALL, APPLICANT_PARTNERS, PARTNER
+from hypha.apply.funds.models.co_applicants import COMMENT, EDIT
 from hypha.apply.projects.models.payment import (
     APPROVED_BY_FINANCE,
     CHANGES_REQUESTED_BY_FINANCE,
@@ -19,7 +20,6 @@ from hypha.apply.projects.models.payment import (
     PAYMENT_FAILED,
     RESUBMITTED,
 )
-from hypha.apply.funds.models.co_applicants import COMMENT, EDIT
 from hypha.apply.projects.templatetags.project_tags import display_project_status
 from hypha.apply.users.models import User
 from hypha.apply.users.roles import (
