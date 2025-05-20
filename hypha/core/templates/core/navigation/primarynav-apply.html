@@ -32,7 +32,7 @@
                 {% if item.sub_items %}
                     <a class="nav__link {% if item.url == request. %}nav__link--active{% endif %} has-[> .nav__link--active]:border"
                        href="{{item.url}}"
-                       aria-label="{% trans "Menu Item" %}"
+                       aria-label="{% trans 'Menu Item' %}"
                        aria-haspopup="menu"
                        aria-expanded="false"
                        role="menuitem"
@@ -69,9 +69,9 @@
                                 class="pr-4 py-2 block font-normal hover:bg-base-200
                                        focus-visible:outline-dashed transition-colors
                                        {% if sub_item.url == request.path %}
-                                           border-l-dark-blue bg-slate-100 pl-3 border-l-4 border-r text-dark-blue font-semibold
+                                           border-l-primary bg-base-300 pl-3 border-l-4 border-r text-primary font-semibold
                                        {% else %}
-                                           border-l md:border-r pl-4 text-base-content hover:text-dark-blue hover:font-semibold
+                                           border-l md:border-r pl-4 text-base-content hover:text-primary hover:font-semibold
                                        {% endif %}"
                             >
                                 {{ sub_item.title }}
