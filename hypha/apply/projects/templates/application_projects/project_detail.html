@@ -54,10 +54,13 @@
         {% block notifications %}{% endblock %}
 
         <div class="wrapper wrapper--sidebar">
-            <article class="wrapper--sidebar--inner">
-                <h2 class="text-xl font-bold">{% trans "Project Information" %}</h2>
+            <article class="wrapper--sidebar--inner @container">
+                <h2 class="pb-2 mb-2 text-xl font-bold border-b">
+                    {% trans "Project Information" %}
+                </h2>
+
                 <dl
-                    class="hypha-grid hypha-grid--proposal-info"
+                    class="grid grid-cols-1 @md:grid-cols-2 gap-2"
                     hx-get='{% url "apply:projects:project_information" object.submission.id %}'
                     hx-trigger="informationUpdated from:body"
                 >
