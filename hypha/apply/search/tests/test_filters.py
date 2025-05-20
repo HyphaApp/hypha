@@ -39,8 +39,8 @@ from ..filters import date_filter_tokens_to_q_obj
         (["<", 2023], "date_field", Q(date_field__year__lt=2023)),
         ([None, 2023], "date_field", Q(date_field__year=2023)),
         ([None, 2023], "date_field", Q(date_field__year=2023)),
-        ([], "date_field", Q(None)),
-        ([], "date_field", Q(None)),
+        ([], "date_field", Q()),
+        ([], "date_field", Q()),
     ],
 )
 def test_date_filter_tokens_to_q_obj(tokens, field, expected):
