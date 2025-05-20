@@ -173,8 +173,10 @@ class ProjectQuerySet(models.QuerySet):
             .with_outstanding_reports()
             .select_related(
                 "report_config",
+                "submission",
                 "submission__page",
                 "lead",
+                "user",
             )
         )
 
