@@ -40,6 +40,23 @@ class BaseInvoiceTable(tables.Table):
     requested_at = tables.DateColumn(verbose_name=_("Submitted"))
     invoice_date = tables.DateColumn(verbose_name=_("Invoice date"))
 
+    def render_status(self, record):
+        status = record.status
+        status_display = record.get_status_display()
+
+        badge_class = {
+            "changes_requested_staff": "badge-warning",
+            "payment_failed": "badge-error",
+            "paid": "badge-success",
+            "declined": "badge-error",
+        }
+
+        return mark_safe(
+            f"<span class='badge badge-soft {
+                badge_class.get(status, 'badge-info')
+            }' data-status='{status}'>{status_display}</span>"
+        )
+
 
 class InvoiceDashboardTable(BaseInvoiceTable):
     project = tables.Column(verbose_name=_("Project Name"))
@@ -75,10 +92,10 @@ class FinanceInvoiceTable(BaseInvoiceTable):
             "selected",
             "invoice_number",
             "invoice_date",
-            "requested_at",
             "vendor_name",
-            "invoice_amount",
             "status",
+            "requested_at",
+            "invoice_amount",
         ]
         model = Invoice
         orderable = True
@@ -112,8 +129,8 @@ class AdminInvoiceListTable(BaseInvoiceTable):
             "selected",
             "invoice_number",
             "invoice_date",
-            "requested_at",
             "status",
+            "requested_at",
             "project",
         ]
         model = Invoice
@@ -121,7 +138,7 @@ class AdminInvoiceListTable(BaseInvoiceTable):
         sequence = fields
         order_by = ["-requested_at"]
         template_name = "application_projects/tables/table.html"
-        attrs = {"class": "table invoices-table"}
+        attrs = {"class": "table border-x border-b mb-2 invoices-table"}
         row_attrs = {
             "data-record-id": lambda record: record.id,
         }

@@ -14,11 +14,11 @@
 {% block pagination %}
     {% if table.page and table.paginator.num_pages > 0 %}
         <div class="pagination--wrapper">
-            <div class='per-page'>
+            <div class='text-sm per-page text-fg-muted'>
                 {% trans "Show" %}
-                <a href="{% querystring "per_page"=25 %}" {% if table.paginator.per_page == 25 %}class="current"{% endif %}>25</a> |
-                <a href="{% querystring "per_page"=50 %}" {% if table.paginator.per_page == 50 %}class="current"{% endif %}>50</a> |
-                <a href="{% querystring "per_page"=100 %}" {% if table.paginator.per_page == 100 %}class="current"{% endif %}>100</a> |
+                <a href="{% querystring "per_page"=25 %}" class="link {% if not table.paginator.per_page == 25 %}link-hover current{% endif %}">25</a> |
+                <a href="{% querystring "per_page"=50 %}" class="link {% if not table.paginator.per_page == 50 %}link-hover current{% endif %}">50</a> |
+                <a href="{% querystring "per_page"=100 %}" class="link {% if not table.paginator.per_page == 100 %}link-hover current{% endif %}">100</a> |
                 {% trans "items" %}
             </div>
             {% if table.paginator.num_pages > 1 %}
