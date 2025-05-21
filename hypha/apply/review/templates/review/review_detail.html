@@ -61,14 +61,14 @@
                     </a>
                 {% endif %}
             </div>
-            {% comment %} {% if not review.for_latest %} {% endcomment %}
-            <div class="text-end">
-                <p class="text-xs">
-                    * {% trans "Review was not against the latest version" %}<br>
-                </p>
-                <a class="button button--primary" href="{{ review.get_compare_url }}">{% trans "Compare" %}</a>
-            </div>
-        {% comment %} {% endif %} {% endcomment %}
+            {% if not review.for_latest %}
+                <div class="text-end">
+                    <p class="text-xs">
+                        * {% trans "Review was not against the latest version" %}<br>
+                    </p>
+                    <a class="button button--primary" href="{{ review.get_compare_url }}">{% trans "Compare" %}</a>
+                </div>
+            {% endif %}
         </div>
 
     </div>
