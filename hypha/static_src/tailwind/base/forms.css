@@ -7,6 +7,9 @@ textarea {
 }
 
 .tox {
+  .tox-tbtn--disabled {
+    @apply opacity-50;
+  }
   .tox-tbtn--bespoke,
   .tox-toolbar,
   .tox-statusbar,
