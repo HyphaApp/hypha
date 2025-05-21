@@ -27,7 +27,7 @@
         <div class="wrapper wrapper--sidebar">
             <article class="wrapper--sidebar--inner">
                 <h4 class="mb-2">{% trans "Project Information" %}</h4>
-                <div class="card card--solid">
+                <div class="h-card h-card--solid card card-border">
                     {% if object.output_answers %}
                         <div class="rich-text rich-text--answers">
                             {{ object.output_answers }}
@@ -43,7 +43,7 @@
                 </div>
 
                 <h4 class="mb-2">{% trans "Approvals" %}</h4>
-                <div class="card card--solid">
+                <div class="h-card h-card--solid card card-border">
                     {% for approval in project.paf_approvals.all %}
                         {% if approval.approved %}
                             <p><b>{{ approval.paf_reviewer_role.label }}</b> - {{ approval.user }} ({{ approval.approved_at|date:"DATE_FORMAT" }})</p>
@@ -54,7 +54,7 @@
                 </div>
 
                 <h4 class="mb-2">{% trans "Reviews" %}</h4>
-                <div class="card card--solid">
+                <div class="h-card h-card--solid card card-border">
                     <p class="mt-0 mb-0 font-bold">{% trans "Submission lead" %}</p>
                     <p class="mt-2 mb-0">{{ project.submission.lead }}</p>
 
@@ -81,7 +81,7 @@
                 </div>
 
                 <h4 class="mb-2">{% trans "Supporting Documents" %}</h4>
-                <div class="card card--solid">
+                <div class="h-card h-card--solid card card-border">
                     <p><a href="{{ object.submission.get_absolute_url }}">{% trans "Application" %}</a></p>
                     {% for packet_file in object.packet_files.all %}
                         <p><a href="{% url 'apply:projects:document' pk=object.pk file_pk=packet_file.pk %}">{{ packet_file.title }}</a></p>
@@ -96,10 +96,10 @@
                         <h5>{% trans "Actions to take" %}</h5>
                         {% user_can_edit_pfs object user as can_edit_pfs %}
                         {% if can_edit_pfs %}
-                            <a class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit_pf' pk=object.submission.pk %}">{% trans "Edit" %}</a>
+                            <a class="btn btn-primary btn-block {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit_pf' pk=object.submission.pk %}">{% trans "Edit" %}</a>
                         {% endif %}
                         <div x-data="{ show: false }" class="relative">
-                            <button x-on:click="show = ! show" class="button button--bottom-space button--primary button--full-width" type="button">
+                            <button x-on:click="show = ! show" class="btn btn-primary btn-block" type="button">
                                 {% trans 'Download Project Form' %}
                             </button>
                             <div x-show="show" x-transition class="dropdown__content">
@@ -123,7 +123,7 @@
                         {% endif %}
                         {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
                         {% if can_assign_paf_approvers %}
-                            <a class="button button--bottom-space button--primary button--full-width"
+                            <a class="btn btn-primary btn-block"
                                href="{% url 'apply:projects:assign_pafapprovers' pk=object.submission.id %}"
                                hx-get="{% url 'apply:projects:assign_pafapprovers' pk=object.submission.id %}"
                                hx-target="#htmx-modal"
@@ -132,7 +132,7 @@
                             </a>
                         {% endif %}
                         {% if can_update_paf_status %}
-                            <a class="button button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}"
+                            <a class="btn btn-primary btn-block {% if user_can_approve %} is-disabled {% endif %}"
                                href="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
                                hx-get="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
                                hx-target="#htmx-modal"

@@ -1,47 +1,49 @@
 {% load i18n heroicons %}
 
-<div class="flex gap-4 justify-between pb-4">
-    <h5 class="m-0">{% trans "Tags" %}</h5>
-    <button
-        class="flex items-center py-1 px-2 font-bold rounded-sm transition-colors hover:bg-gray-100 text-dark-blue -me-2"
-        hx-get="{% url 'funds:submissions:metaterms_update' pk=submission.pk %}"
-        hx-target="#htmx-modal"
-        role="button"
-        {% if meta_terms %}
-            aria-label="{% trans "Update tags" %}"
-            title="{% trans "Update tags" %}"
-        {% else %}
-            aria-label="{% trans "Add tags" %}"
-        {% endif %}
-    >
-        {% if meta_terms %}
-            {% heroicon_micro "pencil" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
-            <span class="sr-only">{% trans "Update" %}</span>
-        {% else %}
-            {% heroicon_micro "plus" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
-            {% trans "Add" %}
-        {% endif %}
-    </button>
-</div>
+<div class="card-body">
+    <div class="flex gap-4 justify-between pb-4">
+        <h2 class="card-title">{% trans "Tags" %}</h2>
+        <button
+            class="flex items-center py-1 px-2 font-bold rounded-sm transition-colors text-dark-blue -me-2 hover:bg-base-200"
+            hx-get="{% url 'funds:submissions:metaterms_update' pk=submission.pk %}"
+            hx-target="#htmx-modal"
+            role="button"
+            {% if meta_terms %}
+                aria-label="{% trans "Update tags" %}"
+                title="{% trans "Update tags" %}"
+            {% else %}
+                aria-label="{% trans "Add tags" %}"
+            {% endif %}
+        >
+            {% if meta_terms %}
+                {% heroicon_micro "pencil" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
+                <span class="sr-only">{% trans "Update" %}</span>
+            {% else %}
+                {% heroicon_micro "plus" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
+                {% trans "Add" %}
+            {% endif %}
+        </button>
+    </div>
 
-{% regroup meta_terms by get_parent as meta_term_groups %}
-<div>
-    {% for group in meta_term_groups %}
-        <div class="mb-2">
-            <h2 class="inline-block mb-2 text-base font-semibold text-fg-muted">{{ group.grouper }}:</h2>
-            <div class="flex flex-wrap gap-2">
-                {% for meta_term in group.list %}
-                    <a
-                        class="py-1 px-2 text-sm font-semibold rounded-lg border transition-opacity hover:opacity-70 bg-slate-100"
-                        href="{% url 'apply:submissions:list' %}?meta_terms={{ meta_term.id }}"
-                        hx-boost="true"
-                        hx-target="#main"
-                        hx-select="#main"
-                    >{{ meta_term.name }}</a>
-                {% endfor %}
+    {% regroup meta_terms by get_parent as meta_term_groups %}
+    <div>
+        {% for group in meta_term_groups %}
+            <div class="mb-2">
+                <h2 class="inline-block mb-2 text-base font-semibold text-fg-muted">{{ group.grouper }}:</h2>
+                <div class="flex flex-wrap gap-2">
+                    {% for meta_term in group.list %}
+                        <a
+                            class="py-1 px-2 text-sm font-semibold rounded-lg border transition-opacity hover:opacity-70 bg-slate-100"
+                            href="{% url 'apply:submissions:list' %}?meta_terms={{ meta_term.id }}"
+                            hx-boost="true"
+                            hx-target="#main"
+                            hx-select="#main"
+                        >{{ meta_term.name }}</a>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-    {% empty %}
-        {% trans "--" %}
-    {% endfor %}
+        {% empty %}
+            {% trans "--" %}
+        {% endfor %}
+    </div>
 </div>

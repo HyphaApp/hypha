@@ -350,7 +350,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find("div", attrs={"data-testid": "sidebar-primary-actions"})
-                .find_all("a", class_="button--primary", string=pattern)
+                .find_all("a", class_="btn-primary", string=pattern)
             )
             self.assertEqual(len(buttons), 1)
 
@@ -375,7 +375,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find("div", attrs={"data-testid": "sidebar-primary-actions"})
-                .find_all("a", class_="button--primary", string=pattern)
+                .find_all("a", class_="btn-primary", string=pattern)
             )
             self.assertEqual(len(buttons), 0)
 
@@ -433,7 +433,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find("div", attrs={"data-testid": "sidebar-primary-actions"})
-                .find_all("a", class_="button--primary", string=pattern)
+                .find_all("a", class_="btn-primary", string=pattern)
             )
             self.assertEqual(len(buttons), 1)
 
@@ -472,7 +472,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find("div", attrs={"data-testid": "sidebar-primary-actions"})
-                .find_all("a", class_="button--primary", string=pattern)
+                .find_all("a", class_="btn-primary", string=pattern)
             )
             self.assertEqual(len(buttons), 0)
 
@@ -506,7 +506,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find(class_="sidebar")
-                .find_all("button", class_="button--primary", string="Assign reviewers")
+                .find_all("button", class_="btn-primary", string="Assign reviewers")
             )
             self.assertEqual(len(buttons), 1)
 
@@ -548,7 +548,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find(class_="sidebar")
-                .find_all("a", class_="button--primary", string="Assign reviewers")
+                .find_all("a", class_="btn-primary", string="Assign reviewers")
             )
             self.assertEqual(len(buttons), 0)
 
@@ -597,7 +597,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find("div", attrs={"data-testid": "sidebar-primary-actions"})
-                .find_all("a", class_="button--primary", string="View determination")
+                .find_all("a", class_="btn-primary", string="View determination")
             )
             self.assertEqual(len(buttons), 1)
 
@@ -621,7 +621,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find("div", attrs={"data-testid": "sidebar-primary-actions"})
-                .find_all("a", class_="button--primary", string="View determination")
+                .find_all("a", class_="btn-primary", string="View determination")
             )
             self.assertEqual(len(buttons), 0)
 
@@ -869,7 +869,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
             # Ignore whitespace (including line breaks) in button text
             pattern = re.compile(rf"\s*{button_text}\s*")
             buttons = BeautifulSoup(response.content, "html5lib").find_all(
-                "a", class_="button--primary", string=pattern
+                "a", class_="btn-primary", string=pattern
             )
             self.assertEqual(len(buttons), 0)
 
@@ -902,7 +902,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find("div", attrs={"data-testid": "sidebar-primary-actions"})
-                .find_all("a", class_="button--primary", string=pattern)
+                .find_all("a", class_="btn-primary", string=pattern)
             )
             self.assertEqual(len(buttons), 1)
 
@@ -930,7 +930,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
             # Ignore whitespace (including line breaks) in button text
             pattern = re.compile(rf"\s*{button_text}\s*")
             buttons = BeautifulSoup(response.content, "html5lib").find_all(
-                "a", class_="button--primary", string=pattern
+                "a", class_="btn-primary", string=pattern
             )
             self.assertEqual(len(buttons), 0)
 
@@ -969,7 +969,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         buttons = (
             BeautifulSoup(response.content, "html5lib")
             .find(class_="sidebar")
-            .find_all("a", class_="button--primary", string="Assign reviewers")
+            .find_all("a", class_="btn-primary", string="Assign reviewers")
         )
         self.assertEqual(len(buttons), 0)
 
@@ -991,7 +991,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find("div", attrs={"data-testid": "sidebar-primary-actions"})
-                .find_all("a", class_="button--primary", string="View determination")
+                .find_all("a", class_="btn-primary", string="View determination")
             )
             self.assertEqual(len(buttons), 1)
 
@@ -1015,7 +1015,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find(class_="sidebar")
-                .find_all("a", class_="button--primary", string="View determination")
+                .find_all("a", class_="btn-primary", string="View determination")
             )
             self.assertEqual(len(buttons), 0)
 
@@ -1295,7 +1295,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
             # Ignore whitespace (including line breaks) in button text
             pattern = re.compile(rf"\s*{button_text}\s*")
             buttons = BeautifulSoup(response.content, "html5lib").find_all(
-                "a", class_="button--primary", string=pattern
+                "a", class_="btn-primary", string=pattern
             )
             self.assertEqual(len(buttons), 0)
 
@@ -1326,7 +1326,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
             # Ignore whitespace (including line breaks) in button text
             pattern = re.compile(r"\s*Add a review\s*")
             buttons = BeautifulSoup(response.content, "html5lib").find_all(
-                "a", class_="button--primary", string=pattern
+                "a", class_="btn-primary", string=pattern
             )
             self.assertEqual(len(buttons), 0)
 
@@ -1351,7 +1351,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         buttons = (
             BeautifulSoup(response.content, "html5lib")
             .find(class_="sidebar")
-            .find_all("a", class_="button--primary", string="Assign reviewers")
+            .find_all("a", class_="btn-primary", string="Assign reviewers")
         )
         self.assertEqual(len(buttons), 0)
 
@@ -1374,7 +1374,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find("div", attrs={"data-testid": "sidebar-primary-actions"})
-                .find_all("a", class_="button--primary", string="View determination")
+                .find_all("a", class_="btn-primary", string="View determination")
             )
             self.assertEqual(len(buttons), 1)
 
@@ -1394,7 +1394,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find(class_="sidebar")
-                .find_all("a", class_="button--primary", string="View determination")
+                .find_all("a", class_="btn-primary", string="View determination")
             )
             self.assertEqual(len(buttons), 0)
 

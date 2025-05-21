@@ -10,24 +10,24 @@
 
         <span class="flex gap-4">
             {% if user.can_access_dashboard %}
-                <a href="{% url 'dashboard:dashboard' %}" class="button button--primary">
+                <a href="{% url 'dashboard:dashboard' %}" class="btn btn-primary">
                     {% heroicon_mini "squares-2x2" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
                     {% trans "Go to my dashboard" %}
                 </a>
             {% else %}
-                <div class="flex items-center wrapper wrapper--cta-box">
+                <div class="flex items-center p-4 w-lg bg-base-100 text-base-content rounded-box">
                     <div class="flex-1">
-                        <h3 class="font-bold heading heading--no-margin">{% trans "Submit a new application" %}</h3>
-                        <p class="m-0 text-base">{% trans "Apply now for our open rounds" %}</p>
+                        <h3 class="font-bold">{% trans "Submit a new application" %}</h3>
+                        <p class="m-0 text-sm">{% trans "Apply now for our open rounds" %}</p>
                     </div>
                     <div>
-                        <a class="button button--blue-white" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
+                        <a class="btn btn-primary btn-outline" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
                     </div>
                 </div>
 
             {% endif %}
             {% if perms.wagtailadmin.access_admin %}
-                <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="button button--primary">
+                <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="btn btn-primary">
                     {% heroicon_solid "cog-6-tooth" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
                     {% trans "Administration" %}
                 </a>
@@ -44,9 +44,7 @@
                 {% for field in form %}
                     {% include "forms/includes/field.html" %}
                 {% endfor %}
-                <div class="form__group">
-                    <button class="button button--primary" type="submit">{% trans "Update Profile" %}</button>
-                </div>
+                <button class="mt-4 btn btn-primary" type="submit">{% trans "Update Profile" %}</button>
             </form>
         </div>
 
@@ -59,11 +57,11 @@
                     <h3 class="mb-0 text-base">{% trans "Password" %}</h3>
                     <p>
                         {% if user.has_usable_password %}
-                            <a class="button button--primary" href="{% url 'users:password_change' %}">
+                            <a class="btn btn-primary" href="{% url 'users:password_change' %}">
                                 {% trans "Update password" %}
                             </a>
                         {% else %}
-                            <button class="button button--primary"
+                            <button class="btn btn-primary"
                                     hx-post="{% url 'users:set_user_password' %}"
                                     hx-swap="outerHTML transition:true"
                             >
@@ -77,10 +75,10 @@
             <h3 class="mb-2 text-base">{% trans "Two-Factor Authentication (2FA)" %}</h3>
             <div>
                 {% if default_device %}
-                    <a class="mb-2 button button--primary" href="{% url 'users:backup_tokens' %}">{% trans "Backup codes" %}</a>
-                    <a class="mb-2 button button--primary button--warning w-fit" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a>
+                    <a class="mb-2 btn btn-primary" href="{% url 'users:backup_tokens' %}">{% trans "Backup codes" %}</a>
+                    <a class="mb-2 btn btn-primary button--warning w-fit" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a>
                 {% else %}
-                    <a class="button button--primary" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a>
+                    <a class="btn btn-primary" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a>
                 {% endif %}
             </div>
 

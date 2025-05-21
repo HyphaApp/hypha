@@ -9,12 +9,15 @@ from django.utils.safestring import mark_safe
 
 def wrap_deleted(text):
     return format_html(
-        '<span class="bg-red-200 line-through">{}</span>', mark_safe(text)
+        '<span class="bg-error bg-error-content line-through">{}</span>',
+        mark_safe(text),
     )
 
 
 def wrap_added(text):
-    return format_html('<span class="bg-green-200">{}</span>', mark_safe(text))
+    return format_html(
+        '<span class="bg-success text-success-content">{}</span>', mark_safe(text)
+    )
 
 
 def compare(answer_a: str, answer_b: str, should_clean: bool = True) -> Tuple[str, str]:

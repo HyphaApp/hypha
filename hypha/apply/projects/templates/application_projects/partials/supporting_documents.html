@@ -12,11 +12,10 @@
     </div>
 
     {% if all_document_categories %}
-
         <div class="w-full ps-7">
             <ul class="pt-3 space-y-2">
                 {% for document_category in all_document_categories %}
-                    <li class="flex justify-between py-2 px-3 bg-gray-100 rounded-sm">
+                    <li class="flex justify-between py-2 px-3 rounded-sm bg-base-200">
                         <div class="docs-block__document-inner">
                             <span>{{ document_category.name }}
                                 {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
@@ -40,8 +39,8 @@
                         </div>
                         {% can "upload_project_documents" object as can_upload_documents %}
                         {% if document_category in remaining_document_categories and can_upload_documents %}
-                            <div class="docs-block__document-inner__actions">
-                                <a class="flex items-center font-bold transition-opacity hover:opacity-70 me-0"
+                            <div class="flex gap-2 items-center ms-auto">
+                                <a class="btn btn-sm"
                                    href="{% url 'apply:projects:supporting_doc_upload' object.submission.id document_category.id %}"
                                    hx-get="{% url 'apply:projects:supporting_doc_upload' object.submission.id document_category.id %}"
                                    hx-target="#htmx-modal"
@@ -55,25 +54,25 @@
                         {% else %}
                             {% category_latest_file object document_category as latest_file %}
                             {% if latest_file %}
-                                <div class="docs-block__document-inner__actions">
+                                <div class="flex gap-2 items-center ms-auto">
                                     <a
-                                        class="docs-block__icon-link"
+                                        class="btn btn-outline btn-secondary"
                                         href="{% url 'apply:projects:document' pk=object.submission.pk file_pk=latest_file.pk %}"
                                         target="_blank"
                                     >
-                                        {% heroicon_micro "eye" class="inline me-1" aria_hidden=true %}
+                                        {% heroicon_micro "eye" class="inline" aria_hidden=true %}
                                         {% trans "View" %}
                                     </a>
                                     {% user_can_remove_supporting_documents object user as can_remove_supporting_doc %}
                                     {% if can_remove_supporting_doc %}
                                         <button
-                                            class="docs-block__icon-link button button--link button--remove"
+                                            class="btn btn-square btn-error btn-ghost"
                                             hx-delete="{% url "apply:projects:remove_supporting_document" object.submission.pk latest_file.pk %}"
                                             hx-swap="none"
                                             hx-confirm="Are you sure you want to remove this document?"
                                         >
-                                            {% heroicon_micro "trash" class="inline me-1 fill-red-500" aria_hidden=true %}
-                                            {% trans "Remove" %}
+                                            {% heroicon_micro "trash" aria_hidden=true %}
+                                            <span class="sr-only">{% trans "Remove" %}</span>
                                         </button>
                                     {% endif %}
                                 </div>
@@ -84,5 +83,4 @@
             </ul>
         </div>
     {% endif %}
-
 </li>
