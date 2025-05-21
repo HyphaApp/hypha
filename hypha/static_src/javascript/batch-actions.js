@@ -3,8 +3,7 @@
   const $body = $("body");
   const $checkbox = $(".js-batch-select");
   const $allCheckboxInput = $(".js-batch-select-all");
-  const $batchButtons = $(".js-batch-button");
-  const $batchInvoiceProgress = $(".js-batch-invoice-progress");
+  const $batchButtons = $("[data-js-batch-actions]");
   const $batchTitlesList = $(".js-batch-titles");
   const $batchTitleCount = $(".js-batch-title-count");
   const $hiddenIDlist = $(".js-submissions-id");
@@ -73,10 +72,6 @@
     });
   });
 
-  $batchInvoiceProgress.click(function () {
-    updateInvoiceProgressButton();
-  });
-
   // show/hide the list of actions
   $toggleBatchList.click((e) => {
     e.preventDefault();
@@ -131,15 +126,14 @@
       }
     });
 
+    const batchInvoiceProgressBtn = document.querySelector(
+      "[data-js-batch-actions='invoice-update-status']"
+    );
+
     if (!actions || actions.length === 0) {
-      $batchInvoiceProgress.attr("disabled", "disabled");
-      $batchInvoiceProgress.attr(
-        "data-tooltip",
-        "Status changes can't be applied to Invoices with this combination of statuses"
-      );
+      batchInvoiceProgressBtn.setAttribute("disabled", "disabled");
     } else {
-      $batchInvoiceProgress.removeAttr("disabled");
-      $batchInvoiceProgress.removeAttr("data-tooltip");
+      batchInvoiceProgressBtn.removeAttribute("disabled");
     }
   }
 
@@ -158,7 +152,14 @@
    * Update the count of selected checkboxes.
    */
   function updateCount() {
-    $(".js-total-actions").html($(".js-batch-select:checked").length);
+    const totalSelectionsElement = document.querySelector(
+      '[data-js-batch-actions="total-selections"]'
+    );
+    if (totalSelectionsElement) {
+      totalSelectionsElement.innerHTML = document.querySelectorAll(
+        ".js-batch-select:checked"
+      ).length;
+    }
   }
 
   /**

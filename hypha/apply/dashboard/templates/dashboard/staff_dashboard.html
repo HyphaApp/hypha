@@ -111,7 +111,7 @@
 
         {% if PROJECTS_ENABLED and active_invoices.count %}
             <div id="active-invoices" class="wrapper wrapper--bottom-space">
-                <h4 class="heading heading--normal">{% trans "Active Invoices" %}</h4>
+                <h2 class="card-title">{% trans "Active Invoices" %}</h2>
                 {% render_table active_invoices.table %}
             </div>
         {% endif %}

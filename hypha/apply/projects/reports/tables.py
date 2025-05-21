@@ -65,7 +65,7 @@ class ReportListTable(tables.Table):
         sequence = ["project", "report_period", "..."]
         model = Report
         template_name = "application_projects/tables/table.html"
-        attrs = {"class": "table overflow-x-auto projects-table"}
+        attrs = {"class": "table border-x border-b mb-2 rounded-b-box projects-table"}
 
     def render_report_period(self, record):
         return f"{record.start} to {record.end_date}"

@@ -163,45 +163,8 @@
     }
   }
 
-  &--actions {
-    position: relative;
-    display: block;
-    background-color: variables.$color--white;
-
-    &:active {
-      background: variables.$color--light-blue-90;
-    }
-
-    &::after {
-      position: absolute;
-      inset-block-start: 0;
-      inset-inline-end: 15px;
-      font-size: 30px;
-      content: "+";
-      line-height: 1.2;
-    }
-
-    &.is-active {
-      color: variables.$color--dark-blue;
-      background: variables.$color--light-blue-90;
-
-      &::after {
-        inset-block-start: -12px;
-        content: "_";
-      }
-    }
-
-    @include mixins.media-query(md) {
-      display: none;
-    }
-  }
-
   &--top-space {
     margin-block-start: 20px;
-  }
-
-  &--submit {
-    min-width: 200px;
   }
 
   &--compare {
@@ -240,83 +203,7 @@
   }
 
   &--action {
-    display: flex;
-    color: variables.$color--default;
-    align-items: center;
     transition: opacity variables.$transition;
-    font-weight: variables.$weight--semibold;
-    position: relative;
-
-    &:hover {
-      opacity: 0.7;
-    }
-
-    &:disabled {
-      color: variables.$color--mid-dark-grey;
-      cursor: not-allowed;
-      pointer-events: all; // to show the tooltip on hover
-
-      // tooltip
-      &::before {
-        content: attr(data-tooltip);
-        pointer-events: none;
-        position: absolute;
-        width: 200px;
-        padding: 12px;
-        font-size: 12px;
-        font-weight: variables.$weight--normal;
-        white-space: normal;
-        background: variables.$color--light-blue;
-        opacity: 0;
-        transition: opacity variables.$transition;
-        inset-block-end: 45px;
-        inset-inline-start: 50%;
-        transform: translateX(-50%);
-        color: variables.$color--white;
-        text-align: start;
-        line-height: 1rem;
-        border: 1px solid variables.$color--white;
-        border-radius: 0.125rem;
-      }
-
-      &::after {
-        @include mixins.triangle(bottom, variables.$color--primary, 7px);
-        position: absolute;
-        inset-block-start: -22px;
-        inset-inline-start: 50%;
-        transform: translateX(-50%);
-        opacity: 0;
-        transition: opacity variables.$transition;
-        z-index: 10;
-      }
-
-      svg {
-        fill: variables.$color--mid-dark-grey;
-      }
-
-      &:hover {
-        opacity: 1;
-
-        // show tooltip
-        &::before {
-          pointer-events: all;
-          z-index: 10;
-          opacity: 1;
-        }
-
-        &::after {
-          opacity: 1;
-        }
-      }
-    }
-
-    svg {
-      fill: variables.$color--light-blue;
-      width: 1em;
-      height: 1em;
-      margin-inline-end: 0.5rem;
-      pointer-events: none;
-    }
   }
 
   &--link {

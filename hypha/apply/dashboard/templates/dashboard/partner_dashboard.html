@@ -16,9 +16,9 @@
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
         <div class="wrapper wrapper--bottom-space">
-            <h4 class="heading heading--normal">
+            <h2 class="card-title">
                 {% trans "You are the partner of these submissions" %} <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded-sm dark:text-blue-300 dark:bg-blue-900 me-2">{{ partner_submissions_count }}</span>
-            </h4>
+            </h2>
 
             {% if partner_submissions.data %}
                 {% render_table partner_submissions %}
@@ -28,7 +28,7 @@
         </div>
 
         <div class="wrapper wrapper--bottom-space">
-            <h4 class="heading heading--normal">{% trans "Your active submissions" %}</h4>
+            <h2 class="card-title">{% trans "Your active submissions" %}</h2>
             {% for submission in my_submissions %}
                 <div class="list-row">
                     <div class="wrapper wrapper--status-bar-inner">
@@ -55,7 +55,7 @@
 
         {% if my_inactive_submissions.data %}
             <div class="wrapper wrapper--bottom-space">
-                <h4 class="heading heading--normal">{% trans "Submission history" %}</h4>
+                <h2 class="card-title">{% trans "Submission history" %}</h2>
                 {% render_table my_inactive_submissions %}
             </div>
         {% endif %}
