@@ -145,7 +145,6 @@
     &--inner {
       flex: 1;
     }
-
   }
 
   &--search {
@@ -214,17 +213,6 @@
 
     @include mixins.media-query(md) {
       padding: 2rem 0;
-    }
-  }
-
-  &--table-actions {
-    @include mixins.media-query(md) {
-      display: flex;
-      justify-content: space-between;
-    }
-
-    @include mixins.media-query(lg) {
-      justify-content: flex-end;
     }
   }
 
