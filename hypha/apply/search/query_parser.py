@@ -87,6 +87,10 @@ def tokenize_date_filter_value(date_str: str) -> list:
     # Match the regex pattern to the value
     match = re.match(regex_pattern, date_str)
 
+    if match is None:
+        # Invalid date string
+        return []
+
     # Extract the operator and date from the match object
     operator = match.group(1)
     date_str = match.group(2)

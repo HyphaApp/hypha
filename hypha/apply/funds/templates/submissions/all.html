@@ -365,12 +365,17 @@
             <nav x-show="!showSelectedSubmissions"
                  class="flex flex-wrap gap-2 items-center menu-filters"
             >
-                <div id="filterupdated" aria-label="Filter by Updated" class="flex items-center">
+                <div id="filtersubmitted" aria-label="Filter by Submitted" class="flex items-center" data-query="submitted">
+                    <button class="flex justify-between items-center py-1 w-full font-medium text-gray-600 border cursor-pointer md:p-0 md:border-none hover:bg-gray-50 ps-2 pe-2 md:pe-4 md:hover:bg-transparent md:hover:text-blue-700">
+                        {% trans "Submitted" %}
+                        {% heroicon_mini "chevron-down" aria_hidden="true" width=18 height=18 class="hidden md:inline-block" %}
+                    </button>
+                </div>
+                <div id="filterupdated" aria-label="Filter by Updated" class="flex items-center" data-query="updated">
                     <button class="flex justify-between items-center py-1 w-full font-medium text-gray-600 border cursor-pointer md:p-0 md:border-none hover:bg-gray-50 ps-2 pe-2 md:pe-4 md:hover:bg-transparent md:hover:text-blue-700">
                         {% trans "Updated" %}
                         {% heroicon_mini "chevron-down" aria_hidden="true" width=18 height=18 class="hidden md:inline-block" %}
                     </button>
-
                 </div>
 
                 {% dropdown_menu title="Status" heading="Filter by current status" enable_search=True %}
@@ -609,23 +614,28 @@
             var start = moment().subtract(29, 'days');
             var end = moment();
 
-            $('#filterupdated').daterangepicker({
-                startDate: start,
-                endDate: end,
-                ranges: {
-                    '{% trans "Today" %}': [moment(), moment()],
-                    '{% trans "Yesterday" %}': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    '{% trans "Last 7 Days" %}': [moment().subtract(6, 'days'), moment()],
-                    '{% trans "Last 30 Days" %}': [moment().subtract(29, 'days'), moment()],
-                    '{% trans "This Month" %}': [moment().startOf('month'), moment().endOf('month')],
-                    '{% trans "Last Month" %}': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                }
-            });
+            // Add the picker for all elements that need it
+            $.each(['#filterupdated', '#filtersubmitted'], (index, element) => {
+                $(element).daterangepicker({
+                    startDate: start,
+                    endDate: end,
+                    ranges: {
+                        '{% trans "Today" %}': [moment(), moment()],
+                        '{% trans "Yesterday" %}': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        '{% trans "Last 7 Days" %}': [moment().subtract(6, 'days'), moment()],
+                        '{% trans "Last 30 Days" %}': [moment().subtract(29, 'days'), moment()],
+                        '{% trans "This Month" %}': [moment().startOf('month'), moment().endOf('month')],
+                        '{% trans "Last Month" %}': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    }
+                });
 
-            $('#filterupdated').on('apply.daterangepicker', function(ev, picker) {
-                $('#search-navbar').val(`updated:>=${picker.startDate.format('YYYY-MM-DD')} updated:<=${picker.endDate.format('YYYY-MM-DD')}`);
-                $('#search-navbar').closest('form').trigger('submit');
-            });
+                var query = $(element).attr("data-query");
+
+                $(element).on('apply.daterangepicker', function(ev, picker) {
+                    $('#search-navbar').val(`${query}:>=${picker.startDate.format('YYYY-MM-DD')} ${query}:<=${picker.endDate.format('YYYY-MM-DD')}`);
+                    $('#search-navbar').closest('form').trigger('submit');
+                });
+            })
         });
     </script>
 {% endblock %}
