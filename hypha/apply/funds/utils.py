@@ -8,11 +8,15 @@ from operator import iconcat
 from typing import Iterable
 
 import django_filters as filters
+from django.urls import reverse
+from django.utils.encoding import force_bytes
 from django.utils.html import strip_tags
+from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext as _
 
 # from django.contrib.sites.models import Site
 from hypha.apply.funds.models.submissions import ApplicationSubmission
+from hypha.apply.users.tokens import CoApplicantInviteTokenGenerator
 from hypha.apply.utils.image import generate_image_tag
 
 from .models.screening import ScreeningStatus
@@ -253,3 +257,13 @@ def get_export_polling_time(submission_count: int) -> int:
         return min_interval
     else:
         return max_interval
+
+
+def generate_invite_path(invite):
+    token = CoApplicantInviteTokenGenerator().make_token(invite)
+    uid = urlsafe_base64_encode(force_bytes(invite.pk))
+    login_path = reverse(
+        "apply:submissions:accept_coapplicant_invite",
+        kwargs={"uidb64": uid, "token": token},
+    )
+    return login_path

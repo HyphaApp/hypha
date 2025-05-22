@@ -1,0 +1,75 @@
+{% load i18n %}
+{% modal_title %}{% trans "Edit Co-Applicant" %}{% endmodal_title %}
+
+
+<form
+    class="form {{ extra_classes }} p-4"
+    action="{{ action|default:request.path }}"
+    method="post"
+    hx-post="{{ action|default:request.path }}"
+    hx-swap="innerHTML"
+    id="{{ form_id }}"
+    enctype="multipart/form-data"
+>
+    {% csrf_token %}
+    {% if co_applicant_exists %}
+        <p class="text-sm text-gray-500">
+            {% trans "Update the role for co-applicant." %}
+            <br>
+            {% trans "1. Read Only: Co-applicant can only view the submission." %}
+            <br>
+            {% trans "2. Comment: Co-applicant can view and write comment." %}
+            <br>
+            {% trans "3. Edit: Co-applicant can view, comment and edit the submission." %}
+        </p>
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+
+        <div class="fields--visible">
+            {% for field in form.visible_fields %}
+                {% if field.field %}
+                    {% include "forms/includes/field.html" %}
+                {% else %}
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="mt-5 sm:flex sm:flex-row-reverse sm:gap-4 sm:mt-4">
+            <button
+                class="w-full sm:w-auto button button--primary"
+                type="submit"
+            >
+                {{ value }}
+            </button>
+            <button
+                type="button"
+                class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 button button--warning rounded-xs shadow-xs"
+                @click="show = false"
+                hx-post="{% url 'apply:submissions:delete_co_applicant_invite' invite_pk=invite.pk %}"
+            >{% trans "Delete" %}</button>
+        </div>
+    {% else %}
+        <div class="text-sm text-gray-500 fields--visible">
+            {% trans "You can not update until co-applicant accepts the invite. You may re-invite them." %}
+        </div>
+
+        <div class="mt-5 sm:flex sm:flex-row-reverse sm:gap-4 sm:mt-4">
+            <button
+                type="button"
+                class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 button button--warning rounded-xs shadow-xs"
+                @click="show = false"
+                hx-post="{% url 'apply:submissions:delete_co_applicant_invite' invite_pk=invite.pk %}"
+            >{% trans "Delete" %}</button>
+
+            <button
+                type="button"
+                class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 rounded-xs shadow-xs"
+                @click="show = false"
+                hx-post="{% url 'apply:submissions:re_invite_co_applicant' invite_pk=invite.pk %}"
+            >{% trans "Re-invite" %}</button>
+        </div>
+    {% endif %}
+
+</form>
+

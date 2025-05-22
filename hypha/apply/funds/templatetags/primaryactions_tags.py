@@ -1,5 +1,7 @@
 from django import template
 
+from ..permissions import has_permission
+
 register = template.Library()
 
 
@@ -19,3 +21,11 @@ def should_display_primary_actions_block(user, submission):
 @register.simple_tag
 def show_progress_button(user, submission):
     return bool(list(submission.get_actions_for_user(user)))
+
+
+@register.simple_tag
+def display_coapplicant_section(user, submission):
+    permission, reason = has_permission(
+        "co_applicants_view", user=user, object=submission, raise_exception=False
+    )
+    return permission

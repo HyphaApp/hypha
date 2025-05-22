@@ -3,6 +3,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.funds.models.submissions import ApplicationSubmission
+from hypha.apply.funds.permissions import has_permission
 from hypha.apply.users.models import User
 
 register = template.Library()
@@ -17,7 +18,10 @@ def check_permission(user, perm, submission):
 
 @register.filter
 def has_edit_perm(user, submission):
-    return check_permission(user, "edit", submission)
+    permission, reason = has_permission(
+        "submission_edit", user=user, object=submission, raise_exception=False
+    )
+    return check_permission(user, "edit", submission) and permission
 
 
 @register.filter

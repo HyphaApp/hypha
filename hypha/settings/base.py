@@ -158,6 +158,11 @@ SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list(
     "SUBMISSIONS_TABLE_EXCLUDED_FIELDS", ["organization_name"]
 )
 
+# No of co-applicants can be added to a submission (default 10)
+SUBMISSIONS_COAPPLICANT_INVITES_LIMIT = env.int(
+    "SUBMISSIONS_COAPPLICANT_INVITES_LIMIT", 10
+)
+
 # Should submission automatically transition after all reviewer roles are assigned.
 TRANSITION_AFTER_ASSIGNED = env.bool("TRANSITION_AFTER_ASSIGNED", False)
 

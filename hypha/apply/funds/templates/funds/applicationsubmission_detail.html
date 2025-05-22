@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static workflow_tags wagtailcore_tags statusbar_tags archive_tags submission_tags translate_tags %}
+{% load i18n static workflow_tags wagtailcore_tags statusbar_tags archive_tags submission_tags translate_tags primaryactions_tags %}
 {% load heroicons %}
 {% load can from permission_tags %}
 
@@ -176,6 +176,13 @@
 
                 {% block reminders %}
                 {% endblock %}
+
+                {% display_coapplicant_section user object as coapplicant_section %}
+                {% if coapplicant_section %}
+                    {% block co_applicant %}
+                        <div hx-trigger="revealed, coApplicantUpdated from:body" hx-get="{% url 'funds:submissions:partial_coapplicant_invites' object.id %}"></div>
+                    {% endblock %}
+                {% endif %}
 
                 {% block related %}
                     {% if other_submissions or object.previous or object.next %}
