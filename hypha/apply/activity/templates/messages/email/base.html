@@ -5,10 +5,10 @@
 
 {% block more_info %}{% endblock %}
 
-{% blocktrans %}Kind Regards,
-    The {{ ORG_SHORT_NAME }} Team{% endblocktrans %}
+{# fmt:off #}{% blocktrans %}Kind Regards,
+The {{ org_short_name }} Team{% endblocktrans %}
 
 --
-{{ ORG_LONG_NAME }}
+{{ org_long_name }}
 {% if ORG_URL %}{{ ORG_URL }}{% endif %}
-{% block post_signature_content %}{% endblock %}
+{% block post_signature_content %}{% endblock %}{# fmt:on #}
