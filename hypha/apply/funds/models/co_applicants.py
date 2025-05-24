@@ -14,6 +14,13 @@ COAPPLICANT_ROLE_CHOICES = (
 )
 
 
+class CoApplicantProjectPermission(models.TextChoices):
+    PROJECT_DOCUMENT = "project_document", "Project Document"
+    CONTRACTING_DOCUMENT = "contracting_document", "Contracting Document"
+    INVOICES = "invoices", "Invoices"
+    REPORTS = "reports", "Reports"
+
+
 class CoApplicantInviteStatus(models.TextChoices):
     PENDING = "pending", "Pending"
     ACCEPTED = "accepted", "Accepted"
@@ -65,6 +72,7 @@ class CoApplicant(models.Model):
         CoApplicantInvite, on_delete=models.CASCADE, related_name="co_applicant"
     )
     role = models.CharField(choices=COAPPLICANT_ROLE_CHOICES, default=READ_ONLY)
+    project_permission = models.JSONField(blank=True, null=True, default=list)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     class Meta:

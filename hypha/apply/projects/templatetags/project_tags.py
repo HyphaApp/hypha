@@ -4,6 +4,7 @@ from django.db.models import Count
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from hypha.apply.funds.models.co_applicants import CoApplicantProjectPermission
 from hypha.apply.projects.models.project import (
     CLOSING,
     COMPLETE,
@@ -30,6 +31,66 @@ def user_can_skip_pafapproval_process(project, user):
     if project.status == DRAFT and (user.is_apply_staff or user.is_apply_staff_admin):
         return no_pafreviewer_role()
     return False
+
+
+@register.simple_tag
+def user_can_access_project(project, user):
+    permission, _ = has_permission(
+        "project_access", user, object=project, raise_exception=False
+    )
+    return permission
+
+
+@register.simple_tag
+def user_can_view_project_documents(project, user):
+    if project.submission.co_applicants.filter(user=user).exists():
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.PROJECT_DOCUMENT
+            not in co_applicant.project_permission
+        ):
+            return False
+    return True
+
+
+@register.simple_tag
+def user_can_view_contracting_documents(project, user):
+    if project.submission.co_applicants.filter(user=user).exists():
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.CONTRACTING_DOCUMENT
+            not in co_applicant.project_permission
+        ):
+            return False
+    return True
+
+
+@register.simple_tag
+def user_can_view_invoices(project, user):
+    if project.submission.co_applicants.filter(user=user).exists():
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.INVOICES
+            not in co_applicant.project_permission
+        ):
+            return False
+    return True
+
+
+@register.simple_tag
+def user_can_view_reports(project, user):
+    if project.submission.co_applicants.filter(user=user).exists():
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.REPORTS
+            not in co_applicant.project_permission
+        ):
+            return False
+    return True
 
 
 @register.simple_tag

@@ -19,6 +19,11 @@
                 {% trans "Invite" %}
             </button>
         </summary>
+        {% if object.project %}
+            <div class="mb-2 text-sm text-gray-500">
+                {% trans "Project permissions are available now and can be updated for each co-applicant." %}
+            </div>
+        {% endif %}
         {% if co_applicants %}
             <div class="flex flex-col gap-2 justify-between">
                 {% for invite in co_applicants %}
