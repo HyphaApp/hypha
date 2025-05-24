@@ -297,6 +297,15 @@ def can_access_project(user, project):
         return True, "Vendor(project user) can view project in all statuses"
 
     if (
+        user.is_applicant
+        and project.submission.co_applicants.filter(user=user).exists()
+    ):
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if co_applicant.project_permission:
+            return True, "Co-applicant with project permission can access project"
+        return False, "Co-applicant without project permission can't access project"
+
+    if (
         project.status in [DRAFT, INTERNAL_APPROVAL, CONTRACTING]
         and project.paf_approvals.exists()
     ):
