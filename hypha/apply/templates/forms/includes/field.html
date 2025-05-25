@@ -3,26 +3,38 @@
 {% with widget_type=field|widget_type field_type=field|field_type %}
     <fieldset
         class="fieldset h-form__group {{ field.id_for_label }} form__group--{{ widget_type }} {% if widget_type == 'hidden_input' %}hidden{% endif %} {% if widget_type == 'checkbox_input' %} form__group--checkbox{% endif %}{% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget' %} form__group--file{% endif %}{% if field.help_text %} flex-wrap{% endif %}{% if field.errors %} form__error{% endif %}{% if field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}{% if field.field.grouper_for %} form-fields-grouper{% endif %}{% if widget_type == 'address_widget' %}bg-base-200/30 border-base-300 rounded-box w-sm border p-4{% endif %}"
-            {% if field.field.grouper_for %}
-                data-grouper-for="{{ field.field.grouper_for }}"
-                data-toggle-on="{{ field.field.choices.0.0 }}"
-                data-toggle-off="{{ field.field.choices.1.0 }}"
-            {% endif %}
-            {% if field.field.group_number > 1 %}
-                data-hidden="{% if not show_all_group_fields and not field.field.visible %}true{% else %}false{% endif %}"
-                data-required="{{ field.field.required_when_visible }}"
-            {% endif %}
-         {% if field.field.word_limit %}
-             data-word-limit="{{ field.field.word_limit }}"
-         {% endif %}
-         {% if widget_type == 'text_input' and field.field.max_length %}
-             data-maxlength="{{ field.field.max_length }}"
-             x-data="{
-                     titleblock: '',
-                     maxlength: $el.dataset.maxlength,
-                     get curlength() { return this.titleblock.length }
-                     }"
-         {% endif %}
+        {% if field.field.grouper_for %}
+            data-grouper-for="{{ field.field.grouper_for }}"
+            data-toggle-on="{{ field.field.choices.0.0 }}"
+            data-toggle-off="{{ field.field.choices.1.0 }}"
+        {% endif %}
+        {% if field.field.group_number > 1 %}
+            data-hidden="{% if not show_all_group_fields and not field.field.visible %}true{% else %}false{% endif %}"
+            data-required="{{ field.field.required_when_visible }}"
+        {% endif %}
+        {% if field.field.word_limit %}
+            data-word-limit="{{ field.field.word_limit }}"
+        {% endif %}
+        {# fmt:off #}
+        {% if widget_type == 'text_input' and field.field.max_length %}
+            x-data="
+             {
+                curlength: 0,
+                maxlength: 0,
+                get visible() {
+                    return this.curlength >= this.maxlength * 0.8;
+                },
+                init() {
+                    const input = this.$el.querySelector('input');
+                    this.maxlength = input.maxLength;
+                    this.curlength = input.value.length;
+                    input.addEventListener('input', (e) => {
+                        this.curlength = e.target.value.length;
+                    });
+                }
+            }"
+        {% endif %}
+        {# fmt:on #}
     >
         {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget'%}
             <span class="form__question form__file-label">
@@ -99,12 +111,14 @@
             {{ field }}
         {% endif %}
 
-        <div class="flex justify-between gap-2 label">
+        <div class="flex gap-2 justify-between label">
             {% if field.help_text %}
                 <label class="whitespace-normal">{{ field.help_text }}</label>
             {% endif %}
             {% if widget_type == 'text_input' and field.field.max_length %}
-                <div><span x-text="curlength"></span>/<span x-text="maxlength"></span></div>
+                <div x-cloak x-show="visible" x-transition>
+                    <span x-text="curlength"></span>/<span x-text="maxlength"></span>
+                </div>
             {% endif %}
         </div>
 
