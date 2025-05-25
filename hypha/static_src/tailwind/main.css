@@ -69,3 +69,8 @@
   /* see https://github.com/tailwindlabs/tailwindcss/pull/12128 */
   overflow-wrap: anywhere;
 }
+
+@utility list-row-card {
+  --radius-box: 0;
+  @apply px-0 gap-2 py-2;
+}
