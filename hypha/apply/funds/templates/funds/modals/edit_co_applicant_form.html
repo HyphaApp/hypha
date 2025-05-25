@@ -1,6 +1,6 @@
 {% load i18n %}
-{% modal_title %}{% trans "Edit Co-Applicant" %}{% endmodal_title %}
 
+{% modal_title %}{% trans "Edit Co-applicant" %}{% endmodal_title %}
 
 <form
     class="form {{ extra_classes }} p-4"
@@ -44,7 +44,7 @@
             </button>
             <button
                 type="button"
-                class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 button button--warning rounded-xs shadow-xs"
+                class="btn btn-warning"
                 @click="show = false"
                 hx-post="{% url 'apply:submissions:delete_co_applicant_invite' invite_pk=invite.pk %}"
             >{% trans "Delete" %}</button>
@@ -54,22 +54,24 @@
             {% trans "You can not update until co-applicant accepts the invite. You may re-invite them." %}
         </div>
 
-        <div class="mt-5 sm:flex sm:flex-row-reverse sm:gap-4 sm:mt-4">
+        <div class="mt-5 sm:flex-row-reverse sm:mt-4 card-actions">
             <button
                 type="button"
-                class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 button button--warning rounded-xs shadow-xs"
-                @click="show = false"
-                hx-post="{% url 'apply:submissions:delete_co_applicant_invite' invite_pk=invite.pk %}"
-            >{% trans "Delete" %}</button>
-
-            <button
-                type="button"
-                class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 rounded-xs shadow-xs"
+                class="w-full sm:w-auto btn btn-primary"
                 @click="show = false"
                 hx-post="{% url 'apply:submissions:re_invite_co_applicant' invite_pk=invite.pk %}"
-            >{% trans "Re-invite" %}</button>
+            >
+                {% trans "Re-invite" %}
+            </button>
+            <button
+                type="button"
+                class="w-full sm:w-auto btn btn-warning btn-soft"
+                @click="show = false"
+                hx-post="{% url 'apply:submissions:delete_co_applicant_invite' invite_pk=invite.pk %}"
+            >
+                {% trans "Delete" %}
+            </button>
         </div>
     {% endif %}
 
 </form>
-
