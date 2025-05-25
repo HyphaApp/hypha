@@ -85,13 +85,13 @@
             <div class="flex gap-4 justify-between pb-4">
                 <h2 class="card-title">{% trans "Reminders" %}</h2>
                 <button
-                    class="flex items-center py-1 px-2 font-bold rounded-sm transition-colors text-dark-blue -me-2 hover:bg-base-200"
+                    role="button"
+                    class="btn btn-sm btn-soft btn-secondary"
                     hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}"
                     hx-target="#htmx-modal"
-                    role="button"
-                    aria-label="{% trans "Create reminder" %}"
+                    aria-label="{% trans "Create new reminder" %}"
                 >
-                    {% heroicon_micro "plus" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
+                    {% heroicon_micro "plus" stroke_width=5 aria_hidden=true %}
                     Add
                 </button>
             </div>

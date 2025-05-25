@@ -14,12 +14,12 @@
             <h3 class="text-base font-semibold leading-6 text-base-content" id="modal-title">Delete submission</h3>
             <div class="mt-2">
                 {% if request.user.is_applicant %}
-                    <p class="text-sm text-gray-500">
+                    <p class="text-sm text-fg-muted">
                         Are you sure you want to delete draft submission? All of your data for this submission
                         will be permanently removed from our servers forever. This action cannot be undone.
                     </p>
                 {% else %}
-                    <p class="text-sm text-gray-500">
+                    <p class="text-sm text-fg-muted">
                         Are you sure you want to delete submission? All of your data
                         will be permanently removed from our servers forever. This
                         includes reviews, determinations and comments. This action cannot be undone.

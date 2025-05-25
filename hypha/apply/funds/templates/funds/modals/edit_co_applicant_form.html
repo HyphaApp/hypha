@@ -13,7 +13,7 @@
 >
     {% csrf_token %}
     {% if co_applicant_exists %}
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-fg-muted">
             {% trans "Update the role for co-applicant." %}
             <br>
             {% trans "1. Read Only: Co-applicant can only view the submission." %}
@@ -50,7 +50,7 @@
             >{% trans "Delete" %}</button>
         </div>
     {% else %}
-        <div class="text-sm text-gray-500 fields--visible">
+        <div class="text-sm text-fg-muted fields--visible">
             {% trans "You can not update until co-applicant accepts the invite. You may re-invite them." %}
         </div>
 
