@@ -8,7 +8,6 @@
   const $batchTitleCount = $(".js-batch-title-count");
   const $hiddenIDlist = $(".js-submissions-id");
   const $hiddenInvoiceIDlist = $(".js-invoices-id");
-  const $toggleBatchList = $(".js-toggle-batch-list");
   const activeClass = "batch-actions-enabled";
   const closedClass = "is-closed";
 
@@ -72,19 +71,6 @@
     });
   });
 
-  // show/hide the list of actions
-  $toggleBatchList.click((e) => {
-    e.preventDefault();
-
-    if ($(".js-batch-titles").hasClass(closedClass)) {
-      $toggleBatchList.html("Hide");
-    } else {
-      $toggleBatchList.html("Show");
-    }
-
-    $batchTitlesList.toggleClass(closedClass);
-  });
-
   /**
    * Prepare the batch listing.
    * @returns {Array} selectedIDs
@@ -93,7 +79,6 @@
     $batchTitlesList.html("");
     $batchTitleCount.html("");
     $batchTitlesList.addClass(closedClass);
-    $toggleBatchList.html("Show");
 
     let selectedIDs = [];
 
