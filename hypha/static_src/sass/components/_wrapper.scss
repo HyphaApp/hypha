@@ -54,7 +54,7 @@
     margin: 2em auto;
 
     @include mixins.media-query(lg) {
-      padding: 2rem 17rem 2rem 0;
+      padding: 1rem 17rem 2rem 0;
       margin: 1rem auto 3rem;
     }
   }
