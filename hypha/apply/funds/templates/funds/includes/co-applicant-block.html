@@ -3,59 +3,67 @@
 <div class="card card-border bg-base-100 shadow-xs">
     <div class="card-body">
         <details {% if user.is_applicant or not co_applicants %} open {% endif %} class="group">
-            <summary class="flex gap-4 justify-between items-center list-none">
+            <summary class="flex gap-4 justify-between items-center mb-2 list-none">
                 <h2 class="card-title">
-                    {% trans "Co-applicants" %} <span class="text-base font-medium">({{ co_applicants.count }})</span>
+                    {% trans "Co-applicants" %} <span class="text-xs text-fg-muted">({{ co_applicants.count }})</span>
                     {% heroicon_solid "chevron-down" size="16" class="w-4 h-4 transition-transform rotate-90 group-open:rotate-0" %}
                 </h2>
                 <button
-                    class="btn btn-sm btn-ghost"
-                    {% if object.co_applicant_invites.count >= invite_max_limit %}disabled{% endif %}
+                    role="button"
+                    class="btn btn-sm btn-soft btn-secondary"
                     hx-get="{% url 'apply:submissions:invite_co_applicant' pk=object.id %}"
                     hx-target="#htmx-modal"
-                    {% if object.co_applicant_invites.count >= invite_max_limit %}disabled title='{% trans "Max limit reached" %}'{% endif %}
-                    role="button"
-                    aria-label="{% trans "Invite co-applicant" %}"
+                    {% if object.co_applicant_invites.count >= invite_max_limit %}
+                        disabled
+                        title='{% trans "Max limit reached" %}'
+                    {% else %}
+                        title='{% trans "Invite co-applicant" %}'
+                        aria-label="{% trans "Invite co-applicant" %}"
+                    {% endif %}
                 >
-                    {% heroicon_micro "plus" stroke_width=5 aria_hidden=true %}
                     {% trans "Invite" %}
                 </button>
             </summary>
 
-            {% if co_applicants %}
-                <div class="flex flex-col gap-2 justify-between">
-                    {% for invite in co_applicants %}
-                        <div>
-                            <a
-                                class="font-bold line-clamp-2 group/coapplicant"
-                                href="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
-                                hx-get="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
-                                hx-target="#htmx-modal"
-                            >
-                                <div class="flex justify-between">
-                                    {% if invite.status == "accepted" %}
-                                        {{ invite.co_applicant.user }}
-                                    {% else %}
-                                        {{ invite.invited_user_email }}
-                                    {% endif %}
+            <div class="list">
+                {% for invite in co_applicants %}
+                    <div class="list-row list-row-card">
+                        <div class="min-w-0 list-col-grow">
+                            <div class="font-medium truncate">
+                                {% if invite.status == "accepted" %}
+                                    {{ invite.co_applicant.user }}
+                                {% else %}
+                                    {{ invite.invited_user_email }}
+                                {% endif %}
+                            </div>
 
-                                    {% heroicon_solid "pencil" class="hidden align-middle me-1 group-hover/coapplicant:inline" width=16 height=16 stroke_width=2 aria_hidden=true %}
-                                </div>
-                            </a>
-                            {% if invite.status == "accepted" %}
-                                <div class="text-xs text-fg-muted" >{{ invite.co_applicant.get_role_display }}</div>
-                            {% else %}
-                                <div class="text-xs text-fg-muted" >{{ invite.get_status_display }}</div>
-                            {% endif %}
+                            <div class="label">
+                                {% if invite.status != "accepted" %}
+                                    {{ invite.get_role_display }}
+                                    &middot;
+                                    {{ invite.get_status_display }}
+                                {% else %}
+                                    {{ invite.co_applicant.get_role_display }}
+                                {% endif %}
+                            </div>
                         </div>
 
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div>
-                    {% trans "No co-applicants yet." %}
-                </div>
-            {% endif %}
+                        <a
+                            href="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
+                            hx-get="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
+                            hx-target="#htmx-modal"
+                        >
+                            <div class="btn btn-sm btn-square btn-ghost">
+                                {% heroicon_mini "pencil-square" stroke_width=2 aria_hidden=true %}
+                            </div>
+                        </a>
+                    </div>
+                {% empty %}
+                    <div class="list-row list-row-card">
+                        {% trans "No co-applicants yet." %}
+                    </div>
+                {% endfor %}
+            </div>
         </details>
     </div>
 </div>
