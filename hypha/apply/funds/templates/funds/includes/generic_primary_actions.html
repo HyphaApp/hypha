@@ -7,7 +7,7 @@
 
             {% if object.in_internal_review_phase or object.in_external_review_phase %}
                 {% trans "Complete draft review" as review_draft %}
-                {% include 'review/includes/review_button.html' with submission=object class="button--full-width button--bottom-space" draft_text=review_draft %}
+                {% include 'review/includes/review_button.html' with submission=object draft_text=review_draft %}
             {% endif %}
 
             {% if object.is_finished %}
