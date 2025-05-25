@@ -27,7 +27,7 @@ class ApplicationMustIncludeFieldBlock(MustIncludeFieldBlock):
 class TitleBlock(ApplicationMustIncludeFieldBlock):
     name = "title"
     description = "The title of the project"
-    widget = forms.TextInput(attrs={"x-model.fill": "titleblock"})
+    widget = forms.TextInput()
     field_label = blocks.CharBlock(
         label=_("Label"), default=_("What is the title of your application?")
     )
