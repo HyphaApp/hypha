@@ -478,6 +478,7 @@ class EmailAdapter(AdapterBase):
         Project = apps.get_model("application_projects", "Project")
         if message_type == MESSAGES.COMMENT:
             # Comment handling for Submissions
+            comment = kwargs["related"]
             if isinstance(source, ApplicationSubmission):
                 # add co-applicants with Comment or edit access
                 co_applicants = source.co_applicants.filter(
@@ -485,7 +486,6 @@ class EmailAdapter(AdapterBase):
                 ).values_list("user__email", flat=True)
                 recipients: List[str] = [source.user.email, *co_applicants]
 
-                comment = kwargs["related"]
                 if partners := list(source.partners.values_list("email", flat=True)):
                     if comment.visibility == PARTNER:
                         recipients = partners
