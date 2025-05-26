@@ -108,7 +108,7 @@ class CoApplicantInviteAcceptView(View):
             self.invite = CoApplicantInvite.objects.get(
                 pk=force_str(urlsafe_base64_decode(kwargs.get("uidb64")))
             )
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        except (TypeError, ValueError, OverflowError, CoApplicantInvite.DoesNotExist):
             return render(
                 self.request,
                 "funds/coapplicant_invite_landing_page.html",
