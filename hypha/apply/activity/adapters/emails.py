@@ -10,7 +10,11 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity import tasks
 from hypha.apply.activity.models import ALL, APPLICANT_PARTNERS, PARTNER
-from hypha.apply.funds.models.co_applicants import COMMENT, EDIT
+from hypha.apply.funds.models.co_applicants import (
+    COMMENT,
+    EDIT,
+    CoApplicantProjectPermission,
+)
 from hypha.apply.projects.models.payment import (
     APPROVED_BY_FINANCE,
     CHANGES_REQUESTED_BY_FINANCE,
@@ -418,7 +422,13 @@ class EmailAdapter(AdapterBase):
                     APPROVED_BY_FINANCE,
                     PAYMENT_FAILED,
                 }:
-                    return [source.user.email]
+                    co_applicants = source.submission.co_applicants.filter(
+                        project_permission__contains=[
+                            CoApplicantProjectPermission.INVOICES
+                        ],
+                        role__in=[EDIT],
+                    ).values_list("user__email", flat=True)
+                    return [source.user.email, *co_applicants]
                 elif status in {CHANGES_REQUESTED_BY_FINANCE, RESUBMITTED}:
                     return [source.lead.email]
             return []
@@ -436,7 +446,13 @@ class EmailAdapter(AdapterBase):
                     )
                 return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME])
             if source.status == INVOICING_AND_REPORTING:
-                return [source.user.email]
+                co_applicants = source.submission.co_applicants.filter(
+                    project_permission__contains=[
+                        CoApplicantProjectPermission.INVOICES
+                    ],
+                    role__in=[EDIT],
+                ).values_list("user__email", flat=True)
+                return [source.user.email, *co_applicants]
 
         if message_type == MESSAGES.APPROVE_INVOICE:
             if user.is_apply_staff:
@@ -447,7 +463,13 @@ class EmailAdapter(AdapterBase):
             if user == source.user:
                 return [source.lead.email]
             else:
-                return [source.user.email]
+                co_applicants = source.submission.co_applicants.filter(
+                    project_permission__contains=[
+                        CoApplicantProjectPermission.INVOICES
+                    ],
+                    role__in=[EDIT],
+                ).values_list("user__email", flat=True)
+                return [source.user.email, *co_applicants]
 
         if isinstance(source, get_user_model()):
             return user.email
@@ -470,21 +492,34 @@ class EmailAdapter(AdapterBase):
                     elif comment.visibility in [APPLICANT_PARTNERS, ALL]:
                         recipients += partners
 
-                try:
-                    recipients.remove(comment.user.email)
-                except ValueError:
-                    pass
-
-                return recipients
-
             # Comment handling for Projects
-            if isinstance(source, Project) and user == source.user:
-                return []
+            elif isinstance(source, Project):
+                # co_applciants with Comment permission
+                co_applicants = (
+                    source.submission.co_applicants.filter(role__in=[COMMENT, EDIT])
+                    .exclude(project_permission=[])
+                    .values_list("user__email", flat=True)
+                )
+                recipients = [source.user.email, *co_applicants]
+            try:
+                recipients.remove(comment.user.email)
+            except ValueError:
+                pass
+
+            return recipients
 
         if isinstance(source, ApplicationSubmission):
             # co-applicants edit/full-access access
             co_applicants = source.co_applicants.filter(role__in=[EDIT]).values_list(
                 "user__email", flat=True
+            )
+            return [source.user.email, *co_applicants]
+        elif isinstance(source, Project):
+            # co-applicants edit access
+            co_applicants = (
+                source.submission.co_applicants.exclude(project_permission=[])
+                .filter(role__in=[EDIT])
+                .values_list("user__email", flat=True)
             )
             return [source.user.email, *co_applicants]
         return [source.user.email]
