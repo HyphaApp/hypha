@@ -40,6 +40,7 @@ from hypha.apply.activity.adapters.utils import get_users_for_groups
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import ACTION, ALL, COMMENT, TEAM, Activity
 from hypha.apply.activity.views import ActivityContextMixin
+from hypha.apply.funds.models.co_applicants import CoApplicantProjectPermission
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.todo.options import (
     PAF_REQUIRED_CHANGES,
@@ -374,7 +375,11 @@ class RemoveContractDocumentView(ProjectBySubmissionIdMixin, View):
 
     def dispatch(self, request, *args, **kwargs):
         self.project = self.get_object()
-        if not request.user.is_applicant or request.user != self.project.user:
+
+        permission = has_object_permission(
+            "update_contracting_documents", request.user, obj=self.project
+        )
+        if not permission:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
@@ -710,7 +715,7 @@ class UploadContractView(ProjectBySubmissionIdMixin, View):
 
             form.instance.project = self.project
 
-            if self.request.user == self.project.user:
+            if self.request.user.is_applicant:
                 form.instance.signed_by_applicant = True
                 form.instance.uploaded_by_applicant_at = timezone.now()
                 messages.success(self.request, _("Countersigned contract uploaded"))
@@ -952,7 +957,10 @@ class UploadContractDocumentView(ProjectBySubmissionIdMixin, View):
         self.category = get_object_or_404(
             ContractDocumentCategory, id=kwargs.get("category_pk")
         )
-        if request.user != self.project.user or not request.user.is_applicant:
+        permission = has_object_permission(
+            "update_contracting_documents", request.user, self.project
+        )
+        if not permission:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
@@ -1736,6 +1744,17 @@ class ProjectPrivateMediaView(
         if self.request.user == self.project.user:
             return True
 
+        # co-applicant with project document permission can view documents
+        co_applicant = self.project.submission.co_applicants.filter(
+            user=self.request.user
+        ).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.PROJECT_DOCUMENT
+            in co_applicant.project_permission
+        ):
+            return True
+
         return False
 
 
@@ -1787,6 +1806,17 @@ class ContractPrivateMediaView(
             return True
 
         if self.request.user == self.project.user:
+            return True
+
+        # co-applicant with contract document permission can view documents
+        co_applicant = self.project.submission.co_applicants.filter(
+            user=self.request.user
+        ).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.CONTRACTING_DOCUMENT
+            in co_applicant.project_permission
+        ):
             return True
 
         return False

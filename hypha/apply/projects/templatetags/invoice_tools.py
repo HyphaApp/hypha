@@ -70,15 +70,6 @@ def project_can_have_invoices(project):
 
 
 @register.simple_tag
-def user_can_add_invoices(project, user):
-    if project.status == INVOICING_AND_REPORTING and (
-        user.is_apply_staff or user == project.user
-    ):
-        return True
-    return False
-
-
-@register.simple_tag
 def get_invoice_form(invoice, user):
     from hypha.apply.projects.views.payment import ChangeInvoiceStatusForm
 

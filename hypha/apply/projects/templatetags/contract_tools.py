@@ -1,6 +1,7 @@
 from django import template
 from django.conf import settings
 
+from hypha.apply.funds.models.co_applicants import EDIT, CoApplicantProjectPermission
 from hypha.apply.projects.models.project import CONTRACTING
 
 from ..permissions import has_permission
@@ -80,6 +81,14 @@ def show_contract_upload_row(project, user):
         return False
     if user.is_contracting or user == project.user or user.is_apply_staff:
         return True
+    if user.is_applicant:
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.CONTRACTING_DOCUMENT
+            in co_applicant.project_permission
+        ):
+            return True
     return False
 
 
@@ -89,6 +98,15 @@ def can_update_contracting_documents(project, user):
         return False
     if user == project.user and not user.is_apply_staff and not user.is_contracting:
         return True
+    if user.is_applicant:
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.CONTRACTING_DOCUMENT
+            in co_applicant.project_permission
+            and co_applicant.role == EDIT
+        ):
+            return True
     return False
 
 

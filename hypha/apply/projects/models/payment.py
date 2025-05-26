@@ -158,20 +158,55 @@ class Invoice(models.Model):
         return self.get_status_display()
 
     def can_user_delete(self, user):
-        if user.is_applicant or user.is_apply_staff:
-            if self.status in (SUBMITTED):
+        from hypha.apply.funds.models.co_applicants import (
+            EDIT,
+            CoApplicantProjectPermission,
+        )
+
+        if self.status in (SUBMITTED):
+            if user.is_apply_staff:
                 return True
+            if user.is_applicant:
+                if user == self.project.user:
+                    return True
+                co_applicant = self.project.submission.co_applicants.filter(
+                    user=user
+                ).first()
+                if (
+                    co_applicant
+                    and CoApplicantProjectPermission.INVOICES
+                    in co_applicant.project_permission
+                    and co_applicant.role == EDIT
+                ):
+                    return True
 
         return False
 
     def can_user_edit(self, user):
+        from hypha.apply.funds.models.co_applicants import (
+            EDIT,
+            CoApplicantProjectPermission,
+        )
+
         """
         Check when an user can edit an invoice.
         Only applicant and staff have permission to edit invoice based on its current status.
         """
         if user.is_applicant:
             if self.status in {SUBMITTED, CHANGES_REQUESTED_BY_STAFF, RESUBMITTED}:
-                return True
+                if user == self.project.user:
+                    return True
+                co_applicant = self.project.submission.co_applicants.filter(
+                    user=user
+                ).first()
+                if (
+                    co_applicant
+                    and CoApplicantProjectPermission.INVOICES
+                    in co_applicant.project_permission
+                    and co_applicant.role == EDIT
+                ):
+                    return True
+            return False
 
         if user.is_apply_staff:
             if self.status in {SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE}:
