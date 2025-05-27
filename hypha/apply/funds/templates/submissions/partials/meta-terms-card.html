@@ -4,10 +4,10 @@
     <div class="flex gap-4 justify-between pb-4">
         <h2 class="card-title">{% trans "Tags" %}</h2>
         <button
-            class="flex items-center py-1 px-2 font-bold rounded-sm transition-colors text-dark-blue -me-2 hover:bg-base-200"
+            role="button"
+            class="btn btn-secondary btn-soft btn-square btn-sm"
             hx-get="{% url 'funds:submissions:metaterms_update' pk=submission.pk %}"
             hx-target="#htmx-modal"
-            role="button"
             {% if meta_terms %}
                 aria-label="{% trans "Update tags" %}"
                 title="{% trans "Update tags" %}"
@@ -16,7 +16,7 @@
             {% endif %}
         >
             {% if meta_terms %}
-                {% heroicon_micro "pencil" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
+                {% heroicon_mini "pencil-square" aria_hidden=true %}
                 <span class="sr-only">{% trans "Update" %}</span>
             {% else %}
                 {% heroicon_micro "plus" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
@@ -33,7 +33,7 @@
                 <div class="flex flex-wrap gap-2">
                     {% for meta_term in group.list %}
                         <a
-                            class="py-1 px-2 text-sm font-semibold rounded-lg border transition-opacity hover:opacity-70 bg-slate-100"
+                            class="hover:opacity-80 badge badge-outline badge-info"
                             href="{% url 'apply:submissions:list' %}?meta_terms={{ meta_term.id }}"
                             hx-boost="true"
                             hx-target="#main"
