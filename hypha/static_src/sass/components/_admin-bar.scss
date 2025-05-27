@@ -5,10 +5,9 @@
   .admin-bar {
     position: relative;
     padding-inline: variables.$gutters;
-    padding-block: calc(var(--spacing) * 5);
     margin-inline: variables.$gutters-reverse;
     color: variables.$color--white;
-    background-color: variables.$color--dark-grey;
+    background-color: var(--color-arsenic);
 
     @include mixins.media-query(xl) {
       padding-inline: 0;
