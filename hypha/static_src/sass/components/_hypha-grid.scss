@@ -1,76 +1,48 @@
 @use "../abstracts/mixins";
 
-.hypha-grid {
-  display: grid;
-  margin-block-end: 1rem;
-  gap: calc(var(--spacing) * 2);
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+@layer utilities {
+  .hypha-grid {
+    display: grid;
+    margin-block-end: 1rem;
+    gap: calc(var(--spacing) * 2);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 
-  &--two {
-    grid-template-columns: 100%;
+    &--narrow {
+      text-align: center;
 
-    @include mixins.media-query(md) {
-      grid-template-columns: 1fr 1fr;
+      @include mixins.media-query(md) {
+        text-align: start;
+      }
     }
 
-    &.delete {
-      grid-template-columns: 1fr;
-    }
-
-    .form--comments & {
-      margin: 20px 0 0;
-      gap: 10px;
-      grid-template-columns: 100px 100px;
-    }
-
-    .wrapper--comments & {
-      grid-template-columns: 1fr;
-    }
-
-    + br {
-      display: none;
-    }
-  }
-
-  &--narrow {
-    text-align: center;
-
-    @include mixins.media-query(md) {
-      text-align: start;
-    }
-  }
-
-  &--no-margin {
-    margin: 0;
-  }
-
-  &--proposal-info {
-    grid-template-columns: 100%;
-    gap: 10px;
-    margin: 0 0 1rem;
-
-    @include mixins.media-query(sm) {
-      margin: 0 0 1.5rem;
-      grid-template-columns: 1fr 1fr;
-    }
-
-    * {
-      margin: 0;
-    }
-  }
-
-  &--status-update {
-    grid-template-columns: 100%;
-
-    @include mixins.media-query(sm) {
+    &--proposal-info {
       grid-template-columns: 100%;
-    }
-  }
+      gap: 10px;
+      margin: 0 0 1rem;
 
-  &__cell {
-    &--span-two {
       @include mixins.media-query(sm) {
-        grid-column: auto / span 2;
+        margin: 0 0 1.5rem;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      * {
+        margin: 0;
+      }
+    }
+
+    &--status-update {
+      grid-template-columns: 100%;
+
+      @include mixins.media-query(sm) {
+        grid-template-columns: 100%;
+      }
+    }
+
+    &__cell {
+      &--span-two {
+        @include mixins.media-query(sm) {
+          grid-column: auto / span 2;
+        }
       }
     }
   }
