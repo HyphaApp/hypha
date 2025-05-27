@@ -1,6 +1,6 @@
 {% with id=widget.attrs.id %}
   <ul
-    class="mb-0! hypha-grid hypha-grid--two {% if widget.attrs.class %} {{ widget.attrs.class }} {% endif %}"
+    class="grid grid-cols-1 sm:grid-cols-2 gap-2 {% if widget.attrs.class %} {{ widget.attrs.class }} {% endif %}"
     {% if id %} id="{{ id }}"{% endif %}
   >
     {% for group, options, index in widget.optgroups %}
@@ -15,4 +15,5 @@
         </li>
       {% endif %}
     {% endfor %}
-  </ul>{% endwith %}
+  </ul>
+{% endwith %}
