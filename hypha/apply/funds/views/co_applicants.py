@@ -88,7 +88,7 @@ class CoApplicantInviteView(View):
                     "HX-Trigger": json.dumps(
                         {
                             "coApplicantUpdated": None,
-                            "showMessage": _("Co-applicant created"),
+                            "showMessage": _("Co-applicant invited"),
                         }
                     ),
                 },

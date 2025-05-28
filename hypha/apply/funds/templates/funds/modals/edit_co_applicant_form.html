@@ -47,6 +47,7 @@
                 class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 button button--warning rounded-xs shadow-xs"
                 @click="show = false"
                 hx-post="{% url 'apply:submissions:delete_co_applicant_invite' invite_pk=invite.pk %}"
+                hx-confirm="{% trans 'Are you sure you want to delete co-applicant?' %}"
             >{% trans "Delete" %}</button>
         </div>
     {% else %}
@@ -60,6 +61,7 @@
                 class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 button button--warning rounded-xs shadow-xs"
                 @click="show = false"
                 hx-post="{% url 'apply:submissions:delete_co_applicant_invite' invite_pk=invite.pk %}"
+                hx-confirm="{% trans 'Are you sure you want to delete co-applicant?' %}"
             >{% trans "Delete" %}</button>
 
             <button
