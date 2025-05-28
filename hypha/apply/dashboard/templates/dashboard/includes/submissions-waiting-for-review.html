@@ -2,7 +2,10 @@
 {% load i18n %}
 
 <h2 class="mb-2 text-xl">
-    <a href="{% url "apply:submissions:list" %}?query=reviewer:@me">{% trans "Submissions waiting for your review" %} <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded-sm me-2">{{ in_review_count }}</span></a>
+    <a href="{% url "apply:submissions:list" %}?query=reviewer:@me">
+        {% trans "Submissions waiting for your review" %}
+        <span class="badge badge-soft badge-secondary">{{ in_review_count }}</span>
+    </a>
 </h2>
 
 {% if my_review.data %}
