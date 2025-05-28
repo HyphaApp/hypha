@@ -2,7 +2,7 @@
 
 {% with widget_type=field|widget_type field_type=field|field_type %}
     <fieldset
-        class="fieldset h-form__group {{ field.id_for_label }} form__group--{{ widget_type }} {% if widget_type == 'hidden_input' %}hidden{% endif %} {% if widget_type == 'checkbox_input' %} form__group--checkbox{% endif %}{% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget' %} form__group--file{% endif %}{% if field.help_text %} flex-wrap{% endif %}{% if field.errors %} form__error{% endif %}{% if field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}{% if field.field.grouper_for %} form-fields-grouper{% endif %}{% if widget_type == 'address_widget' %}bg-base-200/30 border-base-300 rounded-box w-sm border p-4{% endif %}"
+        class="fieldset form__group {{ field.id_for_label }} form__group--{{ widget_type }} {% if widget_type == 'hidden_input' %}hidden{% endif %} {% if widget_type == 'checkbox_input' %} form__group--checkbox{% endif %}{% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget' %} form__group--file{% endif %}{% if field.help_text %} flex-wrap{% endif %}{% if field.errors %} form__error{% endif %}{% if field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}{% if field.field.grouper_for %} form-fields-grouper{% endif %}{% if widget_type == 'address_widget' %}bg-base-200/30 border-base-300 rounded-box w-sm border p-4{% endif %}"
         {% if field.field.grouper_for %}
             data-grouper-for="{{ field.field.grouper_for }}"
             data-toggle-on="{{ field.field.choices.0.0 }}"
@@ -37,25 +37,25 @@
         {# fmt:on #}
     >
         {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget'%}
-            <span class="form__question form__file-label">
+            <span class="fieldset-legend form__question form__file-label">
                 {{ field.label }}
                 {% if field.field.required %}
                     <span class="form__required">*</span>
                 {% endif %}
             </span>
-            <legend
+            <label
                 for="{{ field.id_for_label }}"
-                class="fieldset-legend h-form__question form__question--{{ field_type }} h-widget-{{ widget_type }}"
+                class="form__question form__question--{{ field_type }} h-widget-{{ widget_type }}"
                 {% if field.field.required %}required{% endif %}
             >
-                <span class="btn btn-secondary">
+                <span class="btn btn-sm">
                     {% heroicon_mini "arrow-up-tray" class="w-4 h-4" aria_hidden="true" %}
                     {% trans "Upload" %}
                 </span>
-            </legend>
+            </label>
         {% elif widget_type == 'checkbox_select_multiple' or widget_type == 'radio_select' %}
             <fieldset class="fieldset">
-                <legend class="fieldset-legend h-form__question--{{ field_type }} h-widget-{{ widget_type }}"
+                <legend class="fieldset-legend form__question--{{ field_type }} widget-{{ widget_type }}"
                         {% if field.field.required %}required{% endif %}
                 >
                     {{ field.label }}
@@ -72,16 +72,16 @@
             </label>
         {% else %}
             {% if not field.is_hidden and widget_type != 'checkbox_input' %}
-                <legend
+                <label
                     for="{{ field.id_for_label }}"
-                    class="fieldset-legend h-form__question h-form__question--{{ field_type }} h-widget-{{ widget_type }} {{ label_classes }}"
+                    class="fieldset-legend form__question form__question--{{ field_type }} h-widget-{{ widget_type }} {{ label_classes }}"
                     {% if field.field.required %}required{% endif %}
                 >
                     <span>{{ field.label }}</span>
                     {% if field.field.required %}
                         <span class="form__required">*</span>
                     {% endif %}
-                </legend>
+                </label>
             {% endif %}
         {% endif %}
 
