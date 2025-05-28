@@ -48,8 +48,8 @@
                 class="fieldset-legend h-form__question form__question--{{ field_type }} h-widget-{{ widget_type }}"
                 {% if field.field.required %}required{% endif %}
             >
-                <span class="whitespace-nowrap">
-                    {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
+                <span class="btn btn-secondary">
+                    {% heroicon_mini "arrow-up-tray" class="w-4 h-4" aria_hidden="true" %}
                     {% trans "Upload" %}
                 </span>
             </legend>

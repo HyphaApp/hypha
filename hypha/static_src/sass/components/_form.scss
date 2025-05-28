@@ -37,19 +37,6 @@
 
   &__group {
     position: relative;
-    margin-block-start: 0.5rem;
-    margin-block-end: 1.5rem;
-
-    &:nth-of-type(1) {
-      margin-block-start: 0;
-    }
-
-    &:last-child {
-      .locality & {
-        // remove margin from last item in address field set
-        margin-block-end: 0;
-      }
-    }
 
     #{$root}--report-frequency & {
       margin: 1rem;
@@ -97,25 +84,6 @@
     &--multi_file_field,
     &--single_file_field,
     &--file_field {
-      @include mixins.button(
-        variables.$color--white,
-        variables.$color--light-blue
-      );
-      display: inline-block;
-      color: variables.$color--light-blue;
-      border: 1px solid variables.$color--mid-grey;
-
-      &:focus {
-        color: variables.$color--light-blue;
-      }
-
-      &:hover {
-        color: variables.$color--white;
-      }
-
-      max-width: 15rem;
-      text-align: center;
-
       .no-js & {
         display: none;
       }
