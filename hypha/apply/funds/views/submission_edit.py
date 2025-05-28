@@ -97,10 +97,6 @@ class BaseSubmissionEditView(UpdateView):
         self.object.create_revision(draft=True, by=request.user)
         messages.success(self.request, _("Draft saved"))
 
-        # Required for django-file-form: delete temporary files for the new files
-        # uploaded while edit.
-        form.delete_temporary_files()
-
         context = self.get_context_data()
         return render(request, "funds/application_preview.html", context)
 
