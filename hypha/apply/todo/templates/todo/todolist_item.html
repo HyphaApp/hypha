@@ -14,11 +14,7 @@
             {{ task.text|nh3 }}
 
             {% if task.type == "Draft" %}
-                <span
-                    class="inline-block py-1 px-2 -mt-1 text-xs font-medium text-gray-800 align-middle whitespace-nowrap bg-red-200 rounded-full"
-                >
-                    {{ task.type }}
-                </span>
+                <span class="badge badge-sm badge-warning">{{ task.type }}</span>
             {% endif %}
         </span>
     </a>
