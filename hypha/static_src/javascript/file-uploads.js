@@ -1,7 +1,13 @@
 // We use htmx.onLoad() so it will initialise file uploads in htmx dialogs.
 htmx.onLoad(function () {
+  // Extract DOM element references
+  const forms = document.querySelectorAll("form");
+  const fileGroups = document.querySelectorAll(".form__group--file");
+  const hiddenInputs = document.querySelectorAll("input[type=hidden]");
+  const fileInputs = document.querySelectorAll("input[type='file'][required]");
+
   // Initialize django-file-form
-  document.querySelectorAll("form").forEach(function (form) {
+  forms.forEach(function (form) {
     // Prevent initializing it multiple times and run it for forms
     // that have a `form_id` field added by django-file-form.
     if (!form.initUploadFieldsDone && form.querySelector("[name=form_id]")) {
@@ -15,11 +21,11 @@ htmx.onLoad(function () {
    * @param {object} form The form to initialize.
    */
   function init(form) {
-    if (document.querySelectorAll(".form__group--file").length) {
+    if (fileGroups.length) {
       window.initUploadFields(form);
 
       // Hide wrapper elements for hidden inputs added by django-file-form
-      document.querySelectorAll("input[type=hidden]").forEach(function (input) {
+      hiddenInputs.forEach(function (input) {
         const closestFormGroup = input.closest(".form__group");
         if (closestFormGroup) {
           closestFormGroup.style.display = "none";
@@ -29,8 +35,6 @@ htmx.onLoad(function () {
   }
 
   // Handle client side validation for required file fields
-  let fileInputs = document.querySelectorAll("input[type='file'][required]");
-
   fileInputs.forEach((input) => {
     input.addEventListener("invalid", function (event) {
       event.preventDefault(); // Prevent default browser behavior
