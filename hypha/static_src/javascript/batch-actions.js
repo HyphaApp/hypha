@@ -1,6 +1,5 @@
 /* eslint-disable max-nested-callbacks */
 (function ($) {
-  const $body = $("body");
   const $checkbox = $(".js-batch-select");
   const $allCheckboxInput = $(".js-batch-select-all");
   const $batchButtons = $("[data-js-batch-actions]");
@@ -8,11 +7,10 @@
   const $batchTitleCount = $(".js-batch-title-count");
   const $hiddenIDlist = $(".js-submissions-id");
   const $hiddenInvoiceIDlist = $(".js-invoices-id");
-  const activeClass = "batch-actions-enabled";
   const closedClass = "is-closed";
 
   $(window).on("load", function () {
-    toggleBatchActions();
+    updateActionBarVisibility();
     updateCount();
   });
 
@@ -27,14 +25,14 @@
       });
     }
 
-    toggleBatchActions();
+    updateActionBarVisibility();
     updateCount();
     updateInvoiceProgressButton();
   });
 
   $checkbox.change(function () {
     // see how many checkboxes are :checked
-    toggleBatchActions();
+    updateActionBarVisibility();
 
     // updates selected checkbox count
     updateCount();
@@ -125,11 +123,12 @@
   /**
    * Toggle the batch actions.
    */
-  function toggleBatchActions() {
-    if ($(".js-batch-select:checked").length) {
-      $body.addClass(activeClass);
+  function updateActionBarVisibility() {
+    const bar = document.querySelector("[data-js-batch-actions-bar]");
+    if ($(".js-batch-select:checked").length === 0) {
+      bar.classList.add("hidden");
     } else {
-      $body.removeClass(activeClass);
+      bar.classList.remove("hidden");
     }
   }
 
