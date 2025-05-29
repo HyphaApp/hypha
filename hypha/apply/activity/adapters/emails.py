@@ -11,9 +11,8 @@ from django.utils.translation import gettext as _
 from hypha.apply.activity import tasks
 from hypha.apply.activity.models import ALL, APPLICANT_PARTNERS, PARTNER
 from hypha.apply.funds.models.co_applicants import (
-    COMMENT,
-    EDIT,
     CoApplicantProjectPermission,
+    CoApplicantRole,
 )
 from hypha.apply.projects.models.payment import (
     APPROVED_BY_FINANCE,
@@ -426,7 +425,7 @@ class EmailAdapter(AdapterBase):
                         project_permission__contains=[
                             CoApplicantProjectPermission.INVOICES
                         ],
-                        role__in=[EDIT],
+                        role__in=[CoApplicantRole.EDIT],
                     ).values_list("user__email", flat=True)
                     return [source.user.email, *co_applicants]
                 elif status in {CHANGES_REQUESTED_BY_FINANCE, RESUBMITTED}:
@@ -450,7 +449,7 @@ class EmailAdapter(AdapterBase):
                     project_permission__contains=[
                         CoApplicantProjectPermission.INVOICES
                     ],
-                    role__in=[EDIT],
+                    role__in=[CoApplicantRole.EDIT],
                 ).values_list("user__email", flat=True)
                 return [source.user.email, *co_applicants]
 
@@ -467,7 +466,7 @@ class EmailAdapter(AdapterBase):
                     project_permission__contains=[
                         CoApplicantProjectPermission.INVOICES
                     ],
-                    role__in=[EDIT],
+                    role__in=[CoApplicantRole.EDIT],
                 ).values_list("user__email", flat=True)
                 return [source.user.email, *co_applicants]
 
@@ -482,7 +481,7 @@ class EmailAdapter(AdapterBase):
             if isinstance(source, ApplicationSubmission):
                 # add co-applicants with Comment or edit access
                 co_applicants = source.co_applicants.filter(
-                    role__in=[COMMENT, EDIT]
+                    role__in=[CoApplicantRole.COMMENT, CoApplicantRole.EDIT]
                 ).values_list("user__email", flat=True)
                 recipients: List[str] = [source.user.email, *co_applicants]
 
@@ -496,7 +495,9 @@ class EmailAdapter(AdapterBase):
             elif isinstance(source, Project):
                 # co_applciants with Comment permission
                 co_applicants = (
-                    source.submission.co_applicants.filter(role__in=[COMMENT, EDIT])
+                    source.submission.co_applicants.filter(
+                        role__in=[CoApplicantRole.COMMENT, CoApplicantRole.EDIT]
+                    )
                     .exclude(project_permission=[])
                     .values_list("user__email", flat=True)
                 )
@@ -510,15 +511,15 @@ class EmailAdapter(AdapterBase):
 
         if isinstance(source, ApplicationSubmission):
             # co-applicants edit/full-access access
-            co_applicants = source.co_applicants.filter(role__in=[EDIT]).values_list(
-                "user__email", flat=True
-            )
+            co_applicants = source.co_applicants.filter(
+                role__in=[CoApplicantRole.EDIT]
+            ).values_list("user__email", flat=True)
             return [source.user.email, *co_applicants]
         elif isinstance(source, Project):
             # co-applicants edit access
             co_applicants = (
                 source.submission.co_applicants.exclude(project_permission=[])
-                .filter(role__in=[EDIT])
+                .filter(role__in=[CoApplicantRole.EDIT])
                 .values_list("user__email", flat=True)
             )
             return [source.user.email, *co_applicants]

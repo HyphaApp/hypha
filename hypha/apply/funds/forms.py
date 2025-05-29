@@ -21,7 +21,7 @@ from .models import (
     Reminder,
     ReviewerRole,
 )
-from .models.co_applicants import COAPPLICANT_ROLE_CHOICES, CoApplicantProjectPermission
+from .models.co_applicants import CoApplicantProjectPermission, CoApplicantRole
 from .permissions import can_change_external_reviewers
 from .utils import model_form_initial, render_icon
 from .widgets import MetaTermWidget, MultiCheckboxesWidget
@@ -464,7 +464,7 @@ class CreateReminderForm(forms.ModelForm):
 class InviteCoApplicantForm(forms.ModelForm):
     invited_user_email = forms.EmailField(required=True, label="Email")
     role = forms.ChoiceField(
-        choices=COAPPLICANT_ROLE_CHOICES, label="Role", required=False
+        choices=CoApplicantRole.choices, label="Role", required=False
     )
 
     submission = forms.ModelChoiceField(
@@ -486,14 +486,14 @@ class InviteCoApplicantForm(forms.ModelForm):
 
 class EditCoApplicantForm(forms.ModelForm):
     role = forms.ChoiceField(
-        choices=COAPPLICANT_ROLE_CHOICES, label="Role", required=False
+        choices=CoApplicantRole.choices, label="Role", required=False
     )
     project_permission = forms.MultipleChoiceField(
         choices=CoApplicantProjectPermission.choices,
         required=False,
         widget=forms.CheckboxSelectMultiple,
         label="Enable permissions for Project",
-        help_text="It will provide access of selected role for selected project sections. Ex: selected role - Read Only, selected project section - Contracting, then co-applicant can only read/view the contracting section but can't edit/upload.",
+        help_text="It will provide access of selected role for selected project sections. Ex: selected role - View, selected project section - Contracting, then co-applicant can only read/view the contracting section but can't edit/upload.",
     )
 
     def __init__(self, *args, **kwargs):

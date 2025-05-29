@@ -1,6 +1,9 @@
 from rolepermissions.permissions import register_object_checker
 
-from hypha.apply.funds.models.co_applicants import EDIT, CoApplicantProjectPermission
+from hypha.apply.funds.models.co_applicants import (
+    CoApplicantProjectPermission,
+    CoApplicantRole,
+)
 from hypha.apply.users.roles import Applicant, StaffAdmin
 
 from ..models.project import (
@@ -41,7 +44,7 @@ def update_project_reports(role, user, project) -> bool:
         if (
             co_applicant
             and CoApplicantProjectPermission.REPORTS in co_applicant.project_permission
-            and co_applicant.role == EDIT
+            and co_applicant.role == CoApplicantRole.EDIT
         ):
             return True
     return False
@@ -160,7 +163,7 @@ def update_report(role, user, report) -> bool:
             co_applicant
             and not report.current
             and CoApplicantProjectPermission.REPORTS in co_applicant.project_permission
-            and co_applicant.role == EDIT
+            and co_applicant.role == CoApplicantRole.EDIT
         ):
             return True
 

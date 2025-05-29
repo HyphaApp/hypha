@@ -3,7 +3,10 @@ from django.core.exceptions import PermissionDenied
 from rolepermissions.permissions import register_object_checker
 
 from hypha.apply.activity.adapters.utils import get_users_for_groups
-from hypha.apply.funds.models.co_applicants import EDIT, CoApplicantProjectPermission
+from hypha.apply.funds.models.co_applicants import (
+    CoApplicantProjectPermission,
+    CoApplicantRole,
+)
 from hypha.apply.users.models import User
 from hypha.apply.users.roles import Applicant, Staff
 
@@ -60,7 +63,7 @@ def can_upload_contract(user, project, **kwargs):
             co_applicant
             and CoApplicantProjectPermission.CONTRACTING_DOCUMENT
             in co_applicant.project_permission
-            and co_applicant.role == EDIT
+            and co_applicant.role == CoApplicantRole.EDIT
         ):
             return (
                 True,
@@ -93,7 +96,7 @@ def can_submit_contract_documents(user, project, **kwargs):
             co_applicant
             and CoApplicantProjectPermission.CONTRACTING_DOCUMENT
             in co_applicant.project_permission
-            and co_applicant.role == EDIT
+            and co_applicant.role == CoApplicantRole.EDIT
         ):
             return (
                 True,
@@ -411,7 +414,7 @@ def update_contracting_documents(role, user, project) -> bool:
             co_applicant
             and CoApplicantProjectPermission.CONTRACTING_DOCUMENT
             in co_applicant.project_permission
-            and co_applicant.role == EDIT
+            and co_applicant.role == CoApplicantRole.EDIT
         ):  # co-applicant with permission
             return True
 
@@ -431,7 +434,7 @@ def add_invoice(role, user, project) -> bool:
                 co_applicant
                 and CoApplicantProjectPermission.INVOICES
                 in co_applicant.project_permission
-                and co_applicant.role == EDIT
+                and co_applicant.role == CoApplicantRole.EDIT
             ):
                 return True
     return False

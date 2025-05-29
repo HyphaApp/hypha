@@ -159,8 +159,8 @@ class Invoice(models.Model):
 
     def can_user_delete(self, user):
         from hypha.apply.funds.models.co_applicants import (
-            EDIT,
             CoApplicantProjectPermission,
+            CoApplicantRole,
         )
 
         if self.status in (SUBMITTED):
@@ -176,7 +176,7 @@ class Invoice(models.Model):
                     co_applicant
                     and CoApplicantProjectPermission.INVOICES
                     in co_applicant.project_permission
-                    and co_applicant.role == EDIT
+                    and co_applicant.role == CoApplicantRole.EDIT
                 ):
                     return True
 
@@ -184,8 +184,8 @@ class Invoice(models.Model):
 
     def can_user_edit(self, user):
         from hypha.apply.funds.models.co_applicants import (
-            EDIT,
             CoApplicantProjectPermission,
+            CoApplicantRole,
         )
 
         """
@@ -203,7 +203,7 @@ class Invoice(models.Model):
                     co_applicant
                     and CoApplicantProjectPermission.INVOICES
                     in co_applicant.project_permission
-                    and co_applicant.role == EDIT
+                    and co_applicant.role == CoApplicantRole.EDIT
                 ):
                     return True
             return False

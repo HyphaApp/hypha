@@ -1,7 +1,10 @@
 from django import template
 from django.conf import settings
 
-from hypha.apply.funds.models.co_applicants import EDIT, CoApplicantProjectPermission
+from hypha.apply.funds.models.co_applicants import (
+    CoApplicantProjectPermission,
+    CoApplicantRole,
+)
 from hypha.apply.projects.models.project import CONTRACTING
 
 from ..permissions import has_permission
@@ -104,7 +107,7 @@ def can_update_contracting_documents(project, user):
             co_applicant
             and CoApplicantProjectPermission.CONTRACTING_DOCUMENT
             in co_applicant.project_permission
-            and co_applicant.role == EDIT
+            and co_applicant.role == CoApplicantRole.EDIT
         ):
             return True
     return False
