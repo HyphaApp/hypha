@@ -1,6 +1,6 @@
 {% load i18n heroicons %}
 <li class="list-row">
-    <p class="m-0 list-col-grow">
+    <p class="list-col-grow">
         {% if current %}
             {% trans "The" %} {% if report.can_submit %}{% trans "current" %}{% else %}{% trans "next" %}{% endif %} {% trans "reporting period is" %}
         {% else %}

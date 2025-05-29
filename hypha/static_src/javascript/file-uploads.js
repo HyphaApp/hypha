@@ -2,7 +2,7 @@
 htmx.onLoad(function () {
   // Extract DOM element references
   const forms = document.querySelectorAll("form");
-  const fileGroups = document.querySelectorAll(".form__group--file");
+  const fileGroups = document.querySelectorAll("[data-js-file-upload]");
   const hiddenInputs = document.querySelectorAll("input[type=hidden]");
   const fileInputs = document.querySelectorAll("input[type='file'][required]");
 
