@@ -2,20 +2,23 @@
 
 {% with widget_type=field|widget_type field_type=field|field_type %}
     <fieldset
-        class="fieldset form__group {{ field.id_for_label }} form__group--{{ widget_type }}
-               {% if widget_type == 'hidden_input' %}hidden{% endif %}
-               {% if widget_type == 'checkbox_input' %}form__group--checkbox{% endif %}
-               {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget' %}form__group--file{% endif %}
-               {% if field.help_text %}flex-wrap{% endif %}
-               {% if field.errors %}form__error{% endif %}
-               {% if field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}
-               {% if field.field.grouper_for %}form-fields-grouper{% endif %}
-               {% if widget_type == 'address_widget' %}bg-base-200/30 border-base-300 rounded-box w-sm border px-4 py-2{% endif %}
-              "
+        class="{% spaceless %}
+                   fieldset form__group {{ field.id_for_label }} form__group--{{ widget_type }}
+                   {% if widget_type == 'hidden_input' %}hidden{% endif %}
+                   {% if field.help_text %}flex-wrap{% endif %}
+                   {% if field.errors %}form__error{% endif %}
+                   {% if field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}
+                   {% if field.field.grouper_for %}form-fields-grouper{% endif %}
+                   {% if widget_type == 'address_widget' %}bg-base-200/30 border-base-300 rounded-box w-sm border px-4 py-2{% endif %}
+               {% endspaceless %}"
+
         {% if field.field.grouper_for %}
             data-grouper-for="{{ field.field.grouper_for }}"
             data-toggle-on="{{ field.field.choices.0.0 }}"
             data-toggle-off="{{ field.field.choices.1.0 }}"
+        {% endif %}
+        {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget' %}
+            data-js-file-upload
         {% endif %}
         {% if field.field.group_number > 1 %}
             data-hidden="{% if not show_all_group_fields and not field.field.visible %}true{% else %}false{% endif %}"
@@ -46,7 +49,7 @@
         {# fmt:on #}
     >
         {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget'%}
-            <div class="fieldset-legend form__question form__file-label">
+            <div class="fieldset-legend form__question">
                 <span>{{ field.label }} {% if field.field.required %}<sup>*</sup>{% endif %}</span>
             </div>
             <label

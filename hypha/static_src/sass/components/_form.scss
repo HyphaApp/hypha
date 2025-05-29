@@ -43,38 +43,6 @@
         margin: 0;
       }
     }
-
-    &--checkbox {
-      .form {
-        &__item {
-          display: flex;
-          align-items: center;
-          gap: 0.5em;
-        }
-      }
-    }
-  }
-
-  &__question {
-    // stylelint-disable selector-class-pattern
-    &--image_field,
-    &--multi_file_field,
-    &--single_file_field,
-    &--file_field {
-      .no-js & {
-        display: none;
-      }
-    }
-
-    &--boolean_field {
-      display: inline;
-      margin-block-end: 0;
-    }
-    // stylelint-enable selector-class-pattern
-  }
-
-  &__file-label {
-    padding-block-end: 0.5rem;
   }
 
   &__file-list {
