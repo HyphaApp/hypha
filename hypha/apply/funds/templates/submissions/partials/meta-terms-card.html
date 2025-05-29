@@ -5,7 +5,7 @@
         <h2 class="card-title">{% trans "Tags" %}</h2>
         <button
             role="button"
-            class="btn btn-secondary btn-soft btn-square btn-sm"
+            class="btn btn-secondary btn-soft btn-sm"
             hx-get="{% url 'funds:submissions:metaterms_update' pk=submission.pk %}"
             hx-target="#htmx-modal"
             {% if meta_terms %}
