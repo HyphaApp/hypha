@@ -52,6 +52,10 @@
   .table-container {
     @apply overflow-x-auto;
   }
+
+  a {
+    @apply text-primary underline-offset-2;
+  }
 }
 
 @utility border-stripe {
