@@ -1,5 +1,6 @@
 {% extends "base-apply.html" %}
 {% load wagtailcore_tags static i18n util_tags heroicons %}
+{% load i18n nh3_tags wagtailcore_tags markdown_tags heroicons %}
 {% block body_class %}{% endblock %}
 
 {% block content %}
@@ -15,6 +16,12 @@
             {% endif %}
 
             <h1 class="mb-4 text-5xl font-bold">{{ page.title }}</h1>
+
+            {% if page.get_parent.specific.description %}
+                <div class="mb-4 prose prose-sm">
+                    {{ page.get_parent.specific.description|markdown|nh3 }}
+                </div>
+            {% endif %}
 
             {% if form.errors or form.non_field_errors %}
                 <div class="mb-4 alert alert-warning" role="alert">
