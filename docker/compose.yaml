@@ -33,7 +33,7 @@ services:
       - db
   db:
     container_name: hypha-postgres-dev
-    image: postgres:14-alpine
+    image: postgres:17-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:

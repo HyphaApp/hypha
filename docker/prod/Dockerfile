@@ -19,8 +19,8 @@ WORKDIR /opt/app
 RUN mkdir -p ./hypha/static_compiled && mkdir -p ./hypha/media
 
 # Install node.
-COPY --from=node:20.18-slim /usr/local/bin /usr/local/bin
-COPY --from=node:20.18-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
+COPY --from=node:24.1-slim /usr/local/bin /usr/local/bin
+COPY --from=node:24.1-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
 
 # Install uv.
 COPY --from=ghcr.io/astral-sh/uv:0.5.13 /uv /uvx /usr/local/bin
