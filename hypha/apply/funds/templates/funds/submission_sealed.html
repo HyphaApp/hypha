@@ -16,26 +16,35 @@
             {% status_bar object.workflow object.phase request.user same_stage=True %}
         </div>
     </div>
-    <div class="wrapper wrapper--medium">
 
-        <h2 class="heading">{% trans "This application is sealed until the round is closed" %}</h2>
+    <section class="my-12 wrapper">
+        <div class="mx-auto max-w-lg card card-border bg-base-200">
+            <div class="card-body">
+                <h2 class="flex justify-between items-center card-title">
+                    <span>Application Sealed</span>
+                    <a class="btn btn-sm btn-outline" href="{% url 'apply:submissions:overview' %}">{% trans "Go back" %}</a>
+                </h2>
 
-        <h3>{% trans "The round ends on" %}: {{ object.round.specific.end_date }}</h3>
+                <div class="prose">
+                    <p>
+                        {% trans "This application is sealed until the round is closed" %}
+                    </p>
 
-        <a class="btn btn-primary" href="{% url 'apply:submissions:overview' %}">
-            {% trans "Go back" %}
-        </a>
+                    <p>{% trans "The round ends on" %}: {{ object.round.specific.end_date }}</p>
+                </div>
+            </div>
+        </div>
 
         {% if can_view_sealed %}
-            <p>
-                {% trans "As an admin you are allowed to access the application. However, this action will be recorded." %}
-            </p>
-            <form method="post">
+            <form method="post" class="mx-auto mt-4 max-w-lg alert alert-warning">
                 {% csrf_token %}
-                <button class="button button--warning" type="submit">
-                    {% trans "View application" %}
-                </button>
+                <span class="">
+                    {% trans "As an admin you are allowed to access the application. However, this action will be recorded." %}
+                    <button class="font-semibold link link-primary" type="submit">
+                        {% trans "View application" %}
+                    </button>
+                </span>
             </form>
         {% endif %}
-    </div>
+    </section>
 {% endblock %}
