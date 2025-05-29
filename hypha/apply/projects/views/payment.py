@@ -26,9 +26,11 @@ from django_htmx.http import (
     HttpResponseClientRefresh,
 )
 from django_tables2 import SingleTableMixin
+from rolepermissions.checkers import has_object_permission
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import APPLICANT, COMMENT, Activity
+from hypha.apply.funds.models.co_applicants import CoApplicantProjectPermission
 from hypha.apply.projects.templatetags.invoice_tools import (
     display_invoice_status_for_user,
 )
@@ -92,6 +94,19 @@ class InvoiceAccessMixin(UserPassesTestMixin):
 
         if self.request.user == self.get_object().project.user:
             return True
+
+        if self.request.user.is_applicant:
+            co_applicant = (
+                self.get_object()
+                .project.submission.co_applicants.filter(user=self.request.user)
+                .first()
+            )
+            if (
+                co_applicant
+                and CoApplicantProjectPermission.INVOICES
+                in co_applicant.project_permission
+            ):
+                return True
 
         return False
 
@@ -259,7 +274,8 @@ class CreateInvoiceView(SuccessMessageMixin, CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, submission__id=kwargs["pk"])
-        if not request.user.is_apply_staff and not self.project.user == request.user:
+        permission = has_object_permission("add_invoice", request.user, self.project)
+        if not permission:
             return redirect(self.project)
         return super().dispatch(request, *args, **kwargs)
 
@@ -492,6 +508,17 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
 
         if self.request.user == self.invoice.project.user:
             return True
+
+        if self.request.user.is_applicant:
+            co_applicant = self.invoice.project.submission.co_applicants.filter(
+                user=self.request.user
+            ).first()
+            if (
+                co_applicant
+                and CoApplicantProjectPermission.INVOICES
+                in co_applicant.project_permission
+            ):
+                return True
 
         return False
 
