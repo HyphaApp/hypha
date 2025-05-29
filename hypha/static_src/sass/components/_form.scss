@@ -299,12 +299,8 @@
   }
 
   // make date & time input siblings inline
-  input[type="date"] {
-    max-width: calc(385px - 100px);
-  }
-
   input[type="date"] + input[type="time"] {
-    width: 100px;
+    width: 10rem;
   }
 
   input[type="file"] {
