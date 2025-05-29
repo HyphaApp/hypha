@@ -17,17 +17,7 @@
     vertical-align: top;
   }
 
-  a {
-    color: variables.$color--primary;
-    text-decoration: none;
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
-
   p {
-    margin-block: 0.5rem;
     text-wrap: pretty;
   }
 
