@@ -23,7 +23,7 @@
 
     <div class="flex gap-2">
         <button class="btn btn-primary" role="button" type="submit">{% trans "Submit" %}</button>
-        <button class="button" hx-get="{{ request.path}}?action=cancel">{% trans "Cancel" %}</button>
+        <button class="btn btn-ghost" hx-get="{{ request.path}}?action=cancel">{% trans "Cancel" %}</button>
     </div>
 
     <script>

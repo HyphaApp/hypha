@@ -34,18 +34,6 @@
     }
   }
 
-  &--transparent {
-    @include mixins.button(transparent, variables.$color--black);
-    color: variables.$color--black;
-    border: 1px solid variables.$color--black;
-
-    &:active,
-    &:focus,
-    &:hover {
-      color: variables.$color--white;
-    }
-  }
-
   &--mobile-standout {
     color: variables.$color--white;
     border-color: variables.$color--white;
