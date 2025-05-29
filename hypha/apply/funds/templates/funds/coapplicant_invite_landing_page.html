@@ -2,25 +2,31 @@
 
 {% load i18n %}
 
-{% block user_menu %}
-    <div></div>
-{% endblock user_menu %}
-
 {% block content %}
-    <div class="bg-gray-100 max-w-[70%] mx-auto mt-6 px-10 pt-6 pb-4 border border-gray-300 rounded-sm">
-        {% if is_valid %}
-            <p>{% trans "You've been invited to join the application" %} "{{ invite.submission.title }}" {% trans "as a co-applicant with email" %} <i>{{ invite.invited_user_email }}</i>. {% trans "Please respond to the invitation by choosing accept or decline." %}</p>
-            <p>{% trans "If you accept, you’ll be automatically signed up or logged in and taken directly to" %} {% if two_factor_required %}{% trans "two factor authentication and then to" %} {% endif %} {% trans "the application. We recommend updating your profile after accepting the invite. You’ll also have the option to update your name and email in 'My account' section." %}
-                <div class="flex justify-end mt-10">
+    <div class="mx-auto mt-4 max-w-xl sm:mt-12 card card-border shadow-xs bg-base-200">
+        <div class="card-body">
+            {% if is_valid %}
+                <h2 class="card-title">{% trans "Accept invitation" %}</h2>
+
+                <div class="prose prose-sm">
+                    <p>
+                        {% blocktranslate with title=invite.submission.title %}You have been invited to join the application "{{ title }}" as a co-applicant.{% endblocktranslate %}
+                    </p>
+
+                    {% if not request.user.is_authenticated %}
+                        <p>{% blocktrans with email=invite.invited_user_email %}If you accept this invitation, an account will be created using the email <strong>{{ email }}</strong> and you will be redirected to{% endblocktrans %} {% if two_factor_required %}{% trans "two-factor authentication and then to" %} {% endif %} {% trans "the application. If you wish to update your name/email, you can do it by visiting 'My Account' section." %}</p>
+                    {% endif %}
+                </div>
+                <div class="flex gap-2 justify-end mt-4">
                     <a
-                        class="button button--submit button--white"
+                        class="btn btn-secondary btn-soft"
                         hx-post="."
                         hx-vals='{"action": "reject"}'
                         hx-trigger="click"
                         hx-swap="none"
                     >{% trans "Decline" %}</a>
                     <a
-                        class="button button--submit button--primary"
+                        class="btn btn-primary"
                         type="button"
                         hx-post="."
                         hx-vals='{"action": "accept"}'
@@ -28,13 +34,12 @@
                         hx-swap="none"
                     >{% trans "Accept" %} </a>
                 </div>
-        {% else %}
-            <div class="flex justify-center my-8 text-xl font-bold text-red-500" >{% trans "Invalid Invite" %}</div>
-            <div class="flex justify-center">{% trans "Oops! The invite you are using is no longer valid " %}</div>
-            <div class="flex justify-center">
-                {% trans "Please try again with another invite." %}
-            </div>
-        {% endif %}
+            {% else %}
+                <h2 class="card-title">{% trans "Invalid Invitation" %}</h2>
+                <p>
+                    {% trans "This invitation link is no longer valid or has expired. Please request a new invitation to proceed." %}
+                </p>
+            {% endif %}
+        </div>
     </div>
-
 {% endblock %}
