@@ -48,7 +48,7 @@
         {% endif %}
         {# fmt:on #}
     >
-        {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget'%}
+        {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget' %}
             <div class="fieldset-legend form__question">
                 <span>{{ field.label }} {% if field.field.required %}<sup>*</sup>{% endif %}</span>
             </div>
