@@ -132,14 +132,6 @@
     margin-inline-start: 20px;
   }
 
-  &--narrow {
-    @include mixins.button--narrow;
-  }
-
-  &--wide {
-    @include mixins.button--wide;
-  }
-
   &--full-width {
     width: 100%;
     text-align: center;

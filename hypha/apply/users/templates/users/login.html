@@ -49,7 +49,7 @@
                                 {% if field.auto_id == "id_auth-password" %}
                                     <div class="text-end">
                                         <a
-                                            class="link"
+                                            class="link link-secondary link-hover"
                                             href="{% url 'users:password_reset' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
                                             hx-boost="true"
                                         >

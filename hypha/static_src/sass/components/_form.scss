@@ -6,22 +6,6 @@
 .form {
   $root: &;
 
-  &--with-p-tags {
-    p {
-      margin: 0 0 10px;
-
-      label {
-        display: block;
-        margin-block-end: 0.5em;
-        font-weight: variables.$weight--bold;
-      }
-    }
-
-    button {
-      margin-block-start: 1.5rem;
-    }
-  }
-
   &--error-inline {
     // stylelint-disable-next-line selector-class-pattern
     .form__error-text {
@@ -36,8 +20,6 @@
   }
 
   &__group {
-    position: relative;
-
     #{$root}--report-frequency & {
       margin: 1rem;
 
@@ -289,10 +271,6 @@
         background-color: variables.$color--white;
       }
     }
-
-    &--narrow {
-      max-width: 280px;
-    }
   }
 
   select,
@@ -304,14 +282,8 @@
   input[type="number"],
   input[type="password"],
   input[type="datetime-local"] {
-    width: 100%;
-    max-width: 385px;
-    background-color: var(--color-base-100);
-    border-color: var(--input-color);
-
     &.invalid {
-      border: 2px solid variables.$color--error;
-      outline: none;
+      --input-color: var(--color-error);
     }
   }
 
@@ -326,7 +298,7 @@
     input[type="number"],
     input[type="password"],
     input[type="datetime-local"] {
-      border: 2px solid variables.$color--error;
+      --input-color: var(--color-error);
     }
   }
 

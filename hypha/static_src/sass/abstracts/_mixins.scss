@@ -42,19 +42,6 @@
   }
 }
 
-// Narrow button mixin
-@mixin button--narrow {
-  padding: 0.25rem 0.75rem;
-  font-size: 15px;
-  vertical-align: middle;
-
-  @include media-query(lg) {
-    & {
-      padding: 0.25rem 0.75rem;
-    }
-  }
-}
-
 // Small button mixin
 @mixin button--small {
   padding: 2px;
@@ -63,15 +50,6 @@
   @include media-query(lg) {
     & {
       padding: 3px 5px;
-    }
-  }
-}
-
-// Wide button mixin
-@mixin button--wide {
-  @include media-query(lg) {
-    & {
-      padding: 0.5em 80px;
     }
   }
 }
@@ -102,8 +80,7 @@
   width: 0;
   height: 0;
   content: "";
-  border-#{functions.opposite-direction($direction)}: ($size * 1.5) solid
-    $color;
+  border-#{functions.opposite-direction($direction)}: ($size * 1.5) solid $color;
 
   $perpendicular-borders: $size solid transparent;
 

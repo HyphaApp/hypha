@@ -50,63 +50,60 @@
     </div>
 
     <div class="wrapper wrapper--large wrapper--tabs">
-        <div class="feed">
-            {% if form and not object.is_archive or object.project %}
-                <h4 class="m-0 sr-only">{% trans "Add communication" %}</h4>
-                <div class="pb-4 wrapper wrapper--comments">
-                    <form
-                        class="form form__comments"
-                        method="POST"
-                        enctype="multipart/form-data"
-                        action="./"
-                    >
-                        {% csrf_token %}
+        {% if form and not object.is_archive or object.project %}
+            <h4 class="m-0 sr-only">{% trans "Add communication" %}</h4>
+            <div class="pb-4 wrapper wrapper--comments">
+                <form
+                    class="form form__comments"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    action="./"
+                >
+                    {% csrf_token %}
 
-                        {% for hidden in form.hidden_fields %}
-                            {{ hidden }}
-                        {% endfor %}
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
 
-                        <div class="flex flex-wrap gap-4 lg:flex-nowrap lg:gap-8">
-                            <div class="-mt-4 w-full lg:flex-1 max-w-[53rem]">
-                                {% include "forms/includes/field.html" with field=form.message label_classes="sr-only" %}
+                    <div class="flex flex-wrap gap-4 lg:flex-nowrap lg:gap-8">
+                        <div class="-mt-4 w-full lg:flex-1 max-w-[53rem]">
+                            {% include "forms/includes/field.html" with field=form.message label_classes="sr-only" %}
 
-                                <div class="hidden mt-4 text-right lg:block">
-                                    <button
-                                        class="w-full lg:w-auto btn btn-primary"
-                                        type="submit"
-                                    >
-                                        {% trans "Add Comment" %}
-                                    </button>
-                                </div>
+                            <div class="hidden mt-4 text-right lg:block">
+                                <button
+                                    class="w-full lg:w-auto btn btn-primary"
+                                    type="submit"
+                                >
+                                    {% trans "Add Comment" %}
+                                </button>
                             </div>
-
-                            <div class="w-full lg:max-w-[30%]">
-                                {% include "forms/includes/field.html" with field=form.visibility %}
-                                {% include "forms/includes/field.html" with field=form.assign_to %}
-                                {% include "forms/includes/field.html" with field=form.attachments %}
-                            </div>
-                            <button
-                                class="mt-4 w-full lg:hidden lg:w-auto btn btn-primary"
-                                type="submit"
-                            >
-                                {% trans "Add Comment" %}
-                            </button>
                         </div>
-                    </form>
-                </div>
 
-            {% endif %}
-
-            <div
-                class="comments"
-                id="comment-feed"
-                hx-get="{% url 'activity:partial-comments' object.id %}"
-                hx-trigger="load, intersect once"
-            >
-                <p>{% trans "Loading…" %}</p>
+                        <div class="w-full lg:max-w-[30%]">
+                            {% include "forms/includes/field.html" with field=form.visibility %}
+                            {% include "forms/includes/field.html" with field=form.assign_to %}
+                            {% include "forms/includes/field.html" with field=form.attachments %}
+                        </div>
+                        <button
+                            class="mt-4 w-full lg:hidden lg:w-auto btn btn-primary"
+                            type="submit"
+                        >
+                            {% trans "Add Comment" %}
+                        </button>
+                    </div>
+                </form>
             </div>
-        </div>
 
+        {% endif %}
+
+        <section
+            class="comments"
+            id="comment-feed"
+            hx-get="{% url 'activity:partial-comments' object.id %}"
+            hx-trigger="load, intersect once"
+        >
+            <p>{% trans "Loading…" %}</p>
+        </section>
     </div>
 {% endblock %}
 

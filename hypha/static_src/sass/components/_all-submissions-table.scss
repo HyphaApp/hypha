@@ -33,15 +33,6 @@
         }
       }
 
-      /* &.selected {
-        @include mixins.table-checkbox;
-
-        @include mixins.media-query(lg) {
-          width: 50px;
-          padding-inline-end: 0;
-        }
-      } */
-
       &.comments {
         @include mixins.media-query(lg) {
           width: 110px;
@@ -103,8 +94,8 @@
         font-size: 13px;
         text-align: center;
         vertical-align: middle;
-        background: url("./../images/quote-outline.svg") transparent
-          no-repeat center center;
+        background: url("./../images/quote-outline.svg") transparent no-repeat
+          center center;
         background-size: 24px;
       }
 
@@ -142,11 +133,7 @@
       // arrow to toggle project info - added via js
       @include mixins.media-query(lg) {
         .arrow {
-          @include mixins.triangle(
-            right,
-            variables.$color--primary,
-            6px
-          );
+          @include mixins.triangle(right, variables.$color--primary, 6px);
           position: relative;
           display: inline-block;
           transform: rotate(0);

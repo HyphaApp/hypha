@@ -7,14 +7,6 @@
     gap: calc(var(--spacing) * 2);
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 
-    &--narrow {
-      text-align: center;
-
-      @include mixins.media-query(md) {
-        text-align: start;
-      }
-    }
-
     &--proposal-info {
       grid-template-columns: 100%;
       gap: 10px;
