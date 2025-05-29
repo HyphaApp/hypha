@@ -6,6 +6,15 @@ textarea {
   @apply text-sm relative;
 }
 
+/* Radio + Checkbox with Label */
+[type="radio"],
+[type="checkbox"] {
+  & + label {
+    padding-inline-start: 0.25rem;
+    cursor: pointer;
+  }
+}
+
 .tox {
   .tox-tbtn--disabled {
     @apply opacity-50;
@@ -29,6 +38,7 @@ textarea {
     @apply text-fg-muted!;
   }
 }
+
 .tox:not(.tox-tinymce-inline) .tox-editor-header {
   @apply bg-base-200! text-base-content!;
 }
