@@ -1,10 +1,11 @@
 {% load heroicons %}
-<div class="mb-4 section-head group" id="{{ value.heading_text|slugify }}">
-    <{{ self.size }} tabindex="-1" class="p-2 mb-2 text-white bg-light-blue">
+
+<div class="my-4 group text-primary-content bg-primary/70 rounded-box">
+    <{{ self.size }} tabindex="-1" class="py-2 px-[var(--radius-box)] section-head" id="{{ value.heading_text|slugify }}"">
 
     {{ value.heading_text }}
     <a
-        class="hidden float-right p-1 text-white transition-opacity group-hover:inline-block hover:opacity-70"
+        class="hidden float-right transition-opacity group-hover:inline-block hover:opacity-70"
         href="#{{ value.heading_text|slugify }}"
         aria-hidden='true'
         tabindex="-1"

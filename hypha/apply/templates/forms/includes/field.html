@@ -70,10 +70,15 @@
                     <span>{{ field.label }} {% if field.field.required %}<sup>*</sup>{% endif %}</span>
                 </legend>
         {% elif widget_type == 'checkbox_input' %}
-            <label class="mt-2 text-sm label">
-                {{ field }} {{ field.label }}
-                {% if field.field.required %}*{% endif %}
-            </label>
+            <div class="flex gap-2 mt-2">
+                {{ field }}
+                <div>
+                    <label class="max-w-none prose" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}*{% endif %}</label>
+                    {% if field.help_text %}
+                        <div class="prose prose-sm">{{ field.help_text }}</div>
+                    {% endif %}
+                </div>
+            </div>
         {% else %}
             {% if not field.is_hidden and widget_type != 'checkbox_input' %}
                 <label
@@ -85,7 +90,11 @@
                 </label>
             {% endif %}
         {% endif %}
-
+        <div class="flex gap-2 justify-between -mt-2 label">
+            {% if field.help_text and widget_type != 'checkbox_input' %}
+                <span class="prose prose-sm">{{ field.help_text }}</span>
+            {% endif %}
+        </div>
         {% if not field.is_hidden %}
             {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
                 <div class="{{ widget_type }}">
@@ -112,16 +121,11 @@
             {{ field }}
         {% endif %}
 
-        <div class="flex gap-2 justify-between label">
-            {% if field.help_text %}
-                <label class="whitespace-normal">{{ field.help_text }}</label>
-            {% endif %}
-            {% if widget_type == 'text_input' and field.field.max_length %}
-                <div x-cloak x-show="visible" x-transition>
-                    <span x-text="curlength"></span>/<span x-text="maxlength"></span>
-                </div>
-            {% endif %}
-        </div>
+        {% if widget_type == 'text_input' and field.field.max_length %}
+            <div x-cloak x-show="visible" class="label">
+                <span x-text="curlength"></span>/<span x-text="maxlength"></span>
+            </div>
+        {% endif %}
 
         {% if widget_type == 'checkbox_select_multiple' or widget_type == 'radio_select' %}
             </fieldset>
