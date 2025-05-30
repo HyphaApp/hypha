@@ -49,10 +49,10 @@
 
 {% block footer %}
     {% if settings.core.SystemSettings.footer_content %}
-        <footer class="py-10 px-4 footer shrink-0 bg-dark-blue">
-            <div class="max-w-none text-white wrapper wrapper--large prose prose-invert">
+        <footer class="p-10 footer bg-neutral text-neutral-content sm:footer-horizontal">
+            <aside class="wrapper wrapper--large">
                 {{ settings.core.SystemSettings.footer_content|safe }}
-            </div>
+            </aside>
         </footer>
     {% endif %}
 {% endblock footer %}
