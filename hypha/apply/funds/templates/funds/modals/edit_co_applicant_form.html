@@ -1,9 +1,9 @@
 {% load i18n %}
 
-{% modal_title %}{% trans "Edit Co-applicant" %}{% endmodal_title %}
+{% modal_title %}{% trans "Edit co-applicant" %}{% endmodal_title %}
 
 <form
-    class="form {{ extra_classes }} p-4"
+    class="form p-4 {{ extra_classes }}"
     action="{{ action|default:request.path }}"
     method="post"
     hx-post="{{ action|default:request.path }}"
@@ -12,6 +12,8 @@
     enctype="multipart/form-data"
 >
     {% csrf_token %}
+    {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+
     {% if co_applicant_exists %}
         <p class="text-sm text-fg-muted">
             {% trans "Update the role for co-applicant." %}
@@ -22,9 +24,6 @@
             <br>
             {% trans "3. Edit: Co-applicant can view, comment and edit the submission." %}
         </p>
-        {% for hidden in form.hidden_fields %}
-            {{ hidden }}
-        {% endfor %}
 
         <div class="fields--visible">
             {% for field in form.visible_fields %}
@@ -35,22 +34,22 @@
                 {% endif %}
             {% endfor %}
         </div>
-        <div class="mt-5 sm:flex sm:flex-row-reverse sm:gap-4 sm:mt-4">
+        <div class="mt-4 sm:flex-row-reverse card-actions">
             <button
-                class="w-full sm:w-auto button button--primary"
+                class="w-full sm:w-auto btn btn-primary"
                 type="submit"
             >
                 {{ value }}
             </button>
             <button
                 type="button"
-                class="btn btn-warning"
+                class="btn btn-warning btn-soft"
                 @click="show = false"
                 hx-post="{% url 'apply:submissions:delete_co_applicant_invite' invite_pk=invite.pk %}"
-            >{% trans "Delete" %}</button>
+            >{% trans "Remove" %}</button>
         </div>
     {% else %}
-        <div class="text-sm text-fg-muted fields--visible">
+        <div class="text-sm text-fg-muted">
             {% trans "You can not update until co-applicant accepts the invite. You may re-invite them." %}
         </div>
 
