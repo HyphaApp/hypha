@@ -6,8 +6,8 @@
     position: relative;
     padding-inline: variables.$gutters;
     margin-inline: variables.$gutters-reverse;
-    color: variables.$color--white;
-    background-color: var(--color-arsenic);
+    color: var(--color-neutral-content);
+    background-color: var(--color-neutral);
 
     @include mixins.media-query(xl) {
       padding-inline: 0;
@@ -28,10 +28,6 @@
       }
     }
 
-    &__heading {
-      margin-block-end: 0;
-    }
-
     &__meta {
       margin: 0 0 10px;
 
@@ -43,7 +39,7 @@
     &__back-link {
       display: inline-flex;
       align-items: center;
-      color: variables.$color--lightest-blue;
+      color: var(--color-primary);
       font-weight: variables.$weight--bold;
 
       &::before {
