@@ -4,12 +4,13 @@
 
 {% block title %}{% trans "Editing" %}: {{ object.title }}{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Editing" %}: {{ object.title}}{% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     {% include "forms/includes/form_errors.html" with form=form %}
 
     <div class="wrapper wrapper--form wrapper--sidebar">

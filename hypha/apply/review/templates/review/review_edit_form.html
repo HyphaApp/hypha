@@ -7,17 +7,18 @@
     <script defer src="{% static 'js/behaviours/review-score.js' %}"></script>
 {% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot header %}{{ title }}{% endslot %}
         {% slot sub_heading %}
             {% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a>
         {% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+
+{% block content %}
     {% include "forms/includes/form_errors.html" with form=form %}
-
     <div class="relative my-8" x-data="reviewScore">
         <!-- Review score sticky display -->
         <div class="absolute top-0 right-0 h-full lg:block">

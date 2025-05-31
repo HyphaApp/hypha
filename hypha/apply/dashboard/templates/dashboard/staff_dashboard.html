@@ -4,7 +4,7 @@
 
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
-{% block content %}
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Dashboard" %}{% endslot %}
         {% slot sub_heading %}{% trans "Welcome" %}, {{ request.user }}!{% endslot %}
@@ -16,7 +16,10 @@
             </a>
         {% endif %}
     {% endadminbar %}
+{% endblock %}
 
+
+{% block content %}
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
         <div class="wrapper wrapper--bottom-space">
             {% if my_tasks.count %}

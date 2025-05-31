@@ -4,7 +4,7 @@
 
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
-{% block content %}
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Dashboard" %}{% endslot %}
 
@@ -15,6 +15,9 @@
             </a>
         {% endif %}
     {% endadminbar %}
+{% endblock %}
+
+{% block content %}
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
 

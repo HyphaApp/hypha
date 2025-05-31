@@ -74,9 +74,10 @@
         {% endif %}
 
         {% block header %}{% endblock header %}
+        {% block hero %}{% endblock hero %}
 
         {% block content_wrapper %}
-            <main class="wrapper wrapper--large wrapper--main grow" id="main" x-data="{ showSubmission: false }">
+            <main class="container-constrained grow" id="main" x-data="{ showSubmission: false }">
                 {% block content %}{% endblock %}
             </main>
         {% endblock %}

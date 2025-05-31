@@ -3,12 +3,14 @@
 
 {% block title %}{% trans "Deleting" %}: {{ object }}{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Deleting" %}: {{ object }}{% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+
+{% block content %}
     <div class="wrapper wrapper--form wrapper--sidebar">
         <div class="wrapper--sidebar--inner">
             <form class="form" action="" method="post">

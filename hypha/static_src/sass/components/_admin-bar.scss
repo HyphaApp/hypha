@@ -3,17 +3,6 @@
 
 @layer components {
   .admin-bar {
-    position: relative;
-    padding-inline: variables.$gutters;
-    margin-inline: variables.$gutters-reverse;
-    color: var(--color-neutral-content);
-    background-color: var(--color-neutral);
-
-    @include mixins.media-query(xl) {
-      padding-inline: 0;
-      margin-inline: calc(50% - 50vw);
-    }
-
     &__inner {
       max-width: variables.$site-width;
       margin: 0 auto;
