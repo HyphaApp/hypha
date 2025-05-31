@@ -9,7 +9,6 @@
                    {% if field.errors %}form__error{% endif %}
                    {% if field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}
                    {% if field.field.grouper_for %}form-fields-grouper{% endif %}
-                   {% if widget_type == 'address_widget' %}bg-base-200/30 border-base-300 border px-4 rounded-box mt-4 pb-4 w-sm{% endif %}
                {% endspaceless %}"
 
         {% if field.field.grouper_for %}
