@@ -476,7 +476,7 @@ def partial_screening_card(request, pk):
         "can_view_submission_screening", request.user, submission, raise_exception=False
     )
     can_edit, _ = has_permission(
-        "submission_edit", request.user, submission, raise_exception=False
+        "submission_action", request.user, submission, raise_exception=False
     )
 
     if not view_permission:

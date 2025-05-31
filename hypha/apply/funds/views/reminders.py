@@ -49,7 +49,7 @@ class ReminderCreateView(View):
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit",
+            "submission_action",
             request.user,
             object=self.submission,
             raise_exception=False,
