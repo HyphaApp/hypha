@@ -26,7 +26,9 @@
   };
 
   function labelFor(field) {
-    return $('label[for="' + $(field).attr("id") + '"]');
+    var fieldId = $(field).attr("id");
+    var label = $('label[for="' + fieldId + '"]');
+    return label;
   }
 
   function makeFieldNotRequired(field) {
@@ -54,13 +56,11 @@
     oldValidate.call(this, field, config);
   };
 
-  var selectWrap = '<div class="form__select"></div>';
-
   // Hook into the select builder to update the display
   var oldConvertToSelect = $.fn.addressfield.convertToSelect;
   $.fn.addressfield.convertToSelect = function () {
     var $select = oldConvertToSelect.call(this);
-    $select.wrap(selectWrap);
+    $select.wrap('<div class="form__select"></div>');
     return $select;
   };
 
@@ -74,18 +74,20 @@
 
   $(document).ready(function formReady() {
     $(".form .address").each(function () {
-      $(".form div#" + this.id).addressfield({
+      var config = {
         json: "/static/addressfield.min.json",
         fields: {
-          country: ".country",
-          thoroughfare: ".thoroughfare",
-          premise: ".premise",
-          locality: ".locality",
-          localityname: ".localityname",
-          administrativearea: ".administrativearea",
-          postalcode: ".postalcode",
+          country: "[data-js-addressfield-name='country']",
+          thoroughfare: "[data-js-addressfield-name='thoroughfare']",
+          premise: "[data-js-addressfield-name='premise']",
+          locality: "[data-js-addressfield-name='locality']",
+          localityname: "[data-js-addressfield-name='localityname']",
+          administrativearea:
+            "[data-js-addressfield-name='administrativearea']",
+          postalcode: "[data-js-addressfield-name='postalcode'] ",
         },
-      });
+      };
+      $(".form div#" + this.id).addressfield(config);
     });
   });
 })(jQuery);

@@ -14,7 +14,7 @@ With this user can enter any text and get a feedback why it's wrong.
     }"{# fmt:on #}
 >
     <input
-        class="input"
+        class="input {{ widget.attrs.class|default:'' }}"
         x-model='value'
         :class="error ? 'invalid': ''"
         type="text"
@@ -22,7 +22,7 @@ With this user can enter any text and get a feedback why it's wrong.
         pattern="[0-9.]*"  {% comment %} Allow for digit with a decimal{% endcomment %}
         name="{{ widget.name }}"
         {% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}
-        {% include "django/forms/widgets/attrs.html" %}
+        {% include "django/forms/widgets/attrs.html" with skip_class_attr=True %}
     >
     <p x-cloak x-show="error" x-text="error" class="mt-2 text-error"></p>
 </div>

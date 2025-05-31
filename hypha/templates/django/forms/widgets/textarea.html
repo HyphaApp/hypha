@@ -1,1 +1,1 @@
-<textarea class="validator textarea" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>{% if widget.value %}{{ widget.value }}{% endif %}</textarea>
+<textarea class="validator textarea {{ widget.attrs.class|default:'' }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" with skip_class_attr=True %}>{% if widget.value %}{{ widget.value }}{% endif %}</textarea>
