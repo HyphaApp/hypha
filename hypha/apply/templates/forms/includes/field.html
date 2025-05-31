@@ -1,6 +1,6 @@
 {% load i18n util_tags heroicons %}
 
-{% spaceless %}{% with widget_type=field|widget_type field_type=field|field_type %}
+{% with widget_type=field|widget_type field_type=field|field_type %}
     <fieldset class="fieldset form__group {{ field.id_for_label }} form__group--{{ widget_type }} {% if widget_type == 'hidden_input' %}hidden{% endif %} {% if field.help_text %}flex-wrap{% endif %} {% if field.errors %}form__error{% endif %} {% if field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %} {% if field.field.grouper_for %}form-fields-grouper{% endif %}"
               {% if field.field.grouper_for %}
                   data-grouper-for="{{ field.field.grouper_for }}"
@@ -51,12 +51,11 @@
                 </span>
             </label>
         {% elif widget_type == 'checkbox_select_multiple' or widget_type == 'radio_select' %}
-            <fieldset class="fieldset">
-                <legend class="fieldset-legend form__question--{{ field_type }} widget-{{ widget_type }}"
-                        {% if field.field.required %}required{% endif %}
-                >
-                    <span>{{ field.label }} {% if field.field.required %}<sup>*</sup>{% endif %}</span>
-                </legend>
+            <legend class="fieldset-legend form__question--{{ field_type }} widget-{{ widget_type }}"
+                    {% if field.field.required %}required{% endif %}
+            >
+                <span>{{ field.label }} {% if field.field.required %}<sup>*</sup>{% endif %}</span>
+            </legend>
         {% elif widget_type == 'checkbox_input' %}
             <div class="flex gap-2 mt-2">
                 {{ field }}
@@ -79,7 +78,7 @@
             {% endif %}
         {% endif %}
         {% if field.help_text and widget_type != 'checkbox_input' %}
-            <div class="flex gap-2 justify-between -mt-2 label prose prose-sm">
+            <div class="-mt-2 label prose prose-sm" aria-live="polite" aria-atomic="true">
                 {{ field.help_text }}
             </div>
         {% endif %}
@@ -114,9 +113,5 @@
                 <span x-text="curlength"></span>/<span x-text="maxlength"></span>
             </div>
         {% endif %}
-
-        {% if widget_type == 'checkbox_select_multiple' or widget_type == 'radio_select' %}
-            </fieldset>
-        {% endif %}
     </fieldset>
-{% endwith %}{% endspaceless %}
+{% endwith %}

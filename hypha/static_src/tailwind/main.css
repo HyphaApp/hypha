@@ -54,7 +54,13 @@
   }
 
   a {
-    @apply text-primary underline-offset-2;
+    @apply underline-offset-2;
+  }
+  .table thead a {
+    @apply link link-hover;
+  }
+  .table tbody a {
+    @apply link link-primary font-semibold;
   }
 }
 
