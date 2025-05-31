@@ -20,11 +20,11 @@ class KeepAttrsTextInput(KeepOwnAttrsWidget, forms.TextInput):
     pass
 
 
-def classify(field):
+def classify(field: str) -> str:
     return field.replace("_", "")
 
 
-def display(field):
+def display(field: str) -> str:
     return field.replace("_", " ").title()
 
 
@@ -36,6 +36,7 @@ class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
             widget(
                 attrs={
                     "class": classify(field),
+                    "data-js-addressfield-name": classify(field),
                     "required": False,
                     "display": display(field),
                 }
@@ -95,6 +96,6 @@ class AddressWidget(NestedMultiWidget):
 
     def __init__(self, *args, **kwargs):
         attrs = kwargs.get("attrs", {})
-        attrs["class"] = ""
+        attrs["class"] = "address -mt-2"
         kwargs["attrs"] = attrs
         super().__init__(*args, **kwargs)

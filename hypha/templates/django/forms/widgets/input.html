@@ -1,6 +1,1 @@
-<input
-    class="validator {% if widget.type == 'text' or widget.type == 'time' or widget.type == 'email' or widget.type == 'password' or widget.type == 'url' or widget.type == 'number' %}input{% endif %}{% if widget.type == 'checkbox' %}checkbox{% endif %}{% if widget.type == 'radio' %}radio{% endif %} {{ class }}"
-    type="{{ widget.type }}"
-    name="{{ widget.name }}"{% if widget.value != None %}
-        value="{{ widget.value|stringformat:'s' }}"{% endif %}{% include "django/forms/widgets/attrs.html" %}
->
+<input type="{{ widget.type }}" name="{{ widget.name }}" class="validator {% if widget.type == 'text' or widget.type == 'time' or widget.type == 'email' or widget.type == 'password' or widget.type == 'url' or widget.type == 'number' %}input{% endif %}{% if widget.type == 'checkbox' %}checkbox{% endif %}{% if widget.type == 'radio' %}radio{% endif %}{% if widget.attrs.class %} {{ widget.attrs.class }}{% endif %} {{ class }}" {% if widget.value != None %}value="{{ widget.value|stringformat:'s' }}"{% endif %}{% include "django/forms/widgets/attrs.html" with skip_class_attr=True %} />
