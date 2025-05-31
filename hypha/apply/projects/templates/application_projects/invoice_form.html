@@ -2,22 +2,20 @@
 {% load i18n static %}
 
 {% block title %}{% if object %}{% trans "Edit" %}{% else %}{% trans "Add" %}{% endif %} {% trans "Invoice" %}: {% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
-{% block content %}
 
+{% block hero %}
     {% adminbar %}
         {% slot back_link %}
             <a class="admin-bar__back-link" href="{{ project.get_absolute_url }}">
                 {% trans "View project page" %}
             </a>
         {% endslot %}
+
         {% slot header %}
-            {% if object %}
-                {% trans "Editing" %}
-            {% else %}
-                {% trans "Add" %}
-            {% endif %}
+            {% if object %}{% trans "Editing" %}{% else %}{% trans "Add" %}{% endif %}
             {% trans "Invoice" %}
         {% endslot %}
+
         {% slot sub_heading %}
             {% if object %}
                 {{ object.project.title }}
@@ -26,9 +24,10 @@
             {% endif %}
         {% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     {% include "forms/includes/form_errors.html" with form=form %}
-
     <div class="wrapper wrapper--form wrapper--sidebar">
         <div class="wrapper--sidebar--inner">
             <form class="form" action="" method="post" enctype="multipart/form-data">

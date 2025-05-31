@@ -4,13 +4,15 @@
 
 {% block title %}{% trans "Reviews" %}{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Reviewer leaderboard" %}{% endslot %}
         {% slot sub_heading %}{% trans "Track and explore the reviews" %}{% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+
+{% block content %}
     <div class="mt-4 wrapper wrapper--large">
         {% block table %}
             {% trans "All reviewers" as all_reviewers %}

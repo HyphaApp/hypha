@@ -1,8 +1,8 @@
 {% extends "base-apply.html" %}
 {% load i18n static %}
 {% block title %}{% trans "Editing" %}: {{object.title }}{% endblock %}
-{% block content %}
 
+{% block hero %}
     {% adminbar %}
         {% slot back_link %}
             <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
@@ -11,7 +11,9 @@
         {% endslot %}
         {% slot header %}{% trans "Editing" %}: {{ object.title }}{% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     {% if sow_form_exists %}
         {% include "forms/includes/form_errors.html" with form=sow_form %}
         <div class="pt-8 pb-8 mx-auto mt-4 mb-12 wrapper wrapper--sidebar">
@@ -70,7 +72,6 @@
             </div>
         </div>
     {% endif %}
-
 {% endblock %}
 
 {% block extra_css %}

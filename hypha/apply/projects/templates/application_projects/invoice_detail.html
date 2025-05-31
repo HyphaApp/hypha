@@ -2,10 +2,8 @@
 {% load i18n humanize invoice_tools heroicons %}
 
 {% block title %}{% trans "Invoice" %}: {{ object.invoice_number }} - {{ object.project.title }}{% endblock %}
-{% block content %}
-    {% display_invoice_status_for_user user object as invoice_status %}
-    {% can_show_paid_date invoice as show_paid_date %}
 
+{% block hero %}
     {% adminbar %}
         {% slot back_link %}
             <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
@@ -15,7 +13,11 @@
         {% slot header %}{% trans "Invoice" %}: {{ object.invoice_number }}{% endslot %}
         {% slot sub_heading %}{% trans "For" %}: {{ object.project.title }}{% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
+    {% display_invoice_status_for_user user object as invoice_status %}
+    {% can_show_paid_date invoice as show_paid_date %}
     <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
         <div class="wrapper--sidebar--inner">
             <div class="h-card h-card--solid card card-border">

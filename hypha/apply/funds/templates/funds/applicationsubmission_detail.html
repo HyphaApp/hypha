@@ -6,9 +6,9 @@
 {% block title %}{{ object.title_text_display }}{% endblock %}
 {% block body_class %}{% endblock %}
 
-{% block content %}
-    <div class="pt-4 pb-0 admin-bar">
-        <div class="admin-bar__inner">
+{% block hero %}
+    <div class="pt-4 pb-0 admin-bar bg-neutral text-neutral-content">
+        <div class="container-constrained">
 
             {% if object.project %}
                 {% include "application_projects/includes/project_header.html" with object=object.project %}
@@ -54,8 +54,12 @@
             </div>
         </div>
     </div>
+{% endblock %}
 
-    <div class="wrapper wrapper--large wrapper--tabs">
+
+{% block content %}
+
+    <div class="mt-4">
         <div class="wrapper wrapper--sidebar">
             {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
                 <div class="wrapper--sidebar--inner">
@@ -81,7 +85,7 @@
                         </div>
                     {% endif %}
 
-                    <header class="flex justify-between @container mb-2">
+                    <header class="flex justify-between @container mb-2"-container-constrained>
                         <div class="grid grid-cols-1 @md:grid-cols-2 w-full text-fg-muted text-sm gap-x-4 gap-y-2">
                             <span>
                                 {% if object.is_draft %}

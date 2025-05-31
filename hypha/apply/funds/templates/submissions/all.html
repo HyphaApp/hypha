@@ -5,8 +5,7 @@
 {% load humanize %}
 
 {% block title %}{% trans "Submissions" %}{% endblock %}
-
-{% block content %}{% spaceless %}
+{% block hero %}
     {% adminbar %}
         {% slot header %}
             {% trans "All Submissions" %}<span class="submissions-count"> ({{ page.paginator.count }})</span>
@@ -36,8 +35,10 @@
             </a>
         {% endslot %}
     {% endadminbar %}
+{% endblock %}
 
 
+{% block content %}{% spaceless %}
     <form
         class="flex gap-2 justify-between items-center mt-4 md:gap-4"
         hx-trigger="change"

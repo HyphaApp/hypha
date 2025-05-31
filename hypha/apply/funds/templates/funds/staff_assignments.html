@@ -4,15 +4,16 @@
 
 {% block title %}{% trans "Staff assignments" %}{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Staff assignments" %}{% endslot %}
         {% slot sub_heading %}
             {% trans "Track and explore the staff assignments" %}
         {% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
         {% block table %}
             {% render_table table %}

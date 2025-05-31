@@ -1,7 +1,7 @@
 {% extends "application_projects/project_approval_detail.html" %}
 {% load i18n static approval_tools project_tags apply_tags %}
 
-{% block content %}
+{% block hero %}
     {% adminbar %}
         {% slot back_link %}
             <a class="admin-bar__back-link" href="{{ object.get_absolute_url }}" rel="noopener">
@@ -20,7 +20,9 @@
             </div>
         {% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     <div class="wrapper wrapper--large wrapper--tabs">
         <div class="wrapper wrapper--sidebar">
             <article class="wrapper--sidebar--inner">

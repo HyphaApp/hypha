@@ -5,8 +5,7 @@
 
 {% block title %}{% trans "Reports" %}{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Submitted Reports" %} ({{ table.rows|length }}){% endslot %}
         {% slot sub_heading %}
@@ -14,7 +13,10 @@
             <a href="{% url 'apply:projects:reports:all' %}" class="text-blue-300 hover:underline">View all reports</a>
         {% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+
+{% block content %}
     <div class="mt-2 text-sm breadcrumbs">
         <ul>
             <li><a href="{% url 'dashboard:dashboard' %}">Home</a></li>
@@ -31,5 +33,4 @@
             <p>{% trans "No Reports Available." %}</p>
         {% endif %}
     </div>
-
 {% endblock content %}

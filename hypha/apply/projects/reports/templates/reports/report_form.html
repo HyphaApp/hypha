@@ -1,13 +1,9 @@
 {% extends "base-apply.html" %}
 {% load i18n static heroicons %}
 
-{% block extra_css %}
-    {{ block.super }}
-{% endblock %}
-
 {% block title %}{% trans "Edit Report" %} | {{ object.project.title }}{% endblock %}
-{% block content %}
 
+{% block hero %}
     {% adminbar %}
         {% slot back_link %}
             <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
@@ -17,9 +13,10 @@
         {% slot header %}{{ object.project.title }}{% endslot %}
         {% slot sub_heading %}{% trans "Submit a report" %}{% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     {% if report_form %}
-
         {% include "forms/includes/form_errors.html" with form=form %}
 
         <div class="wrapper wrapper--form">

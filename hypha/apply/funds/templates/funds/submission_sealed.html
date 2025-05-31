@@ -3,8 +3,8 @@
 
 {% block title %}{% trans "Sealed" %}: {{ object.title }}{% endblock %}
 
-{% block content %}
-    <div class="pt-4 pb-0 admin-bar">
+{% block hero %}
+    <div class="pt-4 pb-0 admin-bar container-constrained">
         <div class="admin-bar__inner">
             <h1 class="mb-2 text-2xl font-medium md:m-0 md:text-3xl">{{ object.title }}</h1>
             <h5 class="heading heading--meta">
@@ -16,7 +16,9 @@
             {% status_bar object.workflow object.phase request.user same_stage=True %}
         </div>
     </div>
+{% endblock %}
 
+{% block content %}
     <section class="my-12 wrapper">
         <div class="mx-auto max-w-lg card card-border bg-base-200">
             <div class="card-body">

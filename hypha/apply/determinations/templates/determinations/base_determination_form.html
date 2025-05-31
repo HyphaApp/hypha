@@ -1,29 +1,30 @@
 {% extends "base-apply.html" %}
 {% load i18n static nh3_tags %}
 {% block title %}{% if object %}{% trans "Edit a Determination" %} {% if object.is_draft %}{% trans "draft" %}{% endif %}{% else %}{% trans "Create a Determination" %}{% endif %}{% endblock %}
+
+{% block hero %}
+    {% adminbar %}
+        {% slot header %}{% if object %}{% trans "Update Determination draft" %}{% else %}{% trans "Create Determination" %}{% endif %}{% endslot %}
+        {% slot sub_heading %}{% if submission %}{% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>{% endif %}{% endslot %}
+
+        {% slot buttons %}
+            <div class="mt-4 tabs tabs-lift ms-auto">
+                <button
+                    class="tab [--color-base-content:var(--color-neutral-content)]"
+                    x-data
+                    @click="showSubmission = !showSubmission"
+                    :aria-selected="showSubmission"
+                >
+                    <span x-show="!showSubmission">{% trans "Show application" %}</span>
+                    <span x-show="showSubmission">{% trans "Hide application" %}</span>
+                </button>
+            </div>
+        {% endslot %}
+    {% endadminbar %}
+{% endblock %}
+
+
 {% block content %}
-
-    {% block adminbar %}
-        {% adminbar %}
-            {% slot header %}{% if object %}{% trans "Update Determination draft" %}{% else %}{% trans "Create Determination" %}{% endif %}{% endslot %}
-            {% slot sub_heading %}{% if submission %}{% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>{% endif %}{% endslot %}
-
-            {% slot buttons %}
-                <div class="mt-4 tabs tabs-lift ms-auto">
-                    <button
-                        class="tab [--color-base-content:var(--color-neutral-content)]"
-                        x-data
-                        @click="showSubmission = !showSubmission"
-                        :aria-selected="showSubmission"
-                    >
-                        <span x-show="!showSubmission">{% trans "Show application" %}</span>
-                        <span x-show="showSubmission">{% trans "Hide application" %}</span>
-                    </button>
-                </div>
-            {% endslot %}
-        {% endadminbar %}
-    {% endblock %}
-
     {% block form %}
         <section class="flex flex-col-reverse gap-4 justify-between my-8 lg:flex-row">
 

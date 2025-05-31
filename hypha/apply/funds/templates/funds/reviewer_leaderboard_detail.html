@@ -4,13 +4,14 @@
 
 {% block title %}{% trans "Reviews" %}{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% blocktrans %}Reviews by {{ object }}{% endblocktrans %}{% endslot %}
         {% slot sub_heading %}{% trans "Track and explore the reviews" %}{% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
         {% block table %}
             {% render_table table %}

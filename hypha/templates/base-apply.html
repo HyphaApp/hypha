@@ -3,7 +3,7 @@
 
 {% block header %}
     <header
-        class="flex gap-4 justify-between items-center py-2 mx-auto w-full header max-w-[1280px]"
+        class="flex gap-4 justify-between items-center py-2 mx-auto w-full header container-constrained"
         x-data="{'showDesktopMenu': false, isDesktop: false, mm: null}"
         x-init="mm = window.matchMedia(`(min-width: 768px)`); isDesktop = mm.matches; mm.addListener((e) => { isDesktop = e.matches }); "
     >
@@ -50,7 +50,7 @@
 {% block footer %}
     {% if settings.core.SystemSettings.footer_content %}
         <footer class="p-10 footer bg-neutral text-neutral-content sm:footer-horizontal">
-            <aside class="wrapper wrapper--large">
+            <aside class="container-constrained">
                 {{ settings.core.SystemSettings.footer_content|safe }}
             </aside>
         </footer>

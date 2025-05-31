@@ -5,8 +5,7 @@
 
 {% block title %}{% trans "Reporting" %}{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Reporting" %} ({{ table.rows|length }}){% endslot %}
         {% slot sub_heading %}
@@ -14,7 +13,9 @@
             <a href="{% url 'apply:projects:reports:submitted' %}" class="text-blue-300 hover:underline">View submitted reports</a>
         {% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     <div class="mt-4 wrapper wrapper--large">
         {% if table %}
             {% include "funds/includes/table_filter_and_search.html" %}

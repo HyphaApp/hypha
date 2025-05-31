@@ -9,7 +9,7 @@
                    {% if field.errors %}form__error{% endif %}
                    {% if field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}
                    {% if field.field.grouper_for %}form-fields-grouper{% endif %}
-                   {% if widget_type == 'address_widget' %}bg-base-200/30 border-base-300 rounded-box w-sm border px-4 py-2{% endif %}
+                   {% if widget_type == 'address_widget' %}bg-base-200/30 border-base-300 border px-4 rounded-box mt-4 pb-4 w-sm{% endif %}
                {% endspaceless %}"
 
         {% if field.field.grouper_for %}
@@ -90,11 +90,11 @@
                 </label>
             {% endif %}
         {% endif %}
-        <div class="flex gap-2 justify-between -mt-2 label">
-            {% if field.help_text and widget_type != 'checkbox_input' %}
-                <span class="prose prose-sm">{{ field.help_text }}</span>
-            {% endif %}
-        </div>
+        {% if field.help_text and widget_type != 'checkbox_input' %}
+            <div class="flex gap-2 justify-between -mt-2 label prose prose-sm">
+                {{ field.help_text }}
+            </div>
+        {% endif %}
         {% if not field.is_hidden %}
             {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
                 <div class="{{ widget_type }}">
