@@ -73,7 +73,7 @@
   };
 
   $(document).ready(function formReady() {
-    $(".form .form__group--address_widget").each(function () {
+    $(".form .address").each(function () {
       $(".form div#" + this.id).addressfield({
         json: "/static/addressfield.min.json",
         fields: {
