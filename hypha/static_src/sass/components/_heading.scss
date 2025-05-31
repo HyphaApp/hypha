@@ -29,30 +29,10 @@
   &--submission-meta {
     display: flex;
     flex-direction: column;
-    margin-block-start: 20px;
-    font-weight: variables.$weight--normal;
-    color: variables.$color--black-40;
-
-    @include mixins.media-query(lg) {
-      flex-direction: row;
-      margin-block-start: 0;
-    }
-
-    span {
-      margin-inline-end: 15px;
-    }
-  }
-
-  &--small {
-    font-size: 12px;
   }
 
   &--light-grey {
     color: variables.$color--black-40;
-  }
-
-  &--uppercase {
-    text-transform: uppercase;
   }
 
   &--normal {
@@ -60,10 +40,6 @@
     font-size: 1.25rem;
     line-height: 1.75rem;
     margin-block-end: 0.25rem;
-  }
-
-  &--bold {
-    font-weight: variables.$weight--bold;
   }
 
   &--activity-feed {

@@ -1,7 +1,7 @@
 {% load i18n wagtailimages_tags heroicons %}
 
 <li
-    class="reviews-sidebar__item {% if not reviewer.review %}no-response {% endif %}"
+    class="reviews-sidebar__item {% if not reviewer.review %}text-base-content/80 {% endif %}"
     {% if hidden and  not reviewer.review %}x-cloak x-show="showHiddenReviewers" x-transition.opacity{% endif %}
 >
     {% if not reviewer.review or reviewer.review.is_draft %}

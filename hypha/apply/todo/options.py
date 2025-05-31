@@ -167,7 +167,7 @@ template_map = {
     # invoicing and reporting (vendor/staff/finance team action)
     PROJECT_WAITING_INVOICE: {
         "text": _(
-            '<span class="text-sm">{related.fund_name} #{related.application_id}</span><br>Project <span class="truncate inline-block max-w-32 align-bottom">"{related.title}"</span> is waiting for invoice'
+            '<span class="text-xs">{related.fund_name} #{related.application_id}</span><br>Project <span class="truncate inline-block max-w-32 align-bottom">"{related.title}"</span> is waiting for invoice'
         ),
         "icon": "document-currency-dollar",
         "url": "{link}",

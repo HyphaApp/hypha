@@ -1,14 +1,14 @@
 {% extends "base-apply.html" %}
 {% load wagtailcore_tags static i18n util_tags heroicons %}
 {% block title %}{% trans "Previewing" %}: {{object.title }}{% endblock %}
-{% block body_class %}bg-white{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Previewing" %}: {{ object.title }}{% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     <div class="wrapper wrapper--medium wrapper--form">
         {% include "funds/includes/rendered_answers.html" %}
 
@@ -25,7 +25,7 @@
                             {% include "forms/includes/field.html" %}
                         {% endif %}
                     {% else %}
-                        <div class="max-w-none field-block prose">
+                        <div class="mb-2 max-w-none field-block prose">
                             {{ field.block }}
                         </div>
                     {% endif %}
@@ -43,7 +43,7 @@
         </form>
 
         <div class="form__group">
-            <button class="button button--primary" form="preview-form-submit" name="submit" type="submit" :disabled="isFormSubmitting">{% trans "Submit for review" %}</button>
+            <button class="btn btn-primary" form="preview-form-submit" name="submit" type="submit" :disabled="isFormSubmitting">{% trans "Submit for review" %}</button>
             <button class="button button--secondary" form="preview-form-edit">{% trans "Edit" %}</button>
         </div>
 

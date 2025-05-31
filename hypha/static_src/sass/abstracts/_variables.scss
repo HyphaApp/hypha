@@ -7,7 +7,7 @@
 // Default
 $color--white: var(--color-white);
 $color--black: var(--color-black);
-$color--light-grey: var(--color-light-grey);
+$color--light-grey: var(--color-fg-muted);
 $color--light-mid-grey: var(--color-light-mid-grey);
 $color--mid-grey: var(--color-mid-grey);
 $color--mid-dark-grey: var(--color-mid-dark-grey);
@@ -49,7 +49,7 @@ $color--white-20: var(--color-white-20);
 $color--white-10: var(--color-white-10);
 
 // Assignment
-$color--default: var(--color-default);
+$color--default: var(--color-base-content);
 $color--primary: var(--color-primary);
 $color--error: var(--color-error);
 $color--correct: var(--color-correct);
@@ -62,8 +62,8 @@ $font-size--beta: var(--font-size-beta);
 $font-size--gamma: var(--font-size-gamma);
 $font-size--delta: var(--font-size-delta);
 $font-size--epsilon: var(--font-size-epsilon);
-$font-size--zeta: var(--font-size-zeta);
-$font-size--milli: var(--font-size-milli);
+$font-size--zeta: var(--text-sm);
+$font-size--milli: var(--text-xs);
 
 // Font weights
 $weight--normal: var(--font-weight-normal);

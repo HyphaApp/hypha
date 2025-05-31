@@ -51,7 +51,7 @@
         <div class="mt-4 space-x-2">
             {% if request.user.is_authenticated and request.user.can_access_dashboard%}
                 <a
-                    class="button button--primary"
+                    class="btn btn-primary"
                     href="{% url 'dashboard:dashboard' %}"
                 >
                     {% trans "Go to your dashboard" %}
@@ -73,7 +73,7 @@
                 {% endif %}
             {% else %}
                 <a
-                    class="button button--primary"
+                    class="btn btn-primary"
                     href="{% url 'users:login' %}"
                 >
                     {% trans "Log in" %}

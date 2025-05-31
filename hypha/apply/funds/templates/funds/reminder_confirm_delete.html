@@ -3,13 +3,15 @@
 
 {% block title %}{% trans "Deleting" %}: {{ object }}{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Deleting" %}: {{ object }}{% endslot %}
     {% endadminbar %}
+{% endblock %}
 
-    <div class="wrapper wrapper--default-bg wrapper--form wrapper--sidebar">
+
+{% block content %}
+    <div class="wrapper wrapper--form wrapper--sidebar">
         <div class="wrapper--sidebar--inner">
             <form class="form" action="" method="post">
                 {% csrf_token %}
@@ -18,7 +20,7 @@
                 </p>
 
                 <button
-                    class="button button--warning button--submit button--top-space"
+                    class="mt-4 btn btn-warning"
                     type="submit"
                     role="button"
                 >

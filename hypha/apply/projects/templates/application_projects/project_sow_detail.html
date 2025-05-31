@@ -1,7 +1,7 @@
 {% extends "application_projects/project_approval_detail.html" %}
 {% load i18n static approval_tools project_tags apply_tags %}
 
-{% block content %}
+{% block hero %}
     {% adminbar %}
         {% slot back_link %}
             <a class="admin-bar__back-link" href="{{ object.get_absolute_url }}" rel="noopener">
@@ -20,12 +20,14 @@
             </div>
         {% endslot %}
     {% endadminbar %}
+{% endblock %}
 
-    <div class="wrapper wrapper--large wrapper--tabs">
+{% block content %}
+    <div class="my-4 wrapper wrapper--large">
         <div class="wrapper wrapper--sidebar">
             <article class="wrapper--sidebar--inner">
-                <h4 class="mb-2">{% trans "Scope of Work" %}</h4>
-                <div class="card card--solid">
+                <h2 class="mb-2 card-title">{% trans "Scope of Work" %}</h2>
+                <div class="p-4 mb-4 card card-border rounded-box bg-base-200">
                     {% if object.sow.output_answers %}
                         <div class="rich-text rich-text--answers">
                             {{ object.sow.output_answers }}
@@ -41,14 +43,18 @@
                         {% user_can_edit_pfs object user as can_edit_pfs %}
                         {% if can_edit_pfs %}
                             <a
-                                class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}"
+                                class="btn btn-primary btn-block {% if user_can_approve %} is-disabled {% endif %}"
                                 href="{% url 'apply:projects:edit_sow' pk=object.submission.pk %}"
                             >
                                 {% trans "Edit" %}
                             </a>
                         {% endif %}
                         <div x-data="{ show: false }" class="relative">
-                            <button x-on:click="show = ! show" class="button button--bottom-space button--primary button--full-width" type="button">
+                            <button
+                                x-on:click="show = ! show"
+                                class="btn btn-primary btn-block"
+                                type="button"
+                            >
                                 {% trans 'Download SOW' %}
                             </button>
                             <div x-show="show" x-transition class="dropdown__content">

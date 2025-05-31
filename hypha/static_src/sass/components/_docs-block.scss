@@ -20,7 +20,7 @@
   }
 
   &__inner {
-    padding: 1rem;
+    padding: calc(var(--spacing) * 2);
   }
 
   &__row {

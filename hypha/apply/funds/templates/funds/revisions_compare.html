@@ -2,8 +2,7 @@
 {% load i18n %}
 {% block title %}{% trans "Compare" %}: {{ object.title }}{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot back_link %}
             <a class="admin-bar__back-link" href="{% url "funds:submissions:revisions:list" object.id %}">
@@ -20,7 +19,9 @@
         {% endslot %}
 
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     <table class="mb-8 w-full max-w-none prose prose-h4:mt-0">
         <tr>
             <td>
