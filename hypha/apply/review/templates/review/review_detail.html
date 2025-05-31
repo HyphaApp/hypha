@@ -1,8 +1,8 @@
 {% extends "base-apply.html" %}
 {% load i18n nh3_tags submission_tags heroicons %}
 {% block title %}{% trans "Review for" %} {{ review.submission.title }}{% endblock %}
-{% block content %}
 
+{% block hero %}
     {% adminbar %}
         {% slot back_link %}
             <a class="admin-bar__back-link" href="{{ review.submission.get_absolute_url }}">
@@ -22,7 +22,9 @@
 
         {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     <div class="flex justify-between mt-8 mb-8">
         <div class="flex gap-8">
             <div>
@@ -92,5 +94,4 @@
             <span>{% trans "An opinion is a replacement for a review. You will no longer be able to submit a review for this application." %}</span>
         </em>
     {% endif %}
-
 {% endblock %}

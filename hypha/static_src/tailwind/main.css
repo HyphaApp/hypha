@@ -78,3 +78,11 @@
   --radius-box: 0;
   @apply px-0 gap-2 py-2;
 }
+
+@utility container-constrained {
+  @apply container mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+@utility container-narrow {
+  @apply container mx-auto px-4 sm:px-6 lg:px-8;
+}

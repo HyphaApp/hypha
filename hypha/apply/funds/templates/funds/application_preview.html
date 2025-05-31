@@ -1,14 +1,14 @@
 {% extends "base-apply.html" %}
 {% load wagtailcore_tags static i18n util_tags heroicons %}
 {% block title %}{% trans "Previewing" %}: {{object.title }}{% endblock %}
-{% block body_class %}bg-base-100{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Previewing" %}: {{ object.title }}{% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     <div class="wrapper wrapper--medium wrapper--form">
         {% include "funds/includes/rendered_answers.html" %}
 

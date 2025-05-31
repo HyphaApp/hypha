@@ -5,16 +5,12 @@
 
 {% block title %}{{ object.title }}{% endblock %}
 
-{% block body_class %}{% endblock %}
-
-{% block content %}
-    <div class="pt-4 pb-0 admin-bar">
-        <div class="admin-bar__inner">
-
+{% block hero %}
+    <div class="pt-4 pb-0 admin-bar bg-neutral text-neutral-content">
+        <div class="container-constrained">
             {% include "application_projects/includes/project_header.html" %}
 
             <div role="tablist" class="font-semibold tabs tabs-lg tabs-lift text-base-content">
-
                 <a
                     class="tab [--color-base-content:var(--color-neutral-content)]"
                     href="{{ project.submission.get_absolute_url }}"
@@ -35,12 +31,13 @@
                 >
                     {% trans "Conversation" %} ({{ comments_count }})
                 </a>
-
             </div>
         </div>
     </div>
-    </div>
+{% endblock %}
 
+
+{% block content %}
     {% show_closing_banner object as show_banner %}
     {% if show_banner %}
         <div class="p-2 font-semibold text-center text-white bg-red-500">

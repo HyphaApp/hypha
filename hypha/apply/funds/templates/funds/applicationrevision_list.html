@@ -2,7 +2,7 @@
 {% load i18n %}
 {% block title %}{% blocktrans with title=submission.title %}Revisions for {{ title }}{% endblocktrans %}{% endblock %}
 
-{% block content %}
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Revisions" %}{% endslot %}
         {% slot sub_heading %}
@@ -15,7 +15,10 @@
             </a>
         {% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+
+{% block content %}
     <div class="wrapper wrapper--medium">
         <ol class="my-8 border card border-b-base-300 bg-base-200 list">
             {% for revision in object_list %}

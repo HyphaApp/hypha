@@ -2,13 +2,14 @@
 {% load i18n static apply_tags %}
 {% block title %}{% trans "Submissions results" %}{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Submissions results" %}{% endslot %}
         {% slot sub_heading %}{% trans "Track and explore submission results" %}{% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
         <section class="wrapper wrapper--bottom-space">
             <div class="flex flex-wrap gap-4 lg:gap-8">

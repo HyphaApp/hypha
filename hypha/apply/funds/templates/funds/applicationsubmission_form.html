@@ -3,16 +3,19 @@
 {% block title %}{% trans "Editing" %}: {{ object.application_id }}: {{object.title }}{% endblock %}
 {% block body_class %}bg-base-100{% endblock %}
 
-{% block content %}
+{% block hero %}
     {% adminbar %}
         {% slot header %}
             {% trans "Editing" %}: {{ object.title }} <span class="text-fg-muted">#{{ object.application_id }}</span>
         {% endslot %}
     {% endadminbar %}
+{% endblock %}
 
-    {% include "forms/includes/form_errors.html" with form=form %}
-
+{% block content %}
     <div class="wrapper wrapper--form wrapper--sidebar">
+
+        {% include "forms/includes/form_errors.html" with form=form %}
+
         <div class="wrapper--sidebar--inner">
             <form class="form application-form" action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}

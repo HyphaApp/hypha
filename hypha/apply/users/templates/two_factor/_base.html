@@ -1,7 +1,7 @@
 {% extends 'base-apply.html' %}
 {% load i18n static heroicons %}
 
-{% block content %}
+{% block hero %}
     {% adminbar %}
 
         {% slot back_link %}
@@ -20,7 +20,9 @@
             </a>
         {% endif %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     <div class="max-w-2xl wrapper wrapper--inner-space-medium two-factor">
         {% block content_inner %}{% endblock %}
     </div>
