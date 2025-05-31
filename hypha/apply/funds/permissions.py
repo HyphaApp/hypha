@@ -18,6 +18,16 @@ def has_permission(action, user, object=None, raise_exception=True):
     return value, reason
 
 
+def can_take_submission_actions(user, submission):
+    if not user.is_authenticated:
+        return False, "Login Required"
+
+    if submission.is_archive:
+        return False, "Archived Submission"
+
+    return True, ""
+
+
 def can_edit_submission(user, submission):
     if not user.is_authenticated:
         return False, "Login Required"
@@ -266,6 +276,7 @@ def user_can_view_post_comment_form(user, submission):
 permissions_map = {
     "submission_view": is_user_has_access_to_view_submission,
     "submission_edit": can_edit_submission,
+    "submission_action": can_take_submission_actions,
     "can_view_submission_screening": can_view_submission_screening,
     "archive_alter": can_alter_archived_submissions,
     "co_applicant_invite": can_invite_co_applicants,
