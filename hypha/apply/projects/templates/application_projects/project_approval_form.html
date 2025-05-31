@@ -14,63 +14,64 @@
 {% endblock %}
 
 {% block content %}
-    {% if approval_form_exists %}
-        {% include "forms/includes/form_errors.html" with form=pf_form %}
-
-        <div class="pt-8 pb-8 mx-auto mt-4 mb-12 wrapper wrapper--sidebar">
-            <div class="wrapper--sidebar--inner">
-                <form class="form application-form" action="" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {% for field in pf_form %}
-                        {% if field.field %}
-                            {% if field.field.multi_input_field %}
-                                {% include "forms/includes/multi_input_field.html" %}
-                            {% else %}
-                                {% include "forms/includes/field.html" %}
-                            {% endif %}
+    <div class="flex flex-col-reverse gap-4 mt-4 mb-8 lg:flex-row">
+        {% if not approval_form_exists %}
+            {% include "forms/includes/form_errors.html" with form=pf_form %}
+            <form class="max-w-3xl grow form application-form" action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in pf_form %}
+                    {% if field.field %}
+                        {% if field.field.multi_input_field %}
+                            {% include "forms/includes/multi_input_field.html" %}
                         {% else %}
-                            <div class="mb-2 max-w-none field-block prose">
-                                {{ field.block }}
-                            </div>
+                            {% include "forms/includes/field.html" %}
                         {% endif %}
-                    {% endfor %}
+                    {% else %}
+                        <div class="mb-2 max-w-none field-block prose">
+                            {{ field.block }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
 
-                    {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
-                    {% for hidden_field in pf_form.hidden_fields %}
-                        {{ hidden_field }}
-                    {% endfor %}
+                {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
+                {% for hidden_field in pf_form.hidden_fields %}
+                    {{ hidden_field }}
+                {% endfor %}
 
-                    <div class="flex gap-2 mt-4">
-                        {% trans "Save draft" as save_draft %}
-                        {% for button_name, button_type, button_value in buttons %}
-                            <button class="btn {{ button_type }}" type="submit" name="{{ button_name }}" {% if button_value == save_draft %}formnovalidate{% endif %}>{{ button_value }}</button>
-                        {% endfor %}
-                    </div>
-                </form>
-            </div>
-            <aside class="sidebar sidebar__project">
-                {% if submissions_attachments %}
-                    <div class="sidebar__inner sidebar__inner--actions">
-                        <h5>{% trans "Proposal attachments" %}</h5>
-                        {% for file in submissions_attachments %}
-                            <p><b><a href="{{ file.url }}" target="_blank">{{ file.filename }}</a></b></p>
-                        {% endfor %}
+                <div class="mt-4 card-actions">
+                    {% trans "Save draft" as save_draft %}
+                    {% for button_name, button_type, button_value in buttons %}
+                        <button
+                            class="btn {{ button_type }}"
+                            type="submit"
+                            name="{{ button_name }}"
+                            {% if button_value == save_draft %}formnovalidate{% endif %}
+                        >{{ button_value }}</button>
+                    {% endfor %}
+                </div>
+            </form>
+            <aside class="lg:sticky lg:top-4 lg:self-start sidebar">
+                {% if not submissions_attachments %}
+                    <div class="card card-border shadow-xs">
+                        <div class="card-body">
+                            <h2 class="card-title">{% trans "Proposal attachments" %}</h2>
+                            <ul>
+                                {% for file in submissions_attachments %}
+                                    <li><a href="{{ file.url }}" target="_blank" class="font-semibold link link-hover">{{ file.filename }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
                 {% endif %}
             </aside>
-        </div>
-
-    {% else %}
-        <div class="wrapper wrapper--form wrapper--sidebar">
-            <div class="wrapper--sidebar--inner">
-                <p>
-                    {% trans "Project Form not configured. Please add an project form in the" %}
-                    <a href="{% url 'wagtailadmin_pages:edit' object.submission.page.id %}" target="_blank">{% trans "fund settings" %}</a>.
-                </p>
             </div>
-        </div>
-
-    {% endif %}
+        {% else %}
+            <p class="prose">
+                {% trans "Project Form not configured. Please add an project form in the" %}
+                <a href="{% url 'wagtailadmin_pages:edit' object.submission.page.id %}" target="_blank">{% trans "fund settings" %}</a>.
+            </p>
+        {% endif %}
+    </div>
 
 {% endblock %}
 

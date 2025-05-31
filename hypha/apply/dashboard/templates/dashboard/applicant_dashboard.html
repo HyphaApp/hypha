@@ -13,111 +13,118 @@
 
         <div class="flex items-center p-4 w-lg bg-base-100 text-base-content rounded-box">
             <div class="flex-1">
-                <h3 class="font-bold">{% trans "Submit a new application" %}</h3>
-                <p class="m-0 text-sm">{% trans "Apply now for our open rounds" %}</p>
+                <h3 class="text-xl font-semibold">{% trans "Submit a new application" %}</h3>
+                <p class="text-sm">{% trans "Apply now for our open rounds" %}</p>
             </div>
             <div>
-                <a class="btn btn-primary btn-outline" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
+                <a
+                    class="btn btn-primary btn-outline"
+                    href="{% pageurl APPLY_SITE.root_page %}"
+                >
+                    {% trans "Apply" %}
+                </a>
             </div>
         </div>
+
     {% endadminbar %}
 {% endblock %}
 
 {% block content %}
-    {% if my_tasks.count %}
-        {% include "dashboard/includes/my-tasks.html" with mytasks=mytasks %}
-    {% endif %}
+    <div class="my-4">
+        {% if my_tasks.count %}
+            {% include "dashboard/includes/my-tasks.html" with mytasks=mytasks %}
+        {% endif %}
 
-    {% if my_submissions_exists %}
-        <section class="mb-10">
-            <h2 class="card-title">{% trans "My submissions" %}</h2>
-            <div
-                hx-get="{% url 'dashboard:applicant_submissions' %}"
-                hx-trigger="load"
-                id="submissions_list"
-                class="list"
-            >
-                {% for dummy_item in per_section_items %}
-                    <div class="animate-pulse list-row min-h-40">
-                        <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-base-300 "></div>
-                    </div>
-                {% endfor %}
-
-            </div>
-        </section>
-    {% endif %}
-
-    {% if my_projects_exists %}
-        <div class="mb-10">
-            <h2 class="card-title">{% trans "My projects" %}</h2>
-            <div
-                hx-get="{% url 'dashboard:applicant_projects' %}"
-                hx-trigger="load delay:50"
-                id="projects_list"
-                class="list"
-            >
-                {% for dummy_item in per_section_items %}
-                    <div class="animate-pulse list-row min-h-40">
-                        <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-base-300 "></div>
-                    </div>
-                {% endfor %}
-
-            </div>
-        </div>
-    {% endif %}
-
-    {% if active_invoices.count %}
-        <div class="mb-10">
-            <h2 class="card-title">{% trans "My active invoices" %}</h2>
-            <div class="list">
-                {% for invoice in active_invoices.data %}
-                    <div class="sm:grid-cols-3 list-row">
-                        <div class="col-span-2 sm:col-span-1">
-                            <h4 class="text-xl font-bold">
-                                <a class="link link-hover" href="{{ invoice.get_absolute_url }}">
-                                    {{ invoice.invoice_number }}
-                                </a>
-                            </h4>
-                            <p class="m-0 text-sm text-fg-muted">
-                                {% trans "Submitted" %}
-                                <relative-time datetime={{ invoice.requested_at|date:"c" }}>
-                                    {{ invoice.requested_at|date:"SHORT_DATETIME_FORMAT" }}
-                                </relative-time>
-                            </p>
+        {% if my_submissions_exists %}
+            <section class="mb-10">
+                <h2 class="card-title">{% trans "My submissions" %}</h2>
+                <div
+                    hx-get="{% url 'dashboard:applicant_submissions' %}"
+                    hx-trigger="load"
+                    id="submissions_list"
+                    class="list"
+                >
+                    {% for dummy_item in per_section_items %}
+                        <div class="animate-pulse list-row min-h-40">
+                            <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-base-300 "></div>
                         </div>
-                        <div class="sm:row-start-1 list-col-wrap">
-                            {% display_invoice_table_status_for_user invoice.status request.user as invoice_status %}
-                            <p class="{{ invoice_status|invoice_status_bg_color }} inline-block text-sm font-semibold py-2 px-3 rounded-sm shadow-xs {{ invoice_status|invoice_status_fg_color }}">
-                                {{ invoice_status }}
-                            </p>
+                    {% endfor %}
+
+                </div>
+            </section>
+        {% endif %}
+
+        {% if my_projects_exists %}
+            <div class="mb-10">
+                <h2 class="card-title">{% trans "My projects" %}</h2>
+                <div
+                    hx-get="{% url 'dashboard:applicant_projects' %}"
+                    hx-trigger="load delay:50"
+                    id="projects_list"
+                    class="list"
+                >
+                    {% for dummy_item in per_section_items %}
+                        <div class="animate-pulse list-row min-h-40">
+                            <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-base-300 "></div>
                         </div>
-                        <div class="self-center sm:row-start-1 list-col-wrap">
-                            <span class="text-2xl">
-                                {% if invoice.invoice_amount %}
-                                    {{ invoice.invoice_amount | format_number_as_currency }}
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </span>
-                        </div>
-                    </div>
-                {% empty %}
-                    <div class="list-row">
-                        {% trans "No active invoices" %}
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+
+                </div>
             </div>
-        </div>
-    {% endif %}
+        {% endif %}
 
-    {% if historical_submissions.count %}
-        <h2 class="card-title">{% trans "Submission history" %}</h2>
-        {% render_table historical_submissions.table %}
-    {% endif %}
+        {% if active_invoices.count %}
+            <div class="mb-10">
+                <h2 class="card-title">{% trans "My active invoices" %}</h2>
+                <div class="list">
+                    {% for invoice in active_invoices.data %}
+                        <div class="sm:grid-cols-3 list-row">
+                            <div class="col-span-2 sm:col-span-1">
+                                <h4 class="text-xl font-bold">
+                                    <a class="link link-hover" href="{{ invoice.get_absolute_url }}">
+                                        {{ invoice.invoice_number }}
+                                    </a>
+                                </h4>
+                                <p class="m-0 text-sm text-fg-muted">
+                                    {% trans "Submitted" %}
+                                    <relative-time datetime={{ invoice.requested_at|date:"c" }}>
+                                        {{ invoice.requested_at|date:"SHORT_DATETIME_FORMAT" }}
+                                    </relative-time>
+                                </p>
+                            </div>
+                            <div class="sm:row-start-1 list-col-wrap">
+                                {% display_invoice_table_status_for_user invoice.status request.user as invoice_status %}
+                                <p class="{{ invoice_status|invoice_status_bg_color }} inline-block text-sm font-semibold py-2 px-3 rounded-sm shadow-xs {{ invoice_status|invoice_status_fg_color }}">
+                                    {{ invoice_status }}
+                                </p>
+                            </div>
+                            <div class="self-center sm:row-start-1 list-col-wrap">
+                                <span class="text-2xl">
+                                    {% if invoice.invoice_amount %}
+                                        {{ invoice.invoice_amount | format_number_as_currency }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="list-row">
+                            {% trans "No active invoices" %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
 
-    {% if historical_projects.count %}
-        <h2 class="card-title">{% trans "Project history" %}</h2>
-        {% render_table historical_projects.table %}
-    {% endif %}
+        {% if historical_submissions.count %}
+            <h2 class="card-title">{% trans "Submission history" %}</h2>
+            {% render_table historical_submissions.table %}
+        {% endif %}
 
+        {% if historical_projects.count %}
+            <h2 class="card-title">{% trans "Project history" %}</h2>
+            {% render_table historical_projects.table %}
+        {% endif %}
+    </div>
 {% endblock %}

@@ -28,12 +28,16 @@
     &__back-link {
       display: inline-flex;
       align-items: center;
-      color: var(--color-primary);
-      font-weight: variables.$weight--bold;
+      color: var(--color-fg-muted);
+      font-weight: 600;
+
+      &:hover {
+        color: var(--color-neutral-content);
+      }
 
       &::before {
         @include mixins.triangle(top);
-        margin-inline-end: 0.5rem;
+        margin-inline-end: 0.25rem;
         transform: rotate(-90deg);
       }
     }

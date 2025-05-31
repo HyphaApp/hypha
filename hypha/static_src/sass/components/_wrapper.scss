@@ -208,14 +208,6 @@
     }
   }
 
-  &--tabs {
-    padding: 20px 0;
-
-    @include mixins.media-query(md) {
-      padding: 2rem 0;
-    }
-  }
-
   &--submission-actions {
     margin-inline-start: auto;
     display: flex;
