@@ -143,11 +143,11 @@ extra:
         fedora: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
         macos: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
     postgres:
-      version: 14
+      version: 17
       packages:
-        debian: postgresql-server-dev-14
+        debian: postgresql-server-dev-17
         fedora: postgresql-server
-        macos: postgres@14
+        macos: postgres@17
     postgres_devel:
       packages:
         debian: libpq-dev
@@ -155,6 +155,6 @@ extra:
     tested_ubuntu:
       version: 22.04 LTS
     tested_macos:
-      version: Sequoia 15.2
+      version: Sequoia 15.5
     tested_fedora:
       version: Workstation 38
