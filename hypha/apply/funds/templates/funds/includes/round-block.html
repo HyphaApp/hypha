@@ -1,27 +1,32 @@
 {% load i18n %}
-<div class="wrapper wrapper--bottom-space"
-     x-data="{ activeTab: 'open-rounds' }"
-     x-init="activeTab = window.location.hash && ['#open-rounds', '#closed-rounds'].includes(window.location.hash) ? window.location.hash.substring(1) : activeTab"
+<div
+    class="wrapper wrapper--bottom-space"
+    x-data="{ activeTab: 'open-rounds' }"
+    x-init="activeTab = window.location.hash && ['#open-rounds', '#closed-rounds'].includes(window.location.hash) ? window.location.hash.substring(1) : activeTab"
 >
-    <section class="flex flex-col justify-between items-center md:flex-row">
-        <h3 class="mb-2 text-xl">
-            <a href="{% url 'apply:rounds:list' %}">{{ title }}</a>
-        </h3>
-        <div>
-            <a
-                class="tab__item tab__item--alt"
-                href="#open-rounds"
-                @click="activeTab = 'open-rounds'"
-                :class="{ 'tab__item--active': activeTab === 'open-rounds' }"
-            >{% trans "Open" %}</a>
+    <section class="">
+        <h2 class="justify-between card-title">
+            <a href="{% url 'apply:rounds:list' %}" class="link link-hover">{{ title }}</a>
 
-            <a
-                class="tab__item tab__item--alt"
-                href="#closed-rounds"
-                @click="activeTab = 'closed-rounds'"
-                :class="{ 'tab__item--active': activeTab === 'closed-rounds' }"
-            >{% trans "Closed" %}</a>
-        </div>
+            <div role="tablist" class="tabs tabs-border">
+                <a
+                    role="tab"
+                    class="tab"
+                    href="#open-rounds"
+                    @click="activeTab = 'open-rounds'"
+                    :class="{ 'tab-active': activeTab === 'open-rounds' }"
+                >{% trans "Open" %}</a>
+
+                <a
+                    role="tab"
+                    class="tab"
+                    href="#closed-rounds"
+                    @click="activeTab = 'closed-rounds'"
+                    :class="{ 'tab-active': activeTab === 'closed-rounds' }"
+                >{% trans "Closed" %}</a>
+            </div>
+        </h2>
+
     </section>
 
     {# Open rounds/labs tab #}
