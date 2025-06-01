@@ -1,39 +1,45 @@
 {% extends "base-apply.html" %}
-{% load i18n static nh3_tags %}
+{% load i18n static nh3_tags heroicons %}
 {% block title %}{% if object %}{% trans "Edit a Determination" %} {% if object.is_draft %}{% trans "draft" %}{% endif %}{% else %}{% trans "Create a Determination" %}{% endif %}{% endblock %}
+{% block body_attrs %}x-data="{ showSubmission: false }"{% endblock %}
 
 {% block hero %}
     {% adminbar %}
         {% slot header %}{% if object %}{% trans "Update Determination draft" %}{% else %}{% trans "Create Determination" %}{% endif %}{% endslot %}
-        {% slot sub_heading %}{% if submission %}{% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>{% endif %}{% endslot %}
+        {% slot sub_heading %}
+            {% if submission %}{% trans "For" %} <a class="link link-hover" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>{% endif %}
+        {% endslot %}
 
         {% slot buttons %}
-            <div class="mt-4 tabs tabs-lift ms-auto">
+            <div class="tabs tabs-lift">
                 <button
-                    class="tab [--color-base-content:var(--color-neutral-content)]"
-                    x-data
+                    class="tab tab-active text-base-content/70"
                     @click="showSubmission = !showSubmission"
                     :aria-selected="showSubmission"
                 >
-                    <span x-show="!showSubmission">{% trans "Show application" %}</span>
-                    <span x-show="showSubmission">{% trans "Hide application" %}</span>
+                    <span x-show="!showSubmission" class="flex gap-2 items-center">
+                        {% heroicon_outline "eye" class="w-4 h-4" aria_hidden="true" %}
+                        {% trans "Show application" %}
+                    </span>
+                    <span x-show="showSubmission" class="flex gap-2 items-center" x-cloak>
+                        {% heroicon_outline "eye-slash" class="w-4 h-4" aria_hidden="true" %}
+                        {% trans "Hide application" %}
+                    </span>
                 </button>
             </div>
         {% endslot %}
     {% endadminbar %}
 {% endblock %}
 
-
 {% block content %}
     {% block form %}
         <section class="flex flex-col-reverse gap-4 justify-between my-8 lg:flex-row">
-
-            <div>
+            <div class="flex-1 max-w-3xl">
                 {% include "forms/includes/form_errors.html" with form=form %}
                 {% block determination_information %}{% endblock %}
 
                 <form
-                    class="flex-1 max-w-3xl form"
+                    class="form"
                     action="" method="post"
                     x-data="{ isFormSubmitting: false }"
                     x-on:submit="isFormSubmitting = true"
@@ -61,10 +67,20 @@
                     {% endfor %}
                     {% block form_buttons %}
                         <div class="mt-4 card-actions">
+                            <button
+                                class="btn btn-primary"
+                                :disabled="isFormSubmitting"
+                                type="submit"
+                                name="submit"
+                            >{% trans "Submit" %}</button>
+
                             {% if form.draft_button_name %}
-                                <button class="btn btn-secondary btn-outline" type="submit" name="{{ form.draft_button_name }}">{% trans "Save draft" %}</button>
+                                <button
+                                    class="btn btn-secondary btn-outline"
+                                    type="submit"
+                                    name="{{ form.draft_button_name }}"
+                                >{% trans "Save draft" %}</button>
                             {% endif %}
-                            <button class="btn btn-primary" :disabled="isFormSubmitting" type="submit" name="submit">{% trans "Submit" %}</button>
                         </div>
                     {% endblock %}
                 </form>
@@ -76,14 +92,19 @@
             </div>
 
             {% block show_submission %}
-                <section
-                    class="overflow-y-auto flex-grow p-4 card card-border bg-base-200"
+                <aside
+                    x-cloak
                     x-show="showSubmission"
-                    hx-get="{% url 'funds:submissions:partial-answers' submission.id %}"
-                    hx-trigger="intersect once"
+                    class="overflow-y-auto max-h-screen grow bg-base-200 card card-border lg:max-w-1/2"
                 >
-                    <p>{% trans "Loading…" %}</p>
-                </section>
+                    <div
+                        class="card-body"
+                        hx-get="{% url 'funds:submissions:partial-answers' submission.id %}"
+                        hx-trigger="revealed"
+                    >
+                        <p>{% trans "Loading…" %}</p>
+                    </div>
+                </aside>
             {% endblock %}
 
         </section>

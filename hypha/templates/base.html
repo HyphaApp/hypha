@@ -68,6 +68,7 @@
         hx-ext="multi-swap"
         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
         class="antialiased bg-base-100 min-h-full flex flex-col {% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}"
+        {% block body_attrs %}{% endblock %}
     >
         {% if request.user.is_hijacked %}
             {% include "includes/hijack-bar.html" %}
@@ -77,7 +78,7 @@
         {% block hero %}{% endblock hero %}
 
         {% block content_wrapper %}
-            <main class="container-constrained grow" id="main" x-data="{ showSubmission: false }">
+            <main class="container-constrained grow" id="main">
                 {% block content %}{% endblock %}
             </main>
         {% endblock %}

@@ -13,7 +13,7 @@
 
         {% slot header %} {% trans "Determination" %} {% if determination.is_draft %}[{% trans "DRAFT" %}] {% endif %}{% endslot %}
         {% slot sub_heading %}
-            {% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" determination.submission.id %}">{{ determination.submission.title_text_display }}</a>
+            {% trans "For" %} <a class="link link-hover" href="{% url "funds:submissions:detail" determination.submission.id %}">{{ determination.submission.title_text_display }}</a>
         {% endslot %}
 
     {% endadminbar %}
