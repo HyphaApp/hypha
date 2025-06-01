@@ -7,7 +7,7 @@
             <h1 class="mb-2 text-2xl font-medium md:m-0 md:text-3xl">{% render_slot slots.header %}</h1>
             {% if slots.sub_heading %}<p class="m-0 max-w-3xl text-sm truncate">{% render_slot slots.sub_heading %}</p>{% endif %}
         </div>
-        {% if slots.buttons %}<div class="self-end -mb-5">{% render_slot slots.buttons %}</div>{% endif %}
+        {% if slots.buttons %}<div class="self-end -mb-4">{% render_slot slots.buttons %}</div>{% endif %}
         {% render_slot slots.inner_block %}
     </div>
 </div>
