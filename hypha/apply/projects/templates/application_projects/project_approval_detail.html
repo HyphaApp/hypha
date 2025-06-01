@@ -141,7 +141,7 @@
                             {% endif %}
 
                             {% if can_update_paf_status %}
-                                <a class="btn btn-primary btn-block {% if user_can_approve %} is-disabled {% endif %}"
+                                <a class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
                                    href="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
                                    hx-get="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
                                    hx-target="#htmx-modal"

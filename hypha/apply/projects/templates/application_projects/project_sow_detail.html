@@ -43,7 +43,7 @@
                         {% user_can_edit_pfs object user as can_edit_pfs %}
                         {% if can_edit_pfs %}
                             <a
-                                class="btn btn-primary btn-block {% if user_can_approve %} is-disabled {% endif %}"
+                                class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
                                 href="{% url 'apply:projects:edit_sow' pk=object.submission.pk %}"
                             >
                                 {% trans "Edit" %}
