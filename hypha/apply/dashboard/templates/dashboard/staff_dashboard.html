@@ -95,8 +95,12 @@
 
         {% if PROJECTS_ENABLED and paf_for_review.count %}
             <div id="paf_for_review" class="wrapper wrapper--bottom-space">
-                <h3 class="mb-2 text-xl">{% trans "Project forms for review" %}</h3>
-                {% render_table paf_for_review.table %}
+                <h2 class="mb-2 card-title">{% trans "Project forms for review" %}</h2>
+                <div class="card card-border shadow-xs">
+                    <div class="p-0 card-body">
+                        {% render_table paf_for_review.table %}
+                    </div>
+                </div>
             </div>
         {% endif %}
 
