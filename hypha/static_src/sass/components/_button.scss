@@ -13,12 +13,6 @@
     cursor: pointer;
   }
 
-  &:disabled,
-  &.is-disabled {
-    pointer-events: none;
-    opacity: 0.5;
-  }
-
   &--primary {
     @include mixins.button(
       variables.$color--light-blue,
