@@ -90,18 +90,18 @@
     </div>
 
     <details class="mt-4">
-        <summary class="font-semibold uppercase text-fg-muted">
+        <summary class="mb-2 font-semibold uppercase text-fg-muted">
             {% trans "More actions" %}
         </summary>
 
         <a
-            class="w-full btn btn-outline btn-secondary button--bottom-space"
+            class="mb-2 w-full btn btn-outline btn-secondary"
             href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}"
         >{% trans "Revisions" %}</a>
 
         {% if request.user|can_translate_submission %}
             <button
-                class="w-full btn btn-outline btn-secondary button--bottom-space"
+                class="mb-2 w-full btn btn-outline btn-secondary"
                 hx-get="{% url 'funds:submissions:translate' pk=object.pk %}"
                 hx-target="#htmx-modal"
             >
@@ -111,19 +111,19 @@
         {% endif %}
 
         <button
-            class="w-full btn btn-outline btn-secondary button--bottom-space"
+            class="mb-2 w-full btn btn-outline btn-secondary"
             hx-get="{% url 'funds:submissions:metaterms_update' pk=object.pk %}"
             hx-target="#htmx-modal"
         >{% trans "Tags" %}</button>
 
         <button
-            class="w-full btn btn-outline btn-secondary button--bottom-space"
+            class="mb-2 w-full btn btn-outline btn-secondary"
             hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}"
             hx-target="#htmx-modal"
         >{% trans "Create Reminder" %}</button>
 
         <a
-            class="w-full btn btn-outline btn-secondary button--bottom-space"
+            class="mb-2 w-full btn btn-outline btn-secondary"
             href="{% url "apply:submissions:download" pk=object.pk %}"
         >
             {% trans "Download as PDF" %}
@@ -131,7 +131,7 @@
 
         {% if can_archive %}
             <button
-                class="w-full btn btn-outline btn-secondary button--bottom-space"
+                class="mb-2 w-full btn btn-outline btn-secondary"
                 hx-get="{% url 'funds:submissions:archive' pk=object.pk %}"
                 hx-target="#htmx-modal"
             >

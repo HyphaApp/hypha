@@ -56,11 +56,14 @@
   a {
     @apply underline-offset-2;
   }
-  .table thead a {
-    @apply link link-hover;
-  }
-  .table tbody a {
-    @apply link link-primary font-semibold;
+
+  .table {
+    thead a:not(.btn) {
+      @apply link link-hover;
+    }
+    tbody a:not(.btn) {
+      @apply link link-primary font-semibold;
+    }
   }
 }
 
@@ -89,6 +92,6 @@
   @apply container mx-auto px-4 sm:px-6 lg:px-8;
 }
 
-@utility container-narrow {
-  @apply container mx-auto px-4 sm:px-6 lg:px-8;
+@utility card-actions {
+  @apply gap-3;
 }

@@ -21,12 +21,13 @@
     <dt class="font-semibold">
         {% trans "Start date" %}
         {% if request.user.is_apply_staff and show_start %}
-            <a class="transition-opacity hover:opacity-70 is-active"
-               href="{% url 'apply:projects:project_dates_update' object.submission.id %}"
-               hx-get="{% url 'apply:projects:project_dates_update' object.submission.id %}"
-               hx-target="#htmx-modal"
+            <a
+                class="btn btn-xs btn-ghost btn-square"
+                href="{% url 'apply:projects:project_dates_update' object.submission.id %}"
+                hx-get="{% url 'apply:projects:project_dates_update' object.submission.id %}"
+                hx-target="#htmx-modal"
             >
-                {% heroicon_solid "pencil-square" class="inline mt-2 align-text-bottom ms-1" aria_hidden=true size=20 %}
+                {% heroicon_micro "pencil-square" aria_hidden=true size=20 %}
                 <span class="sr-only">{% trans "edit dates" %}</span>
             </a>
         {% endif %}
@@ -45,12 +46,13 @@
     <dt class="font-semibold">
         {% trans "End date" %}
         {% if request.user.is_apply_staff %}
-            <a class="transition-opacity hover:opacity-70 is-active"
-               href="{% url 'apply:projects:project_dates_update' object.submission.id %}"
-               hx-get="{% url 'apply:projects:project_dates_update' object.submission.id %}"
-               hx-target="#htmx-modal"
+            <a
+                class="btn btn-xs btn-ghost btn-square"
+                href="{% url 'apply:projects:project_dates_update' object.submission.id %}"
+                hx-get="{% url 'apply:projects:project_dates_update' object.submission.id %}"
+                hx-target="#htmx-modal"
             >
-                {% heroicon_solid "pencil-square" class="inline mt-2 align-text-bottom ms-1" aria_hidden=true size=20 %}
+                {% heroicon_micro "pencil-square" aria_hidden=true size=20 %}
                 <span class="sr-only">{% trans "edit dates" %}</span>
             </a>
         {% endif %}

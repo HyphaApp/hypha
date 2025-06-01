@@ -1,4 +1,4 @@
-{% load dashboard_statusbar_tags %}
+{% load dashboard_statusbar_tags i18n %}
 
 <h1
     class="mb-2 text-3xl font-medium"
@@ -14,8 +14,10 @@
     {% if object.submission.round %}
         <span>
             {% if request.user.is_apply_staff %}
-                <a class="text-white underline"
-                   href="{% url 'apply:submissions:list' %}?round={{ object.submission.round.pk }}"
+                <a
+                    class="transition-opacity hover:opacity-70 link"
+                    title="{% trans 'View all applications in this round' %}"
+                    href="{% url 'apply:submissions:list' %}?round={{ object.submission.round.pk }}"
                 >{{ object.submission.round }}</a>
             {% else %}
                 {{ object.submission.round }}
