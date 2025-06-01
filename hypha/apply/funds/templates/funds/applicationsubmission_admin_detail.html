@@ -39,12 +39,13 @@
                 </div>
             </div>
 
-            <div class="gap-4 wrapper wrapper--sidebar-buttons">
-                {% include 'review/includes/review_button.html' with submission=object class="w-1/2" %}
-                {% if request.user.is_apply_staff and object.reviews.exists %}
+            <div class="card-actions">
+                {% include 'review/includes/review_button.html' with submission=object class="grow" %}
+
+                {% if request.user.is_apply_staff and not object.reviews.exists %}
                     <a
                         href="{% url 'apply:submissions:reviews:list' submission_pk=object.id %}"
-                        class="btn btn-secondary btn-outline button--half-width"
+                        class="btn btn-outline grow"
                     >
                         {% trans "View all" %}
                     </a>

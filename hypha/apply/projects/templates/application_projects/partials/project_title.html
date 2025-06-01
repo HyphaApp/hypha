@@ -4,12 +4,13 @@
 <span class="text-fg-muted">#{{ object.submission.application_id }}</span>
 
 {% if request.user.is_apply_staff %}
-    <a class="transition-opacity hover:opacity-70 is-active"
-       href="{% url 'apply:projects:project_title_update' object.submission.id %}"
-       hx-get="{% url 'apply:projects:project_title_update' object.submission.id %}"
-       hx-target="#htmx-modal"
+    <a
+        class="transition-opacity hover:opacity-70 btn btn-square btn-sm btn-ghost"
+        href="{% url 'apply:projects:project_title_update' object.submission.id %}"
+        hx-get="{% url 'apply:projects:project_title_update' object.submission.id %}"
+        hx-target="#htmx-modal"
     >
-        {% heroicon_solid "pencil-square" class="inline mt-2 ms-1" aria_hidden=true %}
+        {% heroicon_mini "pencil-square" aria_hidden=true %}
         <span class="sr-only">{% trans "edit title" %}</span>
     </a>
 {% endif %}

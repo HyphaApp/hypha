@@ -34,6 +34,7 @@
             </p>
         </div>
     </div>
+
     <form
         class="form form--report-frequency"
         method="post"
@@ -65,15 +66,22 @@
             {% endfor %}
         </div>
 
-        <div class="mt-5 sm:flex sm:flex-row-reverse sm:gap-4 sm:mt-4">
+        <div class="mt-4 sm:flex-row-reverse card-actions">
 
-            <button class="w-full sm:w-auto btn btn-primary" type="submit" name="save" value="save"">
-                                                                                                    Save
-                                                                                                    </button>
+            <button class="w-full sm:w-auto btn btn-primary" type="submit" name="save" value="save">
+                {% trans "Save" %}
+            </button>
 
-                                                                                                    <button type="button" class="mt-3 w-full sm:mt-0 sm:w-auto btn btn-secondary btn-outline btn-soft" type="submit" name="disable-reporting" value="disable-reporting">{% trans "Disable" %}</button>
-                                                                                                                                                                                                                                                                                           </div>
-                                                                                                                                                                                                                                                                                           </form>
-                                                                                                                                                                                                                                                                                           </div>
+            <button
+                class="w-full sm:w-auto btn btn-secondary btn-outline btn-soft"
+                type="submit"
+                name="disable-reporting"
+                value="disable-reporting"
+            >
+                {% trans "Disable" %}
+            </button>
+        </div>
+    </form>
+</div>
 
-                                                                                                                                                                                                                                                                                           <script src="{% static 'js/report-calculator.js' %}"></script>
+<script src="{% static 'js/report-calculator.js' %}"></script>

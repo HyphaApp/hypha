@@ -114,29 +114,6 @@
     margin-inline-start: 20px;
   }
 
-  &--full-width {
-    width: 100%;
-    text-align: center;
-  }
-
-  &--half-width {
-    width: 50%;
-    padding: 10px;
-    text-align: center;
-
-    &:last-child {
-      margin-inline-end: 0;
-    }
-  }
-
-  &--bottom-space {
-    margin-block-end: 10px;
-
-    &:last-child {
-      margin-block-end: 0;
-    }
-  }
-
   &--top-space {
     margin-block-start: 20px;
   }
@@ -182,18 +159,6 @@
 
   &--link {
     color: variables.$color--primary;
-  }
-
-  &--tooltip-disabled {
-    background-color: variables.$color--button-disabled;
-    border: 1px solid variables.$color--button-disabled;
-
-    &:hover,
-    &:active,
-    &:focus {
-      cursor: default;
-      background-color: variables.$color--button-disabled;
-    }
   }
 
   &--flag {

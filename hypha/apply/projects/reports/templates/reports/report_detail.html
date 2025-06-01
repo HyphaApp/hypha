@@ -56,33 +56,39 @@
         </div>
         <aside class="sidebar">
             {% if request.user.is_apply_staff or report.previous or report.next %}
-                <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
-                    {% if request.user.is_apply_staff %}
-                        <a
-                            class="btn btn-primary btn-block"
-                            href="{% url "apply:projects:reports:edit" pk=report.pk %}"
-                        >
-                            {% if object.draft %}
-                                {% trans "Continue editing" %}
-                            {% else %}
-                                {% trans "Edit" %}
-                            {% endif %}
-                        </a>
-                    {% endif %}
-                    {% if report.previous %}
-                        <a
-                            class="btn btn-primary btn-block"
-                            href="{% url "apply:projects:reports:detail" pk=report.previous.pk %}">
-                            {% trans "View previous report" %}
-                        </a>
-                    {% endif %}
-                    {% if report.next %}
-                        <a
-                            class="btn btn-primary btn-block"
-                            href="{% url "apply:projects:reports:detail" pk=report.next.pk %}">
-                            {% trans "View next report" %}
-                        </a>
-                    {% endif %}
+                <div class="card card-border shadow-xs">
+                    <div class="card-body">
+                        <h2 class="card-title">{% trans "Actions to take" %}</h2>
+
+                        {% if request.user.is_apply_staff %}
+                            <a
+                                class="btn btn-primary btn-block"
+                                href="{% url "apply:projects:reports:edit" pk=report.pk %}"
+                            >
+                                {% if object.draft %}
+                                    {% trans "Continue editing" %}
+                                {% else %}
+                                    {% trans "Edit" %}
+                                {% endif %}
+                            </a>
+                        {% endif %}
+                        {% if report.previous %}
+                            <a
+                                class="btn btn-secondary btn-block btn-outline"
+                                href="{% url "apply:projects:reports:detail" pk=report.previous.pk %}"
+                            >
+                                {% trans "View previous report" %}
+                            </a>
+                        {% endif %}
+                        {% if report.next %}
+                            <a
+                                class="btn btn-secondary btn-block btn-outline"
+                                href="{% url "apply:projects:reports:detail" pk=report.next.pk %}"
+                            >
+                                {% trans "View next report" %}
+                            </a>
+                        {% endif %}
+                    </div>
                 </div>
             {% endif %}
         </aside>
