@@ -1,8 +1,8 @@
 {% load i18n wagtailimages_tags heroicons %}
 
 <li
-    class="reviews-sidebar__item {% if not reviewer.review %}text-base-content/80 {% endif %}"
-    {% if hidden and  not reviewer.review %}x-cloak x-show="showHiddenReviewers" x-transition.opacity{% endif %}
+    class="reviews-sidebar__item list-row {% if not reviewer.review %}text-base-content/80 {% endif %}"
+    {% if hidden and not reviewer.review %}x-cloak x-show="showHiddenReviewers" x-transition.opacity{% endif %}
 >
     {% if not reviewer.review or reviewer.review.is_draft %}
         <div class="reviews-sidebar__name">
@@ -13,7 +13,7 @@
                     {{ reviewer }}
                 {% endif %}
             </span>
-            {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
+            {% if reviewer.role and reviewer.role.icon %}{% image reviewer.role.icon max-12x12 %}{% endif %}
         </div>
         <div>-</div>
         <div>-</div>
@@ -32,7 +32,9 @@
                         {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
                     </div>
                 </a>
-                <div class="milli">{{ reviewer.review.created_at|date:"SHORT_DATE_FORMAT" }}</div>
+                <relative-time datetime="{{ reviewer.review.created_at|date:'c' }}" class="text-xs">
+                    {{ reviewer.review.created_at|date:'SHORT_DATETIME_FORMAT' }}
+                </relative-time>
             </div>
         {% else %}
             <div class="reviews-sidebar__name">
