@@ -1,42 +1,36 @@
-{% load i18n review_tags %}
+{% load i18n review_tags heroicons %}
 
-<div class="flex justify-around items-center px-2 bg-base-200">
-    {% with recommendation|traffic_light as traffic_light_html %}
-        {% if traffic_light_html %}
-            <span class="py-1">
-                {{ recommendation|traffic_light }}
-            </span>
-        {% endif %}
-    {% endwith %}
+{% with recommendation|traffic_light as traffic_light_html %}
     {% with assigned_reviewers|average_review_score as average %}
-        {% if average %}
-            <span class="py-1 font-medium">
-                {{ average }}
-            </span>
+        {% if traffic_light_html or average %}
+            <div class="flex justify-around items-center p-2 mb-2 bg-base-200">
+                {% if traffic_light_html %}
+                    <span>{{ recommendation|traffic_light }}</span>
+                {% endif %}
+                {% if average %}
+                    <span class="font-medium">{{ average }}</span>
+                {% endif %}
+            </div>
         {% endif %}
     {% endwith %}
-</div>
+{% endwith %}
 
-<ul class="mt-4 reviews-sidebar" id="id_reviewers" x-data='{showHiddenReviewers: false}'>
-    {% if not staff_reviewers_exist %}
+{% if not staff_reviewers_exist %}
+    <p class="p-2 mb-2 alert alert-info alert-soft">
+        {% heroicon_outline "information-circle" aria_hidden="true" %}
         {% if request.user.is_org_faculty %}
-            <li class="reviews-sidebar__no-reviews">{% trans "No staff reviewers yet" %}</li>
-            <hr class="reviews-sidebar__split">
+            {% trans "No staff reviewers yet" %}
         {% else %}
-            <li class="reviews-sidebar__no-reviews">{% trans "No public reviews yet" %}</li>
-            <hr class="reviews-sidebar__split">
+            {% trans "No public reviews yet" %}
         {% endif %}
-    {% endif %}
+    </p>
+{% endif %}
+
+<ul class="reviews-sidebar list" id="id_reviewers" x-data='{showHiddenReviewers: false}'>
 
     {% regroup assigned_reviewers by type as reviewers_list %}
 
     {% for reviewer_type, reviewers in reviewers_list %}
-        {% if not forloop.first %}
-            {% ifchanged reviewer_type %}
-                <hr class="reviews-sidebar__split">
-            {% endifchanged %}
-        {% endif %}
-
         {% for reviewer in reviewers %}
             {% if reviewer_type.name in hidden_types %}
                 {% include 'funds/includes/review_sidebar_item.html' with reviewer=reviewer hidden=True %}
@@ -45,13 +39,14 @@
                     <li>
                         <a
                             role="button"
-                            class="text-sm font-bold underline"
+                            class="mt-2 text-sm font-semibold link"
                             @click.prevent="showHiddenReviewers = !showHiddenReviewers"
                             href="#"
                         >
                             <span x-show="!showHiddenReviewers">{% trans "Show more..." %}</span>
                             <span x-cloak x-show="showHiddenReviewers">{% trans "Show less..." %}</span>
-                        </a></li>
+                        </a>
+                    </li>
                 {% endif %}
             {% else %}
                 {% include 'funds/includes/review_sidebar_item.html' with reviewer=reviewer %}

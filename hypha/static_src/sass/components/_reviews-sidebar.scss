@@ -3,8 +3,6 @@
 
 .reviews-sidebar {
   $root: &;
-  margin-block-end: 20px;
-  font-weight: variables.$weight--bold;
 
   &__decision {
     position: relative;
@@ -16,16 +14,6 @@
   }
 
   &__item {
-    display: flex;
-    justify-content: space-between;
-    margin-block-end: 20px;
-
-    @supports (display: grid) {
-      display: grid;
-      grid-template-columns: 45% 25% 15% 15%;
-      gap: 5px;
-    }
-
     &--decision {
       margin-block-end: 10px;
       font-weight: variables.$weight--semibold;
@@ -80,13 +68,6 @@
     position: relative;
     display: flex;
     align-items: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    &:hover {
-      display: inline-flex;
-      overflow: visible;
-    }
 
     img {
       margin-inline-start: 7px;
