@@ -20,7 +20,7 @@
 {% block content %}
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
         <div class="wrapper wrapper--bottom-space">
-            <h2 class="mb-2 text-xl">
+            <h2 class="mb-2 card-title">
                 {% trans "Community review submissions" %}
                 <span class="badge badge-soft badge-secondary">
                     {{ my_community_review_count }}
@@ -36,7 +36,7 @@
 
         {% if my_reviewed.count %}
             <div class="wrapper wrapper--bottom-space">
-                <h2 class="mb-2 text-xl">
+                <h2 class="mb-2 card-title">
                     {% trans "Your previous reviews" %}
                 </h2>
                 {% include "submissions/partials/submissions-inline.html" with submissions=my_reviewed.objects row_layout="table" %}
@@ -44,7 +44,7 @@
         {% endif %}
 
         <div class="wrapper wrapper--bottom-space">
-            <h2 class="mb-2 text-xl">
+            <h2 class="mb-2 card-title">
                 {% trans "Your active submissions" %}
             </h2>
             {% for submission in my_submissions %}
@@ -88,7 +88,7 @@
 
         {% if my_inactive_submissions.data %}
             <div class="wrapper wrapper--bottom-space">
-                <h2 class="mb-2 text-xl">
+                <h2 class="mb-2 card-title">
                     {% trans "Submission history" %}
                 </h2>
                 {% render_table my_inactive_submissions %}
