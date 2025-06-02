@@ -164,16 +164,6 @@
     }
   }
 
-  &__label {
-    .wrapper--comments & {
-      font-size: 15px;
-    }
-  }
-
-  &__required {
-    color: variables.$color--purple;
-  }
-
   &__help {
     margin: 0;
     color: var(--color-fg-muted);
