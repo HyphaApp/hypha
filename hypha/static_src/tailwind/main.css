@@ -95,3 +95,7 @@
 @utility card-actions {
   @apply gap-3;
 }
+
+.wmd-preview {
+  @apply prose;
+}

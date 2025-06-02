@@ -59,7 +59,7 @@
 
 {% block content %}
 
-    <div class="mt-4">
+    <div class="mt-4 mb-8">
         <div class="wrapper wrapper--sidebar">
             {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
                 <div class="grow">
