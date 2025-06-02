@@ -1,29 +1,28 @@
 {% load i18n heroicons %}
 
-<form action="{% url 'hijack:release' %}"
-      method="POST"
-      class="py-2 px-4 text-center border-t-4 bg-warning text-warning-content border-warning border-stripe"
+<form
+    action="{% url 'hijack:release' %}"
+    method="POST"
+    class="py-2 px-4 text-center border-t-4 bg-warning text-warning-content border-warning border-stripe"
 >
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ request.path }}">
-    <span>
-
+    <div role="alert" class="">
         {% heroicon_micro "exclamation-triangle" size=18 class="inline align-text-bottom" aria_hidden=true %}
 
-        {% blocktrans trimmed with user=request.user %}
-            You are currently working on behalf of <strong class="font-bold">{{ user }}</strong>
-        {% endblocktrans %}
-        &LT;{{ request.user.email }}&GT;
-        {% for role in request.user.get_role_names %}
-            <span class="inline-block px-2 text-xs font-semibold text-gray-800 uppercase bg-gray-200 rounded-full">
-                {{ role }}
-            </span>
-        {% endfor %}
+        <span class="font-semibold">
+            {% blocktrans trimmed with user=request.user %}
+                You are currently working on behalf of <strong class="font-bold">{{ user }}</strong>
+            {% endblocktrans %}
+            &LT;{{ request.user.email }}&GT;
+            {% for role in request.user.get_role_names %}
+                <span class="badge text-warning-content badge-outline">{{ role }}</span>
+            {% endfor %}
+        </span>
 
-
-    </span>
-
-    <button class="font-semibold uppercase btn btn-sm btn-outline ms-2" type="submit">
-        {% translate 'Release' %}
-    </button>
+        <button class="uppercase btn btn-sm btn-primary ms-2" type="submit">
+            {% heroicon_mini "user-minus" class="w-4 h-4" aria_hidden=true %}
+            {% translate 'Release' %}
+        </button>
+    </div>
 </form>
