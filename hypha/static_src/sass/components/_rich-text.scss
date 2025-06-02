@@ -92,13 +92,14 @@
 
       &.word-count-warning,
       &.word-count-warning-2 {
-        background-color: variables.$color--pastel-red;
+        background-color: var(--color-warning);
+        color: var(--color-warning-content);
         font-weight: bold;
       }
 
       &.word-count-warning-2 {
-        background-color: variables.$color--error;
-        color: variables.$color--white;
+        background-color: var(--color-error);
+        color: var(--color-error-content);
       }
     }
   }

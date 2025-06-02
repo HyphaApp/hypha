@@ -175,18 +175,6 @@
     }
   }
 
-  &__help-link {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-
-    a {
-      &:hover {
-        cursor: pointer;
-        color: variables.$color--darkest-blue;
-      }
-    }
-  }
-
   &__open-icon {
     display: inline;
     width: 20px;
@@ -264,7 +252,7 @@
     padding: 5px;
     margin: 20px 0 0;
     color: var(--color-error-content);
-    background: variables.$color--error;
+    background: var(--color-error);
     z-index: 2;
 
     @include mixins.media-query(lg) {
@@ -278,8 +266,7 @@
         position: absolute;
         inset-block-start: 12px;
         inset-inline-start: -10px;
-        border-color: transparent variables.$color--error transparent
-          transparent;
+        border-color: transparent var(--color-error) transparent transparent;
         border-style: solid;
         border-width: 5px 10px 5px 0;
         content: "";

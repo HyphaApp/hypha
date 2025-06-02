@@ -2,10 +2,6 @@
 @use "../abstracts/variables";
 
 .heading {
-  &--no-margin {
-    margin: 0;
-  }
-
   &--meta {
     display: flex;
     flex-wrap: wrap;
@@ -29,10 +25,6 @@
   &--submission-meta {
     display: flex;
     flex-direction: column;
-  }
-
-  &--light-grey {
-    color: variables.$color--black-40;
   }
 
   &--normal {

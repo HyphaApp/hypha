@@ -14,56 +14,30 @@ $color--mid-dark-grey: var(--color-mid-dark-grey);
 $color--dark-grey: var(--color-dark-grey);
 
 // Brand
-$color--lightest-blue: var(--color-lightest-blue);
 $color--light-blue: var(--color-light-blue);
 $color--light-blue-90: var(--color-light-blue-90);
 $color--lighter-blue: var(--color-lighter-blue);
 $color--dark-blue: var(--color-dark-blue);
-$color--darkest-blue: var(--color-darkest-blue);
 $color--mustard: var(--color-mustard);
-$color--purple: var(--color-purple);
-$color--dark-pink: var(--color-dark-pink);
-$color--pink: var(--color-pink);
 $color--light-pink: var(--color-light-pink);
 $color--light-green: var(--color-light-green);
-$color--cream: var(--color-cream);
 $color--dark-tomato: var(--color-dark-tomato);
 $color--tomato: var(--color-tomato);
-$color--mint: var(--color-mint);
-$color--grass: var(--color-grass);
-$color--ocean: var(--color-ocean);
 $color--sky-blue: var(--color-sky-blue);
 $color--marine: var(--color-marine);
 $color--mist: var(--color-mist);
 $color--green: var(--color-green);
-$color--pastel-red: var(--color-pastel-red);
-$color--pastel-green: var(--color-pastel-green);
 
 // Transparent
 $color--black-60: var(--color-black-60);
-$color--black-50: var(--color-black-50);
-$color--black-40: var(--color-black-40);
-$color--black-20: var(--color-black-20);
-$color--black-10: var(--color-black-10);
-$color--white-20: var(--color-white-20);
-$color--white-10: var(--color-white-10);
+$color--black-20: rgb(0 0 0 / 20%);
 
 // Assignment
 $color--default: var(--color-base-content);
 $color--primary: var(--color-primary);
-$color--error: var(--color-error);
-$color--correct: var(--color-correct);
-$color--button-disabled: var(--color-button-disabled);
 
 // Font sizes
 $base-font-size: 16px;
-$font-size--alpha: var(--font-size-alpha);
-$font-size--beta: var(--font-size-beta);
-$font-size--gamma: var(--font-size-gamma);
-$font-size--delta: var(--font-size-delta);
-$font-size--epsilon: var(--font-size-epsilon);
-$font-size--zeta: var(--text-sm);
-$font-size--milli: var(--text-xs);
 
 // Font weights
 $weight--normal: var(--font-weight-normal);
@@ -90,9 +64,6 @@ $spacing-reverse: var(--spacing-reverse);
 
 // Dropdown height
 $dropdown-height: var(--dropdown-height);
-
-// The custom width of 465px allow the buttons to scale with the input field
-$input-box-max-width: 465px;
 
 // Breakpoints
 $breakpoints: (
