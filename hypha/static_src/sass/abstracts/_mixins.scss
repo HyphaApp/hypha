@@ -42,32 +42,6 @@
   }
 }
 
-// Small button mixin
-@mixin button--small {
-  padding: 2px;
-  font-size: 12px;
-
-  @include media-query(lg) {
-    & {
-      padding: 3px 5px;
-    }
-  }
-}
-
-// Viewport sized typography mixin that takes a min and max pixel-based value
-@mixin responsive-font-sizes($min, $max) {
-  $minbreakpoint: 640;
-  $maxbreakpoint: 1280;
-  $minsize: functions.strip-unit($min);
-  $maxsize: functions.strip-unit($max);
-  $minrem: functions.rem($min);
-  $maxrem: functions.rem($max);
-  $slope: math.div($maxsize - $minsize, $maxbreakpoint - $minbreakpoint);
-  $intersection: functions.rem($minsize - $slope * $minbreakpoint);
-
-  font-size: clamp($minrem, calc($intersection + $slope * 100vw), $maxrem);
-}
-
 // Triangle mixin
 // @param {Direction} $direction - Triangle direction, either `top`, `right`, `bottom` or `left`
 // @param {Color} $color [currentcolor] - Triangle color
