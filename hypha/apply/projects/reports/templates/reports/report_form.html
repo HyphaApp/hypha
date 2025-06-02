@@ -20,7 +20,7 @@
         {% include "forms/includes/form_errors.html" with form=form %}
 
         <div class="wrapper wrapper--form">
-            <div class="wrapper--sidebar--inner">
+            <div class="grow">
 
                 <div role="alert" class="mb-4 alert alert-info">
                     {% heroicon_outline 'exclamation-circle' stroke_width=2 size=18 aria_hidden=true %}
@@ -60,7 +60,7 @@
         </div>
     {% else %}
         <div class="wrapper wrapper--form wrapper--sidebar">
-            <div class="wrapper--sidebar--inner">
+            <div class="grow">
                 {% if request.user.is_apply_staff %}
                     <p>
                         {% trans "Project Report Form not configured. Please add a project report form in the" %}

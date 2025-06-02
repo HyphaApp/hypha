@@ -99,17 +99,6 @@
     display: flex;
   }
 
-  &--search {
-    position: absolute;
-    inset-block-start: 0.65em;
-    inset-inline-end: 10px;
-
-    svg {
-      fill: variables.$color--primary;
-      height: 24px;
-    }
-  }
-
   &--left-space {
     margin-inline-start: 20px;
   }

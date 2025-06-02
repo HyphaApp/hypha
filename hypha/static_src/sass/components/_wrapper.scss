@@ -141,30 +141,6 @@
         flex-basis: 210px;
       }
     }
-
-    &--inner {
-      flex: 1;
-    }
-  }
-
-  &--search {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
-    @include mixins.media-query(sm) {
-      flex-direction: row;
-    }
-  }
-
-  &--sidebar-buttons {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  &--cta-box {
-    color: variables.$color--default;
-    background-color: variables.$color--white;
   }
 
   &--applicant-dashboard {

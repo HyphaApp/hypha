@@ -29,7 +29,7 @@
 {% block content %}
     {% include "forms/includes/form_errors.html" with form=form %}
     <div class="wrapper wrapper--form wrapper--sidebar">
-        <div class="wrapper--sidebar--inner">
+        <div class="grow">
             <form class="form" action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% for field in form %}
