@@ -10,10 +10,9 @@
 {% endblock %}
 
 {% block content %}
-    <div class="wrapper wrapper--large wrapper--inner-space-medium">
-        <section class="wrapper wrapper--bottom-space">
-            <div class="flex flex-wrap gap-4 lg:gap-8">
-
+    <div class="flex flex-col gap-8 my-8 mx-auto max-w-6xl">
+        <section>
+            <div class="flex flex-wrap gap-4 justify-between lg:gap-8">
                 <section aria-labelledby="amounts-heading">
                     <h3 id="amounts-heading" class="mb-2 card-title">{% trans "Amounts" %}</h3>
                     <div class="shadow lg:w-full stats">
@@ -100,8 +99,8 @@
             </div>
         </section>
 
-        <section class="wrapper wrapper--bottom-space" aria-labelledby="submission-value-total">
-            <h3 id="submission-value-total" class="card-title">{% trans "Totals" %}</h3>
+        <section aria-labelledby="submission-value-total">
+            <h2 id="submission-value-total" class="mb-2 card-title">{% trans "Totals" %}</h2>
 
 
             {% include "funds/includes/table_filter_and_search.html" with search_term=search_term %}
@@ -130,7 +129,7 @@
 
             {% if not count_values == object_list.count %}
                 {% with object_list.count|subtract:count_values as count_diff %}
-                    <p class="text-xs text-base-content/60" aria-live="polite">
+                    <p class="mt-1 text-xs text-fg-muted" aria-live="polite">
                         {% blocktrans %}*{{ count_diff }} submission(s) lack requested amount fields or data and are not included.{% endblocktrans %}
                     </p>
                 {% endwith %}
