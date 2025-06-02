@@ -114,10 +114,6 @@
     margin-inline-start: 20px;
   }
 
-  &--top-space {
-    margin-block-start: 20px;
-  }
-
   &--compare {
     width: 75px;
     padding: 3px;
@@ -141,24 +137,8 @@
     }
   }
 
-  &--arrow-pixels-white {
-    display: flex;
-    align-items: center;
-
-    svg {
-      width: 10px;
-      height: 14px;
-      margin-inline-start: 10px;
-      fill: variables.$color--white;
-    }
-  }
-
   &--action {
     transition: opacity variables.$transition;
-  }
-
-  &--link {
-    color: variables.$color--primary;
   }
 
   &--flag {
