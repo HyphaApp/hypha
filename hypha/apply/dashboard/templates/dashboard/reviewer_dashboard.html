@@ -20,7 +20,7 @@
             <section id="submissions-flagged">
                 <h2 class="mb-2 card-title">
                     <a href="{% url "apply:submissions:list" %}?query=flagged:@me">
-                        Your flagged submissions
+                        {% trans "Your flagged submissions" %}
                         <span class="badge badge-soft badge-secondary">
                             {{ my_flagged.count }}
                         </span>
