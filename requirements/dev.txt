@@ -422,6 +422,7 @@ django==4.2.23 \
     #   django-tinymce
     #   django-treebeard
     #   django-two-factor-auth
+    #   django-viewflow
     #   django-web-components
     #   djangorestframework
     #   djp
@@ -470,6 +471,7 @@ django-filter==23.5 \
     --hash=sha256:67583aa43b91fe8c49f74a832d95f4d8442be628fd4c6d65e9f811f5153a4e5c \
     --hash=sha256:99122a201d83860aef4fe77758b69dda913e874cc5e0eaa50a86b0b18d708400
     # via
+    #   django-viewflow
     #   hypha
     #   wagtail
 django-formtools==2.5.1 \
@@ -478,10 +480,6 @@ django-formtools==2.5.1 \
     # via
     #   django-two-factor-auth
     #   hypha
-django-fsm==2.8.2 \
-    --hash=sha256:0b4d346a8de1c2c30c2206ced649e25695f567c072358030544a604fc937d235 \
-    --hash=sha256:fe3be8fa916470360632b2a86aefcb342d67916fa4c5749caaa7760f88c0c49c
-    # via hypha
 django-heroku==0.3.1 \
     --hash=sha256:2bc690aab89eedbe01311752320a9a12e7548e3b0ed102681acc5736a41a4762 \
     --hash=sha256:6af4bc3ae4a9b55eaad6dbe5164918982d2762661aebc9f83d9fa49f6009514e
@@ -560,6 +558,10 @@ django-treebeard==4.7.1 \
 django-two-factor-auth==1.17.0 \
     --hash=sha256:622e78b0d6cf12eeafa239665d99c1221c399228f2f902fe478aea7759995e0e \
     --hash=sha256:a2dcc3efedd0ce4b4c14d389766c9fd8e13cabdff5e4e1b645adeb650c550cf7
+    # via hypha
+django-viewflow==2.2.11 \
+    --hash=sha256:518ec75be2e735881cbfaa31f03d40a41b8b2e5a066677dfbc27c210f95135b6 \
+    --hash=sha256:d44241b912cefe11ec70dbd9f2712a7bc17f6691d37ffa5eb10dad0c534b5ca0
     # via hypha
 django-web-components==0.2.0 \
     --hash=sha256:1a2e06767f4b10872f512954287a32e85e96109e918031de78fc8bde796b28d9 \
