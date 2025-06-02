@@ -17,11 +17,13 @@
             {% else %}
                 <div class="flex items-center p-4 w-lg bg-base-100 text-base-content rounded-box">
                     <div class="flex-1">
-                        <h3 class="font-bold">{% trans "Submit a new application" %}</h3>
-                        <p class="m-0 text-sm">{% trans "Apply now for our open rounds" %}</p>
+                        <h3 class="text-xl font-semibold">{% trans "Submit a new application" %}</h3>
+                        <p class="text-sm">{% trans "Apply now for our open rounds" %}</p>
                     </div>
                     <div>
-                        <a class="btn btn-primary btn-outline" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
+                        <a class="btn btn-primary btn-outline" href="{% pageurl APPLY_SITE.root_page %}">
+                            {% trans "Apply" %}
+                        </a>
                     </div>
                 </div>
 
@@ -51,7 +53,6 @@
                 </button>
             </form>
         </div>
-
 
         <div class="flex-1 md:ps-8">
             <h2 class="mb-4 card-title">{% trans "Account Security" %}</h2>

@@ -62,7 +62,7 @@
     <div class="mt-4">
         <div class="wrapper wrapper--sidebar">
             {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
-                <div class="wrapper--sidebar--inner">
+                <div class="grow">
                     <h4>{% trans "Congratulations!" %}</h4>
                     <h5>{% blocktrans with stage=object.previous.stage %}Your {{ stage }} application has been accepted.{% endblocktrans %}</h5>
                     <a class="btn btn-primary" href="{% url 'funds:submissions:edit' object.id %}">
@@ -70,7 +70,7 @@
                     </a>
                 </div>
             {% else %}
-                <article class="wrapper--sidebar--inner">
+                <article class="grow">
                     {% if object.is_archive %}
                         <div role="alert" class="mb-4 alert alert-warning">
                             {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 %}

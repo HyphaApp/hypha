@@ -17,7 +17,7 @@
     {% if sow_form_exists %}
         {% include "forms/includes/form_errors.html" with form=sow_form %}
         <div class="pt-8 pb-8 mx-auto mt-4 mb-12 wrapper wrapper--sidebar">
-            <div class="wrapper--sidebar--inner">
+            <div class="grow">
                 <form class="form application-form" action="" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {% for field in sow_form %}
@@ -64,7 +64,7 @@
         </div>
     {% else %}
         <div class="wrapper wrapper--form wrapper--sidebar">
-            <div class="wrapper--sidebar--inner">
+            <div class="grow">
                 <p>
                     {% trans "Scope of work form not configured. Please add it in the" %}
                     <a href="{% url 'wagtailadmin_pages:edit' object.submission.page.id %}" target="_blank">{% trans "fund settings" %}</a>.
