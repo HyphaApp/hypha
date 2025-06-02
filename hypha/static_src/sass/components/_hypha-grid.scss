@@ -29,13 +29,5 @@
         grid-template-columns: 100%;
       }
     }
-
-    &__cell {
-      &--span-two {
-        @include mixins.media-query(sm) {
-          grid-column: auto / span 2;
-        }
-      }
-    }
   }
 }
