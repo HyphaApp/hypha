@@ -13,21 +13,6 @@
     cursor: pointer;
   }
 
-  &--primary {
-    @include mixins.button(
-      variables.$color--light-blue,
-      variables.$color--dark-blue
-    );
-    display: inline-block;
-    border: 1px solid variables.$color--light-blue;
-
-    .form--filters & {
-      width: 100%;
-      text-align: center;
-      height: 45px;
-    }
-  }
-
   &--cookieconsent {
     @include mixins.button(transparent, variables.$color--white);
     display: inline;
