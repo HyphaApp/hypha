@@ -231,7 +231,7 @@ class ChangePAFStatusForm(forms.ModelForm):
 
     def __init__(self, *args, user=None, instance=None, **kwargs):
         super().__init__(*args, **kwargs, instance=instance)
-        self.fields["paf_status"].widget.attrs["class"] = "grid--status-update"
+        self.fields["paf_status"].widget.attrs["class"] = "hypha-grid--status-update"
 
 
 class ChangeProjectStatusForm(forms.ModelForm):

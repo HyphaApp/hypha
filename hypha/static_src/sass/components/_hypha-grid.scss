@@ -2,26 +2,6 @@
 
 @layer utilities {
   .hypha-grid {
-    display: grid;
-    margin-block-end: 1rem;
-    gap: calc(var(--spacing) * 2);
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-
-    &--proposal-info {
-      grid-template-columns: 100%;
-      gap: 10px;
-      margin: 0 0 1rem;
-
-      @include mixins.media-query(sm) {
-        margin: 0 0 1.5rem;
-        grid-template-columns: 1fr 1fr;
-      }
-
-      * {
-        margin: 0;
-      }
-    }
-
     &--status-update {
       grid-template-columns: 100%;
 
