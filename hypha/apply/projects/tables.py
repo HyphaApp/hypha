@@ -3,7 +3,7 @@ import json
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as _
 from django_tables2.utils import A
 from heroicons.templatetags.heroicons import heroicon_outline
 
@@ -157,16 +157,32 @@ class BaseProjectsTable(tables.Table):
         if not hasattr(record, "report_config"):
             return "-"
 
+        display = []
+
         if record.report_config.is_up_to_date():
-            return "Up to date"
+            display.append(_("Up to date"))
+
+        if record.report_config.submitted_reports():
+            display.append(
+                _("{submitted_reports} submitted").format(
+                    submitted_reports=len(record.report_config.submitted_reports())
+                )
+            )
 
         if record.report_config.has_very_late_reports():
-            display = f"<span class='text-red-500 inline-block align-text-bottom me-1'>{heroicon_outline(name='exclamation-triangle', size=20)}</span>"
+            very_late = f"<span class='text-red-500 inline-block align-text-bottom ms-1'>{heroicon_outline(name='exclamation-triangle', size=20)}</span>"
         else:
-            display = ""
+            very_late = ""
 
-        display += f"{record.report_config.outstanding_reports()} outstanding"
-        return mark_safe(display)
+        if record.report_config.outstanding_reports():
+            display.append(
+                _("{outstanding_reports} outstanding{very_late}").format(
+                    very_late=very_late,
+                    outstanding_reports=record.report_config.outstanding_reports(),
+                )
+            )
+
+        return mark_safe("<br>".join(display))
 
 
 class ProjectsDashboardTable(BaseProjectsTable):
