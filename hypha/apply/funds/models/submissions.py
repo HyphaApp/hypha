@@ -289,7 +289,7 @@ def get_all_possible_states():
     for workflow in WORKFLOWS.values():
         for phase_name, data in workflow.items():
             all_states.add((phase_name, data.display_name))
-    return all_states
+    return sorted(all_states, key=lambda x: x[0])
 
 
 class AddTransitions(models.base.ModelBase):
