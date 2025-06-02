@@ -28,17 +28,6 @@
     }
   }
 
-  &--mobile-standout {
-    color: variables.$color--white;
-    border-color: variables.$color--white;
-    max-width: 250px;
-    margin: 1rem auto 0;
-
-    @include mixins.media-query(md) {
-      display: none;
-    }
-  }
-
   &--cookieconsent {
     @include mixins.button(transparent, variables.$color--white);
     display: inline;
@@ -66,15 +55,6 @@
     }
   }
 
-  &-danger,
-  &--warning {
-    @include mixins.button(variables.$color--error, variables.$color--error);
-
-    &:focus {
-      background-color: variables.$color--pastel-red;
-    }
-  }
-
   &--filters {
     display: flex;
     justify-content: space-between;
@@ -95,80 +75,8 @@
     }
   }
 
-  &--filters-header {
-    display: flex;
-  }
-
   &--left-space {
     margin-inline-start: 20px;
-  }
-
-  &--compare {
-    width: 75px;
-    padding: 3px;
-    margin-block-start: 10px;
-    font-size: 12px;
-    font-weight: variables.$weight--bold;
-    text-align: center;
-    text-transform: uppercase;
-    border: 1px solid currentcolor;
-    transition: background-color, color, border, variables.$transition--quick;
-
-    @include mixins.media-query(md) {
-      margin-block-start: 0;
-    }
-
-    &:focus,
-    &:hover {
-      color: variables.$color--white;
-      background-color: variables.$color--light-blue;
-      border: 1px solid variables.$color--light-blue;
-    }
-  }
-
-  &--action {
-    transition: opacity variables.$transition;
-  }
-
-  &--flag {
-    &.flagged {
-      position: relative;
-
-      &::after {
-        content: "\2691";
-        color: variables.$color--tomato;
-        position: absolute;
-        inset-block-start: 4px;
-        padding-inline-start: 5px;
-        font-size: variables.$font-size--delta;
-        line-height: 1;
-      }
-    }
-  }
-
-  &--unflag {
-    @include mixins.button(
-      variables.$color--light-blue,
-      variables.$color--dark-blue
-    );
-    @include mixins.button--small;
-
-    /* stylelint-disable-next-line no-duplicate-selectors */
-    & {
-      padding-inline-end: 18px;
-    }
-
-    @include mixins.media-query(lg) {
-      padding-inline-end: 18px;
-    }
-
-    &.flagged {
-      &::after {
-        inset-block-start: 2px;
-        padding-inline-start: 3px;
-        font-size: variables.$font-size--zeta;
-      }
-    }
   }
 
   // Two-factor
