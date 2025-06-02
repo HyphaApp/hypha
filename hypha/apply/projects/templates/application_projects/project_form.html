@@ -11,29 +11,28 @@
 {% endblock %}
 
 {% block content %}
-    {% include "forms/includes/form_errors.html" with form=form %}
+    <div class="mx-auto max-w-3xl">
+        {% include "forms/includes/form_errors.html" with form=form %}
 
-    <div class="wrapper wrapper--form wrapper--sidebar">
-        <div class="wrapper--sidebar--inner">
-            <form class="form" method="post">
-                {% csrf_token %}
-                {% for field in form %}
-                    {% if field.field %}
-                        {% include "forms/includes/field.html" %}
-                    {% else %}
-                        {{ field }}
-                    {% endif %}
-                {% endfor %}
+        <form class="form" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                {% if field.field %}
+                    {% include "forms/includes/field.html" %}
+                {% else %}
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
 
-                <a class="button button--submit button--top-space button--white" href="{{ object.get_absolute_url }}">
-                    {% trans "Cancel" %}
-                </a>
-
+            <div class="mt-4">
                 <button class="mt-4 btn btn-primary" type="submit">
                     {% trans "Save" %}
                 </button>
 
-            </form>
-        </div>
+                <a class="btn btn-secondary btn-outline" href="{{ object.get_absolute_url }}">
+                    {% trans "Cancel" %}
+                </a>
+            </div>
+        </form>
     </div>
 {% endblock %}
