@@ -4,23 +4,23 @@
 {% block title %}{% trans "Sealed" %}: {{ object.title }}{% endblock %}
 
 {% block hero %}
-    <div class="pt-4 pb-0 admin-bar container-constrained">
-        <div class="admin-bar__inner">
+    <div class="bg-neutral text-neutral-content">
+        <div class="py-4 admin-bar container-constrained">
             <h1 class="mb-2 text-2xl font-medium md:m-0 md:text-3xl">{{ object.title }}</h1>
-            <h5 class="heading heading--meta">
+            <p class="heading heading--meta">
                 <span>{{ object.stage }}</span>
                 <span>{{ object.page }}</span>
                 <span>{{ object.round }}</span>
                 <span>{% trans "Lead" %}: {{ object.lead }}</span>
-            </h5>
+            </p>
             {% status_bar object.workflow object.phase request.user same_stage=True %}
         </div>
     </div>
 {% endblock %}
 
 {% block content %}
-    <section class="my-12 wrapper">
-        <div class="mx-auto max-w-lg card card-border bg-base-200">
+    <section class="my-8">
+        <div class="mx-auto max-w-3xl card card-border bg-base-200">
             <div class="card-body">
                 <h2 class="flex justify-between items-center card-title">
                     <span>Application Sealed</span>
@@ -32,20 +32,22 @@
                         {% trans "This application is sealed until the round is closed" %}
                     </p>
 
-                    <p>{% trans "The round ends on" %}: {{ object.round.specific.end_date }}</p>
+                    {% if object.round.specific.end_date %}
+                        <p>{% trans "The round ends on" %}: {{ object.round.specific.end_date }}</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
         {% if can_view_sealed %}
-            <form method="post" class="mx-auto mt-4 max-w-lg alert alert-warning">
+            <form method="post" class="mx-auto mt-4 max-w-3xl alert alert-warning">
                 {% csrf_token %}
-                <span class="">
+                <span>
                     {% trans "As an admin you are allowed to access the application. However, this action will be recorded." %}
-                    <button class="font-semibold link link-primary" type="submit">
-                        {% trans "View application" %}
-                    </button>
                 </span>
+                <button class="font-semibold link link-primary" type="submit">
+                    {% trans "View application" %}
+                </button>
             </form>
         {% endif %}
     </section>
