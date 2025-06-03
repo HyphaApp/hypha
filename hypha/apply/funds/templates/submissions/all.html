@@ -526,10 +526,15 @@
 {% endspaceless %}{% endblock content %}
 
 {% block extra_js %}
-    <!-- Datetime picker-->
-    <script src="{% static 'js/vendor/moment.min.js' %}"></script>
-    <script src="{% static 'js/vendor/daterangepicker.min.js' %}"></script>
     <script>
+        /**
+         * Change the value of the query bar based on the provided date range and query param,
+         * then submit the query
+         *
+         * @param {string} dateRange - the date range in the format of `YYYY-MM-DD/YYYY-MM-DD`
+         * @param {string} query - the param to be used in the search bar. ie. `updated`
+         * 
+         */
         function setDateFromPicker(dateRange, query) {
             const searchBar = document.getElementById("search-navbar");
             let [startDate, endDate] = dateRange.split("/");

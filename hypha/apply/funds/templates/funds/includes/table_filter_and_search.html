@@ -120,25 +120,21 @@
                         {% enddropdown_menu %}
 
                         <script>
+                            /**
+                             * Update the current URL with the date params and reload the page
+                             *
+                             * @param {string} dateRange - the date range in the format of `YYYY-MM-DD/YYYY-MM-DD`
+                             * @param {string} fieldName - the field being used as a query param
+                             */
                             function updateURL(dateRange, fieldName) {
-
                                 const [startDate, endDate] = dateRange.split('/');
-
                                 const paramStart = `${fieldName}_after`
                                 const paramEnd = `${fieldName}_before`
 
                                 let url = new URL(window.location);
-                                if (startDate) {
-                                    url.searchParams.set(paramStart, startDate);
-                                } else {
-                                    url.searchParams.delete(paramStart);
-                                }
+                                url.searchParams.set(paramStart, startDate);
+                                url.searchParams.set(paramEnd, endDate);
 
-                                if (endDate) {
-                                    url.searchParams.set(paramEnd, endDate);
-                                } else {
-                                    url.searchParams.delete(paramEnd);
-                                }
                                 window.history.pushState({}, '', url);
                                 location.reload(); // Reload to apply the filter
                             }
