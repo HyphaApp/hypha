@@ -342,7 +342,7 @@ class ProgressSubmissionView(View):
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit",
+            "submission_action",
             request.user,
             object=self.submission,
             raise_exception=False,
@@ -397,7 +397,7 @@ class CreateProjectView(View):
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit",
+            "submission_action",
             request.user,
             object=self.submission,
             raise_exception=False,
@@ -516,7 +516,7 @@ class UpdateLeadView(View):
     def dispatch(self, request, *args, **kwargs):
         self.object = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=self.object, raise_exception=False
+            "submission_action", request.user, object=self.object, raise_exception=False
         )
         if not permission:
             messages.warning(self.request, reason)
@@ -571,7 +571,7 @@ class UpdateReviewersView(View):
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit",
+            "submission_action",
             request.user,
             object=self.submission,
             raise_exception=False,
@@ -648,7 +648,7 @@ class UpdatePartnersView(View):
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit",
+            "submission_action",
             request.user,
             object=self.submission,
             raise_exception=False,
@@ -728,7 +728,7 @@ class UpdateMetaTermsView(View):
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit",
+            "submission_action",
             request.user,
             object=self.submission,
             raise_exception=False,
