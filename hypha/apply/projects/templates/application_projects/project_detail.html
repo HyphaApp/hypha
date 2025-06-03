@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 
-{% load i18n static wagtailcore_tags approval_tools invoice_tools project_tags %}
+{% load i18n static wagtailcore_tags approval_tools invoice_tools project_tags primaryactions_tags %}
 {% load heroicons %}
 
 {% block title %}{{ object.title }}{% endblock %}
@@ -174,6 +174,13 @@
 
                     {% if request.user.is_apply_staff %}
                         {% block admin_assignments %}{% endblock %}
+                    {% endif %}
+
+                    {% display_coapplicant_section user object as coapplicant_section %}
+                    {% if coapplicant_section %}
+                        {% block co_applicant %}
+                            <div hx-trigger="revealed, coApplicantUpdated from:body" hx-get="{% url 'funds:submissions:partial_coapplicant_invites' object.submission.id %}"></div>
+                        {% endblock %}
                     {% endif %}
 
                 </aside>
