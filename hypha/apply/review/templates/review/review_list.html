@@ -3,12 +3,14 @@
 
 {% block title %}{% trans "Reviews" %}{% endblock %}
 
-{% block body_class %}reviews-list__body{% endblock %}
-
 {% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Reviews" %}{% endslot %}
-        {% slot sub_heading %}{% trans "For" %} <a class="text-blue-200" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>{% endslot %}
+        {% slot sub_heading %}
+            {% trans "For" %} <a class="link link-hover" href="{% url "funds:submissions:detail" submission.id %}">
+                {{ submission.title_text_display }}
+            </a>
+        {% endslot %}
 
         {% if request.user|has_review_perm:submission %}
             {% if request.user|has_draft:submission or request.user|can_review:submission %}
@@ -19,7 +21,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="wrapper">
+    <div class="overflow-x-auto my-4">
         <table class="reviews-list">
             {% for answers in review_data.values %}
                 <tr class="reviews-list__tr">
@@ -38,3 +40,4 @@
         </table>
     </div>
 {% endblock %}
+
