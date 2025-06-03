@@ -6,19 +6,6 @@
 .form {
   $root: &;
 
-  &--error-inline {
-    // stylelint-disable-next-line selector-class-pattern
-    .form__error-text {
-      padding-inline-start: 0.5rem;
-      position: relative;
-      max-width: 100%;
-
-      &::before {
-        display: none;
-      }
-    }
-  }
-
   &__group {
     #{$root}--report-frequency & {
       margin: 1rem;
@@ -49,16 +36,6 @@
     ul {
       margin: 0.5rem 0;
     }
-  }
-
-  &__file-drop-zone {
-    color: variables.$color--mid-grey;
-    padding: 25px;
-    font-size: 17px;
-    font-weight: variables.$weight--bold;
-    text-align: center;
-    border: 2px dashed variables.$color--mid-grey;
-    border-radius: 5px;
   }
 
   &__filters {
@@ -175,13 +152,6 @@
     }
   }
 
-  &__open-icon {
-    display: inline;
-    width: 20px;
-    height: 20px;
-    fill: variables.$color--dark-grey;
-  }
-
   &__item {
     position: relative;
     padding-block-start: 0.5rem;
@@ -210,12 +180,6 @@
 
     select[multiple="multiple"] {
       display: block;
-    }
-
-    select {
-      option {
-        background-color: variables.$color--white;
-      }
     }
   }
 
@@ -272,11 +236,6 @@
         content: "";
       }
     }
-  }
-
-  // make date & time input siblings inline
-  input[type="date"] + input[type="time"] {
-    width: 10rem;
   }
 
   input[type="file"] {

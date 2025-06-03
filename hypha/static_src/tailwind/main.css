@@ -49,12 +49,18 @@
     interpolate-size: allow-keywords;
   }
 
-  .table-container {
-    @apply overflow-x-auto;
-  }
-
   a {
     @apply underline-offset-2;
+  }
+
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  .table-container {
+    @apply overflow-x-auto;
   }
 
   .table {
@@ -97,5 +103,5 @@
 }
 
 .wmd-preview {
-  @apply prose;
+  @apply prose w-full;
 }

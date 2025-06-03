@@ -2,6 +2,11 @@ textarea {
   @apply textarea w-full;
 }
 
+/* make date & time input siblings inline */
+input[type="date"] + input[type="time"] {
+  width: 10rem;
+}
+
 .fieldset {
   @apply text-sm relative;
 }
