@@ -59,10 +59,11 @@
 
             {% if show_change_password %}
                 <div class="mb-8 block_manage_password">
-                    <h3 class="mb-0 text-base font-bold">{% trans "Password" %}</h3>
+                    <h3 class="mb-2 text-base font-bold">{% trans "Password" %}</h3>
                     <p>
                         {% if user.has_usable_password %}
-                            <a class="btn btn-primary" href="{% url 'users:password_change' %}">
+                            <a class="btn btn-secondary btn-outline" href="{% url 'users:password_change' %}">
+                                {% heroicon_micro "key" class="inline w-4 h-4" aria_hidden=true %}
                                 {% trans "Update password" %}
                             </a>
                         {% else %}
@@ -70,6 +71,7 @@
                                     hx-post="{% url 'users:set_user_password' %}"
                                     hx-swap="outerHTML transition:true"
                             >
+                                {% heroicon_micro "key" class="inline w-4 h-4" aria_hidden=true %}
                                 {% trans "Set Password" %}
                             </button>
                         {% endif %}
@@ -77,7 +79,7 @@
                 </div>
             {% endif %}
 
-            <h3 class="mb-0 text-base font-bold">{% trans "Two-Factor Authentication (2FA)" %}</h2>
+            <h3 class="mb-2 text-base font-bold">{% trans "Two-Factor Authentication (2FA)" %}</h3>
             <p class="card-actions">
                 {% if default_device %}
                     <a class="btn btn-primary" href="{% url 'users:backup_tokens' %}">{% trans "Backup codes" %}</a>
