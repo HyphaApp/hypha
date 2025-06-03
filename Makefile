@@ -74,6 +74,7 @@ download-esm-modules:  ## Download ECMAScript modules for the project
 	download-esm @github/relative-time-element $(JS_ESM_DIR)
 	download-esm @github/filter-input-element $(JS_ESM_DIR)
 	download-esm choices.js $(JS_ESM_DIR)
+	download-esm cally $(JS_ESM_DIR)
 
 
 .cache/tandem:  ## Install tandem, a tool for running multiple commands in parallel
