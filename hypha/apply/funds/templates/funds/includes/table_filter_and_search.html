@@ -67,7 +67,7 @@
                 class="btn btn-ghost btn-sm btn-link link-hover"
             >
                 {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                {% trans "Clear current filters and sorts" %}
+                {% trans "Clear current filters & sorts" %}
             </a>
             {% for query in filtered_query %}
                 {% for key, data in query.items %}
@@ -112,7 +112,7 @@
                         {% enddropdown_menu %}
                     {% else %}
                         {% dropdown_menu title=field.label heading=field|get_dropdown_heading position="right" %}
-                            <calendar-range class="mx-auto cally" onchange="updateURL(this.value, '{{field_name}}')">
+                            <calendar-range class="mx-auto cally" onchange="updateURL(this.value, '{{field_name}}')" data-field-name='{{field_name}}'>
                                 <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
                                 <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
                                 <calendar-month></calendar-month>
@@ -138,6 +138,23 @@
                                 window.history.pushState({}, '', url);
                                 location.reload(); // Reload to apply the filter
                             }
+
+                            document.addEventListener("DOMContentLoaded", function () {
+                                // Get all date pickers and set their initial range values based on the URL params
+                                document.querySelectorAll(".cally").forEach((datepicker) => {
+                                    const fieldName = datepicker.getAttribute("data-field-name");
+
+                                    const params = new URL(window.location).searchParams;
+
+                                    const startDate = params.get(`${fieldName}_after`);
+                                    const endDate = params.get(`${fieldName}_before`);
+
+                                    if (startDate && endDate) {
+                                        datepicker.value = `${startDate}/${endDate}`
+                                    }
+
+                                })
+                            })
                         </script>
                     {% endif %}
                 </nav>
