@@ -349,6 +349,7 @@ def draw_title_block(canvas, doc, page_title, title, meta, page_width, page_heig
     pos -= meta_size * 2
 
     for line in split_meta:
+        pos -= meta_size
         canvas.drawString(
             doc.leftMargin + FRAME_PADDING,
             pos,
