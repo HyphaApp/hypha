@@ -303,11 +303,11 @@
 }
 
 .daterangepicker.show-ranges.rtl .drp-calendar.right {
-  @apply border-r border-gray-200;
+  @apply border-r border-base-300;
 }
 
 .daterangepicker.show-ranges.ltr .drp-calendar.left {
-  @apply border-l border-gray-200;
+  @apply border-l border-base-300;
 }
 
 .daterangepicker .ranges {
@@ -329,7 +329,7 @@
 }
 
 .daterangepicker .ranges li {
-  @apply text-gray-700 md:text-sm font-medium px-3 py-2 cursor-pointer hover:bg-gray-100 focus:bg-gray-100;
+  @apply text-gray-700 md:text-sm font-medium px-3 py-2 cursor-pointer hover:bg-base-200 focus:bg-base-200;
 }
 
 .daterangepicker .ranges li.active {

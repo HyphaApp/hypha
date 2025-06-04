@@ -5,7 +5,7 @@
 
 {% block body_class %}reviews-list__body{% endblock %}
 
-{% block content %}
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Reviews" %}{% endslot %}
         {% slot sub_heading %}{% trans "For" %} <a class="text-blue-200" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>{% endslot %}
@@ -16,7 +16,9 @@
             {% endif %}
         {% endif %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     <div class="wrapper">
         <table class="reviews-list">
             {% for answers in review_data.values %}

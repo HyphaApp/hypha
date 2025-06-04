@@ -5,14 +5,15 @@
 
 {% block title %}{% trans "Projects" %}{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "All Projects" %} ({{ table.rows|length }}){% endslot %}
         {% slot sub_heading %}{% trans "View, Search and filter all projects" %}{% endslot %}
     {% endadminbar %}
+{% endblock %}
 
-    <div class="mt-4 wrapper wrapper--large">
+{% block content %}
+    <div class="my-4">
         {% if table %}
             {% include "funds/includes/table_filter_and_search.html" with search_term=search_term search_placeholder="projects" use_search=True %}
             {% render_table table %}
@@ -20,5 +21,4 @@
             <p>{% trans "No Projects Available." %}</p>
         {% endif %}
     </div>
-
 {% endblock content %}

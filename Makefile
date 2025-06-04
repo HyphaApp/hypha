@@ -25,7 +25,7 @@ help: ## Show this help menu with a list of available commands and their descrip
 .PHONY: serve
 serve: .cache/tandem .cache/py-packages .cache/dev-build-fe  ## Run Django server, docs preview, and watch frontend changes
 	@.cache/tandem \
-		'${UV_RUN}python manage.py runserver_plus --settings=$(DJANGO_SETTINGS_MODULE)' \
+		'${UV_RUN}python manage.py runserver 7001 --settings=$(DJANGO_SETTINGS_MODULE)' \
 		'npm:watch:*' \
 		'${UV_RUN}mkdocs serve'
 
@@ -74,6 +74,7 @@ download-esm-modules:  ## Download ECMAScript modules for the project
 	download-esm @github/relative-time-element $(JS_ESM_DIR)
 	download-esm @github/filter-input-element $(JS_ESM_DIR)
 	download-esm choices.js $(JS_ESM_DIR)
+	download-esm cally $(JS_ESM_DIR)
 
 
 .cache/tandem:  ## Install tandem, a tool for running multiple commands in parallel

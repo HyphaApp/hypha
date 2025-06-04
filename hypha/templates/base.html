@@ -24,8 +24,8 @@
         <link rel="mask-icon" href="{% static 'images/favicons/safari-pinned-tab.svg' %}" color="#5bbad5">
         <link rel="shortcut icon" href="{% static 'images/favicons/favicon.ico' %}">
 
-        <link rel="stylesheet" href="{% static 'css/tailwind-output.css' %}">
         <link rel="stylesheet" href="{% static 'css/main.css' %}">
+        <link rel="stylesheet" href="{% static 'css/tailwind-output.css' %}">
         <!-- Needed for most forms so load it here once. -->
         <link rel="stylesheet" href="{% static 'file_form/file_form.css' %}">
         {{ form.media.css }}
@@ -57,9 +57,10 @@
         <script defer src="{% static 'js/vendor/alpine.min.js' %}"></script>
         <!-- alpine.js end -->
 
-        <!-- Modules for supporting <relative-time> and <filter-input> elements -->
-        <script type="module" src="{% static 'js/esm/github-relative-time-element-4-3-0.js' %}"></script>
+        <!-- Modules for supporting <relative-time>, <filter-input> and <calendar-date> elements -->
+        <script type="module" src="{% static 'js/esm/github-relative-time-element-4-4-8.js' %}"></script>
         <script type="module" src="{% static 'js/esm/github-filter-input-element-0-1-1.js' %}"></script>
+        <script type="module" src="{% static 'js/esm/cally-0-8-0.js' %}"></script>
 
         {% include "includes/head_end.html" %}
     </head>
@@ -67,16 +68,18 @@
     <body
         hx-ext="multi-swap"
         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-        class="antialiased min-h-full flex flex-col {% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}"
+        class="antialiased bg-base-100 min-h-full flex flex-col {% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}"
+        {% block body_attrs %}{% endblock %}
     >
         {% if request.user.is_hijacked %}
             {% include "includes/hijack-bar.html" %}
         {% endif %}
 
         {% block header %}{% endblock header %}
+        {% block hero %}{% endblock hero %}
 
         {% block content_wrapper %}
-            <main class="wrapper wrapper--large wrapper--main grow" id="main" x-data="{ showSubmission: false }">
+            <main class="container-constrained grow" id="main">
                 {% block content %}{% endblock %}
             </main>
         {% endblock %}
@@ -127,7 +130,7 @@
 
         <!-- choices select -->
         <script type="module">
-            import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+            import Choices from "{% static 'js/esm/choices.js-11-1-0.js' %}";
 
             htmx.onLoad(function() {
                 const selectElements = document.querySelectorAll("[data-js-choices]");

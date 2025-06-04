@@ -2,8 +2,7 @@
 {% load i18n %}
 {% block title %}{% trans "Compare" %}: {{ object.title }}{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot back_link %}
             <a class="admin-bar__back-link" href="{% url "funds:submissions:revisions:list" object.id %}">
@@ -14,13 +13,15 @@
         {% slot header %}{% trans "Comparing revisions" %}{% endslot %}
         {% slot sub_heading %}
             {% trans "For" %}
-            <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" object.id %}">
+            <a class="link link-hover" href="{% url "funds:submissions:detail" object.id %}">
                 {{ object.title_text_display }}
             </a>
         {% endslot %}
 
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     <table class="mb-8 w-full max-w-none prose prose-h4:mt-0">
         <tr>
             <td>

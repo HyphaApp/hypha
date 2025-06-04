@@ -1,20 +1,16 @@
 /* eslint-disable max-nested-callbacks */
 (function ($) {
-  const $body = $("body");
   const $checkbox = $(".js-batch-select");
   const $allCheckboxInput = $(".js-batch-select-all");
-  const $batchButtons = $(".js-batch-button");
-  const $batchInvoiceProgress = $(".js-batch-invoice-progress");
+  const $batchButtons = $("[data-js-batch-actions]");
   const $batchTitlesList = $(".js-batch-titles");
   const $batchTitleCount = $(".js-batch-title-count");
   const $hiddenIDlist = $(".js-submissions-id");
   const $hiddenInvoiceIDlist = $(".js-invoices-id");
-  const $toggleBatchList = $(".js-toggle-batch-list");
-  const activeClass = "batch-actions-enabled";
   const closedClass = "is-closed";
 
   $(window).on("load", function () {
-    toggleBatchActions();
+    updateActionBarVisibility();
     updateCount();
   });
 
@@ -29,14 +25,14 @@
       });
     }
 
-    toggleBatchActions();
+    updateActionBarVisibility();
     updateCount();
     updateInvoiceProgressButton();
   });
 
   $checkbox.change(function () {
     // see how many checkboxes are :checked
-    toggleBatchActions();
+    updateActionBarVisibility();
 
     // updates selected checkbox count
     updateCount();
@@ -73,23 +69,6 @@
     });
   });
 
-  $batchInvoiceProgress.click(function () {
-    updateInvoiceProgressButton();
-  });
-
-  // show/hide the list of actions
-  $toggleBatchList.click((e) => {
-    e.preventDefault();
-
-    if ($(".js-batch-titles").hasClass(closedClass)) {
-      $toggleBatchList.html("Hide");
-    } else {
-      $toggleBatchList.html("Show");
-    }
-
-    $batchTitlesList.toggleClass(closedClass);
-  });
-
   /**
    * Prepare the batch listing.
    * @returns {Array} selectedIDs
@@ -98,7 +77,6 @@
     $batchTitlesList.html("");
     $batchTitleCount.html("");
     $batchTitlesList.addClass(closedClass);
-    $toggleBatchList.html("Show");
 
     let selectedIDs = [];
 
@@ -131,26 +109,26 @@
       }
     });
 
+    const batchInvoiceProgressBtn = document.querySelector(
+      "[data-js-batch-actions='invoice-update-status']"
+    );
+
     if (!actions || actions.length === 0) {
-      $batchInvoiceProgress.attr("disabled", "disabled");
-      $batchInvoiceProgress.attr(
-        "data-tooltip",
-        "Status changes can't be applied to Invoices with this combination of statuses"
-      );
+      batchInvoiceProgressBtn.setAttribute("disabled", "disabled");
     } else {
-      $batchInvoiceProgress.removeAttr("disabled");
-      $batchInvoiceProgress.removeAttr("data-tooltip");
+      batchInvoiceProgressBtn.removeAttribute("disabled");
     }
   }
 
   /**
    * Toggle the batch actions.
    */
-  function toggleBatchActions() {
-    if ($(".js-batch-select:checked").length) {
-      $body.addClass(activeClass);
+  function updateActionBarVisibility() {
+    const bar = document.querySelector("[data-js-batch-actions-bar]");
+    if ($(".js-batch-select:checked").length === 0) {
+      bar.classList.add("hidden");
     } else {
-      $body.removeClass(activeClass);
+      bar.classList.remove("hidden");
     }
   }
 
@@ -158,7 +136,14 @@
    * Update the count of selected checkboxes.
    */
   function updateCount() {
-    $(".js-total-actions").html($(".js-batch-select:checked").length);
+    const totalSelectionsElement = document.querySelector(
+      '[data-js-batch-actions="total-selections"]'
+    );
+    if (totalSelectionsElement) {
+      totalSelectionsElement.innerHTML = document.querySelectorAll(
+        ".js-batch-select:checked"
+      ).length;
+    }
   }
 
   /**

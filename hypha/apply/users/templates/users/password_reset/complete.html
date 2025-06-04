@@ -2,12 +2,13 @@
 {% load i18n %}
 {% block title %}{% trans "Reset password" %}{% endblock %}
 
-{% block content %}
-
+{% block hero %}
     {% adminbar %}
         {% slot header %}{% trans "Password change successful" %}{% endslot %}
     {% endadminbar %}
+{% endblock %}
 
+{% block content %}
     <div class="mt-6 max-w-2xl wrapper">
         <p>
             <a href="{% url 'users:login' %}">{% trans "Log in" %}</a>

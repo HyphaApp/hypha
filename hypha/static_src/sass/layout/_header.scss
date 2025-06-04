@@ -2,12 +2,6 @@
 @use "../abstracts/variables";
 
 .header {
-  padding-inline: variables.$gutters;
-
-  @include mixins.media-query(xl) {
-    padding-inline: 0;
-  }
-
   &__logo {
     max-width: none;
 
