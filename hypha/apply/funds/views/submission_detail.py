@@ -19,7 +19,6 @@ from django.views.generic.detail import SingleObjectMixin
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.views import ActivityContextMixin
 from hypha.apply.users.decorators import (
-    staff_or_finance_required,
     staff_required,
 )
 from hypha.apply.utils.models import PDFPageSettings
@@ -272,17 +271,9 @@ class SubmissionSealedView(DetailView):
             )
 
 
-@method_decorator(staff_or_finance_required, name="dispatch")
+@method_decorator(staff_required, "dispatch")
 class SubmissionDetailPDFView(SingleObjectMixin, View):
     model = ApplicationSubmission
-
-    def get_object(self, queryset=None):
-        obj = super().get_object(queryset)
-
-        if not hasattr(obj, "project"):
-            raise Http404
-
-        return obj
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
