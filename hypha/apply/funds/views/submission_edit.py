@@ -145,7 +145,9 @@ class BaseSubmissionEditView(UpdateView):
         return next(
             (
                 t
-                for t in self.object.get_available_user_status_transitions(user)
+                for t in type(self.object).status_field.get_available_transitions(
+                    self.object, self.object.status, user
+                )
                 if t.custom.get("trigger_on_submit", False)
             ),
             None,
