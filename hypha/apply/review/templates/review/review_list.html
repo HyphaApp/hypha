@@ -22,7 +22,8 @@
 
 {% block content %}
     <div class="overflow-x-auto my-4">
-        <table class="reviews-list">
+        {% comment %} <table class="reviews-list"> {% endcomment %}
+        <table class="table table-pin-rows table-pin-cols">
             {% for answers in review_data.values %}
                 <tr class="reviews-list__tr">
                     <th class="reviews-list__th">{{ answers.question }}</th>

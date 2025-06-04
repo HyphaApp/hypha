@@ -8,21 +8,14 @@
 
   &__group {
     #{$root}--report-frequency & {
-      margin: 1rem;
-
       &--schedule {
         display: flex;
         align-items: center;
       }
 
-      &--report-every {
-        font-weight: 700;
-      }
-
       // stylelint-disable-next-line selector-class-pattern
       &.id_occurrence {
         width: 15%;
-        margin: 0 1rem;
       }
 
       // stylelint-disable-next-line selector-class-pattern

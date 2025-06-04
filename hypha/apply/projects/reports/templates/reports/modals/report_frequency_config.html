@@ -4,7 +4,7 @@
 <div class="p-4">
 
     {{ report_data|json_script:"reportData" }}
-    <div class="card card-sm bg-base-200">
+    <div class="card card-sm bg-base-200" data-js-report-frequency-card>
         <div class="card-body">
             <p>
                 {% if object.disable_reporting %}
@@ -52,16 +52,18 @@
         <div class="fields--visible">
             {% for field in form.visible_fields %}
                 {% if field.name == 'occurrence' %}
-                    <label class="form__group form__group--report-every">{% trans 'Report every:' %}</label>
-                    <div class="form__group--schedule">
+                    <fieldset class="form__group--schedule fieldset">
+                        <legend class="form__group form__group--report-every fieldset-legend">{% trans 'Report every:' %}</legend>
                 {% endif %}
+
                 {% if field.field %}
                     {% include "forms/includes/field.html" %}
                 {% else %}
                     {{ field }}
                 {% endif %}
+
                 {% if field.name == 'frequency' %}
-                    </div>
+                    </fieldset>
                 {% endif %}
             {% endfor %}
         </div>

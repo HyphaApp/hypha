@@ -67,7 +67,7 @@
                 </div>
             </div>
         {% else %}
-            {% if not field.is_hidden and widget_type != 'checkbox_input' %}
+            {% if field.label and not field.is_hidden and widget_type != 'checkbox_input' %}
                 <label
                     for="{{ field.id_for_label }}"
                     class="fieldset-legend form__question form__question--{{ field_type }} h-widget-{{ widget_type }} {{ label_classes }}"
