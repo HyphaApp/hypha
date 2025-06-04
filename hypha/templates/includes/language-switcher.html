@@ -6,10 +6,10 @@
         aria-label="{% trans "Language switcher" %}"
         aria-controls="id-language-switcher"
         type="button"
-        :class="open ? 'bg-gray-900 text-white' : 'hover:bg-slate-200'"
+        :class="open && 'btn-active'"
         :aria-expanded="open"
         title="{% trans "Language switcher" %}"
-        class="flex p-2 rounded-full transition-all text-base-content group"
+        class="btn btn-circle btn-soft btn-secondary group"
     >
         {% heroicon_outline "language" class="inline transition-transform group-hover:scale-110" aria_hidden="true" %}
     </button>
@@ -24,29 +24,42 @@
         role="dialog"
         aria-labelledby="dialogtitle"
         @click.outside="open = false"
-        class="overflow-y-auto absolute right-0 z-30 rounded-sm border shadow-md bg-base-100"
+        class="overflow-y-auto absolute right-0 z-30 border shadow-md rounded-box bg-base-200"
+        id="id-language-switcher"
     >
-
-        <div id="id-language-switcher" class="">
-            {% get_available_languages as LANGUAGES %}
-            {% get_language_info_list for LANGUAGES as languages %}
-            {% if languages|length > 1 %}
-                <form action="{% url 'set_language' %}" method="post" class="p-4" x-ref="langForm">
-                    {% csrf_token %}
-                    <input name="next" type="hidden" value="{{ request.path }}">
-                    <fieldset class="grid gap-1">
-                        {% for language in languages %}
-                            <div>
-                                <input class="sr-only" name="language" id="{{ language.code }}" value="{{ language.code }}" type="radio" {% if language.code == LANGUAGE_CODE %}checked{% endif %}>
-                                <label lang="{{ language.code }}" class="font-semibold capitalize {% if language.code != LANGUAGE_CODE %}cursor-pointer hover:underline text-dark-blue{% endif %}" for="{{ language.code }}" x-on:click="$nextTick(() => { $refs.langForm.submit() })">{{ language.name_local }}</label>
-                            </div>
-                        {% endfor %}
-                        <button class="sr-only" type="submit">{% trans "Set language" %}</button>
-                    </fieldset>
-                </form>
-            {% else %}
-                <span class="text-red-500">{% trans "Can't switch language, only one language is active." %}</span>
-            {% endif %}
-        </div>
+        {% get_available_languages as LANGUAGES %}
+        {% get_language_info_list for LANGUAGES as languages %}
+        {% if languages|length > 1 %}
+            <form action="{% url 'set_language' %}" method="post" x-ref="langForm">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.path }}">
+                <ul class="menu min-w-56">
+                    <li class="menu-title">{% trans 'Select Language' %}</li>
+                    {% for language in languages %}
+                        <li>
+                            <label
+                                lang="{{ language.code }}"
+                                class="capitalize {% if language.code == LANGUAGE_CODE %}menu-active{% endif %}"
+                                for="{{ language.code }}"
+                                x-on:click="$nextTick(() => { $refs.langForm.submit() })"
+                            >{{ language.name_local }}</label>
+                            <input
+                                class="sr-only"
+                                name="language"
+                                id="{{ language.code }}"
+                                value="{{ language.code }}"
+                                type="radio"
+                                {% if language.code == LANGUAGE_CODE %}checked{% endif %}>
+                        </li>
+                    {% endfor %}
+                    <button class="sr-only" type="submit">{% trans "Set language" %}</button>
+                </ul>
+            </form>
+        {% else %}
+            <div class="min-w-xs alert alert-error">
+                {% heroicon_outline "information-circle" %}
+                {% trans "Can't switch language, only one language is active." %}
+            </div>
+        {% endif %}
     </div>
 </div>
