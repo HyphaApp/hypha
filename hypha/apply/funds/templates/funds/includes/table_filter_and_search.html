@@ -56,13 +56,11 @@
     {% get_filtered_query request filter.form as filtered_query %}
     {% if filtered_query %}
         <div class="flex flex-wrap gap-2 items-center mt-2">
-            <a
-                href="./"
-                class="btn btn-ghost btn-sm btn-link link-hover"
-            >
-                {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                {% trans "Clear current filters and sorts" %}
+            <a href="./" class="btn btn-ghost btn-sm btn-link link-hover">
+                {% trans "Clear current filters & sorts" %}
+                {% heroicon_micro "x-mark" aria_hidden="true" class="w-4 h-4" %}
             </a>
+
             {% for query in filtered_query %}
                 {% for key, data in query.items %}
                     <c-badge.action btn_url="{% update_filter_query_params key data.value operation='remove' %}">
