@@ -1,7 +1,8 @@
 {% load i18n approval_tools project_tags heroicons %}
+
 {% modal_title %}{% trans "Submit documents for review" %}{% endmodal_title %}
 
-<div class="p-4">
+<div class="p-4 prose prose-sm">
     {% if remaining_document_categories %}
         <div class="p-2 mb-4 bg-red-100 rounded-sm prose">
             <p class="mb-0">{% trans "Looks like the following documents are missing" %}:</p>
@@ -16,7 +17,7 @@
     {% endif %}
 
     {% if project_settings.paf_reviewers_roles.all %}
-        <p class="mt-0 mb-4 text-gray-500">
+        <p>
             {% trans "This will submit the project documents for review by the configured approvers." %}
             {% if project_settings.paf_approval_sequential %}{% trans "Approvers will review sequentially in order." %}{% else %}{% trans "Approvers can review in parallel at any time." %}{% endif %}
         </p>
@@ -25,13 +26,8 @@
             {% trans "Note: All group members will be notified unless specific approvers are selected below." %}
         </p>
 
-        <div class="flex items-center mb-4 text-sm">
-            <p class="mb-0 font-bold shrink text-slate-500 pe-2">
-                {% trans "Select approvers " %} ({% trans "Optional" %})
-            </p>
-            <p class="mb-0 h-px grow bg-mid-grey"></p>
-        </div>
-
+        <div class="divider divider-start">{% trans "Select approvers " %} ({% trans "Optional" %})</div>
+        {% trans "Submit" as submit %}
         {% include 'includes/dialog_form_base.html' with form=form value=submit %}
     {% else %}
         <p>

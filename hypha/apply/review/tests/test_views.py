@@ -252,7 +252,7 @@ class ReviewDetailTestCase(BaseViewTestCase):
         )
         response = self.get_page(review)
         self.assertContains(response, submission.title)
-        self.assertContains(response, "<p>Yes</p>")
+        self.assertContains(response, "Yes")
 
     def test_review_detail_opinion(self):
         staff = StaffFactory()

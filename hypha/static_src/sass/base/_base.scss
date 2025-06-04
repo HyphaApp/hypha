@@ -2,49 +2,10 @@
 
 @use "../abstracts/variables";
 
-@layer base {
-  body {
-    overflow-x: hidden;
-
-    &.no-scroll {
-      overflow-y: hidden;
-    }
-  }
-
-  // Prevent empty space below images appearing
-  img,
-  svg {
-    vertical-align: top;
-  }
-
-  a {
-    color: variables.$color--primary;
-    text-decoration: none;
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
-
-  p {
-    margin-block: 0.5rem;
-    text-wrap: pretty;
-  }
-
-  dd {
-    text-wrap: pretty;
-  }
-
-  li {
-    text-wrap: pretty;
-  }
-
+@layer base {  
   details {
-    overflow: hidden;
-
     & > summary {
       cursor: pointer;
-      margin-block-end: 10px;
     }
 
     &::details-content {
@@ -62,20 +23,6 @@
 }
 
 @layer utilities {
-  .is-invisible,
-  %is-invisible {
-    z-index: -1;
-    opacity: 0;
-    transition: opacity, z-index, variables.$transition;
-  }
-
-  .is-visible,
-  %is-visible {
-    z-index: 5;
-    opacity: 1;
-    transition: opacity, z-index, variables.$transition;
-  }
-
   .js-hidden,
   %js-hidden {
     html.js & {

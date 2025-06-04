@@ -1,7 +1,6 @@
 @use "../abstracts/variables";
 
 .rich-text {
-  margin-block-end: 2rem;
   word-break: break-word;
   max-width: variables.$max-text-line-length;
 
@@ -93,13 +92,14 @@
 
       &.word-count-warning,
       &.word-count-warning-2 {
-        background-color: variables.$color--pastel-red;
+        background-color: var(--color-warning);
+        color: var(--color-warning-content);
         font-weight: bold;
       }
 
       &.word-count-warning-2 {
-        background-color: variables.$color--error;
-        color: variables.$color--white;
+        background-color: var(--color-error);
+        color: var(--color-error-content);
       }
     }
   }

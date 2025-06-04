@@ -2,41 +2,29 @@
 {% load i18n %}
 
 {% block title %}{% trans "Reset password" %}{% endblock %}
-{% block body_class %}bg-white{% endblock %}
 
 {% block content %}
 
-    <div class="mt-12 max-w-xl wrapper">
-        <form class="form form--with-p-tags" method="post">
-            <h2 class="text-2xl">{% trans "Forgot password?" %}</h2>
-            <p class="form__help">{% trans "Please enter your user account's email address and we will send you a password reset link." %}</p>
+    <div class="my-12 max-w-xl wrapper">
+        <form class="form" method="post">
+
             {% csrf_token %}
+            <h2 class="text-2xl">{% trans "Forgot password?" %}</h2>
+            <p class="text-sm whitespace-normal label">
+                {% trans "Please enter your user account's email address and we will send you a password reset link." %}
+            </p>
+
             {% if redirect_url %}
                 <input type="hidden" name="next" value="{{ redirect_url }}">
             {% endif %}
 
-            {% if form.non_field_errors %}
-                <ul class="errorlist">
-                    {% for error in form.non_field_errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+            {% for field in form %}
+                {% include "forms/includes/field.html" %}
+            {% endfor %}
 
-            {% if form.errors %}
-                <ul class="errorlist">
-                    {% blocktrans trimmed count counter=form.errors.items|length %}
-                        <li>Please correct the error below.</li>
-                    {% plural %}
-                        <li>Please correct the errors below.</li>
-                    {% endblocktrans %}
-                </ul>
-            {% endif %}
-
-            <p>{{ form.email.label_tag }}</p>
-            <p>{{ form.email }}</p>
-
-            <button class="button button--primary button--login" type="submit">{% trans "Send reset email" %}</button>
+            <button class="mt-4 w-full sm:w-auto btn btn-primary" type="submit">
+                {% trans "Send reset email" %}≥
+            </button>
         </form>
     </div>
 {% endblock %}
