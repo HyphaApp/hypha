@@ -5,56 +5,50 @@
     <div
         class="flex flex-wrap gap-4 justify-between items-center w-full"
     >
-        {# Left #}
-        <div>
-            {% if heading %}
-                <h2 class="mb-2 card-title">{{ heading }}</h2>
-            {% endif %}
+        {% if heading %}
+            <h2 class="mb-2 card-title">{{ heading }}</h2>
+        {% endif %}
 
-            {% if invoice_batch_actions %}
-                <div
-                    class="hidden items-center card-actions"
-                    data-js-batch-actions-bar
+        {% if invoice_batch_actions %}
+            <div
+                class="hidden items-center card-actions"
+                data-js-batch-actions-bar
+            >
+                <span class="label ps-2">
+                    <span data-js-batch-actions="total-selections">0</span> {% trans "selected" %}
+                </span>
+                <button
+                    class="btn btn-sm"
+                    href="{% url 'apply:projects:bulk_invoice_status_update' %}"
+                    hx-target="#htmx-modal"
+                    data-js-batch-actions="invoice-update-status"
                 >
-                    <span class="label ps-2">
-                        <span data-js-batch-actions="total-selections">0</span> {% trans "selected" %}
-                    </span>
-                    <button
-                        class="btn btn-sm"
-                        href="{% url 'apply:projects:bulk_invoice_status_update' %}"
-                        hx-target="#htmx-modal"
-                        data-js-batch-actions="invoice-update-status"
+                    {% heroicon_micro "arrows-right-left" class="fill-fg-muted" aria_hidden=true %}
+                    {% trans "Update status" %}
+                </button>
+            </div>
+        {% endif %}
+
+        {% if use_search|default:False %}
+            <form
+                action="{{ search_action }}"
+                method="get"
+                role="search"
+                class="relative grow"
+            >
+                <label class="flex gap-2 items-center w-auto input input-border">
+                    {% heroicon_mini "magnifying-glass" size=20 class="opacity-50 h-[1em]" aria_hidden=true %}
+                    <input
+                        type="search"
+                        placeholder="{% trans 'Search...' %}"
+                        name="query"
+                        {% if search_term %}value="{{ request.GET.query }}"{% endif %}
+                        aria-label="{% trans 'Search input' %}"
+                        class="sm:w-auto w-[15ch]"
                     >
-                        {% heroicon_micro "arrows-right-left" class="fill-fg-muted" aria_hidden=true %}
-                        {% trans "Update status" %}
-                    </button>
-                </div>
-            {% endif %}
-        </div>
-
-        {# Right #}
-        <div class="flex gap-4 items-center">
-            {% if use_search|default:False %}
-                <form
-                    action="{{ search_action }}"
-                    method="get"
-                    role="search"
-                    class="relative"
-                >
-                    <label class="flex gap-2 items-center w-auto input input-sm input-border">
-                        {% heroicon_mini "magnifying-glass" size=20 class="opacity-50 h-[1em]" aria_hidden=true %}
-                        <input
-                            type="search"
-                            placeholder="{% trans 'Search...' %}"
-                            name="query"
-                            {% if search_term %}value="{{ request.GET.query }}"{% endif %}
-                            aria-label="{% trans 'Search input' %}"
-                            class="sm:w-auto w-[15ch]"
-                        >
-                    </label>
-                </form>
-            {% endif %}
-        </div>
+                </label>
+            </form>
+        {% endif %}
     </div>
 {% endif %}
 
