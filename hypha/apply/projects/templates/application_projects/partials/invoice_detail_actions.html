@@ -50,7 +50,7 @@
     {% can_delete object user as user_can_delete_request %}
     {% if user_can_delete_request %}
         <a
-            class="btn btn-warning btn-block"
+            class="btn btn-error btn-block"
             href="{% url 'apply:projects:invoice-delete' pk=object.project.submission.pk invoice_pk=object.pk %}"
         >
             {% trans "Delete Invoice" %}

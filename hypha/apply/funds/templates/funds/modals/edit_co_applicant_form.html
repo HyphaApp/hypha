@@ -43,7 +43,7 @@
             </button>
             <button
                 type="button"
-                class="btn btn-warning btn-soft"
+                class="btn btn-error btn-soft"
                 @click="show = false"
                 hx-post="{% url 'apply:submissions:delete_co_applicant_invite' invite_pk=invite.pk %}"
             >{% trans "Remove" %}</button>
@@ -64,7 +64,7 @@
             </button>
             <button
                 type="button"
-                class="w-full sm:w-auto btn btn-warning btn-soft"
+                class="w-full sm:w-auto btn btn-error btn-soft"
                 @click="show = false"
                 hx-post="{% url 'apply:submissions:delete_co_applicant_invite' invite_pk=invite.pk %}"
             >

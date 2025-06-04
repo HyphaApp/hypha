@@ -335,7 +335,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
     def buttons(self):
         yield ("submit", "btn-primary", _("Update"))
         if self.object.can_user_delete(self.request.user):
-            yield ("delete", "btn-warning", _("Delete"))
+            yield ("delete", "btn-error", _("Delete"))
 
     def get_initial(self):
         initial = super().get_initial()

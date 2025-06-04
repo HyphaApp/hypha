@@ -72,7 +72,7 @@
                                     </a>
                                     {% if can_update_documents %}
                                         <button
-                                            class="btn btn-outline btn-warning"
+                                            class="btn btn-outline btn-error"
                                             hx-delete="{% url "apply:projects:remove_contracting_document" object.submission.pk latest_file.pk %}"
                                             hx-swap="none"
                                             hx-confirm="Are you sure you want to remove this document?"

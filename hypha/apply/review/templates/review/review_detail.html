@@ -78,7 +78,7 @@
 
                 {% if not perms.funds.delete_review or request.user == review.author.reviewer %}
                     <a
-                        class="btn btn-warning btn-outline btn-sm"
+                        class="btn btn-error btn-outline btn-sm"
                         href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}"
                     >
                         {% heroicon_micro "trash" class="inline w-4 h-4" aria_hidden=true %}

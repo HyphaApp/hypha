@@ -117,7 +117,7 @@
 
                             {% if request.user|has_edit_perm:object %}
                                 <a
-                                    class="btn btn-ghost btn-secondary btn-sm"
+                                    class="btn btn-soft btn-secondary btn-sm"
                                     href="{% url 'funds:submissions:edit' object.id %}"
                                 >
                                     {% heroicon_micro "pencil-square" class="inline me-1" aria_hidden=true %}
@@ -128,7 +128,7 @@
                             {% can "delete_submission" object as can_delete_submission %}
                             {% if can_delete_submission %}
                                 <a
-                                    class="btn btn-ghost btn-warning btn-sm btn-square"
+                                    class="btn btn-soft btn-error btn-sm btn-square"
                                     href="{% url 'funds:submissions:delete' object.id %}"
                                     hx-get="{% url 'funds:submissions:delete' object.id %}"
                                     hx-target="#htmx-modal"

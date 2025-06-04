@@ -32,7 +32,7 @@
         {% endif %}
         {% trans "Delete" as delete %}
         <button
-            class="btn {% if invert %}btn-secondary btn-outline{% elif value == delete %}btn-warning{% else %}btn-primary{% endif %}"
+            class="btn {% if invert %}btn-secondary btn-outline{% elif value == delete %}btn-error{% else %}btn-primary{% endif %}"
             id="{{ form.name }}-submit"
             name="{{ form_prefix }}{{ form.name }}"
             type="submit"
