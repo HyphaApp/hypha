@@ -71,19 +71,19 @@
 
     <div class="flex flex-wrap gap-2 justify-between">
         <button
-            class="btn btn-outline btn-secondary"
+            class="btn btn-outline grow"
             hx-get="{% url 'funds:submissions:reviewers_update' pk=object.pk %}"
             hx-target="#htmx-modal"
         >{% trans "Reviewers" %}</button>
 
         <button
-            class="btn btn-outline btn-secondary"
+            class="btn btn-outline grow"
             hx-get="{% url 'funds:submissions:partners_update' pk=object.pk %}"
             hx-target="#htmx-modal"
         >{% trans "Partners" %}</button>
 
         <button
-            class="btn btn-outline btn-secondary grow"
+            class="btn btn-outline grow"
             hx-get="{% url 'funds:submissions:lead_update' pk=object.pk %}"
             hx-target="#htmx-modal"
         >{% trans "Lead" %}</button>
@@ -94,50 +94,52 @@
             {% trans "More actions" %}
         </summary>
 
-        <a
-            class="mb-2 w-full btn btn-outline btn-secondary"
-            href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}"
-        >{% trans "Revisions" %}</a>
+        <div class="flex flex-col gap-2">
+            <a
+                class="w-full btn btn-outline"
+                href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}"
+            >{% trans "Revisions" %}</a>
 
-        {% if request.user|can_translate_submission %}
+            {% if request.user|can_translate_submission %}
+                <button
+                    class="w-full btn btn-outline"
+                    hx-get="{% url 'funds:submissions:translate' pk=object.pk %}"
+                    hx-target="#htmx-modal"
+                >
+                    {% heroicon_outline "language" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
+                    {% trans "Translate" %}
+                </button>
+            {% endif %}
+
             <button
-                class="mb-2 w-full btn btn-outline btn-secondary"
-                hx-get="{% url 'funds:submissions:translate' pk=object.pk %}"
+                class="w-full btn btn-outline"
+                hx-get="{% url 'funds:submissions:metaterms_update' pk=object.pk %}"
                 hx-target="#htmx-modal"
-            >
-                {% heroicon_outline "language" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
-                {% trans "Translate" %}
-            </button>
-        {% endif %}
+            >{% trans "Tags" %}</button>
 
-        <button
-            class="mb-2 w-full btn btn-outline btn-secondary"
-            hx-get="{% url 'funds:submissions:metaterms_update' pk=object.pk %}"
-            hx-target="#htmx-modal"
-        >{% trans "Tags" %}</button>
-
-        <button
-            class="mb-2 w-full btn btn-outline btn-secondary"
-            hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}"
-            hx-target="#htmx-modal"
-        >{% trans "Create Reminder" %}</button>
-
-        <a
-            class="mb-2 w-full btn btn-outline btn-secondary"
-            href="{% url "apply:submissions:download" pk=object.pk %}"
-        >
-            {% trans "Download as PDF" %}
-        </a>
-
-        {% if can_archive %}
             <button
-                class="mb-2 w-full btn btn-outline btn-secondary"
-                hx-get="{% url 'funds:submissions:archive' pk=object.pk %}"
+                class="w-full btn btn-outline"
+                hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}"
                 hx-target="#htmx-modal"
+            >{% trans "Create Reminder" %}</button>
+
+            <a
+                class="w-full btn btn-outline"
+                href="{% url "apply:submissions:download" pk=object.pk %}"
             >
-                {% heroicon_outline "lock-closed" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
-                {% trans "Archive Submission" %}
-            </button>
-        {% endif %}
+                {% trans "Download as PDF" %}
+            </a>
+
+            {% if can_archive %}
+                <button
+                    class="w-full btn btn-outline"
+                    hx-get="{% url 'funds:submissions:archive' pk=object.pk %}"
+                    hx-target="#htmx-modal"
+                >
+                    {% heroicon_outline "lock-closed" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
+                    {% trans "Archive Submission" %}
+                </button>
+            {% endif %}
+        </div>
     </details>
 {% endif %}

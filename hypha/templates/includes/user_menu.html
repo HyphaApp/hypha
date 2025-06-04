@@ -4,7 +4,7 @@
     <div x-data="{ show: false }" x-on:keydown.escape="show = false" class="flex relative">
         <button
             x-on:click="show = ! show"
-            class="md:w-auto btn btn-secondary btn-square group md:px-[var(--btn-p)] md:btn-outline"
+            class="md:w-auto btn btn-square group md:px-[var(--btn-p)] md:btn-outline"
             type="button"
             :class="show ? 'btn-active' : 'btn-soft'"
         >

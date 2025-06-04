@@ -5,7 +5,7 @@
 {% block admin_assignments %}
     {% user_can_update_project_status object user as can_update_status %}
     {% if can_update_status %}
-        <div class="card card-border shadow-xs bg-primary/10" data-testid="sidebar-primary-actions">
+        <div class="card card-border shadow-xs bg-base-200" data-testid="sidebar-primary-actions">
             <div class="card-body">
                 <h2 class="card-title">{% trans "Actions to take" %}</h2>
 

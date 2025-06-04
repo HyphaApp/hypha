@@ -100,7 +100,7 @@
 
         <aside class="sidebar">
             <section
-                class="sticky top-8 card card-border border-primary/10 bg-primary/10 shadow-xs sidebar__inner--actions"
+                class="sticky top-8 card card-border bg-base-200 shadow-xs sidebar__inner--actions"
                 hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}"
                 hx-trigger="invoicesUpdated from:body"
                 data-testid="sidebar-primary-actions"
