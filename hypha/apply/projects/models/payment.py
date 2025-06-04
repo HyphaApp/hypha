@@ -116,7 +116,7 @@ class Invoice(models.Model):
     message_for_pm = models.TextField(
         blank=True,
         verbose_name=_("Comment"),
-        help_text="This will be displayed as a comment in the conversations tab",
+        help_text="This will be displayed as a comment in the comments tab",
     )
     comment = models.TextField(blank=True)
     invoice_number = models.CharField(
