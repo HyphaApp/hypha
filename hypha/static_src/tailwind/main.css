@@ -63,7 +63,7 @@
     @apply overflow-x-auto;
   }
 
-  .table {
+  .table-link {
     thead a:not(.btn) {
       @apply link link-hover;
     }

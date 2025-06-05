@@ -1,4 +1,3 @@
-{% load render_table from django_tables2 %}
 {% load i18n %}
 
 <h2 class="mb-2 card-title">
@@ -9,16 +8,13 @@
 </h2>
 
 {% if my_review.data %}
-
-    {% include "submissions/partials/submissions-inline.html" with submissions=my_review.data row_layout="table" %}
-    {% comment %} {% render_table my_review %} {% endcomment %}
-
-    {% if display_more %}
-        <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
-            <a href="{% url "apply:submissions:list" %}?query=reviewer:@me">{% trans "Show all" %}</a>
-        </div>
-    {% endif %}
-
+    <c-submission-list
+        show_more_link="{% url 'apply:submissions:list' %}?query=reviewer:@me"
+        variant="table"
+        rounded-top
+        :submissions="my_review.data"
+        :show_more="display_more"
+    />
 {% else %}
     <div class="py-10 w-full text-center card card-border bg-base-100 shadow-xs">
         <div class="card-body">
@@ -32,9 +28,5 @@
                 </a>
             </p>
         </div>
-
     </div>
-    {# TODO Fill in data and update styles in future ticket #}
-    <div>{# Since you last logged in #}</div>
-
 {% endif %}

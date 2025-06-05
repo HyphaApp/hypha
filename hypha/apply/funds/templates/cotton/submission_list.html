@@ -1,5 +1,7 @@
 {% load querystrings heroicons %}
 
+<c-vars variant="table"></c-vars>
+
 <div
     {% if 'reviews' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
         hx-trigger="load delay:50"
@@ -7,11 +9,11 @@
         hx-swap="multi:{% for s in submissions %}#r{{s.id}}{% if not forloop.last %},{% endif %}{% endfor %}"
     {% endif %}
 >
-    {% if row_layout != "list" %}
-        <div class="overflow-x-auto">
-            <table class="w-full relative [&_th]:p-2 [&_td]:p-2">
-                <thead class="border bg-base-200">
-                    <tr class="">
+    {% if variant == "table" %}
+        <div class="overflow-x-auto bg-base-100 border {% if rounded_top %} rounded-t-box{% endif %}{% if rounded_bottom %} rounded-b-box{% endif %}{% if show_more_link and not show_more %} rounded-b-box{% endif %}">
+            <table class="table [&_th]:p-2">
+                <thead class="bg-base-200">
+                    <tr>
                         {% if enable_selection %}<th class="hidden md:table-cell"></th>{% endif %}
                         <th></th>
                         <th class="font-semibold min-w-48">
@@ -50,3 +52,8 @@
         {% endfor %}
     {% endif %}
 </div>
+{% if show_more and show_more_link %}
+    <div class="flex justify-center items-center py-3 font-semibold border-b border-x rounded-b-box">
+        <a href="{{ show_more_link }}" class="link link-hover">Show All</a>
+    </div>
+{% endif %}

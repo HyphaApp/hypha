@@ -297,7 +297,7 @@
         <header
             hx-target="#main"
             hx-swap="outerHTML show:top"
-            class="flex sticky top-0 flex-wrap justify-between items-center py-2 px-3 mt-3 border-t md:gap-5 md:text-sm md:font-medium bg-base-200 border-base-300 z-5 border-x"
+            class="flex sticky top-0 flex-wrap justify-between items-center py-2 px-4 mt-3 border-t md:gap-5 md:text-sm md:font-medium bg-base-200 border-base-300 z-5 border-x rounded-t-box"
         >
             <span class="hidden items-center py-1 md:inline-flex">
                 {% if enable_selection %}
@@ -504,11 +504,17 @@
         {% endcomment %}
         <section class="mb-4 w-full bg-base-100">
             {% if submissions %}
-                {% include "submissions/partials/submissions-inline.html" with submissions=submissions row_layout=request.GET.format enable_selection=enable_selection %}
+                <c-submission-list
+                    show_more_link="{% url 'apply:submissions:list' %}?query=reviewer:@me"
+                    :variant="request.GET.format"
+                    rounded-bottom
+                    :enable_selection="enable_selection"
+                    :submissions="submissions"
+                />
             {% else %}
-                <div class="flex flex-col justify-center items-center py-32 px-4 mb-8 border">
-                    <h2 class='text-2xl'>{% trans "No results matched your search" %}</h2>
-                    <p>{% trans "Try" %} <a href="./" hx-get="./" hx-target="#main" hx-push-url="true" hx-swap="outerHTML transition:true">{% trans "clearing" %}</a> {% trans "the current query and try again" %}.</p>
+                <div class="flex flex-col justify-center items-center py-32 px-4 mb-8 border rounded-b-box">
+                    <h2 class='mb-2 text-2xl card-title'>{% trans "No results matched your search" %}</h2>
+                    <p class="text-fg-muted">{% trans "Try" %} <a href="./" hx-get="./" hx-target="#main" hx-push-url="true" hx-swap="outerHTML transition:true">{% trans "clearing" %}</a> {% trans "the current query and try again" %}.</p>
                 </div>
             {% endif %}
         </section>

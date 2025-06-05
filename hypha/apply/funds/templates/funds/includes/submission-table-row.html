@@ -2,10 +2,10 @@
 {% load show_applicant_identity from workflow_tags %}
 
 <tr
-    class="relative py-1 px-2 border hover:bg-base-200"
+    class="relative hover:bg-base-200"
 >
     {% if enable_selection %}
-        <td class="hidden p-2 text-center align-top md:table-cell">
+        <td class="hidden text-center align-top md:table-cell pe-2">
             <!-- select -->
             <label class="py-2.5">
                 <input id="submission-{{ s.id }}"
@@ -20,7 +20,7 @@
         </td>
     {% endif %}
 
-    <td class="text-center align-top">
+    <td class="text-center align-top pe-2">
         <div class="py-1" tabindex="-1">
             {% if s.is_archive %}
                 {% trans "Archived Submission" as text_archived %}
@@ -39,7 +39,7 @@
     </td>
 
     <!-- title -->
-    <td class="p-2 align-text-top">
+    <td class="align-text-top">
         <a
             title="{{ s.form_data.title }}"
             href="{% url "funds:submissions:detail" s.id %}?ref=table-view"
@@ -55,8 +55,7 @@
         </div>
     </td>
 
-    <td class="p-2 text-center align-top">
-
+    <td class="text-center align-top">
         <a
             hx-target="#main"
             hx-push-url="true"
@@ -67,7 +66,7 @@
         >{{ s.phase.display_name }}</a>
     </td>
 
-    <td class="p-2 text-sm align-top">
+    <td class="text-sm align-top">
         {% if s|show_applicant_identity:request.user %}
             <a
                 href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" applicants=s.user.id %}"
@@ -87,7 +86,7 @@
 
     {% if "round" not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
         <!-- fund -->
-        <td class="p-2 text-sm text-center align-top">
+        <td class="text-sm text-center align-top">
             {% if s.round %}
                 <a
                     href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" round=s.round.id %}"
@@ -116,7 +115,7 @@
     {% endif %}
 
     {% if not 'lead' in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-        <td class="p-2 text-sm align-top">
+        <td class="text-sm align-top">
             <a
                 href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" lead=s.lead.id %}"
                 hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" lead=s.lead.id %}"
@@ -127,7 +126,7 @@
             >{{ s.lead }}</a>
         </td>
     {% endif %}
-    <td class="p-2 align-top">
+    <td class="align-top">
         <div class="flex {% if 'reviews' in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}justify-center{% else %}justify-start{% endif%} gap-2">
             {% if 'reviews' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
                 {% comment %} Reviews {% endcomment %}

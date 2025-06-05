@@ -78,14 +78,13 @@
                         Your flagged submissions <span class="badge badge-soft badge-secondary">{{ my_flagged.count }}</span>
                     </a>
                 </h2>
-
-                {% include "submissions/partials/submissions-inline.html" with submissions=my_flagged.objects row_layout="table" %}
-
-                {% if my_flagged.display_more  %}
-                    <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
-                        <a href="{% url "apply:submissions:list" %}?query=flagged:@me">Show All</a>
-                    </div>
-                {% endif %}
+                <c-submission-list
+                    show_more_link="{% url 'apply:submissions:list' %}?query=flagged:@me"
+                    variant="table"
+                    rounded-top
+                    :submissions="my_flagged.objects"
+                    :show_more="my_flagged.display_more"
+                />
             </section>
         {% endif %}
 
@@ -134,13 +133,14 @@
                         {% trans "Your previous reviews" %} <span class="badge badge-soft badge-secondary">{{ my_reviewed.count }}</span>
                     </a>
                 </h2>
-                {% include "submissions/partials/submissions-inline.html" with submissions=my_reviewed.objects row_layout="table" %}
 
-                {% if my_reviewed.display_more %}
-                    <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
-                        <a href="{% url "apply:submissions:list" %}?query=reviewed-by:@me">{% trans "Show all" %}</a>
-                    </div>
-                {% endif %}
+                <c-submission-list
+                    show_more_link="{% url 'apply:submissions:list' %}?query=reviewed-by:@me"
+                    variant="table"
+                    rounded-top
+                    :submissions="my_reviewed.objects"
+                    :show_more="my_reviewed.display_more"
+                />
             </section>
         {% endif %}
     </div>
