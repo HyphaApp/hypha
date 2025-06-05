@@ -1,7 +1,7 @@
 {% load i18n querystrings %}
-<c-vars page target use_htmx class btn_class="btn btn-soft" />
+<c-vars page target use_htmx class btn_class="btn btn-sm" />
 
-<div class="flex justify-around {{ class }}">
+<div class="flex justify-around items-center {{ class }}">
     <div aria-label="Pagination" class="join">
         {% if page.has_previous %}
             <a  href="{% if use_htmx %}#{% else %}{% modify_query page=1 %}{% endif %}"
@@ -12,7 +12,7 @@
                class="join-item {{ btn_class }}">{% trans "Previous" %}</a>
         {% endif %}
 
-        <span class="pointer-events-none btn btn-ghost">
+        <span class="pointer-events-none btn btn-ghost btn-sm">
             Page {{ page.number }} of {{ page.paginator.num_pages }}
         </span>
 
