@@ -46,6 +46,7 @@ class CoApplicantInvite(models.Model):
     role = models.CharField(
         choices=CoApplicantRole.choices, default=CoApplicantRole.VIEW
     )
+    project_permission = models.JSONField(blank=True, null=True, default=list)
     responded_on = models.DateTimeField(blank=True, null=True)
     invited_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

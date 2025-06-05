@@ -466,6 +466,13 @@ class InviteCoApplicantForm(forms.ModelForm):
     role = forms.ChoiceField(
         choices=CoApplicantRole.choices, label="Role", required=False
     )
+    project_permission = forms.MultipleChoiceField(
+        choices=CoApplicantProjectPermission.choices,
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="Enable permissions for Project",
+        help_text="It will provide access of selected role for selected project sections. Ex: selected role - View, selected project section - Contracting, then co-applicant can only read/view the contracting section but can't edit/upload.",
+    )
 
     submission = forms.ModelChoiceField(
         queryset=ApplicationSubmission.objects.filter(),
@@ -478,6 +485,8 @@ class InviteCoApplicantForm(forms.ModelForm):
 
         if submission:
             self.fields["submission"].initial = submission.id
+            if not hasattr(submission, "project"):
+                self.fields.pop("project_permission", None)
 
     class Meta:
         model = CoApplicantInvite
