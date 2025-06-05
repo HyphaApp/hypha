@@ -113,8 +113,8 @@
                     {% else %}
                         {% dropdown_menu title=field.label heading=field|get_dropdown_heading position="right" %}
                             <calendar-range class="mx-auto cally" onchange="updateURL(this.value, '{{field_name}}')" data-field-name='{{field_name}}'>
-                                <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                                <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                                {% heroicon_solid "chevron-left" aria_label="Previous" slot="previous" class="size-4" %}
+                                {% heroicon_solid "chevron-right" aria_label="Next" slot="next" class="size-4" %}
                                 <calendar-month></calendar-month>
                             </calendar-range>
                         {% enddropdown_menu %}
