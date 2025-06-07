@@ -23,23 +23,6 @@
     }
   }
 
-  &--secondary,
-  &--white {
-    @include mixins.button(
-      variables.$color--white,
-      variables.$color--light-blue
-    );
-    display: inline-block;
-    color: variables.$color--light-blue;
-    border: 1px solid variables.$color--mid-grey;
-
-    &:active,
-    &:focus,
-    &:hover {
-      color: variables.$color--white;
-    }
-  }
-
   &--filters {
     display: flex;
     justify-content: space-between;
