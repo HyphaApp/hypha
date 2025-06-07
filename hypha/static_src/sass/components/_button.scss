@@ -23,26 +23,6 @@
     }
   }
 
-  &--filters {
-    display: flex;
-    justify-content: space-between;
-    max-width: 300px;
-    padding: 15px 20px;
-    font-weight: variables.$weight--normal;
-    color: variables.$color--default;
-    border: 1px solid variables.$color--light-mid-grey;
-    transition: none;
-    width: 100%;
-
-    @include mixins.media-query(lg) {
-      background: none;
-      padding: 10px;
-      border: 0;
-      justify-content: flex-start;
-      opacity: 0.7;
-    }
-  }
-
   &--left-space {
     margin-inline-start: 20px;
   }
