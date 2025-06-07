@@ -71,6 +71,9 @@ class CoApplicantInviteView(View):
             form.instance.submission = self.submission
             form.instance.invited_user_email = form.cleaned_data["invited_user_email"]
             form.instance.role = form.cleaned_data["role"]
+            form.instance.project_permission = form.cleaned_data.get(
+                "project_permission", None
+            )
             form.instance.invited_by = self.request.user
             form.instance.invited_at = timezone.now()
             co_applicant_invite = form.save()
@@ -88,7 +91,7 @@ class CoApplicantInviteView(View):
                     "HX-Trigger": json.dumps(
                         {
                             "coApplicantUpdated": None,
-                            "showMessage": _("Co-applicant created"),
+                            "showMessage": _("Co-applicant invited"),
                         }
                     ),
                 },
@@ -170,6 +173,7 @@ class CoApplicantInviteAcceptView(View):
                 submission=self.invite.submission,
                 user=user,
                 role=self.invite.role,
+                project_permission=self.invite.project_permission,
             )
 
             if not self.request.user.is_authenticated or self.request.user != user:

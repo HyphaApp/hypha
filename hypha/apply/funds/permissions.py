@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from rolepermissions.permissions import register_object_checker
 
-from hypha.apply.funds.models.co_applicants import COMMENT, READ_ONLY, CoApplicant
+from hypha.apply.funds.models.co_applicants import CoApplicant, CoApplicantRole
 from hypha.apply.funds.models.submissions import DRAFT_STATE
 
 from ..users.roles import STAFF_GROUP_NAME, SUPERADMIN, TEAMADMIN_GROUP_NAME, StaffAdmin
@@ -38,10 +38,10 @@ def can_edit_submission(user, submission):
     if submission.phase.permissions.can_edit(user):
         co_applicant = submission.co_applicants.filter(user=user).first()
         if co_applicant:
-            if co_applicant.role not in [READ_ONLY, COMMENT]:
+            if co_applicant.role not in [CoApplicantRole.VIEW, CoApplicantRole.COMMENT]:
                 return (
                     True,
-                    "Co-applicant with read only or comment access can't edit submission",
+                    "Co-applicant with read/view only or comment access can't edit submission",
                 )
             return False, ""
         return True, "User can edit in current phase"
@@ -268,7 +268,7 @@ def can_update_co_applicant(user, invite):
 
 def user_can_view_post_comment_form(user, submission):
     co_applicant = CoApplicant.objects.filter(user=user, submission=submission).first()
-    if co_applicant and co_applicant.role == READ_ONLY:
+    if co_applicant and co_applicant.role == CoApplicantRole.VIEW:
         return False
     return True
 

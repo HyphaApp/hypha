@@ -76,8 +76,8 @@ class TestInvoiceModel(TestCase):
         self.assertFalse(invoice.can_user_delete(staff))
 
     def test_can_user_delete_from_submitted(self):
-        invoice = InvoiceFactory(status=SUBMITTED)
         user = ApplicantFactory()
+        invoice = InvoiceFactory(status=SUBMITTED, project__user=user)
         self.assertTrue(invoice.can_user_delete(user))
 
     def test_user_cant_delete_from_resubmitted(self):
@@ -136,7 +136,7 @@ class TestInvoiceModel(TestCase):
         statuses = [CHANGES_REQUESTED_BY_STAFF, RESUBMITTED, SUBMITTED]
         user = ApplicantFactory()
         for status in statuses:
-            invoice = InvoiceFactory(status=status)
+            invoice = InvoiceFactory(status=status, project__user=user)
             self.assertTrue(invoice.can_user_edit(user))
 
     def test_applicant_cant_edit_invoice(self):

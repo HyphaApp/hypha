@@ -63,17 +63,8 @@ def percentage(value, total):
 
 
 @register.simple_tag
-def user_can_view_invoices(project, user):
+def project_can_have_invoices(project):
     if project.status in [INVOICING_AND_REPORTING, CLOSING, COMPLETE]:
-        return True
-    return False
-
-
-@register.simple_tag
-def user_can_add_invoices(project, user):
-    if project.status == INVOICING_AND_REPORTING and (
-        user.is_apply_staff or user == project.user
-    ):
         return True
     return False
 
