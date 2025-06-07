@@ -102,6 +102,26 @@
   @apply gap-3;
 }
 
+@utility link-expand-x {
+  text-decoration-line: none;
+
+  &::after {
+    content: "";
+    display: block;
+    margin-top: 0.25rem;
+    width: 100%;
+    border-bottom: solid var(--link-expand-border-width, 4px)
+      var(--color-primary);
+    transform: scaleX(0);
+    transition: transform 250ms ease-in-out;
+  }
+
+  &:hover::after,
+  &.link-active::after {
+    transform: scaleX(1);
+  }
+}
+
 .wmd-preview {
   @apply prose w-full;
 }

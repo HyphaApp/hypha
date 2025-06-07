@@ -67,5 +67,5 @@ def truncatechars_middle(value, arg):
 
 
 @register.simple_tag
-def primary_navigation_items(user):
-    return get_primary_navigation_items(user)
+def primary_navigation_items(request):
+    return get_primary_navigation_items(request)
