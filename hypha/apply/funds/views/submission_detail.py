@@ -300,7 +300,7 @@ class SubmissionDetailPDFView(SingleObjectMixin, View):
             self.object.get_absolute_url()
         )
         context["id"] = self.object.application_id
-        context["data"] = self.object.get_text_question_answer_as_dict()
+        context["data"] = self.object.get_text_questions_answers_as_dict()
         context["title"] = self.object.title
         context["stage"] = self.object.stage
         context["fund"] = self.object.page
