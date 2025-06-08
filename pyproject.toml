@@ -1,6 +1,6 @@
 [project]
 name = "hypha"
-description = "A open source submission management platform to receive and manage applications for funding."
+description = "A open source submission management platform to receive and manage applications for funding"
 readme = "README.md"
 version = "5.32.0"
 requires-python = ">=3.10"
@@ -63,7 +63,7 @@ dependencies = [
     "wagtail-modeladmin>=2.1.0",
     "redis>=5.2.1",
     "crispy-tailwind>=1.0.3",
-    "django-cotton>=2.1.2",
+    "django-cotton~=2.1",
 ]
 
 [dependency-groups]
