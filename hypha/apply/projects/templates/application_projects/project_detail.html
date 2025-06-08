@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 
-{% load i18n static wagtailcore_tags approval_tools invoice_tools project_tags %}
+{% load i18n static wagtailcore_tags approval_tools invoice_tools project_tags primaryactions_tags %}
 {% load heroicons %}
 
 {% block title %}{{ object.title }}{% endblock %}
@@ -64,26 +64,32 @@
                     {% include "application_projects/partials/project_information.html" %}
                 </dl>
 
+                {% project_can_have_invoices object as can_have_invoices %}
                 {% user_can_view_invoices object user as can_view_invoices %}
-                {% if can_view_invoices %}
+                {% if can_have_invoices and can_view_invoices %}
                     <div class="wrapper wrapper--outer-space-large">
                         {% include "application_projects/includes/invoices.html" %}
                     </div>
                 {% endif %}
 
                 {% project_show_reports_section object as show_reports_section %}
-                {% if show_reports_section %}
+                {% user_can_view_reports object user as can_view_reports %}
+                {% if show_reports_section and can_view_reports %}
                     <div class="wrapper wrapper--outer-space-large">
                         {% include "reports/includes/reports.html" %}
                     </div>
                 {% endif %}
 
                 {% project_can_have_contracting_section object as can_have_contracting_section %}
-                {% if can_have_contracting_section %}
+                {% user_can_view_contracting_documents object user as can_view_contracting_documents %}
+                {% if can_have_contracting_section and can_view_contracting_documents %}
                     {% include "application_projects/includes/contracting_documents.html" %}
                 {% endif %}
 
-                {% include "application_projects/includes/project_documents.html" %}
+                {% user_can_view_project_documents object user as can_view_project_documents %}
+                {% if can_view_project_documents %}
+                    {% include "application_projects/includes/project_documents.html" %}
+                {% endif %}
             </article>
 
             {% block sidebar %}
@@ -174,6 +180,13 @@
 
                     {% if request.user.is_apply_staff %}
                         {% block admin_assignments %}{% endblock %}
+                    {% endif %}
+
+                    {% display_coapplicant_section user object as coapplicant_section %}
+                    {% if coapplicant_section %}
+                        {% block co_applicant %}
+                            <div hx-trigger="revealed, coApplicantUpdated from:body" hx-get="{% url 'funds:submissions:partial_coapplicant_invites' object.submission.id %}"></div>
+                        {% endblock %}
                     {% endif %}
 
                 </aside>

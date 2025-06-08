@@ -1,16 +1,17 @@
 {% load i18n %}
-{% modal_title %}{% trans "Invite Co-Applicant" %}{% endmodal_title %}
+{% modal_title %}{% trans "Invite co-applicant" %}{% endmodal_title %}
 
 <div class="p-4 prose prose-sm text-fg-muted">
     {% blocktrans %}
         <p>Enter a valid email address to invite a co-applicant. We will send a one-time email invitation to this address. The invitation will expire in {{ expiry }} days.</p>
         <p>Select a role for the co-applicant:
             <ol>
-                <li>Read Only: They can view the submission only.</li>
-                <li>Comment: They can view the submission and add comments.</li>
-                <li>Edit: They can view, comment on, and edit the submission.</li>
+                <li>View: They can only read the application.</li>
+                <li>Comment: They can view and add comments to the application.</li>
+                <li>Edit: They can view, comment and edit the application.</li>
             </ol>
         </p>
     {% endblocktrans %}
+
     {% include 'includes/dialog_form_base.html' with form=form value=value %}
 </div>

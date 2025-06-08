@@ -187,8 +187,8 @@ class TestInvoiceTools(TestCase):
         self.assertFalse(can_delete(invoice, staff))
 
     def test_user_can_delete_from_submitted(self):
-        invoice = InvoiceFactory(status=SUBMITTED)
         user = ApplicantFactory()
+        invoice = InvoiceFactory(status=SUBMITTED, project__user=user)
 
         self.assertTrue(can_delete(invoice, user))
 
@@ -217,16 +217,18 @@ class TestInvoiceTools(TestCase):
         self.assertFalse(can_delete(invoice, user))
 
     def test_applicant_and_staff_can_edit_in_submitted(self):
-        invoice = InvoiceFactory(status=SUBMITTED)
         applicant = ApplicantFactory()
+        invoice = InvoiceFactory(status=SUBMITTED, project__user=applicant)
         staff = StaffFactory()
 
         self.assertTrue(can_edit(invoice, applicant))
         self.assertTrue(can_edit(invoice, staff))
 
     def test_applicant_can_edit_in_changes_requested(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
         applicant = ApplicantFactory()
+        invoice = InvoiceFactory(
+            status=CHANGES_REQUESTED_BY_STAFF, project__user=applicant
+        )
 
         self.assertTrue(can_edit(invoice, applicant))
 
@@ -237,8 +239,8 @@ class TestInvoiceTools(TestCase):
         self.assertFalse(can_edit(invoice, staff))
 
     def test_applicant_and_staff_can_edit_in_resubmitted(self):
-        invoice = InvoiceFactory(status=RESUBMITTED)
         applicant = ApplicantFactory()
+        invoice = InvoiceFactory(status=RESUBMITTED, project__user=applicant)
         staff = StaffFactory()
 
         self.assertTrue(can_edit(invoice, applicant))

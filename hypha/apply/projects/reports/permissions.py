@@ -1,6 +1,10 @@
 from rolepermissions.permissions import register_object_checker
 
-from hypha.apply.users.roles import StaffAdmin
+from hypha.apply.funds.models.co_applicants import (
+    CoApplicantProjectPermission,
+    CoApplicantRole,
+)
+from hypha.apply.users.roles import Applicant, StaffAdmin
 
 from ..models.project import (
     CLOSING,
@@ -31,8 +35,18 @@ def update_project_reports(role, user, project) -> bool:
         return False
     if project.status != INVOICING_AND_REPORTING:
         return False
-    if role == StaffAdmin or user == project.user:
+    if role == StaffAdmin:
         return True
+    if role == Applicant:
+        if user == project.user:
+            return True
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.REPORTS in co_applicant.project_permission
+            and co_applicant.role == CoApplicantRole.EDIT
+        ):
+            return True
     return False
 
 
@@ -95,8 +109,17 @@ def view_report(role, user, report) -> bool:
         return False
     if report.skipped:
         return False
-    if user.is_apply_staff or user.is_finance or user == report.project.user:
+    if user.is_apply_staff or user.is_finance:
         return True
+    if role == Applicant:
+        if user == report.project.user:
+            return True
+        co_applicant = report.project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.REPORTS in co_applicant.project_permission
+        ):
+            return True
     return False
 
 
@@ -129,7 +152,19 @@ def update_report(role, user, report) -> bool:
     if not report.can_submit:
         return False
 
-    if user.is_apply_staff or (user == report.project.user and not report.current):
+    if user.is_apply_staff:
         return True
+
+    if role == Applicant:
+        if user == report.project.user and not report.current:
+            return True
+        co_applicant = report.project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and not report.current
+            and CoApplicantProjectPermission.REPORTS in co_applicant.project_permission
+            and co_applicant.role == CoApplicantRole.EDIT
+        ):
+            return True
 
     return False

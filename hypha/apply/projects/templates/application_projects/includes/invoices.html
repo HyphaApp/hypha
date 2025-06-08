@@ -1,9 +1,10 @@
 {% load i18n invoice_tools humanize heroicons %}
+{% load can from permission_tags %}
 
 <section id="invoices" class="border rounded-box border-base-300 wrapper--outer-space-large">
     <div class="docs-block__header">
         <h2 class="m-0 text-lg font-semibold">{% trans "Invoices" %}</h2>
-        {% user_can_add_invoices object user as can_add_invoice %}
+        {% can "add_invoice" object as can_add_invoice %}
         {% if can_add_invoice %}
             <a
                 class="btn btn-secondary btn-outline"

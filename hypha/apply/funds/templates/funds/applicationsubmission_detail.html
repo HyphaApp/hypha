@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static workflow_tags wagtailcore_tags statusbar_tags archive_tags submission_tags translate_tags primaryactions_tags %}
+{% load i18n static workflow_tags wagtailcore_tags statusbar_tags archive_tags submission_tags translate_tags primaryactions_tags project_tags %}
 {% load heroicons %}
 {% load can from permission_tags %}
 
@@ -26,12 +26,15 @@
                 </a>
 
                 {% if PROJECTS_ENABLED and object.project %}
-                    <a
-                        class="tab [--color-base-content:var(--color-neutral-content)]"
-                        href="{% url 'funds:submissions:project' pk=object.id %}"
-                    >
-                        {% trans "Project" %}
-                    </a>
+                    {% user_can_access_project object.project user as can_access_project %}
+                    {% if can_access_project %}
+                        <a
+                            class="tab [--color-base-content:var(--color-neutral-content)]"
+                            href="{% url 'funds:submissions:project' pk=object.id %}"
+                        >
+                            {% trans "Project" %}
+                        </a>
+                    {% endif %}
                 {% endif %}
 
                 <a

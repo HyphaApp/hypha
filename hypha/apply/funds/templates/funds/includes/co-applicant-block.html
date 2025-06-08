@@ -26,6 +26,13 @@
             </summary>
 
             <div class="list">
+
+                {% if object.project %}
+                    <div class="mb-2 text-sm text-fg-muted">
+                        {% trans "Project permissions are available now and can be updated for each co-applicant." %}
+                    </div>
+                {% endif %}
+
                 {% for invite in co_applicants %}
                     <div class="list-row list-row-card">
                         <div class="min-w-0 list-col-grow">

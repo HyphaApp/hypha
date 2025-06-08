@@ -49,7 +49,13 @@ def get_related_activities_for_user(obj, user):
         [`Activity`][hypha.apply.activity.models.Activity] queryset
     """
     if hasattr(obj, "project") and obj.project:
-        source_filter = Q(submission=obj) | Q(project=obj.project)
+        if (
+            obj.co_applicants.filter(user=user).exists()
+            and not obj.co_applicants.filter(user=user).first().project_permission
+        ):
+            source_filter = Q(submission=obj)
+        else:
+            source_filter = Q(submission=obj) | Q(project=obj.project)
     elif hasattr(obj, "submission") and obj.submission:
         source_filter = Q(submission=obj.submission) | Q(project=obj)
     else:

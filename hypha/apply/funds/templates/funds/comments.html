@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static heroicons %}
+{% load i18n static heroicons project_tags %}
 
 {% block title %}Comments: {{ object.title_text_display }}{% endblock %}
 
@@ -20,13 +20,16 @@
                     {% trans "Application" %}
                 </a>
 
-                {% if object.project and PROJECTS_ENABLED %}
-                    <a
-                        class="tab [--color-base-content:var(--color-neutral-content)]"
-                        href="{% url 'funds:submissions:project' pk=object.id %}"
-                    >
-                        {% trans "Project" %}
-                    </a>
+                {% if PROJECTS_ENABLED and object.project %}
+                    {% user_can_access_project object.project user as can_access_project %}
+                    {% if can_access_project %}
+                        <a
+                            class="tab [--color-base-content:var(--color-neutral-content)]"
+                            href="{% url 'funds:submissions:project' pk=object.id %}"
+                        >
+                            {% trans "Project" %}
+                        </a>
+                    {% endif %}
                 {% endif %}
 
                 <a class="tab tab-active"
@@ -52,50 +55,51 @@
 
 {% block content %}
     <div class="my-4">
-        {% if form and not object.is_archive or object.project %}
-            <h2 class="sr-only">{% trans "Add communication" %}</h2>
-            <div class="pb-6 mb-4 w-full border-b border-base-300">
-                <form
-                    class="form form__comments"
-                    method="POST"
-                    enctype="multipart/form-data"
-                    action="./"
-                >
-                    {% csrf_token %}
+        {% if form %}
+            {% if not object.is_archive or object.project %}
+                <h2 class="sr-only">{% trans "Add communication" %}</h2>
+                <div class="pb-6 mb-4 w-full border-b border-base-300">
+                    <form
+                        class="form form__comments"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        action="./"
+                    >
+                        {% csrf_token %}
 
-                    {% for hidden in form.hidden_fields %}
-                        {{ hidden }}
-                    {% endfor %}
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
 
-                    <div class="flex flex-wrap gap-2 lg:flex-nowrap lg:gap-4">
-                        <div class="w-full lg:flex-1 max-w-[60rem]">
-                            {% include "forms/includes/field.html" with field=form.message label_classes="sr-only" %}
+                        <div class="flex flex-wrap gap-2 lg:flex-nowrap lg:gap-4">
+                            <div class="w-full lg:flex-1 max-w-[60rem]">
+                                {% include "forms/includes/field.html" with field=form.message label_classes="sr-only" %}
 
-                            <div class="hidden mt-4 text-right lg:block">
-                                <button
-                                    class="w-full lg:w-auto btn btn-primary"
-                                    type="submit"
-                                >
-                                    {% trans "Add Comment" %}
-                                </button>
+                                <div class="hidden mt-4 text-right lg:block">
+                                    <button
+                                        class="w-full lg:w-auto btn btn-primary"
+                                        type="submit"
+                                    >
+                                        {% trans "Add Comment" %}
+                                    </button>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="w-full lg:my-4 lg:w-auto lg:border-l lg:ps-4">
-                            {% include "forms/includes/field.html" with field=form.visibility %}
-                            {% include "forms/includes/field.html" with field=form.assign_to %}
-                            {% include "forms/includes/field.html" with field=form.attachments %}
+                            <div class="w-full lg:my-4 lg:w-auto lg:border-l lg:ps-4">
+                                {% include "forms/includes/field.html" with field=form.visibility %}
+                                {% include "forms/includes/field.html" with field=form.assign_to %}
+                                {% include "forms/includes/field.html" with field=form.attachments %}
+                            </div>
+                            <button
+                                class="mt-4 w-full lg:hidden lg:w-auto btn btn-primary"
+                                type="submit"
+                            >
+                                {% trans "Add Comment" %}
+                            </button>
                         </div>
-                        <button
-                            class="mt-4 w-full lg:hidden lg:w-auto btn btn-primary"
-                            type="submit"
-                        >
-                            {% trans "Add Comment" %}
-                        </button>
-                    </div>
-                </form>
-            </div>
-
+                    </form>
+                </div>
+            {% endif %}
         {% endif %}
 
         <section

@@ -3,22 +3,25 @@ from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.users.models import User
 
-READ_ONLY = "read_only"
-COMMENT = "comment"
-EDIT = "edit"
 
-COAPPLICANT_ROLE_CHOICES = (
-    (READ_ONLY, _("Read Only")),
-    (COMMENT, _("Comment")),
-    (EDIT, _("Edit")),
-)
+class CoApplicantRole(models.TextChoices):
+    VIEW = "view", _("View")
+    COMMENT = "comment", _("Comment")
+    EDIT = "edit", _("Edit")
+
+
+class CoApplicantProjectPermission(models.TextChoices):
+    PROJECT_DOCUMENT = "project_document", _("Project Document")
+    CONTRACTING_DOCUMENT = "contracting_document", _("Contracting Document")
+    INVOICES = "invoices", _("Invoices")
+    REPORTS = "reports", _("Reports")
 
 
 class CoApplicantInviteStatus(models.TextChoices):
-    PENDING = "pending", "Pending"
-    ACCEPTED = "accepted", "Accepted"
-    REJECTED = "rejected", "Rejected"
-    EXPIRED = "expired", "Expired"
+    PENDING = "pending", _("Pending")
+    ACCEPTED = "accepted", _("Accepted")
+    REJECTED = "rejected", _("Rejected")
+    EXPIRED = "expired", _("Expired")
 
 
 class CoApplicantInvite(models.Model):
@@ -40,7 +43,10 @@ class CoApplicantInvite(models.Model):
         choices=CoApplicantInviteStatus.choices,
         default=CoApplicantInviteStatus.PENDING,
     )
-    role = models.CharField(choices=COAPPLICANT_ROLE_CHOICES, default=READ_ONLY)
+    role = models.CharField(
+        choices=CoApplicantRole.choices, default=CoApplicantRole.VIEW
+    )
+    project_permission = models.JSONField(blank=True, null=True, default=list)
     responded_on = models.DateTimeField(blank=True, null=True)
     invited_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -64,7 +70,10 @@ class CoApplicant(models.Model):
     invite = models.OneToOneField(
         CoApplicantInvite, on_delete=models.CASCADE, related_name="co_applicant"
     )
-    role = models.CharField(choices=COAPPLICANT_ROLE_CHOICES, default=READ_ONLY)
+    role = models.CharField(
+        choices=CoApplicantRole.choices, default=CoApplicantRole.VIEW
+    )
+    project_permission = models.JSONField(blank=True, null=True, default=list)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     class Meta:
