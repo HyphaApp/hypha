@@ -122,6 +122,11 @@
   }
 }
 
+@utility separator-dot:not(:last-child)::after {
+  @apply text-fg-muted mx-1;
+  content: "\00B7"; /* Unicode for middle dot */
+}
+
 .wmd-preview {
   @apply prose w-full;
 }

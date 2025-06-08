@@ -7,7 +7,7 @@
         hx-get="{% url 'apply:projects:lead_update' object.submission.id %}"
         hx-target="#htmx-modal"
     >
-        <u>{% trans "Project lead" %}: {{ object.lead }}</u>
+        {% trans "Project lead" %}: {{ object.lead }}
         {% heroicon_micro "pencil-square" class="inline ms-1" aria_hidden=true %}
     </a>
 {% else %}

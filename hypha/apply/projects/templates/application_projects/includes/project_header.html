@@ -8,11 +8,11 @@
     <span class="inline-block bg-gray-600 rounded-md animate-pulse"></span>
 </h1>
 
-<div class="mt-1 text-sm font-medium heading heading--meta">
-    <span>{{ object.fund_name }}</span>
+<div class="mt-1 mb-4 font-medium text-fg-muted">
+    <span class="separator-dot">{{ object.fund_name }}</span>
 
     {% if object.submission.round %}
-        <span>
+        <span class="separator-dot">
             {% if request.user.is_apply_staff %}
                 <a
                     class="transition-opacity hover:opacity-70 link"
@@ -27,7 +27,8 @@
 
     {% if not HIDE_STAFF_IDENTITY or request.user.is_apply_staff %}
         <span
-            hx-get="{% url "apply:projects:project_lead" object.submission.id %}"
+            class="separator-dot"
+            hx-get="{% url 'apply:projects:project_lead' object.submission.id %}"
             hx-trigger="load, leadUpdated from:body"
         >
             <span class="inline-block w-24 bg-gray-600 rounded-md animate-pulse"></span>

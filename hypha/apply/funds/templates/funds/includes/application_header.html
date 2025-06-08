@@ -5,27 +5,28 @@
     <span class="text-fg-muted">#{{ object.application_id }}</span>
 </h1>
 
-<div class="mt-1 text-sm font-medium heading heading--meta">
-    <span>
+<div class="mt-1 mb-4 font-medium text-fg-muted">
+    <span class="separator-dot">
         {{ object.page }}
     </span>
 
     {% if object.round %}
         {% if request.user.is_apply_staff %}
-            <span>
+            <span class="separator-dot">
                 <a class="text-white hover:underline"
                    href="{% url 'apply:submissions:list' %}?round={{ object.round.pk }}"
                 >{{ object.round }}</a>
             </span>
         {% else %}
-            <span>{{ object.round }}</span>
+            <span class="separator-dot">{{ object.round }}</span>
         {% endif %}
     {% endif %}
 
-    <span>{{ object.stage }}</span>
+    <span class="separator-dot">{{ object.stage }}</span>
 
     <span
-        hx-get="{% url "apply:submissions:partial-get-lead" object.id %}"
+        class="separator-dot"
+        hx-get="{% url 'apply:submissions:partial-get-lead' object.id %}"
         hx-trigger="load, leadUpdated from:body"
     >
         <span class="inline-block w-24 bg-gray-600 rounded-md animate-pulse"></span>

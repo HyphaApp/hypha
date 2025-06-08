@@ -1,7 +1,7 @@
 {% load i18n heroicons %}
 {% if request.user.is_apply_staff %}
     <a
-        class="link link-neutral"
+        class="link"
         href="{% url 'funds:submissions:lead_update' pk=submission.pk %}"
         hx-get="{% url 'funds:submissions:lead_update' pk=submission.pk %}"
         hx-target="#htmx-modal"
