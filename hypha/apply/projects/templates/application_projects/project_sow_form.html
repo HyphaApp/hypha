@@ -41,7 +41,7 @@
                     {% trans "Save draft" as save_draft %}
                     {% for button_name, button_type, button_value in buttons %}
                         <button
-                            class="btn button--{{ button_type }}"
+                            class="btn {{ button_type }}"
                             type="submit"
                             name="{{ button_name }}"
                             {% if button_value == save_draft %}formnovalidate{% endif %}

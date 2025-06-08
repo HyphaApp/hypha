@@ -21,27 +21,6 @@
   }
 }
 
-// Button mixin
-@mixin button($bg, $hover-bg) {
-  padding: 0.5em 2rem;
-  font-weight: variables.$weight--bold;
-  color: variables.$color--white;
-  text-align: center;
-  background: $bg;
-  border: 1px solid variables.$color--white;
-  transition: color, background, border, variables.$transition;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover,
-  &:focus,
-  &:active {
-    cursor: pointer;
-    background: $hover-bg;
-  }
-}
-
 // Triangle mixin
 // @param {Direction} $direction - Triangle direction, either `top`, `right`, `bottom` or `left`
 // @param {Color} $color [currentcolor] - Triangle color
