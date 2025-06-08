@@ -50,9 +50,9 @@
 {% block footer %}
     {% if settings.core.SystemSettings.footer_content %}
         <footer class="p-10 footer bg-neutral text-neutral-content sm:footer-horizontal">
-            <aside class="container-constrained">
+            <div class="container-constrained">
                 {{ settings.core.SystemSettings.footer_content|safe }}
-            </aside>
+            </div>
         </footer>
     {% endif %}
 {% endblock footer %}

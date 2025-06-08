@@ -187,25 +187,23 @@
         <!-- Load extra js. -->
         {% block extra_js %}{% endblock %}
 
-        {% block sentry_sdk %}
-            {% if SENTRY_PUBLIC_KEY %}
-                <script
-                    src="https://js.sentry-cdn.com/{{ SENTRY_PUBLIC_KEY }}.min.js"
-                    crossorigin="anonymous"
-                ></script>
-                <script>
-                    Sentry.onLoad(function() {
-                        Sentry.init({
-                            environment: "{{ SENTRY_ENVIRONMENT }}",
-                            debug: {% if SENTRY_DEBUG %}true{% else %}false{% endif %},
-                            integrations: [new BrowserTracing()],
-                            denyUrls: {{ SENTRY_DENY_URLS|safe }},
-                            tracesSampleRate: {{ SENTRY_TRACES_SAMPLE_RATE }}
-                        });
+        {% if SENTRY_PUBLIC_KEY %}
+            <script
+                src="https://js.sentry-cdn.com/{{ SENTRY_PUBLIC_KEY }}.min.js"
+                crossorigin="anonymous"
+            ></script>
+            <script>
+                Sentry.onLoad(function() {
+                    Sentry.init({
+                        environment: "{{ SENTRY_ENVIRONMENT }}",
+                        debug: {% if SENTRY_DEBUG %}true{% else %}false{% endif %},
+                        integrations: [new BrowserTracing()],
+                        denyUrls: {{ SENTRY_DENY_URLS|safe }},
+                        tracesSampleRate: {{ SENTRY_TRACES_SAMPLE_RATE }}
                     });
-                </script>
-            {% endif %}
-        {% endblock sentry_sdk %}
+                });
+            </script>
+        {% endif %}
         {% include "includes/body_end.html" %}
     </body>
 </html>
