@@ -107,17 +107,6 @@
         }
       }
 
-      // batch action checkboxes
-      &.selected {
-        @include mixins.table-checkbox;
-        display: none;
-        padding-inline-end: 0;
-
-        @include mixins.media-query(lg) {
-          display: table-cell;
-        }
-      }
-
       &.fund,
       &.round,
       &.screening_status {
