@@ -470,8 +470,10 @@ class InviteCoApplicantForm(forms.ModelForm):
         choices=CoApplicantProjectPermission.choices,
         required=False,
         widget=forms.CheckboxSelectMultiple,
-        label="Enable permissions for Project",
-        help_text="It will provide access of selected role for selected project sections. Ex: selected role - View, selected project section - Contracting, then co-applicant can only read/view the contracting section but can't edit/upload.",
+        label=_("Project permissions"),
+        help_text=_(
+            "Enable same access level to these sections. Example: View role + Contracting = read-only contracting access."
+        ),
     )
 
     submission = forms.ModelChoiceField(
@@ -501,8 +503,10 @@ class EditCoApplicantForm(forms.ModelForm):
         choices=CoApplicantProjectPermission.choices,
         required=False,
         widget=forms.CheckboxSelectMultiple,
-        label="Enable permissions for Project",
-        help_text="It will provide access of selected role for selected project sections. Ex: selected role - View, selected project section - Contracting, then co-applicant can only read/view the contracting section but can't edit/upload.",
+        label=_("Project permissions"),
+        help_text=_(
+            "Enable same access level to these sections. Example: View role + Contracting = read-only contracting access."
+        ),
     )
 
     def __init__(self, *args, **kwargs):

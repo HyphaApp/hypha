@@ -28,9 +28,9 @@
             <div class="list">
 
                 {% if object.project %}
-                    <div class="mb-2 text-sm text-fg-muted">
-                        {% trans "Project permissions are available now and can be updated for each co-applicant." %}
-                    </div>
+                    <p class="mb-2 text-sm text-fg-muted">
+                        {% trans "Project permissions are enabled and can be updated for each co-applicant." %}
+                    </p>
                 {% endif %}
 
                 {% for invite in co_applicants %}
