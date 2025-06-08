@@ -1,0 +1,22 @@
+{% extends "base-pdf.html" %}
+{% load i18n %}
+
+{% block content %}
+    <div>
+        <div align="center">
+            <img height="40" src="{{ logo }}">
+            <h2 style="margin-bottom: 2px;">{{ org_name }} {% trans "Submission details" %}</h2>
+        </div>
+        <h2 style="margin-bottom: 0;">{{ title }}  <a href="{{ link }}">(#{{ id }})</a></h2>
+        <p style="margin-top:0; margin-bottom:8px;">{{ stage }} : {{ fund }} : {{ round }} : {{ lead }}</p>
+    </div>
+    <hr style="margin-top:0;">
+
+    <div style="font-size:14px;">
+        {% for question, answer in data.items %}
+            <p><b>{{ question }}</b></p>
+            <p> {{ answer }}</p>
+        {% endfor %}
+    </div>
+
+{% endblock %}
