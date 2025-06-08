@@ -2,7 +2,7 @@
 
 @use "../abstracts/variables";
 
-@layer base {  
+@layer base {
   details {
     & > summary {
       cursor: pointer;
@@ -30,14 +30,6 @@
     }
   }
 
-  .no-js-hidden,
-  %no-js-hidden {
-    html.no-js & {
-      display: none;
-    }
-  }
-
-  .off-screen,
   %off-screen {
     position: absolute;
     inset-inline-start: -9999px;
