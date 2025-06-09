@@ -157,20 +157,6 @@
       background: none;
     }
 
-    .form--scoreable & {
-      margin-block-start: 20px;
-    }
-
-    .form {
-      &__filters & {
-        max-width: 100%;
-
-        select {
-          height: variables.$dropdown-height;
-        }
-      }
-    }
-
     select[multiple="multiple"] {
       display: block;
     }

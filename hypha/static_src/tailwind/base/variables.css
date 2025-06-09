@@ -22,9 +22,7 @@
   --color-dark-pink: #511034;
   --color-pink: #d02a85;
   --color-light-pink: #ffe1df;
-  --color-light-green: #e1fae1;
   --color-cream: #f5f7e7;
-  --color-dark-tomato: #cc1e12;
   --color-mint: #40c2ad;
   --color-grass: #7dc588;
   --color-sky-blue: #e7f2f6;
@@ -58,10 +56,7 @@
   --transition-quick: 0.15s ease;
 
   /* Spacing */
-  --gutters: calc(5px + 1.5625vw);
-  --gutters-reverse: calc(0px - (5px + 1.5625vw));
   /* --spacing: 1.25rem; */
-  /* --spacing-reverse: -1.25rem; */
 
   /* Dropdown height */
   --dropdown-height: 45px;

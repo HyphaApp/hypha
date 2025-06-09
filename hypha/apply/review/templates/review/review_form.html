@@ -52,7 +52,7 @@
         </div>
 
         {% if not has_submitted_review %}
-            <form id="review-form-edit" class="flex-1 max-w-3xl form form--scoreable" action="" method="post">
+            <form id="review-form-edit" class="flex-1 max-w-3xl form" action="" method="post">
                 {% include "forms/includes/form_errors.html" with form=form %}
                 {% csrf_token %}
 
