@@ -234,8 +234,8 @@
   input[type="file"] {
     @extend %off-screen;
 
-    .no-js & {
-      @extend %on-screen;
+    @media (scripting: none) {
+      display: block;
     }
   }
 
