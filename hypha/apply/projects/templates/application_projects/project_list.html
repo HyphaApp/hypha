@@ -6,10 +6,12 @@
 {% block title %}{% trans "Projects" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "All Projects" %} ({{ table.rows|length }}){% endslot %}
-        {% slot sub_heading %}{% trans "View, Search and filter all projects" %}{% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'All Projects' %} ({{ table.rows|length }})"
+            subtitle="{% trans 'View, Search and filter all projects' %}"
+        />
+    </c-hero>
 {% endblock %}
 
 {% block content %}

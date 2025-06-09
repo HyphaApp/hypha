@@ -4,15 +4,14 @@
 {% block title %}{% trans "Edit Report" %} | {{ object.project.title }}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
-                {% trans "View project page" %}
-            </a>
-        {% endslot %}
-        {% slot header %}{{ object.project.title }}{% endslot %}
-        {% slot sub_heading %}{% trans "Submit a report" %}{% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ object.project.get_absolute_url }}"
+            back_link_text="{% trans 'View project page' %}"
+            title="{{ object.project.title }}"
+            subtitle="{% trans 'Submit a report' %}"
+        />
+    </c-hero>
 {% endblock %}
 
 {% block content %}

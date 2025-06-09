@@ -6,34 +6,32 @@
 {% block title %}{{ object.title }}{% endblock %}
 
 {% block hero %}
-    <div class="pt-4 pb-0 admin-bar bg-neutral text-neutral-content">
-        <div class="container-constrained">
-            {% include "application_projects/includes/project_header.html" %}
+    <c-hero padding="pt-4">
+        {% include "application_projects/includes/project_header.html" %}
 
-            <div role="tablist" class="font-semibold tabs tabs-lg tabs-lift text-base-content">
-                <a
-                    class="tab [--color-base-content:var(--color-neutral-content)]"
-                    href="{{ project.submission.get_absolute_url }}"
-                >
-                    {% trans "Application" %}
-                </a>
+        <div role="tablist" class="font-semibold tabs tabs-lg tabs-lift text-base-content">
+            <a
+                class="tab [--color-base-content:var(--color-neutral-content)]"
+                href="{{ project.submission.get_absolute_url }}"
+            >
+                {% trans "Application" %}
+            </a>
 
-                <a
-                    class="tab tab-active"
-                    href="{% url 'funds:submissions:project' pk=object.submission.id %}"
-                >
-                    {% trans "Project" %}
-                </a>
+            <a
+                class="tab tab-active"
+                href="{% url 'funds:submissions:project' pk=object.submission.id %}"
+            >
+                {% trans "Project" %}
+            </a>
 
-                <a
-                    class="tab [--color-base-content:var(--color-neutral-content)]"
-                    href="{% url 'funds:submissions:comments' pk=object.submission.id %}"
-                >
-                    {% trans "Comments" %} ({{ comments_count }})
-                </a>
-            </div>
+            <a
+                class="tab [--color-base-content:var(--color-neutral-content)]"
+                href="{% url 'funds:submissions:comments' pk=object.submission.id %}"
+            >
+                {% trans "Comments" %} ({{ comments_count }})
+            </a>
         </div>
-    </div>
+    </c-hero>
 {% endblock %}
 
 

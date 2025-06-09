@@ -2,24 +2,20 @@
 {% load i18n static heroicons %}
 
 {% block hero %}
-    {% adminbar %}
-
-        {% slot back_link %}
-            <a href="/account/" class="admin-bar__back-link"> {% trans "Back to Account" %}</a>
-        {% endslot %}
-
-        {% slot header %}
-            {% trans "Two-Factor Authentication (2FA)" %}
-        {% endslot %}
-        {% comment %} {% slot sub_heading %}{% trans "All submissions ready for discussion." %}{% endslot %} {% endcomment %}
-
-        {% if user.can_access_dashboard %}
-            <a href="{% url 'dashboard:dashboard' %}" class="btn btn-primary" hx-boost='true'>
-                {% heroicon_mini "squares-2x2" size=20 class="inline mr-1 align-text-bottom" %}
-                {% trans "Go to my dashboard" %}
-            </a>
-        {% endif %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            back_link="/account/"
+            back_link_text="{% trans 'Back to Account' %}"
+            title="{% trans 'Two-Factor Authentication (2FA)' %}"
+        >
+            {% if user.can_access_dashboard %}
+                <a href="{% url 'dashboard:dashboard' %}" class="btn btn-primary" hx-boost='true'>
+                    {% heroicon_mini "squares-2x2" size=20 class="inline mr-1 align-text-bottom" %}
+                    {% trans "Go to my dashboard" %}
+                </a>
+            {% endif %}
+        </c-hero.header>
+    </c-hero>
 {% endblock %}
 
 {% block content %}

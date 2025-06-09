@@ -4,15 +4,14 @@
 {% block title %}{% trans "Invoice" %}: {{ object.invoice_number }} - {{ object.project.title }}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
-                {% trans "View project page" %}
-            </a>
-        {% endslot %}
-        {% slot header %}{% trans "Invoice" %}: {{ object.invoice_number }}{% endslot %}
-        {% slot sub_heading %}{% trans "For" %}: {{ object.project.title }}{% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ object.project.get_absolute_url }}"
+            back_link_text="{% trans 'View project page' %}"
+            title="{% trans 'Invoice' %}: {{ object.invoice_number }}"
+            subtitle="{% trans 'For' %}: {{ object.project.title }}"
+        />
+    </c-hero>
 {% endblock %}
 
 {% block content %}
@@ -106,7 +105,7 @@
                 data-testid="sidebar-primary-actions"
             >
                 {% include "application_projects/partials/invoice_detail_actions.html" %}
-            </>
+            </c-->
         </aside>
     </div>
 {% endblock %}

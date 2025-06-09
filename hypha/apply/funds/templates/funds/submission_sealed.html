@@ -4,18 +4,18 @@
 {% block title %}{% trans "Sealed" %}: {{ object.title }}{% endblock %}
 
 {% block hero %}
-    <div class="bg-neutral text-neutral-content">
-        <div class="py-4 admin-bar container-constrained">
-            <h1 class="mb-2 text-2xl font-medium md:m-0 md:text-3xl">{{ object.title }}</h1>
-            <p class="heading heading--meta">
-                <span>{{ object.stage }}</span>
-                <span>{{ object.page }}</span>
-                <span>{{ object.round }}</span>
-                <span>{% trans "Lead" %}: {{ object.lead }}</span>
-            </p>
-            {% status_bar object.workflow object.phase request.user same_stage=True %}
-        </div>
-    </div>
+    <c-hero>
+        <c-hero.header
+            title="{{ object.title }}"
+            subtitle='
+                      <span class="separator-dot">{{ object.stage }}</span>
+                      <span class="separator-dot">{{ object.page }}</span>
+                      <span class="separator-dot">{{ object.round }}</span>
+                      <span class="separator-dot">{% trans "Lead" %}: {{ object.lead }}</span>'
+        />
+
+        {% status_bar object.workflow object.phase request.user same_stage=True %}
+    </c-hero>
 {% endblock %}
 
 {% block content %}

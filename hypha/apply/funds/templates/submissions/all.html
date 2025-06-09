@@ -6,35 +6,33 @@
 
 {% block title %}{% trans "Submissions" %}{% endblock %}
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}
-            {% trans "All Submissions" %}<span class="submissions-count"> ({{ page.paginator.count }})</span>
-        {% endslot %}
-
-        {% slot sub_heading %}
-            {% trans "Search and filter all submissions" %}
-        {% endslot %}
-
-        {% slot buttons %}
-            {% if request.GET.format == 'list' %}
-                <a class="block pb-4 tab__item ms-auto"
-                   href="{% modify_query "page" format="table" %}"
-                >
-                    {% heroicon_mini "table-cells" aria_hidden="true" size=16 class="inline align-text-bottom" %}
-                    {% trans "Table view" %}
-                </a>
-            {% else %}
-                <a
-                    class="block pb-4 tab__item ms-auto"
-                    href="{% modify_query "page" format="list" %}"
-                >
-                    {% heroicon_mini "queue-list" aria_hidden="true" size=16 class="inline align-text-bottom" %}
-                    {% trans "List View" %}
-                </a>
-            {% endif %}
-            </a>
-        {% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'All Submissions' %}<span class='submissions-count'> ({{ page.paginator.count }})</span>"
+            subtitle="{% trans 'Search and filter all submissions' %}"
+        >
+            <div class="self-end -mb-4">
+                <div class="tabs tabs-lift">
+                    {% if request.GET.format == "list" %}
+                        <a
+                            class="flex gap-2 items-center tab tab-active text-base-content/70"
+                            href="{% modify_query "page" format="table" %}"
+                        >
+                            {% heroicon_mini "table-cells" aria_hidden="true" size=16 %}
+                            {% trans "Table view" %}</a>
+                    {% else %}
+                        <a
+                            class="flex gap-2 items-center tab tab-active text-base-content/70"
+                            href="{% modify_query "page" format="list" %}"
+                        >
+                            {% heroicon_mini "queue-list" aria_hidden="true" size=16 class="inline align-text-bottom" %}
+                            {% trans "List View" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </c-hero.header>
+    </c-hero>
 {% endblock %}
 
 

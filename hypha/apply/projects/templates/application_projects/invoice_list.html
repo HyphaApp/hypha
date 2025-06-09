@@ -6,10 +6,12 @@
 {% block title %}{% trans "Invoices" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "All Invoices" %} ({{ table.rows|length }}){% endslot %}
-        {% slot sub_heading %}{% trans "View, search and filter all project invoices" %}{% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'All Invoices' %} ({{ table.rows|length }})"
+            subtitle="{% trans 'View, search and filter all project invoices' %}"
+        />
+    </c-hero>
 {% endblock %}
 
 {% block content %}

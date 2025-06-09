@@ -5,10 +5,12 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Dashboard" %}{% endslot %}
-        {% slot sub_heading %}{% trans "Welcome" %}, {{ request.user }}!{% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Dashboard' %}"
+            subtitle="{% trans 'Welcome' %}, {{ request.user }}!"
+        />
+    </c-hero>
 {% endblock %}
 
 {% block content %}

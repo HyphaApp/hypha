@@ -3,26 +3,22 @@
 {% block title %}{% trans "Notifications" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Notifications" %}{% endslot %}
-        {% slot sub_heading %}
-            {% if PROJECTS_ENABLED %}
-                {% trans "Activity feed across all applications and projects" %}
-            {% else %}
-                {% trans "Activity feed across all the applications" %}
-            {% endif %}
-        {% endslot %}
-
-        <form
-            class="[&>label]:sr-only text-base-content flex items-center justify-between gap-2"
-            method="get"
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Notifications' %}"
+            subtitle="{% if PROJECTS_ENABLED %}{% trans 'Activity feed across all applications and projects' %}{% else %}{% trans 'Activity feed across all the applications' %}{% endif %}"
         >
-            {{ filter.form }}
-            <button class="btn btn-primary" type="submit" value="Filter">
-                {% trans "Filter" %}
-            </button>
-        </form>
-    {% endadminbar %}
+            <form
+                class="[&>label]:sr-only text-base-content flex items-center justify-between gap-2"
+                method="get"
+            >
+                {{ filter.form }}
+                <button class="btn btn-primary" type="submit" value="Filter">
+                    {% trans "Filter" %}
+                </button>
+            </form>
+        </c-hero.header>
+    </c-hero>
 {% endblock %}
 
 {% block content %}

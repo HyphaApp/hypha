@@ -4,9 +4,9 @@
 {% block title %}{% trans "Deleting" %}: {{ object }}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Deleting" %}: {{ object }}{% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header title="{% trans 'Deleting' %}: {{ object }}" />
+    </c-hero>
 {% endblock %}
 
 

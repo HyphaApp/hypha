@@ -4,26 +4,14 @@
 {% block title %}{% if object %}{% trans "Edit" %}{% else %}{% trans "Add" %}{% endif %} {% trans "Invoice" %}: {% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ project.get_absolute_url }}">
-                {% trans "View project page" %}
-            </a>
-        {% endslot %}
-
-        {% slot header %}
-            {% if object %}{% trans "Editing" %}{% else %}{% trans "Add" %}{% endif %}
-            {% trans "Invoice" %}
-        {% endslot %}
-
-        {% slot sub_heading %}
-            {% if object %}
-                {{ object.project.title }}
-            {% else %}
-                {% trans "For" %}: {{ project.title }}
-            {% endif %}
-        {% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ project.get_absolute_url }}"
+            back_link_text="{% trans 'View project page' %}"
+            title="{% if object %}{% trans 'Editing' %}{% else %}{% trans 'Add' %}{% endif %} {% trans 'Invoice' %}"
+            subtitle="{% if object %}{{ object.project.title }}{% else %}{% trans 'For' %}: {{ project.title }}{% endif %}"
+        />
+    </c-hero>
 {% endblock %}
 
 {% block content %}

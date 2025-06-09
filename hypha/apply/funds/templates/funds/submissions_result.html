@@ -3,10 +3,12 @@
 {% block title %}{% trans "Submissions results" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Submissions results" %}{% endslot %}
-        {% slot sub_heading %}{% trans "Track and explore submission results" %}{% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Submissions results' %}"
+            subtitle="{% trans 'Track and explore submission results' %}"
+        />
+    </c-hero>
 {% endblock %}
 
 {% block content %}

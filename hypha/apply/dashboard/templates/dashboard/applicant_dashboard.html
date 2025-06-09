@@ -5,28 +5,27 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "My dashboard" %}{% endslot %}
-        {% slot sub_heading %}
-            {% trans "An overview of active and past submissions and projects" %}
-        {% endslot %}
-
-        <div class="flex items-center p-4 w-lg bg-base-100 text-base-content rounded-box">
-            <div class="flex-1">
-                <h3 class="text-xl font-semibold">{% trans "Submit a new application" %}</h3>
-                <p class="text-sm">{% trans "Apply now for our open rounds" %}</p>
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'My dashboard' %}"
+            subtitle="{% trans 'An overview of active and past submissions and projects' %}"
+        >
+            <div class="flex items-center p-4 w-lg bg-base-100 text-base-content rounded-box">
+                <div class="flex-1">
+                    <h3 class="text-xl font-semibold">{% trans "Submit a new application" %}</h3>
+                    <p class="text-sm">{% trans "Apply now for our open rounds" %}</p>
+                </div>
+                <div>
+                    <a
+                        class="btn btn-primary btn-outline"
+                        href="{% pageurl APPLY_SITE.root_page %}"
+                    >
+                        {% trans "Apply" %}
+                    </a>
+                </div>
             </div>
-            <div>
-                <a
-                    class="btn btn-primary btn-outline"
-                    href="{% pageurl APPLY_SITE.root_page %}"
-                >
-                    {% trans "Apply" %}
-                </a>
-            </div>
-        </div>
-
-    {% endadminbar %}
+        </c-hero.header>
+    </c-hero>
 {% endblock %}
 
 {% block content %}

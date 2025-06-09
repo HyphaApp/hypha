@@ -3,9 +3,9 @@
 {% block title %}{% trans "Previewing" %}: {{object.title }}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Previewing" %}: {{ object.title }}{% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header title="{% trans 'Previewing' %}: {{ object.title }}" />
+    </c-hero>
 {% endblock %}
 
 {% block content %}

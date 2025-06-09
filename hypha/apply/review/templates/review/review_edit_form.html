@@ -8,12 +8,12 @@
 {% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{{ title }}{% endslot %}
-        {% slot sub_heading %}
-            {% trans "For" %} <a class="link link-hover" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a>
-        {% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            title="{{ title }}"
+            subtitle="{% trans 'For' %} <a class='link link-hover' href='{% url 'funds:submissions:detail' submission.id %}'>{{ submission.title }}</a>"
+        />
+    </c-hero>
 {% endblock %}
 
 

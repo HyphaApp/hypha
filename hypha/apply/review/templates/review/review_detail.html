@@ -3,25 +3,16 @@
 {% block title %}{% trans "Review for" %} {{ review.submission.title }}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ review.submission.get_absolute_url }}">
-                {% trans "View application" %}
-            </a>
-        {% endslot %}
-        {% slot header %}{% trans "Review" %}{% endslot %}
-        {% slot sub_heading %}
-            {% trans "For" %} {{ review.submission.title_text_display }} {% trans "by" %}
-            {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == review.author.reviewer %}
-                {% trans "Reviewer" %}
-            {% else %}
-                {{ review.author }}
-            {% endif %}
-            {% trans "at" %} {{ review.created_at|date:"SHORT_DATE_FORMAT" }} {% if review.is_updated %}<small>({% trans "Last updated" %}: {{ review.updated_at|date:"SHORT_DATE_FORMAT" }})</small>{% endif %}
-        {% endslot %}
-
-        {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ review.submission.get_absolute_url }}"
+            back_link_text="{% trans 'View application' %}"
+            title="{% trans 'Review' %}"
+            subtitle="{% trans 'For' %} {{ review.submission.title_text_display }} {% trans 'by' %} {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == review.author.reviewer %}{% trans 'Reviewer' %}{% else %}{{ review.author }}{% endif %} {% trans 'at' %} {{ review.created_at|date:'SHORT_DATE_FORMAT' }} {% if review.is_updated %}<small>({% trans 'Last updated' %}: {{ review.updated_at|date:'SHORT_DATE_FORMAT' }})</small>{% endif %}"
+        >
+            {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
+        </c-hero.header>
+    </c-hero>
 {% endblock %}
 
 {% block content %}

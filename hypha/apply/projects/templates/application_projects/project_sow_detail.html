@@ -2,24 +2,14 @@
 {% load i18n static approval_tools project_tags apply_tags %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ object.get_absolute_url }}" rel="noopener">
-                {% trans "Back to Project" %}
-            </a>
-        {% endslot %}
-
-        {% slot header %}
-            {{ object.title }}
-        {% endslot %}
-        {% slot sub_heading %}
-            <div class="mt-1 text-sm heading heading--meta">
-                <span>{{ object.submission.page }}</span>
-                <span>{{ object.submission.round }}</span>
-                <span>{% trans "Lead" %}: {{ object.lead }}</span>
-            </div>
-        {% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ object.get_absolute_url }}"
+            back_link_text="{% trans 'Back to Project' %}"
+            title="{{ object.title }}"
+            subtitle="<div class='mt-1 text-sm heading heading--meta'><span>{{ object.submission.page }}</span><span>{{ object.submission.round }}</span><span>{% trans 'Lead' %}: {{ object.lead }}</span></div>"
+        />
+    </c-hero>
 {% endblock %}
 
 {% block content %}

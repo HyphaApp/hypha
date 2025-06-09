@@ -3,9 +3,9 @@
 {% block title %}{% trans "Reset password" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Password change successful" %}{% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header title="{% trans 'Password change successful' %}" />
+    </c-hero>
 {% endblock %}
 
 {% block content %}

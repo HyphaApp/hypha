@@ -10,34 +10,32 @@
 {% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{{ title }}{% endslot %}
-        {% slot sub_heading %}
-            <a class="link link-hover" href="{% url "funds:submissions:detail" submission.id %}">
-                {{ submission.title_text_display }}
-            </a>
-        {% endslot %}
-
-        {% slot buttons %}
-            <div class="tabs tabs-lift">
-                <button
-                    class="tab tab-active text-base-content/70"
-                    x-data
-                    @click="showSubmission = !showSubmission"
-                    :aria-selected="showSubmission"
-                >
-                    <span x-show="!showSubmission" class="flex gap-2 items-center">
-                        {% heroicon_outline "eye" class="w-4 h-4" aria_hidden="true" %}
-                        {% trans "Show application" %}
-                    </span>
-                    <span x-show="showSubmission" class="flex gap-2 items-center" x-cloak>
-                        {% heroicon_outline "eye-slash" class="w-4 h-4" aria_hidden="true" %}
-                        {% trans "Hide application" %}
-                    </span>
-                </button>
+    <c-hero>
+        <c-hero.header
+            title="{{ title }}"
+            subtitle="<a class='link link-hover' href='{% url 'funds:submissions:detail' submission.id %}'>{{ submission.title_text_display }}</a>"
+        >
+            <div class="self-end -mb-4">
+                <div class="tabs tabs-lift">
+                    <button
+                        class="tab tab-active text-base-content/70"
+                        x-data
+                        @click="showSubmission = !showSubmission"
+                        :aria-selected="showSubmission"
+                    >
+                        <span x-show="!showSubmission" class="flex gap-2 items-center">
+                            {% heroicon_outline "eye" class="w-4 h-4" aria_hidden="true" %}
+                            {% trans "Show application" %}
+                        </span>
+                        <span x-show="showSubmission" class="flex gap-2 items-center" x-cloak>
+                            {% heroicon_outline "eye-slash" class="w-4 h-4" aria_hidden="true" %}
+                            {% trans "Hide application" %}
+                        </span>
+                    </button>
+                </div>
             </div>
-        {% endslot %}
-    {% endadminbar %}
+        </c-hero.header>
+    </c-hero>
 {% endblock %}
 
 {% block content %}

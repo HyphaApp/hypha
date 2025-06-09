@@ -4,20 +4,21 @@
 {% block content_inner %}
     <h1>{% block title %}{% trans "Backup Codes" %}{% endblock %}</h1>
 
-    <p class="hide-print">
+    <p class="print:hidden">
         {% blocktrans %}You should now print these codes or copy them to your
             clipboard and store them in your password manager.{% endblocktrans %}
     </p>
 
     {% if device.token_set.count %}
-        <textarea readonly
-                  cols="8"
-                  rows="{{ device.token_set.count }}"
-                  id="list-backup-tokens"
-                  class="font-mono font-medium leading-tight bg-orange-100 resize-none pe-0"
+        <textarea
+            readonly
+            cols="8"
+            rows="{{ device.token_set.count }}"
+            id="list-backup-tokens"
+            class="font-mono font-medium leading-tight bg-orange-100 resize-none pe-0"
         >{% for token in device.token_set.all %}{{ token.token }}{% if not forloop.last %}&#013;&#010;{% endif %}{% endfor %}</textarea>
 
-        <form method="post" class="actions actions-footer">{% csrf_token %}{{ form }}
+        <form method="post" class="actions actions-footer print:hidden">{% csrf_token %}{{ form }}
             <p class="flex flex-wrap gap-2 justify-start mb-4">
                 <a href="#" class="btn btn-primary btn-print">{% trans "Print" %}</button>
                 <a href="#"
@@ -31,7 +32,7 @@
             </p>
 
             <p class="text-sm text-fg-muted">{% blocktrans trimmed %} <strong>Note:</strong> Each of the code can be used only once. When they are used up, you can generate a new set of backup codes.{% endblocktrans %}</p>
-            <p class="hide-print">{% blocktrans %}Once done, acknowledge you have stored the codes securely and then click "Finish".{% endblocktrans %}</p>
+            <p class="print:hidden">{% blocktrans %}Once done, acknowledge you have stored the codes securely and then click "Finish".{% endblocktrans %}</p>
             <div class="form">
                 <ul class="hidden errorlist error-action-agree"><li>Please confirm you have stored the codes securely below.</li></ul>
                 <div class="mb-4 form__item">
@@ -55,9 +56,7 @@
 {% block extra_css %}
     <style>
         @media print {
-            .header, .admin-bar, .actions, .hide-print {
-                display: none;
-            }
+            .header, [data-cotton='c-hero'] { display: none; }
         }
     </style>
 {% endblock %}
@@ -65,13 +64,12 @@
 {% block extra_js %}
     <script src="{% static 'js/vendor/clipboard.min.js' %}"></script>
     <script>
-
-    {# Select the codes when clicked #}
+        // Select the codes when clicked
         $('#list-backup-tokens').on("click", function (e){
             $(this).select();
         });
 
-    {# Setup print button #}
+        // Setup print button
         $(".btn-print").on("click", function(e){
             e.preventDefault();
             window.print();
@@ -88,7 +86,7 @@
         });
 
 
-    {# Instantiate clipboard by passing a HTML element, uses clipboard.js #}
+        // Instantiate clipboard by passing a HTML element, uses clipboard.js
         var clipboardBtn = document.querySelector('.btn-copy-to-clipboard');
         if (clipboardBtn) {
             var clipboard = new ClipboardJS(clipboardBtn);
@@ -105,6 +103,5 @@
                 tooltip.show();
             });
         }
-
     </script>
 {% endblock %}

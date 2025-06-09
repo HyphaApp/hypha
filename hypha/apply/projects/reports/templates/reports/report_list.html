@@ -6,13 +6,12 @@
 {% block title %}{% trans "Reports" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Submitted Reports" %} ({{ table.rows|length }}){% endslot %}
-        {% slot sub_heading %}
-            {% trans "View and filter all Submitted Reports" %} •
-            <a href="{% url 'apply:projects:reports:all' %}" class="link link-hover">View all reports</a>
-        {% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Submitted Reports' %} ({{ table.rows|length }})"
+            subtitle="{% trans 'View and filter all Submitted Reports' %} • <a href='{% url 'apply:projects:reports:all' %}' class='link link-hover'>View all reports</a>"
+        />
+    </c-hero>
 {% endblock %}
 
 

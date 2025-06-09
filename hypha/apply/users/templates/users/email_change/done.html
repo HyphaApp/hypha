@@ -4,9 +4,9 @@
 {% block title %}{% trans "Verify Email" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Email Update" %}{% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header title="{% trans 'Email Update' %}" />
+    </c-hero>
 {% endblock %}
 
 {% block content %}

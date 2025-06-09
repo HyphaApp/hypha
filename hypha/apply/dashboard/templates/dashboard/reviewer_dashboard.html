@@ -5,9 +5,9 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Dashboard" %}{% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header title="{% trans 'Dashboard' %}" />
+    </c-hero>
 {% endblock %}
 
 {% block content %}

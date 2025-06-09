@@ -5,16 +5,18 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Dashboard" %}{% endslot %}
-
-        {% if perms.wagtailadmin.access_admin %}
-            <a href="{% url 'wagtailadmin_home' %}" class="btn btn-primary">
-                {% heroicon_solid "cog-6-tooth" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
-                {% trans "Administration" %}
-            </a>
-        {% endif %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Dashboard' %}"
+        >
+            {% if perms.wagtailadmin.access_admin %}
+                <a href="{% url 'wagtailadmin_home' %}" class="btn btn-primary">
+                    {% heroicon_solid "cog-6-tooth" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
+                    {% trans "Administration" %}
+                </a>
+            {% endif %}
+        </c-hero.header>
+    </c-hero>
 {% endblock %}
 
 {% block content %}

@@ -4,19 +4,14 @@
 {% block title %}{% trans "Determination for" %} {{ determination.submission.title }}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ determination.submission.get_absolute_url }}">
-                {% trans "View application" %}
-            </a>
-        {% endslot %}
-
-        {% slot header %} {% trans "Determination" %} {% if determination.is_draft %}[{% trans "DRAFT" %}] {% endif %}{% endslot %}
-        {% slot sub_heading %}
-            {% trans "For" %} <a class="link link-hover" href="{% url "funds:submissions:detail" determination.submission.id %}">{{ determination.submission.title_text_display }}</a>
-        {% endslot %}
-
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ determination.submission.get_absolute_url }}"
+            back_link_text="{% trans 'View application' %}"
+            title="{% trans 'Determination' %} {% if determination.is_draft %}[{% trans 'DRAFT' %}] {% endif %}"
+            subtitle="{% trans 'For' %} <a class='link link-hover' href='{% url 'funds:submissions:detail' determination.submission.id %}'>{{ determination.submission.title_text_display }}</a>"
+        />
+    </c-hero>
 {% endblock %}
 
 

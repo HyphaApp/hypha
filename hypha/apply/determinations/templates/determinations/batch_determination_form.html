@@ -6,9 +6,9 @@
 {% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Add batch determination" %} - {{ action_name }}{% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header title="{% trans 'Add batch determination' %} - {{ action_name }}" />
+    </c-hero>
 {% endblock %}
 
 {% block determination_information %}

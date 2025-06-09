@@ -5,10 +5,13 @@
 {% block title %}{% trans "Rounds" %}{% endblock %}
 
 {% block hero %}
-    <c-adminbar
-        title="{% trans 'Rounds' %}"
-        subtitle="{% trans 'Explore current and past rounds' %}"
-    />
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Rounds' %}"
+            subtitle="{% trans 'Explore current and past rounds' %}"
+        />
+    </c-hero>
+    </c-hero>
 {% endblock %}
 
 

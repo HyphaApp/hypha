@@ -4,38 +4,40 @@
 {% block title %}{% trans "Account" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Welcome" %} {{ user }}{% endslot %}
-        {% slot sub_heading %}{% trans "Manage your account details and security." %}{% endslot %}
-
-        <span class="flex gap-4">
-            {% if user.can_access_dashboard %}
-                <a href="{% url 'dashboard:dashboard' %}" class="btn btn-primary">
-                    {% heroicon_mini "squares-2x2" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
-                    {% trans "Go to my dashboard" %}
-                </a>
-            {% else %}
-                <div class="flex items-center p-4 w-lg bg-base-100 text-base-content rounded-box">
-                    <div class="flex-1">
-                        <h3 class="text-xl font-semibold">{% trans "Submit a new application" %}</h3>
-                        <p class="text-sm">{% trans "Apply now for our open rounds" %}</p>
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Welcome' %} {{ user }}"
+            subtitle="{% trans 'Manage your account details and security.' %}"
+        >
+            <span class="flex gap-4">
+                {% if user.can_access_dashboard %}
+                    <a href="{% url 'dashboard:dashboard' %}" class="btn btn-primary">
+                        {% heroicon_mini "squares-2x2" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
+                        {% trans "Go to my dashboard" %}
+                    </a>
+                {% else %}
+                    <div class="flex items-center p-4 w-lg bg-base-100 text-base-content rounded-box">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-semibold">{% trans "Submit a new application" %}</h3>
+                            <p class="text-sm">{% trans "Apply now for our open rounds" %}</p>
+                        </div>
+                        <div>
+                            <a class="btn btn-primary btn-outline" href="{% pageurl APPLY_SITE.root_page %}">
+                                {% trans "Apply" %}
+                            </a>
+                        </div>
                     </div>
-                    <div>
-                        <a class="btn btn-primary btn-outline" href="{% pageurl APPLY_SITE.root_page %}">
-                            {% trans "Apply" %}
-                        </a>
-                    </div>
-                </div>
 
-            {% endif %}
-            {% if perms.wagtailadmin.access_admin %}
-                <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="btn btn-primary">
-                    {% heroicon_solid "cog-6-tooth" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
-                    {% trans "Administration" %}
-                </a>
-            {% endif %}
-        </span>
-    {% endadminbar %}
+                {% endif %}
+                {% if perms.wagtailadmin.access_admin %}
+                    <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="btn btn-primary">
+                        {% heroicon_solid "cog-6-tooth" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
+                        {% trans "Administration" %}
+                    </a>
+                {% endif %}
+            </span>
+        </c-hero.header>
+    </c-hero>
 {% endblock %}
 
 {% block content %}

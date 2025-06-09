@@ -4,20 +4,18 @@
 {% block title %}{% trans "Reviews" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Reviews" %}{% endslot %}
-        {% slot sub_heading %}
-            {% trans "For" %} <a class="link link-hover" href="{% url "funds:submissions:detail" submission.id %}">
-                {{ submission.title_text_display }}
-            </a>
-        {% endslot %}
-
-        {% if request.user|has_review_perm:submission %}
-            {% if request.user|has_draft:submission or request.user|can_review:submission %}
-                {% include 'review/includes/review_button.html' with submission=submission %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Reviews' %}"
+            subtitle="{% trans 'For' %} <a class='link link-hover' href='{% url 'funds:submissions:detail' submission.id %}'>{{ submission.title_text_display }}</a>"
+        >
+            {% if request.user|has_review_perm:submission %}
+                {% if request.user|has_draft:submission or request.user|can_review:submission %}
+                    {% include 'review/includes/review_button.html' with submission=submission %}
+                {% endif %}
             {% endif %}
-        {% endif %}
-    {% endadminbar %}
+        </c-hero.header>
+    </c-hero>
 {% endblock %}
 
 {% block content %}
@@ -41,4 +39,3 @@
         </table>
     </div>
 {% endblock %}
-

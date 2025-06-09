@@ -4,11 +4,11 @@
 {% block body_class %}bg-base-100{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}
-            {% trans "Editing" %}: {{ object.title }} <span class="text-fg-muted">#{{ object.application_id }}</span>
-        {% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Editing' %}: {{ object.title }} <span class='text-fg-muted'>#{{ object.application_id }}</span>"
+        />
+    </c-hero>
 {% endblock %}
 
 {% block content %}

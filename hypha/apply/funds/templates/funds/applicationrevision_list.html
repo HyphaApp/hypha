@@ -3,18 +3,12 @@
 {% block title %}{% blocktrans with title=submission.title %}Revisions for {{ title }}{% endblocktrans %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Revisions" %}{% endslot %}
-        {% slot sub_heading %}
-            {% trans "For" %}
-            <a
-                class="link link-hover"
-                href="{% url "funds:submissions:detail" submission.id %}"
-            >
-                {{ submission.title_text_display }}
-            </a>
-        {% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Revisions' %}"
+            subtitle="{% trans 'For' %} <a class='link link-hover' href='{% url 'funds:submissions:detail' submission.id %}'>{{ submission.title_text_display }}</a>"
+        />
+    </c-hero>
 {% endblock %}
 
 
@@ -55,6 +49,6 @@
                     {% endif %}
                 </li>
             {% endfor %}
-        </>
+        </c-->
     </div>
 {% endblock %}

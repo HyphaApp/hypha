@@ -5,10 +5,12 @@
 {% block title %}{% trans "Reviews" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Reviewer leaderboard" %}{% endslot %}
-        {% slot sub_heading %}{% trans "Track and explore the reviews" %}{% endslot %}
-    {% endadminbar %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Reviewer leaderboard' %}"
+            subtitle="{% trans 'Track and explore the reviews' %}"
+        />
+    </c-hero>
 {% endblock %}
 
 
