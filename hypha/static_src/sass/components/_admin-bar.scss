@@ -6,23 +6,6 @@
     &__inner {
       max-width: variables.$site-width;
       margin: 0 auto;
-
-      &--with-button {
-        @include mixins.media-query(md) {
-          display: flex;
-          align-items: center;
-          flex-direction: row;
-          justify-content: space-between;
-        }
-      }
-    }
-
-    &__meta {
-      margin: 0 0 10px;
-
-      span {
-        margin: 0 5px;
-      }
     }
 
     &__back-link {

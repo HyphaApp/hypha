@@ -5,10 +5,10 @@
 {% block title %}{% trans "Rounds" %}{% endblock %}
 
 {% block hero %}
-    {% adminbar %}
-        {% slot header %}{% trans "Rounds" %}{% endslot %}
-        {% slot sub_heading %}{% trans "Explore current and past rounds" %}{% endslot %}
-    {% endadminbar %}
+    <c-adminbar
+        title="{% trans 'Rounds' %}"
+        subtitle="{% trans 'Explore current and past rounds' %}"
+    />
 {% endblock %}
 
 
