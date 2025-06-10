@@ -3,8 +3,7 @@
 
 {% block content %}
     <h2 style="margin-bottom: 0;">{{ title }}  <a href="{{ link }}">(#{{ id }})</a></h2>
-    <p style="margin-top:0; margin-bottom:8px;">{{ stage }} : {{ fund }} : {{ round }} : {{ lead }}</p>
-    <hr style="margin-top:0;">
+    <p style="margin-top:0; margin-bottom:8px; border-bottom: 1px solid lightgray;">{{ stage }} : {{ fund }} : {{ round }} : {{ lead }}</p>
 
     <div style="font-size:14px;">
         {% for question, answer in data.items %}
