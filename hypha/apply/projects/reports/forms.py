@@ -57,7 +57,10 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
             if field.split("_")[0] in instance.question_field_ids
         }
         # In case there are stream form file fields, process those here.
-        instance.process_file_data(self.cleaned_data["form_data"])
+        instance.process_file_data(
+            self.cleaned_data["form_data"],
+            latest_existing_data=instance.current.form_data,
+        )
 
         is_draft = "save" in self.data
         version = ReportVersion.objects.create(
@@ -68,7 +71,10 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
             draft=is_draft,
             author=self.user,
         )
-        version.process_file_data(self.cleaned_data["form_data"])
+        version.process_file_data(
+            self.cleaned_data["form_data"],
+            latest_existing_data=instance.current.form_data,
+        )
         version.save()
 
         if is_draft:
