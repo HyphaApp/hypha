@@ -306,6 +306,8 @@ class SubmissionDetailPDFView(SingleObjectMixin, View):
         context["fund"] = self.object.page
         context["round"] = self.object.round
         context["lead"] = self.object.lead
+        context["show_header"] = True
+        context["header_title"] = "Submission details"
         template_path = "funds/submission-pdf.html"
         return render_as_pdf(
             request=request,
