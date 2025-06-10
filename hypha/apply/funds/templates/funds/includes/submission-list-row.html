@@ -79,7 +79,7 @@
                     hx-target="#main"
                     hx-push-url="true"
                     hx-swap="outerHTML transition:true"
-                    class="hover:underline text-inherit"
+                    class="link link-muted text-inherit"
                 >{{ s.user }}</a>{% endif %} • {{ s.stage }} •
 
 
@@ -92,7 +92,7 @@
                             hx-target="#main"
                             hx-push-url="true"
                             hx-swap="outerHTML transition:true"
-                            class="hover:underline text-inherit"
+                            class="link link-muted text-inherit"
                         >{{ s.round }}</a>
 
                         {% if 'fund' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
@@ -102,7 +102,7 @@
                                 hx-target="#main"
                                 hx-push-url="true"
                                 hx-swap="outerHTML transition:true"
-                                class="hover:underline text-inherit"
+                                class="link link-muted text-inherit"
                             >{{ s.page }}</a>)
                         {% endif %}
                     {% else %}
@@ -114,14 +114,14 @@
                             hx-target="#main"
                             hx-push-url="true"
                             hx-swap="outerHTML transition:true"
-                            class="hover:underline text-inherit"
+                            class="link link-muted text-inherit"
                         >
                             {{ s.page }}</a>
                     {% endif %}
                 {% endif %}
 
                 {% if s.project %}
-                    • <a href="{% url "funds:submissions:project" s.id %}" class="hover:underline text-inherit">{% trans "Project" %}</a>
+                    • <a href="{% url "funds:submissions:project" s.id %}" class="link link-muted text-inherit">{% trans "Project" %}</a>
                 {% endif %}
             </p>
         </div>
@@ -145,7 +145,7 @@
                         hx-target="#main"
                         hx-push-url="true"
                         hx-swap="outerHTML transition:true"
-                        class="hover:underline text-inherit"
+                        class="link link-muted text-inherit"
                     >
                         {{ s.lead }}
                     </a>

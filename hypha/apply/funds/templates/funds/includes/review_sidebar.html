@@ -36,16 +36,16 @@
                 {% include 'funds/includes/review_sidebar_item.html' with reviewer=reviewer hidden=True %}
 
                 {% if forloop.last %}
-                    <li>
-                        <a
+                    <li class="list-row">
+                        <button
                             role="button"
-                            class="mt-2 text-sm font-semibold link"
+                            class="text-sm font-semibold link link-muted"
                             @click.prevent="showHiddenReviewers = !showHiddenReviewers"
                             href="#"
                         >
                             <span x-show="!showHiddenReviewers">{% trans "Show more..." %}</span>
                             <span x-cloak x-show="showHiddenReviewers">{% trans "Show less..." %}</span>
-                        </a>
+                        </button>
                     </li>
                 {% endif %}
             {% else %}

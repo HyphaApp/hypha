@@ -50,7 +50,7 @@
             submitted <relative-time datetime="{{ s.submit_time|date:"c" }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
             • {{ s.stage }}
             {% if s.project %}
-                • <a href="{% url "funds:submissions:project" s.id %}" class="hover:underline text-inherit">{% trans "Project" %}</a>
+                • <a href="{% url "funds:submissions:project" s.id %}" class="link link-muted text-inherit">{% trans "Project" %}</a>
             {% endif %}
         </div>
     </td>
@@ -74,7 +74,7 @@
                 hx-target="#main"
                 hx-push-url="true"
                 hx-swap="outerHTML transition:true"
-                class="hover:underline text-inherit"
+                class="link link-muted text-inherit"
             >
                 {{ s.user }}
             </a>
@@ -94,7 +94,7 @@
                     hx-target="#main"
                     hx-push-url="true"
                     hx-swap="outerHTML transition:true"
-                    class="hover:underline text-inherit"
+                    class="link link-muted text-inherit"
                 >{{ s.round }}</a>
                 {% if 'fund' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
                     <span class="text-xs text-fg-muted"> / {{ s.page }}</span>
@@ -106,7 +106,7 @@
                     hx-target="#main"
                     hx-push-url="true"
                     hx-swap="outerHTML transition:true"
-                    class="hover:underline text-inherit"
+                    class="link link-muted text-inherit"
                 >
                     {{ s.page }}
                 </a>
@@ -122,7 +122,7 @@
                 hx-target="#main"
                 hx-push-url="true"
                 hx-swap="outerHTML transition:true"
-                class="hover:underline text-inherit"
+                class="link link-muted text-inherit"
             >{{ s.lead }}</a>
         </td>
     {% endif %}
