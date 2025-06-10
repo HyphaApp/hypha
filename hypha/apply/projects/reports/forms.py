@@ -59,7 +59,9 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
         # In case there are stream form file fields, process those here.
         instance.process_file_data(
             self.cleaned_data["form_data"],
-            latest_existing_data=instance.current.form_data,
+            latest_existing_data=instance.current.form_data
+            if instance.current
+            else None,
         )
 
         is_draft = "save" in self.data
@@ -73,7 +75,9 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
         )
         version.process_file_data(
             self.cleaned_data["form_data"],
-            latest_existing_data=instance.current.form_data,
+            latest_existing_data=instance.current.form_data
+            if instance.current
+            else None,
         )
         version.save()
 
