@@ -1,8 +1,8 @@
 {% load i18n nh3_tags wagtailcore_tags markdown_tags heroicons %}
 
-<article class="list-row">
+<article class="list-row hover:bg-base-200/60">
   <div class="list-col-grow">
-    <h2 class="body-h2">{{ page.title }}</h2>
+    <h2 class="mb-2 text-h2">{{ page.title }}</h2>
     {% if page.next_deadline and page.show_deadline %}
       <p class="mb-4">
         <span class="py-2 px-3 text-sm bg-orange-100 rounded-sm">
@@ -12,13 +12,13 @@
       </p>
     {% endif %}
     {% if page.description %}
-      <p>
+      <div class="prose">
         {{ page.description|markdown|nh3 }}
-      </p>
+      </div>
     {% endif %}
   </div>
 
-  <div>
+  <div class="flex items-center">
     <a
       class="btn btn-primary"
       href="{% pageurl page %}"

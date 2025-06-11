@@ -1,0 +1,12 @@
+.table-container {
+  @apply overflow-x-auto;
+}
+
+.table-link {
+  thead a:not(.btn) {
+    @apply link link-hover;
+  }
+  tbody a:not(.btn) {
+    @apply link link-primary font-semibold;
+  }
+}

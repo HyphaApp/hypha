@@ -1,11 +1,15 @@
 @import "tailwindcss";
 @import "./base/variables.css" layer(base);
-@import "./base/core.css" layer(base);
-@import "./base/forms.css" layer(utility);
+
 @import "./components/choices.css" layer(components);
 @import "./components/daterangepicker.css" layer(components);
 @import "./components/django-file-field.css" layer(components);
+@import "./components/tinymce.css" layer(components);
+@import "./components/fieldset.css" layer(components);
 @import "./components/link.css" layer(components);
+@import "./components/table.css" layer(components);
+
+@import "./utilities/typography.css" layer(utilities);
 @import "./components/nprogress";
 
 @plugin '@tailwindcss/typography';
@@ -50,6 +54,15 @@
     interpolate-size: allow-keywords;
   }
 
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold text-inherit text-balance;
+  }
+
   a {
     @apply underline-offset-2;
   }
@@ -60,17 +73,22 @@
     text-wrap: pretty;
   }
 
-  .table-container {
-    @apply overflow-x-auto;
+  /* Radio + Checkbox with Label */
+  [type="radio"],
+  [type="checkbox"] {
+    & + label {
+      padding-inline-start: 0.25rem;
+      cursor: pointer;
+    }
   }
 
-  .table-link {
-    thead a:not(.btn) {
-      @apply link link-hover;
-    }
-    tbody a:not(.btn) {
-      @apply link link-primary font-semibold;
-    }
+  textarea {
+    @apply textarea w-full;
+  }
+
+  /* make date & time input siblings inline */
+  input[type="date"] + input[type="time"] {
+    width: 10rem;
   }
 }
 

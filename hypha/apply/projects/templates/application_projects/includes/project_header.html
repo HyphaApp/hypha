@@ -1,14 +1,14 @@
 {% load dashboard_statusbar_tags i18n %}
 
 <h1
-    class="mb-2 text-3xl font-medium"
+    class="mb-2 text-h1"
     hx-get='{% url "apply:projects:project_title" object.submission.id %}'
     hx-trigger="load, titleUpdated from:body"
 >
     <span class="inline-block bg-gray-600 rounded-md animate-pulse"></span>
 </h1>
 
-<div class="mt-1 mb-4 font-medium text-fg-muted">
+<div class="mb-4 font-medium text-fg-muted">
     <span class="separator-dot">{{ object.fund_name }}</span>
 
     {% if object.submission.round %}

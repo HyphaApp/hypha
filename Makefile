@@ -25,7 +25,7 @@ help: ## Show this help menu with a list of available commands and their descrip
 .PHONY: serve
 serve: .cache/tandem .cache/py-packages .cache/dev-build-fe  ## Run Django server, docs preview, and watch frontend changes
 	@.cache/tandem \
-		'${UV_RUN}uv run python manage.py runserver_plus --settings=$(DJANGO_SETTINGS_MODULE)' \
+		'${UV_RUN}python manage.py runserver_plus --settings=$(DJANGO_SETTINGS_MODULE)' \
 		'npm:watch:*' \
 		'${UV_RUN}mkdocs serve'
 

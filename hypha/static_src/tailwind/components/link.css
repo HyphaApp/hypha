@@ -1,5 +1,5 @@
 .link {
-  --link-color: color-mix(in oklab, var(--color-base-content) 80%, #0000);
+  --link-color: currentColor;
   @apply inline-block font-medium;
   color: var(--link-color);
   &:hover {

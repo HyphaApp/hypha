@@ -28,7 +28,7 @@
 {% block content %}
     <div class="flex flex-col gap-8">
         <section>
-            <h2 class="mb-2 card-title">
+            <h2 class="mb-2 text-h3">
                 {% trans "Community review submissions" %}
                 <span class="badge badge-soft badge-secondary">
                     {{ my_community_review_count }}
@@ -44,7 +44,7 @@
 
         {% if my_reviewed.count %}
             <section>
-                <h2 class="mb-2 card-title">
+                <h2 class="mb-2 text-h3">
                     {% trans "Your previous reviews" %}
                 </h2>
 
@@ -58,7 +58,7 @@
         {% endif %}
 
         <section>
-            <h2 class="mb-2 card-title">
+            <h2 class="mb-2 text-h3">
                 {% trans "Your active submissions" %}
             </h2>
             {% for submission in my_submissions %}
@@ -102,7 +102,7 @@
 
         {% if my_inactive_submissions.data %}
             <section>
-                <h2 class="mb-2 card-title">
+                <h2 class="mb-2 text-h3">
                     {% trans "Submission history" %}
                 </h2>
                 {% render_table my_inactive_submissions %}
