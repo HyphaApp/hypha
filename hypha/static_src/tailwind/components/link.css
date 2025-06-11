@@ -1,17 +1,20 @@
 .link {
   --link-color: currentColor;
-  @apply inline-block font-medium;
   color: var(--link-color);
+
   &:hover {
     color: color-mix(in oklab, var(--link-color) 80%, #000);
   }
+
   &:focus {
     @apply outline-none;
   }
+
   &:focus-visible {
     outline: 2px solid currentColor;
     outline-offset: 2px;
   }
+
   &.disabled,
   &[disabled],
   &:disabled {

@@ -5,7 +5,6 @@
 @import "./components/daterangepicker.css" layer(components);
 @import "./components/django-file-field.css" layer(components);
 @import "./components/tinymce.css" layer(components);
-@import "./components/fieldset.css" layer(components);
 @import "./components/link.css" layer(components);
 @import "./components/table.css" layer(components);
 
@@ -60,7 +59,7 @@
   h4,
   h5,
   h6 {
-    @apply font-bold text-inherit text-balance;
+    @apply font-normal text-inherit text-balance;
   }
 
   a {
@@ -146,6 +145,6 @@
   @apply prose w-full;
 }
 
-@utility .js-hidden {
+@utility js-hidden {
   @apply hidden noscript:block;
 }

@@ -9,7 +9,7 @@
     <c-hero padding="pt-4">
         {% include "application_projects/includes/project_header.html" %}
 
-        <div role="tablist" class="font-semibold tabs tabs-lg tabs-lift text-base-content">
+        <div role="tablist" class="font-semibold tabs tabs-md tabs-lift text-base-content">
             <a
                 class="tab [--color-base-content:var(--color-neutral-content)]"
                 href="{{ project.submission.get_absolute_url }}"
@@ -50,7 +50,7 @@
 
         <div class="wrapper wrapper--sidebar">
             <article class="grow @container">
-                <h2 class="pb-2 mb-2 border-b card-title">
+                <h2 class="pb-2 mb-2 font-medium border-b text-h3">
                     {% trans "Project Information" %}
                 </h2>
 

@@ -17,7 +17,7 @@
     <div class="flex flex-col gap-8 my-8">
 
         <section>
-            <h2 class="mb-2 text-h3">
+            <h2 class="mb-2 font-semibold text-h3">
                 {% trans "You are the partner of these submissions" %} <span class="badge badge-info badge-outline badge-sm">{{ partner_submissions_count }}</span>
             </h2>
 
@@ -31,7 +31,7 @@
         </section>
 
         <section>
-            <h2 class="mb-2 text-h3">{% trans "Your active submissions" %}</h2>
+            <h2 class="mb-2 font-semibold text-h3">{% trans "Your active submissions" %}</h2>
             <div class="overflow-x-auto border border-base-200 rounded-box">
                 <div class="list-row">
                     {% for submission in my_submissions %}
@@ -62,7 +62,7 @@
 
             {% if my_inactive_submissions.data %}
                 <section>
-                    <h2 class="mb-2 text-h3">
+                    <h2 class="mb-2 font-semibold text-h3">
                         {% trans "Submission history" %}
                     </h2>
                     <div class="overflow-x-auto border border-base-200 rounded-box">

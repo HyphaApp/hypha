@@ -4,14 +4,14 @@
     <div x-data="{ showBackButton: {{ back_link|yesno:'true,false' }} || (window.history && window.history.length > 1) }">
         <a
             x-show="showBackButton"
-            class="inline-flex items-center font-semibold transition-all hover:-translate-x-0.5 text-fg-muted hover:text-neutral-content"
+            class="inline-flex items-center text-sm font-semibold transition-all hover:-translate-x-0.5 text-fg-muted hover:text-neutral-content"
             href="{{ back_link|default:'#' }}"
             {% if not back_link %}@click.prevent="window.history.back()"{% endif %}
         >
             {% translate "Go back" as back_default_text %}
             ← {{ back_link_text|default:back_default_text }}
         </a>
-        <h1 class="mb-2 md:m-0 text-h1">{{ title }}</h1>
+        <h1 class="mb-2 font-medium md:m-0 text-h1">{{ title }}</h1>
         {% if subtitle %}
             <p class="max-w-3xl text-sm text-fg-muted">{{ subtitle }}</p>
         {% endif %}

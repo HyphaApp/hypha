@@ -18,7 +18,7 @@
     <div class="my-4">
         <div class="wrapper wrapper--sidebar">
             <article class="max-w-3xl grow">
-                <h2 class="mb-2 text-h3">{% trans "Project Information" %}</h2>
+                <h2 class="mb-2 font-semibold text-h3">{% trans "Project Information" %}</h2>
 
                 <div class="p-4 mb-4 card card-border rounded-box bg-base-200">
                     {% if object.output_answers %}
@@ -35,7 +35,7 @@
                     {% endif %}
                 </div>
 
-                <h2 class="mb-2 text-h3">{% trans "Approvals" %}</h2>
+                <h2 class="mb-2 font-semibold text-h3">{% trans "Approvals" %}</h2>
                 <div class="p-4 mb-4 card card-border rounded-box bg-base-200">
                     {% for approval in project.paf_approvals.all %}
                         {% if approval.approved %}
@@ -46,7 +46,7 @@
                     {% endfor %}
                 </div>
 
-                <h2 class="mb-2 text-h3">{% trans "Reviews" %}</h2>
+                <h2 class="mb-2 font-semibold text-h3">{% trans "Reviews" %}</h2>
                 <div class="p-4 mb-4 card card-border rounded-box bg-base-200">
                     <p class="mt-0 mb-0 font-bold">{% trans "Submission lead" %}</p>
                     <p class="mt-2 mb-0">{{ project.submission.lead }}</p>
@@ -73,7 +73,7 @@
                     {% endfor %}
                 </div>
 
-                <h2 class="mb-2 text-h3">{% trans "Supporting Documents" %}</h2>
+                <h2 class="mb-2 font-semibold text-h3">{% trans "Supporting Documents" %}</h2>
                 <div class="p-4 mb-4 card card-border rounded-box bg-base-200">
                     <p>
                         <a href="{{ object.submission.get_absolute_url }}" class="link">
