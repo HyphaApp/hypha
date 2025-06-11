@@ -110,7 +110,7 @@ class AccessFormData:
                 new_file_upload = False
                 for file_data in uploads_data:
                     # id can be a path or a uuid, where path can exist only for existing files so uuid means a new file
-                    if self._is_valid_uuid(file_data["id"]):
+                    if self._is_valid_uuid(file_data.get("id", None)):
                         new_file_upload = True  # if any new file is uploaded we have to process and save the files
 
                 # get existing files from instance
@@ -153,7 +153,7 @@ class AccessFormData:
         try:
             uuid.UUID(value)
             return True
-        except ValueError:
+        except (ValueError, TypeError):
             return False
 
     def extract_files(self):

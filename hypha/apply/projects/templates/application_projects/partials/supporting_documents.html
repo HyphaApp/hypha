@@ -21,7 +21,7 @@
                                 {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
                                 {% if document_category.template %}
                                     <a class="font-semibold transition-opacity hover:opacity-70"
-                                       href="{% url 'apply:projects:category_template' pk=object.pk type='project_document' category_pk=document_category.pk %}"
+                                       href="{% url 'apply:projects:category_template' pk=object.submission.pk type='project_document' category_pk=document_category.pk %}"
                                        target="_blank"
                                     >
                                         <span class="border-b-2 border-dashed">

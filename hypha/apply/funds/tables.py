@@ -235,30 +235,13 @@ def get_used_rounds(request):
     return Round.objects.filter(submissions__isnull=False).distinct()
 
 
-def get_used_rounds_from_dataset(dataset):
-    return Round.objects.filter(id__in=dataset.values("round")).distinct()
-
-
 def get_used_funds(request):
     # Use page to pick up on both Labs and Funds
     return Page.objects.filter(applicationsubmission__isnull=False).distinct()
 
 
-def get_used_funds_from_dataset(dataset):
-    return Page.objects.filter(id__in=dataset.values("page")).distinct()
-
-
 def get_round_leads(request):
     return User.objects.filter(submission_lead__isnull=False).distinct()
-
-
-def get_round_leads_from_dataset(dataset):
-    return User.objects.filter(id__in=dataset.values("lead")).distinct()
-
-
-def get_reviewers_from_dataset(dataset):
-    """All assigned reviewers, not including Staff and Admin because we want a list of reviewers only"""
-    return User.objects.filter(id__in=dataset.values("reviewers")).distinct()
 
 
 def get_screening_statuses(request):
@@ -269,12 +252,6 @@ def get_screening_statuses(request):
     )
 
 
-def get_screening_statuses_from_dataset(dataset):
-    return ScreeningStatus.objects.filter(
-        id__in=dataset.values("screening_statuses__id")
-    ).distinct()
-
-
 def get_meta_terms(request):
     return MetaTerm.objects.filter(
         filter_on_dashboard=True,
@@ -282,12 +259,6 @@ def get_meta_terms(request):
         .values("meta_terms__id")
         .distinct("meta_terms__id"),
     )
-
-
-def get_meta_terms_from_dataset(dataset):
-    return MetaTerm.objects.filter(
-        filter_on_dashboard=True, id__in=dataset.values("meta_terms__id")
-    ).distinct()
 
 
 class MultiCheckboxesMixin(filters.Filter):
@@ -359,31 +330,7 @@ class SubmissionFilter(filters.FilterSet):
         if exclude is None:
             exclude = []
 
-        qs = kwargs.get("queryset")
-
-        archived = kwargs.pop("archived") if "archived" in kwargs.keys() else None
-        if archived is not None:
-            archived = int(archived) if archived else None
-
         super().__init__(*args, **kwargs)
-
-        reviewers_qs = get_reviewers_from_dataset(
-            dataset=qs.exclude(reviewers__isnull=True)
-        )
-        if archived is not None and archived == 0:
-            reviewers_qs = get_reviewers_from_dataset(
-                dataset=qs.filter(is_archive=archived).exclude(reviewers__isnull=True)
-            )
-            qs = qs.filter(is_archive=archived)
-
-        self.filters["fund"].queryset = get_used_funds_from_dataset(dataset=qs)
-        self.filters["round"].queryset = get_used_rounds_from_dataset(dataset=qs)
-        self.filters["lead"].queryset = get_round_leads_from_dataset(dataset=qs)
-        self.filters[
-            "screening_statuses"
-        ].queryset = get_screening_statuses_from_dataset(dataset=qs)
-        self.filters["reviewers"].queryset = reviewers_qs
-        self.filters["meta_terms"].queryset = get_meta_terms_from_dataset(dataset=qs)
 
         self.filters["status"] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
         self.filters["category_options"].extra["choices"] = [

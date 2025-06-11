@@ -31,7 +31,7 @@
                                     {% heroicon_mini "information-circle" class="inline align-middle fill-light-blue" aria_hidden=true %}
                                     <a
                                         class="font-semibold border-b-2 border-dashed"
-                                        href="{% url 'apply:projects:category_template' pk=object.pk type='contract_document' category_pk=document_category.pk %}"
+                                        href="{% url 'apply:projects:category_template' pk=object.submission.pk type='contract_document' category_pk=document_category.pk %}"
                                         target="_blank"
                                     >
                                         {% trans "View template" %}
