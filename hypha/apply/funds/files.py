@@ -22,7 +22,7 @@ class PrivateStreamFieldFile(StreamFieldFile):
 
     def get_entity_id(self):
         from hypha.apply.funds.models import ApplicationRevision
-        from hypha.apply.projects.reports.models import ReportVersion
+        from hypha.apply.projects.reports.models import Report, ReportVersion
 
         entity_id = self.instance.pk
 
@@ -30,15 +30,13 @@ class PrivateStreamFieldFile(StreamFieldFile):
             entity_id = self.instance.submission.pk
         elif isinstance(self.instance, ReportVersion):
             # Reports are project documents.
-            entity_id = self.instance.report.project.pk
+            entity_id = self.instance.report.project.submission.pk
+        elif isinstance(self.instance, Report):
+            entity_id = self.instance.project.submission.pk
         return entity_id
 
     def generate_filename(self):
-        from hypha.apply.projects.reports.models import ReportVersion
-
         path_start = "submission"
-        if isinstance(self.instance, ReportVersion):
-            path_start = "project"
         return generate_private_file_path(
             self.get_entity_id(),
             self.field.id,
@@ -48,14 +46,10 @@ class PrivateStreamFieldFile(StreamFieldFile):
 
     @property
     def url(self):
-        from hypha.apply.projects.reports.models import ReportVersion
-
         view_name = "apply:submissions:serve_private_media"
         kwargs = {
             "pk": self.get_entity_id(),
             "field_id": self.field.id,
             "file_name": self.basename,
         }
-        if isinstance(self.instance, ReportVersion):
-            view_name = "apply:projects:document"
         return reverse(viewname=view_name, kwargs=kwargs)
