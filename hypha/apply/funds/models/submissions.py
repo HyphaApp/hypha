@@ -24,15 +24,13 @@ from django.db.models import (
 from django.db.models.expressions import OrderBy, RawSQL
 from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Cast
-from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.html import strip_tags
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from django_fsm import RETURN_VALUE, FSMField, can_proceed, transition
-from django_fsm.signals import post_transition
+from viewflow.fsm import State
 from wagtail.contrib.forms.models import AbstractFormSubmission
 from wagtail.fields import StreamField
 
@@ -273,7 +271,7 @@ def make_permission_check(users):
 
 def wrap_method(func):
     def wrapped(*args, **kwargs):
-        # Provides a new function that can be wrapped with the django_fsm method
+        # Provides a new function that can be wrapped with the viewflow-fsm method
         # Without this using the same method for multiple transitions fails as
         # the fsm wrapping is overwritten
         return func(*args, **kwargs)
@@ -286,8 +284,18 @@ def transition_id(target, phase):
     return "__".join([transition_prefix, phase.stage.name.lower(), phase.name, target])
 
 
+def get_all_possible_states():
+    all_states = set()
+    for workflow in WORKFLOWS.values():
+        for phase_name, data in workflow.items():
+            all_states.add((phase_name, data.display_name))
+    return sorted(all_states, key=lambda x: x[0])
+
+
 class AddTransitions(models.base.ModelBase):
     def __new__(cls, name, bases, attrs, **kwargs):
+        status_field = attrs.get("status_field")
+
         for workflow in WORKFLOWS.values():
             for phase_name, data in workflow.items():
                 for transition_name, action in data.transitions.items():
@@ -296,43 +304,55 @@ class AddTransitions(models.base.ModelBase):
                     permission_func = make_permission_check(action["permissions"])
 
                     # Get the method defined on the parent or default to a NOOP
-                    transition_state = wrap_method(
-                        attrs.get(action.get("method"), lambda *args, **kwargs: None)
-                    )
+                    method = action.get("method")
+
+                    if method in attrs:
+                        transition_m = attrs[method]
+                    elif method and hasattr(cls, method):
+                        transition_m = getattr(cls, method)
+                    else:
+                        # Create a bound noop method that updates status
+                        def make_noop(target_state):
+                            def noop_method(instance, *args, **kwargs):
+                                return True
+
+                            return noop_method
+
+                        transition_m = make_noop(transition_name)
+
+                    transition_state = wrap_method(transition_m)
                     # Provide a neat name for graph viz display
                     transition_state.__name__ = slugify(action["display"])
 
                     conditions = [
                         attrs[condition] for condition in action.get("conditions", [])
                     ]
-                    # Wrap with transition decorator
-                    transition_func = transition(
-                        attrs["status"],
+
+                    # Create the transition
+                    transition_func = status_field.transition(
                         source=phase_name,
                         target=transition_name,
                         permission=permission_func,
                         conditions=conditions,
                         custom=action.get("custom", {}),
-                    )(transition_state)
+                    )
 
-                    # Attach to new class
-                    attrs[method_name] = transition_func
+                    # Bind the transition method
+                    attrs[method_name] = transition_func(transition_state)
                     attrs[permission_name] = permission_func
 
         def get_transition(self, transition):
             try:
                 return getattr(self, transition_id(transition, self.phase))
-            except TypeError:
-                # Defined on the class
-                return None
-            except AttributeError:
-                # For the other workflow
+            except (TypeError, AttributeError):
                 return None
 
         attrs["get_transition"] = get_transition
 
         def get_actions_for_user(self, user):
-            transitions = self.get_available_user_status_transitions(user)
+            transitions = type(self).status_field.get_available_transitions(
+                self, self.status, user
+            )
             actions = [
                 (
                     transition.target,
@@ -346,15 +366,19 @@ class AddTransitions(models.base.ModelBase):
         attrs["get_actions_for_user"] = get_actions_for_user
 
         def perform_transition(self, action, user, request=None, **kwargs):
-            transition = self.get_transition(action)
-            if not transition:
+            transition_method = self.get_transition(action)
+            if not transition_method:
                 raise PermissionDenied(f'Invalid "{action}" transition')
-            if not can_proceed(transition):
+
+            if not transition_method.can_proceed():
                 action = self.phase.transitions[action]
                 raise PermissionDenied(f'You do not have permission to "{action}"')
 
-            transition(by=user, request=request, **kwargs)
-            self.save(update_fields=["status"])
+            # Execute the transition
+            result = transition_method(by=user, request=request, **kwargs)
+            if result:
+                self.status = action
+                self.save(update_fields=["status"])
 
             self.progress_stage_when_possible(user, request, **kwargs)
 
@@ -472,7 +496,15 @@ class ApplicationSubmission(
     search_document = SearchVectorField(null=True)
 
     # Workflow inherited from WorkflowHelpers
-    status = FSMField(default=INITIAL_STATE, protected=True)
+    status = models.CharField(
+        max_length=100,
+        choices=get_all_possible_states(),
+        default=INITIAL_STATE,
+    )
+    status_field = State(
+        default=INITIAL_STATE,
+        states=get_all_possible_states(),
+    )
 
     screening_statuses = models.ManyToManyField(
         "funds.ScreeningStatus", related_name="submissions", blank=True
@@ -513,6 +545,10 @@ class ApplicationSubmission(
     def is_draft(self):
         return self.status == DRAFT_STATE
 
+    @status_field.getter()
+    def _get_object_status(self):
+        return self.status
+
     @property
     def title_text_display(self):
         """Return the title text for display across the site.
@@ -532,10 +568,9 @@ class ApplicationSubmission(
     def not_progressed(self):
         return not self.next
 
-    @transition(
-        status,
+    @status_field.transition(
         source="*",
-        target=RETURN_VALUE(INITIAL_STATE, "draft_proposal", "invited_to_proposal"),
+        target=[INITIAL_STATE, "draft_proposal", "invited_to_proposal"],
         permission=make_permission_check({UserPermissions.ADMIN}),
     )
     def restart_stage(self, **kwargs):
@@ -636,8 +671,8 @@ class ApplicationSubmission(
     def progress_application(self, **kwargs):
         target = None
         for phase in STAGE_CHANGE_ACTIONS:
-            transition = self.get_transition(phase)
-            if can_proceed(transition):
+            transition_method = self.get_transition(phase)
+            if transition_method and transition_method.can_proceed():
                 # We convert to dict as not concerned about transitions from the first phase
                 # See note in workflow.py
                 target = dict(PHASES)[phase].stage
@@ -662,6 +697,7 @@ class ApplicationSubmission(
 
         submission_in_db.next = self
         submission_in_db.save()
+        return True
 
     def from_draft(self) -> Self:
         """Sets current `form_data` to the `form_data` from the draft revision.
@@ -745,8 +781,7 @@ class ApplicationSubmission(
                 self.save(skip_custom=True)
 
                 return revision
-
-        return None
+            return True
 
     def clean_submission(self):
         self.process_form_data()
@@ -1000,48 +1035,49 @@ class ApplicationSubmission(
     def get_no_screening_status(self):
         return self.screening_statuses.filter(yes=False).first()
 
+    @status_field.on_success()
+    def log_status_update(self, descriptor, source, target, **kwargs):
+        instance = self
+        old_phase = self.workflow[source]
 
-@receiver(post_transition, sender=ApplicationSubmission)
-def log_status_update(sender, **kwargs):
-    instance = kwargs["instance"]
-    old_phase = instance.workflow[kwargs["source"]]
+        by = kwargs["by"]
+        request = kwargs["request"]
+        notify = kwargs.get("notify", True)
 
-    by = kwargs["method_kwargs"]["by"]
-    request = kwargs["method_kwargs"]["request"]
-    notify = kwargs["method_kwargs"].get("notify", True)
+        if request and notify:
+            if source == DRAFT_STATE:
+                # remove task from applicant dashboard for this instance
+                remove_tasks_for_user(
+                    code=SUBMISSION_DRAFT, user=by, related_obj=instance
+                )
+                # notify for a new submission
+                messenger(
+                    MESSAGES.NEW_SUBMISSION,
+                    request=request,
+                    user=by,
+                    source=instance,
+                )
+            else:
+                messenger(
+                    MESSAGES.TRANSITION,
+                    user=by,
+                    request=request,
+                    source=instance,
+                    related=old_phase,
+                )
 
-    if request and notify:
-        if kwargs["source"] == DRAFT_STATE:
-            # remove task from applicant dashboard for this instance
-            remove_tasks_for_user(code=SUBMISSION_DRAFT, user=by, related_obj=instance)
-            # notify for a new submission
+            if instance.status in review_statuses:
+                messenger(
+                    MESSAGES.READY_FOR_REVIEW,
+                    user=by,
+                    request=request,
+                    source=instance,
+                )
+
+        if instance.status in STAGE_CHANGE_ACTIONS:
             messenger(
-                MESSAGES.NEW_SUBMISSION,
+                MESSAGES.INVITED_TO_PROPOSAL,
                 request=request,
                 user=by,
                 source=instance,
             )
-        else:
-            messenger(
-                MESSAGES.TRANSITION,
-                user=by,
-                request=request,
-                source=instance,
-                related=old_phase,
-            )
-
-        if instance.status in review_statuses:
-            messenger(
-                MESSAGES.READY_FOR_REVIEW,
-                user=by,
-                request=request,
-                source=instance,
-            )
-
-    if instance.status in STAGE_CHANGE_ACTIONS:
-        messenger(
-            MESSAGES.INVITED_TO_PROPOSAL,
-            request=request,
-            user=by,
-            source=instance,
-        )
