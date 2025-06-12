@@ -13,7 +13,7 @@ class HandleProtectionErrorMiddleware:
             messages.error(
                 request,
                 _(
-                    "The object you are trying to delete is used somewhere. Please remove any usages and try again!."
+                    "The object you are trying to delete is used somewhere. Please remove any usages and try again!"
                 ),
             )
             return HttpResponseRedirect(request.path)
