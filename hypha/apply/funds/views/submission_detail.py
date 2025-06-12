@@ -115,7 +115,11 @@ class ReviewerSubmissionDetailView(ActivityContextMixin, DetailView):
         submission = self.get_object()
         # If the requesting user submitted the application, return the Applicant view.
         # Reviewers may sometimes be applicants as well.
-        if submission.user == request.user:
+        # or if requesting user is a co-applicant to application, return the Applicant view.
+        if (
+            submission.user == request.user
+            or submission.co_applicants.filter(user=request.user).exists()
+        ):
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
         if submission.status == DRAFT_STATE:
             raise Http404
@@ -149,7 +153,11 @@ class PartnerSubmissionDetailView(ActivityContextMixin, DetailView):
         )
         # If the requesting user submitted the application, return the Applicant view.
         # Partners may sometimes be applicants as well.
-        if submission.user == request.user:
+        # or if requesting user is a co-applicant to application, return the Applicant view.
+        if (
+            submission.user == request.user
+            or submission.co_applicants.filter(user=request.user).exists()
+        ):
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
         # Only allow partners in the submission they are added as partners
         partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
@@ -171,7 +179,11 @@ class CommunitySubmissionDetailView(ActivityContextMixin, DetailView):
         )
         # If the requesting user submitted the application, return the Applicant view.
         # Reviewers may sometimes be applicants as well.
-        if submission.user == request.user:
+        # or if requesting user is a co-applicant to application, return the Applicant view.
+        if (
+            submission.user == request.user
+            or submission.co_applicants.filter(user=request.user).exists()
+        ):
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
         # Only allow community reviewers in submission with a community review state.
         if not submission.community_review:
