@@ -22,17 +22,20 @@ class PrivateStreamFieldFile(StreamFieldFile):
 
     def get_entity_id(self):
         from hypha.apply.funds.models import ApplicationRevision
+        from hypha.apply.projects.models.project import Project, ProjectSOW
         from hypha.apply.projects.reports.models import Report, ReportVersion
 
         entity_id = self.instance.pk
 
-        if isinstance(self.instance, ApplicationRevision):
+        if isinstance(self.instance, ApplicationRevision) or isinstance(
+            self.instance, Project
+        ):
             entity_id = self.instance.submission.pk
+        elif isinstance(self.instance, Report) or isinstance(self.instance, ProjectSOW):
+            entity_id = self.instance.project.submission.pk
         elif isinstance(self.instance, ReportVersion):
             # Reports are project documents.
             entity_id = self.instance.report.project.submission.pk
-        elif isinstance(self.instance, Report):
-            entity_id = self.instance.project.submission.pk
         return entity_id
 
     def generate_filename(self):
