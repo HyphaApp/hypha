@@ -4,11 +4,6 @@
 .wrapper {
   width: 100%;
 
-  &--small {
-    max-width: variables.$wrapper--small;
-    margin-inline: auto;
-  }
-
   &--medium {
     max-width: variables.$wrapper--medium;
     margin-inline: auto;

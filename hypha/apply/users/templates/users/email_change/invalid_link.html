@@ -1,16 +1,25 @@
-{% extends 'base.html' %}
-{% load i18n %}
+{% extends "base-apply.html" %}
+{% load i18n heroicons %}
 
 {% block title %}{% trans "Invalid Confirmation" %}{% endblock %}
-{% block page_title %}{% trans "Invalid Confirmation URL" %}{% endblock %}
+{% block body_class %}bg-base-200{% endblock %}
 
 {% block content %}
-    <div class="wrapper wrapper--small wrapper--bottom-space">
-        <p><strong>{% trans "Possible reason:" %}</strong></p>
-        <ul>
-            <li>{% trans "The confirmation link has expired." %}</li>
-        </ul>
+    <div class="flex flex-col justify-center items-center min-h-[60vh]">
+        <section class="w-full max-w-2xl card shadow-xs bg-base-100 md:card-lg">
+            <div class="items-center card-body">
+                <span class="flex justify-center items-center p-4 mb-4 rounded-full bg-warning/10">
+                    {% heroicon_outline "exclamation-triangle" class="w-14 h-14 text-warning" %}
+                </span>
 
-        <p>{% blocktrans %}Try again to change email from accounts page. If that fails please contact {{ ORG_SHORT_NAME }} at{% endblocktrans %} <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}</a></p>
+                <h2 class="mb-4 font-semibold text-h0">{% trans "Invalid Confirmation URL" %}</h2>
+
+                <div class="prose">
+                    <p>{% trans "The confirmation link you used is either invalid or has expired." %}</p>
+
+                    <p>{% blocktrans %}Try again to change email from accounts page. If that fails please contact {{ ORG_SHORT_NAME }} at{% endblocktrans %} <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}</a></p>
+                </div>
+            </div>
+        </section>
     </div>
 {% endblock %}

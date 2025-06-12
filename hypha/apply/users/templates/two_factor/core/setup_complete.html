@@ -3,29 +3,33 @@
 
 {% block content_inner %}
 
-  <div class="mb-4">
-    <p>{% blocktrans trimmed %}Congratulations, you've successfully enabled two-factor
-      authentication.{% endblocktrans %}</p>
+    <div class="mb-4 prose">
+        <p>{% blocktrans trimmed %}Congratulations, you've successfully enabled two-factor
+            authentication.{% endblocktrans %}</p>
 
-    <p>{% blocktrans trimmed %}We strongly recommend you to save the backup codes.
-      To get the backup codes you can continue to Show Codes.{% endblocktrans %}</p>
-  </div>
+        <p>{% blocktrans trimmed %}We strongly recommend you to save the backup codes.
+            To get the backup codes you can continue to Show Codes.{% endblocktrans %}</p>
 
-  {% if not phone_methods %}
-    <a href="{% url 'users:backup_tokens' %}" class="btn btn-link">{% trans "Show Codes" %}</a>
+        {% if phone_methods %}
+            <p>{% blocktrans trimmed %}However, it might happen that you don't have access to
+                your primary token device. To enable account recovery, add a phone
+                number.{% endblocktrans %}</p>
 
-  {% else %}
-    <p>{% blocktrans trimmed %}However, it might happen that you don't have access to
-      your primary token device. To enable account recovery, add a phone
-      number.{% endblocktrans %}</p>
+            <div class="card-actions">
+                <a href="{% url 'users:backup_tokens' %}" class="mt-2 btn btn-primary btn-wide">
+                    {% trans "Show Codes" %}
+                </a>
 
-    <p><a href="{% url 'users:backup_tokens' %}" class="btn btn-block">{% trans "Show Codes" %}</a></p>
+                <a href="{% url 'two_factor:phone_create' %}" class="btn">
+                    {% trans "Add Phone Number" %}
+                </a>
+            </div>
 
-    <p>
-      <a href="{% url 'two_factor:phone_create' %}"
-         class="btn btn-success">{% trans "Add Phone Number" %}
-      </a>
-    </p>
-  {% endif %}
+        {% else %}
+            <a href="{% url 'users:backup_tokens' %}" class="mt-2 btn btn-primary btn-wide">
+                {% trans "Show Codes" %}
+            </a>
+        {% endif %}
+    </div>
 
 {% endblock %}
