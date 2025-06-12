@@ -1,50 +1,60 @@
 {% load i18n invoice_tools heroicons %}
 
-<div class="flex-none">
-    <p><b>{% trans "Status" %}: </b></p>
-</div>
-<div class="ps-2">
-    {% extract_status latest_activity user as latest_activity_status %}
-    {% get_comment_for_invoice_action object latest_activity as latest_activity_comment %}
-    <p>{{ latest_activity_status }} {% if user.is_applicant and latest_activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ latest_activity.user }}){% endif %}
-        <span class="text-gray-400">{{ latest_activity.timestamp }}</span>
+<div class="card-body">
+    <div class="flex-none">
+        <p><b>{% trans "Status" %}: </b></p>
+    </div>
+    <div class="ps-2">
+        {% extract_status latest_activity user as latest_activity_status %}
+        {% get_comment_for_invoice_action object latest_activity as latest_activity_comment %}
+        <p>{{ latest_activity_status }} {% if user.is_applicant and latest_activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ latest_activity.user }}){% endif %}
+            <span class="text-fg-muted">
+                <relative-time datetime="{{ latest_activity.timestamp|date:'c' }}">
+                    {{ latest_activity.timestamp|date:'SHORT_DATETIME_FORMAT' }}
+                </relative-time>
+            </span>
 
-        {% if latest_activity_comment %}
-            {% heroicon_outline "exclamation-circle" stroke_width=2 size=22 class="inline stroke-red-500" aria_hidden=true %}
-            <a
-                href="{{ latest_activity_comment.get_absolute_url }}"
-                class="font-bold"
-            >{% trans "View comment" %}</a>
-        {% endif %}
-    </p>
-    {% for activity in activities %}
-        {% extract_status activity user as activity_status %}
-        {% get_comment_for_invoice_action object activity as activity_comment %}
-        <p x-show="!collapsed">{{ activity_status }} {% if user.is_applicant and activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ activity.user }}){% endif %}
-            <span class="text-gray-400">{{ activity.timestamp }}</span>
-            {% if activity_comment %}
+            {% if latest_activity_comment %}
                 {% heroicon_outline "exclamation-circle" stroke_width=2 size=22 class="inline stroke-red-500" aria_hidden=true %}
                 <a
-                    href="{{ activity_comment.get_absolute_url }}"
-                    class="font-bold"
+                    href="{{ latest_activity_comment.get_absolute_url }}"
+                    class="link"
                 >{% trans "View comment" %}</a>
             {% endif %}
         </p>
-    {% endfor %}
+        {% for activity in activities %}
+            {% extract_status activity user as activity_status %}
+            {% get_comment_for_invoice_action object activity as activity_comment %}
+            <p x-show="!collapsed">{{ activity_status }} {% if user.is_applicant and activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ activity.user }}){% endif %}
+                <span class="text-fg-muted">
+                    <relative-time datetime="{{ activity.timestamp|date:'c' }}">
+                        {{ activity.timestamp|date:'SHORT_DATETIME_FORMAT' }}
+                    </relative-time>
+                </span>
+                {% if activity_comment %}
+                    {% heroicon_outline "exclamation-circle" stroke_width=2 size=22 class="inline stroke-red-500" aria_hidden=true %}
+                    <a
+                        href="{{ activity_comment.get_absolute_url }}"
+                        class="font-bold"
+                    >{% trans "View comment" %}</a>
+                {% endif %}
+            </p>
+        {% endfor %}
+    </div>
+    {% if activities %}
+        <button
+            type="button"
+            class="flex-1 font-bold transition-opacity hover:opacity-70 text-light-blue text-end"
+            x-on:click="collapsed = ! collapsed"
+        >
+            <span x-show="collapsed">
+                {% trans "Show" %}
+                {% heroicon_mini "arrow-down" class="inline align-text-bottom" aria_hidden=true %}
+            </span>
+            <span x-show="!collapsed">
+                {% trans "Hide" %}
+                {% heroicon_mini "arrow-up" class="inline align-text-bottom" aria_hidden=true %}
+            </span>
+        </button>
+    {% endif %}
 </div>
-{% if activities %}
-    <button
-        type="button"
-        class="flex-1 font-bold transition-opacity hover:opacity-70 text-light-blue text-end"
-        x-on:click="collapsed = ! collapsed"
-    >
-        <span x-show="collapsed">
-            {% trans "Show" %}
-            {% heroicon_mini "arrow-down" class="inline align-text-bottom" aria_hidden=true %}
-        </span>
-        <span x-show="!collapsed">
-            {% trans "Hide" %}
-            {% heroicon_mini "arrow-up" class="inline align-text-bottom" aria_hidden=true %}
-        </span>
-    </button>
-{% endif %}

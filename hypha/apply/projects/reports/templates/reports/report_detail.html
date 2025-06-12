@@ -3,39 +3,40 @@
 
 {% block title %}{% trans "Report" %} | {{ object.project.title }}{% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ object.project.get_absolute_url }}"
+            back_link_text="{% trans 'View project page' %}"
+            title="{{ object.project.title }} <span class='text-fg-muted'>#{{ object.project.application_id }}</span>"
+            subtitle="{% trans 'Report' %}"
+        />
+    </c-hero>
+{% endblock %}
+
 {% block content %}
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
-                {% trans "View project page" %}
-            </a>
-        {% endslot %}
-        {% slot header %}{{ object.project.title }} <span class="text-gray-400">#{{ object.project.application_id }}</span>{% endslot %}
-        {% slot sub_heading %}{% trans "Report" %}{% endslot %}
-    {% endadminbar %}
-
     <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
-
-        <div class="wrapper--sidebar--inner">
-            <p class="flex items-center py-2 px-3 mt-0 mb-8 text-sm border bg-(--color-light-blue-90)">
-                {% heroicon_outline 'exclamation-circle' stroke_width=2 size=18 class="inline me-1 stroke-dark-blue" aria_hidden=true %}
+        <div class="grow">
+            <div role="alert" class="mb-4 alert alert-info">
+                {% heroicon_outline 'exclamation-circle' stroke_width=2 size=18 aria_hidden=true %}
                 <span>
                     {% trans "This report is for the period" %} <strong class="font-semibold">{{ object.start_date }}</strong> {% trans "to" %} <strong class="font-semibold">{{ object.end_date }}</strong>
                 </span>
-            </p>
+            </div>
 
             <section>
                 {% if report.skipped %}
                     <h2>{% trans "Report Skipped" %}</h2>
                 {% else %}
-                    <h4>{% trans "Public Report" %}</h4>
-                    <div class="card card--solid">
-                        {% if object.current %}
-                            <div class="rich-text rich-text--answers">
+                    <h2 class="mb-4 text-xl">{% trans "Public Report" %}</h2>
+
+                    {% if object.current %}
+                        <div class="card card-border shadow-xs">
+                            <div class="card-body">
                                 {{ object.current.output_answers }}
                             </div>
-                        {% endif %}
-                    </div>
+                        </div>
+                    {% endif %}
 
                     {% for file in object.current.files.all %}
                         {% if forloop.first %}
@@ -54,33 +55,39 @@
         </div>
         <aside class="sidebar">
             {% if request.user.is_apply_staff or report.previous or report.next %}
-                <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
-                    {% if request.user.is_apply_staff %}
-                        <a
-                            class="button button--bottom-space button--primary button--full-width"
-                            href="{% url "apply:projects:reports:edit" pk=report.pk %}"
-                        >
-                            {% if object.draft %}
-                                {% trans "Continue editing" %}
-                            {% else %}
-                                {% trans "Edit" %}
-                            {% endif %}
-                        </a>
-                    {% endif %}
-                    {% if report.previous %}
-                        <a
-                            class="button button--bottom-space button--primary button--full-width"
-                            href="{% url "apply:projects:reports:detail" pk=report.previous.pk %}">
-                            {% trans "View previous report" %}
-                        </a>
-                    {% endif %}
-                    {% if report.next %}
-                        <a
-                            class="button button--bottom-space button--primary button--full-width"
-                            href="{% url "apply:projects:reports:detail" pk=report.next.pk %}">
-                            {% trans "View next report" %}
-                        </a>
-                    {% endif %}
+                <div class="card card-border shadow-xs">
+                    <div class="card-body">
+                        <h2 class="card-title">{% trans "Actions to take" %}</h2>
+
+                        {% if request.user.is_apply_staff %}
+                            <a
+                                class="btn btn-primary btn-block"
+                                href="{% url "apply:projects:reports:edit" pk=report.pk %}"
+                            >
+                                {% if object.draft %}
+                                    {% trans "Continue editing" %}
+                                {% else %}
+                                    {% trans "Edit" %}
+                                {% endif %}
+                            </a>
+                        {% endif %}
+                        {% if report.previous %}
+                            <a
+                                class="btn btn-secondary btn-block btn-outline"
+                                href="{% url "apply:projects:reports:detail" pk=report.previous.pk %}"
+                            >
+                                {% trans "View previous report" %}
+                            </a>
+                        {% endif %}
+                        {% if report.next %}
+                            <a
+                                class="btn btn-secondary btn-block btn-outline"
+                                href="{% url "apply:projects:reports:detail" pk=report.next.pk %}"
+                            >
+                                {% trans "View next report" %}
+                            </a>
+                        {% endif %}
+                    </div>
                 </div>
             {% endif %}
         </aside>

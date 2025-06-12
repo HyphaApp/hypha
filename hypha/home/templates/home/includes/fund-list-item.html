@@ -1,9 +1,16 @@
 {% load i18n nh3_tags wagtailcore_tags markdown_tags heroicons %}
 
-<article class="flex gap-4 justify-between items-center py-8 px-4 transition-colors hover:bg-slate-50">
-
-  <div>
-    <h2>{{ page.title }}</h2>
+<article class="list-row hover:bg-base-200/60">
+  <div class="list-col-grow">
+    <h2 class="mb-2 font-bold text-h2">
+      <a
+        class="link link-hover"
+        href="{% pageurl page %}"
+        title="Click to apply for {{ page.title }}"
+      >
+        {{ page.title }}
+      </a>
+    </h2>
     {% if page.next_deadline and page.show_deadline %}
       <p class="mb-4">
         <span class="py-2 px-3 text-sm bg-orange-100 rounded-sm">
@@ -13,15 +20,15 @@
       </p>
     {% endif %}
     {% if page.description %}
-      <p>
+      <div class="prose">
         {{ page.description|markdown|nh3 }}
-      </p>
+      </div>
     {% endif %}
   </div>
 
-  <div>
+  <div class="flex items-center">
     <a
-      class="button button--primary"
+      class="btn btn-primary"
       href="{% pageurl page %}"
       title="Click to apply for {{ page.title }}"
     >

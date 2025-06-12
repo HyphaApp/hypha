@@ -5,41 +5,40 @@
 {% load humanize %}
 
 {% block title %}{% trans "Submissions" %}{% endblock %}
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'All Submissions' %}<span class='submissions-count'> ({{ page.paginator.count }})</span>"
+            subtitle="{% trans 'Search and filter all submissions' %}"
+        >
+            <div class="self-end -mb-4">
+                <div class="tabs tabs-lift">
+                    {% if request.GET.format == "list" %}
+                        <a
+                            class="flex gap-2 items-center tab tab-active text-base-content/70"
+                            href="{% modify_query "page" format="table" %}"
+                        >
+                            {% heroicon_mini "table-cells" aria_hidden="true" size=16 %}
+                            {% trans "Table view" %}</a>
+                    {% else %}
+                        <a
+                            class="flex gap-2 items-center tab tab-active text-base-content/70"
+                            href="{% modify_query "page" format="list" %}"
+                        >
+                            {% heroicon_mini "queue-list" aria_hidden="true" size=16 class="inline align-text-bottom" %}
+                            {% trans "List View" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </c-hero.header>
+    </c-hero>
+{% endblock %}
+
 
 {% block content %}{% spaceless %}
-    {% adminbar %}
-        {% slot header %}
-            {% trans "All Submissions" %}<span class="submissions-count"> ({{ page.paginator.count }})</span>
-        {% endslot %}
-
-        {% slot sub_heading %}
-            {% trans "Search and filter all submissions" %}
-        {% endslot %}
-
-        {% slot buttons %}
-            {% if request.GET.format == 'list' %}
-                <a class="block pb-4 tab__item ms-auto"
-                   href="{% modify_query "page" format="table" %}"
-                >
-                    {% heroicon_mini "table-cells" aria_hidden="true" size=16 class="inline align-text-bottom" %}
-                    {% trans "Table view" %}
-                </a>
-            {% else %}
-                <a
-                    class="block pb-4 tab__item ms-auto"
-                    href="{% modify_query "page" format="list" %}"
-                >
-                    {% heroicon_mini "queue-list" aria_hidden="true" size=16 class="inline align-text-bottom" %}
-                    {% trans "List View" %}
-                </a>
-            {% endif %}
-            </a>
-        {% endslot %}
-    {% endadminbar %}
-
-
     <form
-        class="flex gap-2 justify-between items-center mt-3 md:gap-4"
+        class="flex gap-2 justify-between items-center mt-4 md:gap-4"
         hx-trigger="change"
         hx-get="./"
         hx-target="#main"
@@ -54,7 +53,7 @@
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "is:open" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex {% if request.GET.query == "is:open" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
                 {% if request.GET.query == "is:open" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
@@ -66,7 +65,7 @@
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "lead:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex {% if request.GET.query == "lead:@me" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
                 {% if request.GET.query == "lead:@me" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
@@ -78,7 +77,7 @@
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "flagged:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex {% if request.GET.query == "flagged:@me" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
                 {% if request.GET.query == "flagged:@me" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
@@ -90,7 +89,7 @@
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "flagged:@staff" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex {% if request.GET.query == "flagged:@staff" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
                 {% if request.GET.query == "flagged:@staff" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
@@ -102,7 +101,7 @@
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "reviewer:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex {% if request.GET.query == "reviewer:@me" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
                 {% if request.GET.query == "reviewer:@me" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
@@ -114,7 +113,7 @@
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "reviewed-by:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex {% if request.GET.query == "reviewed-by:@me" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
                 {% if request.GET.query == "reviewed-by:@me" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
@@ -135,7 +134,7 @@
             <input
                 type="text"
                 id="search-navbar"
-                class="block p-2 w-full text-sm text-gray-900 bg-gray-50 border border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-xs ps-10"
+                class="w-full input"
                 placeholder="{% trans 'Search…' %}"
                 name="query"
                 aria-label="{% trans 'Search submissions' %}"
@@ -144,38 +143,32 @@
         </label>
 
         {% if can_view_archive %}
-            <span>
-                <label class="inline-flex relative items-center cursor-pointer">
-                    <input type="checkbox" {% if show_archived %}checked{% endif %}
-                           class="sr-only peer"
-                           name="archived"
-                    >
-                    <div
-                        class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[ dark:peer-focus:ring-blue-800''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
-                    </div>
-                    <span class="text-sm font-medium text-gray-600 ms-3">{% trans "Archived" %}</span>
-                </label>
-            </span>
+            <label class="label">
+                <input
+                    type="checkbox"
+                    name="archived"
+                    {% if show_archived %}checked{% endif %}
+                    class="toggle toggle-sm toggle-primary"
+                >
+                {% trans "Archived" %}
+            </label>
         {% endif %}
 
         {% if can_access_drafts %}
-            <span>
-                <label class="inline-flex relative items-center cursor-pointer">
-                    <input type="checkbox" {% if show_drafts %}checked{% endif %}
-                           class="sr-only peer"
-                           name="drafts"
-                    >
-                    <div
-                        class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[ dark:peer-focus:ring-blue-800''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
-                    </div>
-                    <span class="text-sm font-medium text-gray-600 ms-3">{% trans "Drafts" %}</span>
-                </label>
-            </span>
+            <label class="label">
+                <input
+                    type="checkbox"
+                    name="drafts"
+                    {% if show_drafts %}checked{% endif %}
+                    class="toggle toggle-sm toggle-primary"
+                >
+                {% trans "Drafts" %}
+            </label>
         {% endif %}
 
         {% if can_export_submissions %}
-            <button
-                class="py-1.5 px-2 rounded-sm border transition-colors hover:bg-gray-100 shadow-xs"
+            <a
+                class="btn btn-square"
                 hx-get="{% url 'apply:submissions:submission-export-status' %}"
                 hx-swap="outerHTML"
                 hx-target="this"
@@ -183,14 +176,14 @@
                 hx-trigger="load"
             >
                 {% heroicon_mini "arrow-down-tray" %}
-            </button>
+            </a>
         {% endif %}
     </form>
 
     {% if is_filtered %}
         {% comment %} Display option to clear all the filters {% endcomment %}
         <div
-            class="flex flex-wrap gap-1 mt-3"
+            class="flex flex-wrap gap-2 items-center mt-4"
             hx-target="#main"
             hx-push-url="true"
             hx-swap="outerHTML transition:true"
@@ -198,101 +191,61 @@
             <a
                 href="./"
                 hx-get="./"
-                class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2"
+                class="btn btn-ghost btn-sm btn-link link-hover"
             >
-                {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                {% trans "Clear current search query, filters and sorts" %}
+                {% trans "Clear current filters & sorts" %}
+                {% heroicon_micro "x-mark" aria_hidden="true" class="w-4 h-4" %}
             </a>
 
             {% if selected_statuses %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query "status" %}">
                     {% trans "Status:" %} {% for s in selected_statuses %}{{ s }}{% endfor %}
-                    <a href="{% remove_from_query "status" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove status filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endif %}
             {% for fund in selected_fund_objects %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query fund=fund.id %}">
                     {% trans "Fund:" %} {{ fund }}
-                    <a href="{% remove_from_query fund=fund.id %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove fund filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endfor %}
             {% for round in selected_round_objects %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query round=round.id %}">
                     {% trans "Round:" %} {{ round }}
-                    <a href="{% remove_from_query round=round.id %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove round filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endfor %}
             {% for s in selected_leads %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query lead=s %}">
                     {% trans "Lead:" %} {{ s|get_display_name_from_id }}
-                    <a href="{% remove_from_query lead=s %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove leads filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endfor %}
             {% if selected_applicants %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query "applicants" %}">
                     {% trans "Applicant:" %} {% for s in selected_applicants %}{{ s }}{% endfor %}
-                    <a href="{% remove_from_query "applicants" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove applicant filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endif %}
             {% for s in selected_reviewers %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query reviewers=s %}">
                     {% trans "Reviewer:" %} {{ s|get_display_name_from_id }}
-                    <a href="{% remove_from_query reviewers=s %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove reviewer filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endfor %}
             {% for s in selected_meta_terms %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query meta_terms=s %}">
                     {% trans "Tag:" %} {{ s|get_meta_term_from_id }}
-                    <a href="{% remove_from_query meta_terms=s %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove tag filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endfor %}
             {% for s in selected_category_options %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query category_options=s.id %}">
                     {% trans "Category:" %} {{ s.value }}
-                    <a href="{% remove_from_query category_options=s.id %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove category filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endfor %}
             {% for s in selected_screening_statuses_objects %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query screening_statuses=s.slug %}">
                     {% trans "Screening:" %} "{{ s.title }}"
-                    <a href="{% remove_from_query screening_statuses=s.slug %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove screening decisions filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endfor %}
             {% if selected_sort %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query "sort" %}">
                     {% trans "Sort:" %} {{ selected_sort }}
-                    <a href="{% remove_from_query "sort" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove sort filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endif %}
         </div>
     {% endif %}
@@ -342,7 +295,7 @@
         <header
             hx-target="#main"
             hx-swap="outerHTML show:top"
-            class="flex sticky top-0 flex-wrap justify-between items-center py-2 px-3 mt-3 bg-gray-50 border-t border-gray-200 md:gap-5 md:text-sm md:font-medium z-5 border-x"
+            class="flex sticky top-0 flex-wrap justify-between items-center py-2 px-4 mt-3 border-t md:gap-5 md:text-sm md:font-medium bg-base-200 border-base-300 z-5 border-x rounded-t-box"
         >
             <span class="hidden items-center py-1 md:inline-flex">
                 {% if enable_selection %}
@@ -351,7 +304,7 @@
                         type="checkbox"
                         x-ref="checkboxSelectAll"
                         aria-label="{% trans 'Select all submissions' %}"
-                        class="w-4 h-4 text-blue-600 rounded-sm border-gray-300 focus:ring-2 focus:ring-blue-500"
+                        class="checkbox checkbox-sm"
                         @click="toggleAllCheckboxes()"
                     >
                     <label
@@ -362,17 +315,19 @@
                 {% endif %}
             </span>
 
-            <nav x-show="!showSelectedSubmissions"
-                 class="flex flex-wrap gap-2 items-center menu-filters"
+            <nav
+                x-show="!showSelectedSubmissions"
+                class="flex flex-wrap gap-2 items-center menu-filters"
             >
                 <div id="filtersubmitted" aria-label="Filter by Submitted" class="flex items-center" data-query="submitted">
-                    <button class="flex justify-between items-center py-1 w-full font-medium text-gray-600 border cursor-pointer md:p-0 md:border-none hover:bg-gray-50 ps-2 pe-2 md:pe-4 md:hover:bg-transparent md:hover:text-blue-700">
+                    <button class="flex justify-between items-center py-1 w-full font-medium border cursor-pointer md:p-0 md:border-none hover:bg-gray-50 text-base-content/80 ps-2 pe-2 md:pe-4 md:hover:bg-transparent md:hover:text-blue-700">
                         {% trans "Submitted" %}
                         {% heroicon_mini "chevron-down" aria_hidden="true" width=18 height=18 class="hidden md:inline-block" %}
                     </button>
                 </div>
+
                 <div id="filterupdated" aria-label="Filter by Updated" class="flex items-center" data-query="updated">
-                    <button class="flex justify-between items-center py-1 w-full font-medium text-gray-600 border cursor-pointer md:p-0 md:border-none hover:bg-gray-50 ps-2 pe-2 md:pe-4 md:hover:bg-transparent md:hover:text-blue-700">
+                    <button class="flex justify-between items-center py-1 w-full font-medium border cursor-pointer md:p-0 md:border-none hover:bg-gray-50 text-base-content/80 ps-2 pe-2 md:pe-4 md:hover:bg-transparent md:hover:text-blue-700">
                         {% trans "Updated" %}
                         {% heroicon_mini "chevron-down" aria_hidden="true" width=18 height=18 class="hidden md:inline-block" %}
                     </button>
@@ -386,7 +341,7 @@
                             <li>
                                 <a hx-get="{% remove_from_query "page" "status" %}"
                                    href="{% remove_from_query "page" "status" %}"
-                                   class="flex px-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
+                                   class="flex px-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200{% if s.selected %}bg-base-200{% endif %}">
                                     {% trans "All statuses" %}
                                 </a>
                             </li>
@@ -400,7 +355,7 @@
                                         href="{% modify_query "page" status=s.slug %}"
                                     {% endif %}
                                     role="menuitemradio" aria-checked="{{ s.selected }}"
-                                    class="flex {% if s.selected %}bg-gray-100 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
+                                    class="flex {% if s.selected %}bg-base-200 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200"
                                 >
                                     {% if s.selected %}
                                         {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-2" %}
@@ -429,7 +384,7 @@
                                         href="{% modify_query "page" screening_statuses=s.slug %}"
                                     {% endif %}
                                     role="menuitemradio" aria-checked="{{ s.selected }}"
-                                    class="flex {% if s.selected %}bg-gray-100 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
+                                    class="flex {% if s.selected %}bg-base-200 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200"
                                 >
                                     {% if s.selected %}
                                         {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-2" %}
@@ -487,7 +442,7 @@
                             {% endif %}
                             hx-push-url="true"
                             aria-selected="{% if sort_option.selected %}true{% else %}false{% endif %}"
-                            class="flex {% if sort_option.selected %}ps-3 font-bold{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                            class="flex {% if sort_option.selected %}ps-3 font-bold{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
                             {% if sort_option.selected %}
                                 {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                             {% endif %}
@@ -520,9 +475,9 @@
                         hx-post="{% url 'apply:submissions:bulk-archive' %}"
                         hx-include="[name='selectedSubmissionIds']"
                         hx-confirm="{% trans 'Are you sure you want to archive the selected submissions?' %}"
-                        class="flex items-center py-1 px-2 bg-gray-100 border hover:bg-gray-200"
+                        class="btn btn-sm"
                     >
-                        {% heroicon_outline "lock-closed" aria_hidden="true" size=14 class="inline stroke-gray-600 me-1" %}
+                        {% heroicon_outline "lock-closed" aria_hidden="true" size=14 class="stroke-base-content/80" %}
                         {% trans "Archive" %}
                     </button>
                 {% endif %}
@@ -532,9 +487,9 @@
                         hx-post="{% url 'apply:submissions:bulk-delete' %}"
                         hx-include="[name='selectedSubmissionIds']"
                         hx-confirm="{% trans 'Are you sure you want to delete the selected submissions? This action cannot be undone.' %}"
-                        class="flex items-center py-1 px-2 bg-gray-100 border hover:bg-red-300"
+                        class="btn btn-sm"
                     >
-                        {% heroicon_outline "trash" aria_hidden="true" size=14 class="inline stroke-gray-600 me-1" %}
+                        {% heroicon_outline "trash" aria_hidden="true" size=14 class="stroke-base-content/80" %}
                         {% trans "Delete" %}
                     </button>
                 {% endif %}
@@ -545,60 +500,28 @@
         Load reviews using htmx multi-swap extension, the reviewers for all the submission
         on the page are fetched after the pages is loaded
         {% endcomment %}
-        <section class="w-full bg-white">
+        <section class="mb-4 w-full bg-base-100">
             {% if submissions %}
-                {% include "submissions/partials/submissions-inline.html" with submissions=submissions row_layout=request.GET.format enable_selection=enable_selection %}
+                <c-submission-list
+                    show_more_link="{% url 'apply:submissions:list' %}?query=reviewer:@me"
+                    :variant="request.GET.format"
+                    rounded-bottom
+                    :enable_selection="enable_selection"
+                    :submissions="submissions"
+                />
             {% else %}
-                <div class="flex flex-col justify-center items-center py-32 px-4 mb-8 border">
-                    <h2 class='text-2xl'>{% trans "No results matched your search" %}</h2>
-                    <p>{% trans "Try" %} <a href="./" hx-get="./" hx-target="#main" hx-push-url="true" hx-swap="outerHTML transition:true">{% trans "clearing" %}</a> {% trans "the current query and try again" %}.</p>
+                <div class="flex flex-col justify-center items-center py-32 px-4 mb-8 border rounded-b-box">
+                    <h2 class='mb-2 text-2xl card-title'>{% trans "No results matched your search" %}</h2>
+                    <p class="text-fg-muted">{% trans "Try" %} <a href="./" hx-get="./" hx-target="#main" hx-push-url="true" hx-swap="outerHTML transition:true">{% trans "clearing" %}</a> {% trans "the current query and try again" %}.</p>
                 </div>
             {% endif %}
         </section>
 
-        {% if page.paginator.count %}
-            <nav class="mt-5 mb-20" aria-label="Pagination">
-                <span class="flex gap-2 justify-center items-center step-links">
-                    {% if page.has_previous %}
-                        <a
-                            href="{% modify_query page=1 %}"
-                            class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                            aria-label="{% trans 'First Page' %}"
-                        >
-                            &laquo; {% trans "First" %}
-                        </a>
-                        <a
-                            href="{% modify_query page=page.previous_page_number %}"
-                            class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                            aria-label="{% trans 'Previous Page' %}"
-                        >
-                            {% trans "Previous" %}
-                        </a>
-                    {% endif %}
-
-                    <span class="current">
-                        {% blocktrans with page_number=page.number total=page.paginator.num_pages %}Page {{ page_number }} of {{ total }}.{% endblocktrans %}
-                    </span>
-
-                    {% if page.has_next %}
-                        <a
-                            href="{% modify_query page=page.next_page_number %}"
-                            class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                            aria-label="{% trans 'Next Page' %}"
-                        >
-                            {% trans "Next" %}
-                        </a>
-                        <a
-                            href="{% modify_query page=page.paginator.num_pages %}"
-                            class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                            aria-label="{% trans 'Last Page' %}"
-                        >
-                            {% trans "Last" %} &raquo;
-                        </a>
-                    {% endif %}
-                </span>
-            </nav>
-        {% endif %}
+        <c-pagination
+            :page="page"
+            :url="./"
+            class="mb-8"
+        ></c-pagination>
 
     </section>
 {% endspaceless %}{% endblock content %}

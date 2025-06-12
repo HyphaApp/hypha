@@ -328,6 +328,10 @@ coverage==7.8.2 \
     # via
     #   django-coverage-plugin
     #   pytest-cov
+crispy-tailwind==1.0.3 \
+    --hash=sha256:2bc9f616d406e4b003f25d46fcb0079f1c2522719d97adb107667271d849459a \
+    --hash=sha256:31427f66b1c4fd0d6fb040f4197cfb97d104cdbe7641ea2dea940c0057c4db4b
+    # via hypha
 cryptography==45.0.4 \
     --hash=sha256:0339a692de47084969500ee455e42c58e449461e0ec845a34a6a9b9bf7df7fb8 \
     --hash=sha256:03dbff8411206713185b8cebe31bc5c0eb544799a50c09035733716b386e61a4 \
@@ -395,10 +399,13 @@ django==4.2.23 \
     --hash=sha256:42fdeaba6e6449d88d4f66de47871015097dc6f1b87910db00a91946295cfae4 \
     --hash=sha256:dafbfaf52c2f289bd65f4ab935791cb4fb9a198f2a5ba9faf35d7338a77e9803
     # via
+    #   crispy-tailwind
     #   dj-database-url
     #   django-anymail
     #   django-basic-auth-ip-whitelist
     #   django-browser-reload
+    #   django-cotton
+    #   django-crispy-forms
     #   django-debug-toolbar
     #   django-extensions
     #   django-filter
@@ -441,6 +448,10 @@ django-basic-auth-ip-whitelist==0.8.0 \
 django-browser-reload==1.18.0 \
     --hash=sha256:c5f0b134723cbf2a0dc9ae1ee1d38e42db28fe23c74cdee613ba3ef286d04735 \
     --hash=sha256:ed4cc2fb83c3bf6c30b54107a1a6736c0b896e62e4eba666d81005b9f2ecf6f8
+django-cotton==2.1.2 \
+    --hash=sha256:8492cb7cfe881455a1b9dfaaaec2d1943494a1d3d2e2066ac7da6ce31afceef3 \
+    --hash=sha256:ad467f725239bf43004dad87dfc70f95c08d96efde4166d4bfb815e7cb72c56f
+    # via hypha
 django-countries==7.6.1 \
     --hash=sha256:1ed20842fe0f6194f91faca21076649513846a8787c9eb5aeec3cbe1656b8acc \
     --hash=sha256:c772d4e3e54afcc5f97a018544e96f246c6d9f1db51898ab0c15cd57e19437cf
@@ -448,6 +459,10 @@ django-countries==7.6.1 \
 django-coverage-plugin==3.1.0 \
     --hash=sha256:223d34bf92bebadcb8b7b89932480e41c7bd98b44a8156934488fbe7f4a71f99 \
     --hash=sha256:eb0ea8ffdb0db11a02994fc99be6500550efb496c350d709f418ff3d8e553a67
+django-crispy-forms==2.4 \
+    --hash=sha256:5a4b99876cfb1bdd3e47727731b6d4197c51c0da502befbfbec6a93010b02030 \
+    --hash=sha256:915e1ffdeb2987d78b33fabfeff8e5203c8776aa910a3a659a2c514ca125f3bd
+    # via crispy-tailwind
 django-debug-toolbar==5.2.0 \
     --hash=sha256:15627f4c2836a9099d795e271e38e8cf5204ccd79d5dbcd748f8a6c284dcd195 \
     --hash=sha256:9e7f0145e1a1b7d78fcc3b53798686170a5b472d9cf085d88121ff823e900821

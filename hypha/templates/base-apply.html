@@ -3,7 +3,7 @@
 
 {% block header %}
     <header
-        class="flex gap-4 justify-between items-center py-2 mx-auto w-full header max-w-[1280px]"
+        class="flex gap-4 justify-between items-center py-2 mx-auto w-full header container-constrained"
         x-data="{'showDesktopMenu': false, isDesktop: false, mm: null}"
         x-init="mm = window.matchMedia(`(min-width: 768px)`); isDesktop = mm.matches; mm.addListener((e) => { isDesktop = e.matches }); "
     >
@@ -36,7 +36,7 @@
                 {% endif %}
 
                 <button
-                    class="p-1.5 text-center rounded-sm border transition-colors md:hidden hover:bg-slate-100"
+                    class="md:hidden btn btn-soft btn-square btn-secondary"
                     @click="showDesktopMenu = true"
                 >
                     <span class="sr-only">{% trans "Menu" %}</span>
@@ -49,8 +49,8 @@
 
 {% block footer %}
     {% if settings.core.SystemSettings.footer_content %}
-        <footer class="py-10 px-4 footer shrink-0 bg-dark-blue">
-            <div class="max-w-none text-white wrapper wrapper--large prose prose-invert">
+        <footer class="p-10 footer bg-base-200/60 text-base-content sm:footer-horizontal">
+            <div class="container-constrained">
                 {{ settings.core.SystemSettings.footer_content|safe }}
             </div>
         </footer>

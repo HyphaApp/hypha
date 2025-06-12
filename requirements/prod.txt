@@ -237,6 +237,10 @@ colorama==0.4.6 ; sys_platform == 'win32' \
     # via
     #   click
     #   qrcode
+crispy-tailwind==1.0.3 \
+    --hash=sha256:2bc9f616d406e4b003f25d46fcb0079f1c2522719d97adb107667271d849459a \
+    --hash=sha256:31427f66b1c4fd0d6fb040f4197cfb97d104cdbe7641ea2dea940c0057c4db4b
+    # via hypha
 cryptography==45.0.4 \
     --hash=sha256:0339a692de47084969500ee455e42c58e449461e0ec845a34a6a9b9bf7df7fb8 \
     --hash=sha256:03dbff8411206713185b8cebe31bc5c0eb544799a50c09035733716b386e61a4 \
@@ -300,9 +304,12 @@ django==4.2.23 \
     --hash=sha256:42fdeaba6e6449d88d4f66de47871015097dc6f1b87910db00a91946295cfae4 \
     --hash=sha256:dafbfaf52c2f289bd65f4ab935791cb4fb9a198f2a5ba9faf35d7338a77e9803
     # via
+    #   crispy-tailwind
     #   dj-database-url
     #   django-anymail
     #   django-basic-auth-ip-whitelist
+    #   django-cotton
+    #   django-crispy-forms
     #   django-extensions
     #   django-filter
     #   django-formtools
@@ -340,10 +347,18 @@ django-basic-auth-ip-whitelist==0.8.0 \
     --hash=sha256:e4e46c2c59b4dde3a318d8812b6640b4a714bc2d1a0647854dead7743f1202ee \
     --hash=sha256:edcff4ad789c9cf0c335c12366d5356f1f07d44172c2ecbfa5cb8ec914ea8252
     # via hypha
+django-cotton==2.1.2 \
+    --hash=sha256:8492cb7cfe881455a1b9dfaaaec2d1943494a1d3d2e2066ac7da6ce31afceef3 \
+    --hash=sha256:ad467f725239bf43004dad87dfc70f95c08d96efde4166d4bfb815e7cb72c56f
+    # via hypha
 django-countries==7.6.1 \
     --hash=sha256:1ed20842fe0f6194f91faca21076649513846a8787c9eb5aeec3cbe1656b8acc \
     --hash=sha256:c772d4e3e54afcc5f97a018544e96f246c6d9f1db51898ab0c15cd57e19437cf
     # via hypha
+django-crispy-forms==2.4 \
+    --hash=sha256:5a4b99876cfb1bdd3e47727731b6d4197c51c0da502befbfbec6a93010b02030 \
+    --hash=sha256:915e1ffdeb2987d78b33fabfeff8e5203c8776aa910a3a659a2c514ca125f3bd
+    # via crispy-tailwind
 django-elevate==2.0.3 \
     --hash=sha256:00422cb5742ea3de06a189e245a4ad28eb645a1cde8946ff2e6922132134ae84 \
     --hash=sha256:b715c74451d49e45e8e6f9aba2bc4a839470e3e62e4f53d51d872396371e8082

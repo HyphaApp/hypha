@@ -1,93 +1,99 @@
-{% load i18n wagtailcore_tags %}
+{% load i18n wagtailcore_tags heroicons %}
 
-{% if show_banner %}
-    <div class="z-20 py-8 w-full cookieconsent">
-        <div class="cookieconsent__content">
-            <div class="cookieconsent__brief">
-                <div>
-                    <h2 class="cookieconsent__title">
-                        {% trans settings.cookieconsent_title %}
-                    </h2>
-                    <div class="cookieconsent__message rich-text">
-                        {{ settings.cookieconsent_message|richtext }}
-                    </div>
-
-                    <div class="cookieconsent__actions">
-                        {% if settings.cookieconsent_analytics %}
-                            <button class="button button--cookieconsent button--decline"
-                                    title="{% trans 'Decline tracking cookies.' %}"
-                                    type="button"
-                                    data-consent="decline"
-                            >{% trans 'Essential only' %}</button>
-
-                            <button class="button button--cookieconsent button--accept lg:ms-[20px]"
-                                    title="{% trans 'Accept tracking cookies.' %}"
-                                    type="button"
-                                    data-consent="accept"
-                            >{% trans 'Accept all' %}</button>
-                        {% else %}
-                            <button class="button button--cookieconsent button--accept"
-                                    title="{% trans 'Acknowledge use of essential cookies.' %}"
-                                    data-consent="ack"
-                            >{% trans 'Ok' %}</button>
-                        {% endif %}
-
-                        <button class="button button--cookieconsent button--learn-more lg:ms-[20px]"
-                                title="{% trans 'Learn more about specific cookies used.' %}"
-                                show-learn-more="true"
-                        >{% trans 'Learn More' %}</button>
-
-                    </div>
+{% if settings.cookieconsent_active %}
+    <section
+        x-cloak
+        x-data="cookieConsent"
+        x-show="isOpen"
+        class="fixed inset-x-0 bottom-0 z-20 pt-6 pb-4 w-full bg-info text-info-content"
+    >
+        <div class="container-constrained">
+            <div class="cookieconsent__brief" x-show="!showLearnMore">
+                <h2 class="mb-2 text-xl card-title">
+                    {% translate settings.cookieconsent_title %}
+                </h2>
+                <div class="max-w-3xl prose prose-sm text-inherit">
+                    {{ settings.cookieconsent_message|richtext }}
                 </div>
             </div>
-            <div class="cookieconsent__learnmore">
-                <div>
-                    <div class="cookieconsent__statement">
-                        <p>{% trans "This Website uses cookies.  Below you can select the categories of cookies to allow when you use our website and services." %}</p>
+
+            <div x-show="showLearnMore">
+                <p class="hidden mt-0 mb-4 text-sm lg:block">
+                    {% blocktranslate trimmed %}
+                        This Website uses cookies. Below you can select the categories
+                        of cookies to allow when you use our website and services.
+                    {% endblocktranslate %}
+                </p>
+
+                <div class="flex flex-col gap-4 md:flex-row">
+                    <div class="cookieconsent__info">
+                        <h2 class="mb-2 font-bold">
+                            {% translate "Essential Cookies" %}
+                            <span class="font-normal badge badge-outline badge-sm ms-1">
+                                {% translate "Always enabled" %}
+                            </span>
+                        </h2>
+                        <div class="max-w-none prose prose-sm text-inherit">
+                            {{ settings.cookieconsent_essential_about|richtext }}
+                        </div>
                     </div>
 
-                    <div class="cookieconsent__info-wrapper">
+                    {% if settings.cookieconsent_analytics %}
                         <div class="cookieconsent__info">
-                            <p class="font-semibold">{% trans "Essential Cookies" %}</p>
-                            {{ settings.cookieconsent_essential_about|richtext }}
-                            <span class="font-bold">{% trans "Always enabled." %}</span>
-                        </div>
-                        {% if settings.cookieconsent_analytics %}
-                            <div class="lg:pl-10 cookieconsent__info">
-                                <p class="font-semibold">{% trans "Analytics Cookies" %}</p>
+                            <h2 class="mb-2 font-bold">
+                                {% translate "Analytics Cookies" %}
+                            </h2>
+
+                            <div class="max-w-none prose prose-sm text-inherit">
                                 {{ settings.cookieconsent_analytics_about|richtext }}
                             </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="cookieconsent__actions">
-                        {% if settings.cookieconsent_analytics %}
-                            <button class="button button--cookieconsent button--decline"
-                                    title="{% trans 'Decline tracking cookies.' %}"
-                                    type="button"
-                                    data-consent="decline"
-                            >{% trans 'Essential only' %}</button>
-
-                            <button class="button button--cookieconsent button--accept lg:ms-[20px]"
-                                    title="{% trans 'Accept tracking cookies.' %}"
-                                    type="button"
-                                    data-consent="accept"
-                            >{% trans 'Accept all' %}</button>
-                        {% else %}
-                            <button class="button button--cookieconsent button--accept"
-                                    title="{% trans 'Acknowledge use of essential cookies.' %}"
-                                    data-consent="ack"
-                            >{% trans 'Ok' %}</button>
-                        {% endif %}
-
-                        <button class="button button--cookieconsent button--learn-more lg:ms-[20px]"
-                                title="{% trans 'Return to main cookie menu.' %}"
-                                show-learn-more="false"
-                                tabindex="-1"
-                        >{% trans 'Back' %}</button>
-                    </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
+            <div class="mt-4 card-actions">
+                {% if settings.cookieconsent_analytics %}
+                    <button
+                        class="w-full sm:w-auto btn btn-primary btn-soft"
+                        title="{% translate 'Decline tracking cookies.' %}"
+                        type="button"
+                        data-consent="decline"
+                    >{% translate "Essential only" %}</button>
+
+                    <button
+                        class="sm:w-auto btn btn-primary btn-soft"
+                        title="{% translate 'Accept all tracking cookies.' %}"
+                        type="button"
+                        data-consent="accept"
+                    >{% translate "Accept all" %}</button>
+                {% else %}
+                    <button
+                        class="sm:w-auto btn btn-primary btn-soft"
+                        title="{% translate 'Acknowledge use of essential cookies.' %}"
+                        data-consent="ack"
+                    >{% translate "Ok" %}</button>
+                {% endif %}
+
+                <button
+                    class="sm:w-auto btn btn-link"
+                    title="{% translate 'Learn more about specific cookies used.' %}"
+                    @click="toggleLearnMore()"
+                    x-show="!showLearnMore"
+                >
+                    {% translate "Learn More" %}
+                    {% heroicon_micro "arrow-right" aria_hidden="true" %}
+                </button>
+
+                <button
+                    class="sm:w-auto btn btn-link"
+                    title="{% translate 'Return to main cookie menu.' %}"
+                    @click="toggleLearnMore()"
+                    x-show="showLearnMore"
+                >
+                    {% heroicon_micro "arrow-left" aria_hidden="true" %}
+                    {% translate "Go Back" %}
+                </button>
+            </div>
         </div>
-    </div>
+    </section>
 {% endif %}
