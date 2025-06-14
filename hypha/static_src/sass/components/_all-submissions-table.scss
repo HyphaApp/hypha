@@ -4,7 +4,6 @@
 // stylelint-disable selector-class-pattern
 .all-submissions-table {
   $root: &;
-  font-size: 14px;
 
   thead {
     th {
@@ -119,21 +118,6 @@
         }
       }
 
-      // arrow to toggle project info - added via js
-      @include mixins.media-query(lg) {
-        .arrow {
-          @include mixins.triangle(right, variables.$color--primary, 6px);
-          position: relative;
-          display: inline-block;
-          transform: rotate(0);
-          transition: transform variables.$transition;
-
-          &:hover {
-            cursor: pointer;
-          }
-        }
-      }
-
       > span.mobile-label {
         display: inline-block;
         width: 90px;
@@ -147,72 +131,6 @@
           display: none;
         }
       }
-    }
-  }
-
-  &__parent {
-    &.is-expanded {
-      background-color: variables.$color--mist;
-      border-block-end: 1px solid variables.$color--light-mid-grey;
-
-      + #{$root}__child {
-        border-block-end: 1px solid variables.$color--light-mid-grey;
-      }
-
-      + #{$root}__child,
-      + #{$root}__child + #{$root}__child {
-        display: table-row;
-      }
-
-      .arrow {
-        transform: rotate(90deg);
-      }
-    }
-  }
-
-  &__child {
-    display: none;
-    color: variables.$color--mid-dark-grey;
-    vertical-align: top;
-    background-color: variables.$color--mist;
-    border: 0;
-    border-block-end: 2px solid variables.$color--light-grey;
-
-    &:hover {
-      box-shadow: none;
-    }
-
-    td {
-      padding: 10px;
-    }
-
-    p {
-      margin: 0;
-      font-weight: variables.$weight--bold;
-      color: variables.$color--default;
-    }
-
-    .title {
-      a {
-        visibility: hidden;
-      }
-    }
-  }
-
-  &__empty {
-    td {
-      padding: 20px;
-    }
-  }
-
-  &__toggle {
-    padding: 0.5em;
-    margin-block-start: -0.5em;
-    cursor: pointer;
-    vertical-align: top;
-
-    &:hover {
-      opacity: 0.7;
     }
   }
 }
