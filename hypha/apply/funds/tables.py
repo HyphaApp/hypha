@@ -18,28 +18,12 @@ from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import MetaTerm, Option
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.review.models import Review
-from hypha.apply.utils.image import generate_image_tag
-from hypha.images.models import CustomImage
 
 from .models import ApplicationSubmission, Round, ScreeningStatus
 from .widgets import MultiCheckboxesWidget
-from .workflows import STATUSES, get_review_active_statuses
+from .workflows import STATUSES
 
 User = get_user_model()
-
-
-def review_filter_for_user(user):
-    review_states = set(get_review_active_statuses(user))
-    statuses = [name for name, status in STATUSES.items() if review_states & status]
-    return [slugify(status) for status in statuses]
-
-
-def make_row_class(record):
-    css_class = (
-        "submission-meta__row" if record.next else "all-submissions-table__parent"
-    )
-    css_class += "" if record.active else " is-inactive"
-    return css_class
 
 
 def render_actions(table, record):
@@ -109,7 +93,6 @@ class SubmissionsTable(tables.Table):
         sequence = fields + ("comments",)
         template_name = "funds/tables/table.html"
         row_attrs = {
-            "class": make_row_class,
             "data-record-id": lambda record: record.id,
             "data-archived": lambda record: record.is_archive,
         }
@@ -205,30 +188,6 @@ class BaseAdminSubmissionsTable(SubmissionsTable):
             return format_html(
                 "<span class='text-xs text-fg-muted'>{}</span>", "Awaiting"
             )
-
-
-class SummarySubmissionsTable(BaseAdminSubmissionsTable):
-    class Meta(BaseAdminSubmissionsTable.Meta):
-        orderable = False
-
-
-class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
-    """Adds Role Assigned to the 'Waiting for My Review' table"""
-
-    role_icon = tables.Column(verbose_name=_("Role"))
-
-    class Meta(BaseAdminSubmissionsTable.Meta):
-        sequence = BaseAdminSubmissionsTable.Meta.fields + ("role_icon", "comments")
-        orderable = False
-
-    def render_role_icon(self, value):
-        if value:
-            image = CustomImage.objects.filter(id=value).first()
-            if image:
-                filter_spec = "fill-20x20"
-                return generate_image_tag(image, filter_spec)
-
-        return ""
 
 
 def get_used_rounds(request):

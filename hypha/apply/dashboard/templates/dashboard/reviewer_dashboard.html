@@ -13,7 +13,7 @@
 {% block content %}
     <div class="flex flex-col gap-8 my-4">
         <section>
-            {% include "dashboard/includes/submissions-waiting-for-review.html" with in_review_count=awaiting_reviews.count my_review=awaiting_reviews.table display_more=awaiting_reviews.display_more active_statuses_filter=awaiting_reviews.active_statuses_filter %}
+            {% include "dashboard/includes/submissions-waiting-for-review.html" with in_review_count=awaiting_reviews.count my_review=awaiting_reviews.submissions display_more=awaiting_reviews.display_more %}
         </section>
 
         {% if my_flagged.count %}

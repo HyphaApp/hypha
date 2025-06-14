@@ -1,7 +1,7 @@
 {% load i18n approval_tools project_tags heroicons %}
 {% allow_collapsible_header object header_type='project_documents' as collapsible_header %}
 
-<div class="border rounded-box border-base-300 wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
+<div class="border rounded-box border-base-300" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
     <div class="docs-block__header" id="project-documents-section" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" role="button" aria-label="Toggle Project documents visibility" aria-controls="project-documents-elements" {% endif %}>
         <div class="flex gap-2 justify-between items-center w-full">
             <h2 class="m-0 text-lg font-semibold">

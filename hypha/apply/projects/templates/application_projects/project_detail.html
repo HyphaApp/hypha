@@ -36,46 +36,44 @@
 
 
 {% block content %}
-    {% show_closing_banner object as show_banner %}
-    {% if show_banner %}
-        <div class="p-2 font-semibold text-center text-white bg-red-500">
-            {% display_project_status object request.user as project_status %}
-            {% blocktrans with status=project_status %} This project is in {{ status }} state. {% endblocktrans %}
-        </div>
-    {% endif %}
-
     <div class="my-4">
 
-        {% block notifications %}{% endblock %}
+        {% block notifications %}
+            {% show_closing_banner object as show_banner %}
+            {% if show_banner %}
+                <div class="mb-4 alert alert-warning">
+                    {% display_project_status object request.user as project_status %}
+                    {% blocktrans with status=project_status %} This project is in {{ status }} state. {% endblocktrans %}
+                </div>
+            {% endif %}
+        {% endblock %}
 
         <div class="wrapper wrapper--sidebar">
-            <article class="grow @container">
-                <h2 class="pb-2 mb-2 font-medium border-b text-h3">
-                    {% trans "Project Information" %}
-                </h2>
+            <article class="grow @container flex flex-col gap-8">
+                <section>
+                    <h2 class="pb-2 mb-2 font-semibold border-b text-h3">
+                        {% trans "Project Information" %}
+                    </h2>
 
-                <dl
-                    class="grid grid-cols-1 @md:grid-cols-2 gap-2"
-                    hx-get='{% url "apply:projects:project_information" object.submission.id %}'
-                    hx-trigger="informationUpdated from:body"
-                >
-                    {% include "application_projects/partials/project_information.html" %}
-                </dl>
+                    <dl
+                        class="grid grid-cols-1 @md:grid-cols-2 gap-2"
+                        hx-get='{% url "apply:projects:project_information" object.submission.id %}'
+                        hx-trigger="informationUpdated from:body"
+                    >
+                        {% include "application_projects/partials/project_information.html" %}
+                    </dl>
+                </section>
 
                 {% project_can_have_invoices object as can_have_invoices %}
                 {% user_can_view_invoices object user as can_view_invoices %}
                 {% if can_have_invoices and can_view_invoices %}
-                    <div class="wrapper wrapper--outer-space-large">
-                        {% include "application_projects/includes/invoices.html" %}
-                    </div>
+                    {% include "application_projects/includes/invoices.html" %}
                 {% endif %}
 
                 {% project_show_reports_section object as show_reports_section %}
                 {% user_can_view_reports object user as can_view_reports %}
                 {% if show_reports_section and can_view_reports %}
-                    <div class="wrapper wrapper--outer-space-large">
-                        {% include "reports/includes/reports.html" %}
-                    </div>
+                    {% include "reports/includes/reports.html" %}
                 {% endif %}
 
                 {% project_can_have_contracting_section object as can_have_contracting_section %}
@@ -183,10 +181,12 @@
                     {% display_coapplicant_section user object as coapplicant_section %}
                     {% if coapplicant_section %}
                         {% block co_applicant %}
-                            <div hx-trigger="revealed, coApplicantUpdated from:body" hx-get="{% url 'funds:submissions:partial_coapplicant_invites' object.submission.id %}"></div>
+                            <div
+                                hx-trigger="revealed, coApplicantUpdated from:body"
+                                hx-get="{% url 'funds:submissions:partial_coapplicant_invites' object.submission.id %}"
+                            ></div>
                         {% endblock %}
                     {% endif %}
-
                 </aside>
             {% endblock sidebar %}
         </div>

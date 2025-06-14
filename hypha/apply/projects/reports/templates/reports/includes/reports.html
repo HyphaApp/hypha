@@ -4,7 +4,7 @@
 {% can "update_project_reports" object as can_update_project_reports %}
 {% can "update_report_config" object as can_update_report_config %}
 
-<section class="border rounded-box border-base-300">
+<section class="overflow-hidden border rounded-box border-base-300 shadow-xs">
     <header class="docs-block__header">
         <h2 class="card-title">
             {% trans "Reports" %}
@@ -109,7 +109,7 @@
             </div>
             {% if object.reports.done.count > 4 %}
                 <p class="text-center">
-                    <a class="font-semibold js-data-block-pagination" href="#">{% trans "Show more" %}</a>
+                    <a class="font-semibold link js-data-block-pagination" href="#">{% trans "Show more" %}</a>
                 </p>
             {% endif %}
         {% else %}

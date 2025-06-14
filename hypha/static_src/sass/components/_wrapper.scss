@@ -46,14 +46,6 @@
     padding-block: calc(var(--spacing) * 4);
   }
 
-  &--outer-space-large {
-    margin: 20px 0;
-
-    @include mixins.media-query(md) {
-      margin: 2rem 0;
-    }
-  }
-
   &--sidebar {
     display: flex;
     flex-direction: column;

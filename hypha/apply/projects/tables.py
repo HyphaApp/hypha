@@ -199,7 +199,7 @@ class ProjectsDashboardTable(BaseProjectsTable):
         model = Project
         template_name = "application_projects/tables/table.html"
         orderable = False
-        attrs = {"class": "table border-x border-b mb-2 rounded-b-box projects-table"}
+        attrs = {"class": "table projects-table"}
 
 
 class ProjectsAssigneeDashboardTable(BaseProjectsTable):
@@ -215,7 +215,7 @@ class ProjectsAssigneeDashboardTable(BaseProjectsTable):
         model = Project
         orderable = False
         exclude = ["status"]
-        attrs = {"class": "table border-x border-b mb-2 rounded-b-box projects-table"}
+        attrs = {"class": "table projects-table"}
 
 
 class PAFForReviewDashboardTable(tables.Table):
@@ -278,4 +278,4 @@ class ProjectsListTable(BaseProjectsTable):
         orderable = True
         order_by = ("end_date",)
         template_name = "application_projects/tables/table.html"
-        attrs = {"class": "table border-x border-b mb-2 rounded-b-box projects-table"}
+        attrs = {"class": "table projects-table"}

@@ -1,6 +1,7 @@
 {% load i18n heroicons %}
 <li class="list-row">
-    <p class="list-col-grow">
+    <p class="text-base list-col-grow">
+
         {% if current %}
             {% trans "The" %} {% if report.can_submit %}{% trans "current" %}{% else %}{% trans "next" %}{% endif %} {% trans "reporting period is" %}
         {% else %}
@@ -11,11 +12,12 @@
             {% heroicon_outline 'exclamation-circle' stroke_width=2 size=22 class="inline me-1 stroke-red-500" aria_hidden=true %}
         {% endif %}
         {% if request.user.is_apply_staff and report.can_submit %}
+            &middot;
             <button
                 hx-post="{% url "apply:projects:reports:skip" pk=report.id %}"
                 hx-confirm="{% blocktrans with start_date=report.start_date end_date=report.end_date %} You're skipping the report for {{ start_date }} - {{ end_date }}. This will result in a gap in reporting for the project. You can undo this at any time. {% endblocktrans %}"
                 value="{% trans 'Skip' %}"
-                class="btn btn-link"
+                class="text-sm font-medium uppercase link"
             >
                 {% trans 'Skip' %}
             </button>
@@ -25,7 +27,7 @@
     {% if report.can_submit %}
         <span>
             <a
-                class="btn btn-primary"
+                class="btn btn-primary btn-sm"
                 href="{% url "apply:projects:reports:edit" pk=report.pk %}"
             >
                 {% if report.draft %}{% trans "Continue Editing" %}{% else %}{% trans "Add Report" %}{% endif %}

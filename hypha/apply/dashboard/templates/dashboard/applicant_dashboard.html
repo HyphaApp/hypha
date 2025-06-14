@@ -29,13 +29,13 @@
 {% endblock %}
 
 {% block content %}
-    <div class="my-4">
+    <div class="flex flex-col gap-8 my-4">
         {% if my_tasks.count %}
             {% include "dashboard/includes/my-tasks.html" with mytasks=mytasks %}
         {% endif %}
 
         {% if my_submissions_exists %}
-            <section class="mb-10">
+            <section>
                 <h2 class="card-title">{% trans "My submissions" %}</h2>
                 <div
                     hx-get="{% url 'dashboard:applicant_submissions' %}"
@@ -54,8 +54,8 @@
         {% endif %}
 
         {% if my_projects_exists %}
-            <div class="mb-10">
-                <h2 class="card-title">{% trans "My projects" %}</h2>
+            <section id="my-projects">
+                <h2 class="mb-2 font-semibold text-h3">{% trans "My projects" %}</h2>
                 <div
                     hx-get="{% url 'dashboard:applicant_projects' %}"
                     hx-trigger="load delay:50"
@@ -69,13 +69,13 @@
                     {% endfor %}
 
                 </div>
-            </div>
+            </section>
         {% endif %}
 
         {% if active_invoices.count %}
-            <div class="mb-10">
-                <h2 class="card-title">{% trans "My active invoices" %}</h2>
-                <div class="list">
+            <section id="active-invoices">
+                <h2 class="mb-2 font-semibold text-h3">{% trans "My active invoices" %}</h2>
+                <div class="border list border-base-200 rounded-box shadow-xs">
                     {% for invoice in active_invoices.data %}
                         <div class="sm:grid-cols-3 list-row">
                             <div class="col-span-2 sm:col-span-1">
@@ -93,9 +93,9 @@
                             </div>
                             <div class="sm:row-start-1 list-col-wrap">
                                 {% display_invoice_table_status_for_user invoice.status request.user as invoice_status %}
-                                <p class="{{ invoice_status|invoice_status_bg_color }} inline-block text-sm font-semibold py-2 px-3 rounded-sm shadow-xs {{ invoice_status|invoice_status_fg_color }}">
+                                <span class="{{ invoice_status|invoice_status_to_classname }} badge-md">
                                     {{ invoice_status }}
-                                </p>
+                                </span>
                             </div>
                             <div class="self-center sm:row-start-1 list-col-wrap">
                                 <span class="text-2xl">
@@ -113,17 +113,29 @@
                         </div>
                     {% endfor %}
                 </div>
-            </div>
+            </section>
         {% endif %}
 
         {% if historical_submissions.count %}
-            <h2 class="card-title">{% trans "Submission history" %}</h2>
-            {% render_table historical_submissions.table %}
+            <section id="submission-history">
+                <h2 class="mb-2 font-semibold text-h3">
+                    {% trans "Submission history" %}
+                </h2>
+                <div class="overflow-x-auto border border-base-200 rounded-box shadow-xs">
+                    {% render_table historical_submissions.table %}
+                </div>
+            </section>
         {% endif %}
 
         {% if historical_projects.count %}
-            <h2 class="card-title">{% trans "Project history" %}</h2>
-            {% render_table historical_projects.table %}
+            <section id="project-history">
+                <h2 class="mb-2 font-semibold text-h3">
+                    {% trans "Project history" %}
+                </h2>
+                <div class="overflow-x-auto border border-base-200 rounded-box shadow-xs">
+                    {% render_table historical_projects.table %}
+                </div>
+            </section>
         {% endif %}
     </div>
 {% endblock %}

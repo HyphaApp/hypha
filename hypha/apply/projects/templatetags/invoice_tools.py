@@ -7,8 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from hypha.apply.activity.models import Activity
 from hypha.apply.activity.templatetags.activity_tags import display_for
 from hypha.apply.projects.constants import (
-    INVOICE_STATUS_BG_COLORS,
-    INVOICE_STATUS_FG_COLORS,
+    INVOICE_STATUS_CLASSNAME_MAP,
 )
 from hypha.apply.projects.models.payment import PAID
 from hypha.apply.projects.models.project import (
@@ -127,13 +126,8 @@ def get_comment_for_invoice_action(invoice, action):
 
 
 @register.filter
-def invoice_status_bg_color(invoice_status):
-    return INVOICE_STATUS_BG_COLORS.get(invoice_status, "bg-base-200")
-
-
-@register.filter
-def invoice_status_fg_color(invoice_status):
-    return INVOICE_STATUS_FG_COLORS.get(invoice_status, "text-gray-700")
+def invoice_status_to_classname(invoice_status):
+    return INVOICE_STATUS_CLASSNAME_MAP.get(invoice_status, "badge")
 
 
 @register.simple_tag
