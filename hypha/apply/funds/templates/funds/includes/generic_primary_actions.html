@@ -1,7 +1,7 @@
 {% load i18n primaryactions_tags %}
 
 {% if request.user|should_display_primary_actions_block:object %}
-    <section class="card sidebar__inner--actions" data-testid="sidebar-primary-actions">
+    <section class="card card-border shadow-xs sidebar__inner--actions" data-testid="sidebar-primary-actions">
         <div class="card-body">
             <h2 class="card-title">{% trans "Actions to take" %}</h2>
 

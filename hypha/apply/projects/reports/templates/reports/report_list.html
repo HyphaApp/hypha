@@ -16,18 +16,12 @@
 
 
 {% block content %}
-    <div class="mt-2 text-sm breadcrumbs">
-        <ul>
-            <li><a href="{% url 'dashboard:dashboard' %}">Home</a></li>
-            <li><a href="{% url 'apply:projects:all' %}">Projects</a></li>
-            <li>Reports</li>
-        </ul>
-    </div>
-
     <div class="mt-4 wrapper wrapper--large">
         {% if table %}
             {% include "funds/includes/table_filter_and_search.html" %}
-            {% render_table table %}
+            <div class="overflow-x-auto mb-4 border-b rounded-b-box border-x">
+                {% render_table table %}
+            </div>
         {% else %}
             <p>{% trans "No Reports Available." %}</p>
         {% endif %}

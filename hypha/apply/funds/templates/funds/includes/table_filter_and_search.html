@@ -3,10 +3,10 @@
 
 {% if heading or use_search %}
     <div
-        class="flex flex-wrap gap-4 justify-between items-center w-full"
+        class="flex flex-wrap gap-4 justify-between items-center mb-2 w-full"
     >
         {% if heading %}
-            <h2 class="mb-2 font-semibold text-h3">{{ heading }}</h2>
+            <h2 class="section-header">{{ heading }}</h2>
         {% endif %}
 
         {% if invoice_batch_actions %}
@@ -55,7 +55,7 @@
 <div>
     {% get_filtered_query request filter.form as filtered_query %}
     {% if filtered_query %}
-        <div class="flex flex-wrap gap-2 items-center mt-2">
+        <div class="flex flex-wrap gap-2 items-center my-2">
             <a href="./" class="btn btn-ghost btn-sm btn-link link-hover">
                 {% trans "Clear current filters & sorts" %}
                 {% heroicon_micro "x-mark" aria_hidden="true" class="w-4 h-4" %}
@@ -71,7 +71,7 @@
         </div>
     {% endif %}
 
-    <form method="GET" class="flex sticky top-0 flex-wrap gap-2 justify-end items-center py-2 px-3 mt-3 border-t md:gap-5 md:text-sm md:font-medium bg-base-200 border-base-300 z-[5] border-x">
+    <form method="GET" class="flex overflow-hidden sticky top-0 z-10 flex-wrap gap-2 justify-end items-center py-2 px-3 border md:gap-5 md:text-sm md:font-medium bg-base-200 rounded-t-box">
         <span class="hidden items-center py-1 md:inline-flex"></span>
         {% for field_name, field in filter.form|get_filter_fields %}
             {% if filter.form %}
@@ -154,7 +154,6 @@
                                     let formattedEnd = end.format('YYYY-MM-DD');
                                     dateLink.textContent = formattedStart + ' - ' + formattedEnd;
                                     updateURL(fieldName + "_after", fieldName + "_before", formattedStart, formattedEnd);
-
                                 });
                             });
                         </script>

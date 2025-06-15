@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<h2 class="mb-2 font-semibold text-h3">
+<h2 class="section-header">
     <a href="{% url "apply:submissions:list" %}?query=reviewer:@me">
         {% trans "Submissions waiting for your review" %}
         <span class="badge badge-soft badge-secondary">{{ in_review_count }}</span>

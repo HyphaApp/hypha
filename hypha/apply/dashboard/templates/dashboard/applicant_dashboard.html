@@ -36,50 +36,53 @@
 
         {% if my_submissions_exists %}
             <section>
-                <h2 class="card-title">{% trans "My submissions" %}</h2>
-                <div
-                    hx-get="{% url 'dashboard:applicant_submissions' %}"
-                    hx-trigger="load"
-                    id="submissions_list"
-                    class="list"
-                >
-                    {% for dummy_item in per_section_items %}
-                        <div class="animate-pulse list-row min-h-40">
-                            <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-base-300 "></div>
-                        </div>
-                    {% endfor %}
-
+                <h2 class="section-header">{% trans "My submissions" %}</h2>
+                <div class="overflow-hidden border border-base-200 rounded-box shadow-xs">
+                    <div
+                        hx-get="{% url 'dashboard:applicant_submissions' %}"
+                        hx-trigger="load"
+                        id="submissions_list"
+                        class="list"
+                    >
+                        {% for dummy_item in per_section_items %}
+                            <div class="animate-pulse list-row min-h-40">
+                                <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-base-300 "></div>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </section>
         {% endif %}
 
         {% if my_projects_exists %}
             <section id="my-projects">
-                <h2 class="mb-2 font-semibold text-h3">{% trans "My projects" %}</h2>
-                <div
-                    hx-get="{% url 'dashboard:applicant_projects' %}"
-                    hx-trigger="load delay:50"
-                    id="projects_list"
-                    class="list"
-                >
-                    {% for dummy_item in per_section_items %}
-                        <div class="animate-pulse list-row min-h-40">
-                            <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-base-300 "></div>
-                        </div>
-                    {% endfor %}
+                <h2 class="section-header">{% trans "My projects" %}</h2>
+                <div class="overflow-hidden border border-base-200 rounded-box shadow-xs">
+                    <div
+                        hx-get="{% url 'dashboard:applicant_projects' %}"
+                        hx-trigger="load delay:50"
+                        id="projects_list"
+                        class="list"
+                    >
+                        {% for dummy_item in per_section_items %}
+                            <div class="animate-pulse list-row min-h-40">
+                                <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-base-300 "></div>
+                            </div>
+                        {% endfor %}
 
+                    </div>
                 </div>
             </section>
         {% endif %}
 
         {% if active_invoices.count %}
             <section id="active-invoices">
-                <h2 class="mb-2 font-semibold text-h3">{% trans "My active invoices" %}</h2>
+                <h2 class="section-header">{% trans "My active invoices" %}</h2>
                 <div class="border list border-base-200 rounded-box shadow-xs">
                     {% for invoice in active_invoices.data %}
                         <div class="sm:grid-cols-3 list-row">
                             <div class="col-span-2 sm:col-span-1">
-                                <h4 class="text-xl font-bold">
+                                <h4 class="font-bold text-h4">
                                     <a class="link link-hover" href="{{ invoice.get_absolute_url }}">
                                         {{ invoice.invoice_number }}
                                     </a>
@@ -97,8 +100,8 @@
                                     {{ invoice_status }}
                                 </span>
                             </div>
-                            <div class="self-center sm:row-start-1 list-col-wrap">
-                                <span class="text-2xl">
+                            <div class="sm:row-start-1 list-col-wrap">
+                                <span class="text-h4">
                                     {% if invoice.invoice_amount %}
                                         {{ invoice.invoice_amount | format_number_as_currency }}
                                     {% else %}
@@ -118,7 +121,7 @@
 
         {% if historical_submissions.count %}
             <section id="submission-history">
-                <h2 class="mb-2 font-semibold text-h3">
+                <h2 class="section-header">
                     {% trans "Submission history" %}
                 </h2>
                 <div class="overflow-x-auto border border-base-200 rounded-box shadow-xs">
@@ -129,7 +132,7 @@
 
         {% if historical_projects.count %}
             <section id="project-history">
-                <h2 class="mb-2 font-semibold text-h3">
+                <h2 class="section-header">
                     {% trans "Project history" %}
                 </h2>
                 <div class="overflow-x-auto border border-base-200 rounded-box shadow-xs">

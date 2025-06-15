@@ -5,7 +5,7 @@
     hx-get='{% url "apply:projects:project_title" object.submission.id %}'
     hx-trigger="load, titleUpdated from:body"
 >
-    <span class="inline-block bg-gray-600 rounded-md animate-pulse"></span>
+    <span class="inline-block rounded-md animate-pulse bg-base-300"></span>
 </h1>
 
 <div class="mb-4 font-medium text-fg-muted">
@@ -36,4 +36,6 @@
     {% endif %}
 </div>
 
-{% project_status_bar object.status request.user css_class="w-full" %}
+<div class="mt-4 mb-8">
+    {% project_status_bar object.status request.user css_class="w-full" %}
+</div>

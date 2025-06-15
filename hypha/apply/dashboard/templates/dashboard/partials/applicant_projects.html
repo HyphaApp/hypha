@@ -1,37 +1,33 @@
 {% load i18n dashboard_statusbar_tags statusbar_tags workflow_tags %}
 
-<section class="my-8">
-    <div class="list">
-        {% for project in page.object_list %}
-            <div class="list-row">
-                <div class="mt-4 sm:w-sm">
-                    <h2 class="text-xl font-bold line-clamp-4">
-                        <a class="link link-hover" href="{{ project.get_absolute_url }}">
-                            {{ project.title }}
-                        </a>
-                    </h2>
-                    <p class="m-0 text-sm text-fg-muted">
-                        {% trans "Project started " %} {{ project.created_at.date }}
-                    </p>
-                </div>
-
-                <div class="list-col-grow">
-                    {% project_status_bar project.status request.user css_class="w-full" %}
-                </div>
+<div class="list">
+    {% for project in page.object_list %}
+        <div class="list-row">
+            <div class="mt-4 sm:w-sm">
+                <h2 class="font-bold text-h4 line-clamp-4">
+                    <a class="link link-hover" href="{{ project.get_absolute_url }}">
+                        {{ project.title }}
+                    </a>
+                </h2>
+                <p class="m-0 text-sm text-fg-muted">
+                    {% trans "Project started " %} {{ project.created_at.date }}
+                </p>
             </div>
-        {% empty %}
-            <div class="list-row">
-                {% trans "No active projects" %}
+
+            <div class="list-col-grow">
+                {% project_status_bar project.status request.user css_class="w-full" %}
             </div>
-        {% endfor %}
-    </div>
+        </div>
+    {% empty %}
+        <div class="list-row">
+            {% trans "No active projects" %}
+        </div>
+    {% endfor %}
+</div>
 
-    <c-pagination
-        :page="page"
-
-        target="#projects_list"
-        class="my-4"
-        use_htmx
-    ></c-pagination>
-
-</section>
+<c-pagination
+    :page="page"
+    target="#projects_list"
+    class="my-4"
+    use_htmx
+></c-pagination>

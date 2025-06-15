@@ -1,6 +1,6 @@
 {% load statusbar_tags %}
 
-<section class="pt-4 pb-8 @container">
+<section class="@container">
     <ul class=" w-full steps {{ class }} hidden @lg:inline-grid">
         {% for phase in phases %}
             {% ifchanged phase.step %}

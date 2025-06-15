@@ -18,7 +18,7 @@
 
         {% if my_flagged.count %}
             <section id="submissions-flagged">
-                <h2 class="mb-2 font-semibold text-h3">
+                <h2 class="section-header">
                     <a href="{% url "apply:submissions:list" %}?query=flagged:@me">
                         {% trans "Your flagged submissions" %}
                         <span class="badge badge-soft badge-secondary">
@@ -39,7 +39,7 @@
 
         {% if my_reviewed.count %}
             <section>
-                <h2 class="mb-2 font-semibold text-h3">
+                <h2 class="section-header">
                     <a href="{% url "apply:submissions:list" %}?query=reviewed-by:@me">
                         {% trans "Your previous reviews" %}
                         <span class="badge badge-soft badge-secondary">{{ my_reviewed.count }}</span>
@@ -57,7 +57,7 @@
 
         {% if my_submissions %}
             <section>
-                <h2 class="mb-2 font-semibold text-h3">
+                <h2 class="section-header">
                     {% trans "Your active submissions" %}
                 </h2>
                 {% for submission in my_submissions %}
@@ -85,7 +85,7 @@
 
         {% if my_inactive_submissions.data %}
             <section>
-                <h2 class="mb-2 font-semibold text-h3">
+                <h2 class="section-header">
                     {% trans "Submission history" %}
                 </h2>
                 {% render_table my_inactive_submissions %}

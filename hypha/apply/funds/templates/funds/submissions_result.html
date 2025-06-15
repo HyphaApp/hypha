@@ -12,11 +12,11 @@
 {% endblock %}
 
 {% block content %}
-    <div class="flex flex-col gap-8 my-8 mx-auto max-w-6xl">
+    <div class="flex flex-col gap-8 my-8 mx-auto">
         <section>
-            <div class="flex flex-wrap gap-4 justify-between lg:gap-8">
+            <div class="flex flex-wrap gap-4 justify-around lg:gap-8">
                 <section aria-labelledby="amounts-heading">
-                    <h3 id="amounts-heading" class="mb-2 font-semibold text-h3">{% trans "Amounts" %}</h3>
+                    <h3 id="amounts-heading" class="section-header">{% trans "Amounts" %}</h3>
                     <div class="shadow lg:w-full stats">
                         <dl role="list" aria-label="{% trans 'Applied amounts' %}" class="stat">
                             <dt class="stat-title">
@@ -39,7 +39,7 @@
                 </section>
 
                 <section aria-labelledby="submissions-heading">
-                    <h3 id="submissions-heading" class="mb-2 font-semibold text-h3">{% trans "Submissions" %}</h3>
+                    <h3 id="submissions-heading" class="section-header">{% trans "Submissions" %}</h3>
                     <div class="w-full shadow stats">
                         <dl role="list" aria-label="{% trans 'Applied submissions' %}" class="stat">
                             <dt class="stat-title">
@@ -70,7 +70,7 @@
                 </section>
 
                 <section aria-labelledby="reviews-heading">
-                    <h3 id="reviews-heading" class="mb-2 font-semibold text-h3">{% trans "Reviews" %}</h3>
+                    <h3 id="reviews-heading" class="section-header">{% trans "Reviews" %}</h3>
                     <div class="w-full shadow stats">
                         <dl role="list" aria-label="{% trans 'All reviews' %}" class="stat">
                             <dt class="stat-title">
@@ -102,12 +102,12 @@
         </section>
 
         <section aria-labelledby="submission-value-total">
-            <h2 id="submission-value-total" class="mb-2 font-semibold text-h3">{% trans "Totals" %}</h2>
+            <h2 id="submission-value-total" class="section-header">{% trans "Totals" %}</h2>
 
 
             {% include "funds/includes/table_filter_and_search.html" with search_term=search_term %}
 
-            <div class="w-full rounded-none border stats border-base-300">
+            <div class="w-full rounded-t-none border-b rounded-b-box border-x stats border-base-300">
                 <section class='stat' aria-labelledby="submissions-count-heading">
                     <span id="submissions-count-heading" class="stat-title">{% trans "Number of submissions" %}</span>
                     <span class="stat-value">

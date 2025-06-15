@@ -20,7 +20,7 @@
 {% block pagination %}
     {% if table.page and table.paginator.num_pages > 0 %}
         <div class="relative">
-            <div class='hidden absolute left-0 text-sm md:block per-page text-fg-muted'>
+            <div class='hidden absolute top-2 left-4 text-sm md:block per-page text-fg-muted'>
                 {% trans "Show" %}
                 <a href="{% querystring "per_page"=25 %}" class="link {% if not table.paginator.per_page == 25 %}link-hover current{% endif %}">25</a> |
                 <a href="{% querystring "per_page"=50 %}" class="link {% if not table.paginator.per_page == 50 %}link-hover current{% endif %}">50</a> |

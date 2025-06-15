@@ -75,7 +75,7 @@
 
         {% if my_flagged.count %}
             <section id="submissions-flagged">
-                <h2 class="mb-2 font-semibold text-h3">
+                <h2 class="section-header">
                     <a href="{% url "apply:submissions:list" %}?query=flagged:@me">
                         Your flagged submissions <span class="badge badge-soft badge-secondary">{{ my_flagged.count }}</span>
                     </a>
@@ -98,7 +98,7 @@
 
         {% if PROJECTS_ENABLED and paf_for_review.count %}
             <section id="paf_for_review">
-                <h2 class="mb-2 font-semibold text-h3">{% trans "Project forms for review" %}</h2>
+                <h2 class="section-header">{% trans "Project forms for review" %}</h2>
                 <div class="card card-border shadow-xs">
                     <div class="p-0 card-body">
                         {% render_table paf_for_review.table %}
@@ -109,7 +109,7 @@
 
         {% if PROJECTS_ENABLED and projects.table.data %}
             <section id="active-projects">
-                <h2 class="mb-2 font-semibold text-h3">
+                <h2 class="section-header">
                     {% trans "Your projects" %}
                 </h2>
 
@@ -130,7 +130,7 @@
 
         {% if my_reviewed.count %}
             <section>
-                <h2 class="mb-2 font-semibold text-h3">
+                <h2 class="section-header">
                     <a href="{% url "apply:submissions:list" %}?query=reviewed-by:@me">
                         {% trans "Your previous reviews" %} <span class="badge badge-soft badge-secondary">{{ my_reviewed.count }}</span>
                     </a>

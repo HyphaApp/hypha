@@ -1,6 +1,6 @@
 {% load dashboard_statusbar_tags %}
 
-<section class="pt-4 pb-8 @container">
+<section class="@container">
     <ul class=" w-full steps {{ class }} hidden @lg:inline-grid">
         {% for status, display_text in statuses %}
             {% if forloop.counter0 == current_status_index %}
