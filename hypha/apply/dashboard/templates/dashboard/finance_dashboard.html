@@ -18,13 +18,13 @@
 {% endblock %}
 
 {% block content %}
-    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+    <div class="flex flex-col gap-8 my-4">
 
         {% if my_tasks.count %}
             {% include "dashboard/includes/my-tasks.html" with mytasks=mytasks %}
         {% endif %}
 
-        <div class="wrapper wrapper--bottom-space" >
+        <section>
             <h2 class="section-header">{% trans 'Invoices' %} </h2>
 
             <div class="tabs tabs-lift">
@@ -48,11 +48,12 @@
                     {% endif %}
                 </div>
 
-                <input type="radio"
-                       name="invoice_tabs"
-                       class="tab"
-                       id="tab-invoices-for-approval"
-                       aria-label="{% trans 'For Approval' %}" />
+                <input
+                    type="radio"
+                    name="invoice_tabs"
+                    class="tab"
+                    id="tab-invoices-for-approval"
+                    aria-label="{% trans 'For Approval' %}" />
                 <div class="tab-content border-base-300 bg-base-100"
                      role="tabpanel"
                      tabindex="0"
@@ -67,11 +68,12 @@
                     {% endif %}
                 </div>
 
-                <input type="radio"
-                       name="invoice_tabs"
-                       class="tab"
-                       id="tab-invoices-for-conversion"
-                       aria-label="{% trans 'For Conversion' %}" />
+                <input
+                    type="radio"
+                    name="invoice_tabs"
+                    class="tab"
+                    id="tab-invoices-for-conversion"
+                    aria-label="{% trans 'For Conversion' %}" />
                 <div class="tab-content border-base-300 bg-base-100"
                      role="tabpanel"
                      tabindex="0"
@@ -86,15 +88,20 @@
                     {% endif %}
                 </div>
             </div>
+        </section>
 
-        </div>
-
-        {% if paf_for_review.count %}
-            <div id="paf_for_review" class="wrapper wrapper--bottom-space">
-                <h2 class="card-title">{% trans "PAFs for review" %}</h2>
-                {% render_table paf_for_review.table %}
+        <section id="paf_for_review">
+            <h2 class="section-header">{% trans "PAFs for review" %}</h2>
+            <div class="overflow-x-auto border rounded-box">
+                {% if not paf_for_review.count %}
+                    {% render_table paf_for_review.table %}
+                {% else %}
+                    <p class="p-4 text-sm text-fg-muted">
+                        {% trans "You don't have any PAFs for review right now" %}
+                    </p>
+                {% endif %}
             </div>
-        {% endif %}
+        </section>
 
     </div>
 {% endblock %}

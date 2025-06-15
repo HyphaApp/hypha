@@ -20,19 +20,26 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="wrapper wrapper--large wrapper--inner-space-medium">
-
+    <div class="flex flex-col gap-8 my-4">
         {% if my_tasks.count %}
             {% include "dashboard/includes/my-tasks.html" with mytasks=mytasks %}
         {% endif %}
 
-        {% if paf_for_review.count %}
-            <div id="paf_for_review" class="wrapper wrapper--bottom-space">
-                <h2 class="card-title">{% trans "PAFs for review" %}</h2>
-                {% render_table paf_for_review.table %}
+        <section id="paf_for_review" aria-labelledby="paf-for-review">
+            <h2 class="section-header" id="paf-for-review">
+                {% trans "PAFs for review" %}
+            </h2>
+            <div class="overflow-x-auto border rounded-box">
+                {% if paf_for_review.count %}
+                    {% render_table paf_for_review.table %}
+                {% else %}
+                    <p class="p-4 text-sm text-fg-muted">
+                        {% trans "You don't have any PAFs for review right now" %}
+                    </p>
+                {% endif %}
             </div>
-        {% endif %}
+        </section>
+
 
         {% if projects_in_contracting.count %}
             {% include "dashboard/includes/projects_in_contracting.html" with projects_in_contracting=projects_in_contracting %}
