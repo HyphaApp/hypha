@@ -18,7 +18,7 @@
                     <span data-js-batch-actions="total-selections">0</span> {% trans "selected" %}
                 </span>
                 <button
-                    class="btn btn-sm"
+                    class="btn btn-primary btn-sm"
                     href="{% url 'apply:projects:bulk_invoice_status_update' %}"
                     hx-target="#htmx-modal"
                     data-js-batch-actions="invoice-update-status"
@@ -71,7 +71,7 @@
         </div>
     {% endif %}
 
-    <form method="GET" class="flex overflow-hidden sticky top-0 z-10 flex-wrap gap-2 justify-end items-center py-2 px-3 border md:gap-5 md:text-sm md:font-medium bg-base-200 rounded-t-box">
+    <form method="GET" class="flex sticky top-0 z-10 flex-wrap gap-2 justify-end items-center py-2 px-3 border md:gap-5 md:text-sm md:font-medium bg-base-200 rounded-t-box">
         <span class="hidden items-center py-1 md:inline-flex"></span>
         {% for field_name, field in filter.form|get_filter_fields %}
             {% if filter.form %}

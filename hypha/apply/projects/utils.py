@@ -39,7 +39,7 @@ PROJECT_TITLE_TEMPLATE = "{text} <span class='text-fg-muted'>#{application_id}</
 
 
 def get_project_title(project):
-    text = textwrap.shorten(project.title, width=40, placeholder="…")
+    text = textwrap.shorten(project.title, width=60, placeholder="…")
     return format_html(
         PROJECT_TITLE_TEMPLATE,
         text=text,
