@@ -23,7 +23,7 @@
 }
 
 .link:where(.link-muted) {
-  @apply no-underline text-fg-muted [@media(hover:hover)]:hover:text-primary transition-colors;
+  @apply no-underline font-medium text-neutral-700 dark:text-base-content [@media(hover:hover)]:hover:text-primary hover:underline focus:underline;
 }
 
 .link:where(.link-hover) {

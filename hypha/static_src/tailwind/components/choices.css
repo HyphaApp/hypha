@@ -3,6 +3,7 @@
 =   For the select component rendered with choices.js
 =============================== */
 .choices {
+  width: clamp(3rem, 20rem, 100%);
   @apply relative overflow-hidden text-base focus:outline-hidden;
 }
 

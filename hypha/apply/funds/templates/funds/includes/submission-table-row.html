@@ -43,7 +43,7 @@
         <a
             title="{{ s.form_data.title }}"
             href="{% url "funds:submissions:detail" s.id %}?ref=table-view"
-            class="text-base font-semibold break-words transition-colors text-base-content line-clamp-2 hover:text-primary"
+            class="text-base font-semibold break-words link link-hover line-clamp-2"
         >{{ s.form_data.title }}</a>
         <div class="text-xs text-fg-muted">
             #{{ s.application_id }}

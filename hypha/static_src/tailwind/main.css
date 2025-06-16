@@ -5,10 +5,10 @@
 @import "./components/daterangepicker.css" layer(components);
 @import "./components/django-file-field.css" layer(components);
 @import "./components/tinymce.css" layer(components);
-@import "./components/link.css" layer(components);
 @import "./components/table.css" layer(components);
 
 @import "./utilities/typography.css" layer(utilities);
+@import "./components/link.css" layer(utilities);
 @import "./components/nprogress";
 
 @plugin '@tailwindcss/typography';
@@ -70,15 +70,6 @@
   li,
   dd {
     text-wrap: pretty;
-  }
-
-  /* Radio + Checkbox with Label */
-  [type="radio"],
-  [type="checkbox"] {
-    & + label {
-      padding-inline-start: 0.25rem;
-      cursor: pointer;
-    }
   }
 
   textarea {
