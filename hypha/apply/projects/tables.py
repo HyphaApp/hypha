@@ -1,7 +1,9 @@
 import json
 
 import django_tables2 as tables
+from django.conf import settings
 from django.urls import reverse
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -52,6 +54,13 @@ class BaseInvoiceTable(tables.Table):
             "tabindex": "0",  # Accessibility
         }
 
+    def render_requested_at(self, record):
+        return format_html(
+            "<relative-time datetime='{}' prefix=''>{}</relative-time>",
+            record.requested_at.isoformat(),
+            record.requested_at.strftime(settings.SHORT_DATETIME_FORMAT),
+        )
+
     def render_status(self, record):
         status = record.status
         status_display = record.get_status_display()
@@ -63,10 +72,11 @@ class BaseInvoiceTable(tables.Table):
             "declined": "badge-error",
         }
 
-        return mark_safe(
-            f"<span class='badge badge-soft {
-                badge_class.get(status, 'badge-info')
-            }' data-status='{status}'>{status_display}</span>"
+        return format_html(
+            "<span class='badge badge-soft whitespace-nowrap {}' data-status='{}'>{}</span>",
+            badge_class.get(status, "badge-info"),
+            status,
+            status_display,
         )
 
 

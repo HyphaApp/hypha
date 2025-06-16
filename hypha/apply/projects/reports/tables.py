@@ -1,4 +1,5 @@
 import django_tables2 as tables
+from django.conf import settings
 from django.utils.html import format_html
 
 from hypha.apply.projects.models import Project
@@ -79,7 +80,20 @@ class ReportListTable(tables.Table):
         attrs = {"class": "table projects-table ReportListTable"}
 
     def render_report_period(self, record):
-        return f"{record.start} to {record.end_date}"
+        return format_html(
+            "<relative-time datetime='{}' prefix=''>{}</relative-time> – <relative-time datetime='{}' prefix=''>{}</relative-time>",
+            record.start.isoformat(),
+            record.start.strftime(settings.SHORT_DATETIME_FORMAT),
+            record.end_date.isoformat(),
+            record.end_date.strftime(settings.SHORT_DATETIME_FORMAT),
+        )
 
     def render_project(self, record):
         return get_project_title(record.project)
+
+    def render_submitted(self, record):
+        return format_html(
+            "<relative-time datetime='{}' prefix=''>{}</relative-time>",
+            record.submitted.isoformat(),
+            record.submitted.strftime(settings.SHORT_DATETIME_FORMAT),
+        )
