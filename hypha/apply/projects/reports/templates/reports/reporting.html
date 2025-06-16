@@ -15,13 +15,14 @@
 {% endblock %}
 
 {% block content %}
-    <div class="mt-4 wrapper wrapper--large">
+    <div class="mt-4">
         {% if table %}
             {% include "funds/includes/table_filter_and_search.html" %}
-            {% render_table table %}
+            <div class="overflow-x-auto border-b rounded-b-box border-x">
+                {% render_table table %}
+            </div>
         {% else %}
-            <p>{% trans "No Projects Currently Reporting." %}</p>
+            <p class="p-4">{% trans "No Projects Currently Reporting." %}</p>
         {% endif %}
     </div>
-
 {% endblock content %}

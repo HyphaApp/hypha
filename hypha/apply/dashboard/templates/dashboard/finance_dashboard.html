@@ -82,7 +82,7 @@
                     {% if invoices_to_convert.count %}
                         {% render_table invoices_to_convert.table %}
                     {% else %}
-                        <span class="block p-4">
+                        <span class="block p-4 text-sm text-fg-muted">
                             {% trans "No invoices for conversion " %}
                         </span>
                     {% endif %}

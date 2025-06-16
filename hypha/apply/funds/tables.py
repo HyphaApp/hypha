@@ -61,7 +61,7 @@ class SubmissionsTable(tables.Table):
                 "data-tippy-placement": "top",
                 # Use after:content-[''] after:block to hide the default browser tooltip on Safari
                 # https://stackoverflow.com/a/43915246
-                "class": "truncate inline-block w-[calc(100%-2rem)] after:content-[''] after:block",
+                "class": "link link-hover text-h4 font-semibold truncate inline-block w-[calc(100%-2rem)] after:content-[''] after:block",
             },
         },
     )
@@ -529,7 +529,10 @@ class ReviewerLeaderboardTable(tables.Table):
         args=[A("pk")],
         orderable=True,
         verbose_name=_("Reviewer"),
-        attrs={"td": {"class": "title"}},
+        attrs={
+            "a": {"class": "link link-hover text-h4 font-semibold"},
+            "td": {"class": "title"},
+        },
     )
 
     class Meta:
@@ -562,7 +565,7 @@ class ReviewerLeaderboardDetailTable(tables.Table):
                 "data-tippy-placement": "top",
                 # Use after:content-[''] after:block to hide the default browser tooltip on Safari
                 # https://stackoverflow.com/a/43915246
-                "class": "truncate inline-block w-[calc(100%-2rem)] after:content-["
+                "class": "link link-hover text-h4 font-semibold truncate inline-block w-[calc(100%-2rem)] after:content-["
                 "] after:block",
             },
         },

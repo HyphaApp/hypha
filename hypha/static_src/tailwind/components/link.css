@@ -26,6 +26,10 @@
   @apply no-underline text-fg-muted [@media(hover:hover)]:hover:text-primary transition-colors;
 }
 
+.link:where(.link-hover) {
+  @apply [@media(hover:hover)]:hover:text-primary transition-colors;
+}
+
 .link:where(.link-animated) {
   @apply relative no-underline before:pointer-events-none before:absolute before:start-0 before:bottom-0 before:h-px before:w-full before:bg-current before:transition-transform before:duration-300 before:ease-in-out before:content-[''];
 }
