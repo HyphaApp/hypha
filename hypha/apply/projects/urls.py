@@ -37,8 +37,6 @@ from .views import (
     UploadContractDocumentView,
     UploadContractView,
     UploadDocumentView,
-    get_invoices_status_counts,
-    get_project_status_counts,
     partial_contracting_documents,
     partial_get_invoice_detail_actions,
     partial_get_invoice_status,
@@ -57,11 +55,7 @@ urlpatterns = [
     path("", RedirectView.as_view(pattern_name="apply:projects:all"), name="overview"),
     path("all/", ProjectListView.as_view(), name="all"),
     path("reports/", include("hypha.apply.projects.reports.urls"), name="reports"),
-    path("statuses/", get_project_status_counts, name="projects_status_counts"),
     path("invoices/", InvoiceListView.as_view(), name="invoices"),
-    path(
-        "invoices/statuses/", get_invoices_status_counts, name="invoices_status_counts"
-    ),
     path(
         "all/bulk_invoice_status_update/",
         BatchUpdateInvoiceStatusView.as_view(),

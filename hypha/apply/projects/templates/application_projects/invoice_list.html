@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="mt-4 wrapper wrapper--large">
+    <div class="my-4">
         {% if table %}
             {% trans "invoices" as search_placeholder %}
             {% include "funds/includes/table_filter_and_search.html" with search_term=search_term use_search=True invoice_batch_actions=True search_placeholder=search_placeholder %}

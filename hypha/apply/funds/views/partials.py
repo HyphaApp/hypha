@@ -4,12 +4,11 @@ from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
-from django.urls import reverse_lazy
 from django.utils.text import slugify
-from django.views.decorators.http import require_GET, require_http_methods
+from django.views.decorators.http import require_http_methods
 from django_htmx.http import (
     HttpResponseClientRefresh,
 )
@@ -41,10 +40,8 @@ from ..utils import (
     check_submissions_same_determination_form,
     get_export_polling_time,
     get_or_create_default_screening_statuses,
-    get_statuses_as_params,
-    status_and_phases_mapping,
 )
-from ..workflows.constants import DETERMINATION_OUTCOMES, PHASES_MAPPING
+from ..workflows.constants import DETERMINATION_OUTCOMES
 
 User = get_user_model()
 
@@ -414,44 +411,6 @@ def sub_menu_bulk_update_reviewers(request: HttpRequest) -> HttpResponse:
     }
 
     return render(request, "submissions/submenu/bulk-update-reviewers.html", ctx)
-
-
-@login_required
-@require_GET
-def get_applications_status_counts(request):
-    current_url = request.headers.get("Hx-Current-Url")
-    current_url_queries = parse_qs(urlparse(current_url).query)
-    application_status_url_query = current_url_queries.get("status")
-    status_counts = dict(
-        ApplicationSubmission.objects.current()
-        .values("status")
-        .annotate(
-            count=Count("status"),
-        )
-        .values_list("status", "count")
-    )
-
-    grouped_statuses = {
-        status: {
-            "name": data["name"],
-            "count": sum(status_counts.get(status, 0) for status in data["statuses"]),
-            "url": reverse_lazy("funds:submissions:list")
-            + get_statuses_as_params(status_and_phases_mapping[status]),
-            "is_active": True
-            if application_status_url_query
-            and status_and_phases_mapping[status] == application_status_url_query
-            else False,
-        }
-        for status, data in PHASES_MAPPING.items()
-    }
-    return render(
-        request,
-        "funds/includes/status-block.html",
-        {
-            "status_counts": grouped_statuses,
-            "type": "Applications",
-        },
-    )
 
 
 @login_required

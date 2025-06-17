@@ -9,11 +9,6 @@
     margin-inline: auto;
   }
 
-  &--large {
-    max-width: variables.$site-width;
-    margin-inline: auto;
-  }
-
   &--form {
     padding: 0;
     margin: 2em auto;
@@ -21,16 +16,6 @@
     @include mixins.media-query(lg) {
       padding: 1rem 17rem 2rem 0;
       margin: 1rem auto 3rem;
-    }
-  }
-
-  &--bottom-space {
-    padding-block-end: 20px;
-    margin-block-end: 20px;
-
-    @include mixins.media-query(md) {
-      padding-block-end: 3rem;
-      margin-block-end: 0;
     }
   }
 

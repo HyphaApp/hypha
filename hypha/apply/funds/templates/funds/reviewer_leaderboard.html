@@ -15,7 +15,7 @@
 
 
 {% block content %}
-    <div class="mt-4 wrapper wrapper--large">
+    <div class="mx-auto mt-4 max-w-7xl">
         {% block table %}
             {% trans "All reviewers" as all_reviewers %}
             {% include "funds/includes/table_filter_and_search.html" with search_term=search_term search_placeholder="reviewers" use_search=True heading=all_reviewers %}

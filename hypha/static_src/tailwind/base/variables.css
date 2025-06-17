@@ -33,10 +33,6 @@
   /* Assignment */
   --color-default: var(--color-black);
 
-  /* Wrappers */
-  --site-width: 1280px;
-  --wrapper-medium: 1020px;
-
   /* Transition */
   --transition: 0.25s ease-out;
 }
