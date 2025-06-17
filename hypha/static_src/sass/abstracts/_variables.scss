@@ -11,7 +11,6 @@ $color--light-grey: var(--color-fg-muted);
 $color--light-mid-grey: var(--color-light-mid-grey);
 $color--mid-grey: var(--color-mid-grey);
 $color--mid-dark-grey: var(--color-mid-dark-grey);
-$color--dark-grey: var(--color-dark-grey);
 
 // Brand
 $color--light-blue: var(--color-light-blue);
@@ -22,8 +21,6 @@ $color--mustard: var(--color-mustard);
 $color--light-pink: var(--color-light-pink);
 $color--tomato: var(--color-tomato);
 $color--sky-blue: var(--color-sky-blue);
-$color--marine: var(--color-marine);
-$color--mist: var(--color-mist);
 $color--green: var(--color-green);
 
 // Transparent
@@ -31,32 +28,14 @@ $color--black-60: var(--color-black-60);
 $color--black-20: rgb(0 0 0 / 20%);
 
 // Assignment
-$color--default: var(--color-base-content);
 $color--primary: var(--color-primary);
 
 // Font sizes
 $base-font-size: 16px;
 
-// Font weights
-$weight--normal: var(--font-weight-normal);
-$weight--bold: var(--font-weight-bold);
-$weight--semibold: var(--font-weight-semibold);
-
 // Wrappers
 $site-width: var(--site-width);
 $wrapper--medium: var(--wrapper-medium);
-
-// Text line length
-$max-text-line-length: var(--max-text-line-length);
-
-// Transition
-$transition: var(--transition);
-
-// Spacing
-$spacing: var(--spacing);
-
-// Dropdown height
-$dropdown-height: var(--dropdown-height);
 
 // Breakpoints
 $breakpoints: (

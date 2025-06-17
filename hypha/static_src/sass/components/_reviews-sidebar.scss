@@ -16,7 +16,7 @@
   &__item {
     &--decision {
       margin-block-end: 10px;
-      font-weight: variables.$weight--semibold;
+      font-weight: var(--font-weight-semibold);
 
       &:first-child {
         #{$root}__outcome {

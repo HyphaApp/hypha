@@ -8,7 +8,6 @@
   --color-light-mid-grey: #e8e8e8;
   --color-mid-grey: #cfcfcf;
   --color-mid-dark-grey: #919191;
-  --color-dark-grey: #404041;
 
   /* Brand */
   --color-lightest-blue: #24aae1;
@@ -26,8 +25,6 @@
   --color-mint: #40c2ad;
   --color-grass: #7dc588;
   --color-sky-blue: #e7f2f6;
-  --color-marine: #14729a;
-  --color-mist: #f3fafe;
   --color-green: #7dc558;
 
   /* Transparent */
@@ -40,16 +37,6 @@
   --site-width: 1280px;
   --wrapper-medium: 1020px;
 
-  /* Text line length */
-  --max-text-line-length: 50em;
-
   /* Transition */
   --transition: 0.25s ease-out;
-  --transition-quick: 0.15s ease;
-
-  /* Spacing */
-  /* --spacing: 1.25rem; */
-
-  /* Dropdown height */
-  --dropdown-height: 45px;
 }

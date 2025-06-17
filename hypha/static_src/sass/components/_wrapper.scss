@@ -34,14 +34,6 @@
     }
   }
 
-  &--inner-space-medium {
-    padding: calc(var(--spacing) * 2) 0;
-
-    + .wrapper--inner-space-medium {
-      padding: 0;
-    }
-  }
-
   &--outer-space-medium {
     padding-block: calc(var(--spacing) * 4);
   }

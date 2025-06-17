@@ -2,7 +2,7 @@
 
 .rich-text {
   word-break: break-word;
-  max-width: variables.$max-text-line-length;
+  max-width: 50em;
 
   &--answers {
     > section {

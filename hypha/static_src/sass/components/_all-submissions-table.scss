@@ -58,7 +58,7 @@
       &.title {
         position: relative;
         padding-block-start: 15px;
-        font-weight: variables.$weight--bold;
+        font-weight: var(--font-weight-bold);
 
         @include mixins.media-query(lg) {
           display: flex;
@@ -76,8 +76,7 @@
           display: inline-block;
           padding: 5px;
           font-size: 13px;
-          font-weight: variables.$weight--bold;
-          color: variables.$color--marine;
+          font-weight: var(--font-weight-bold);
           text-align: center;
           background-color: variables.$color--sky-blue;
 
