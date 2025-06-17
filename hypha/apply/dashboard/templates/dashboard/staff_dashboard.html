@@ -102,32 +102,33 @@
         {% if PROJECTS_ENABLED and paf_for_review.count %}
             <section id="paf_for_review">
                 <h2 class="section-header">{% trans "Project forms for review" %}</h2>
-                <div class="card card-border shadow-xs">
-                    <div class="p-0 card-body">
-                        {% render_table paf_for_review.table %}
-                    </div>
+                <div class="overflow-x-auto border rounded-box shadow-x">
+                    {% render_table paf_for_review.table %}
                 </div>
             </section>
         {% endif %}
 
         {% if PROJECTS_ENABLED and projects.table.data %}
             <section id="active-projects">
-                <h2 class="section-header">
-                    {% trans "Your projects" %}
-                </h2>
+                <h2 class="section-header">{% trans "Your projects" %}</h2>
 
-                {% render_table projects.table %}
+                <div class="overflow-x-auto border rounded-t-box">
+                    {% render_table projects.table %}
+                </div>
 
-                <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
-                    <a href="{{ projects.url }}?lead={{ request.user.pk }}">{% trans "Show all" %}</a>
+                <div class="flex justify-center py-2 border-b border-x rounded-b-box">
+                    <a href="{{ projects.url }}?lead={{ request.user.pk }}" class="font-semibold link">{% trans "Show all" %}</a>
                 </div>
             </section>
         {% endif %}
 
         {% if PROJECTS_ENABLED and active_invoices.count %}
             <section id="active-invoices">
-                <h2 class="card-title">{% trans "Active Invoices" %}</h2>
-                {% render_table active_invoices.table %}
+                <h2 class="section-header">{% trans "Active invoices" %}</h2>
+
+                <div class="overflow-x-auto border rounded-box shadow-x">
+                    {% render_table active_invoices.table %}
+                </div>
             </section>
         {% endif %}
 
