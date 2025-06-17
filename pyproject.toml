@@ -22,7 +22,6 @@ dependencies = [
     "django-file-form~=3.8.0",
     "django-filter==23.5",
     "django-formtools~=2.5.1",
-    "django-fsm~=2.8.2",
     "django-heroku~=0.3.1",
     "django-hijack~=3.7.0",
     "django-htmx~=1.23.0",
@@ -62,6 +61,7 @@ dependencies = [
     "xmltodict~=0.14.2",
     "wagtail-modeladmin>=2.1.0",
     "redis>=5.2.1",
+    "django-viewflow>=2.2.11",
 ]
 
 [dependency-groups]
