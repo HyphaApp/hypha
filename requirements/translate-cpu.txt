@@ -2,5 +2,5 @@
 
 # Only install the CPU version of torch when available (linux)
 --extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.6.0+cpu
+torch==2.7.1
 argostranslate==1.9.6
