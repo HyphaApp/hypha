@@ -53,11 +53,18 @@
     <body>
         {% if show_header %}
             {% block header %}
-                <div>
-                    <img height="40" src="{{ logo }}">
-                    <h2 style="margin-bottom: 2px;">{{ header_title }}</h2>
-                    <hr style="margin-top:0;">
-                </div>
+                <table valign="middle" style="margin-bottom: 10px;">
+                    <tr>
+                        <td align="left" style="margin: 0; padding: 0;">
+                            <img height="40" style="margin: 0; padding: 0;" src="{{ logo }}">
+                        </td>
+                        <td align="left" style="padding-left: 4px;">
+                            <h2 style="margin: 0; padding: 0;">{{ header_title }}</h2>
+                        </td>
+                        <td></td>
+                    </tr>
+                </table>
+                <hr style="margin-top:0;">
             {% endblock %}
         {% endif %}
         <div>
