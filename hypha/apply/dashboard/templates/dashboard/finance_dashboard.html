@@ -19,7 +19,6 @@
 
 {% block content %}
     <div class="flex flex-col gap-8 my-4">
-
         {% if my_tasks.count %}
             {% include "dashboard/includes/my-tasks.html" with mytasks=mytasks %}
         {% endif %}

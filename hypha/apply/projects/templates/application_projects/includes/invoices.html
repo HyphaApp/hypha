@@ -14,7 +14,7 @@
             </a>
         {% endif %}
     </div>
-    <div class="overflow-x-auto docs-block__inner"  x-data="{ showrejected: false }">
+    <div class="overflow-x-auto p-2"  x-data="{ showrejected: false }">
         {% if object.invoices.not_rejected %}
             <table class="table">
                 <thead>
@@ -31,7 +31,7 @@
                 </tbody>
             </table>
         {% else %}
-            <p>{% trans "No active invoices yet." %}</p>
+            <p class="p-4 text-fg-muted">{% trans "No active invoices yet." %}</p>
         {% endif %}
 
         {% if object.invoices.rejected %}

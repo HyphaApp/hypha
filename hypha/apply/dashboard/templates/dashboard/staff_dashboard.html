@@ -30,7 +30,7 @@
         {% endif %}
 
         <section>
-            <div class="w-full shadow stats">
+            <div class="w-full shadow stats bg-base-100">
                 <div class="stat relative {% if awaiting_reviews.count > 0 %}hover:bg-primary/10 transition-colors{% endif %}" role="region" aria-labelledby="awaiting-reviews-title">
                     <h4 id="awaiting-reviews-title" class="m-0 stat-title">{% trans "Submissions waiting for your review" %}</h4>
                     <div class="stat-value" aria-live="polite">{{ awaiting_reviews.count }}</div>
@@ -102,7 +102,7 @@
         {% if PROJECTS_ENABLED and paf_for_review.count %}
             <section id="paf_for_review">
                 <h2 class="section-header">{% trans "Project forms for review" %}</h2>
-                <div class="overflow-x-auto border rounded-box shadow-x">
+                <div class="overflow-x-auto border rounded-box shadow-x bg-base-100">
                     {% render_table paf_for_review.table %}
                 </div>
             </section>
@@ -112,11 +112,11 @@
             <section id="active-projects">
                 <h2 class="section-header">{% trans "Your projects" %}</h2>
 
-                <div class="overflow-x-auto border rounded-t-box">
+                <div class="overflow-x-auto border rounded-t-box bg-base-100">
                     {% render_table projects.table %}
                 </div>
 
-                <div class="flex justify-center py-2 border-b border-x rounded-b-box">
+                <div class="flex justify-center py-2 border-b border-x rounded-b-box bg-base-100">
                     <a href="{{ projects.url }}?lead={{ request.user.pk }}" class="font-semibold link">{% trans "Show all" %}</a>
                 </div>
             </section>
@@ -126,7 +126,7 @@
             <section id="active-invoices">
                 <h2 class="section-header">{% trans "Active invoices" %}</h2>
 
-                <div class="overflow-x-auto border rounded-box shadow-x">
+                <div class="overflow-x-auto border rounded-box shadow-x bg-base-100">
                     {% render_table active_invoices.table %}
                 </div>
             </section>
