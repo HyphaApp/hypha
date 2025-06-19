@@ -364,7 +364,8 @@
     input[type="email"],
     input[type="number"],
     input[type="password"],
-    input[type="datetime-local"] {
+    input[type="datetime-local"],
+    .tox-tinymce {
       border: 2px solid variables.$color--error;
     }
   }
