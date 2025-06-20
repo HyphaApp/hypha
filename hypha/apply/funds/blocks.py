@@ -28,7 +28,7 @@ class ApplicationMustIncludeFieldBlock(MustIncludeFieldBlock):
 class TitleBlock(ApplicationMustIncludeFieldBlock):
     name = "title"
     description = "The title of the project"
-    widget = forms.TextInput(attrs={"x-model.fill": "inputblock"})
+    widget = forms.TextInput()
     field_label = blocks.CharBlock(
         label=_("Label"), default=_("What is the title of your application?")
     )
@@ -124,7 +124,7 @@ class AddressFieldBlock(ApplicationSingleIncludeFieldBlock):
 class FullNameBlock(ApplicationMustIncludeFieldBlock):
     name = "full_name"
     description = "Full name"
-    widget = forms.TextInput(attrs={"x-model.fill": "inputblock"})
+    widget = forms.TextInput()
     field_label = blocks.CharBlock(label=_("Label"), default=_("What is your name?"))
     help_text = blocks.RichTextBlock(
         required=False,
