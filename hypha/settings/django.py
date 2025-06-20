@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     "django_filters",
     "hypha.addressfield",
     "django_nh3",
-    "django_fsm",
+    "viewflow",
     "django_slack",
     "django_otp",
     "django_otp.plugins.otp_totp",

@@ -44,10 +44,11 @@ class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
                 source=submission,
             )
 
-        # Delete NEW_SUBMISSION event for this particular submission, if any.
+        # Delete NEW_SUBMISSION & COMMENT events for this particular submission, if any.
         # Otherwise, the submission deletion will fail.
         Event.objects.filter(
-            type=MESSAGES.NEW_SUBMISSION, object_id=submission.id
+            type__in=[MESSAGES.NEW_SUBMISSION, MESSAGES.COMMENT],
+            object_id=submission.id,
         ).delete()
 
         # delete submission and redirect to success url

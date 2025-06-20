@@ -8,7 +8,7 @@ from django.db.models import Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django_fsm import FSMField, transition
+from viewflow.fsm import State
 
 from hypha.apply.utils.storage import PrivateStorage
 
@@ -131,7 +131,10 @@ class Invoice(models.Model):
     )
     invoice_date = models.DateField(null=True, verbose_name=_("Invoice date"))
     paid_date = models.DateField(null=True, verbose_name=_("Paid date"))
-    status = FSMField(default=SUBMITTED, choices=INVOICE_STATUS_CHOICES)
+    status = models.CharField(
+        default=SUBMITTED, choices=INVOICE_STATUS_CHOICES, max_length=30
+    )
+    status_field = State(default=SUBMITTED, states=INVOICE_STATUS_CHOICES)
     objects = InvoiceQueryset.as_manager()
 
     wagtail_reference_index_ignore = True
@@ -139,8 +142,17 @@ class Invoice(models.Model):
     def __str__(self):
         return _("Invoice requested for {project}").format(project=self.project)
 
-    @transition(
-        field=status, source=INVOICE_TRANSITION_TO_RESUBMITTED, target=RESUBMITTED
+    @status_field.getter()
+    def _get_object_status(self):
+        return self.status
+
+    @status_field.setter()
+    def _get_object_status(self, value):
+        self.status = value
+        return self.status
+
+    @status_field.transition(
+        source=INVOICE_TRANSITION_TO_RESUBMITTED, target=RESUBMITTED
     )
     def transition_invoice_to_resubmitted(self):
         """

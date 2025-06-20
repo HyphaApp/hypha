@@ -3,9 +3,9 @@
 argostranslate==1.9.6 \
     --hash=sha256:285b194bd64d65617ee2fa8969a40ce790c6b3acf875f94f1d2b0373f3ae691c \
     --hash=sha256:dd8cc1327aa67132299f950e160dd20d314b8cf484f540f0d22f1f07c2d8876b
-certifi==2025.4.26 \
-    --hash=sha256:0a816057ea3cdefcef70270d2c515e4506bbc954f417fa5ade2021213bb8f0c6 \
-    --hash=sha256:30350364dfe371162649852c63336a15c70c6510c2ad5015b21c2345311805f3
+certifi==2025.6.15 \
+    --hash=sha256:2e0c7ce7cb5d8f8634ca55d2ba7e6ec2689a2fd6537d8dec1296a477a4910057 \
+    --hash=sha256:d747aa5a8b9bbbb1bb8c22bb13e22bd1f18e9796defa16bab421f7f7a317323b
     # via requests
 charset-normalizer==3.4.2 \
     --hash=sha256:0c29de6a1a95f24b9a1aa7aefd27d2487263f00dfd55a77719b530788f75cff7 \

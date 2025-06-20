@@ -283,7 +283,7 @@ class SubmissionFilter(filters.FilterSet):
 
     class Meta:
         model = ApplicationSubmission
-        fields = ("status", "fund", "round")
+        fields = ("fund", "round")
 
     def __init__(self, *args, exclude=None, limit_statuses=None, **kwargs):
         if exclude is None:
