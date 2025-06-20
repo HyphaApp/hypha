@@ -11,7 +11,7 @@
             </a>
         {% endslot %}
         {% slot header %}{{ object.project.title }} <span class="text-gray-400">#{{ object.project.application_id }}</span>{% endslot %}
-        {% slot sub_heading %}{% trans "Report" %}{% endslot %}
+        {% slot sub_heading %}{% trans "Report" %} {% if object.author %}{% trans " by " %}{{ object.author }} {% endif %}{% endslot %}
     {% endadminbar %}
 
     <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
