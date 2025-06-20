@@ -7,7 +7,7 @@
         hx-get="{% url 'funds:submissions:lead_update' pk=submission.pk %}"
         hx-target="#htmx-modal"
     >
-        {% trans "Lead" %}: {{ submission.lead }}
+        <div class="inline-flex max-w-lg"><span class="truncate">{% trans "Lead" %}: {{ submission.lead }}</span></div>
         {% heroicon_micro "pencil-square" class="inline ms-1" aria_hidden=true %}
     </a>
 {% elif request.user.is_org_faculty or not HIDE_STAFF_IDENTITY %}

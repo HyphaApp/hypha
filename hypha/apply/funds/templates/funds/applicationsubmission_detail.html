@@ -97,7 +97,7 @@
                                     </relative-time>
                                 </strong>
                                 {% trans "by" %}
-                                <strong>{% display_submission_author %}</strong>
+                                <strong class="max-w-md line-clamp-2">{% display_submission_author %}</strong>
                             </span>
                             <span>{% trans "Updated" %}
                                 <strong>
@@ -106,7 +106,7 @@
                                     </relative-time>
                                 </strong>
                                 {% trans "by" %}
-                                <strong>
+                                <strong class="max-w-md line-clamp-2">
                                     {% display_submission_author True %}
                                 </strong>
                             </span>
@@ -122,7 +122,6 @@
                                     {% trans "Edit" %}
                                 </a>
                             {% endif %}
-
                             {% can "delete_submission" object as can_delete_submission %}
                             {% if can_delete_submission %}
                                 <a
