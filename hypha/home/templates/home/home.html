@@ -6,18 +6,16 @@
 {% block meta_description %}{{ settings.core.SystemSettings.home_strapline|striptags|truncatechars:200 }}{% endblock %}
 
 {% block content %}
-    <div class="py-8 mx-auto max-w-3xl lg:py-16">
+    <div class="my-8 mx-auto max-w-3xl lg:my-16">
 
-        <h1 class="text-5xl font-bold text-balance">
-            {{ settings.core.SystemSettings.home_title}}
-        </h1>
+        <h1 class="font-bold text-h00">{{ settings.core.SystemSettings.home_title}}</h1>
 
         {% if settings.core.SystemSettings.home_strapline %}
             <p class="mb-8 text-fg-muted text-pretty">{{ settings.core.SystemSettings.home_strapline|nh3|safe }}</p>
         {% endif %}
 
         {% if funds %}
-            <div class="divide-y">
+            <div class="list">
                 {% for fund in funds %}
                     {% include "home/includes/fund-list-item.html" with page=fund %}
                 {% endfor %}

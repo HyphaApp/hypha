@@ -2,32 +2,35 @@
 {% load i18n humanize invoice_tools %}
 
 {% block title %} {% trans "Invoice" %}: {{ object.project.title }}{% endblock %}
+
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ object.project.get_absolute_url }}"
+            back_link_text="{% trans 'View project page' %}"
+            title="{% trans 'Delete Invoice' %}"
+            subtitle="{% trans 'For' %}: {{ object.project.title }}"
+        />
+    </c-hero>
+{% endblock %}
+
 {% block content %}
     {% display_invoice_status_for_user user object as invoice_status %}
-
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
-                {% trans "View project page" %}
-            </a>
-        {% endslot %}
-        {% slot header %}{% trans "Delete Invoice" %}{% endslot %}
-        {% slot sub_heading %}{% trans "For" %}: {{ object.project.title }}{% endslot %}
-    {% endadminbar %}
-
     <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
-        <div class="wrapper--sidebar--inner">
+        <div class="grow">
 
-            <div class="card card--solid">
-                <p class="card__text"><b>{% trans "Status" %}:</b> {{ invoice_status }}</p>
-                <p class="card__text"><b>{% trans "Vendor" %}:</b> {{ object.project.user }}</p>
-                <p class="card__text"><b>{% trans "Invoice Number" %}:</b> {{ object.pk }}</p>
-
+            <div class="mb-4 card card-border bg-base-200">
+                <div class="card-body">
+                    <p><b>{% trans "Status" %}:</b> {{ invoice_status }}</p>
+                    <p><b>{% trans "Vendor" %}:</b> {{ object.project.user }}</p>
+                    <p><b>{% trans "Invoice Number" %}:</b> {{ object.pk }}</p>
+                </div>
             </div>
-            <div class="card card--solid">
+
+            <div class="p-4 mb-4 card card-border rounded-box bg-base-200">
                 <form method="post">{% csrf_token %}
                     <p>{% trans "Are you sure you want to delete this invoice for" %} {{ object.project.title }}?</p>
-                    <button class="button button--primary" type="submit">{% trans "Confirm" %}</button>
+                    <button class="btn btn-primary" type="submit">{% trans "Confirm" %}</button>
                 </form>
 
             </div>

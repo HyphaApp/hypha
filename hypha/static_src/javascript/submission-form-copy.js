@@ -85,9 +85,7 @@
   ) {
     var $button = $("<button/>")
       .text("Copy questions to clipboard")
-      .addClass(
-        "button button--primary button--narrow my-2 js-clipboard-button"
-      )
+      .addClass("btn sm:btn-sm w-full sm:w-auto js-clipboard-button")
       .attr(
         "title",
         "Copies all the questions and user input to the clipboard in plain text."

@@ -1,4 +1,4 @@
-{% load invoice_tools i18n %}
+{% load invoice_tools i18n tz %}
 
 <html>
     <body>
@@ -7,7 +7,10 @@
         <ul>
             {% for activity in activities %}
                 {% extract_status activity request.user as activity_status %}
-                <li><strong> {{ activity_status }} ({{ activity.user.email }})</strong> on {{ activity.timestamp }}</li>
+                {% get_current_timezone as TIME_ZONE %}
+                <li>
+                    {% blocktrans with email=activity.user.email time=activity.timestamp|localtime %}<strong> {{ activity_status }} ({{ email }})</strong> on {{ time }} {{ TIME_ZONE }}{% endblocktrans %}
+                </li>
             {% endfor %}
         </ul>
 

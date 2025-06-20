@@ -5,31 +5,41 @@
     {{ block.super }}
 {% endblock %}
 
-{% block adminbar %}
-    {% adminbar %}
-        {% slot header %}{% trans "Add Batch Determination" %} - {{ action_name }}{% endslot %}
-    {% endadminbar %}
+{% block hero %}
+    <c-hero>
+        <c-hero.header title="{% trans 'Add batch determination' %} - {{ action_name }}" />
+    </c-hero>
 {% endblock %}
 
 {% block determination_information %}
-    <div class="list-reveal list-reveal--determination">
-        <div class="list-reveal__item list-reveal__item--meta list-reveal__item--determination" aria-live="polite">
-            <span>{% trans "Determining" %} {{ submissions.count }} {% trans "submission" %}{{ submissions.count|pluralize }} {% trans "as" %} "{{ action_name }}"</span>
-            <a href="#" class="list-reveal__link js-toggle-batch-list">{% trans "Show" %}</a>
+    <details class="border collapse collapse-arrow bg-base-100 border-base-300">
+        <summary class="font-semibold collapse-title">
+            <span>
+                {% trans "Determining" %} {{ submissions.count }} {% trans "submission" %}{{ submissions.count|pluralize }} {% trans "as" %} "{{ action_name }}"
+            </span>
+        </summary>
+        <div class="text-sm collapse-content prose">
+            <ol>
+                {% for submission in submissions %}
+                    <li>
+                        <a
+                            href="{% url 'funds:submissions:detail' submission.id %}"
+                            class="link list-row link-hover"
+                            target="_blank"
+                            title="{{ submission.title }}"
+                        >
+                            {{ submission.title_text_display }}
+                            {% heroicon_micro "arrow-top-right-on-square" class="inline w-4 h-4 align-text-bottom" aria_hidden=true %}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ol>
         </div>
-        <div class="list-reveal__list list-reveal__list--determination js-batch-titles is-closed" aria-live="polite">
-            {% for submission in submissions %}
-                <a href="{% url "funds:submissions:detail" submission.id %}" class="list-reveal__item" target="_blank" rel="noopener noreferrer" title="{{ submission.title }}">
-                    {{ submission.title_text_display }}
-                    {% heroicon_micro "arrow-top-right-on-square" class="inline w-4 h-4 align-text-bottom" aria_hidden=true %}
-                </a>
-            {% endfor %}
-        </div>
-    </div>
+    </details>
 {% endblock %}
 
 {% block form_buttons %}
-    <button class="button button--submit button--top-space button--primary" type="submit" onclick="return confirm('{% blocktrans %}This determination message will be emailed to applicants and cannot be undone. Do you wish to continue?{% endblocktrans %}')">
+    <button class="mt-4 btn btn-primary" type="submit" onclick="return confirm('{% blocktrans %}This determination message will be emailed to applicants and cannot be undone. Do you wish to continue?{% endblocktrans %}')">
         {% trans "Send" %}
     </button>
 {% endblock %}

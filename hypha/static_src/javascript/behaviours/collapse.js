@@ -29,13 +29,13 @@
 
     // Create a "Show" button
     const btn_show = document.createElement("button");
-    btn_show.classList.add("button", "button--primary", "button--narrow");
-    btn_show.textContent = "Show";
+    btn_show.classList.add("btn", "btn-secondary", "btn-sm");
+    btn_show.textContent = "Show all";
 
     // Create a wrapper for the button with gradient background
     const btn_wrapper = document.createElement("div");
     btn_wrapper.classList.add(
-      ..."w-full absolute bottom-0 left-0 text-center pt-8 pb-4 bg-linear-to-t from-white".split(
+      ..."w-full absolute bottom-0 left-0 text-center pt-8 pb-4 bg-linear-to-t from-base-100".split(
         " "
       )
     );

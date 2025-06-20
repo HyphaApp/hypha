@@ -1,44 +1,43 @@
 {% load i18n %}
-<div class="wrapper wrapper--bottom-space"
-     x-data="{ activeTab: 'open-rounds' }"
-     x-init="activeTab = window.location.hash && ['#open-rounds', '#closed-rounds'].includes(window.location.hash) ? window.location.hash.substring(1) : activeTab"
->
-    <section class="flex flex-col justify-between items-center md:flex-row">
-        <h3 class="mb-2 text-xl">
-            <a href="{% url 'apply:rounds:list' %}">{{ title }}</a>
-        </h3>
-        <div>
-            <a
-                class="tab__item tab__item--alt"
-                href="#open-rounds"
-                @click="activeTab = 'open-rounds'"
-                :class="{ 'tab__item--active': activeTab === 'open-rounds' }"
-            >{% trans "Open" %}</a>
+<section>
+    <h2 class="section-header">
+        <a href="{% url 'apply:rounds:list' %}" class="link link-hover">{{ title }}</a>
+    </h2>
 
-            <a
-                class="tab__item tab__item--alt"
-                href="#closed-rounds"
-                @click="activeTab = 'closed-rounds'"
-                :class="{ 'tab__item--active': activeTab === 'closed-rounds' }"
-            >{% trans "Closed" %}</a>
+    <div class="tabs tabs-lift">
+        <input type="radio"
+               name="rounds_tabs"
+               class="tab"
+               id="tab-open-rounds"
+               aria-label="{% trans 'Open' %}"
+               checked="checked" />
+        <div class="tab-content border-base-300 bg-base-100"
+             role="tabpanel"
+             tabindex="0"
+             aria-labelledby="tab-open-rounds"
+             id="panel-open-rounds">
+            {% if page_type == 'dashboard' %}
+                {% include "funds/includes/no_round_block_dashboard.html" with rounds=open_rounds display_text="Open until" query=open_query type="Open" %}
+            {% else %}
+                {% include "funds/includes/round-block-listing.html" with can_export=can_export rounds=open_rounds display_text="Open until" query=open_query type="Open" %}
+            {% endif %}
         </div>
-    </section>
 
-    {# Open rounds/labs tab #}
-    <div x-cloak x-show="activeTab === 'open-rounds'">
-        {% if page_type == 'dashboard' %}
-            {% include "funds/includes/no_round_block_dashboard.html" with rounds=open_rounds display_text="Open until" query=open_query type="Open" %}
-        {% else %}
-            {% include "funds/includes/round-block-listing.html" with can_export=can_export rounds=open_rounds display_text="Open until" query=open_query type="Open" %}
-        {% endif %}
+        <input type="radio"
+               name="rounds_tabs"
+               class="tab"
+               id="tab-closed-rounds"
+               aria-label="{% trans 'Closed' %}" />
+        <div class="tab-content border-base-300 bg-base-100"
+             role="tabpanel"
+             tabindex="0"
+             aria-labelledby="tab-closed-rounds"
+             id="panel-closed-rounds">
+            {% if page_type == 'dashboard' %}
+                {% include "funds/includes/no_round_block_dashboard.html" with rounds=closed_rounds display_text="Closed" query=closed_query type="Closed" %}
+            {% else %}
+                {% include "funds/includes/round-block-listing.html" with rounds=closed_rounds display_text="Closed" query=closed_query type="Closed" %}
+            {% endif %}
+        </div>
     </div>
-
-    {# Closed rounds/labs tab #}
-    <div x-cloak x-show="activeTab === 'closed-rounds'">
-        {% if page_type == 'dashboard' %}
-            {% include "funds/includes/no_round_block_dashboard.html" with rounds=closed_rounds display_text="Closed" query=closed_query type="Closed" %}
-        {% else %}
-            {% include "funds/includes/round-block-listing.html" with rounds=closed_rounds display_text="Closed" query=closed_query type="Closed" %}
-        {% endif %}
-    </div>
-</div>
+</section>

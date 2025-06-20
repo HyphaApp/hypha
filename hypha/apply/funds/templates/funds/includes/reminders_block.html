@@ -16,12 +16,13 @@
                         </span>
 
                         <div>
-                            <a class="inline-flex items-center p-2 rounded-sm hover:bg-gray-100"
-                               title="{% trans "Delete" %}"
-                               href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}"
-                               role="button"
+                            <a
+                                class="btn btn-error btn-square btn-sm btn-ghost text-error hover:text-error-content"
+                                title="{% trans "Delete" %}"
+                                href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}"
+                                role="button"
                             >
-                                {% heroicon_micro "trash" class="inline-block fill-red-500" aria_hidden=true %}
+                                {% heroicon_micro "trash" aria_hidden=true %}
                                 <span class="sr-only">{% trans "Delete" %}</span>
                             </a>
                         </div>

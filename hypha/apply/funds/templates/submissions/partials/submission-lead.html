@@ -1,9 +1,11 @@
 {% load i18n heroicons %}
+
 {% if request.user.is_apply_staff %}
-    <a class="flex items-center text-blue-400 transition-opacity hover:opacity-80 is-active"
-       href="{% url 'funds:submissions:lead_update' pk=submission.pk %}"
-       hx-get="{% url 'funds:submissions:lead_update' pk=submission.pk %}"
-       hx-target="#htmx-modal"
+    <a
+        class="link"
+        href="{% url 'funds:submissions:lead_update' pk=submission.pk %}"
+        hx-get="{% url 'funds:submissions:lead_update' pk=submission.pk %}"
+        hx-target="#htmx-modal"
     >
         <span class="max-w-lg truncate">{% trans "Lead" %}: {{ submission.lead }}</span>
         {% heroicon_micro "pencil-square" class="inline ms-1" aria_hidden=true %}

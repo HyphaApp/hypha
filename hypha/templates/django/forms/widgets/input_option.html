@@ -1,4 +1,8 @@
-{% include "django/forms/widgets/input.html" %}
-{% if widget.wrap_label %}
-    <label class="form__label" {% if widget.attrs.id %} for="{{ widget.attrs.id }}"{% endif %}>{% endif %}{% if widget.wrap_label %} {{ widget.label }}</label>
+<div class="flex gap-2 items-center">
+    {% include "django/forms/widgets/input.html" %}
+    {% if widget.wrap_label %}
+        <label {% if widget.attrs.id %} for="{{ widget.attrs.id }}"{% endif %}>
+            {{ widget.label }}
+        </label>
     {% endif %}
+</div>

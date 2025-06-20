@@ -2,51 +2,53 @@
 {% load i18n %}
 {% block title %}{% blocktrans with title=submission.title %}Revisions for {{ title }}{% endblocktrans %}{% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Revisions' %}"
+            subtitle="{% trans 'For' %} <a class='link link-hover' href='{% url 'funds:submissions:detail' submission.id %}'>{{ submission.title_text_display }}</a>"
+        />
+    </c-hero>
+{% endblock %}
+
+
 {% block content %}
-    {% adminbar %}
-        {% slot header %}{% trans "Revisions" %}{% endslot %}
-        {% slot sub_heading %}
-            {% trans "For" %}
-            <a
-                class="text-blue-300 hover:underline"
-                href="{% url "funds:submissions:detail" submission.id %}"
-            >
-                {{ submission.title_text_display }}
-            </a>
-        {% endslot %}
-    {% endadminbar %}
-
     <div class="wrapper wrapper--medium">
-        <ul class="my-8 border border-slate-300">
+        <ol class="my-8 border card border-b-base-300 bg-base-200 list">
             {% for revision in object_list %}
-                <li class="flex flex-col justify-between p-4 border-b border-dashed md:flex-row last:border-0 first:bg-sky-blue">
-                    <p class="m-0 font-semibold">
-                        {% trans "Edited by" %} {{ revision.author }}
+                <li class="list-row first:bg-base-300 first:rounded-t-box">
+                    <p class="self-center m-0 font-semibold list-col-grow">
+                        {{ revision.author }} {% trans "edited" %}
 
-                        <relative-time datetime={{ revision.timestamp|date:"c" }}>
+                        <relative-time datetime={{ revision.timestamp|date:"c" }} class="text-fg-muted">
                             {{ revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}
                         </relative-time>
 
                         {% if forloop.first %}
-                            ({% trans "current" %})
+
                         {% endif %}
                         {% if revision.is_draft %}
-                            <span class="text-red-600">
+                            <span class="uppercase badge badge-warning badge-outline">
                                 ({% trans "draft" %})
                             </span>
                         {% endif %}
                     </p>
 
-                    {% if not forloop.first %}
+                    {% if forloop.first %}
+                        <span class="uppercase badge badge-primary badge-outline ms-1">
+                            {% trans "latest" %}
+                        </span>
+                    {% else %}
                         <a
-                            class="button button--compare"
+                            class="btn btn-primary btn-sm"
                             href="{{ revision.get_compare_url_to_latest }}"
+                            data-tippy-content="{% trans 'Compare with latest' %}"
                         >
                             {% trans "Compare" %}
                         </a>
                     {% endif %}
                 </li>
             {% endfor %}
-        </ul>
+        </c-->
     </div>
 {% endblock %}

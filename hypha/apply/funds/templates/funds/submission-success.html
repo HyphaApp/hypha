@@ -3,7 +3,7 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
-    <div class="mt-8 max-w-2xl wrapper">
+    <div class="mx-auto mt-8 max-w-2xl">
         {% if form_submission.status == 'draft' %}
             <h3>{% trans "Your application is saved as a draft." %}</h3>
 
@@ -48,34 +48,28 @@
 
         {% endif %}
 
-        <div class="mt-4 space-x-2">
+        <div class="mt-4 card-actions">
             {% if request.user.is_authenticated and request.user.can_access_dashboard%}
-                <a
-                    class="button button--primary"
-                    href="{% url 'dashboard:dashboard' %}"
-                >
+                <a class="btn btn-primary" href="{% url 'dashboard:dashboard' %}">
                     {% trans "Go to your dashboard" %}
                 </a>
                 {% if form_submission.status == 'draft' %}
                     <a
-                        class="button button--secondary"
+                        class="btn btn-secondary btn-outline"
                         href="{% url 'apply:submissions:edit' form_submission.id %}"
                     >
                         {% trans "Continue editing" %}
                     </a>
                 {% else %}
                     <a
-                        class="button button--secondary"
+                        class="btn btn-secondary btn-outline"
                         href="{% url 'apply:submissions:detail' form_submission.id %}"
                     >
                         {% trans "View your submission" %}
                     </a>
                 {% endif %}
             {% else %}
-                <a
-                    class="button button--primary"
-                    href="{% url 'users:login' %}"
-                >
+                <a class="btn btn-primary" href="{% url 'users:login' %}">
                     {% trans "Log in" %}
                 </a>
             {% endif %}

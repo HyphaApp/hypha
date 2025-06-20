@@ -1,0 +1,33 @@
+.tox {
+  .tox-tbtn--disabled {
+    @apply opacity-50;
+  }
+  .tox-tbtn--bespoke,
+  .tox-toolbar,
+  .tox-statusbar,
+  .tox-toolbar__overflow,
+  .tox-toolbar__primary,
+  .tox-toolbar-overlord {
+    @apply bg-base-200! text-base-content!;
+  }
+  .tox-tbtn svg,
+  .tox-tbtn {
+    @apply text-base-content! fill-base-content!;
+  }
+
+  .tox-statusbar a,
+  .tox-statusbar__path-item,
+  .tox-statusbar__wordcount {
+    @apply text-fg-muted!;
+  }
+}
+
+.tox:not(.tox-tinymce-inline) .tox-editor-header {
+  @apply bg-base-200! text-base-content!;
+}
+
+.tox-tinymce {
+  @apply border-base-content/20! rounded-box!;
+  border-width: 1px !important;
+  border-radius: var(--radius-field) !important;
+}

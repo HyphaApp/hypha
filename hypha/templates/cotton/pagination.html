@@ -1,0 +1,28 @@
+{% load i18n querystrings %}
+<c-vars page target use_htmx class btn_class="btn btn-sm" />
+
+<div class="flex justify-around items-center {{ class }}">
+    <div aria-label="Pagination" class="join">
+        {% if page.has_previous %}
+            <a  href="{% if use_htmx %}#{% else %}{% modify_query page=1 %}{% endif %}"
+               {% if use_htmx and url and target %}hx-get="{% modify_query page=1 %}" hx-target="{{ target }}"{% endif %}
+               class="join-item {{ btn_class }}">&laquo; {% trans "First" %}</a>
+            <a  href="{% if use_htmx %}#{% else %}{% modify_query page=page.previous_page_number %}{% endif %}"
+               {% if use_htmx and url and target %}hx-get="{% modify_query page=page.previous_page_number %}" hx-target="{{ target }}"{% endif %}
+               class="join-item {{ btn_class }}">{% trans "Previous" %}</a>
+        {% endif %}
+
+        <span class="pointer-events-none btn btn-ghost btn-sm">
+            Page {{ page.number }} of {{ page.paginator.num_pages }}
+        </span>
+
+        {% if page.has_next %}
+            <a  href="{% if use_htmx %}#{% else %}{% modify_query page=page.next_page_number %}{% endif %}"
+               {% if use_htmx and url and target %}hx-get="{% modify_query page=page.next_page_number %}" hx-target="{{ target }}"{% endif %}
+               class="join-item {{ btn_class }}">{% trans "Next" %}</a>
+            <a  href="{% if use_htmx %}#{% else %}{% modify_query page=page.paginator.num_pages %}{% endif %}"
+               {% if use_htmx and url and target %}hx-get="{% modify_query page=page.paginator.num_pages %}" hx-target="{{ target }}"{% endif %}
+               class="join-item {{ btn_class }}">{% trans "Last" %} &raquo;</a>
+        {% endif %}
+    </div>
+</div>

@@ -2,7 +2,7 @@
 {% load i18n wagtailcore_tags heroicons %}
 
 {% block title %}{% trans "Confirm access" %}{% endblock %}
-{% block body_class %}bg-white{% endblock %}
+{% block body_class %}bg-base-100{% endblock %}
 
 {% block content %}
     <div class="px-4 pt-4 mx-auto max-w-md md:py-4 md:mt-5">
@@ -14,38 +14,36 @@
         </p>
 
         <section id="section-form">
-
-            {% if request.user.has_usable_password %}
-                <form
-                    class="px-4 pt-4 mb-4 bg-gray-50 border rounded-xs form form--error-inline"
-                    method="post"
-                    action="./"
-                    data-test-id="section-password-input"
-                    id="form-password-input"
-                >
-                    {% csrf_token %}
-                    {% for field in form %}
-                        {% include "forms/includes/field.html" %}
-                    {% endfor %}
-
-                    <div class="form__group">
-                        <button class="button button--primary" type="submit">{% trans "Confirm" %}</button>
-                    </div>
-                </form>
-            {% else %}
-                <section data-test-id="section-confirm" id="confirm-code-input" class="px-4 pt-4 mb-4 text-center">
-
-                    <button
-                        class="button button--primary"
-                        type="submit"
-                        hx-post="{% url 'users:elevate_send_confirm_access_email' %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}"
-                        hx-swap="outerHTML transition:true"
-                        hx-target="#confirm-code-input"
+            <div class="card card-border bg-base-200">
+                {% if request.user.has_usable_password %}
+                    <form
+                        class="card-body form"
+                        method="post"
+                        action="./"
+                        data-test-id="section-password-input"
+                        id="form-password-input"
                     >
-                        {% trans "Send a confirmation code to your email" %}
-                    </button>
-                </section>
-            {% endif %}
+                        {% csrf_token %}
+                        {% for field in form %}
+                            {% include "forms/includes/field.html" %}
+                        {% endfor %}
+
+                        <button role="button" class="mt-4 btn btn-primary" type="submit">{% trans "Confirm" %}</button>
+                    </form>
+                {% else %}
+                    <section data-test-id="section-confirm" id="confirm-code-input" class="px-4 pt-4 mb-4 text-center">
+                        <button
+                            class="btn btn-primary"
+                            type="submit"
+                            hx-post="{% url 'users:elevate_send_confirm_access_email' %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}"
+                            hx-swap="outerHTML transition:true"
+                            hx-target="#confirm-code-input"
+                        >
+                            {% trans "Send a confirmation code to your email" %}
+                        </button>
+                    </section>
+                {% endif %}
+            </div>
 
             {% if request.user.has_usable_password %}
                 <section data-test-id="section-send-email" class="px-4 pt-2 pb-4 border">

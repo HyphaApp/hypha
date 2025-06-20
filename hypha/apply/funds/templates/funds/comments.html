@@ -3,110 +3,110 @@
 
 {% block title %}Comments: {{ object.title_text_display }}{% endblock %}
 
-{% block content %}
-    <div class="pt-4 pb-0 admin-bar">
-        <div class="admin-bar__inner">
+{% block hero %}
+    <c-hero padding="pt-4">
+        {% if object.project %}
+            {% include "application_projects/includes/project_header.html" with object=object.project %}
+        {% else %}
+            {% include "funds/includes/application_header.html" %}
+        {% endif %}
 
-            {% if object.project %}
-                {% include "application_projects/includes/project_header.html" with object=object.project %}
-            {% else %}
-                {% include "funds/includes/application_header.html" %}
+        <div role="tablist" class="font-medium tabs tabs-lg tabs-lift text-base-content">
+            <a
+                class="tab [--color-base-content:var(--color-neutral-content)]"
+                href="{% url 'funds:submissions:detail' pk=object.id %}">
+                {% trans "Application" %}
+            </a>
+
+            {% if PROJECTS_ENABLED and object.project %}
+                {% user_can_access_project object.project user as can_access_project %}
+                {% if can_access_project %}
+                    <a
+                        class="tab [--color-base-content:var(--color-neutral-content)]"
+                        href="{% url 'funds:submissions:project' pk=object.id %}"
+                    >
+                        {% trans "Project" %}
+                    </a>
+                {% endif %}
             {% endif %}
 
-            <div class="tabs">
-                <div class="tabs__container">
-                    <a
-                        class="tab__item"
-                        href="{% url 'funds:submissions:detail' pk=object.id %}">
-                        {% trans "Application" %}
-                    </a>
+            <a class="tab tab-active"
+               href="{% url 'funds:submissions:comments' pk=object.id %}"
+               data-tab="tab-2"
+            >
+                {% trans "Comments" %} ({{ comments_count }})
+            </a>
 
-                    {% if object.project and PROJECTS_ENABLED %}
-                        {% user_can_access_project object.project user as can_access_project %}
-                        {% if can_access_project %}
-                            <a class="tab__item"
-                               href="{% url 'funds:submissions:project' pk=object.id %}"
-                            >
-                                {% trans "Project" %}
-                            </a>
-                        {% endif %}
-                    {% endif %}
-
-                    <a class="tab__item tab__item--active"
-                       href="{% url 'funds:submissions:comments' pk=object.id %}"
-                       data-tab="tab-2"
-                    >
-                        {% trans "Conversation" %} ({{ comments_count }})
-                    </a>
-
-                    {# is_staff is only used for Django Admin. #}
-                    {% if request.user.is_staff %}
-                        <a
-                            class="hidden md:block tab__item ms-auto"
-                            href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}"
-                        >
-                            {% trans "View message log" %}
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
+            {# is_staff is only used for Django Admin. #}
+            {% if request.user.is_staff %}
+                <a
+                    class="hidden md:block tab ms-auto [--color-base-content:var(--color-neutral-content)]"
+                    href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}"
+                >
+                    {% trans "View message log" %}
+                </a>
+            {% endif %}
         </div>
-    </div>
+    </c-hero>
+{% endblock %}
 
-    <div class="wrapper wrapper--large wrapper--tabs">
-        <div class="feed">
-            {% if form %}
-                {% if not object.is_archive or object.project %}
-                    <h4 class="m-0 sr-only">{% trans "Add communication" %}</h4>
-                    <div class="pb-4 wrapper wrapper--comments">
-                        <form
-                            class="form form__comments"
-                            method="POST"
-                            enctype="multipart/form-data"
-                            action="./"
-                        >
-                            {% csrf_token %}
+{% block content %}
+    <div class="my-4">
+        {% if form %}
+            {% if not object.is_archive or object.project %}
+                <h2 class="sr-only">{% trans "Add communication" %}</h2>
+                <div class="pb-6 mb-4 w-full border-b border-base-300">
+                    <form
+                        class="form form__comments"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        action="./"
+                    >
+                        {% csrf_token %}
 
-                            {% for hidden in form.hidden_fields %}
-                                {{ hidden }}
-                            {% endfor %}
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
 
-                            <div class="flex flex-wrap gap-4 lg:flex-nowrap lg:gap-8">
-                                <div class="-mt-4 w-full lg:flex-1 max-w-[53rem]">
-                                    {% include "forms/includes/field.html" with field=form.message label_classes="sr-only" %}
+                        <div class="flex flex-wrap gap-2 lg:flex-nowrap lg:gap-4">
+                            <div class="w-full lg:flex-1 max-w-[60rem]">
+                                {% include "forms/includes/field.html" with field=form.message label_classes="sr-only" %}
 
-                                    <div class="text-right">
-                                        <button
-                                            class="w-full lg:w-auto button button--primary"
-                                            type="submit"
-                                        >
-                                            {% trans "Add Comment" %}
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="w-full lg:max-w-[30%]">
-                                    {% include "forms/includes/field.html" with field=form.visibility %}
-                                    {% include "forms/includes/field.html" with field=form.assign_to %}
-                                    {% include "forms/includes/field.html" with field=form.attachments %}
+                                <div class="hidden mt-4 text-right lg:block">
+                                    <button
+                                        class="w-full lg:w-auto btn btn-primary"
+                                        type="submit"
+                                    >
+                                        {% trans "Add Comment" %}
+                                    </button>
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                {% endif %}
 
+                            <div class="w-full max-w-md lg:my-4 lg:w-auto lg:border-l grow lg:ps-4">
+                                {% include "forms/includes/field.html" with field=form.visibility %}
+                                {% include "forms/includes/field.html" with field=form.assign_to %}
+                                {% include "forms/includes/field.html" with field=form.attachments %}
+                            </div>
+                            <button
+                                class="mt-4 w-full lg:hidden lg:w-auto btn btn-primary"
+                                type="submit"
+                            >
+                                {% trans "Add Comment" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
             {% endif %}
+        {% endif %}
 
-            <div
-                class="comments"
-                id="comment-feed"
-                hx-get="{% url 'activity:partial-comments' object.id %}"
-                hx-trigger="load, intersect once"
-            >
-                <p>{% trans "Loading…" %}</p>
-            </div>
-        </div>
-
+        <section
+            class="comments"
+            id="comment-feed"
+            hx-get="{% url 'activity:partial-comments' object.id %}"
+            hx-trigger="load, intersect once"
+        >
+            <p>{% trans "Loading…" %}</p>
+        </section>
     </div>
 {% endblock %}
 

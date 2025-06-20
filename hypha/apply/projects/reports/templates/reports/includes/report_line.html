@@ -1,6 +1,7 @@
 {% load i18n heroicons %}
-<li class="gap-2 data-block__list-item">
-    <p class="flex-1 m-0">
+<li class="list-row @container">
+    <p class="text-sm list-col-grow">
+
         {% if current %}
             {% trans "The" %} {% if report.can_submit %}{% trans "current" %}{% else %}{% trans "next" %}{% endif %} {% trans "reporting period is" %}
         {% else %}
@@ -10,26 +11,27 @@
         {% if report.is_very_late %}
             {% heroicon_outline 'exclamation-circle' stroke_width=2 size=22 class="inline me-1 stroke-red-500" aria_hidden=true %}
         {% endif %}
-        {% if request.user.is_apply_staff and report.can_submit %}
-            <button
-                hx-post="{% url "apply:projects:reports:skip" pk=report.id %}"
-                hx-confirm="{% blocktrans with start_date=report.start_date end_date=report.end_date %} You're skipping the report for {{ start_date }} - {{ end_date }}. This will result in a gap in reporting for the project. You can undo this at any time. {% endblocktrans %}"
-                value="{% trans 'Skip' %}"
-                class="btn data-block__action-link"
-            >
-                {% trans 'Skip' %}
-            </button>
-        {% endif %}
+
     </p>
 
     {% if report.can_submit %}
-        <span>
+        <div class="list-col-wrap @sm:row-start-1 card-actions">
             <a
-                class="button button--project-action"
+                class="btn btn-primary btn-sm"
                 href="{% url "apply:projects:reports:edit" pk=report.pk %}"
             >
                 {% if report.draft %}{% trans "Continue Editing" %}{% else %}{% trans "Add Report" %}{% endif %}
             </a>
-        </span>
+            {% if request.user.is_apply_staff and report.can_submit %}
+                <button
+                    hx-post="{% url 'apply:projects:reports:skip' pk=report.id %}"
+                    hx-confirm="{% blocktrans with start_date=report.start_date end_date=report.end_date %} You're skipping the report for {{ start_date }} - {{ end_date }}. This will result in a gap in reporting for the project. You can undo this at any time. {% endblocktrans %}"
+                    value="{% trans 'Skip' %}"
+                    class="uppercase btn btn-sm"
+                >
+                    {% trans 'Skip' %}
+                </button>
+            {% endif %}
+        </div>
     {% endif %}
 </li>

@@ -9,8 +9,8 @@
 __pycache__
 db.sqlite3
 media/
-static/
 tmp/
+/static/
 
 # Node
 node_modules/

@@ -1,0 +1,43 @@
+{% load i18n static heroicons %}<!doctype html>
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html class="h-full" lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>{% trans "Bad Request" %}</title>
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="theme-color" content="#ffffff">
+        <link rel="shortcut icon" href="{% static 'images/favicons/favicon.ico' %}">
+
+        <link rel="stylesheet" href="{% static 'css/tailwind-output.css' %}">
+    </head>
+
+    <body class="h-full bg-base-200">
+        <main class="container-constrained" id="main">
+            <div class="flex flex-col justify-center items-center min-h-[60vh]" x-data="{ hasHistory: window.history.length > 1 }">
+                <div class="w-full max-w-2xl card bg-base-100 lg:card-xl">
+                    <div class="items-center card-body">
+                        <span class="flex justify-center items-center p-4 mb-4 rounded-full bg-warning/10">
+                            {% heroicon_outline "exclamation-triangle" class="w-14 h-14 text-warning" %}
+                        </span>
+                        <h1 class="mb-2 text-4xl font-bold text-warning">
+                            {% trans "Bad Request" %}
+                        </h1>
+                        <div class="mb-6 prose">
+                            <p>{% blocktranslate %}The request could not be understood by the server due to malformed syntax or invalid parameters. Please check your request and try again.{% endblocktranslate %}</p>
+                        </div>
+
+                        <div class="card-actions">
+                            <a href="{{ settings.core.SystemSettings.site_logo_link|default:'/' }}" class="btn btn-primary">
+                                {% trans "Go to homepage" %}
+                            </a>
+                        </div>
+
+                        <p class="mt-4 font-mono text-fg-muted">{% trans "Error code: Bad Request (400)" %}</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

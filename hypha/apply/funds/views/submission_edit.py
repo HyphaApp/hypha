@@ -119,12 +119,12 @@ class BaseSubmissionEditView(UpdateView):
             (<button type>, <button styling>, <button label>)
         """
         if settings.SUBMISSION_PREVIEW_REQUIRED:
-            yield ("preview", "primary", _("Preview and submit"))
-            yield ("save", "white", _("Save draft"))
+            yield ("preview", "btn-primary", _("Preview and submit"))
+            yield ("save", "btn-secondary btn-outline", _("Save draft"))
         else:
-            yield ("submit", "primary", _("Submit"))
-            yield ("save", "white", _("Save draft"))
-            yield ("preview", "white", _("Preview"))
+            yield ("submit", "btn-primary", _("Submit"))
+            yield ("save", "btn-secondary btn-outline", _("Save draft"))
+            yield ("preview", "btn-secondary btn-outline", _("Preview"))
 
     def get_object_fund_current_round(self):
         assigned_fund = self.object.round.get_parent().specific
@@ -145,7 +145,9 @@ class BaseSubmissionEditView(UpdateView):
         return next(
             (
                 t
-                for t in self.object.get_available_user_status_transitions(user)
+                for t in type(self.object).status_field.get_available_transitions(
+                    self.object, self.object.status, user
+                )
                 if t.custom.get("trigger_on_submit", False)
             ),
             None,
@@ -299,9 +301,9 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
             A generator returning a tuple strings in the format of:
             (<button type>, <button styling>, <button label>)
         """
-        yield ("submit", "primary", _("Submit"))
-        yield ("save", "white", _("Save draft"))
-        yield ("preview", "white", _("Preview"))
+        yield ("submit", "btn-primary", _("Submit"))
+        yield ("save", "btn-secondary btn-outline", _("Save draft"))
+        yield ("preview", "btn-secondary btn-outline", _("Preview"))
 
 
 @method_decorator(login_required, name="dispatch")

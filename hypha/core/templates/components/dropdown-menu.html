@@ -22,7 +22,7 @@
 >
     <button
         type="button"
-        class="flex justify-between items-center py-1 w-full font-medium text-gray-600 border cursor-pointer md:border-none hover:bg-gray-50 ps-2 pe-2 md:hover:bg-transparent md:hover:text-blue-700"
+        class="flex justify-between items-center py-1 w-full font-medium border cursor-pointer md:border-none hover:bg-gray-50 text-base-content/80 ps-2 pe-2 md:hover:bg-transparent md:hover:text-blue-700"
         x-ref="button"
         @click="toggle()"
         :aria-expanded="open"
@@ -40,7 +40,7 @@
     </button>
 
     <!-- Panel -->
-    <div class="m-4 z-20 border min-w-max fixed top-0 start-0 end-0 md:text-sm md:m-0 md:mt-1 md:absolute md:start-auto {% if attributes.position == 'right' %}md:end-0{% else %} md:end-auto{% endif %} md:top-auto md:bottom-auto bg-white divide-y divide-gray-100 rounded-lg shadow-lg"
+    <div class="m-4 z-20 border border-base-300 min-w-max fixed top-0 start-0 end-0 md:text-sm md:m-0 md:mt-1 md:absolute md:start-auto {% if attributes.position == 'right' %}md:end-0{% else %} md:end-auto{% endif %} md:top-auto md:bottom-auto bg-base-100 divide-y divide-base-300 rounded-box shadow-lg"
          role="menu"
          x-ref="panel"
          x-show="open"
@@ -51,7 +51,7 @@
          x-cloak
     >
         {% if attributes.heading %}
-            <header class="flex gap-2 justify-between items-center py-2 px-3 border-b subheading">
+            <header class="flex gap-2 justify-between items-center py-2 px-3 border-b subheading bg-base-200 rounded-t-box">
                 <span class="font-medium SubMenuHeading text-inherit">{{ attributes.heading }}</span>
                 <button type="button" @click='open = false' class="appearance-none">
                     {% heroicon_mini "x-mark" aria_hidden="true" width=16 height=16 class="stroke-1 hover:stroke-2" %}
@@ -62,12 +62,13 @@
         {% if attributes.enable_search %}
             <filter-input aria-owns="dd-content-{{ id }}" class="flex py-3 px-3 border-b grow">
                 <label for="search-{{ id }}" class="sr-only">{% trans "Filter" %} {{ attributes.title }}</label>
-                <input type="text"
-                       autofocus
-                       id="search-{{ id }}"
-                       @keydown.down="$focus.next()"
-                       placeholder="Filter {{ attributes.title }}"
-                       class="p-2 w-max font-normal text-gray-900 rounded-sm border border-gray-300 md:py-1 focus:border-blue-500 focus:ring-blue-500 grow text-inherit">
+                <input
+                    type="text"
+                    id="search-{{ id }}"
+                    @keydown.down="$focus.next()"
+                    placeholder="Filter {{ attributes.title }}"
+                    class="input input-sm"
+                >
             </filter-input>
         {% endif %}
 
@@ -78,7 +79,7 @@
             {% render_slot slots.inner_block %}
             {% if slots.url %}
                 <div role="status" class="flex justify-center items-center py-4">
-                    <svg aria-hidden="true" width="8" height="8" class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 me-2 fill-blue-600"
+                    <svg aria-hidden="true" width="8" height="8" class="w-8 h-8 text-gray-200 animate-spin me-2 fill-blue-600 dark:text-base-content/80"
                          viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"

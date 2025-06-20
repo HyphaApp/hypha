@@ -1,7 +1,7 @@
 {% load i18n heroicons querystrings %}
 {% load show_applicant_identity from workflow_tags %}
 
-<div class="relative flex-wrap py-1 px-2 w-full border-t md:flex md:flex-nowrap last:border-b hover:bg-gray-100 border-x">
+<div class="relative flex-wrap py-2 px-2 w-full border-t md:flex md:flex-nowrap last:border-b border-x hover:bg-base-200">
 
     {% comment %} Select {% endcomment %}
     {% if enable_selection %}
@@ -11,7 +11,7 @@
                    value="{{ s.id }}"
                    x-model="selectedSubmissions"
                    name="selectedSubmissionIds"
-                   class="w-4 h-4 text-blue-600 rounded-sm border-gray-300 focus:ring-2 focus:ring-blue-500"
+                   class="checkbox checkbox-sm"
             >
             <span class="sr-only">{% trans "Select submission" %} #{{ s.id }}</span>
         </label>
@@ -40,7 +40,7 @@
             <a
                 title="{{ s.form_data.title }}"
                 href="{% url "funds:submissions:detail" s.id %}?ref=all-alt"
-                class="text-base font-semibold break-words transition-colors hover:text-blue-600 text-[#404041]"
+                class="text-base font-semibold break-words transition-colors text-base-content hover:text-primary"
             >{{ s.form_data.title }}</a>
 
             <a
@@ -79,7 +79,7 @@
                     hx-target="#main"
                     hx-push-url="true"
                     hx-swap="outerHTML transition:true"
-                    class="inline-flex max-w-sm hover:underline text-inherit truncate"
+                    class="inline-flex max-w-sm link link-muted text-inherit text-inherit truncate"
                 >{{ s.user }}</a>{% endif %} • {{ s.stage }} •
 
 
@@ -92,7 +92,7 @@
                             hx-target="#main"
                             hx-push-url="true"
                             hx-swap="outerHTML transition:true"
-                            class="hover:underline text-inherit"
+                            class="link link-muted text-inherit"
                         >{{ s.round }}</a>
 
                         {% if 'fund' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
@@ -102,7 +102,7 @@
                                 hx-target="#main"
                                 hx-push-url="true"
                                 hx-swap="outerHTML transition:true"
-                                class="hover:underline text-inherit"
+                                class="link link-muted text-inherit"
                             >{{ s.page }}</a>)
                         {% endif %}
                     {% else %}
@@ -114,14 +114,14 @@
                             hx-target="#main"
                             hx-push-url="true"
                             hx-swap="outerHTML transition:true"
-                            class="hover:underline text-inherit"
+                            class="link link-muted text-inherit"
                         >
                             {{ s.page }}</a>
                     {% endif %}
                 {% endif %}
 
                 {% if s.project %}
-                    • <a href="{% url "funds:submissions:project" s.id %}" class="hover:underline text-inherit">{% trans "Project" %}</a>
+                    • <a href="{% url "funds:submissions:project" s.id %}" class="link link-muted text-inherit">{% trans "Project" %}</a>
                 {% endif %}
             </p>
         </div>
@@ -145,7 +145,7 @@
                         hx-target="#main"
                         hx-push-url="true"
                         hx-swap="outerHTML transition:true"
-                        class="max-w-sm hover:underline text-inherit truncate"
+                        class="max-w-sm link link-muted text-inherit truncate"
                     >
                         {{ s.lead }}
                     </a>
@@ -165,19 +165,19 @@
                 >
                     <span id="r{{s.id}}" class="inline-block w-full">
                         {% comment %} pre-loading animation {% endcomment %}
-                        <span class="inline-block w-full h-5 bg-gray-200 rounded-sm animate-pulse"
+                        <span class="inline-block w-full h-5 rounded-sm animate-pulse bg-base-300"
                         ></span>
                     </span>
 
                     <div
-                        class="hidden absolute bottom-6 z-10 p-2 w-64 bg-white rounded-sm border shadow-lg group-hover:block review-hovercard -end-1/2 md:-end-4"
+                        class="hidden absolute bottom-6 z-10 p-2 w-64 rounded-sm border shadow-lg group-hover:block bg-base-100 review-hovercard -end-1/2 md:-end-4"
                     >
                         {% comment %} pre-loading animation {% endcomment %}
                         <div class="animate-pulse min-h-30">
-                            <div class="mb-3 w-full h-9 bg-gray-200"></div>
-                            <div class="mb-1 w-full h-6 bg-gray-200"></div>
-                            <div class="mb-3 w-full h-1 bg-gray-200"></div>
-                            <div class="mb-3 w-1/2 h-6 bg-gray-200"></div>
+                            <div class="mb-3 w-full h-9 bg-base-300"></div>
+                            <div class="mb-1 w-full h-6 bg-base-300"></div>
+                            <div class="mb-3 w-full h-1 bg-base-300"></div>
+                            <div class="mb-3 w-1/2 h-6 bg-base-300"></div>
                         </div>
                     </div>
                 </div>
@@ -187,7 +187,7 @@
         {% comment %} Comment Count {% endcomment %}
         <span class="inline-block w-10">
             {% if s.comment_count %}
-                <a class="flex items-center text-gray-900 transition-colors group hover:text-light-blue"
+                <a class="flex items-center transition-colors text-inherit group hover:text-primary"
                    title="{% trans 'View communications' %}"
                    href="{% url 'funds:submissions:comments' s.id %}"
                 >

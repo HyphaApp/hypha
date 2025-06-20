@@ -1,15 +1,15 @@
 {% extends "base-apply.html" %}
 {% load wagtailcore_tags static i18n util_tags heroicons %}
 {% block title %}{% trans "Previewing" %}: {{object.title }}{% endblock %}
-{% block body_class %}bg-white{% endblock %}
+
+{% block hero %}
+    <c-hero>
+        <c-hero.header title="{% trans 'Previewing' %}: {{ object.title }}" />
+    </c-hero>
+{% endblock %}
 
 {% block content %}
-
-    {% adminbar %}
-        {% slot header %}{% trans "Previewing" %}: {{ object.title }}{% endslot %}
-    {% endadminbar %}
-
-    <div class="wrapper wrapper--medium wrapper--form">
+    <div class="my-8 mx-auto max-w-4xl">
         {% include "funds/includes/rendered_answers.html" %}
 
         <form id="preview-form-submit" class="form application-form" action="{% url 'funds:submissions:edit' object.id %}" method="POST" enctype="multipart/form-data" novalidate>
@@ -25,7 +25,7 @@
                             {% include "forms/includes/field.html" %}
                         {% endif %}
                     {% else %}
-                        <div class="max-w-none field-block prose">
+                        <div class="mb-2 max-w-none field-block prose">
                             {{ field.block }}
                         </div>
                     {% endif %}
@@ -42,9 +42,13 @@
             {% csrf_token %}
         </form>
 
-        <div class="form__group">
-            <button class="button button--primary" form="preview-form-submit" name="submit" type="submit" :disabled="isFormSubmitting">{% trans "Submit for review" %}</button>
-            <button class="button button--secondary" form="preview-form-edit">{% trans "Edit" %}</button>
+        <div class="mt-4 card-actions">
+            <button class="btn btn-primary" form="preview-form-submit" name="submit" type="submit" :disabled="isFormSubmitting">
+                {% trans "Submit for review" %}
+            </button>
+            <button class="btn btn-secondary btn-outline" form="preview-form-edit">
+                {% trans "Continue editing" %}
+            </button>
         </div>
 
     </div>

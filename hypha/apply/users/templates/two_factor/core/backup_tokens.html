@@ -1,51 +1,73 @@
 {% extends "two_factor/_base.html" %}
-{% load static i18n users_tags %}
+{% load static i18n users_tags heroicons %}
 
 {% block content_inner %}
-    <h1>{% block title %}{% trans "Backup Codes" %}{% endblock %}</h1>
+    <h1 class="mb-2 font-semibold text-h2">
+        {% block title %}{% trans "Backup Codes" %}{% endblock %}
+    </h1>
 
-    <p class="hide-print">
+    <p class="mb-2 print:hidden">
         {% blocktrans %}You should now print these codes or copy them to your
             clipboard and store them in your password manager.{% endblocktrans %}
     </p>
 
     {% if device.token_set.count %}
-        <textarea readonly
-                  cols="8"
-                  rows="{{ device.token_set.count }}"
-                  id="list-backup-tokens"
-                  class="font-mono font-medium leading-tight bg-orange-100 resize-none pe-0"
+        <textarea
+            readonly
+            cols="8"
+            rows="{{ device.token_set.count }}"
+            id="list-backup-tokens"
+            class="w-auto font-mono text-lg font-medium leading-tight resize-none bg-base-200 pe-0"
+            onclick="this.select()"
         >{% for token in device.token_set.all %}{{ token.token }}{% if not forloop.last %}&#013;&#010;{% endif %}{% endfor %}</textarea>
 
-        <form method="post" class="actions actions-footer">{% csrf_token %}{{ form }}
-            <p class="flex flex-wrap gap-2 justify-start mb-4">
-                <a href="#" class="btn btn-primary btn-print">{% trans "Print" %}</button>
-                <a href="#"
-                   class="btn btn-primary btn-copy-to-clipboard"
-                   data-clipboard-target="#list-backup-tokens"
-                   data-clipboard-action="copy"
-                   data-tippy-content="{% trans "Copied!" %}"
-                   data-tippy-trigger="manual"
-                >{% trans "Copy to Clipboard" %}</a>
-                <button class="btn btn-primary" type="submit">{% trans "Regenerate Codes" %}</button>
-            </p>
+        <form method="post" class="actions actions-footer print:hidden">{% csrf_token %}{{ form }}
+            <div class="my-4 card-actions">
+                <button class="btn btn-primary" onclick="window.print()">
+                    {% heroicon_mini "printer" class="w-4 h-4" aria_hidden="true" %}
+                    {% trans "Print" %}
+                </button>
+                <a
+                    href="#"
+                    class="btn btn-primary btn-copy-to-clipboard"
+                    data-clipboard-target="#list-backup-tokens"
+                    data-clipboard-action="copy"
+                    data-tippy-content="{% trans 'Copied!' %}"
+                    data-tippy-trigger="manual"
+                >
+                    {% heroicon_mini "clipboard" class="w-4 h-4" aria_hidden="true" %}
+                    {% trans "Copy to Clipboard" %}
+                </a>
+                <button class="btn" type="submit">{% trans "Regenerate Codes" %}</button>
+            </div>
 
-            <p class="text-sm text-fg-muted">{% blocktrans trimmed %} <strong>Note:</strong> Each of the code can be used only once. When they are used up, you can generate a new set of backup codes.{% endblocktrans %}</p>
-            <p class="hide-print">{% blocktrans %}Once done, acknowledge you have stored the codes securely and then click "Finish".{% endblocktrans %}</p>
-            <div class="form">
-                <ul class="hidden errorlist error-action-agree"><li>Please confirm you have stored the codes securely below.</li></ul>
-                <div class="mb-4 form__item">
-                    <input type="checkbox" id="action_agree" name="action_agree" value="action_agree">
+            <p class="mb-2 text-sm text-fg-muted">
+                {% blocktrans trimmed %} <strong>Note:</strong> Each of the code can be used only once. When they are used up, you can generate a new set of backup codes.{% endblocktrans %}
+            </p>
+            <p class="print:hidden">
+                {% blocktrans %}Once done, acknowledge you have stored the codes securely and then click "Finish".{% endblocktrans %}
+            </p>
+            <div class="form" x-data="{ agreed: false }" x-cloak>
+                <ul class="hidden errorlist error-action-agree">
+                    <li>Please confirm you have stored the codes securely below.</li>
+                </ul>
+                <div class="flex gap-2 items-center my-2 mb-4">
+                    <input type="checkbox" id="action_agree" name="action_agree" value="action_agree" class="checkbox" x-model="agreed">
                     <label for="action_agree"> I have stored the backup codes securely.</label>
                 </div>
-                <div class="form__item">
-                    <a class="btn btn-link btn-finish" href="{% url 'users:account' %}">{% trans "Finish" %}</a>
+                <div>
+                    <a
+                        class="btn btn-primary"
+                        href="{% url 'users:account' %}"
+                        x-bind:disabled="!agreed"
+                    >{% trans "Finish" %}</a>
                 </div>
-
             </div>
         </form>
     {% else %}
-        <p class="mb-4">{% trans "You don't have any backup codes yet." %}</p>
+        <p class="mb-4">
+            {% trans "You don't have any backup codes yet." %}
+        </p>
         <form method="post">{% csrf_token %}{{ form }}
             <button class="btn btn-primary" type="submit">{% trans "Generate Codes" %}</button>
         </form>
@@ -55,9 +77,7 @@
 {% block extra_css %}
     <style>
         @media print {
-            .header, .admin-bar, .actions, .hide-print {
-                display: none;
-            }
+            .header, [data-cotton='c-hero'] { display: none; }
         }
     </style>
 {% endblock %}
@@ -65,46 +85,24 @@
 {% block extra_js %}
     <script src="{% static 'js/vendor/clipboard.min.js' %}"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Instantiate clipboard by passing a HTML element, uses clipboard.js
+            var clipboardBtn = document.querySelector('.btn-copy-to-clipboard');
+            if (clipboardBtn) {
+                var clipboard = new ClipboardJS(clipboardBtn);
+                var tooltip = tippy(clipboardBtn, {
+                    trigger: 'manual',
+                    animation: 'fade'
+                });
 
-    {# Select the codes when clicked #}
-        $('#list-backup-tokens').on("click", function (e){
-            $(this).select();
-        });
-
-    {# Setup print button #}
-        $(".btn-print").on("click", function(e){
-            e.preventDefault();
-            window.print();
-        });
-
-        $(".btn-finish").on("click", function(e){
-            if(!$("#action_agree").is(":checked")) {
-                $(".error-action-agree").show();
-                e.preventDefault();
-            } else {
-                $(".error-action-agree").hide();
-                window.location.href = $(this).attr('href');
+                clipboard.on('success', function (e) {
+                    tooltip.show();
+                });
+                clipboard.on('error', function (e) {
+                    tooltip.setContent("Use ctrl/cmd + C to copy the backup codes.")
+                    tooltip.show();
+                });
             }
         });
-
-
-    {# Instantiate clipboard by passing a HTML element, uses clipboard.js #}
-        var clipboardBtn = document.querySelector('.btn-copy-to-clipboard');
-        if (clipboardBtn) {
-            var clipboard = new ClipboardJS(clipboardBtn);
-            var tooltip = tippy(clipboardBtn, {
-                trigger: 'manual',
-                animation: 'fade'
-            });
-
-            clipboard.on('success', function (e) {
-                tooltip.show();
-            });
-            clipboard.on('error', function (e) {
-                tooltip.setContent("Use ctrl/cmd + C to copy the backup codes.")
-                tooltip.show();
-            });
-        }
-
     </script>
 {% endblock %}

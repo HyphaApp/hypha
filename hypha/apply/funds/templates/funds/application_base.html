@@ -1,136 +1,135 @@
 {% extends "base-apply.html" %}
 {% load wagtailcore_tags static i18n util_tags heroicons %}
+{% load i18n nh3_tags wagtailcore_tags markdown_tags heroicons %}
 {% block body_class %}{% endblock %}
 
 {% block content %}
+    <div class="my-8 mx-auto max-w-3xl lg:my-16">
+        {% if page.end_date and page.get_parent.specific.show_deadline %}
+            <p>
+                {% heroicon_mini "calendar-days" aria_hidden="true" class="inline me-1 fill-fg-muted" %}
+                <span class="font-bold text-fg-muted">{% trans "Next deadline" %}: {{ page.end_date }}</span>
+            </p>
+        {% endif %}
 
-    <div class="wrapper wrapper--default-bg wrapper--form wrapper--sidebar">
-        <div class="wrapper--sidebar--inner">
+        <h1 class="mb-4 font-bold text-h00">{{ page.title }}</h1>
 
-            {% if page.end_date and page.get_parent.specific.show_deadline %}
-                <p>
-                    {% heroicon_mini "calendar-days" aria_hidden="true" class="inline me-1 fill-fg-muted" %}
-                    <span class="font-bold text-fg-muted">{% trans "Next deadline" %}: {{ page.end_date }}</span>
-                </p>
+        {% if form.errors or form.non_field_errors %}
+            <div class="mb-4 alert alert-warning" role="alert">
+                {% heroicon_solid "exclamation-triangle" aria_hidden="true" %}
+                {% if form.non_field_errors %}
+                    <ul>
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <span>
+                        {% trans "Please fix the errors in your form. Review and update the highlighted fields below to continue." %}
+                    </span>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if not page.open_round and not page.start_date and not request.is_preview %}
+            {# the page has no open rounds and we arent on a round page #}
+            {% verbose_name page as name %}
+            <h4>
+                {% blocktrans %}Sorry, this {{ name }} is not currently accepting applications.{% endblocktrans %}
+                <a href="{% url 'home' %}">
+                    {% trans "See other funds" %} {% heroicon_mini "arrow-right" class="inline mb-0.5 align-text-bottom" %}
+                </a>
+            </h4>
+        {% else%}
+            {% if page.get_parent.specific.guide_link %}
+                <a
+                    href="{{ page.get_parent.specific.guide_link }}"
+                    class="print:hidden"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    {% trans "Application guide" %}
+                </a>
             {% endif %}
-
-            <h1 class="text-5xl font-bold">{{ page.title }}</h1>
-
-            {% if form.errors or form.non_field_errors %}
-                <div class="wrapper wrapper--error">
-                    {% heroicon_solid "exclamation-triangle" aria_hidden="true" class="inline me-2 fill-red-500" %}
-                    {% if form.non_field_errors %}
-                        <ul>
-                            {% for error in form.non_field_errors %}
-                                <li class="error">{{ error }}</li>
-                            {% endfor %}
-                        </ul>
+            <form class="form application-form" action="/test500/" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form %}
+                    {% if field.field %}
+                        {% if field.field.multi_input_field %}
+                            {% include "forms/includes/multi_input_field.html" %}
+                        {% else %}
+                            {% include "forms/includes/field.html" %}
+                        {% endif %}
                     {% else %}
-                        <h5 class="heading heading--no-margin heading--regular">
-                            {% trans "There were some errors with your form. Please amend the fields highlighted below" %}
-                        </h5>
+                        {% if field.group_number > 1 %}
+                            <div class="field-group-{{ field.group_number }}">
+                                {{ field.block }}
+                            </div>
+                        {% else %}
+                            <div class="mb-2 max-w-none field-block prose">
+                                {{ field.block }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
+                {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field }}
+                {% endfor %}
+
+                <div class="items-center mt-4 card-actions">
+                    {% comment %}
+                        If a preview is required for this application,
+                        don't allow submitting yet (via name="preview").
+                        At the moment, this functionality only works if a user is logged in.
+                    {% endcomment %}
+                    {% if require_preview and request.user.is_authenticated %}
+                        <button
+                            class="w-full sm:w-auto btn btn-primary"
+                            type="submit"
+                            name="preview"
+                            value="Preview and Submit"
+                            disabled
+                        >
+                            {% trans "Preview and submit" %}
+                        </button>
+                    {% else %}
+                        <button
+                            class="w-full sm:w-auto btn btn-primary"
+                            type="submit"
+                            disabled
+                        >
+                            {% trans "Submit for review" %}
+                        </button>
+                    {% endif %}
+
+                    <button
+                        class="w-full sm:w-auto btn btn-secondary btn-outline"
+                        type="submit"
+                        name="draft"
+                        value="Save draft"
+                        formnovalidate
+                    >
+                        {% trans "Save draft" %}
+                    </button>
+
+                    {% if not require_preview and request.user.is_authenticated %}
+                        <button
+                            class="btn btn-secondary btn-outline"
+                            type="submit"
+                            name="preview"
+                            value="Preview"
+                        >
+                            {% trans "Preview" %}
+                        </button>
                     {% endif %}
                 </div>
-            {% endif %}
-
-            {% if not page.open_round and not page.start_date and not request.is_preview %}
-                {# the page has no open rounds and we arent on a round page #}
-                {% verbose_name page as name %}
-                <h4>
-                    {% blocktrans %}Sorry, this {{ name }} is not currently accepting applications.{% endblocktrans %}
-                    <a href="{% url 'home' %}">
-                        {% trans "See other funds" %} {% heroicon_mini "arrow-right" class="inline mb-0.5 align-text-bottom" %}
-                    </a>
-                </h4>
-            {% else%}
-                {% if page.get_parent.specific.guide_link %}
-                    <a
-                        href="{{ page.get_parent.specific.guide_link }}"
-                        class="print:hidden"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        {% trans "Application guide" %}
-                    </a>
-                {% endif %}
-                <form class="form application-form" action="/test500/" method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {% for field in form %}
-                        {% if field.field %}
-                            {% if field.field.multi_input_field %}
-                                {% include "forms/includes/multi_input_field.html" %}
-                            {% else %}
-                                {% include "forms/includes/field.html" %}
-                            {% endif %}
-                        {% else %}
-                            {% if field.group_number > 1 %}
-                                <div class="field-group-{{ field.group_number }}">
-                                    {{ field.block }}
-                                </div>
-                            {% else %}
-                                <div class="max-w-none field-block prose">
-                                    {{ field.block }}
-                                </div>
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
-
-                    {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
-                    {% for hidden_field in form.hidden_fields %}
-                        {{ hidden_field }}
-                    {% endfor %}
-
-                    <div class="form__group">
-                        {% comment %}
-                            If a preview is required for this application,
-                            don't allow submitting yet (via name="preview").
-                            At the moment, this functionality only works if a user is logged in.
-                        {% endcomment %}
-                        {% if require_preview and request.user.is_authenticated %}
-                            <button
-                                class="button button--submit button--primary"
-                                type="submit"
-                                name="preview"
-                                value="Preview and Submit"
-                                disabled
-                            >
-                                {% trans "Preview and submit" %}
-                            </button>
-                        {% else %}
-                            <button
-                                class="button button--submit button--primary"
-                                type="submit"
-                                disabled
-                            >
-                                {% trans "Submit for review" %}
-                            </button>
-                        {% endif %}
-
-                        <button
-                            class="button button--submit button--white"
-                            type="submit"
-                            name="draft"
-                            value="Save draft"
-                            formnovalidate
-                        >
-                            {% trans "Save draft" %}
-                        </button>
-
-                        {% if not require_preview and request.user.is_authenticated %}
-                            <button
-                                class="button button--submit button--white"
-                                type="submit"
-                                name="preview"
-                                value="Preview"
-                            >
-                                {% trans "Preview" %}
-                            </button>
-                        {% endif %}
-                    </div>
-                </form>
-                <p class="wrapper--error message-no-js js-hidden">{% trans "You must have Javascript enabled to use this form." %}</p>
-            {% endif %}
-        </div>
+            </form>
+            <p class="hidden mt-4 alert alert-error noscript:block">
+                {% trans "You must have Javascript enabled to use this form." %}
+            </p>
+        {% endif %}
     </div>
 {% endblock %}
 
@@ -140,5 +139,6 @@
     {% if not show_all_group_fields %}
         <script src="{% static 'js/form-group-toggle.js' %}"></script>
     {% endif %}
-    <script src="{% static 'js/multi-input-fields.js' %}"></script>
+    <script src="{% static 'js/multi-input-fields-alpine.js' %}"></script>
+
 {% endblock %}

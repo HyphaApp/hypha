@@ -3,30 +3,34 @@
 
 {% block title %}{% trans "Determination for" %} {{ determination.submission.title }}{% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ determination.submission.get_absolute_url }}"
+            back_link_text="{% trans 'View application' %}"
+            title="{% trans 'Determination' %} {% if determination.is_draft %}[{% trans 'DRAFT' %}] {% endif %}"
+            subtitle="{% trans 'For' %} <a class='link link-hover' href='{% url 'funds:submissions:detail' determination.submission.id %}'>{{ determination.submission.title_text_display }}</a>"
+        />
+    </c-hero>
+{% endblock %}
+
+
 {% block content %}
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ determination.submission.get_absolute_url }}">
-                {% trans "View application" %}
-            </a>
-        {% endslot %}
-
-        {% slot header %} {% trans "Determination" %} {% if determination.is_draft %}[{% trans "DRAFT" %}] {% endif %}{% endslot %}
-        {% slot sub_heading %}
-            {% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" determination.submission.id %}">{{ determination.submission.title_text_display }}</a>
-        {% endslot %}
-
-    {% endadminbar %}
-
-    <div class="flex justify-between pt-2 mt-2 mb-2 border-b max-w-[50em]">
-        <h5>
-            {% trans "Determination" %}: {{ determination.get_outcome_display }}
-        </h5>
+    <div class="flex justify-between pt-2 pb-2 mt-2 border-b max-w-[50em]">
+        <h2>
+            {% trans "Determination" %}: <span class="badge badge-info badge-outline">{{ determination.get_outcome_display }}</span>
+        </h2>
         {% if request.user.is_apply_staff %}
-            <a class="text-blue-500 hover:underline" href="{% url 'apply:submissions:determinations:edit' submission_pk=determination.submission.id pk=determination.id %}">
-                <span class="whitespace-nowrap">
-                    {% trans "Edit" %}{% heroicon_mini "pencil-square" size=18 class="inline align-text-bottom ms-1" aria_hidden=true %}
-                </span>
+            <a
+                class="btn btn-primary btn-sm {% if determination.is_draft %}btn-primary{% else %}btn-ghost{% endif %}"
+                href="{% url 'apply:submissions:determinations:edit' submission_pk=determination.submission.id pk=determination.id %}"
+            >
+                {% heroicon_mini "pencil-square" size=18 aria_hidden=true %}
+                {% if determination.is_draft %}
+                    {% trans "Continue editing" %}
+                {% else %}
+                    {% trans "Edit" %}
+                {% endif %}
             </a>
         {% endif %}
     </div>
@@ -36,10 +40,10 @@
         {{ determination.message|nh3 }}
         {% for group in determination.detailed_data.values %}
             {% if group.title %}
-                <h4>{{ group.title|nh3 }}</h4>
+                <h2>{{ group.title|nh3 }}</h2>
             {% endif %}
             {% for question, answer in group.questions %}
-                <h5>{{ question }}</h5>
+                <h3>{{ question }}</h3>
                 {% if answer %}{% if answer == True %}{{ answer|yesno:"Agree,Disagree" }}{% else %}{{ answer|nh3 }}{% endif %}{% else %}-{% endif %}
             {% endfor %}
         {% endfor %}

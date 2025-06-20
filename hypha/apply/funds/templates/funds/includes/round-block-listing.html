@@ -1,44 +1,102 @@
-{% load i18n %}
+{% load i18n heroicons %}
 
-<ul class="round-block">
-    {% for round in rounds %}
-        {% if forloop.counter0 < 5 %}
-            <li class="round-block__item">
-                <a href="{{round.get_absolute_url}}"
-                   class="round-block__title hover:text-dark-blue"
-                >{{ round }}</a>
-                <p class="round-block__fund">
-                    {{ round.fund|default_if_none:"-" }} </p>
-                <p class="round-block__date">
-                    {% if round.end_date %}
-                        {{ display_text }} {{ round.end_date|date:"SHORT_DATE_FORMAT" }}
-                    {% else %}
-                        {% trans "Open" %}
-                    {% endif %}
-                </p>
-                <p class="round-block__determination">
-                    {% if round.progress is None %}
-                        -
-                    {% else %}
-                        {{ round.progress }}% {% trans 'Determined' %} ({{ round.closed_submissions }}/{{ round.total_submissions }})
-                    {% endif %}
-                </p>
-                <a class="round-block__view" href="{{round.get_absolute_url}}">{% trans 'View' %}
-                </a>
-                {% if can_export %}
-                    <a class="round-block__view" href="{% url 'apply:submissions:list' %}{% if round.fund %}?round={{round.pk}}{% else %}?fund={{round.pk}}{% endif %}&format=csv" onclick="return confirm('{% blocktrans %}Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.{% endblocktrans %}');">{% trans 'Export' %}</a>
+<div class="card">
+    <div class="p-0 card-body">
+        <ul class="divide-y divide-base-200">
+            {% for round in rounds %}
+                {% if forloop.counter0 < 5 %}
+                    <li class="transition-all duration-200 group hover:bg-base-200/50">
+                        <div class="flex flex-col gap-4 p-4 sm:grid sm:grid-cols-12 sm:gap-4 sm:items-center">
+                            <!-- Title and Fund -->
+                            <div class="sm:col-span-5 lg:col-span-6">
+                                <div class="flex flex-col gap-1">
+                                    <a href="{{ round.get_absolute_url }}"
+                                       class="text-lg font-semibold transition-colors duration-200 text-base-content line-clamp-2 sm:line-clamp-1 hover:text-primary">
+                                        {{ round }}
+                                    </a>
+                                    <div class="flex flex-wrap gap-2 items-center">
+                                        <span class="badge badge-info badge-outline badge-sm">
+                                            {% if round.end_date %}
+                                                {{ display_text }} {{ round.end_date|date:"SHORT_DATE_FORMAT" }}
+                                            {% else %}
+                                                {% trans "Open" %}
+                                            {% endif %}
+                                        </span>
+                                        {% if round.fund %}
+                                            <span class="text-sm text-base-content/70">{{ round.fund }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Progress -->
+                            <div class="sm:col-span-4 lg:col-span-3">
+                                {% if round.progress is not None %}
+                                    <div class="flex gap-3 items-center">
+                                        <div
+                                            class="radial-progress text-info"
+                                            style="--value:{{ round.progress }}; --size:2.5rem; --thickness:.2rem;"
+                                            class="sm:[--size:3rem] sm:[--thickness:.25rem]"
+                                            aria-valuenow="{{ round.progress }}"
+                                            role="progressbar"
+                                        >
+                                            <span class="text-xs font-semibold">{{ round.progress }}%</span>
+                                        </div>
+                                        <div class="text-sm text-base-content/70">
+                                            <span class="sm:block">{% trans 'Determined' %}</span>
+                                            <span class="font-medium">{{ round.closed_submissions }}/{{ round.total_submissions }}</span>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="hidden sm:block text-base-content/50">—</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex gap-2 sm:col-span-3 sm:justify-end">
+                                <a class="flex-1 sm:flex-initial btn btn-primary btn-sm"
+                                   href="{{ round.get_absolute_url }}"
+                                   aria-label="{% trans 'View details for' %} {{ round }}"
+                                >
+                                    {% heroicon_outline "eye" aria_hidden="true" class="w-4 h-4 sm:hidden lg:block" stroke_width="1.5" %}
+                                    {% trans 'View' %}
+                                </a>
+                                {% if can_export %}
+                                    <a class="flex-1 sm:flex-initial btn btn-outline btn-secondary btn-sm"
+                                       href="{% url 'apply:submissions:list' %}{% if round.fund %}?round={{ round.pk }}{% else %}?fund={{ round.pk }}{% endif %}&format=csv"
+                                       onclick="return confirm('{% blocktrans %}Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.{% endblocktrans %}');">
+                                        {% heroicon_mini "arrow-down-tray" aria_hidden="true" class="w-4 h-4 sm:hidden lg:block" stroke_width="1.5" %}
+                                        {% trans 'Export' %}
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="bg-base-200/30">
+                        <div class="p-2 text-center">
+                            <a href="{% url 'apply:rounds:list' %}{{ query }}"
+                               class="btn btn-ghost btn-sm">
+                                {% trans 'Show all' %}
+                                {% heroicon_mini "arrow-right" class="w-4 h-4" aria_hidden="true" stroke_width="1.5" %}
+                            </a>
+                        </div>
+                    </li>
                 {% endif %}
-            </li>
-        {% else %}
-            <li class="round-block__item round-block__item--more">
-                <a href="{% url 'apply:rounds:list' %}{{ query }}">{% trans 'Show all' %}</a>
-            </li>
-        {% endif %}
-    {% empty %}
-        {% block empty_round %}
-            <p class="round-block__not-found">
-                {% trans "There are no" %} {% if round.end_date %} {{ display_text|lower }} {% else %} {{ type|lower }} {% endif %} {% trans "rounds" %}
-            </p>
-        {% endblock %}
-    {% endfor %}
-</ul>
+            {% empty %}
+                {% block empty_round %}
+                    <li class="p-8 text-center">
+                        <div class="flex flex-col gap-2 items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-base-content/30">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                            </svg>
+                            <p class="text-base-content/70">
+                                {% trans "There are no" %} {% if round.end_date %} {{ display_text|lower }} {% else %} {{ type|lower }} {% endif %} {% trans "rounds" %}
+                            </p>
+                        </div>
+                    </li>
+                {% endblock %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>
