@@ -40,7 +40,7 @@
             </div>
         </div>
         {% if not has_submitted_review %}
-            <form id="review-form-edit" class="flex-1 max-w-3xl form form--scoreable" action="" method="post">
+            <form id="review-form-edit" class="flex-1 max-w-3xl form form--scoreable" action="" method="post" novalidate>
                 {% csrf_token %}
                 {% for hidden in form.hidden_fields %}
                     {{ hidden }}
