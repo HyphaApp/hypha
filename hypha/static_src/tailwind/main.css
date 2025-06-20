@@ -6,6 +6,7 @@
 @import "./components/django-file-field.css" layer(components);
 @import "./components/tinymce.css" layer(components);
 @import "./components/table.css" layer(components);
+@import "./components/card.css" layer(components);
 
 @import "./utilities/typography.css" layer(utilities);
 @import "./components/link.css" layer(utilities);
@@ -121,10 +122,6 @@
 
 @utility container-constrained {
   @apply container mx-auto px-4 sm:px-6 lg:px-8;
-}
-
-@utility card-actions {
-  @apply gap-3;
 }
 
 .separator-dot:not(:last-child)::after {

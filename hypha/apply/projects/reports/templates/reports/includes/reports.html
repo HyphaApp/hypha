@@ -4,15 +4,16 @@
 {% can "update_project_reports" object as can_update_project_reports %}
 {% can "update_report_config" object as can_update_report_config %}
 
-<section class="overflow-hidden border rounded-box border-base-300 shadow-xs">
-    <header class="docs-block__header">
+<section class="card card-border border-base-300">
+    <header class="card-header">
         <h2 class="card-title">
             {% trans "Reports" %}
         </h2>
 
-        <p class="text-fg-muted">
-            {{ object.report_config.get_frequency_display }}
-
+        <div class="items-center card-actions">
+            <p class="text-sm text-fg-muted">
+                {{ object.report_config.get_frequency_display }}
+            </p>
             {% if can_update_report_config %}
                 &middot;
                 <a
@@ -28,10 +29,10 @@
                     {% endif %}
                 </a>
             {% endif %}
-        </p>
+        </div>
     </header>
 
-    <div class="p-2">
+    <div class="p-2 card-body">
         {% if can_update_project_reports %}
             <ul class="px-0 list">
                 {% for report in object.report_config.past_due_reports %}
@@ -47,18 +48,18 @@
 
 
         {% if object.reports.done %}
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto" x-data="{show_all: false}">
                 <table class="table js-past-reports-table">
                     <thead>
                         <tr>
-                            <th class="data-block__table-date">{% trans "Period End" %}</th>
-                            <th class="data-block__table-date">{% trans "Submitted" %}</th>
-                            <th class="data-block__table-update"></th>
+                            <th>{% trans "Period End" %}</th>
+                            <th>{% trans "Submitted" %}</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for report in object.reports.done %}
-                            <tr {% if forloop.counter > 8 %}class="hidden"{% endif %}>
+                            <tr {% if forloop.counter > 1 %}x-show="show_all"{% endif %}>
                                 <td>{{ report.end_date }}</td>
                                 <td>
                                     {{ report.submitted_date|default:"Skipped" }}
@@ -68,10 +69,10 @@
                                         {% can "view_report" report as can_view_report %}
                                         {% if can_view_report %}
                                             <a
-                                                class="btn btn-sm btn-outline btn-primary"
+                                                class="btn btn-sm"
                                                 href="{% url "apply:projects:reports:detail" pk=report.pk %}"
                                             >
-                                                {% heroicon_micro "eye" class="inline w-4 h-4" aria_hidden=true %}
+                                                {% heroicon_micro "eye" class="inline w-4 h-4 opacity-80" aria_hidden=true %}
                                                 {% trans "View" %}
                                             </a>
                                         {% endif %}
@@ -94,7 +95,7 @@
                                         {% if can_update_project_reports %}
                                             <button
                                                 type="button"
-                                                class="btn btn-link btn-sm"
+                                                class="btn btn-sm"
                                                 hx-post="{% url "apply:projects:reports:skip" pk=report.pk %}"
                                             >
                                                 {% trans "Unskip" %}
@@ -106,14 +107,20 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                {% if object.reports.done.count > 1 %}
+                    <div class="mt-2 text-center">
+                        <button
+                            class="btn btn-ghost btn-sm" type="button"
+                            @click.prevent="show_all = !show_all"
+                        >
+                            <span x-text="show_all ? '{% trans 'Show less' %}' : '{% trans 'Show more' %}'">{% trans "Show more" %}</span>
+                            <span class="transition-transform" :class="show_all ? 'rotate-180' : ''">{% heroicon_mini "chevron-down" %}</span>
+                        </button>
+                    </div>
+                {% endif %}
             </div>
-            {% if object.reports.done.count > 4 %}
-                <p class="text-center">
-                    <a class="font-semibold link js-data-block-pagination" href="#">{% trans "Show more" %}</a>
-                </p>
-            {% endif %}
         {% else %}
-            <p>{% trans "No reports submitted yet." %}</p>
+            <p class="p-4 text-fg-muted">{% trans "No reports submitted yet." %}</p>
         {% endif %}
     </div>
 </section>

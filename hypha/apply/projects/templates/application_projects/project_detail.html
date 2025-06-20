@@ -9,7 +9,7 @@
     <c-hero padding="pt-4">
         {% include "application_projects/includes/project_header.html" %}
 
-        <div role="tablist" class="tabs tabs-lg tabs-lift text-base-content">
+        <div role="tablist" class="font-medium tabs tabs-lg tabs-lift text-base-content">
             <a
                 class="tab [--color-base-content:var(--color-neutral-content)]"
                 href="{{ project.submission.get_absolute_url }}"
@@ -196,6 +196,5 @@
 
 
 {% block extra_js %}
-    <script src="{% static 'js/past-reports-pagination.js' %}"></script>
     <script src="{% static 'js/report-calculator.js' %}"></script>
 {% endblock %}

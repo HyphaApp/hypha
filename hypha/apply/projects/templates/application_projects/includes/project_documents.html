@@ -1,83 +1,96 @@
 {% load i18n approval_tools project_tags heroicons %}
 {% allow_collapsible_header object header_type='project_documents' as collapsible_header %}
 
-<section class="border rounded-box border-base-300" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
-    <div class="docs-block__header rounded-t-box" id="project-documents-section" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" role="button" aria-label="Toggle Project documents visibility" aria-controls="project-documents-elements" {% endif %}>
-        <div class="flex gap-2 justify-between items-center w-full">
-            <h2 class="font-semibold text-h3">
-                {% trans "Project documents" %}
-            </h2>
+<section class="card card-border" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
+    <header
+        class="cursor-pointer card-header"
+        id="project-documents-section"
+        {% if collapsible_header %}
+            x-on:click="collapsed = ! collapsed"
+            role="button"
+            aria-label="Toggle Project documents visibility"
+            aria-controls="project-documents-elements"
+            x-bind:class="collapsed ? 'border-b-0': ''"
+        {% endif %}
+    >
+        <h2 class="font-semibold text-h3">
+            {% trans "Project documents" %}
+        </h2>
 
-            <div class="flex flex-wrap gap-2">
-                {% user_can_send_for_approval object user as can_send_to_approve %}
-                {% if can_send_to_approve %}
-                    <a class="btn btn-primary"
-                       href="{% url 'apply:projects:submit_project_for_approval' object.submission.id %}"
-                       hx-get="{% url 'apply:projects:submit_project_for_approval' object.submission.id %}"
-                       hx-target="#htmx-modal"
-                    >
-                        {% if object.paf_approvals.exists %}
-                            {% trans "Resubmit for approval" %}
-                        {% else %}
-                            {% trans "Submit for approval" %}
-                        {% endif %}
-                    </a>
-                {% endif %}
-
-                {% user_can_update_paf_approvers object user request as can_update_paf_approvers %}
-                {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
-                {% if can_update_paf_approvers %}
-                    {% if user == project.lead %}
-                        <a
-                            class="btn btn-link"
-                            href="{% url 'apply:projects:update_pafapprovers' object.submission.id %}"
-                            hx-get="{% url 'apply:projects:update_pafapprovers' object.submission.id %}"
-                            hx-target="#htmx-modal"
-                        >
-                            {% trans "Update approvers" %}
-                        </a>
+        <div class="card-actions">
+            {% user_can_send_for_approval object user as can_send_to_approve %}
+            {% if can_send_to_approve %}
+                <a class="btn btn-primary btn-sm"
+                   href="{% url 'apply:projects:submit_project_for_approval' object.submission.id %}"
+                   hx-get="{% url 'apply:projects:submit_project_for_approval' object.submission.id %}"
+                   hx-target="#htmx-modal"
+                >
+                    {% if object.paf_approvals.exists %}
+                        {% trans "Resubmit for approval" %}
                     {% else %}
-                        <a
-                            class="btn btn-secondary btn-outline"
-                            href="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
-                            hx-get="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
-                            hx-target="#htmx-modal"
-                        >
-                            {% trans "Change approver" %}
-                        </a>
+                        {% trans "Submit for approval" %}
                     {% endif %}
-                {% endif %}
+                </a>
+            {% endif %}
 
-                {% if can_assign_paf_approvers %}
-                    <a class="btn btn-primary"
-                       href="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
-                       hx-get="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
-                       hx-target="#htmx-modal"
+            {% user_can_update_paf_approvers object user request as can_update_paf_approvers %}
+            {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
+            {% if can_update_paf_approvers %}
+                {% if user == project.lead %}
+                    <a
+                        class="btn btn-link btn-sm"
+                        href="{% url 'apply:projects:update_pafapprovers' object.submission.id %}"
+                        hx-get="{% url 'apply:projects:update_pafapprovers' object.submission.id %}"
+                        hx-target="#htmx-modal"
                     >
-                        {% trans "Assign approver" %}
+                        {% trans "Update approvers" %}
+                    </a>
+                {% else %}
+                    <a
+                        class="btn btn-secondary btn-sm btn-outline"
+                        href="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
+                        hx-get="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
+                        hx-target="#htmx-modal"
+                    >
+                        {% trans "Change approver" %}
                     </a>
                 {% endif %}
+            {% endif %}
 
-                {% user_can_update_paf_status object user request=request as can_update_paf_status %}
-                {% if object.can_make_approval and can_update_paf_status %}
-                    <a class="btn btn-primary ms-2"
-                       href="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
-                       hx-get="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
-                       hx-target="#htmx-modal"
-                    >
-                        {% trans "Update Status" %}
-                    </a>
-                {% endif %}
+            {% if can_assign_paf_approvers %}
+                <a class="btn btn-primary btn-sm"
+                   href="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
+                   hx-get="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
+                   hx-target="#htmx-modal"
+                >
+                    {% trans "Assign approver" %}
+                </a>
+            {% endif %}
 
-                {% if collapsible_header %}
-                    <button class="align-middle transition-transform transform ms-1" x-bind:class="collapsed ? '': 'rotate-180' ">
+            {% user_can_update_paf_status object user request=request as can_update_paf_status %}
+            {% if object.can_make_approval and can_update_paf_status %}
+                <a class="btn btn-primary ms-2"
+                   href="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
+                   hx-get="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
+                   hx-target="#htmx-modal"
+                >
+                    {% trans "Update Status" %}
+                </a>
+            {% endif %}
+
+            {% if collapsible_header %}
+                <button
+                    class="transition-transform transform btn btn-ghost btn-square btn-sm"
+                >
+                    <span x-bind:class="collapsed ? '': 'rotate-180'">
                         {% heroicon_outline 'chevron-down' size=20 stroke_width=2 aria_hidden=true %}
-                        <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">{% trans "expand" %}</span>
-                    </button>
-                {% endif %}
-            </div>
+                    </span>
+                    <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">{% trans "expand" %}</span>
+                </button>
+            {% endif %}
+
         </div>
-    </div>
+    </header>
 
     <div
         class="list"

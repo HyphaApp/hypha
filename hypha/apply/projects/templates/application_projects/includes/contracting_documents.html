@@ -1,9 +1,9 @@
 {% load i18n contract_tools project_tags heroicons %}
 {% allow_collapsible_header object header_type='contracting_documents' as collapsible_header %}
 
-<section class="overflow-hidden border rounded-box border-base-300" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
+<section class="overflow-hidden card card-border" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
     <header
-        class="flex gap-2 justify-between items-center w-full docs-block__header"
+        class="cursor-pointer card-header"
         id="contract-documents-section"
         {% if collapsible_header %}
             x-on:click="collapsed = ! collapsed"
@@ -15,25 +15,25 @@
 
         <h2 class="font-semibold text-h3 grow">{% trans "Contracting documents" %}</h2>
 
-        <div class="flex gap-2">
+        <div class="card-actions">
             {% user_can_upload_contract object request.user as can_upload_contract %}
             {% user_can_submit_contract object user contract as can_submit_contract %}
             {% required_remaining_contracting_doc_categories remaining_contract_document_categories as required_remaining_contract_document_categories %}
 
             {% if can_submit_contract %}
-                <a class="btn btn-primary{% if required_remaining_contract_document_categories or not contract.signed_by_applicant %} btn-disabled{% endif %}"
+                <a class="btn btn-primary btn-sm {% if required_remaining_contract_document_categories or not contract.signed_by_applicant %} btn-disabled{% endif %}"
                    id="submit_contract_document"
                    hx-get="{% url 'apply:projects:contract_documents_submit' object.submission.id %}"
                    href="{% url 'apply:projects:contract_documents_submit' object.submission.id %}"
                    hx-target="#htmx-modal"
                 >
-                    {% trans "Submit contract documents" %}
+                    {% trans "Submit documents" %}
                 </a>
             {% endif %}
 
             {% user_can_approve_contract request.user object as can_approve_contract %}
             {% if contract_to_approve and can_approve_contract %}
-                <a class="btn btn-primary"
+                <a class="btn btn-primary btn-sm"
                    hx-get="{% url 'apply:projects:contract_approve' object.submission.id %}"
                    href="{% url 'apply:projects:contract_approve' object.submission.id %}"
                    hx-target="#htmx-modal"
@@ -45,10 +45,11 @@
 
             {% if collapsible_header %}
                 <button
-                    class="transition-transform transform"
-                    x-bind:class="collapsed ? '': 'rotate-180'"
+                    class="transition-transform transform btn btn-ghost btn-square btn-sm"
                 >
-                    {% heroicon_outline 'chevron-down' size=20 stroke_width=2 aria_hidden=true %}
+                    <span x-bind:class="collapsed ? '': 'rotate-180'">
+                        {% heroicon_outline 'chevron-down' size=20 stroke_width=2 aria_hidden=true %}
+                    </span>
                     <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">{% trans "expand" %}</span>
                 </button>
             {% endif %}

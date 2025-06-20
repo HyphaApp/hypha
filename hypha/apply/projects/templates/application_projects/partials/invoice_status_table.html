@@ -3,26 +3,26 @@
 {% for invoice in invoices %}
     <tr>
         {% display_invoice_status_for_user user invoice as invoice_status %}
-        <td>{{ invoice.requested_at.date }}</td>
-        <td>
+        <td class="whitespace-nowrap">{{ invoice.requested_at.date }}</td>
+        <td class="whitespace-nowrap">
             {% if invoice.invoice_date %}
                 {{ invoice.invoice_date }}
             {% else %}
                 {{ invoice.requested_at.date }}
             {% endif %}
         </td>
-        <td>{{ invoice.invoice_number }}</td>
+        <td class="whitespace-nowrap">{{ invoice.invoice_number }}</td>
         <td>{{ invoice_status }}</td>
         <td class="flex flex-wrap gap-2 justify-end py-4 xl:flex-nowrap">
-            <a class="btn btn-sm btn-outline btn-primary" href="{{ invoice.get_absolute_url }}" >
-                {% heroicon_micro "eye" aria_hidden=true class="me-1" %}
+            <a class="btn btn-sm" href="{{ invoice.get_absolute_url }}" >
+                {% heroicon_micro "eye" aria_hidden=true class="opacity-80" %}
                 {% trans "View" %}
             </a>
             {% if not rejected %}
                 {% can_edit invoice user as user_can_edit_request %}
                 {% if user_can_edit_request %}
                     <a
-                        class="btn btn-sm btn-outline btn-secondary btn-square"
+                        class="btn btn-sm btn-soft btn-secondary btn-square"
                         href="{% url 'apply:projects:invoice-edit' pk=invoice.project.submission.pk invoice_pk=invoice.pk %}"
                     >
                         {% heroicon_micro "pencil-square" aria_hidden=true %}
@@ -31,7 +31,7 @@
                 {% endif %}
 
                 {% can_delete invoice user as user_can_delete_request %}
-                {% if user.is_applicant and user_can_delete_request %}
+                {% if not user.is_applicant and not user_can_delete_request %}
                     <a
                         class="btn btn-sm btn-outline btn-error btn-square"
                         href="{% url 'apply:projects:invoice-delete' pk=invoice.project.submission.pk invoice_pk=invoice.pk %}"
