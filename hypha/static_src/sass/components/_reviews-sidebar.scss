@@ -39,16 +39,12 @@
       }
     }
 
-    &.is-hidden {
-      display: none;
-    }
-
     &.no-response {
       color: variables.$color--black-20;
     }
 
     .yes {
-      color: variables.$color--green;
+      color: var(--color-success);
     }
 
     .maybe {
@@ -56,7 +52,7 @@
     }
 
     .no {
-      color: variables.$color--tomato;
+      color: var(--color-error);
     }
   }
 
@@ -78,11 +74,11 @@
     position: relative;
 
     &.agree {
-      color: variables.$color--green;
+      color: var(--color-success);
     }
 
     &.disagree {
-      color: variables.$color--tomato;
+      color: var(--color-error);
     }
   }
 }

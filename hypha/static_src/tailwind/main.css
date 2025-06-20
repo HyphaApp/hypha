@@ -19,10 +19,7 @@
 @theme {
   --color-light-blue: #0d7db0;
   --color-dark-blue: #0c72a0;
-  --color-sky-blue: #e7f2f6;
-  --color-tomato: #f05e54;
   --color-mid-grey: #cfcfcf;
-  --color-arsenic: #404041;
   --color-fg-default: var(--color-base-content);
   --color-fg-muted: color-mix(in oklab, currentColor 60%, transparent);
 }

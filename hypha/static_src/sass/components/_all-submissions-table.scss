@@ -78,7 +78,7 @@
           font-size: 13px;
           font-weight: var(--font-weight-bold);
           text-align: center;
-          background-color: variables.$color--sky-blue;
+          background-color: var(--color-base-200);
 
           @include mixins.media-query(lg) {
             width: 100%;

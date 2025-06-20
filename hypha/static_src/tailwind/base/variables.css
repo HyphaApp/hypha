@@ -1,38 +1,18 @@
 :root {
-  --color-bg-default: #fff;
-  --color-header-bg: #fff;
-
   /* Default */
   --color-white: #fff;
   --color-black: #1f2328;
   --color-light-mid-grey: #e8e8e8;
   --color-mid-grey: #cfcfcf;
-  --color-mid-dark-grey: #919191;
 
   /* Brand */
-  --color-lightest-blue: #24aae1;
   --color-light-blue: #1d79a8;
   --color-light-blue-90: rgb(29 121 168 / 10%);
-  --color-lighter-blue: #7ab8d4;
   --color-dark-blue: #0c72a0;
-  --color-darkest-blue: #3d6bdb;
   --color-mustard: #e6ab32;
   --color-purple: #8c0bbf;
-  --color-dark-pink: #511034;
-  --color-pink: #d02a85;
   --color-light-pink: #ffe1df;
-  --color-cream: #f5f7e7;
-  --color-mint: #40c2ad;
-  --color-grass: #7dc588;
-  --color-sky-blue: #e7f2f6;
-  --color-green: #7dc558;
 
   /* Transparent */
   --color-black-60: rgb(0 0 0 / 60%);
-
-  /* Assignment */
-  --color-default: var(--color-black);
-
-  /* Transition */
-  --transition: 0.25s ease-out;
 }
