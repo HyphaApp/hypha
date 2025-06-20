@@ -12,7 +12,7 @@
             <span class="flex gap-4">
                 {% if user.can_access_dashboard %}
                     <a href="{% url 'dashboard:dashboard' %}" class="btn btn-primary">
-                        {% heroicon_mini "squares-2x2" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
+                        {% heroicon_mini "squares-2x2" size=20 class="opacity-80" aria_hidden=true %}
                         {% trans "Go to my dashboard" %}
                     </a>
                 {% else %}
@@ -31,7 +31,7 @@
                 {% endif %}
                 {% if perms.wagtailadmin.access_admin %}
                     <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="btn btn-primary">
-                        {% heroicon_solid "cog-6-tooth" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
+                        {% heroicon_solid "cog-6-tooth" size=20 class="opacity-80" aria_hidden=true %}
                         {% trans "Administration" %}
                     </a>
                 {% endif %}
