@@ -177,6 +177,15 @@ class ProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
         super().__init__(*args, **kwargs)
+
+        # Set attrs for input max lengths (allows alpine to display char count)
+        self.fields["full_name"].widget.attrs["x-model.fill"] = "inputblock"
+        self.fields["slack"].widget.attrs["x-model.fill"] = "inputblock"
+
+        if self.request:
+            self.fields["full_name"].initial = self.request.user.full_name
+            self.fields["slack"].initial = self.request.user.slack
+
         if not self.instance.is_org_faculty:
             del self.fields["slack"]
 

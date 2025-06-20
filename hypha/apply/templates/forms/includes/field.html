@@ -17,9 +17,9 @@
          {% if widget_type == 'text_input' and field.field.max_length %}
              data-maxlength="{{ field.field.max_length }}"
              x-data="{
-                     titleblock: '',
+                     inputblock: '',
                      maxlength: $el.dataset.maxlength,
-                     get curlength() { return this.titleblock.length }
+                     get curlength() { return this.inputblock.length }
                      }"
          {% endif %}
     >
