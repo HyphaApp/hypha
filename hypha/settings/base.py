@@ -250,8 +250,13 @@ TEMPLATES = [
             os.path.join(PROJECT_DIR, "templates"),
             os.path.join(PROJECT_DIR, "apply", "templates"),
         ],
-        "APP_DIRS": True,
+        # "APP_DIRS": True,
         "OPTIONS": {
+            "loaders": [
+                "django_cotton.cotton_loader.Loader",
+                "django.template.loaders.filesystem.Loader",
+                "django.template.loaders.app_directories.Loader",
+            ],
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -265,6 +270,7 @@ TEMPLATES = [
                 "hypha.core.context_processors.global_vars",
             ],
             "builtins": [
+                "django_cotton.templatetags.cotton",
                 "django_web_components.templatetags.components",
             ],
         },

@@ -1,8 +1,13 @@
 {% extends 'funds/includes/round-block-listing.html' %}
-{% load i18n %}
+{% load i18n heroicons %}
 
 {% block empty_round %}
-    <p class="round-block__not-found">
-        {% blocktrans with type=type|lower %}You have no {{ type }} rounds or labs assigned to you.{% endblocktrans %}
-    </p>
+    <div class="p-8 text-center">
+        <div class="flex flex-col gap-2 items-center">
+            {% heroicon_outline "archive-box-x-mark" class="w-12 h-12 text-base-content/30" stroke_width="1.5" aria_hidden="true" %}
+            <p class="text-base-content/70">
+                {% blocktrans with type=type|lower %}You have no {{ type }} rounds or labs assigned to you.{% endblocktrans %}
+            </p>
+        </div>
+    </div>
 {% endblock %}

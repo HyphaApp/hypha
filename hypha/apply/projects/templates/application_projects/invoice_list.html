@@ -5,14 +5,17 @@
 
 {% block title %}{% trans "Invoices" %}{% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'All Invoices' %} ({{ table.rows|length }})"
+            subtitle="{% trans 'View, search and filter all project invoices' %}"
+        />
+    </c-hero>
+{% endblock %}
+
 {% block content %}
-    {% adminbar %}
-        {% slot header %}{% trans "All Invoices" %} ({{ table.rows|length }}){% endslot %}
-        {% slot sub_heading %}{% trans "View, search and filter all project invoices" %}{% endslot %}
-    {% endadminbar %}
-
-    <div class="mt-4 wrapper wrapper--large">
-
+    <div class="my-4">
         {% if table %}
             {% trans "invoices" as search_placeholder %}
             {% include "funds/includes/table_filter_and_search.html" with search_term=search_term use_search=True invoice_batch_actions=True search_placeholder=search_placeholder %}

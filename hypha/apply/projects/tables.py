@@ -1,6 +1,9 @@
 import json
 
 import django_tables2 as tables
+from django.conf import settings
+from django.urls import reverse
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -23,14 +26,14 @@ def render_invoice_actions(table, record):
 class BaseInvoiceTable(tables.Table):
     invoice_number = tables.LinkColumn(
         "funds:projects:invoice-detail",
-        verbose_name=_("Invoice Number"),
+        verbose_name=_("Invoice #"),
         args=[tables.utils.A("project__submission__pk"), tables.utils.A("pk")],
         attrs={
             "td": {
                 "class": "js-title",  # using title as class because of batch-actions.js
             },
             "a": {
-                "class": "truncate inline-block w-[calc(100%-2rem)] after:content-[''] after:block",
+                "class": "link link-hover text-h4 font-semibold break-words line-clamp-2 max-w-md",
             },
         },
     )
@@ -39,22 +42,57 @@ class BaseInvoiceTable(tables.Table):
     )
     requested_at = tables.DateColumn(verbose_name=_("Submitted"))
     invoice_date = tables.DateColumn(verbose_name=_("Invoice date"))
+    project = tables.Column(
+        verbose_name=_("Project Title"), attrs={"td": {"class": "max-w-md"}}
+    )
+
+    class Meta:
+        row_attrs = {
+            "onclick": lambda record: f"window.location.href='{reverse('funds:projects:invoice-detail', args=[record.project.submission.pk, record.pk])}'",
+            "class": "table-row-link",
+            "role": "button",
+            "tabindex": "0",  # Accessibility
+        }
+
+    def render_requested_at(self, record):
+        return format_html(
+            "<relative-time datetime='{}' prefix=''>{}</relative-time>",
+            record.requested_at.isoformat(),
+            record.requested_at.strftime(settings.SHORT_DATETIME_FORMAT),
+        )
+
+    def render_status(self, record):
+        status = record.status
+        status_display = record.get_status_display()
+
+        badge_class = {
+            "changes_requested_staff": "badge-warning",
+            "payment_failed": "badge-error",
+            "paid": "badge-success",
+            "declined": "badge-error",
+        }
+
+        return format_html(
+            "<span class='badge badge-soft whitespace-nowrap {}' data-status='{}'>{}</span>",
+            badge_class.get(status, "badge-info"),
+            status,
+            status_display,
+        )
 
 
 class InvoiceDashboardTable(BaseInvoiceTable):
-    project = tables.Column(verbose_name=_("Project Name"))
-
-    class Meta:
+    class Meta(BaseInvoiceTable.Meta):
         fields = [
-            "requested_at",
             "invoice_number",
+            "requested_at",
             "status",
             "project",
         ]
         model = Invoice
         order_by = ["-requested_at"]
         template_name = "application_projects/tables/table.html"
-        attrs = {"class": "invoices-table"}
+        attrs = {"class": "table invoices-table invoivceDashboardTable"}
+        orderable = False
 
     def render_project(self, record):
         return get_project_title(record.project)
@@ -65,27 +103,27 @@ class FinanceInvoiceTable(BaseInvoiceTable):
     selected = LabeledCheckboxColumn(
         accessor=A("pk"),
         attrs={
-            "input": {"class": "js-batch-select"},
-            "th__input": {"class": "js-batch-select-all"},
+            "input": {"class": "js-batch-select checkbox"},
+            "th__input": {"class": "js-batch-select-all checkbox"},
         },
     )
 
-    class Meta:
+    class Meta(BaseInvoiceTable.Meta):
         fields = [
             "selected",
-            "invoice_date",
-            "requested_at",
-            "vendor_name",
             "invoice_number",
-            "invoice_amount",
+            "invoice_date",
+            "vendor_name",
             "status",
+            "requested_at",
+            "invoice_amount",
         ]
         model = Invoice
         orderable = True
         sequence = fields
         order_by = ["-requested_at", "invoice_date"]
         template_name = "application_projects/tables/table.html"
-        attrs = {"class": "invoices-table"}
+        attrs = {"class": "table border-x border-b mb-2 invoices-table"}
         row_attrs = {
             "data-record-id": lambda record: record.id,
         }
@@ -102,18 +140,18 @@ class AdminInvoiceListTable(BaseInvoiceTable):
             "th": {
                 "class": "w-8",
             },
-            "input": {"class": "js-batch-select"},
-            "th__input": {"class": "js-batch-select-all"},
+            "input": {"class": "js-batch-select checkbox"},
+            "th__input": {"class": "js-batch-select-all checkbox"},
         },
     )
 
-    class Meta:
+    class Meta(BaseInvoiceTable.Meta):
         fields = [
             "selected",
             "invoice_number",
             "invoice_date",
-            "requested_at",
             "status",
+            "requested_at",
             "project",
         ]
         model = Invoice
@@ -121,7 +159,7 @@ class AdminInvoiceListTable(BaseInvoiceTable):
         sequence = fields
         order_by = ["-requested_at"]
         template_name = "application_projects/tables/table.html"
-        attrs = {"class": "invoices-table"}
+        attrs = {"class": "table border-x border-b mb-2 invoices-table"}
         row_attrs = {
             "data-record-id": lambda record: record.id,
         }
@@ -134,6 +172,11 @@ class BaseProjectsTable(tables.Table):
     title = tables.LinkColumn(
         "funds:submissions:project",
         args=[tables.utils.A("application_id")],
+        attrs={
+            "a": {
+                "class": "link link-hover text-h4 font-semibold break-words line-clamp-2 max-w-md"
+            }
+        },
     )
     status = tables.Column(
         verbose_name=_("Status"), accessor="get_status_display", order_by=("status",)
@@ -182,7 +225,7 @@ class ProjectsDashboardTable(BaseProjectsTable):
         model = Project
         template_name = "application_projects/tables/table.html"
         orderable = False
-        attrs = {"class": "projects-table"}
+        attrs = {"class": "table projects-table"}
 
 
 class ProjectsAssigneeDashboardTable(BaseProjectsTable):
@@ -198,7 +241,7 @@ class ProjectsAssigneeDashboardTable(BaseProjectsTable):
         model = Project
         orderable = False
         exclude = ["status"]
-        attrs = {"class": "projects-table"}
+        attrs = {"class": "table projects-table"}
 
 
 class PAFForReviewDashboardTable(tables.Table):
@@ -227,7 +270,7 @@ class PAFForReviewDashboardTable(tables.Table):
         template_name = (
             "funds/tables/table.html"  # todo: update it with Project table template
         )
-        attrs = {"class": "paf-review-table"}
+        attrs = {"class": "table paf-review-table"}
 
     def order_date_requested(self, qs, is_descending):
         direction = "-" if is_descending else ""
@@ -261,4 +304,4 @@ class ProjectsListTable(BaseProjectsTable):
         orderable = True
         order_by = ("end_date",)
         template_name = "application_projects/tables/table.html"
-        attrs = {"class": "projects-table"}
+        attrs = {"class": "table projects-table"}

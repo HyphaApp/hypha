@@ -2,39 +2,36 @@
 {% load i18n activity_tags heroicons %}
 {% block title %}{% trans "Notifications" %}{% endblock %}
 
-{% block content %}
-
-    {% adminbar %}
-        {% slot header %}{% trans "Notifications" %}{% endslot %}
-        {% slot sub_heading %}
-            {% if PROJECTS_ENABLED %}
-                {% trans "Activity feed across all applications and projects" %}
-            {% else %}
-                {% trans "Activity feed across all the applications" %}
-            {% endif %}
-        {% endslot %}
-
-        <form
-            class="[&>label]:sr-only text-black flex items-center justify-between gap-2"
-            method="get"
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Notifications' %}"
+            subtitle="{% if PROJECTS_ENABLED %}{% trans 'Activity feed across all applications and projects' %}{% else %}{% trans 'Activity feed across all the applications' %}{% endif %}"
         >
-            {{ filter.form }}
-            <button class="button button--primary" type="submit" value="Filter">
-                {% trans "Filter" %}
-            </button>
-        </form>
-    {% endadminbar %}
+            <form
+                class="[&>label]:sr-only text-base-content flex items-center justify-between gap-2"
+                method="get"
+            >
+                {{ filter.form }}
+                <button class="btn btn-primary" type="submit" value="Filter">
+                    {% trans "Filter" %}
+                </button>
+            </form>
+        </c-hero.header>
+    </c-hero>
+{% endblock %}
 
-    <div class="wrapper wrapper--large wrapper--outer-space-medium">
-        <div class="border-b-2 border-b-slate-300">
+{% block content %}
+    <div class="my-4">
+        <div class="border-b-2 border-b-base-300">
             <section class="ml-4 max-w-3xl md:ml-20">
 
-                <div class="timeline">
+                <div class="h-timeline">
                     {% for activity in object_list %}
                         {% with activity|display_for:request.user as activity_text %}
-                            <div class="relative timeline-item" id="communications#{{ activity.id }}">
+                            <div class="relative h-timeline-item" id="communications#{{ activity.id }}">
                                 {% ifchanged activity.source.id %}
-                                    <div class="py-0.5 mt-4 bg-gray-100 ps-5 pe-2 border-s-2 border-slate-300">
+                                    <div class="py-0.5 mt-4 bg-base-200 ps-5 pe-2 border-s-2 border-slate-300">
                                         <span class="text-sm font-semibold text-fg-muted">{{ activity.source_content_type.name|source_type }}</span> <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.fund_name }} #{{ activity.source.application_id }}: {{ activity.source.title|capfirst|truncatechars:50 }}</a>
                                     </div>
                                 {% endifchanged %}

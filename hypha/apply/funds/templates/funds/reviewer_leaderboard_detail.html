@@ -4,14 +4,17 @@
 
 {% block title %}{% trans "Reviews" %}{% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{% blocktrans %}Reviews by {{ object }}{% endblocktrans %}"
+            subtitle="{% trans 'Track and explore the reviews' %}"
+        />
+    </c-hero>
+{% endblock %}
+
 {% block content %}
-
-    {% adminbar %}
-        {% slot header %}{% blocktrans %}Reviews by {{ object }}{% endblocktrans %}{% endslot %}
-        {% slot sub_heading %}{% trans "Track and explore the reviews" %}{% endslot %}
-    {% endadminbar %}
-
-    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+    <div class="my-4">
         {% block table %}
             {% render_table table %}
         {% endblock %}

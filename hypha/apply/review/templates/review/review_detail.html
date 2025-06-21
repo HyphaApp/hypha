@@ -1,96 +1,94 @@
 {% extends "base-apply.html" %}
 {% load i18n nh3_tags submission_tags heroicons %}
 {% block title %}{% trans "Review for" %} {{ review.submission.title }}{% endblock %}
+
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ review.submission.get_absolute_url }}"
+            back_link_text="{% trans 'View application' %}"
+            title="{% trans 'Review' %}"
+            subtitle="{% trans 'For' %} {{ review.submission.title_text_display }} {% trans 'by' %} {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == review.author.reviewer %}{% trans 'Reviewer' %}{% else %}{{ review.author }}{% endif %} {% trans 'at' %} {{ review.created_at|date:'SHORT_DATE_FORMAT' }} {% if review.is_updated %}<small>({% trans 'Last updated' %}: {{ review.updated_at|date:'SHORT_DATE_FORMAT' }})</small>{% endif %}"
+        >
+            {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
+        </c-hero.header>
+    </c-hero>
+{% endblock %}
+
 {% block content %}
-
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ review.submission.get_absolute_url }}">
-                {% trans "View application" %}
-            </a>
-        {% endslot %}
-        {% slot header %}{% trans "Review" %}{% endslot %}
-        {% slot sub_heading %}
-            {% trans "For" %} {{ review.submission.title_text_display }} {% trans "by" %}
-            {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == review.author.reviewer %}
-                {% trans "Reviewer" %}
-            {% else %}
-                {{ review.author }}
-            {% endif %}
-            {% trans "at" %} {{ review.created_at|date:"SHORT_DATE_FORMAT" }} {% if review.is_updated %}<small>({% trans "Last updated" %}: {{ review.updated_at|date:"SHORT_DATE_FORMAT" }})</small>{% endif %}
-        {% endslot %}
-
-        {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
-    {% endadminbar %}
-
     <div class="flex justify-between mt-8 mb-8">
-        <div class="flex gap-8">
-            <div>
-                <h5>{% trans "Recommendation" %}</h5>
-                <p>{{ review.get_recommendation_display }}</p>
+        <div class="flex flex-col gap-8">
+            <div class="flex gap-4 justify-between">
+                <div>
+                    <h3 class="mb-2 font-bold">{% trans "Recommendation" %}</h3>
+                    <p class="badge badge-primary badge-outline">{{ review.get_recommendation_display }}</p>
+                </div>
+                <div>
+                    <h3 class="mb-2 font-bold">{% trans "Score" %}</h3>
+                    <p class="badge badge-primary badge-outline">{{ review.get_score_display }}</p>
+                </div>
+                <div>
+                    <h3 class="mb-2 font-bold">{% trans "Visibility" %}</h3>
+                    <p class="badge badge-primary badge-outline">{{ review.get_visibility_display }}</p>
+                </div>
             </div>
-            <div>
-                <h5>{% trans "Score" %}</h5>
-                <p>{{ review.get_score_display }}</p>
+
+            <div class="rich-text rich-text--answers">
+                {{ object.get_comments_display|submission_links }}
+
+                <div class="prose">
+                    {{ object.output_answers|submission_links }}
+                </div>
             </div>
+
+            {% if form %}
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form }}
+                </form>
+
+                <em class='flex items-center mb-8 text-fg-muted'>
+                    {% heroicon_micro "information-circle" class="mr-1 w-4 h-4 fill-fg-muted" aria_hidden=true %}
+                    <span>{% trans "An opinion is a replacement for a review. You will no longer be able to submit a review for this application." %}</span>
+                </em>
+            {% endif %}
         </div>
 
-        <div class="flex flex-col gap-4 items-end">
-            <div class="flex gap-4 justify-end items-start">
-                <span class="flex items-center">
-                    {% heroicon_micro "eye" class="inline w-4 h-4 me-1" aria_hidden=true %}
-                    {{ review.get_visibility_display }}
-                </span>
-                {% if perms.funds.delete_review or request.user == review.author.reviewer %}
-                    <a
-                        class="flex items-center font-bold text-red-500 transition-opacity hover:opacity-70"
-                        href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}"
-                    >
-                        {% heroicon_micro "trash" class="inline w-4 h-4 me-1" aria_hidden=true %}
-                        {% trans "Delete" %}
-                    </a>
-                {% endif %}
 
-                {% if perms.funds.change_review or request.user == review.author.reviewer %}
+        <div class="flex flex-col gap-2 items-end">
+            <div class="flex gap-3 justify-end items-start">
+                {% if not perms.funds.change_review or request.user == review.author.reviewer %}
                     <a
-                        class="flex items-center font-bold transition-opacity hover:opacity-70"
+                        class="btn btn-primary btn-sm"
                         href="{% url 'apply:submissions:reviews:edit' submission_pk=object.submission.id pk=object.id %}"
                     >
-                        {% heroicon_micro "pencil-square" class="inline w-4 h-4 me-1" aria_hidden=true %}
+                        {% heroicon_micro "pencil-square" class="inline w-4 h-4" aria_hidden=true %}
                         {% trans "Edit" %}
                     </a>
                 {% endif %}
+
+                {% if not perms.funds.delete_review or request.user == review.author.reviewer %}
+                    <a
+                        class="btn btn-error btn-outline btn-sm"
+                        href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}"
+                    >
+                        {% heroicon_micro "trash" class="inline w-4 h-4" aria_hidden=true %}
+                        <span class="sr-only">{% trans "Delete" %}</span>
+                    </a>
+                {% endif %}
             </div>
+
             {% if not review.for_latest %}
-                <div class="text-end">
+                <div class="text-end max-w-52">
                     <p class="text-xs">
-                        * {% trans "Review was not against the latest version" %}<br>
+                        * {% trans "Review was not against the latest version of the application" %}
+                        <a class="link" href="{{ review.get_compare_url }}">
+                            {% trans "View comparison" %}
+                        </a>
+
                     </p>
-                    <a class="button button--primary" href="{{ review.get_compare_url }}">{% trans "Compare" %}</a>
                 </div>
             {% endif %}
         </div>
-
     </div>
-
-    <div class="rich-text rich-text--answers">
-        {{ object.get_comments_display|submission_links }}
-
-        <div class="prose">
-            {{ object.output_answers|submission_links }}
-        </div>
-    </div>
-
-    {% if form %}
-        <form method="post">
-            {% csrf_token %}
-            {{ form }}
-        </form>
-
-        <em class='flex items-center mb-8 text-fg-muted'>
-            {% heroicon_micro "information-circle" class="mr-1 w-4 h-4 fill-fg-muted" aria_hidden=true %}
-            <span>{% trans "An opinion is a replacement for a review. You will no longer be able to submit a review for this application." %}</span>
-        </em>
-    {% endif %}
-
 {% endblock %}

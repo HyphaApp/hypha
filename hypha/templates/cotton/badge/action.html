@@ -1,0 +1,21 @@
+{% load heroicons %}
+
+<c-vars
+    class="badge-info badge-soft"
+    icon="x-mark"
+    btn_url
+/>
+
+<span class="badge {{ class }} {% if btn_url %}pe-0.5{% endif %}" {{ attrs }} data-cmp="c-badge.action">
+    {{ slot }}
+
+    {% if btn_url %}
+        <a
+            href="{{ btn_url }}"
+            role="button"
+            class="btn btn-ghost btn-xs btn-square"
+            aria-label="Remove">
+            {% heroicon_mini icon aria_hidden="true" %}
+        </a>
+    {% endif %}
+</span>

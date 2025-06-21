@@ -3,39 +3,52 @@
 
 {% block title %}{% trans "Sealed" %}: {{ object.title }}{% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{{ object.title }}"
+            subtitle='
+                      <span class="separator-dot">{{ object.stage }}</span>
+                      <span class="separator-dot">{{ object.page }}</span>
+                      <span class="separator-dot">{{ object.round }}</span>
+                      <span class="separator-dot">{% trans "Lead" %}: {{ object.lead }}</span>'
+        />
+
+        {% status_bar object.workflow object.phase request.user same_stage=True %}
+    </c-hero>
+{% endblock %}
+
 {% block content %}
-    <div class="pt-4 pb-0 admin-bar">
-        <div class="admin-bar__inner">
-            <h1 class="mb-2 text-2xl font-medium md:m-0 md:text-3xl">{{ object.title }}</h1>
-            <h5 class="heading heading--meta">
-                <span>{{ object.stage }}</span>
-                <span>{{ object.page }}</span>
-                <span>{{ object.round }}</span>
-                <span>{% trans "Lead" %}: {{ object.lead }}</span>
-            </h5>
-            {% status_bar object.workflow object.phase request.user same_stage=True %}
+    <section class="my-8">
+        <div class="mx-auto max-w-3xl card card-border bg-base-200">
+            <div class="card-body">
+                <h2 class="flex justify-between items-center card-title">
+                    <span>Application Sealed</span>
+                    <a class="btn btn-sm btn-outline" href="{% url 'apply:submissions:overview' %}">{% trans "Go back" %}</a>
+                </h2>
+
+                <div class="prose">
+                    <p>
+                        {% trans "This application is sealed until the round is closed" %}
+                    </p>
+
+                    {% if object.round.specific.end_date %}
+                        <p>{% trans "The round ends on" %}: {{ object.round.specific.end_date }}</p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="wrapper wrapper--medium">
-
-        <h2 class="heading">{% trans "This application is sealed until the round is closed" %}</h2>
-
-        <h3>{% trans "The round ends on" %}: {{ object.round.specific.end_date }}</h3>
-
-        <a class="button button--primary" href="{% url 'apply:submissions:overview' %}">
-            {% trans "Go back" %}
-        </a>
 
         {% if can_view_sealed %}
-            <p>
-                {% trans "As an admin you are allowed to access the application. However, this action will be recorded." %}
-            </p>
-            <form method="post">
+            <form method="post" class="mx-auto mt-4 max-w-3xl alert alert-warning">
                 {% csrf_token %}
-                <button class="button button--warning" type="submit">
+                <span>
+                    {% trans "As an admin you are allowed to access the application. However, this action will be recorded." %}
+                </span>
+                <button class="font-semibold link link-primary" type="submit">
                     {% trans "View application" %}
                 </button>
             </form>
         {% endif %}
-    </div>
+    </section>
 {% endblock %}

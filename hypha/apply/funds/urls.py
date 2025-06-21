@@ -25,7 +25,6 @@ from .views.co_applicants import (
 )
 from .views.comments import comments_view
 from .views.partials import (
-    get_applications_status_counts,
     partial_meta_terms_card,
     partial_reviews_card,
     partial_reviews_decisions,
@@ -98,11 +97,6 @@ submission_urls = (
         ),
         path("success/<int:pk>/", submission_success, name="success"),
         path("all/", submissions_all, name="list"),
-        path(
-            "statuses/",
-            get_applications_status_counts,
-            name="applications_status_counts",
-        ),
         path("all/bulk_archive/", bulk_archive_submissions, name="bulk-archive"),
         path("all/bulk_delete/", bulk_delete_submissions, name="bulk-delete"),
         path(

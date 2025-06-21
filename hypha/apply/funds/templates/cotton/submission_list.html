@@ -1,0 +1,59 @@
+{% load querystrings heroicons %}
+
+<c-vars variant="table"></c-vars>
+
+<div
+    {% if 'reviews' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
+        hx-trigger="load delay:50"
+        hx-get="{% url "funds:submissions:partial-reviews-decisions" %}?ids={% for s in submissions %}{{s.id}}{% if not forloop.last %},{% endif %}{% endfor %}"
+        hx-swap="multi:{% for s in submissions %}#r{{s.id}}{% if not forloop.last %},{% endif %}{% endfor %}"
+    {% endif %}
+>
+    {% if variant == "table" %}
+        <div class="overflow-x-auto bg-base-100 border {% if rounded_top %} rounded-t-box{% endif %}{% if rounded_bottom %} rounded-b-box{% endif %}{% if show_more_link and not show_more %} rounded-b-box{% endif %}">
+            <table class="table [&_th]:p-2">
+                <thead class="bg-base-200">
+                    <tr>
+                        {% if enable_selection %}<th class="hidden md:table-cell"></th>{% endif %}
+                        <th></th>
+                        <th class="font-semibold min-w-48">
+                            Title
+                        </th>
+                        <th class="font-semibold">Status</th>
+                        <th class="font-semibold">
+                            Applicant
+                            {% if 'organization_name' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
+                                <span class="text-xs text-fg-muted"> / Organization</span>
+                            {% endif %}
+                        </th>
+
+                        {% if "round" not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
+                            <th class="font-semibold min-w-36">Round</th>
+                        {% endif %}
+
+                        {% if 'lead' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
+                            <th class="font-semibold">Lead</th>
+                        {% endif %}
+                        <th class="text-sm font-semibold">
+                            {% if 'reviews' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}Reviews /{% endif %} <br /> Comments
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in submissions %}
+                        {% include "funds/includes/submission-table-row.html" with s=s enable_selection=enable_selection %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        {% for s in submissions %}
+            {% include "funds/includes/submission-list-row.html" with s=s enable_selection=enable_selection %}
+        {% endfor %}
+    {% endif %}
+</div>
+{% if show_more and show_more_link %}
+    <div class="flex justify-center items-center py-3 font-semibold border-b border-x rounded-b-box">
+        <a href="{{ show_more_link }}" class="link link-hover">Show All</a>
+    </div>
+{% endif %}

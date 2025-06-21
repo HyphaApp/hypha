@@ -3,14 +3,15 @@
 {% block page_title %}{% trans "Email Change - Verify Email" %}{% endblock %}
 {% block title %}{% trans "Verify Email" %}{% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header title="{% trans 'Email Update' %}" />
+    </c-hero>
+{% endblock %}
+
 {% block content %}
-
-    {% adminbar %}
-        {% slot header %}{% trans "Email Update" %}{% endslot %}
-    {% endadminbar %}
-
-    <div class="mt-6 wrapper prose">
-        <h2>{% trans "Confirm &amp; verify your new email!" %} </h2>
+    <div class="mt-12 max-w-2xl prose">
+        <h2 class="mb-4 font-semibold text-h0">{% trans "Confirm &amp; verify your new email!" %} </h2>
         <p>
             {% trans "We have sent a confirmation link to your new email." %}
         </p>

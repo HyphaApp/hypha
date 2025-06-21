@@ -1,5 +1,3 @@
-import textwrap
-
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from django_file_form.uploaded_file import PlaceholderUploadedFile
@@ -39,10 +37,9 @@ PROJECT_TITLE_TEMPLATE = "{text} <span class='text-fg-muted'>#{application_id}</
 
 
 def get_project_title(project):
-    text = textwrap.shorten(project.title, width=40, placeholder="…")
     return format_html(
         PROJECT_TITLE_TEMPLATE,
-        text=text,
+        text=project.title,
         application_id=project.application_id,
     )
 

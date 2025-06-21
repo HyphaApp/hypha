@@ -41,8 +41,6 @@ from .project import (
     update_project_title,
 )
 from .project_partials import (
-    get_invoices_status_counts,
-    get_project_status_counts,
     partial_contracting_documents,
     partial_get_invoice_detail_actions,
     partial_get_invoice_status,
@@ -62,8 +60,6 @@ __all__ = [
     "partial_get_invoice_status",
     "partial_get_invoice_detail_actions",
     "partial_contracting_documents",
-    "get_invoices_status_counts",
-    "get_project_status_counts",
     "BatchUpdateInvoiceStatusView",
     "ChangeInvoiceStatusView",
     "ChangeProjectstatusView",
