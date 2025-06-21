@@ -4,9 +4,9 @@
 @import "./components/choices.css" layer(components);
 @import "./components/daterangepicker.css" layer(components);
 @import "./components/django-file-field.css" layer(components);
-@import "./components/tinymce.css" layer(components);
 @import "./components/table.css" layer(components);
 @import "./components/card.css" layer(components);
+@import "./components/tinymce.css" layer(components);
 
 @import "./utilities/typography.css" layer(utilities);
 @import "./components/link.css" layer(utilities);
