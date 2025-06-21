@@ -130,6 +130,10 @@
   @apply prose w-full;
 }
 
+.errorlist {
+  @apply alert alert-error;
+}
+
 @utility js-hidden {
   @apply hidden noscript:block;
 }
