@@ -7,18 +7,18 @@
             <ul class='pt-1 divide-y'>
                 {% for reminder in action.list %}
                     <li class="flex gap-4 justify-between py-1">
-                        <span class="{% if reminder.is_expired %}text-red-600{% endif %}">
+                        <span class="{% if reminder.is_expired %}text-error{% endif %}">
                             <span class="font-medium line-clamp-2">{{ reminder.title|default:"untitled reminder" }}</span>
-                            <datetime class="text-xs text-fg-muted" datetime="{{ reminder.time|date:"c" }}">
+                            <relative-time class="text-xs" datetime="{{ reminder.time|date:"c" }}">
                                 {{ reminder.time|date:"SHORT_DATE_FORMAT" }}
                                 {% if reminder.is_expired %} - {% trans "Expired" %}{% endif %}
-                            </datetime>
+                            </relative-time>
                         </span>
 
                         <div>
                             <a
                                 class="btn btn-error btn-square btn-sm btn-ghost text-error hover:text-error-content"
-                                title="{% trans "Delete" %}"
+                                title="{% trans 'Delete' %}"
                                 href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}"
                                 role="button"
                             >
