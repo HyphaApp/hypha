@@ -3,10 +3,10 @@
 {% with activity|display_for:request.user as activity_text %}
     <div class="relative h-timeline-item" id="communications#{{ activity.id }}">
         <div
-            class="flex items-center py-2 -ml-3 before:block before:-z-10 before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-slate-300"
+            class="flex items-center py-2 -ml-3 before:block before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-base-300"
         >
-            <div class="inline-flex relative justify-center items-start me-2">
-                <div class="relative rounded-full inline-flex items-center justify-center border-white border-2 -ms-0.5 {% if activity.user.is_staff %}bg-slate-200 {% else %}bg-gray-200{% endif %}">
+            <div class="inline-flex relative justify-center items-start me-2 z-1">
+                <div class="inline-flex relative justify-center items-center rounded-full border-2 border-base-100 -ms-0.5 bg-base-300">
                     <div class="inline-flex justify-center items-center w-6 h-6 text-fg-muted">
                         {% if 'edit' in activity_text.lower %}
                             {% heroicon_micro "pencil-square" class="inline" aria_hidden=true size=14 %}
