@@ -45,7 +45,6 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
     def save(self, commit=True, form_fields=dict):
         self.instance.form_fields = form_fields
         instance = super().save(commit)
-        instance.author = self.user
         # We need to save the fields first, not attempt to save form_data on first save, then update the form_data next.
         # Otherwise, we don't get access to the generator method "question_field_ids" which we use to prevent temp file
         # fields from getting into the saved form_data.
@@ -88,6 +87,7 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
             # If this is the first submission of the report we track that as the
             # submitted date of the report
             if not instance.submitted:
+                instance.author = self.user
                 instance.submitted = version.submitted
             instance.current = version
             instance.draft = None
