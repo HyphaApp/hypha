@@ -45,6 +45,12 @@
   &:not(.tox-tinymce-inline) .tox-editor-header {
     @apply bg-base-200! text-base-content!;
   }
+  .tox-toolbar__group {
+    padding: 0 !important;
+  }
+  .tox-toolbar__group:first-child {
+    padding-inline-start: calc(var(--spacing, 0.25em) * 2) !important;
+  }
 }
 /* Error State */
 .fieldset-error {
