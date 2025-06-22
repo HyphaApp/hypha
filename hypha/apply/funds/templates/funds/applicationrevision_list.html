@@ -13,20 +13,19 @@
 
 
 {% block content %}
-    <div class="wrapper wrapper--medium">
-        <ol class="my-8 border card border-b-base-300 bg-base-200 list">
+    <div class="my-8 max-w-3xl">
+        <h2 class="section-header">Application revisions</h2>
+
+        <ol class="card card-border list">
             {% for revision in object_list %}
-                <li class="list-row first:bg-base-300 first:rounded-t-box">
-                    <p class="self-center m-0 font-semibold list-col-grow">
-                        {{ revision.author }} {% trans "edited" %}
+                <li class="list-row {% if not forloop.first %}hover:bg-base-200 cursor-pointer{% endif %}" {% if not forloop.first %}onclick="window.location.href='{{ revision.get_compare_url_to_latest }}'"{% endif %}>
+                    <p class="self-center list-col-grow">
+                        <span class="font-semibold">{{ revision.author }}</span> {% trans "edited" %}
 
                         <relative-time datetime={{ revision.timestamp|date:"c" }} class="text-fg-muted">
                             {{ revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}
                         </relative-time>
 
-                        {% if forloop.first %}
-
-                        {% endif %}
                         {% if revision.is_draft %}
                             <span class="uppercase badge badge-warning badge-outline">
                                 ({% trans "draft" %})
@@ -35,7 +34,7 @@
                     </p>
 
                     {% if forloop.first %}
-                        <span class="uppercase badge badge-primary badge-outline ms-1">
+                        <span class="uppercase badge badge-info badge-outline">
                             {% trans "latest" %}
                         </span>
                     {% else %}
@@ -49,6 +48,6 @@
                     {% endif %}
                 </li>
             {% endfor %}
-        </c-->
+        </ol>
     </div>
 {% endblock %}

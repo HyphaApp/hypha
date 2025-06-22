@@ -4,11 +4,6 @@
 .wrapper {
   width: 100%;
 
-  &--medium {
-    max-width: variables.$wrapper--medium;
-    margin-inline: auto;
-  }
-
   &--form {
     padding: 0;
     margin: 2em auto;
