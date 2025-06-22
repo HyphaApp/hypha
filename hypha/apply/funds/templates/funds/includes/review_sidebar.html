@@ -3,7 +3,7 @@
 {% with recommendation|traffic_light as traffic_light_html %}
     {% with assigned_reviewers|average_review_score as average %}
         {% if traffic_light_html or average %}
-            <div class="flex justify-around items-center p-2 mb-2 bg-base-200">
+            <div class="flex justify-around items-center p-2 mb-2 border rounded-box">
                 {% if traffic_light_html %}
                     <span>{{ recommendation|traffic_light }}</span>
                 {% endif %}
@@ -26,7 +26,7 @@
     </p>
 {% endif %}
 
-<ul class="reviews-sidebar list" id="id_reviewers" x-data='{showHiddenReviewers: false}'>
+<ul class="divide-y reviews-sidebar" id="id_reviewers" x-data='{showHiddenReviewers: false}'>
 
     {% regroup assigned_reviewers by type as reviewers_list %}
 
@@ -36,12 +36,11 @@
                 {% include 'funds/includes/review_sidebar_item.html' with reviewer=reviewer hidden=True %}
 
                 {% if forloop.last %}
-                    <li class="list-row">
+                    <li class="flex justify-around py-2">
                         <button
                             role="button"
-                            class="text-sm font-semibold link link-muted"
+                            class="btn btn-ghost btn-sm"
                             @click.prevent="showHiddenReviewers = !showHiddenReviewers"
-                            href="#"
                         >
                             <span x-show="!showHiddenReviewers">{% trans "Show more..." %}</span>
                             <span x-cloak x-show="showHiddenReviewers">{% trans "Show less..." %}</span>

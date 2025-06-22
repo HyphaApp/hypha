@@ -1,7 +1,7 @@
 {% load i18n wagtailimages_tags heroicons %}
 
 <li
-    class="reviews-sidebar__item list-row {% if not reviewer.review %}text-base-content/80 {% endif %}"
+    class="px-0 py-2 {% if not reviewer.review %}text-base-content/80 {% endif %}"
     {% if hidden and not reviewer.review %}x-cloak x-show="showHiddenReviewers" x-transition.opacity{% endif %}
 >
     <div class="grid grid-cols-6 col-span-2 w-full">
@@ -16,13 +16,13 @@
                 </span>
                 {% if reviewer.role and reviewer.role.icon %}{% image reviewer.role.icon max-12x12 %}{% endif %}
             </div>
-            <div>-</div>
-            <div>-</div>
+            <div class="col-span-1">-</div>
+            <div class="col-span-1">-</div>
         {% else %}
             {% if request.user == reviewer.reviewer or request.user.is_reviewer and reviewer.review.reviewer_visibility or request.user.is_community_reviewer and reviewer.review.reviewer_visibility or request.user.is_apply_staff %}
                 <div class="col-span-4">
-                    <a href="{% url 'apply:submissions:reviews:review' submission_pk=reviewer.submission.id pk=reviewer.review.id %}">
-                        <div class="reviews-sidebar__name">
+                    <a class="font-semibold link link-hover" href="{% url 'apply:submissions:reviews:review' submission_pk=reviewer.submission.id pk=reviewer.review.id %}">
+                        <div class="flex gap-1 items-center">
                             <span>
                                 {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == reviewer.reviewer %}
                                     {% trans "Reviewer" %}
@@ -38,7 +38,7 @@
                     </relative-time>
                 </div>
             {% else %}
-                <div class="col-span-4 reviews-sidebar__name">
+                <div class="col-span-4">
                     <span>
                         {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == reviewer.reviewer %}
                             {% trans "Reviewer" %}
@@ -50,8 +50,8 @@
                 </div>
             {% endif %}
             {% with reviewer.review.get_recommendation_display as recommendation and reviewer.review.get_score_display as score %}
-                <div class="{{ recommendation|slugify }}">{{ recommendation }}</div>
-                <div class="{{ recommendation|slugify }}">{{ score }}</div>
+                <div class="col-span-1 {{ recommendation|slugify }}">{{ recommendation }}</div>
+                <div class="col-span-1 {{ recommendation|slugify }}">{{ score }}</div>
             {% endwith %}
         {% endif %}
     </div>
