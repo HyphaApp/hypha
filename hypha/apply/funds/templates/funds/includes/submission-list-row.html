@@ -72,14 +72,14 @@
         <div class="pt-1">
             <p class="m-0 text-xs">
                 #{{ s.application_id }}
-                submitted <relative-time datetime="{{ s.submit_time|date:"c" }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
-                {% if s|show_applicant_identity:request.user %}by <a
+                {% trans "submitted" %} <relative-time datetime="{{ s.submit_time|date:"c" }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
+                {% if s|show_applicant_identity:request.user %}{% trans "by" %} <a
                     href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" applicants=s.user.id %}"
                     hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" applicants=s.user.id %}"
                     hx-target="#main"
                     hx-push-url="true"
                     hx-swap="outerHTML transition:true"
-                    class="link link-muted text-inherit"
+                    class="inline-flex max-w-sm link link-muted text-inherit text-inherit truncate"
                 >{{ s.user }}</a>{% endif %} • {{ s.stage }} •
 
 
@@ -135,17 +135,17 @@
                 <div
                     data-tippy-content="Assigned to {{ s.lead }}"
                     data-tippy-placement="left"
-                    class="flex gap-1 truncate"
+                    class="flex gap-1"
                 >
                     {% comment %} <span class="block mb-1 text-xs text-fg-muted">Lead: </span> {% endcomment %}
-                    {% heroicon_micro "user-circle" aria_hidden="true" size=16 class="fill-fg-muted" %}
+                    {% heroicon_micro "user-circle" aria_hidden="true" size=16 class="fill-fg-muted min-w-[16px]" %}
                     <a
                         hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" leads=s.lead.id %}"
                         href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" leads=s.lead.id %}"
                         hx-target="#main"
                         hx-push-url="true"
                         hx-swap="outerHTML transition:true"
-                        class="link link-muted text-inherit"
+                        class="max-w-sm link link-muted text-inherit truncate"
                     >
                         {{ s.lead }}
                     </a>

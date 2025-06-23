@@ -94,7 +94,7 @@
                                 <relative-time datetime={{ object.submit_time|date:"c" }} class="font-semibold">
                                     {{ object.submit_time|date:"SHORT_DATETIME_FORMAT" }}
                                 </relative-time>
-                                {% trans "by" %} <strong class="font-semibold">{% display_submission_author %}</strong>
+                                {% trans "by" %} <strong class="max-w-md font-semibold line-clamp-2">{% display_submission_author %}</strong>
                             </span>
 
                             <span class="self-center">
@@ -103,7 +103,7 @@
                                     {{ object.live_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}
                                 </relative-time>
                                 {% trans "by" %}
-                                <strong class="font-semibold">
+                                <strong class="max-w-md font-semibold line-clamp-2">
                                     {% display_submission_author True %}
                                 </strong>)
                             </span>
@@ -121,7 +121,6 @@
                                     {% trans "Edit" %}
                                 </a>
                             {% endif %}
-
                             {% can "delete_submission" object as can_delete_submission %}
                             {% if can_delete_submission %}
                                 <a

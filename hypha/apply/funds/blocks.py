@@ -7,6 +7,7 @@ from wagtail import blocks
 from hypha.addressfield.fields import ADDRESS_FIELDS_ORDER, AddressField
 from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.stream_forms.blocks import FormFieldsBlock
+from hypha.apply.users.models import User
 from hypha.apply.utils.blocks import (
     CustomFormFieldsBlock,
     MustIncludeFieldBlock,
@@ -27,7 +28,6 @@ class ApplicationMustIncludeFieldBlock(MustIncludeFieldBlock):
 class TitleBlock(ApplicationMustIncludeFieldBlock):
     name = "title"
     description = "The title of the project"
-    widget = forms.TextInput()
     field_label = blocks.CharBlock(
         label=_("Label"), default=_("What is the title of your application?")
     )
@@ -131,6 +131,12 @@ class FullNameBlock(ApplicationMustIncludeFieldBlock):
             "We will use this name when we communicate with you about your proposal."
         ),
     )
+
+    def get_field_kwargs(self, struct_value):
+        kwargs = super().get_field_kwargs(struct_value)
+        # Pull the max length from the full_name db field
+        kwargs["max_length"] = User._meta.get_field("full_name").max_length
+        return kwargs
 
     class Meta:
         label = _("Full name")
