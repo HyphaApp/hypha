@@ -2,19 +2,19 @@
 name = "hypha"
 description = "A open source submission management platform to receive and manage applications for funding."
 readme = "README.md"
-version = "5.32.0"
+version = "5.33.0"
 requires-python = ">=3.10"
 license = { text = "BSD-3-Clause" }
 
 dependencies = [
-    "scout-apm~=3.3.0",
-    "sentry-sdk~=2.24.1",
+    "scout-apm~=3.4.0",
+    "sentry-sdk~=2.30.0",
     "Babel~=2.17.0",
-    "boto3~=1.37.18",
-    "celery~=5.4.0",
+    "boto3~=1.38.41",
+    "celery~=5.5.0",
     "click~=8.1.8",
     "dj-database-url~=2.3.0",
-    "django-anymail~=12.0",
+    "django-anymail~=13.0",
     "django-basic-auth-ip-whitelist~=0.8.0",
     "django-countries~=7.6.1",
     "django-elevate~=2.0.3",
@@ -59,9 +59,9 @@ dependencies = [
     "whitenoise~=6.9.0",
     "xhtml2pdf~=0.2.17",
     "xmltodict~=0.14.2",
-    "wagtail-modeladmin>=2.1.0",
-    "redis>=5.2.1",
-    "django-viewflow>=2.2.11",
+    "wagtail-modeladmin~=2.2.0",
+    "redis~=6.2.0",
+    "django-viewflow~=2.2.11",
 ]
 
 [dependency-groups]
@@ -100,7 +100,7 @@ dependencies = [
 ]
 
 # Requirements for machine translations
-"translate" = ["torch~=2.3", "argostranslate~=1.9.6"]
+"translate" = ["torch~=2.7", "argostranslate~=1.9.6"]
 
 [tool.uv]
 default-groups = ["dev", "docs"]
