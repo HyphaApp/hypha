@@ -1,33 +1,60 @@
+/* TinyMCE Base Styles */
 .tox {
+  @apply border-base-content/20! rounded-box!;
+  border-width: 1px !important;
+  border-radius: var(--radius-field) !important;
+
+  /* Button States */
   .tox-tbtn--disabled {
     @apply opacity-50;
   }
+
+  .tox-tbtn {
+    @apply text-base-content! fill-base-content!;
+
+    svg {
+      @apply text-base-content! fill-base-content!;
+    }
+  }
+
+  .tox-editor-header {
+    @apply bg-base-200! text-base-content! shadow-none! border-b! border-base-300! p-0!;
+  }
+
+  /* Toolbar Components */
   .tox-tbtn--bespoke,
   .tox-toolbar,
-  .tox-statusbar,
   .tox-toolbar__overflow,
   .tox-toolbar__primary,
   .tox-toolbar-overlord {
     @apply bg-base-200! text-base-content!;
   }
-  .tox-tbtn svg,
-  .tox-tbtn {
-    @apply text-base-content! fill-base-content!;
+
+  /* Status Bar Components */
+  .tox-statusbar {
+    @apply bg-base-200! text-base-content!;
+
+    a,
+    &__path-item,
+    &__wordcount {
+      @apply text-fg-muted!;
+    }
   }
 
-  .tox-statusbar a,
-  .tox-statusbar__path-item,
-  .tox-statusbar__wordcount {
-    @apply text-fg-muted!;
+  /* Editor Header */
+  &:not(.tox-tinymce-inline) .tox-editor-header {
+    @apply bg-base-200! text-base-content!;
+  }
+  .tox-toolbar__group {
+    padding: 0 !important;
+  }
+  .tox-toolbar__group:first-child {
+    padding-inline-start: calc(var(--spacing, 0.25em) * 2) !important;
   }
 }
-
-.tox:not(.tox-tinymce-inline) .tox-editor-header {
-  @apply bg-base-200! text-base-content!;
-}
-
-.tox-tinymce {
-  @apply border-base-content/20! rounded-box!;
-  border-width: 1px !important;
-  border-radius: var(--radius-field) !important;
+/* Error State */
+.fieldset-error {
+  .tox {
+    border-color: var(--color-error) !important;
+  }
 }

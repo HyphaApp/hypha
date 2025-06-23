@@ -1,32 +1,45 @@
 {% extends "base-apply.html" %}
 {% load i18n static %}
 
-{% block title %}{% trans "Deleting" %}: {{ object }}{% endblock %}
+{% block title %}{% trans "Delete reminder" %}{% endblock %}
 
 {% block hero %}
     <c-hero>
-        <c-hero.header title="{% trans 'Deleting' %}: {{ object }}" />
+        <c-hero.header title="{% trans 'Delete reminder' %}" />
     </c-hero>
 {% endblock %}
 
 
 {% block content %}
-    <div class="wrapper wrapper--form wrapper--sidebar">
-        <div class="grow">
-            <form class="form" action="" method="post">
-                {% csrf_token %}
-                <p class="font-semibold">
-                    {% blocktrans %}Are you sure you want to delete "{{ object }}"?{% endblocktrans %}
-                </p>
+    <div class="mx-auto mt-4 mb-16 max-w-2xl card card-border">
+        <form class="form card-body" action="" method="post">
+            {% csrf_token %}
+            <h2 class="mb-4 card-title">
+                {% translate "Delete Reminder?" %}
+            </h2>
+            <p>
+                {% blocktrans %}Are you sure you want to delete this reminder scheduled {% endblocktrans %} <relative-time datetime="{{ reminder.time|date:'c' }}">{{ reminder.time|date:"SHORT_DATE_FORMAT" }}</relative-time>?
+                {% trans "This cannot be undone." %}
+            </p>
 
+            <p>
+                <strong class="font-semibold">Title:</strong> {{ object.title }} <br />
+                <strong class="font-semibold">Type:</strong> {{ object.get_action_display }} <br />
+            </p>
+
+            <div class="flex gap-3 mt-4 card-actions">
                 <button
-                    class="mt-4 btn btn-error"
+                    class="btn btn-error"
                     type="submit"
                     role="button"
                 >
-                    {% trans "Confirm" %}
+                    {% trans "Delete reminder" %}
                 </button>
-            </form>
-        </div>
+
+                <a href="{{ object.submission.get_absolute_url }}" class="btn">
+                    {% trans "Cancel" %}
+                </a>
+            </div>
+        </form>
     </div>
 {% endblock %}

@@ -15,79 +15,73 @@
 {% endblock %}
 
 {% block content %}
-    {% if report_form %}
-        {% include "forms/includes/form_errors.html" with form=form %}
+    <div class="mx-auto mt-4 mb-8 max-w-3xl">
 
-        <div class="wrapper wrapper--form">
-            <div class="grow">
+        {% if report_form %}
+            <div role="alert" class="mb-4 alert alert-info">
+                {% heroicon_outline 'exclamation-circle' stroke_width=2 size=18 aria_hidden=true %}
+                <span>
+                    {% trans "This report is for the period" %} <strong class="font-semibold">{{ object.start_date }}</strong> {% trans "to" %} <strong class="font-semibold">{{ object.end_date }}</strong>
+                </span>
+            </div>
 
-                <div role="alert" class="mb-4 alert alert-info">
-                    {% heroicon_outline 'exclamation-circle' stroke_width=2 size=18 aria_hidden=true %}
-                    <span>
-                        {% trans "This report is for the period" %} <strong class="font-semibold">{{ object.start_date }}</strong> {% trans "to" %} <strong class="font-semibold">{{ object.end_date }}</strong>
-                    </span>
-                </div>
+            <form class="form" action="" method="post" enctype="multipart/form-data" novalidate>
+                {% include "forms/includes/form_errors.html" with form=form %}
+                {% csrf_token %}
 
-                <form class="form" action="" method="post" enctype="multipart/form-data" novalidate>
-                    {% csrf_token %}
-                    {% for field in form %}
-                        {% if field.field %}
-                            {% if field.field.multi_input_field %}
-                                {% include "forms/includes/multi_input_field.html" %}
-                            {% else %}
-                                {% include "forms/includes/field.html" %}
-                            {% endif %}
+                {% for field in form %}
+                    {% if field.field %}
+                        {% if field.field.multi_input_field %}
+                            {% include "forms/includes/multi_input_field.html" %}
                         {% else %}
-                            <div class="mb-2 max-w-none field-block prose">
-                                {{ field.block }}
-                            </div>
+                            {% include "forms/includes/field.html" %}
                         {% endif %}
-                    {% endfor %}
+                    {% else %}
+                        <div class="mb-2 max-w-none field-block prose">
+                            {{ field.block }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
 
-                    {% for hidden_field in form.hidden_fields %}
-                        {{ hidden_field }}
-                    {% endfor %}
+                {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field }}
+                {% endfor %}
 
-                    <div class="mt-4 card-actions">
-                        <button
-                            type="submit"
-                            id="submit-report-form-submit"
-                            name="submit"
-                            class="sm:w-auto btn btn-block btn-primary"
-                            onclick="return confirm('Are you sure you want to submit your report?')"
-                        >
-                            {% trans "Submit" %}
-                        </button>
-                        <button
-                            type="submit"
-                            id="submit-report-form-save"
-                            name="save"
-                            class="sm:w-auto btn btn-block btn-secondary btn-outline"
-                            onclick="return confirm('{% blocktrans %}Saving a draft means this report will be visible to you and staff from your project page.{% endblocktrans %}')"
-                        >
-                            {% trans "Save draft" %}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    {% else %}
-        <div class="wrapper wrapper--form wrapper--sidebar">
-            <div class="grow">
+                <div class="mt-4 card-actions">
+                    <button
+                        type="submit"
+                        id="submit-report-form-submit"
+                        name="submit"
+                        class="sm:w-auto btn btn-block btn-primary"
+                        onclick="return confirm('Are you sure you want to submit your report?')"
+                    >
+                        {% trans "Submit" %}
+                    </button>
+                    <button
+                        type="submit"
+                        id="submit-report-form-save"
+                        name="save"
+                        class="sm:w-auto btn btn-block btn-secondary btn-outline"
+                        onclick="return confirm('{% blocktrans %}Saving a draft means this report will be visible to you and staff from your project page.{% endblocktrans %}')"
+                    >
+                        {% trans "Save draft" %}
+                    </button>
+                </div>
+            </form>
+        {% else %}
+            <p class="p-4">
                 {% if request.user.is_apply_staff %}
-                    <p>
-                        {% trans "Project Report Form not configured. Please add a project report form in the" %}
-                        <a href="{% url 'wagtailadmin_pages:edit' object.project.submission.page.id %}" target="_blank">{% trans "fund settings" %}</a>.
-                    </p>
+                    {% trans "Project report form not configured. Please add a project report form in the" %}
+                    <a href="{% url 'wagtailadmin_pages:edit' object.project.submission.page.id %}" target="_blank" class="link">
+                        {% trans "fund settings" %}
+                    </a>.
                 {% else %}
-                    <p>
-                        {% trans "Project Report Form not configured yet. Please contact us at " %}
-                        <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}.</a>
-                    </p>
+                    {% trans "Project report rorm not configured yet. Please contact us at " %}
+                    <a href="mailto:{{ ORG_EMAIL }}" class="link">{{ ORG_EMAIL }}.</a>
                 {% endif %}
-            </div>
-        </div>
-    {% endif %}
+            </p>
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block extra_js %}

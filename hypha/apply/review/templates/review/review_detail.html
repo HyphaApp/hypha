@@ -42,7 +42,7 @@
             </div>
 
             {% if form %}
-                <form method="post">
+                <form method="post" class="card-actions">
                     {% csrf_token %}
                     {{ form }}
                 </form>
@@ -85,7 +85,6 @@
                         <a class="link" href="{{ review.get_compare_url }}">
                             {% trans "View comparison" %}
                         </a>
-
                     </p>
                 </div>
             {% endif %}

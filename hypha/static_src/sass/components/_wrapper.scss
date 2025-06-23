@@ -4,11 +4,6 @@
 .wrapper {
   width: 100%;
 
-  &--medium {
-    max-width: variables.$wrapper--medium;
-    margin-inline: auto;
-  }
-
   &--form {
     padding: 0;
     margin: 2em auto;
@@ -17,10 +12,6 @@
       padding: 1rem 17rem 2rem 0;
       margin: 1rem auto 3rem;
     }
-  }
-
-  &--outer-space-medium {
-    padding-block: calc(var(--spacing) * 4);
   }
 
   &--sidebar {

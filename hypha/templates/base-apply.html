@@ -21,7 +21,7 @@
         {% endblock %}
 
         {% block user_menu %}
-            <div class="flex gap-2 no-print">
+            <div class="flex gap-2 print:hidden">
                 {% if request.user.is_authenticated and request.user.is_apply_staff %}
                     {% include "includes/menu-notifications.html" %}
                 {% endif %}
@@ -61,17 +61,21 @@
             <div class="items-center py-4 footer container-constrained sm:footer-horizontal">
                 <aside class="gap-1">
                     {% if ORG_LONG_NAME %}
-                        <span class="text-fg-muted">Copyright &COPY; {{ ORG_LONG_NAME }}</span>
+                        <span class="text-fg-muted">{% translate "Copyright" %} &COPY; {{ ORG_LONG_NAME }}</span>
                     {% endif %}
                     <span class="text-neutral-400">
-                        Built with <a href="https://docs.hypha.app" class="font-semibold hover:underline text-neutral-400 hover:text-neutral-300">Hypha</a>
+                        {% translate "Built with" %} <a href="https://docs.hypha.app" class="font-semibold hover:underline text-neutral-400 hover:text-neutral-300">Hypha</a>
                     </span>
                 </aside>
 
-                <div class="grid-flow-col gap-4 md:justify-self-end md:place-self-center"
-                     x-data="{ isDark: localStorage.getItem('theme') === 'dark' || false }"
-                     x-init="$watch('isDark', value => { localStorage.setItem('theme', value ? 'dark' : 'light'); document.documentElement.setAttribute('data-theme', value ? 'dark' : 'light'); }); document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');">
-                    <div>
+                <div class="grid-flow-col gap-4 items-center md:justify-self-end md:place-self-center">
+                    {% if settings.cookieconsent.CookieConsentSettings.cookieconsent_active %}
+                        <button onclick="openConsentPrompt()" class="text-neutral-400 link link-hover">{% trans "Manage cookies" %}</button>
+                    {% endif %}
+                    <div
+                        x-data="{ isDark: localStorage.getItem('theme') === 'dark' || false }"
+                        x-init="$watch('isDark', value => { localStorage.setItem('theme', value ? 'dark' : 'light'); document.documentElement.setAttribute('data-theme', value ? 'dark' : 'light'); }); document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');"
+                    >
                         <label class="swap swap-rotate text-fg-muted">
                           <!-- this hidden checkbox controls the state -->
                             <input type="checkbox" class="theme-controller" id="theme-controller" value="dark" x-model="isDark" />
