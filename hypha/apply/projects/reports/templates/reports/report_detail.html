@@ -16,9 +16,9 @@
 
 {% block content %}
     <div class="my-4 wrapper wrapper--sidebar">
-        <div class="grow">
+        <article class="grow">
             <div class="flex gap-x-4 mb-4 text-xs text-fg-muted">
-                <span style="margin-inline-end: 15px;">
+                <span>
                     {% trans "Submitted " %}
                     <strong class="font-semibold">
                         <relative-time datetime={{ object.submitted|date:"c" }}>
@@ -79,7 +79,7 @@
                     {% endfor %}
                 {% endif %}
             </section>
-        </div>
+        </article>
         <aside class="sidebar">
             {% if request.user.is_apply_staff or report.previous or report.next %}
                 <div class="card card-border shadow-xs">
