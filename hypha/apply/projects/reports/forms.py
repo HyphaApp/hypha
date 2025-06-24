@@ -87,6 +87,7 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
             # If this is the first submission of the report we track that as the
             # submitted date of the report
             if not instance.submitted:
+                instance.author = self.user
                 instance.submitted = version.submitted
             instance.current = version
             instance.draft = None

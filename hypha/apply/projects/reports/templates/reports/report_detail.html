@@ -16,7 +16,34 @@
 
 {% block content %}
     <div class="my-4 wrapper wrapper--sidebar">
-        <div class="grow">
+        <article class="grow">
+            <div class="flex gap-x-4 mb-4 text-xs text-fg-muted">
+                <span>
+                    {% trans "Submitted " %}
+                    <strong class="font-semibold">
+                        <relative-time datetime={{ object.submitted|date:"c" }}>
+                            {{ object.submitted|date:"SHORT_DATETIME_FORMAT" }}
+                        </relative-time>
+                    </strong>
+                    {% trans "by" %}
+                    <strong class="font-semibold">
+                        {{ object.author }}
+                    </strong>
+                </span>
+                <span>
+                    {% trans "Updated" %}
+                    <strong class="font-semibold">
+                        <relative-time datetime={{ object.current.submitted|date:"c" }}>
+                            {{ object.current.submitted|date:"SHORT_DATETIME_FORMAT" }}
+                        </relative-time>
+                    </strong>
+                    {% trans "by" %}
+                    <strong class="font-semibold">
+                        {{ object.current.author }}
+                    </strong>
+                </span>
+            </div>
+
             <div role="alert" class="mb-4 alert alert-info">
                 {% heroicon_outline 'exclamation-circle' stroke_width=2 size=18 aria_hidden=true %}
                 <span>
@@ -52,7 +79,7 @@
                     {% endfor %}
                 {% endif %}
             </section>
-        </div>
+        </article>
         <aside class="sidebar">
             {% if request.user.is_apply_staff or report.previous or report.next %}
                 <div class="card card-border shadow-xs">
