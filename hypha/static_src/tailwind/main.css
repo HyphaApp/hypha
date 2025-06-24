@@ -118,7 +118,7 @@
 }
 
 @utility container-constrained {
-  @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  @apply xl:container mx-auto px-4 sm:px-6 lg:px-8;
 }
 
 .separator-dot:not(:last-child)::after {
