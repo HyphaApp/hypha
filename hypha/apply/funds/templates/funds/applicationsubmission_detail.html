@@ -98,14 +98,14 @@
                             </span>
 
                             <span class="self-center">
-                                ({% trans "Updated" %}
+                                {% trans "Updated" %}
                                 <relative-time datetime={{ object.live_revision.timestamp|date:"c" }} class="font-semibold">
                                     {{ object.live_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}
                                 </relative-time>
                                 {% trans "by" %}
                                 <strong class="max-w-md font-semibold line-clamp-2">
                                     {% display_submission_author True %}
-                                </strong>)
+                                </strong>
                             </span>
 
 

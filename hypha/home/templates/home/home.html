@@ -8,14 +8,16 @@
 {% block content %}
     <div class="my-8 mx-auto max-w-3xl lg:my-16">
 
-        <h1 class="font-bold text-h00">{{ settings.core.SystemSettings.home_title}}</h1>
+        <h1 class="font-bold text-h00">
+            {{ settings.core.SystemSettings.home_title}}
+        </h1>
 
         {% if settings.core.SystemSettings.home_strapline %}
             <p class="mb-8 text-fg-muted text-pretty">{{ settings.core.SystemSettings.home_strapline|nh3|safe }}</p>
         {% endif %}
 
         {% if funds %}
-            <div class="list">
+            <div class="mt-4 list">
                 {% for fund in funds %}
                     {% include "home/includes/fund-list-item.html" with page=fund %}
                 {% endfor %}
@@ -25,6 +27,5 @@
                 {{ settings.core.SystemSettings.home_no_applications_msg|nh3|safe }}
             </div>
         {% endif %}
-
     </div>
 {% endblock %}

@@ -46,7 +46,7 @@
             {% with determination=object.determinations.last %}
                 {% if determination %}
                     <a
-                        class="btn btn-primary btn-block btn-lg"
+                        class="btn btn-primary btn-block"
                         href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}"
                     >{% trans "View determination" %}</a>
                 {% endif %}
