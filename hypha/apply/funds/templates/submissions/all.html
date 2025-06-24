@@ -13,25 +13,26 @@
         >
             <div class="self-end -mb-4">
                 <div class="tabs tabs-lift">
-                    {% if request.GET.format == "list" %}
-                        <a
-                            class="flex gap-2 items-center tab tab-active text-base-content/70"
-                            href="{% modify_query "page" format="table" %}"
-                        >
-                            {% heroicon_mini "table-cells" aria_hidden="true" size=16 %}
-                            {% trans "Table view" %}</a>
-                    {% else %}
-                        <a
-                            class="flex gap-2 items-center tab tab-active text-base-content/70"
-                            href="{% modify_query "page" format="list" %}"
-                        >
-                            {% heroicon_mini "queue-list" aria_hidden="true" size=16 class="inline align-text-bottom" %}
-                            {% trans "List View" %}
-                        </a>
-                    {% endif %}
+                    <a
+                        class="tab {% if request.GET.format != "list" %}tab-active bg-base-100 text-base-content{% else %}bg-base-100/70 text-base-content/70{% endif %}"
+                        href="{% modify_query "page" format="table" %}"
+                        data-tippy-content="{% trans 'Table view' %}"
+                    >
+                        {% heroicon_solid "table-cells" aria_hidden="true" size=18 %}
+                        <span class="sr-only">{% trans "Table view" %}</span>
+                    </a>
+                    <a
+                        class="tab {% if request.GET.format == "list" %}tab-active bg-base-100 text-base-content{% else %}bg-base-100/70 text-base-content/70{% endif %}"
+                        href="{% modify_query "page" format="list" %}"
+                        data-tippy-content="{% trans 'List view' %}"
+                    >
+                        {% heroicon_solid "queue-list" aria_hidden="true" size=18 %}
+                        <span class="sr-only">{% trans "List view" %}</span>
+                    </a>
                 </div>
             </div>
-        </c-hero.header>
+        </div>
+    </c-hero.header>
     </c-hero>
 {% endblock %}
 
