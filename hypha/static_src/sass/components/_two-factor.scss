@@ -1,5 +1,4 @@
 // stylelint-disable property-no-vendor-prefix, selector-id-pattern
-@use "../base/typography";
 
 .two-factor {
   position: relative;
@@ -11,7 +10,6 @@
 
   h1,
   h2 {
-    @extend %h3;
     font-weight: 700;
   }
 
@@ -22,7 +20,7 @@
 
 // 2FA token label font size
 label[for="id_generator-token"] {
-  font-size: 1.2em;
+  margin-inline-end: 0.5rem;
 }
 
 // 2FA token field.

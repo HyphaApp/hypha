@@ -2,35 +2,22 @@
 {% load i18n static %}
 
 {% block title %}{% if object %}{% trans "Edit" %}{% else %}{% trans "Add" %}{% endif %} {% trans "Invoice" %}: {% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
+
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ project.get_absolute_url }}"
+            back_link_text="{% trans 'View project page' %}"
+            title="{% if object %}{% trans 'Editing' %}{% else %}{% trans 'Add' %}{% endif %} {% trans 'Invoice' %}"
+            subtitle="{% if object %}{{ object.project.title }}{% else %}{% trans 'For' %}: {{ project.title }}{% endif %}"
+        />
+    </c-hero>
+{% endblock %}
+
 {% block content %}
-
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ project.get_absolute_url }}">
-                {% trans "View project page" %}
-            </a>
-        {% endslot %}
-        {% slot header %}
-            {% if object %}
-                {% trans "Editing" %}
-            {% else %}
-                {% trans "Add" %}
-            {% endif %}
-            {% trans "Invoice" %}
-        {% endslot %}
-        {% slot sub_heading %}
-            {% if object %}
-                {{ object.project.title }}
-            {% else %}
-                {% trans "For" %}: {{ project.title }}
-            {% endif %}
-        {% endslot %}
-    {% endadminbar %}
-
     {% include "forms/includes/form_errors.html" with form=form %}
-
-    <div class="wrapper wrapper--default-bg wrapper--form wrapper--sidebar">
-        <div class="wrapper--sidebar--inner">
+    <div class="wrapper wrapper--form wrapper--sidebar">
+        <div class="grow">
             <form class="form" action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% for field in form %}
@@ -40,9 +27,18 @@
                         {{ field }}
                     {% endif %}
                 {% endfor %}
-                {% for button_name, button_type, button_value in buttons %}
-                    <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }} {% if button_value == delete %}formnovalidate{% endif %}">{{ button_value }}</button>
-                {% endfor %}
+
+                <div class="flex flex-wrap gap-2 mt-4">
+                    {% for button_name, button_type, button_value in buttons %}
+                        <button
+                            class="btn {{ button_type }}"
+                            type="submit"
+                            name="{{ button_name }} {% if button_value == delete %}formnovalidate{% endif %}"
+                        >
+                            {{ button_value }}
+                        </button>
+                    {% endfor %}
+                </div>
             </form>
         </div>
     </div>

@@ -14,7 +14,7 @@
         {{ hidden }}
     {% endfor %}
 
-    <div class="fields--visible">
+    <section>
         {% for field in form.visible_fields %}
             {% if field.field %}
                 {% include "forms/includes/field.html" %}
@@ -22,19 +22,19 @@
                 {{ field }}
             {% endif %}
         {% endfor %}
-    </div>
+    </section>
 
-    <div class="mt-5 sm:flex sm:flex-row-reverse sm:gap-4 sm:mt-4">
+    <div class="mt-4 sm:flex-row-reverse card-actions">
         {% trans "Delete" as delete %}
         <button
-            class="button button--{% if invert %}white{% elif value == delete %}warning{% else %}primary{% endif %} w-full sm:w-auto"
+            class="btn {% if invert %}btn-secondary{% elif value == delete %}btn-danger{% else %}btn-primary{% endif %} w-full sm:w-auto"
             type="submit">
             {{ value }}
         </button>
 
         <button
             type="button"
-            class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 rounded-xs shadow-xs"
+            class="w-full sm:w-auto btn btn-secondary btn-outline btn-soft"
             @click="show = false"
         >{% trans "Cancel" %}</button>
     </div>

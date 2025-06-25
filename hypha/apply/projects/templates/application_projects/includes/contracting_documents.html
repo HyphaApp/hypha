@@ -1,162 +1,186 @@
 {% load i18n contract_tools project_tags heroicons %}
 {% allow_collapsible_header object header_type='contracting_documents' as collapsible_header %}
 
-<div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
-    <div class="docs-block__header" id="contract-documents-section" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" role="button" aria-label="Toggle Contract documents visibility" aria-controls="contract-documents-elements" {% endif %}>
-        <div class="flex justify-between w-full" >
-            <h2 class="m-0 text-lg font-semibold">
-                {% trans "Contracting documents" %}
-            </h2>
+<section class="overflow-hidden card card-border" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
+    <header
+        class="cursor-pointer card-header"
+        id="contract-documents-section"
+        {% if collapsible_header %}
+            x-on:click="collapsed = ! collapsed"
+            x-bind:aria-expanded="collapsed ? 'false' : 'true'"
+            role="button"
+            aria-label="Toggle Contract documents visibility"
+            aria-controls="contract-documents-elements"
+        {% endif %}>
+
+        <h2 class="font-semibold text-h3 grow">{% trans "Contracting documents" %}</h2>
+
+        <div class="card-actions">
+            {% user_can_upload_contract object request.user as can_upload_contract %}
+            {% user_can_submit_contract object user contract as can_submit_contract %}
+            {% required_remaining_contracting_doc_categories remaining_contract_document_categories as required_remaining_contract_document_categories %}
+
+            {% if can_submit_contract %}
+                <a class="btn btn-primary btn-sm {% if required_remaining_contract_document_categories or not contract.signed_by_applicant %} btn-disabled{% endif %}"
+                   id="submit_contract_document"
+                   hx-get="{% url 'apply:projects:contract_documents_submit' object.submission.id %}"
+                   href="{% url 'apply:projects:contract_documents_submit' object.submission.id %}"
+                   hx-target="#htmx-modal"
+                >
+                    {% trans "Submit documents" %}
+                </a>
+            {% endif %}
+
+            {% user_can_approve_contract request.user object as can_approve_contract %}
+            {% if contract_to_approve and can_approve_contract %}
+                <a class="btn btn-primary btn-sm"
+                   hx-get="{% url 'apply:projects:contract_approve' object.submission.id %}"
+                   href="{% url 'apply:projects:contract_approve' object.submission.id %}"
+                   hx-target="#htmx-modal"
+                >
+                    {% trans "Approve contract documents" %}
+                </a>
+
+            {% endif %}
 
             {% if collapsible_header %}
-                <button class="align-middle transition-transform transform ms-1" x-bind:class="collapsed ? '': '-rotate-90' ">
-                    {% heroicon_outline 'chevron-left' size=20 stroke_width=2 aria_hidden=true %}
-
+                <button
+                    class="transition-transform transform btn btn-ghost btn-square btn-sm"
+                >
+                    <span x-bind:class="collapsed ? '': 'rotate-180'">
+                        {% heroicon_outline 'chevron-down' size=20 stroke_width=2 aria_hidden=true %}
+                    </span>
                     <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">{% trans "expand" %}</span>
                 </button>
             {% endif %}
         </div>
-        {% user_can_upload_contract object request.user as can_upload_contract %}
-        {% user_can_submit_contract object user contract as can_submit_contract %}
-        {% required_remaining_contracting_doc_categories remaining_contract_document_categories as required_remaining_contract_document_categories %}
-        {% if can_submit_contract %}
-            <a class="button button--project-action {% if required_remaining_contract_document_categories or not contract.signed_by_applicant %}is-disabled{% endif %}"
-               id="submit_contract_document"
-               hx-get="{% url 'apply:projects:contract_documents_submit' object.submission.id %}"
-               href="{% url 'apply:projects:contract_documents_submit' object.submission.id %}"
-               hx-target="#htmx-modal"
-            >
-                {% trans "Submit contract documents" %}
-            </a>
+    </header>
+
+    <ul
+        class="list"
+        id="contract-documents-elements"
+        {% if collapsible_header %}
+            x-show="!collapsed" role="region"
+            aria-labelledby="contract-documents-section"
         {% endif %}
-        {% user_can_approve_contract request.user object as can_approve_contract %}
-        {% if contract_to_approve and can_approve_contract %}
-            <a class="button button--project-action"
-               hx-get="{% url 'apply:projects:contract_approve' object.submission.id %}"
-               href="{% url 'apply:projects:contract_approve' object.submission.id %}"
-               hx-target="#htmx-modal"
-            >
-                {% trans "Approve contract documents" %}
-            </a>
-
-        {% endif %}
-    </div>
-
-    <ul class="docs-block__inner" id="contract-documents-elements" {% if collapsible_header %} x-show="!collapsed" role="region"
-            aria-labelledby="contract-documents-section" {% endif %}>
-
-            {% is_project_contract_approved object as is_contract_approved %}
-            {% contract_uploaded_by_contracting object as contract_uploaded %}
-            <li class="docs-block__row">
-                <div class="docs-block__row-inner">
-                    {% if object.submitted_contract_documents %}
-                        {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
-                    {% else %}
-                        {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
-                    {% endif %}
-                    <p class="docs-block__title">{% trans "Contract" %}</p>
-                </div>
-                {% if contract_uploaded %}
-                    <div class="docs-block__row-inner">
-                        <a
-                            class="flex items-center p-2.5 mb-1 w-auto font-bold bg-white border border-solid hover:text-white text-start text-light-blue me-0 border-light-blue hover:bg-light-blue focus:text-light-blue"
-                            href="{{ contract.get_absolute_url }}"
-                            target="_blank"
-                        >
-                            {% heroicon_micro "eye" class="inline w-4 h-4 me-1" aria_hidden=true %}
-                            {% trans "View" %}
-                        </a>
-                    </div>
-                    {% if not is_contract_approved %}
-                        <ul class="mt-0 w-full ps-9">
-                            <li class="docs-block__document">
-                                <div class="docs-block__row-inner">
-                                </div>
-                                <div class="docs-block__row-inner">
-                                    {% heroicon_mini "information-circle" class="inline align-middle fill-light-blue me-1" aria_hidden=true %}
-                                    <a
-                                        class="docs-block__icon-link"
-                                        href="{% url 'funds:submissions:comments' object.submission.id %}"
-                                    >
-                                        <span>{% trans "Corrections/amendments?" %}</span>
-                                    </a>
-                                </div>
-                            </li>
-                        </ul>
-                    {% endif %}
+    >
+        {% is_project_contract_approved object as is_contract_approved %}
+        {% contract_uploaded_by_contracting object as contract_uploaded %}
+        <li class="list-row hover:bg-base-200">
+            <h3 class="flex gap-2 items-center font-medium text-h4 list-col-grow">
+                {% if object.submitted_contract_documents %}
+                    {% heroicon_outline "check-circle" size=16 class="w-5 h-5 stroke-primary" stroke_width=2 aria_hidden=true %}
+                {% else %}
+                    {% heroicon_outline "check-circle" class="stroke-gray-400" aria_hidden=true %}
                 {% endif %}
+                {% trans "Contract" %}
+            </h3>
 
-                {% show_contract_upload_row object user as show_contract_row %}
-                {% if show_contract_row %}
-                    {% contract_reuploaded_by_applicant object as contract_reuploaded %}
-                    <ul class="mt-2 w-full ps-9">
-                        <li class="docs-block__document">
-                            <div class="docs-block__row-inner">
-                                <p class="docs-block__title">
-                                    {% if not contract.uploaded_by_contractor_at %}{% trans "Pending signed contract by " %}{% else %}{% trans "Signed contract by " %}{% endif %}{% if user == object.user %}{{ ORG_SHORT_NAME }}{% else %}{% trans "Contracting team " %} {% endif %}
-                                    <i>{% if contract.uploaded_by_contractor_at %}({{ contract.uploaded_by_contractor_at }}){% endif %}</i></p>
-                            </div>
-                            {% user_can_initiate_contract user as can_initiate_contract %}
-                            {% if can_upload_contract and can_initiate_contract  %}
-                                <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                                    <a class="flex items-center p-2.5 w-auto font-bold text-white border-none text-start bg-light-blue me-0"
-                                       hx-get="{% url 'apply:projects:contract_upload' object.submission.id %}"
-                                       href="{% url 'apply:projects:contract_upload' object.submission.id %}"
-                                       hx-target="#htmx-modal"
-                                    >
-                                        {% heroicon_micro "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
-                                        {% if not contract %}
-                                            {% trans "Upload" %}
-                                        {% elif not contract.approver %}
-                                            {% trans "Reupload" %}
-                                        {% endif %}
-                                    </a>
-                                </div>
-                            {% endif %}
-                        </li>
-
-                        <li class="docs-block__document">
-                            <div class="docs-block__row-inner">
-                                <p class="docs-block__title">{% if not contract.uploaded_by_applicant_at %}{% trans "Pending countersigned contract by " %}{% else %}{% trans "Countersigned contract by " %}{% endif %}{% if user == object.user %}{% trans "you " %} {% else %}{% trans "Vendor " %}{% endif %}
-                                    <i>{% if contract.uploaded_by_applicant_at %}({{ contract.uploaded_by_applicant_at }}){% endif %}</i></p>
-                            </div>
-                            {% if can_upload_contract and user.is_applicant %}
-                                <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                                    <a class="flex items-center p-2.5 w-auto font-bold text-white border-none text-start bg-light-blue me-0"
-                                       hx-get="{% url 'apply:projects:contract_upload' object.submission.id %}"
-                                       href="{% url 'apply:projects:contract_upload' object.submission.id %}"
-                                       hx-target="#htmx-modal"
-                                    >
-                                        {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
-                                        {% if not contract.signed_by_applicant %}
-                                            {% trans "Upload" %}
-                                        {% elif not contract.approver %}
-                                            {% trans "Reupload" %}
-                                        {% endif %}
-                                    </a>
-                                </div>
-                            {% endif %}
-                        </li>
-                    </ul>
-                {% endif %}
-            </li>
-
-            {% if contracting_documents_configured and contract_uploaded %}
-                <div
-                    hx-trigger="load, contractingDocumentUpload from:body, contractingDocumentRemove from:body"
-                    hx-get="{% url "apply:projects:contract_documents" object.submission.id %}"
-                    hx-target="this">
-                    {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
-                    <p class="docs-block__title">{% trans "Contracting documents" %}</p>
-
-                    <div class="animate-pulse min-h-30">
-                        <div class="mb-3 w-full h-9 bg-gray-200"></div>
-                        <div class="mb-1 w-full h-6 bg-gray-200"></div>
-                        <div class="mb-3 w-full h-1 bg-gray-200"></div>
-                        <div class="mb-3 w-20 h-6 bg-gray-200"></div>
-                    </div>
-                </div>
+            {% if not is_contract_approved %}
+                <a
+                    class="inline-flex gap-1 items-center link"
+                    href="{% url 'funds:submissions:comments' object.submission.id %}"
+                >
+                    {% heroicon_mini "information-circle" class="text-fg-muted" aria_hidden=true %}
+                    <span>{% trans "Corrections/amendments?" %}</span>
+                </a>
             {% endif %}
 
-        </ul>
-</div>
+            {% if contract_uploaded %}
+                <a
+                    class="btn btn-secondary btn-outline btn-sm"
+                    href="{{ contract.get_absolute_url }}"
+                    target="_blank"
+                >
+                    {% heroicon_micro "eye" class="inline w-4 h-4" aria_hidden=true %}
+                    <span>{% trans "View" %}</span>
+                </a>
+            {% endif %}
+
+            {% show_contract_upload_row object user as show_contract_row %}
+            {% if show_contract_row %}
+                {% contract_reuploaded_by_applicant object as contract_reuploaded %}
+                <ul class="list">
+                    <li class="list-row">
+
+                        <p class="list-col-grow">
+                            {% if not contract.uploaded_by_contractor_at %}{% trans "Pending signed contract by " %}{% else %}{% trans "Signed contract by " %}{% endif %}{% if user == object.user %}{{ ORG_SHORT_NAME }}{% else %}{% trans "Contracting team " %} {% endif %}
+                            <i>{% if contract.uploaded_by_contractor_at %}({{ contract.uploaded_by_contractor_at }}){% endif %}</i>
+                        </p>
+
+                        {% user_can_initiate_contract user as can_initiate_contract %}
+                        {% if can_upload_contract and can_initiate_contract  %}
+                            <a
+                                class="btn btn-sm btn-primary"
+                                hx-get="{% url 'apply:projects:contract_upload' object.submission.id %}"
+                                href="{% url 'apply:projects:contract_upload' object.submission.id %}"
+                                hx-target="#htmx-modal"
+                            >
+                                {% heroicon_micro "arrow-up-tray" size=18 class="opacity-80" aria_hidden="true" %}
+                                {% if not contract %}
+                                    {% trans "Upload" %}
+                                {% elif not contract.approver %}
+                                    {% trans "Reupload" %}
+                                {% endif %}
+                            </a>
+                        {% endif %}
+                    </li>
+
+                    <li class="list-row">
+
+                        <p class="list-col-grow">
+                            {% if not contract.uploaded_by_applicant_at %}
+                                {% trans "Pending countersigned contract by " %}
+                            {% else %}
+                                {% trans "Countersigned contract by " %}
+                            {% endif %}
+                            {% if user == object.user %}{% trans "you " %} {% else %}{% trans "Vendor " %}{% endif %}
+
+                            <i>{% if contract.uploaded_by_applicant_at %}({{ contract.uploaded_by_applicant_at }}){% endif %}</i>
+                        </p>
+
+                        {% if can_upload_contract and user.is_applicant %}
+                            <a
+                                class="btn btn-sm btn-primary"
+                                hx-get="{% url 'apply:projects:contract_upload' object.submission.id %}"
+                                href="{% url 'apply:projects:contract_upload' object.submission.id %}"
+                                hx-target="#htmx-modal"
+                            >
+                                {% heroicon_mini "arrow-up-tray" size=18 class="opacity-80" aria_hidden="true" %}
+                                {% if not contract.signed_by_applicant %}
+                                    {% trans "Upload" %}
+                                {% elif not contract.approver %}
+                                    {% trans "Reupload" %}
+                                {% endif %}
+                            </a>
+                        {% endif %}
+                    </li>
+                </ul>
+            {% endif %}
+        </li>
+
+        {% if contracting_documents_configured and contract_uploaded %}
+            <li
+                class="list-row"
+                hx-trigger="load, contractingDocumentUpload from:body, contractingDocumentRemove from:body"
+                hx-get="{% url 'apply:projects:contract_documents' object.submission.id %}"
+                hx-target="this"
+            >
+                <h3 class="flex gap-2 items-center font-medium text-h4 list-col-grow">
+                    {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+                    {% trans "Contracting documents" %}
+                </h3>
+
+                <div class="list-col-wrap">
+                    <div class="animate-pulse min-h-30">
+                        <div class="mb-3 w-full h-9 bg-base-300"></div>
+                        <div class="mb-1 w-full h-6 bg-base-300"></div>
+                        <div class="mb-3 w-full h-1 bg-base-300"></div>
+                        <div class="mb-3 w-20 h-6 bg-base-300"></div>
+                    </div>
+                </div>
+            </li>
+        {% endif %}
+
+    </ul>
+</section>

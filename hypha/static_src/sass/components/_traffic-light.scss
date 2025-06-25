@@ -8,19 +8,19 @@
 
   &--no,
   &--red {
-    background-color: variables.$color--tomato;
+    background-color: var(--color-error);
     clip-path: polygon(100% 0, 0 0, 50% 100%);
   }
 
   &--maybe,
   &--amber {
-    background-color: variables.$color--mustard;
+    background-color: var(--color-warning);
     border-radius: 50%;
   }
 
   &--yes,
   &--green {
-    background-color: variables.$color--green;
+    background-color: var(--color-success);
     clip-path: polygon(50% 0, 0 100%, 100% 100%);
   }
 }

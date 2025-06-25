@@ -5,20 +5,25 @@
 
 {% block title %}{% trans "Projects" %}{% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'All Projects' %} ({{ table.rows|length }})"
+            subtitle="{% trans 'View, Search and filter all projects' %}"
+        />
+    </c-hero>
+{% endblock %}
+
 {% block content %}
-
-    {% adminbar %}
-        {% slot header %}{% trans "All Projects" %} ({{ table.rows|length }}){% endslot %}
-        {% slot sub_heading %}{% trans "View, Search and filter all projects" %}{% endslot %}
-    {% endadminbar %}
-
-    <div class="mt-4 wrapper wrapper--large">
+    <div class="my-4">
         {% if table %}
             {% include "funds/includes/table_filter_and_search.html" with search_term=search_term search_placeholder="projects" use_search=True %}
-            {% render_table table %}
+
+            <div class="overflow-x-auto mb-4 border-b rounded-b-box border-x">
+                {% render_table table %}
+            </div>
         {% else %}
-            <p>{% trans "No Projects Available." %}</p>
+            <p class="p-4">{% trans "No Projects Available." %}</p>
         {% endif %}
     </div>
-
 {% endblock content %}

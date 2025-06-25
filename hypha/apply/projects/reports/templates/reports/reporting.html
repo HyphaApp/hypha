@@ -5,23 +5,24 @@
 
 {% block title %}{% trans "Reporting" %}{% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Reporting' %} ({{ table.rows|length }})"
+            subtitle="{% trans 'View, Search and filter reporting statuses' %} • <a href='{% url 'apply:projects:reports:submitted' %}' class='link link-hover'>View submitted reports</a>"
+        />
+    </c-hero>
+{% endblock %}
+
 {% block content %}
-
-    {% adminbar %}
-        {% slot header %}{% trans "Reporting" %} ({{ table.rows|length }}){% endslot %}
-        {% slot sub_heading %}
-            {% trans "View, Search and filter reporting statuses" %} •
-            <a href="{% url 'apply:projects:reports:submitted' %}" class="text-blue-300 hover:underline">View submitted reports</a>
-        {% endslot %}
-    {% endadminbar %}
-
-    <div class="mt-4 wrapper wrapper--large">
+    <div class="mt-4">
         {% if table %}
             {% include "funds/includes/table_filter_and_search.html" %}
-            {% render_table table %}
+            <div class="overflow-x-auto border-b rounded-b-box border-x">
+                {% render_table table %}
+            </div>
         {% else %}
-            <p>{% trans "No Projects Currently Reporting." %}</p>
+            <p class="p-4">{% trans "No Projects Currently Reporting." %}</p>
         {% endif %}
     </div>
-
 {% endblock content %}

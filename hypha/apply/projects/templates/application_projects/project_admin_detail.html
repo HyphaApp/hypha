@@ -2,36 +2,33 @@
 
 {% load i18n approval_tools contract_tools project_tags static %}
 
-
 {% block admin_assignments %}
     {% user_can_update_project_status object user as can_update_status %}
     {% if can_update_status %}
-        <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions" data-testid="sidebar-primary-actions">
+        <div class="card card-border shadow-xs bg-base-200" data-testid="sidebar-primary-actions">
+            <div class="card-body">
+                <h2 class="card-title">{% trans "Actions to take" %}</h2>
 
-            <h5>{% trans "Actions to take" %}</h5>
-
-            {% user_can_skip_pafapproval_process project user as can_skip_paf %}
-            {% if can_skip_paf %}
-                <a class="button button--white button--full-width button--bottom-space"
-                   hx-confirm="Please ensure the Project Form is completed and you are ready to proceed to the next stage. This action cannot be reverted."
-                   hx-post="{% url 'apply:projects:paf_skip' object.id %}"
-                >
-                    {% trans "Continue to next status" %}
-                </a>
-            {% else %}
-                <!-- Move the condition below to link if add more than one link to 'More Actions'-->
-                <details>
-                    <summary class="sidebar__separator sidebar__separator--medium">{% trans "More actions" %}</summary>
-
-                    <a class="button button--white button--full-width button--bottom-space"
-                       href="{% url 'apply:projects:project_status_update' object.submission.id %}"
-                       hx-get="{% url 'apply:projects:project_status_update' object.submission.id %}"
-                       hx-target="#htmx-modal"
+                {% user_can_skip_pafapproval_process project user as can_skip_paf %}
+                {% if can_skip_paf %}
+                    <a
+                        class="btn btn-secondary btn-outline btn-block"
+                        hx-confirm="{% trans 'Please ensure the Project Form is completed and you are ready to proceed to the next stage. This action cannot be reverted.' %}"
+                        hx-post="{% url 'apply:projects:paf_skip' object.id %}"
                     >
-                        {% trans "Update Project Status" %}
+                        {% trans "Continue to next status" %}
                     </a>
-                </details>
-            {% endif %}
+                {% else %}
+                    <a
+                        class="btn btn-secondary btn-outline btn-block"
+                        href="{% url 'apply:projects:project_status_update' object.submission.id %}"
+                        hx-get="{% url 'apply:projects:project_status_update' object.submission.id %}"
+                        hx-target="#htmx-modal"
+                    >
+                        {% trans "Update project status" %}
+                    </a>
+                {% endif %}
+            </div>
         </div>
     {% endif %}
 {% endblock %}

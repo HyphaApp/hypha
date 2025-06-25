@@ -6,9 +6,9 @@
 {% block meta_description %}{{ settings.core.SystemSettings.home_strapline|striptags|truncatechars:200 }}{% endblock %}
 
 {% block content %}
-    <div class="py-8 mx-auto max-w-3xl lg:py-16">
+    <div class="my-8 mx-auto max-w-3xl">
 
-        <h1 class="text-5xl font-bold text-balance">
+        <h1 class="font-bold text-h00">
             {{ settings.core.SystemSettings.home_title}}
         </h1>
 
@@ -17,7 +17,7 @@
         {% endif %}
 
         {% if funds %}
-            <div class="divide-y">
+            <div class="mt-4 list">
                 {% for fund in funds %}
                     {% include "home/includes/fund-list-item.html" with page=fund %}
                 {% endfor %}
@@ -27,6 +27,5 @@
                 {{ settings.core.SystemSettings.home_no_applications_msg|nh3|safe }}
             </div>
         {% endif %}
-
     </div>
 {% endblock %}

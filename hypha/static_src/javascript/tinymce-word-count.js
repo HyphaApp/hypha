@@ -10,7 +10,7 @@
   function updateWordCount(element) {
     const currentCount = parseInt(element.innerText.match(/\d+/)?.[0], 10) || 0;
     const limit = parseInt(
-      element.closest("div[data-word-limit]").dataset.wordLimit,
+      element.closest("[data-word-limit]").dataset.wordLimit,
       10
     );
     const warningThreshold = limit * WARNING_THRESHOLD;

@@ -46,9 +46,6 @@
     });
   }
 
-  // Remove the "no javascript" messages
-  document.querySelector(".message-no-js").remove();
-
   // Block multiple form submits.
   form.addEventListener("submit", function () {
     // Use setTimeout with 0 delay to ensure form submission begins

@@ -15,8 +15,6 @@ from hypha.apply.funds.permissions import can_export_submissions
 from hypha.apply.funds.tables import (
     ReviewerSubmissionsTable,
     SubmissionsTable,
-    SummarySubmissionsTableWithRole,
-    review_filter_for_user,
 )
 from hypha.apply.projects.filters import ProjectListFilter
 from hypha.apply.projects.models import Invoice, Project, ProjectSettings
@@ -133,15 +131,9 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
 
         limit = 5
         return {
-            "active_statuses_filter": "".join(
-                f"&status={status}"
-                for status in review_filter_for_user(self.request.user)
-            ),
             "count": count,
             "display_more": count > limit,
-            "table": SummarySubmissionsTableWithRole(
-                submissions[:limit], prefix="my-review-"
-            ),
+            "submissions": submissions[:limit],
         }
 
     def active_invoices(self):
@@ -304,13 +296,9 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
 
         limit = 5
         return {
-            "active_statuses_filter": "".join(
-                f"&status={status}"
-                for status in review_filter_for_user(self.request.user)
-            ),
             "count": count,
             "display_more": count > limit,
-            "table": ReviewerSubmissionsTable(submissions[:limit], prefix="my-review-"),
+            "submissions": submissions[:limit],
         }
 
 
@@ -515,6 +503,7 @@ class ApplicantDashboardView(TemplateView):
         )
         return {
             "count": historical_submissions.count(),
+            "submissions": historical_submissions,
             "table": SubmissionsTable(data=historical_submissions),
         }
 

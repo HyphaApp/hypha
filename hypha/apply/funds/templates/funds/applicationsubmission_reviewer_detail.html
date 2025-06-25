@@ -2,31 +2,35 @@
 {% load i18n static workflow_tags review_tags determination_tags %}
 
 {% block flags %}
-    <div class="sidebar__inner">
-        <h5>{% trans "Flags" %}</h5>
-        {% include 'flags/flags.html' with submission=object user=request.user %}
-    </div>
+    <section class="card card-border bg-base-100 shadow-xs" id="screening-status-{{ object.id }}">
+        <div class="card-body">
+            <h2 class="card-title">{% trans "Flags" %}</h2>
+            {% include 'flags/flags.html' with submission=object user=request.user %}
+        </div>
+    </section>
 {% endblock %}
 
 {% block reviews %}
-    <div class="sidebar__inner">
-        <h5>{% trans "Reviews & assignees" %}</h5>
+    <div class="card card-border bg-base-100 shadow-xs">
+        <div class="card-body">
+            <h2 class="card-title">{% trans "Reviews & assignees" %}</h2>
 
-        <div
-            hx-trigger="revealed"
-            hx-get="{% url 'funds:submissions:partial-reviews-card' object.id %}"
-            hx-target="this"
-        >
-            <div class="animate-pulse min-h-30">
-                <div class="mb-3 w-full h-9 bg-gray-200"></div>
-                <div class="mb-1 w-full h-6 bg-gray-200"></div>
-                <div class="mb-3 w-full h-1 bg-gray-200"></div>
-                <div class="mb-3 w-20 h-6 bg-gray-200"></div>
+            <div
+                hx-trigger="revealed"
+                hx-get="{% url 'funds:submissions:partial-reviews-card' object.id %}"
+                hx-target="this"
+            >
+                <div class="animate-pulse min-h-30">
+                    <div class="mb-3 w-full h-9 bg-base-300"></div>
+                    <div class="mb-1 w-full h-6 bg-base-300"></div>
+                    <div class="mb-3 w-full h-1 bg-base-300"></div>
+                    <div class="mb-3 w-20 h-6 bg-base-300"></div>
+                </div>
             </div>
-        </div>
 
-        <div class="wrapper wrapper--sidebar-buttons">
-            {% include 'review/includes/review_button.html' with submission=object class="button--half-width" %}
+            <div class="card-actions">
+                {% include 'review/includes/review_button.html' with submission=object %}
+            </div>
         </div>
     </div>
 {% endblock %}
