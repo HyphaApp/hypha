@@ -18,6 +18,7 @@ from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import MetaTerm, Option
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.review.models import Review
+from hypha.core.tables import RelativeTimeColumn
 
 from .models import ApplicationSubmission, Round, ScreeningStatus
 from .widgets import MultiCheckboxesWidget
@@ -380,12 +381,17 @@ class RoundsTable(tables.Table):
     title = tables.Column(
         linkify=lambda record: record.get_absolute_url(),
         orderable=True,
+        attrs={
+            "a": {"class": "link link-hover text-h4 font-semibold"},
+        },
     )
     fund = tables.Column(accessor=A("specific__fund"))
     lead = tables.Column()
     start_date = tables.Column()
     end_date = tables.Column()
     deterrmined = tables.Column(verbose_name=_("Determined"), accessor="progress")
+    start_date = RelativeTimeColumn(verbose_name=_("Start"))
+    end_date = RelativeTimeColumn(verbose_name=_("End"))
 
     def __init__(self, *args, **kwargs):
         self.prefix = kwargs.pop("prefix", "rounds")

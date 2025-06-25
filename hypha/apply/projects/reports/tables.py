@@ -3,6 +3,7 @@ from django.conf import settings
 from django.utils.html import format_html
 
 from hypha.apply.projects.models import Project
+from hypha.core.tables import RelativeTimeColumn
 
 from ..utils import get_project_title
 from .models import Report
@@ -66,7 +67,7 @@ class ReportListTable(tables.Table):
         },
     )
     report_period = tables.Column(accessor="pk")
-    submitted = tables.DateColumn()
+    submitted = RelativeTimeColumn()
     lead = tables.Column(accessor="project__lead")
 
     class Meta:
@@ -90,10 +91,3 @@ class ReportListTable(tables.Table):
 
     def render_project(self, record):
         return get_project_title(record.project)
-
-    def render_submitted(self, record):
-        return format_html(
-            "<relative-time datetime='{}' prefix=''>{}</relative-time>",
-            record.submitted.isoformat(),
-            record.submitted.strftime(settings.SHORT_DATETIME_FORMAT),
-        )

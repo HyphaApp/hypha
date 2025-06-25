@@ -11,6 +11,7 @@ from django_tables2.utils import A
 from heroicons.templatetags.heroicons import heroicon_outline
 
 from hypha.apply.funds.tables import LabeledCheckboxColumn
+from hypha.core.tables import RelativeTimeColumn
 
 from .forms.payment import get_invoice_possible_transition_for_user
 from .models import Invoice, PAFApprovals, Project
@@ -183,8 +184,8 @@ class BaseProjectsTable(tables.Table):
     )
     fund = tables.Column(verbose_name=_("Fund"), accessor="submission__page")
     reporting = tables.Column(verbose_name=_("Reporting"), accessor="pk")
-    last_payment_request = tables.DateColumn()
-    end_date = tables.DateColumn(verbose_name=_("End date"), accessor="proposed_end")
+    last_payment_request = RelativeTimeColumn()
+    end_date = RelativeTimeColumn(verbose_name=_("End date"), accessor="proposed_end")
 
     def order_reporting(self, qs, is_descending):
         direction = "-" if is_descending else ""
