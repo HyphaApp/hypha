@@ -83,35 +83,29 @@
                         </div>
                     {% endif %}
 
-                    <header class="flex justify-between @container mb-2"-container-constrained>
+                    <header class="flex justify-between @container mb-2">
                         <div class="grid grid-cols-1 @md:grid-cols-2 w-full text-fg-muted text-sm gap-x-4 gap-y-2">
-                            <span class="self-center">
-                                {% if object.is_draft %}
-                                    {% trans "Drafted " %}
-                                {% else %}
-                                    {% trans "Submitted " %}
-                                {% endif %}
+                            <div class="self-center line-clamp-2">
+                                {% if object.is_draft %}{% trans "Drafted " %}{% else %}{% trans "Submitted " %}{% endif %}
                                 <relative-time datetime={{ object.submit_time|date:"c" }} class="font-semibold">
                                     {{ object.submit_time|date:"SHORT_DATETIME_FORMAT" }}
                                 </relative-time>
-                                {% trans "by" %} <strong class="max-w-md font-semibold line-clamp-2">{% display_submission_author %}</strong>
-                            </span>
+                                {% trans "by" %} <strong class="max-w-md font-semibold">{% display_submission_author %}</strong>
+                            </div>
 
-                            <span class="self-center">
+                            <div class="self-center line-clamp-2">
                                 {% trans "Updated" %}
                                 <relative-time datetime={{ object.live_revision.timestamp|date:"c" }} class="font-semibold">
                                     {{ object.live_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}
                                 </relative-time>
                                 {% trans "by" %}
-                                <strong class="max-w-md font-semibold line-clamp-2">
+                                <strong class="max-w-md font-semibold">
                                     {% display_submission_author True %}
                                 </strong>
-                            </span>
-
-
+                            </div>
                         </div>
-                        <div class="flex flex-1 gap-2 justify-end items-center print:hidden">
 
+                        <div class="flex flex-1 gap-2 justify-end items-center print:hidden">
                             {% if request.user|has_edit_perm:object %}
                                 <a
                                     class="btn btn-soft btn-secondary btn-sm"
@@ -121,6 +115,7 @@
                                     {% trans "Edit" %}
                                 </a>
                             {% endif %}
+
                             {% can "delete_submission" object as can_delete_submission %}
                             {% if can_delete_submission %}
                                 <a
@@ -136,9 +131,10 @@
                             {% endif %}
                         </div>
                     </header>
+
                     {% if request.user|can_translate_submission %}
                         <div
-                            class="w-full"
+                            class="mt-4 w-full"
                             hx-get="{% url 'funds:submissions:partial-translate-answers' object.id %}"
                             hx-trigger="translateSubmission from:body"
                             hx-indicator="#translate-card-loading"
