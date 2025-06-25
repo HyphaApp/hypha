@@ -7,6 +7,7 @@
 @import "./components/table.css" layer(components);
 @import "./components/card.css" layer(components);
 @import "./components/tinymce.css" layer(components);
+@import "./components/pagedown.css" layer(components);
 
 @import "./utilities/typography.css" layer(utilities);
 @import "./components/link.css" layer(utilities);
@@ -124,10 +125,6 @@
 .separator-dot:not(:last-child)::after {
   @apply text-fg-muted mx-1;
   content: "\00B7"; /* Unicode for middle dot */
-}
-
-.wmd-preview {
-  @apply prose w-full;
 }
 
 .errorlist {

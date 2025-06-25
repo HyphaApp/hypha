@@ -122,27 +122,12 @@
     }
   }
 
-  .wmd-preview {
-    width: 100%;
-  }
-
-  .wmd-input {
-    field-sizing: content;
-    min-height: 14rem;
-  }
-
   &__comments {
     // stylelint-disable-next-line selector-class-pattern,selector-id-pattern
     ul#id_visibility {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
-    }
-
-    .wmd-input,
-    .wmd-preview {
-      max-width: 100%;
-      margin-block-end: 0;
     }
   }
 }

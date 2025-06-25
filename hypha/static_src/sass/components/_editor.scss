@@ -1,10 +1,7 @@
 @use "../abstracts/variables";
 
 .wmd-preview {
-  background-color: var(--color-base-200);
   padding: 0 10px;
-  width: 100%;
-  overflow: hidden; /* prevent collapsing margins */
 }
 
 .wmd-button-row {
@@ -36,14 +33,4 @@
     width: 20px;
     height: 20px;
   }
-}
-
-.wmd-prompt-background {
-  background-color: variables.$color--black;
-}
-
-.wmd-prompt-dialog {
-  background-color: variables.$color--light-grey;
-  padding: 0.5em;
-  border: 4px solid variables.$color--primary;
 }
