@@ -4,11 +4,11 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
-    <div class="my-8 mx-auto max-w-3xl lg:my-16">
+    <div class="my-8 mx-auto max-w-3xl">
         {% if page.end_date and page.get_parent.specific.show_deadline %}
-            <p>
-                {% heroicon_mini "calendar-days" aria_hidden="true" class="inline me-1 fill-fg-muted" %}
-                <span class="font-bold text-fg-muted">{% trans "Next deadline" %}: {{ page.end_date }}</span>
+            <p class="badge badge-info badge-soft badge-md">
+                {% heroicon_micro 'calendar-days' class='w-4 h-4' aria_hidden=true %}
+                <span class="font-medium">{% trans 'Next deadline' %}: {{ page.next_deadline|date:'M j, Y' }}</span>
             </p>
         {% endif %}
 
@@ -66,8 +66,10 @@
                                 {{ field.block }}
                             </div>
                         {% else %}
-                            <div class="mb-2 max-w-none field-block prose">
-                                {{ field.block }}
+                            <div class="max-w-none field-block prose">
+                                <div>
+                                    {{ field.block }}
+                                </div>
                             </div>
                         {% endif %}
                     {% endif %}

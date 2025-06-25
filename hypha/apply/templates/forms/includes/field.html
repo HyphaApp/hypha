@@ -63,7 +63,7 @@
                 <div>
                     <label class="max-w-none prose" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}*{% endif %}</label>
                     {% if field.help_text %}
-                        <div class="prose prose-sm">{{ field.help_text }}</div>
+                        <div class="text-xs prose h-help-text">{{ field.help_text }}</div>
                     {% endif %}
                 </div>
             </div>
@@ -79,7 +79,7 @@
             {% endif %}
         {% endif %}
         {% if field.help_text and widget_type != 'checkbox_input' %}
-            <div class="-mt-2 whitespace-normal label prose prose-sm" aria-live="polite" aria-atomic="true">
+            <div class="mb-1 -mt-1 text-xs whitespace-normal label prose" aria-live="polite" aria-atomic="true">
                 {{ field.help_text }}
             </div>
         {% endif %}

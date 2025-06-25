@@ -64,7 +64,3 @@
 .fieldset {
   @apply text-sm;
 }
-
-:root .prose {
-  line-height: 1.5rem;
-}

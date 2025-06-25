@@ -12,15 +12,13 @@
       </a>
     </h2>
     {% if page.next_deadline and page.show_deadline %}
-      <p class="mb-4">
-        <span class="badge badge-warning badge-md">
-          {% heroicon_micro 'calendar-days' class='inline align-text-bottom' aria_hidden=true %}
-          <span class="font-medium">{% trans 'Next deadline' %}: {{ page.next_deadline|date:'M j, Y' }}</span>
-        </span>
+      <p class="badge badge-info badge-soft badge-md">
+        {% heroicon_micro 'calendar-days' class='w-4 h-4' aria_hidden=true %}
+        <span class="font-medium">{% trans 'Next deadline' %}: {{ page.next_deadline|date:'M j, Y' }}</span>
       </p>
     {% endif %}
     {% if page.description %}
-      <div class="prose">
+      <div class="mt-2 prose">
         {{ page.description|markdown|nh3 }}
       </div>
     {% endif %}
