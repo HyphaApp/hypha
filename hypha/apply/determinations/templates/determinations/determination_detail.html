@@ -52,7 +52,7 @@
         {% for group in determination.detailed_data.values %}
             <section>
                 {% if group.title %}
-                    <h2 class="section-title">{{ group.title|nh3 }}</h2>
+                    <h2 class="section-header">{{ group.title|nh3 }}</h2>
                 {% endif %}
 
                 {% for question, answer in group.questions %}

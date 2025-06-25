@@ -180,7 +180,7 @@
         <!-- Needed for most forms so load it here once. -->
         <script src="{% static 'file_form/file_form.min.js' %}"></script>
         <script src="{% static 'js/file-uploads.js' %}"></script>
-        <script src="{% static 'js/behaviours/prose-cleanup.js' %}"></script>
+        <script defer src="{% static 'js/behaviours/prose-cleanup.js' %}"></script>
         {{ form.media.js }}
         <!-- Load extra js. -->
         {% block extra_js %}{% endblock %}

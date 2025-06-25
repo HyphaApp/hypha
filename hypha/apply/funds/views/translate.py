@@ -16,9 +16,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views import View
 
-from hypha.apply.users.decorators import (
-    staff_required,
-)
+from hypha.apply.users.decorators import staff_required
 
 from ..models import ApplicationSubmission
 

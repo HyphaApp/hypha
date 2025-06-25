@@ -422,8 +422,8 @@ def partial_submission_answers(request, pk):
     )
     return render(
         request,
-        "submissions/partials/applicationsubmission.html",
-        {"submission": submission},
+        "funds/includes/rendered_answers.html",
+        {"object": submission},
     )
 
 
