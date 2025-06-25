@@ -4,40 +4,6 @@
   word-break: break-word;
   max-width: 50em;
 
-  &--answers {
-    > section {
-      margin: 0 0 2rem;
-
-      p:first-of-type {
-        margin-block-start: 0;
-      }
-
-      p:empty {
-        margin: 0;
-      }
-    }
-  }
-
-  &--hidden {
-    display: none;
-
-    &.is-open {
-      display: block;
-    }
-  }
-
-  // This is a hack to make sure a copy pasted table with width property on it
-  // doesn't break the layout. The margin from the table is removed and transferred
-  // to the parent element, because the table is wrapped in a div with overflow: auto
-  &__table {
-    overflow: auto;
-    margin-block: 1.25rem;
-
-    > table {
-      margin-block: 0;
-    }
-  }
-
   ul {
     &.remove-list-style {
       padding: 0;

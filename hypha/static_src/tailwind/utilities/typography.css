@@ -64,3 +64,12 @@
 .fieldset {
   @apply text-sm;
 }
+.prose :where(.table-container) {
+  @apply my-8;
+
+  table {
+    @apply my-0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
