@@ -11,27 +11,3 @@
     }
   }
 }
-
-.tox {
-  .tox-statusbar {
-    &__wordcount {
-      padding-inline: 0.5rem;
-
-      &::after {
-        content: attr(data-after-word-count);
-      }
-
-      &.word-count-warning,
-      &.word-count-warning-2 {
-        background-color: var(--color-warning);
-        color: var(--color-warning-content);
-        font-weight: bold;
-      }
-
-      &.word-count-warning-2 {
-        background-color: var(--color-error);
-        color: var(--color-error-content);
-      }
-    }
-  }
-}

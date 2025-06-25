@@ -33,12 +33,32 @@
   /* Status Bar Components */
   .tox-statusbar {
     @apply bg-base-200! text-base-content!;
+  }
 
-    a,
-    &__path-item,
-    &__wordcount {
-      @apply text-fg-muted!;
-    }
+  .tox-statusbar__wordcount {
+    padding-inline: 0.5rem;
+  }
+
+  .tox-statusbar__wordcount::after {
+    content: attr(data-after-word-count);
+  }
+
+  .tox-statusbar__wordcount.word-count-warning,
+  .tox-statusbar__wordcount.word-count-warning-2 {
+    background-color: var(--color-warning);
+    color: var(--color-warning-content);
+    font-weight: bold;
+  }
+
+  .tox-statusbar__wordcount.word-count-warning-2 {
+    background-color: var(--color-error);
+    color: var(--color-error-content);
+  }
+
+  .tox-statusbar a,
+  .tox-statusbar__path-item,
+  .tox-statusbar__wordcount {
+    @apply text-fg-muted!;
   }
 
   /* Editor Header */
