@@ -10,52 +10,81 @@
             title="{% trans 'Review' %}"
             subtitle="{% trans 'For' %} {{ review.submission.title_text_display }} {% trans 'by' %} {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == review.author.reviewer %}{% trans 'Reviewer' %}{% else %}{{ review.author }}{% endif %} {% trans 'at' %} {{ review.created_at|date:'SHORT_DATE_FORMAT' }} {% if review.is_updated %}<small>({% trans 'Last updated' %}: {{ review.updated_at|date:'SHORT_DATE_FORMAT' }})</small>{% endif %}"
         >
-            {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
         </c-hero.header>
     </c-hero>
 {% endblock %}
 
 {% block content %}
-    <div class="flex justify-between mt-8 mb-8">
-        <div class="flex flex-col gap-8">
-            <div class="flex gap-4 justify-between">
-                <div>
-                    <h3 class="mb-2 font-bold">{% trans "Recommendation" %}</h3>
-                    <p class="badge badge-primary badge-outline">{{ review.get_recommendation_display }}</p>
-                </div>
-                <div>
-                    <h3 class="mb-2 font-bold">{% trans "Score" %}</h3>
-                    <p class="badge badge-primary badge-outline">{{ review.get_score_display }}</p>
-                </div>
-                <div>
-                    <h3 class="mb-2 font-bold">{% trans "Visibility" %}</h3>
-                    <p class="badge badge-primary badge-outline">{{ review.get_visibility_display }}</p>
-                </div>
-            </div>
+    <div class="flex flex-wrap gap-4 my-4 mx-auto max-w-6xl">
+        <div class="max-w-3xl grow">
 
-            <div class="rich-text rich-text--answers">
-                {{ object.get_comments_display|submission_links }}
+            {% if not review.for_latest %}
+                <div role="alert" class="mb-4 alert alert-vertical alert-warning alert-soft sm:alert-horizontal">
+                    {% heroicon_outline "information-circle" class="w-6 h-6 stroke-warning shrink-0" stroke_width="2" aria_hidden=true %}
+                    <span>{% trans "Review was not against the latest version of the application" %}</span>
 
-                <div class="prose">
-                    {{ object.output_answers|submission_links }}
+                    <div>
+                        <a class="btn btn-sm btn-outline" href="{{ review.get_compare_url }}">
+                            {% trans "View Changes" %}
+                        </a>
+                    </div>
                 </div>
-            </div>
-
-            {% if form %}
-                <form method="post" class="card-actions">
-                    {% csrf_token %}
-                    {{ form }}
-                </form>
-
-                <em class='flex items-center mb-8 text-fg-muted'>
-                    {% heroicon_micro "information-circle" class="mr-1 w-4 h-4 fill-fg-muted" aria_hidden=true %}
-                    <span>{% trans "An opinion is a replacement for a review. You will no longer be able to submit a review for this application." %}</span>
-                </em>
             {% endif %}
+
+            <div class="flex flex-col gap-8">
+                <div class="card card-border bg-base-200">
+                    <div class="card-body">
+                        <div class="flex gap-4 justify-between">
+                            <div>
+                                <h3 class="mb-2 font-bold">{% trans "Recommendation" %}</h3>
+                                <p class="badge badge-outline">{{ review.get_recommendation_display }}</p>
+                            </div>
+                            <div>
+                                <h3 class="mb-2 font-bold">{% trans "Score" %}</h3>
+                                <p class="badge badge-outline">{{ review.get_score_display }}</p>
+                            </div>
+                            <div>
+                                <h3 class="mb-2 font-bold">{% trans "Visibility" %}</h3>
+                                <p class="badge badge-outline">{{ review.get_visibility_display }}</p>
+                            </div>
+                        </div>
+
+                        {% if object.get_comments_display != "-" %}
+                            <div class="mt-4 [&_h2]:text-base [&_h2]:font-bold">
+                                {{ object.get_comments_display|submission_links }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+
+                {{ object.output_answers|submission_links }}
+
+                {% if review.opinions.exists %}
+                    <section id="review-opinions">
+                        <h3 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300">{% trans "Opinions" %}</h3>
+                        {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
+                    </section>
+                {% endif %}
+
+                {% if form %}
+                    <section>
+                        <form method="post" class="card-actions">
+                            {% csrf_token %}
+                            {{ form }}
+                        </form>
+
+                        <em class='flex items-center mb-8 text-fg-muted'>
+                            {% heroicon_micro "information-circle" class="mr-1 w-4 h-4 fill-fg-muted" aria_hidden=true %}
+                            <span>{% trans "An opinion is a replacement for a review. You will no longer be able to submit a review for this application." %}</span>
+                        </em>
+                    </section>
+                {% endif %}
+            </div>
+
         </div>
 
-
-        <div class="flex flex-col gap-2 items-end">
+        <div class="flex flex-col gap-4 w-xs">
             <div class="flex gap-3 justify-end items-start">
                 {% if not perms.funds.change_review or request.user == review.author.reviewer %}
                     <a
@@ -77,17 +106,6 @@
                     </a>
                 {% endif %}
             </div>
-
-            {% if not review.for_latest %}
-                <div class="text-end max-w-52">
-                    <p class="text-xs">
-                        * {% trans "Review was not against the latest version of the application" %}
-                        <a class="link" href="{{ review.get_compare_url }}">
-                            {% trans "View comparison" %}
-                        </a>
-                    </p>
-                </div>
-            {% endif %}
         </div>
     </div>
 {% endblock %}

@@ -9,7 +9,7 @@ from django.utils.safestring import mark_safe
 
 def wrap_deleted(text):
     return format_html(
-        '<span class="bg-error bg-error-content line-through">{}</span>',
+        '<span class="bg-error text-error-content line-through">{}</span>',
         mark_safe(text),
     )
 

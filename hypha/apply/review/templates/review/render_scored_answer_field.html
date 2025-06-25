@@ -1,8 +1,17 @@
 {% load nh3_tags %}
+
 {% block data_display %}
-    <div>
-        <h3>{{ value.field_label }}</h3>
-        <div>{{ score }}</div>
-        <div>{{ comment|nh3 }}</div>
-    </div>
+    <section data-score-answer-field>
+        <div class="flex flex-wrap gap-2 items-center pb-1 mb-2 border-b">
+            <h2 class="font-medium text-h3 border-base-300">
+                {{ value.field_label }}
+            </h2>
+        </div>
+
+        <span class="badge badge-outline">{{ score }}</span>
+
+        <div class="relative mt-4 prose">
+            {{ comment|nh3 }}
+        </div>
+    </section>
 {% endblock %}
