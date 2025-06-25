@@ -57,6 +57,7 @@
         <!-- Modules for supporting <relative-time> and <filter-input> elements -->
         <script type="module" src="{% static 'js/esm/github-relative-time-element-4-3-0.js' %}"></script>
         <script type="module" src="{% static 'js/esm/github-filter-input-element-0-1-1.js' %}"></script>
+        <script defer src="{% static 'js/behaviours/prose-cleanup.js' %}"></script>
 
         {% include "includes/head_end.html" %}
     </head>
@@ -180,7 +181,6 @@
         <!-- Needed for most forms so load it here once. -->
         <script src="{% static 'file_form/file_form.min.js' %}"></script>
         <script src="{% static 'js/file-uploads.js' %}"></script>
-        <script defer src="{% static 'js/behaviours/prose-cleanup.js' %}"></script>
         {{ form.media.js }}
         <!-- Load extra js. -->
         {% block extra_js %}{% endblock %}
