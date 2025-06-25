@@ -5,10 +5,10 @@
         x-cloak
         x-data="cookieConsent"
         x-show="isOpen"
-        class="fixed inset-x-0 bottom-0 z-20 pt-6 pb-4 w-full bg-info text-info-content print:hidden"
+        class="fixed inset-x-0 bottom-0 z-20 py-8 w-full bg-base-200 print:hidden"
     >
         <div class="container-constrained">
-            <div class="cookieconsent__brief" x-show="!showLearnMore">
+            <div x-show="!showLearnMore">
                 <h2 class="mb-2 text-xl card-title">
                     {% translate settings.cookieconsent_title %}
                 </h2>
@@ -26,7 +26,7 @@
                 </p>
 
                 <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="cookieconsent__info">
+                    <div>
                         <h2 class="mb-2 font-bold">
                             {% translate "Essential Cookies" %}
                             <span class="font-normal badge badge-outline badge-sm ms-1">
@@ -39,7 +39,7 @@
                     </div>
 
                     {% if settings.cookieconsent_analytics %}
-                        <div class="cookieconsent__info">
+                        <div>
                             <h2 class="mb-2 font-bold">
                                 {% translate "Analytics Cookies" %}
                             </h2>
@@ -54,21 +54,21 @@
             <div class="mt-4 card-actions">
                 {% if settings.cookieconsent_analytics %}
                     <button
-                        class="w-full sm:w-auto btn btn-primary btn-soft"
+                        class="w-full sm:w-auto btn btn-primary"
                         title="{% translate 'Decline tracking cookies.' %}"
                         type="button"
                         data-consent="decline"
                     >{% translate "Essential only" %}</button>
 
                     <button
-                        class="sm:w-auto btn btn-primary btn-soft"
+                        class="sm:w-auto btn btn-primary"
                         title="{% translate 'Accept all tracking cookies.' %}"
                         type="button"
                         data-consent="accept"
                     >{% translate "Accept all" %}</button>
                 {% else %}
                     <button
-                        class="sm:w-auto btn btn-primary btn-soft"
+                        class="sm:w-auto btn btn-primary"
                         title="{% translate 'Acknowledge use of essential cookies.' %}"
                         data-consent="ack"
                     >{% translate "Ok" %}</button>
