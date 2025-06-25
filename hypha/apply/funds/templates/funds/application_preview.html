@@ -10,9 +10,17 @@
 
 {% block content %}
     <div class="my-8 mx-auto max-w-4xl">
+
         {% include "funds/includes/rendered_answers.html" %}
 
-        <form id="preview-form-submit" class="form application-form" action="{% url 'funds:submissions:edit' object.id %}" method="POST" enctype="multipart/form-data" novalidate>
+        <form
+            id="preview-form-submit"
+            class="form application-form"
+            action="{% url 'funds:submissions:edit' object.id %}"
+            method="POST"
+            enctype="multipart/form-data"
+            novalidate
+        >
             {% csrf_token %}
 
             {# Hidden form fields to allow for POSTing to funds:submissions:edit on submit/edit #}
@@ -38,20 +46,16 @@
                     {{ hidden_field }}
                 {% endfor %}
             </div>
+
+
+            <div class="mt-4 card-actions">
+                <button class="btn btn-primary" form="preview-form-submit" name="submit" type="submit" :disabled="isFormSubmitting">
+                    {% trans "Submit for review" %}
+                </button>
+                <button class="btn btn-secondary btn-outline" form="preview-form-edit">
+                    {% trans "Continue editing" %}
+                </button>
+            </div>
         </form>
-
-        <form id="preview-form-edit" class="form application-form" action="{% url 'funds:submissions:edit' object.id %}" x-data="{ isFormSubmitting: false }" x-on:submit="isFormSubmitting = true">
-            {% csrf_token %}
-        </form>
-
-        <div class="mt-4 card-actions">
-            <button class="btn btn-primary" form="preview-form-submit" name="submit" type="submit" :disabled="isFormSubmitting">
-                {% trans "Submit for review" %}
-            </button>
-            <button class="btn btn-secondary btn-outline" form="preview-form-edit">
-                {% trans "Continue editing" %}
-            </button>
-        </div>
-
     </div>
 {% endblock %}

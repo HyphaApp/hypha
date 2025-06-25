@@ -27,7 +27,11 @@
                             {% include "forms/includes/field.html" %}
                         {% endif %}
                     {% else %}
-                        {{ field.block }}
+                        <div class="max-w-none prose" h-field-block>
+                            <div>
+                                {{ field.block }}
+                            </div>
+                        </div>
                     {% endif %}
                 {% endfor %}
 
