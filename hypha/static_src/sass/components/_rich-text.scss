@@ -3,11 +3,4 @@
 .rich-text {
   word-break: break-word;
   max-width: 50em;
-
-  ul {
-    &.remove-list-style {
-      padding: 0;
-      list-style: none;
-    }
-  }
 }

@@ -38,8 +38,8 @@ def compare(answer_a: str, answer_b: str, should_clean: bool = True) -> Tuple[st
     if should_clean:
         answer_a = re.sub("(<li[^>]*>)", r"\1◦ ", answer_a)
         answer_b = re.sub("(<li[^>]*>)", r"\1◦ ", answer_b)
-        answer_a = nh3.clean(answer_a, tags={"h4"}, attributes={})
-        answer_b = nh3.clean(answer_b, tags={"h4"}, attributes={})
+        answer_a = nh3.clean(answer_a, tags={"h2"}, attributes={})
+        answer_b = nh3.clean(answer_b, tags={"h2"}, attributes={})
 
     diff = SequenceMatcher(None, answer_a, answer_b)
     from_diff = []
