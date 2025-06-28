@@ -22,14 +22,14 @@
 
                 <div class="p-4 mb-4 card card-border rounded-box bg-base-200">
                     {% if object.output_answers %}
-                        <div class="rich-text rich-text--answers">
+                        <div class="rich-text">
                             {{ object.output_answers }}
                         </div>
                     {% endif %}
 
                     {% has_project_sow_form object as project_sow %}
                     {% if project_sow and object.sow.output_answers %}
-                        <div class="rich-text rich-text--answers">
+                        <div class="rich-text">
                             {{ object.sow.output_answers }}
                         </div>
                     {% endif %}
