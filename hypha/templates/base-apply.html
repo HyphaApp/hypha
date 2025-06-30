@@ -21,7 +21,7 @@
         {% endblock %}
 
         {% block user_menu %}
-            <div class="flex gap-2 print:hidden">
+            <div class="flex gap-2 print:!hidden">
                 {% if request.user.is_authenticated and request.user.is_apply_staff %}
                     {% include "includes/menu-notifications.html" %}
                 {% endif %}
