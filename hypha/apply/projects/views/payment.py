@@ -220,6 +220,7 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
 
 class DeleteInvoiceView(DeleteView):
     model = Invoice
+    template_name = "application_projects/modals/invoice_confirm_delete.html"
 
     def get_object(self):
         project = get_object_or_404(Project, submission__pk=self.kwargs["pk"])

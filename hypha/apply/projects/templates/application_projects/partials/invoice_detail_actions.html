@@ -1,4 +1,4 @@
-{% load i18n invoice_tools %}
+{% load i18n invoice_tools heroicons %}
 
 <div class="card-body">
     <h2 class="card-title">{% trans "Actions to take" %}</h2>
@@ -42,6 +42,7 @@
                  "#"
             {% endif %}
         >
+            {% heroicon_micro "pencil-square" aria_hidden=true class="w-4 h-4 opacity-80" %}
             {% trans "Edit Invoice" %}
         </a>
     {% endif %}
@@ -50,10 +51,12 @@
     {% can_delete object user as user_can_delete_request %}
     {% if user_can_delete_request %}
         <a
-            class="btn btn-error btn-block"
-            href="{% url 'apply:projects:invoice-delete' pk=object.project.submission.pk invoice_pk=object.pk %}"
+            class="btn btn-error btn-outline btn-block"
+            hx-get="{% url 'apply:projects:invoice-delete' pk=object.project.submission.pk invoice_pk=object.pk %}"
+            hx-target="#htmx-modal"
         >
-            {% trans "Delete Invoice" %}
+            {% heroicon_micro "trash" aria_hidden=true class="w-4 h-4 opacity-80" %}
+            {% trans "Delete" %}
         </a>
     {% endif %}
 
