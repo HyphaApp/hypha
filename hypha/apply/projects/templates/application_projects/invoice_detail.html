@@ -17,8 +17,8 @@
 {% block content %}
     {% display_invoice_status_for_user user object as invoice_status %}
     {% can_show_paid_date invoice as show_paid_date %}
-    <div class="my-4 wrapper wrapper--sidebar">
-        <div class="grow">
+    <div class="my-4 layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-end">
+        <div class="layout-main">
             <div class="mb-4 card card-border bg-base-200">
                 <div class="grid grid-cols-1 lg:grid-cols-2 card-body">
                     <p>
@@ -97,7 +97,7 @@
             {% endif %}
         </div>
 
-        <aside class="sidebar">
+        <aside class="layout-sidebar">
             <section
                 class="sticky top-8 card card-border bg-base-200 shadow-xs sidebar__inner--actions"
                 hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}"

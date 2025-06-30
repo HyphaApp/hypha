@@ -54,28 +54,25 @@
     </c-hero>
 {% endblock %}
 
-
 {% block content %}
-
-    <div class="mt-4 mb-8">
-        <div class="wrapper wrapper--sidebar">
+    <div class="my-4 mx-auto layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-end md:[--layout-sidebar-width:20.5rem]">
+        <div class="layout-main">
             {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
-                <div class="grow">
-                    <h4>{% trans "Congratulations!" %}</h4>
-                    <h5>{% blocktrans with stage=object.previous.stage %}Your {{ stage }} application has been accepted.{% endblocktrans %}</h5>
-                    <a class="btn btn-primary" href="{% url 'funds:submissions:edit' object.id %}">
-                        {% blocktrans with stage=object.stage %}Start your {{ stage }} application.{% endblocktrans %}
-                    </a>
-                </div>
+                <h4>{% trans "Congratulations!" %}</h4>
+                <h5>{% blocktrans with stage=object.previous.stage %}Your {{ stage }} application has been accepted.{% endblocktrans %}</h5>
+                <a class="btn btn-primary" href="{% url 'funds:submissions:edit' object.id %}">
+                    {% blocktrans with stage=object.stage %}Start your {{ stage }} application.{% endblocktrans %}
+                </a>
             {% else %}
-                <article class="grow">
-                    {% if object.is_archive %}
-                        <div role="alert" class="mb-4 alert alert-warning">
-                            {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 %}
-                            <span>{% trans "This application has been archived. This is visible to accounts with " %} {{ archive_access_groups|join_with_commas }} roles.</span>
-                        </div>
-                    {% endif %}
 
+                {% if object.is_archive %}
+                    <div role="alert" class="mb-4 alert alert-warning">
+                        {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 %}
+                        <span>{% trans "This application has been archived. This is visible to accounts with " %} {{ archive_access_groups|join_with_commas }} roles.</span>
+                    </div>
+                {% endif %}
+
+                <article>
                     {% if object.round.specific.is_sealed %}
                         <div role="alert" class="mb-4 alert alert-warning">
                             {% heroicon_outline "clock" aria_hidden="true" size=16 stroke_width=2 %}
@@ -150,99 +147,99 @@
 
                 </article>
             {% endif %}
-
-            <aside class="sidebar">
-                {% block sidebar_top %}
-                    {% include "funds/includes/generic_primary_actions.html" %}
-                {% endblock %}
-
-                {% block screening_status %}
-                {% endblock %}
-
-                {% block determination %}
-                    {% if object.determinations.submitted.count %}
-                        {% include 'determinations/includes/applicant_determination_block.html' with submission=object %}
-                    {% endif %}
-                {% endblock %}
-
-                {% block reviews %}
-                {% endblock %}
-
-                {% block flags %}
-                {% endblock %}
-
-                {% block meta_terms %}
-                {% endblock %}
-
-                {% block reminders %}
-                {% endblock %}
-
-                {% display_coapplicant_section user object as coapplicant_section %}
-                {% if coapplicant_section %}
-                    {% block co_applicant %}
-                        <div hx-trigger="revealed, coApplicantUpdated from:body" hx-get="{% url 'funds:submissions:partial_coapplicant_invites' object.id %}"></div>
-                    {% endblock %}
-                {% endif %}
-
-                {% block related %}
-                    {% if other_submissions or object.previous or object.next %}
-                        <div class="card card-border bg-base-100 shadow-xs">
-                            <div class="card-body">
-                                <h2 class="card-title">{% trans "Related submissions" %}</h2>
-
-                                {% if object.previous %}
-                                    <p class="mb-4">
-                                        <a
-                                            class="font-bold underline"
-                                            href="{% url 'funds:submissions:detail' object.previous.id %}"
-                                        >
-                                            {% trans "View linked" %} {{ object.previous.stage }}
-                                        </a>
-                                    </p>
-                                {% endif %}
-
-                                {% if object.next %}
-                                    <p class="mb-4">
-                                        <a
-                                            class="font-bold underline"
-                                            href="{% url 'funds:submissions:detail' object.next.id %}"
-                                        >
-                                            {% trans "View linked" %} {{ object.next.stage }}
-                                        </a>
-                                    </p>
-                                {% endif %}
-
-                                <section class="flex flex-col gap-2" data-js-collapse>
-                                    {% for submission in other_submissions %}
-                                        {% if forloop.first %}
-                                            <h6 class="pb-2 mb-0 font-semibold uppercase border-b text-fg-muted">
-                                                {% trans "Other Submissions" %}
-                                            </h6>
-                                        {% endif %}
-                                        <div>
-                                            <a
-                                                class="font-bold hover:underline line-clamp-2"
-                                                href="{% url 'funds:submissions:detail' submission.id %}"
-                                            >
-                                                {{ submission.title }}
-                                            </a>
-                                            <div class="text-sm text-fg-muted">
-                                                <span>#{{ submission.application_id }}</span>
-                                                <relative-time datetime='{{ submission.submit_time|date:"c" }}'>
-                                                    {{ submission.submit_time|date:"SHORT_DATETIME_FORMAT" }}
-                                                </relative-time>
-                                                in {{ submission.round|default_if_none:submission.page }}
-                                                &middot;
-                                                <span>{{ submission.phase }}</span>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </section>
-                            </div>
-                        </div>
-                    {% endif %}
-                {% endblock %}
-            </aside>
         </div>
+
+        <aside class="flex flex-col gap-4 layout-sidebar">
+            {% block sidebar_top %}
+                {% include "funds/includes/generic_primary_actions.html" %}
+            {% endblock %}
+
+            {% block screening_status %}
+            {% endblock %}
+
+            {% block determination %}
+                {% if object.determinations.submitted.count %}
+                    {% include 'determinations/includes/applicant_determination_block.html' with submission=object %}
+                {% endif %}
+            {% endblock %}
+
+            {% block reviews %}
+            {% endblock %}
+
+            {% block flags %}
+            {% endblock %}
+
+            {% block meta_terms %}
+            {% endblock %}
+
+            {% block reminders %}
+            {% endblock %}
+
+            {% display_coapplicant_section user object as coapplicant_section %}
+            {% if coapplicant_section %}
+                {% block co_applicant %}
+                    <div hx-trigger="revealed, coApplicantUpdated from:body" hx-get="{% url 'funds:submissions:partial_coapplicant_invites' object.id %}"></div>
+                {% endblock %}
+            {% endif %}
+
+            {% block related %}
+                {% if other_submissions or object.previous or object.next %}
+                    <div class="card card-border bg-base-100 shadow-xs">
+                        <div class="card-body">
+                            <h2 class="card-title">{% trans "Related submissions" %}</h2>
+
+                            {% if object.previous %}
+                                <p class="mb-4">
+                                    <a
+                                        class="font-bold underline"
+                                        href="{% url 'funds:submissions:detail' object.previous.id %}"
+                                    >
+                                        {% trans "View linked" %} {{ object.previous.stage }}
+                                    </a>
+                                </p>
+                            {% endif %}
+
+                            {% if object.next %}
+                                <p class="mb-4">
+                                    <a
+                                        class="font-bold underline"
+                                        href="{% url 'funds:submissions:detail' object.next.id %}"
+                                    >
+                                        {% trans "View linked" %} {{ object.next.stage }}
+                                    </a>
+                                </p>
+                            {% endif %}
+
+                            <section class="flex flex-col gap-2" data-js-collapse>
+                                {% for submission in other_submissions %}
+                                    {% if forloop.first %}
+                                        <h6 class="pb-2 mb-0 font-semibold uppercase border-b text-fg-muted">
+                                            {% trans "Other Submissions" %}
+                                        </h6>
+                                    {% endif %}
+                                    <div>
+                                        <a
+                                            class="font-bold hover:underline line-clamp-2"
+                                            href="{% url 'funds:submissions:detail' submission.id %}"
+                                        >
+                                            {{ submission.title }}
+                                        </a>
+                                        <div class="text-sm text-fg-muted">
+                                            <span>#{{ submission.application_id }}</span>
+                                            <relative-time datetime='{{ submission.submit_time|date:"c" }}'>
+                                                {{ submission.submit_time|date:"SHORT_DATETIME_FORMAT" }}
+                                            </relative-time>
+                                            in {{ submission.round|default_if_none:submission.page }}
+                                            &middot;
+                                            <span>{{ submission.phase }}</span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </section>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endblock %}
+        </aside>
     </div>
 {% endblock %}

@@ -15,8 +15,8 @@
 {% endblock %}
 
 {% block content %}
-    <div class="my-4 wrapper wrapper--sidebar">
-        <article class="grow">
+    <div class="my-4 layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-end">
+        <article class="layout-main">
             <div class="flex gap-x-4 mb-4 text-xs text-fg-muted">
                 <span>
                     {% trans "Submitted " %}
@@ -80,7 +80,8 @@
                 {% endif %}
             </section>
         </article>
-        <aside class="sidebar">
+
+        <aside class="layout-sidebar">
             {% if request.user.is_apply_staff or report.previous or report.next %}
                 <div class="card card-border shadow-xs">
                     <div class="card-body">
