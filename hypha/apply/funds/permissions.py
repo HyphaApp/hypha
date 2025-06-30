@@ -236,6 +236,13 @@ def can_view_submission_screening(user, submission):
 
 
 def can_invite_co_applicants(user, submission):
+    if submission.is_archive:
+        return False, "Co-applicant can't be added to archived submission"
+    if hasattr(submission, "project"):
+        from hypha.apply.projects.models.project import COMPLETE
+
+        if submission.project.status == COMPLETE:
+            return False, "Co-applicants can't be invited to completed projects"
     if (
         submission.co_applicant_invites.all().count()
         >= settings.SUBMISSIONS_COAPPLICANT_INVITES_LIMIT
@@ -257,6 +264,13 @@ def can_view_co_applicants(user, submission):
 
 
 def can_update_co_applicant(user, invite):
+    if invite.submission.is_archive:
+        return False, "Co-applicant can't be updated to archived submission"
+    if hasattr(invite.submission, "project"):
+        from hypha.apply.projects.models.project import COMPLETE
+
+        if invite.submission.project.status == COMPLETE:
+            return False, "Co-applicants can't be updated to completed projects"
     if invite.invited_by == user:
         return True, "Same user who invited can delete the co-applicant"
     if invite.submission.user == user:

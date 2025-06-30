@@ -1,4 +1,4 @@
-{% load i18n heroicons %}
+{% load i18n heroicons co-applicant_tags %}
 
 <div class="sidebar__inner sidebar__inner--actions" data-testid="sidebar-primary-actions">
     <details {% if user.is_applicant or not co_applicants %} open {% endif %} class="group">
@@ -7,11 +7,12 @@
                 {% trans "Co-applicants" %} <span class="text-base font-medium"> ({{ co_applicants.count }})</span>
                 {% heroicon_solid "chevron-down" size="16" class="w-4 h-4 transition-transform rotate-90 ms-2 group-open:rotate-0" %}
             </p>
+            {% can_invite_coapplicant user object as can_invite %}
             <button
                 class="flex items-center py-1 pr-4 pl-2 font-bold rounded-sm -me-2 {% if object.co_applicant_invites.count >= invite_max_limit %} text-blue-200 {% else %}transition-colors cursor-pointer text-dark-blue hover:bg-slate-200{% endif %}"
                 hx-get="{% url 'apply:submissions:invite_co_applicant' pk=object.id %}"
                 hx-target="#htmx-modal"
-                {% if object.co_applicant_invites.count >= invite_max_limit %}disabled title='{% trans "Max limit reached" %}'{% endif %}
+                {% if not can_invite %}disabled title='{% trans "Not allowed" %}'{% endif %}
                 role="button"
                 aria-label="{% trans "Invite co-applicant" %}"
             >
@@ -27,25 +28,39 @@
         {% if co_applicants %}
             <div class="flex flex-col gap-2 justify-between">
                 {% for invite in co_applicants %}
-
+                    {% can_update_coapplicant user invite as can_update %}
                     <div>
-                        <a
-                            class="font-bold line-clamp-2 group/coapplicant"
-                            href="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
-                            hx-get="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
-                            hx-target="#htmx-modal"
-                        >
-                            <div class="flex justify-between">
-                                {% if invite.status == "accepted" %}
-                                    {{ invite.co_applicant.user }}
-                                {% else %}
-                                    {{ invite.invited_user_email }}
-                                {% endif %}
+                        {% if can_update %}
+                            <a
+                                class="font-bold line-clamp-2 group/coapplicant"
+                                href="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
+                                hx-get="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
+                                hx-target="#htmx-modal"
+                            >
+                                <div class="flex justify-between">
+                                    {% if invite.status == "accepted" %}
+                                        {{ invite.co_applicant.user }}
+                                    {% else %}
+                                        {{ invite.invited_user_email }}
+                                    {% endif %}
 
-                                {% heroicon_solid "pencil" class="hidden align-middle me-1 group-hover/coapplicant:inline" width=16 height=16 stroke_width=2 aria_hidden=true %}
+                                    {% heroicon_solid "pencil" class="hidden align-middle me-1 group-hover/coapplicant:inline" width=16 height=16 stroke_width=2 aria_hidden=true %}
 
+                                </div>
+                            </a>
+                        {% else %}
+                            <div class="font-bold line-clamp-2 group/coapplicant">
+                                <div class="flex justify-between">
+                                    {% if invite.status == "accepted" %}
+                                        {{ invite.co_applicant.user }}
+                                    {% else %}
+                                        {{ invite.invited_user_email }}
+                                    {% endif %}
+
+                                </div>
                             </div>
-                        </a>
+                        {% endif %}
+
                         {% if invite.status == "accepted" %}
                             <div class="text-xs text-fg-muted" >{{ invite.co_applicant.get_role_display }}</div>
                         {% else %}
