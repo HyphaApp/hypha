@@ -15,76 +15,63 @@
 {% endblock %}
 
 {% block content %}
-    <div class="flex flex-wrap gap-4 my-4 mx-auto max-w-6xl">
-        <div class="max-w-3xl grow">
+    <div class="my-4 layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-start">
+        <div class="layout-main">
+            <div class="">
 
-            {% if not review.for_latest %}
-                <div role="alert" class="mb-4 alert alert-vertical alert-warning alert-soft sm:alert-horizontal">
-                    {% heroicon_outline "information-circle" class="w-6 h-6 stroke-warning shrink-0" stroke_width="2" aria_hidden=true %}
-                    <span>{% trans "Review was not against the latest version of the application" %}</span>
+                {% if not review.for_latest %}
+                    <div role="alert" class="mb-4 alert alert-vertical alert-warning alert-soft sm:alert-horizontal">
+                        {% heroicon_outline "information-circle" class="w-6 h-6 stroke-warning shrink-0" stroke_width="2" aria_hidden=true %}
+                        <span>{% trans "Review was not against the latest version of the application" %}</span>
 
-                    <div>
-                        <a class="btn btn-sm btn-outline" href="{{ review.get_compare_url }}">
-                            {% trans "View Changes" %}
-                        </a>
-                    </div>
-                </div>
-            {% endif %}
-
-            <div class="flex flex-col gap-8">
-                <div class="card card-border bg-base-200">
-                    <div class="card-body">
-                        <div class="flex gap-4 justify-between">
-                            <div>
-                                <h3 class="mb-2 font-bold">{% trans "Recommendation" %}</h3>
-                                <p class="badge badge-outline">{{ review.get_recommendation_display }}</p>
-                            </div>
-                            <div>
-                                <h3 class="mb-2 font-bold">{% trans "Score" %}</h3>
-                                <p class="badge badge-outline">{{ review.get_score_display }}</p>
-                            </div>
-                            <div>
-                                <h3 class="mb-2 font-bold">{% trans "Visibility" %}</h3>
-                                <p class="badge badge-outline">{{ review.get_visibility_display }}</p>
-                            </div>
+                        <div>
+                            <a class="btn btn-sm btn-outline" href="{{ review.get_compare_url }}">
+                                {% trans "View Changes" %}
+                            </a>
                         </div>
-
-                        {% if object.get_comments_display != "-" %}
-                            <div class="mt-4 [&_h2]:text-base [&_h2]:font-bold">
-                                {{ object.get_comments_display|submission_links }}
-                            </div>
-                        {% endif %}
                     </div>
+                {% endif %}
+
+                <div class="flex flex-col gap-8">
+                    <div class="card card-border bg-base-200">
+                        <div class="gap-4 card-body">
+                            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6">
+                                <div>
+                                    <dt class="mb-2 font-bold">{% trans "Recommendation" %}</dt>
+                                    <dd><p class="badge badge-outline">{{ review.get_recommendation_display }}</p></dd>
+                                </div>
+                                <div>
+                                    <dt class="mb-2 font-bold">{% trans "Score" %}</dt>
+                                    <dd><p class="badge badge-outline">{{ review.get_score_display }}</p></dd>
+                                </div>
+                                <div>
+                                    <dt class="mb-2 font-bold">{% trans "Visibility" %}</dt>
+                                    <dd><p class="badge badge-outline">{{ review.get_visibility_display }}</p></dd>
+                                </div>
+                            </dl>
+
+                            {% if object.get_comments_display != "-" %}
+                                <div class="[&_h2]:text-sm [&_h2]:font-bold">
+                                    {{ object.get_comments_display|submission_links }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+
+                    {{ object.output_answers|submission_links }}
+
+                    {% if review.opinions.exists %}
+                        <section id="review-opinions">
+                            <h3 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300">{% trans "Opinions" %}</h3>
+                            {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
+                        </section>
+                    {% endif %}
                 </div>
-
-
-                {{ object.output_answers|submission_links }}
-
-                {% if review.opinions.exists %}
-                    <section id="review-opinions">
-                        <h3 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300">{% trans "Opinions" %}</h3>
-                        {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
-                    </section>
-                {% endif %}
-
-                {% if form %}
-                    <section>
-                        <form method="post" class="card-actions">
-                            {% csrf_token %}
-                            {{ form }}
-                        </form>
-
-                        <em class='flex items-center mb-8 text-fg-muted'>
-                            {% heroicon_micro "information-circle" class="mr-1 w-4 h-4 fill-fg-muted" aria_hidden=true %}
-                            <span>{% trans "An opinion is a replacement for a review. You will no longer be able to submit a review for this application." %}</span>
-                        </em>
-                    </section>
-                {% endif %}
             </div>
-
         </div>
 
-        <div class="flex flex-col gap-4 w-xs">
+        <div class="flex flex-col gap-4 layout-sidebar">
             <div class="flex gap-3 justify-end items-start">
                 {% if not perms.funds.change_review or request.user == review.author.reviewer %}
                     <a
@@ -102,10 +89,27 @@
                         href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}"
                     >
                         {% heroicon_micro "trash" class="inline w-4 h-4" aria_hidden=true %}
-                        <span class="sr-only">{% trans "Delete" %}</span>
+                        {% trans "Delete" %}
                     </a>
                 {% endif %}
             </div>
+            {% if form %}
+                <section class="card card-border">
+                    <div class="card-body">
+                        <h2 class="card-title">{% trans "Your opinions" %}</h2>
+
+                        <div class="text-fg-muted">
+                            {% trans "Note: An opinion is a replacement for a review. You will no longer be able to submit a review for this application." %}
+                        </div>
+
+                        <form method="post" class="mt-2 card-actions">
+                            {% csrf_token %}
+                            {{ form }}
+                        </form>
+                    </div>
+                </section>
+            {% endif %}
+
         </div>
     </div>
 {% endblock %}
