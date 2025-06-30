@@ -25,47 +25,47 @@
             <a
                 href="{% url 'users:account' %}"
                 title="Goto your account"
-                class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-dark-blue focus-visible:outline-dashed"
+                class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
             >
-                {% heroicon_outline "user" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-dark-blue" aria_hidden=true %}
+                {% heroicon_outline "user" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
                 {% trans 'My account' %}
             </a>
             {% if request.user.is_apply_staff %}
                 <a
                     href="{% url 'activity:notifications' %}"
                     title="Check latest notifications"
-                    class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-dark-blue focus-visible:outline-dashed"
+                    class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
                 >
-                    {% heroicon_outline "bolt" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-dark-blue" aria_hidden=true %}
+                    {% heroicon_outline "bolt" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
                     {% trans "Activity feed" %}
                 </a>
                 <a
                     href="{% url "apply:submissions:list" %}?query=flagged:@me"
                     title="Goto your flagged submissions"
-                    class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-dark-blue focus-visible:outline-dashed"
+                    class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
                 >
-                    {% heroicon_outline "flag" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-dark-blue" aria_hidden=true %}
+                    {% heroicon_outline "flag" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
                     {% trans "My flagged" %}
                 </a>
                 {% if perms.wagtailadmin.access_admin %}
                     <a
                         href="{% url 'wagtailadmin_home' %}"
                         title="Goto wagtail admin"
-                        class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-dark-blue focus-visible:outline-dashed"
+                        class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
                     >
-                        {% heroicon_outline "cog-6-tooth" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-dark-blue" aria_hidden=true %}
+                        {% heroicon_outline "cog-6-tooth" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
                         {% trans "Administration" %}
                     </a>
                 {% endif %}
             {% endif %}
             {% if HIJACK_ENABLE and not user.is_hijacked and user.is_superuser %}
                 <a
-                    class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-dark-blue focus-visible:outline-dashed"
+                    class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
                     hx-get="{% url 'users:hijack' %}?next={{ request.path }}"
                     hx-target="#htmx-modal"
                     x-on:click="show = false"
                 >
-                    {% heroicon_outline "arrows-right-left" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-dark-blue" aria_hidden=true %}
+                    {% heroicon_outline "arrows-right-left" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
                     {% trans "Switch User" %}
                 </a>
             {% endif %}
@@ -76,10 +76,11 @@
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{{ request.path }}">
 
-                    <button type="submit"
-                            class="flex gap-2 items-center py-2 px-3 w-full transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-dark-blue focus-visible:outline-dashed"
+                    <button
+                        type="submit"
+                        class="flex gap-2 items-center py-2 px-3 w-full transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
                     >
-                        {% heroicon_outline "user-minus" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-dark-blue" aria_hidden=true %}
+                        {% heroicon_outline "user-minus" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
                         {% translate 'Release User' %}
                     </button>
                 </form>
@@ -88,7 +89,7 @@
             <a
                 href="{% url 'users:logout' %}"
                 title="Log out"
-                class="block py-2 px-3 font-semibold text-center text-red-600 transition-all hover:font-semibold hover:text-red-900 hover:bg-red-100 border-x focus-visible:outline-dashed"
+                class="block py-2 px-3 font-semibold text-center transition-all hover:font-semibold text-error border-x hover:bg-error/10 focus-visible:outline-dashed"
             >
                 {% trans "Log out" %}
             </a>
