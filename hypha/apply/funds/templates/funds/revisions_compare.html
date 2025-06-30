@@ -20,8 +20,11 @@
                 <h2 class="section-header">{% trans "Changes" %}</h2>
                 <div class="flex flex-wrap gap-2">
                     <span class="badge badge-soft">{{ from_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}</span>
-                    {% trans "↔" %}
-                    <span class="badge badge-soft">{{ to_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}</span>
+
+                    {% if to_revision.id != from_revision.id %}
+                        {% trans "↔" %}
+                        <span class="badge badge-soft">{{ to_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}</span>
+                    {% endif %}
                 </div>
             </div>
 
@@ -77,42 +80,49 @@
         </div>
 
         <div class="layout-sidebar">
-            <h2 class="mb-4 card-title">All Revisions</h2>
-            <ul class="list">
-                {% for revision in all_revisions %}
-                    <li class="list-row {% if revision.id == from_revision.id %} bg-base-300 {% endif %}">
-                        <div class="list-col-grow">
-                            <span class="font-semibold">{{ revision.author }}</span> {% trans "edited" %}
+            <div class="sticky top-4">
+                <h2 class="mb-4 card-title">{% trans "Revisions" %}</h2>
+                <div class="list">
+                    {% for revision in all_revisions %}
+                        <a
+                            class="list-row {% if revision.id == from_revision.id %} bg-base-300 {% else %}hover:bg-base-200{% endif %}"
+                            href="{{ revision.get_compare_url_to_latest }}"
+                        >
+                            <div class="list-col-grow">
+                                <span class="font-semibold">{{ revision.author }}</span> {% trans "edited" %}
 
-                            <relative-time datetime={{ revision.timestamp|date:"c" }} class="text-fg-muted">
-                                {{ revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}
-                            </relative-time>
+                                <relative-time datetime={{ revision.timestamp|date:"c" }} class="text-fg-muted">
+                                    {{ revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}
+                                </relative-time>
 
-                            {% if revision.is_draft %}
-                                <span class="uppercase badge badge-warning badge-outline">
-                                    ({% trans "draft" %})
-                                </span>
-                            {% endif %}
-                        </div>
+                                {% if revision.is_draft %}
+                                    <span class="uppercase badge badge-warning badge-outline">
+                                        ({% trans "draft" %})
+                                    </span>
+                                {% endif %}
+                            </div>
 
-                        <div>
-                            {% if forloop.first %}
-                                <span class="uppercase badge badge-info badge-outline">
-                                    {% trans "latest" %}
-                                </span>
-                            {% else %}
-                                <a
-                                    class="btn btn-sm"
-                                    href="{{ revision.get_compare_url_to_latest }}"
-                                >
-                                    {% trans "compare" %}
-                                    {% heroicon_mini "arrow-right" class="w-4 h-4" %}
-                                </a>
-                            {% endif %}
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
+                            <div>
+                                {% if forloop.first %}
+                                    <span class="uppercase badge badge-info badge-outline">
+                                        {% trans "latest" %}
+                                    </span>
+                                {% else %}
+                                    {% if revision.id != from_revision.id %}
+                                        <span
+                                            class="btn btn-sm"
+                                            href="{{ revision.get_compare_url_to_latest }}"
+                                        >
+                                            {% trans "view" %}
+                                            {% heroicon_mini "arrow-right" class="w-4 h-4" %}
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
