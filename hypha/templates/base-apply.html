@@ -73,12 +73,12 @@
                         <button onclick="openConsentPrompt()" class="text-neutral-400 link link-hover">{% trans "Manage cookies" %}</button>
                     {% endif %}
                     <div
-                        x-data="{ isDark: localStorage.getItem('theme') === 'dark' || false }"
-                        x-init="$watch('isDark', value => { localStorage.setItem('theme', value ? 'dark' : 'light'); document.documentElement.setAttribute('data-theme', value ? 'dark' : 'light'); }); document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');"
+                        x-data="{ isDark: localStorage.getItem('theme') === 'hyphadark' || false }"
+                        x-init="$watch('isDark', value => { localStorage.setItem('theme', value ? 'hyphadark' : 'hyphalight'); document.documentElement.setAttribute('data-theme', value ? 'hyphadark' : 'hyphalight'); }); document.documentElement.setAttribute('data-theme', isDark ? 'hyphadark' : 'hyphalight');"
                     >
                         <label class="swap swap-rotate text-fg-muted">
                           <!-- this hidden checkbox controls the state -->
-                            <input type="checkbox" class="theme-controller" id="theme-controller" value="dark" x-model="isDark" />
+                            <input type="checkbox" class="theme-controller" id="theme-controller" value="hyphadark" x-model="isDark" />
 
                           <!-- sun icon -->
                             <svg

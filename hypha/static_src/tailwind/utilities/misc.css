@@ -1,0 +1,109 @@
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-base-300, currentColor);
+  }
+
+  /* Transitioning page view. */
+  @view-transition {
+    navigation: auto;
+  }
+
+  :root {
+    /* Activate transition to intrinsic sizes like auto and fit-content. */
+    interpolate-size: allow-keywords;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-normal text-inherit text-balance;
+  }
+
+  a {
+    @apply underline-offset-2;
+  }
+
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  textarea {
+    @apply textarea w-full;
+  }
+
+  /* make date & time input siblings inline */
+  input[type="date"] + input[type="time"] {
+    width: 10rem;
+  }
+
+  details {
+    & > summary {
+      cursor: pointer;
+    }
+
+    &::details-content {
+      block-size: 0;
+      transition: block-size 0.25s, content-visibility 0.25s;
+      transition-behavior: allow-discrete;
+    }
+
+    &[open]::details-content {
+      block-size: auto;
+    }
+  }
+}
+
+@utility border-stripe {
+  border-image: repeating-linear-gradient(
+      -55deg,
+      #000 0,
+      #000 20px,
+      #ffb101 20px,
+      #ffb101 40px
+    )
+    10;
+}
+
+@utility break-anywhere {
+  /* see https://github.com/tailwindlabs/tailwindcss/pull/12128 */
+  overflow-wrap: anywhere;
+}
+
+@utility list-row-card {
+  --radius-box: 0;
+  @apply px-0 gap-2 py-2;
+}
+
+@utility container-constrained {
+  @apply xl:container mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.separator-dot:not(:last-child)::after {
+  @apply text-fg-muted mx-1;
+  content: "\00B7"; /* Unicode for middle dot */
+}
+
+.errorlist {
+  @apply alert alert-error;
+}
+
+@utility js-hidden {
+  @apply hidden noscript:block;
+}

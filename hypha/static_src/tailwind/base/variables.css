@@ -16,3 +16,11 @@
   /* Transparent */
   --color-black-60: rgb(0 0 0 / 60%);
 }
+
+@theme {
+  --color-light-blue: #0d7db0;
+  --color-dark-blue: #0c72a0;
+  --color-mid-grey: #cfcfcf;
+  --color-fg-default: var(--color-base-content);
+  --color-fg-muted: color-mix(in oklab, currentColor 60%, transparent);
+}
