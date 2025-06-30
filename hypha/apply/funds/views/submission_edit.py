@@ -767,7 +767,7 @@ class UpdateMetaTermsView(View):
                     "HX-Trigger": json.dumps(
                         {
                             "metaTermsUpdated": None,
-                            "showMessage": _("Meta terms updated successfully."),
+                            "showMessage": _("Tags updated successfully."),
                         }
                     ),
                 },
