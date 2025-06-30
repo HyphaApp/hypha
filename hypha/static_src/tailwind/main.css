@@ -5,6 +5,7 @@
 @import "./components/choices.css" layer(components);
 @import "./components/daterangepicker.css" layer(components);
 @import "./components/django-file-field.css" layer(components);
+@import "./components/html-diff.css" layer(components);
 @import "./components/layout.css" layer(components);
 @import "./components/pagedown.css" layer(components);
 @import "./components/table.css" layer(components);

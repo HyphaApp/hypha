@@ -72,6 +72,7 @@ beautifulsoup4==4.11.2 \
     --hash=sha256:0e79446b10b3ecb499c1556f7e228a53e64a2bfcebd455f370d8927cb5b59e39 \
     --hash=sha256:bc4bdda6717de5a2987436fb8d72f45dc90dd856bdfd512a1314ce90349a0106
     # via
+    #   html-diff
     #   htmldocx
     #   wagtail
 billiard==4.2.1 \
@@ -501,6 +502,10 @@ h11==0.16.0 \
 heroicons==2.11.0 \
     --hash=sha256:36fed4e7a2fc134f70fd22597a73012b74904cec19968f85a5bad8ae97fb7cc2 \
     --hash=sha256:68d8c754076b0c12f7f60157bcc47fb89135ccb4f0f7d3ac53791546132bf92d
+    # via hypha
+html-diff==0.4.1 \
+    --hash=sha256:4260ad08d80a043f34a45721d429d3462ec2738b9002c7e5bd75040bdcd40528 \
+    --hash=sha256:b64d90514abecd13702b936ec4221aa103f4f0df96427bf8387bb18ca6c0ab74
     # via hypha
 html5lib==1.1 \
     --hash=sha256:0d78f8fde1c230e99fe37986a60526d7049ed4bf8a9fadbad5f00e22e58e041d \

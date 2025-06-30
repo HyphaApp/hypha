@@ -1,85 +1,118 @@
 {% extends "base-apply.html" %}
-{% load i18n %}
+{% load i18n heroicons %}
 {% block title %}{% trans "Compare" %}: {{ object.title }}{% endblock %}
-
 {% block hero %}
     <c-hero>
         <c-hero.header
             back_link="{% url 'funds:submissions:revisions:list' object.id %}"
-            back_link_text="{% trans 'View revisions' %}"
-            title="{% trans 'Comparing revisions' %}"
-            subtitle="{% trans 'For' %} <a class='link link-hover' href='{% url 'funds:submissions:detail' object.id %}'>{{ object.title_text_display }}</a>"
+            back_link_text="{% trans 'View all revisions' %}"
+            title="{% trans 'Revision detail' %}"
+            subtitle="{% blocktranslate with title=object.title_text_display %}For {{ title }}{% endblocktranslate %}"
         />
     </c-hero>
 {% endblock %}
 
 {% block content %}
-    <table class="mb-8 w-full max-w-none prose prose-h4:mt-0">
-        <tr>
-            <td>
-                <h3>{% trans "Proposal Information (Old)" %}</h3>
-                <p>
-                    {% trans "Submitted" %}
-                    <relative-time datetime='{{ timestamps.0|date:"c" }}' class="font-semibold">
-                        {{ timestamps.0|date:"SHORT_DATETIME_FORMAT" }}
-                    </relative-time>
-                </p>
-            </td>
-            <td>
-                <h3>{% trans "Proposal Information (New)" %}</h3>
-                <p>
-                    {% trans "Submitted" %}
-                    <relative-time datetime='{{ timestamps.1|date:"c" }}' class="font-semibold">
-                        {{ timestamps.0|date:"SHORT_DATETIME_FORMAT" }}
-                    </relative-time>
-                </p>
-            </td>
-        </tr>
+    <div class="my-4 mx-auto layout layout-flowrow-until-md layout-sidebar-flowrow-start">
 
-        {% for from_field, to_field in required_fields %}
-            {% if forloop.first %}
-                <tr>
-                    <td><h4>{% trans "Title" %}</h4>{{ from_field }}</td>
-                    <td><h4>{% trans "Title" %}</h4>{{ to_field }}</td>
-                </tr>
-            {% elif forloop.counter == 2 %}
-                <tr>
-                    <td><h4>{% trans "Legal Name" %}</h4>{{ from_field }}</td>
-                    <td><h4>{% trans "Legal Name" %}</h4>{{ to_field }}</td>
-                </tr>
-            {% elif forloop.counter == 3 %}
-                <tr>
-                    <td><h4>{% trans "E-mail" %}</h4>{{ from_field }}</td>
-                    <td><h4>{% trans "E-mail" %}</h4>{{ to_field }}</td>
-                </tr>
-            {% elif forloop.counter == 4 %}
-                <tr>
-                    <td><h4>{% trans "Address" %}</h4>{{ from_field }}</td>
-                    <td><h4>{% trans "Address" %}</h4>{{ to_field }}</td>
-                </tr>
-            {% elif forloop.counter == 5 %}
-                <tr>
-                    <td><h4>{% trans "Project Duration" %}</h4>{{ from_field }}</td>
-                    <td><h4>{% trans "Project Duration" %}</h4>{{ to_field }}</td>
-                </tr>
-            {% elif forloop.counter == 6 %}
-                <tr>
-                    <td><h4>{% trans "Requested Funding" %}</h4>{{ from_field }}</td>
-                    <td><h4>{% trans "Requested Funding" %}</h4>{{ to_field }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td>{{ from_field }}</td>
-                    <td>{{ to_field }}</td>
-                </tr>
-            {% endif %}
-        {% endfor %}
-        {% for from_field, to_field in stream_fields %}
-            <tr>
-                <td>{{ from_field }}</td>
-                <td>{{ to_field }}</td>
-            </tr>
-        {% endfor %}
-    </table>
+        <div class="layout-main">
+            <div class="mb-4">
+                <h2 class="section-header">{% trans "Changes" %}</h2>
+                <div class="flex flex-wrap gap-2">
+                    <span class="badge badge-soft">{{ from_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}</span>
+                    {% trans "↔" %}
+                    <span class="badge badge-soft">{{ to_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}</span>
+                </div>
+            </div>
 
+            <div class="card card-border">
+                <div class="gap-8 max-w-full card-body html-diff">
+                    {% for diff in required_fields %}
+                        {% if forloop.first %}
+                            <section>
+                                <h4 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300 question">{% trans "Title" %}</h4>
+                                <div>{{ diff }}</div>
+                            </section>
+                        {% elif forloop.counter == 2 %}
+                            <section>
+                                <h4 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300 question">{% trans "Legal Name" %}</h4>
+                                <div>{{ diff }}</div>
+                            </section>
+                        {% elif forloop.counter == 3 %}
+                            <section>
+                                <h4 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300 question">{% trans "E-mail" %}</h4>
+                                <div>{{ diff }}</div>
+                            </section>
+                        {% elif forloop.counter == 4 %}
+                            <section>
+                                <h4 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300 question">{% trans "Address" %}</h4>
+                                <div>{{ diff }}</div>
+                            </section>
+                        {% elif forloop.counter == 5 %}
+                            <section>
+                                <h4 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300 question">{% trans "Project Duration" %}</h4>
+                                <div>{{ diff }}</div>
+                            </section>
+                        {% elif forloop.counter == 6 %}
+                            <section>
+                                <h4 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300 question">{% trans "Requested Funding" %}</h4>
+                                <div>{{ diff }}</div>
+                            </section>
+                        {% elif forloop.counter == 7 %}
+                            <section>
+                                <h4 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300 question">{% trans "Organization" %}</h4>
+                                <div>{{ diff }}</div>
+                            </section>
+                        {% else %}
+                            <section>
+                                <div>{{ diff }}</div>
+                            </section>
+                        {% endif %}
+                    {% endfor %}
+                    {% for diff in stream_fields %}
+                        {{ diff }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="layout-sidebar">
+            <h2 class="mb-4 card-title">All Revisions</h2>
+            <ul class="list">
+                {% for revision in all_revisions %}
+                    <li class="list-row {% if revision.id == from_revision.id %} bg-base-300 {% endif %}">
+                        <div class="list-col-grow">
+                            <span class="font-semibold">{{ revision.author }}</span> {% trans "edited" %}
+
+                            <relative-time datetime={{ revision.timestamp|date:"c" }} class="text-fg-muted">
+                                {{ revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}
+                            </relative-time>
+
+                            {% if revision.is_draft %}
+                                <span class="uppercase badge badge-warning badge-outline">
+                                    ({% trans "draft" %})
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            {% if forloop.first %}
+                                <span class="uppercase badge badge-info badge-outline">
+                                    {% trans "latest" %}
+                                </span>
+                            {% else %}
+                                <a
+                                    class="btn btn-sm"
+                                    href="{{ revision.get_compare_url_to_latest }}"
+                                >
+                                    {% trans "compare" %}
+                                    {% heroicon_mini "arrow-right" class="w-4 h-4" %}
+                                </a>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 {% endblock %}

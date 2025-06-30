@@ -63,6 +63,7 @@ dependencies = [
     "redis>=5.2.1",
     "django-cotton~=2.1",
     "django-viewflow>=2.2.11",
+    "html-diff>=0.4.1",
 ]
 
 [dependency-groups]

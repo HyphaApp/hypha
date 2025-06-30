@@ -1,19 +1,21 @@
 {% extends "base-apply.html" %}
-{% load i18n %}
+{% load i18n heroicons %}
 {% block title %}{% blocktrans with title=submission.title %}Revisions for {{ title }}{% endblocktrans %}{% endblock %}
 
 {% block hero %}
     <c-hero>
         <c-hero.header
-            title="{% trans 'Revisions' %}"
-            subtitle="{% trans 'For' %} <a class='link link-hover' href='{% url 'funds:submissions:detail' submission.id %}'>{{ submission.title_text_display }}</a>"
+            title="{% blocktranslate with title=submission.title_text_display %}Edits to {{ title }}{% endblocktranslate %}"
+            subtitle="List of all edits made to this application"
+            back_link="{{ submission.get_absolute_url }}"
+            back_link_text="{% trans 'View application' %}"
         />
     </c-hero>
 {% endblock %}
 
 
 {% block content %}
-    <div class="my-8 max-w-3xl">
+    <div class="my-4 mx-auto w-full max-w-2xl">
         <h2 class="section-header">Application revisions</h2>
 
         <ol class="card card-border list">
@@ -41,9 +43,9 @@
                         <a
                             class="btn btn-primary btn-sm"
                             href="{{ revision.get_compare_url_to_latest }}"
-                            data-tippy-content="{% trans 'Compare with latest' %}"
                         >
-                            {% trans "Compare" %}
+                            {% trans "Compare with latest" %}
+                            {% heroicon_mini "arrow-right" class="w-4 h-4" %}
                         </a>
                     {% endif %}
                 </li>

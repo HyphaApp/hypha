@@ -1164,7 +1164,7 @@ name = "exceptiongroup"
 version = "1.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.12'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/0b/9f/a65090624ecf468cdca03533906e7c69ed7588582240cfe7cc9e770b50eb/exceptiongroup-1.3.0.tar.gz", hash = "sha256:b241f5885f560bc56a59ee63ca4c6a8bfa46ae4ad651af316d4e81817bb9fd88", size = 29749, upload-time = "2025-05-10T17:42:51.123Z" }
 wheels = [
@@ -1331,6 +1331,18 @@ wheels = [
 ]
 
 [[package]]
+name = "html-diff"
+version = "0.4.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "beautifulsoup4" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b3/b2/53c5b08a6af8b90213f45aad08ef6dc02a50bffc30f27b6093fb9d4f1bb9/html-diff-0.4.1.tar.gz", hash = "sha256:4260ad08d80a043f34a45721d429d3462ec2738b9002c7e5bd75040bdcd40528", size = 24461, upload-time = "2021-12-03T17:50:12.333Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/21/ea/2306cede5715f6203515f595b7c251c1a5ea083e5139be70c503962edff8/html_diff-0.4.1-py3-none-any.whl", hash = "sha256:b64d90514abecd13702b936ec4221aa103f4f0df96427bf8387bb18ca6c0ab74", size = 24174, upload-time = "2021-12-03T17:50:14.229Z" },
+]
+
+[[package]]
 name = "html5lib"
 version = "1.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1423,6 +1435,7 @@ dependencies = [
     { name = "environs" },
     { name = "gunicorn" },
     { name = "heroicons" },
+    { name = "html-diff" },
     { name = "htmldocx" },
     { name = "lark" },
     { name = "mistune" },
@@ -1522,6 +1535,7 @@ requires-dist = [
     { name = "environs", specifier = "~=14.1.1" },
     { name = "gunicorn", specifier = "~=23.0.0" },
     { name = "heroicons", specifier = "~=2.11.0" },
+    { name = "html-diff", specifier = ">=0.4.1" },
     { name = "htmldocx", specifier = "~=0.0.6" },
     { name = "lark", specifier = "~=1.2.2" },
     { name = "mistune", specifier = "~=3.1.3" },
