@@ -1,8 +1,8 @@
 {% load i18n project_tags %}
 {% if user.is_applicant %}
-    {% modal_title %}{% trans "Upload Countersigned Contract" %}{% endmodal_title %}
+    <c-modal.header>{% trans "Upload Countersigned Contract" %}</c-modal.header>
 {% else %}
-    {% modal_title %}{% trans "Upload Signed Contract" %}{% endmodal_title %}
+    <c-modal.header>{% trans "Upload Signed Contract" %}</c-modal.header>
 {% endif %}
 
 <div class="p-4">

@@ -1,19 +1,19 @@
-{% load components heroicons %}
+{% load i18n heroicons %}
 
 <header class="flex gap-4 justify-between items-center p-2 border-b">
     <h1 id="model-title" class="py-2 pl-2 m-0 text-base font-semibold">
-        {% render_slot slots.inner_block %}
+        {{ slot }}
     </h1>
 
     <div>
         <button
             class="p-1.5 rounded-sm opacity-70 hover:opacity-100 hover:bg-base-200"
-            aria-label="Close Modal"
+            aria-label="{% trans "Close Modal" %}"
             @click="show = false"
             type="button"
         >
             {% heroicon_outline "x-mark" size=20 stroke_width="1.5" %}
-            <span class="sr-only">Close</span>
+            <span class="sr-only">{% trans "Close" %}</span>
         </button>
     </div>
 </header>

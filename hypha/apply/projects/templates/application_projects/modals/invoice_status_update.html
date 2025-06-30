@@ -1,5 +1,5 @@
 {% load i18n %}
-{% modal_title %}{% trans "Update Invoice status" %}{% endmodal_title %}
+<c-modal.header>{% trans "Update Invoice status" %}</c-modal.header>
 
 <div class="p-4" id="change_invoice_status">
     <p>{% trans "Current status" %}: {{ object.status_display }}</p>

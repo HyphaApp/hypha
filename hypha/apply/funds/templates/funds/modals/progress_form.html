@@ -2,7 +2,7 @@
 {% show_progress_button request.user object as show_progress_form %}
 
 {% if show_progress_form %}
-    {% modal_title %}{% trans "Update Status" %}{% endmodal_title %}
+    <c-modal.header>{% trans "Update Status" %}</c-modal.header>
 
     <div class="p-4">
         <div class="mb-4">

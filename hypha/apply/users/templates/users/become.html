@@ -1,6 +1,6 @@
 {% load i18n static %}
 
-{% modal_title %}{% trans "Switch to User..." %}{% endmodal_title %}
+<c-modal.header>{% trans "Switch to User..." %}</c-modal.header>
 
 <form class="p-4 form" action="{{ request.path }}" method="post">
     {% csrf_token %}

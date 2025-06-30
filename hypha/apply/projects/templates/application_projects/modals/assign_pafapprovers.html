@@ -1,8 +1,8 @@
 {% load i18n %}
 {% if pafapprover_exists %}
-    {% modal_title %}{% trans "Assign Approver" %}{% endmodal_title %}
+    <c-modal.header>{% trans "Assign Approver" %}</c-modal.header>
 {% else %}
-    {% modal_title %}{% trans "Change Approver" %}{% endmodal_title %}
+    <c-modal.header>{% trans "Change Approver" %}</c-modal.header>
 {% endif %}
 
 <div class="p-4">
