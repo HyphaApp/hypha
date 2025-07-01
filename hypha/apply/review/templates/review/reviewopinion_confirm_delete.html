@@ -1,22 +1,10 @@
-{% extends "base-apply.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Deleting" %}: {{ object }}{% endblock %}
-
-{% block hero %}
-    <c-hero>
-        <c-hero.header title="{% trans 'Deleting' %}: {{ object }}" />
-    </c-hero>
-{% endblock %}
-
-{% block content %}
-    <div class="wrapper wrapper--form wrapper--sidebar">
-        <div class="grow">
-            <form class="form" action="" method="post">
-                {% csrf_token %}
-                <p><strong>{% trans "Are you sure you want to delete" %} "{{ object }}"?</strong></p>
-                <button class="mt-4 btn btn-error" type="submit">{% trans "Confirm" %}</button>
-            </form>
-        </div>
-    </div>
-{% endblock %}
+<c-modal.confirm title="{% trans 'Delete review opinion' %}">
+    <p class="text-sm text-fg-muted">
+        {% blocktranslate trimmed with user=object.author %}
+            Are you sure you want to delete this review opinion by {{ user }}?
+            This action cannot be undone.
+        {% endblocktranslate %}
+    </p>
+</c-modal.confirm>

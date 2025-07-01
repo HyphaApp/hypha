@@ -61,15 +61,9 @@
             <div class="list-col-wrap">
                 <ul class="steps steps-vertical">
         {% endif %}
-        <!-- <ul class="steps steps-vertical">
-          <li class="step step-primary">Register</li>
-          <li class="step step-primary">Choose plan</li>
-          <li class="step">Purchase</li>
-          <li class="step">Receive Product</li>
-        </ul> -->
 
         <li class="step">
-            <div class="flex gap-2">
+            <div class="flex gap-2 items-center">
                 <span>
                     {{ opinion.author }}
                     {% with role=opinion.author.role %}
@@ -79,10 +73,17 @@
                 <div class="reviews-sidebar__outcome {{ opinion.get_opinion_display|slugify }}">
                     {{ opinion.get_opinion_display }}
                 </div>
-                <div class="text-center">
-                    <a href="{% url 'apply:submissions:reviews:delete_opinion' submission_pk=opinion.review.submission.id pk=opinion.id %}">
-                        {% heroicon_outline "trash" aria_hidden="true" size=14 class="inline align-middle stroke-red-800" %}</a>
-                </div>
+
+                {% if self.request.user == opinion.author.reviewer %}
+                    <button
+                        type="button"
+                        class="btn btn-square btn-ghost"
+                        hx-get="{% url 'apply:submissions:reviews:delete_opinion' submission_pk=opinion.review.submission.id pk=opinion.id %}"
+                        hx-target="#htmx-modal"
+                    >
+                        {% heroicon_outline "trash" aria_hidden="true" size=14 class="stroke-error" %}
+                    </button>
+                {% endif %}
             </div>
         </li>
         {% if forloop.last %}
