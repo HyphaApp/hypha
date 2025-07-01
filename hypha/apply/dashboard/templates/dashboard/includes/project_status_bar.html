@@ -1,16 +1,16 @@
 {% load dashboard_statusbar_tags %}
 
 <section class="@container">
-    <ul class=" w-full steps {{ class }} hidden @lg:inline-grid">
+    <ul class=" w-full steps steps-sm {{ class }} hidden @lg:inline-grid">
         {% for status, display_text in statuses %}
             {% if forloop.counter0 == current_status_index %}
                 <li data-content="●" class="step step-primary">
-                    <span class="block py-1 px-2 text-sm font-semibold rounded-box bg-primary text-primary-content row-start-auto!">{{ display_text }}</span>
+                    <span class="block py-1 px-2 text-xs font-semibold rounded-box bg-primary text-primary-content row-start-auto!">{{ display_text }}</span>
                 </li>
             {% elif forloop.counter0 < current_status_index %}
                 <li data-content="✓" class="step step-primary">{{ display_text }}</li>
             {% else %}
-                <li data-content="" class="step">{{ display_text }}</li>
+                <li data-content="" class="step text-fg-muted">{{ display_text }}</li>
             {% endif %}
         {% endfor %}
     </ul>
