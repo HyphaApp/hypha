@@ -24,13 +24,13 @@
     width: var(--marker-border-width);
   }
 
-  div > del {
+  div:not(.prose) > del {
     margin-inline-start: var(--marker-ms);
     padding-inline-start: var(--marker-ps);
     border-inline-start: var(--marker-border-width) solid var(--color-error);
   }
 
-  div > ins {
+  div:not(.prose) > ins {
     margin-inline-start: var(--marker-ms);
     padding-inline-start: var(--marker-ps);
     border-inline-start: var(--marker-border-width) solid var(--color-success);
