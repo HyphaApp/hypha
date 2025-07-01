@@ -18,8 +18,12 @@
     <div class="flex flex-col gap-2">
         {% if PROJECTS_ENABLED %}
             {% if object.accepted_for_funding and not object.project %}
-                <button class="btn btn-primary btn-block"  hx-get="{% url 'funds:submissions:create_project' pk=object.pk %}" hx-target="#htmx-modal">
-                    {% trans "Create Project" %}
+                <button
+                    class="btn btn-primary btn-block"
+                    hx-get="{% url 'funds:submissions:create_project' pk=object.pk %}"
+                    hx-target="#htmx-modal"
+                >
+                    {% trans "Create project" %}
                 </button>
             {% endif %}
         {% endif %}
