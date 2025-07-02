@@ -14,7 +14,7 @@
 
 {% block content %}
     <div class="flex flex-col-reverse gap-4 mt-4 mb-8 lg:flex-row">
-        {% if not approval_form_exists %}
+        {% if approval_form_exists %}
             {% include "forms/includes/form_errors.html" with form=pf_form %}
             <form class="max-w-3xl grow form application-form" action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
