@@ -40,7 +40,10 @@
                         {% if document_category not in remaining_contract_document_categories %}
                             {% contract_category_latest_file object document_category as latest_file %}
                             <div class="text-sm">
-                                <span>{{ latest_file.title|truncatechars_middle:45 }}</span> - <span class="text-fg-muted">{{ latest_file.created_at }}</span>
+                                <span>{{ latest_file.title|truncatechars_middle:45 }}</span> -
+                                <time datetime="{{ latest_file.created_at|date:'c' }}" class="text-fg-muted">
+                                    {{ latest_file.created_at|date:'SHORT_DATE_FORMAT' }}
+                                </time>
                             </div>
                         {% endif %}
                     </div>
@@ -65,7 +68,7 @@
                                     href="{% url 'apply:projects:contract_document' pk=object.submission.pk file_pk=latest_file.pk %}"
                                     target="_blank"
                                 >
-                                    {% heroicon_micro "eye" class="inline w-4 h-4" aria_hidden=true %}
+                                    {% heroicon_outline "document" size=14 class="opacity-80 size-4" aria_hidden=true stroke_width=2 %}
                                     {% trans "View" %}
                                 </a>
                                 {% if can_update_documents %}
@@ -75,9 +78,9 @@
                                         hx-swap="none"
                                         hx-confirm="Are you sure you want to remove this document?"
                                     >
-                                        {% heroicon_micro "trash" aria_hidden=true %}
                                         {% csrf_token %}
-                                        {% trans "Remove" %}
+                                        {% heroicon_micro "trash" aria_hidden=true class="w-4 h-4 opacity-80" %}
+                                        <span class="sr-only">{% trans "Remove" %}</span>
                                     </button>
                                 {% endif %}
                             </div>

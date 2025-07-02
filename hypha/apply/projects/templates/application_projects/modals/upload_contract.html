@@ -1,14 +1,22 @@
 {% load i18n project_tags %}
 {% if user.is_applicant %}
-    <c-modal.header>{% trans "Upload Countersigned Contract" %}</c-modal.header>
+    <c-modal.header>{% trans "Upload countersigned contract" %}</c-modal.header>
 {% else %}
-    <c-modal.header>{% trans "Upload Signed Contract" %}</c-modal.header>
+    <c-modal.header>{% trans "Upload signed contract" %}</c-modal.header>
 {% endif %}
 
-<div class="p-4">
+<div class="flex flex-col gap-2 p-4">
     {% if not user.is_applicant %}
-        <p><i><b>{% trans "The signed contract will be sent to Applicant once you submit. But if you select Signed and approved then it will directly be approved and project will move to Invoicing and Reporting." %}</b></i></p>
-        <br>
+        <p class="text-sm text-fg-muted">
+            {% trans "Upload a signed contract that will sent to applicant for countersigning." %}
+        </p>
+        <p class="text-sm text-fg-muted">
+            {% blocktranslate trimmed %}
+                NOTE: Selecting "Signed and approved" indicates the uploaded contract is
+                already signed by both parties and the current project will move to the
+                invoicing & reporting stage.
+            {% endblocktranslate %}
+        </p>
     {% endif %}
     {% include 'includes/dialog_form_base.html' with form=form value=value %}
 </div>
