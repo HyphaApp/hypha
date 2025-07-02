@@ -38,140 +38,169 @@
     {% endadminbar %}
 
 
-    <form
-        class="flex gap-2 justify-between items-center mt-3 md:gap-4"
-        hx-trigger="change"
-        hx-get="./"
-        hx-target="#main"
-        hx-push-url="true"
-        hx-swap="outerHTML transition:true"
-    >
+    <div class="flex gap-2 justify-between items-center mt-4 md:gap-4">
+        <form
+            class="flex gap-2 justify-between items-center w-full md:gap-4"
+            hx-trigger="change"
+            hx-get="./"
+            hx-target="#main"
+            hx-push-url="true"
+            hx-swap="outerHTML transition:true"
+        >
 
-        {% dropdown_menu title="Filters" heading="Filter submissions" %}
-            <a
-                href="{% url "apply:submissions:list" %}?query=is:open"
-                hx-get="{% url "apply:submissions:list" %}?query=is:open"
-                hx-push-url="true"
-                hx-target="#main"
-                hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "is:open" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% if request.GET.query == "is:open" %}
-                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
-                {% endif %}
-                {% trans "Open submissions" %} {{ request.GET.lead }}
-            </a>
-            <a
-                href="{% url "apply:submissions:list" %}?query=lead:@me"
-                hx-get="{% url "apply:submissions:list" %}?query=lead:@me"
-                hx-push-url="true"
-                hx-target="#main"
-                hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "lead:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% if request.GET.query == "lead:@me" %}
-                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
-                {% endif %}
-                {% trans "Your assigned submissions (lead)" %} {{ request.GET.lead }}
-            </a>
-            <a
-                href="{% url "apply:submissions:list" %}?query=flagged:@me"
-                hx-get="{% url "apply:submissions:list" %}?query=flagged:@me"
-                hx-push-url="true"
-                hx-target="#main"
-                hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "flagged:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% if request.GET.query == "flagged:@me" %}
-                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
-                {% endif %}
-                {% trans "Your flagged submissions" %}
-            </a>
-            <a
-                href="{% url "apply:submissions:list" %}?query=flagged:@staff"
-                hx-get="{% url "apply:submissions:list" %}?query=flagged:@staff"
-                hx-push-url="true"
-                hx-target="#main"
-                hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "flagged:@staff" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% if request.GET.query == "flagged:@staff" %}
-                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
-                {% endif %}
-                {% trans "Staff flagged submissions" %}
-            </a>
-            <a
-                href="{% url "apply:submissions:list" %}?query=reviewer:@me"
-                hx-get="{% url "apply:submissions:list" %}?query=reviewer:@me"
-                hx-push-url="true"
-                hx-target="#main"
-                hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "reviewer:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% if request.GET.query == "reviewer:@me" %}
-                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
-                {% endif %}
-                {% trans "Awaiting your review" %}
-            </a>
-            <a
-                href="{% url "apply:submissions:list" %}?query=reviewed-by:@me"
-                hx-get="{% url "apply:submissions:list" %}?query=reviewed-by:@me"
-                hx-push-url="true"
-                hx-target="#main"
-                hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "reviewed-by:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% if request.GET.query == "reviewed-by:@me" %}
-                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
-                {% endif %}
-                {% trans "Reviewed by you" %}
-            </a>
-        {% enddropdown_menu %}
+            {% dropdown_menu title="Filters" heading="Filter submissions" %}
+                <a
+                    href="{% url "apply:submissions:list" %}?query=is:open"
+                    hx-get="{% url "apply:submissions:list" %}?query=is:open"
+                    hx-push-url="true"
+                    hx-target="#main"
+                    hx-swap="outerHTML transition:true"
+                    class="flex {% if request.GET.query == "is:open" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                    {% if request.GET.query == "is:open" %}
+                        {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                    {% endif %}
+                    {% trans "Open submissions" %} {{ request.GET.lead }}
+                </a>
+                <a
+                    href="{% url "apply:submissions:list" %}?query=lead:@me"
+                    hx-get="{% url "apply:submissions:list" %}?query=lead:@me"
+                    hx-push-url="true"
+                    hx-target="#main"
+                    hx-swap="outerHTML transition:true"
+                    class="flex {% if request.GET.query == "lead:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                    {% if request.GET.query == "lead:@me" %}
+                        {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                    {% endif %}
+                    {% trans "Your assigned submissions (lead)" %} {{ request.GET.lead }}
+                </a>
+                <a
+                    href="{% url "apply:submissions:list" %}?query=flagged:@me"
+                    hx-get="{% url "apply:submissions:list" %}?query=flagged:@me"
+                    hx-push-url="true"
+                    hx-target="#main"
+                    hx-swap="outerHTML transition:true"
+                    class="flex {% if request.GET.query == "flagged:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                    {% if request.GET.query == "flagged:@me" %}
+                        {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                    {% endif %}
+                    {% trans "Your flagged submissions" %}
+                </a>
+                <a
+                    href="{% url "apply:submissions:list" %}?query=flagged:@staff"
+                    hx-get="{% url "apply:submissions:list" %}?query=flagged:@staff"
+                    hx-push-url="true"
+                    hx-target="#main"
+                    hx-swap="outerHTML transition:true"
+                    class="flex {% if request.GET.query == "flagged:@staff" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                    {% if request.GET.query == "flagged:@staff" %}
+                        {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                    {% endif %}
+                    {% trans "Staff flagged submissions" %}
+                </a>
+                <a
+                    href="{% url "apply:submissions:list" %}?query=reviewer:@me"
+                    hx-get="{% url "apply:submissions:list" %}?query=reviewer:@me"
+                    hx-push-url="true"
+                    hx-target="#main"
+                    hx-swap="outerHTML transition:true"
+                    class="flex {% if request.GET.query == "reviewer:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                    {% if request.GET.query == "reviewer:@me" %}
+                        {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                    {% endif %}
+                    {% trans "Awaiting your review" %}
+                </a>
+                <a
+                    href="{% url "apply:submissions:list" %}?query=reviewed-by:@me"
+                    hx-get="{% url "apply:submissions:list" %}?query=reviewed-by:@me"
+                    hx-push-url="true"
+                    hx-target="#main"
+                    hx-swap="outerHTML transition:true"
+                    class="flex {% if request.GET.query == "reviewed-by:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                    {% if request.GET.query == "reviewed-by:@me" %}
+                        {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                    {% endif %}
+                    {% trans "Reviewed by you" %}
+                </a>
+            {% enddropdown_menu %}
 
-        {% for key, value in request.GET.items %}
-            {% if key != 'page' and key != 'drafts' and key != 'query' and key != 'archived' %}
-                <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% for key, value in request.GET.items %}
+                {% if key != 'page' and key != 'drafts' and key != 'query' and key != 'archived' %}
+                    <input type="hidden" name="{{ key }}" value="{{ value }}">
+                {% endif %}
+            {% endfor %}
+
+            <label class="inline-flex relative flex-auto items-center">
+                <span class="flex absolute inset-y-0 items-center pointer-events-none start-0 ps-3">
+                    {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" aria_hidden=true %}
+                </span>
+                <input
+                    type="text"
+                    id="search-navbar"
+                    class="w-full input"
+                    placeholder="{% trans 'Search…' %}"
+                    name="query"
+                    aria-label="{% trans 'Search submissions' %}"
+                    value="{{ search_query|default_if_none:'' }}" {% if search_query %}autofocus{% endif %}
+                >
+            </label>
+
+            {% if can_view_archive %}
+                <label class="label">
+                    <input
+                        type="checkbox"
+                        name="archived"
+                        {% if show_archived %}checked{% endif %}
+                        class="toggle toggle-sm toggle-primary"
+                    >
+                    {% trans "Archived" %}
+                </label>
             {% endif %}
-        {% endfor %}
 
-        <label class="inline-flex relative flex-auto items-center">
-            <span class="flex absolute inset-y-0 items-center pointer-events-none start-0 ps-3">
-                {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" aria_hidden=true %}
-            </span>
-            <input
-                type="text"
-                id="search-navbar"
-                class="block p-2 w-full text-sm text-gray-900 bg-gray-50 border border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-xs ps-10"
-                placeholder="{% trans 'Search…' %}"
-                name="query"
-                aria-label="{% trans 'Search submissions' %}"
-                value="{{ search_query|default_if_none:'' }}" {% if search_query %}autofocus{% endif %}
-            >
-        </label>
+            <label class="inline-flex relative flex-auto items-center">
+                <span class="flex absolute inset-y-0 items-center pointer-events-none start-0 ps-3">
+                    {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" aria_hidden=true %}
+                </span>
+                <input
+                    type="text"
+                    id="search-navbar"
+                    class="block p-2 w-full text-sm text-gray-900 bg-gray-50 border border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-xs ps-10"
+                    placeholder="{% trans 'Search…' %}"
+                    name="query"
+                    aria-label="{% trans 'Search submissions' %}"
+                    value="{{ search_query|default_if_none:'' }}" {% if search_query %}autofocus{% endif %}
+                >
+            </label>
 
-        {% if can_view_archive %}
-            <span>
-                <label class="inline-flex relative items-center cursor-pointer">
-                    <input type="checkbox" {% if show_archived %}checked{% endif %}
-                           class="sr-only peer"
-                           name="archived"
-                    >
-                    <div
-                        class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[ dark:peer-focus:ring-blue-800''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
-                    </div>
-                    <span class="text-sm font-medium text-gray-600 ms-3">{% trans "Archived" %}</span>
-                </label>
-            </span>
-        {% endif %}
+            {% if can_view_archive %}
+                <span>
+                    <label class="inline-flex relative items-center cursor-pointer">
+                        <input type="checkbox" {% if show_archived %}checked{% endif %}
+                               class="sr-only peer"
+                               name="archived"
+                        >
+                        <div
+                            class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[ dark:peer-focus:ring-blue-800''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                        </div>
+                        <span class="text-sm font-medium text-gray-600 ms-3">{% trans "Archived" %}</span>
+                    </label>
+                </span>
+            {% endif %}
 
-        {% if can_access_drafts %}
-            <span>
-                <label class="inline-flex relative items-center cursor-pointer">
-                    <input type="checkbox" {% if show_drafts %}checked{% endif %}
-                           class="sr-only peer"
-                           name="drafts"
-                    >
-                    <div
-                        class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[ dark:peer-focus:ring-blue-800''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
-                    </div>
-                    <span class="text-sm font-medium text-gray-600 ms-3">{% trans "Drafts" %}</span>
-                </label>
-            </span>
-        {% endif %}
+            {% if can_access_drafts %}
+                <span>
+                    <label class="inline-flex relative items-center cursor-pointer">
+                        <input type="checkbox" {% if show_drafts %}checked{% endif %}
+                               class="sr-only peer"
+                               name="drafts"
+                        >
+                        <div
+                            class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[ dark:peer-focus:ring-blue-800''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                        </div>
+                        <span class="text-sm font-medium text-gray-600 ms-3">{% trans "Drafts" %}</span>
+                    </label>
+                </span>
+            {% endif %}
+        </form>
 
         {% if can_export_submissions %}
             <button
@@ -185,7 +214,7 @@
                 {% heroicon_mini "arrow-down-tray" %}
             </button>
         {% endif %}
-    </form>
+    </div>
 
     {% if is_filtered %}
         {% comment %} Display option to clear all the filters {% endcomment %}
