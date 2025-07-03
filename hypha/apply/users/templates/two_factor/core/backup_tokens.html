@@ -6,7 +6,7 @@
         {% block title %}{% trans "Backup Codes" %}{% endblock %}
     </h1>
 
-    <p class="mb-2 print:hidden">
+    <p class="mb-2 print:!hidden">
         {% blocktrans %}You should now print these codes or copy them to your
             clipboard and store them in your password manager.{% endblocktrans %}
     </p>
@@ -21,7 +21,7 @@
             onclick="this.select()"
         >{% for token in device.token_set.all %}{{ token.token }}{% if not forloop.last %}&#013;&#010;{% endif %}{% endfor %}</textarea>
 
-        <form method="post" class="actions actions-footer print:hidden">{% csrf_token %}{{ form }}
+        <form method="post" class="actions actions-footer print:!hidden">{% csrf_token %}{{ form }}
             <div class="my-4 card-actions">
                 <button class="btn btn-primary" onclick="window.print()">
                     {% heroicon_mini "printer" class="size-4" aria_hidden="true" %}
@@ -44,7 +44,7 @@
             <p class="mb-2 text-sm text-fg-muted">
                 {% blocktrans trimmed %} <strong>Note:</strong> Each of the code can be used only once. When they are used up, you can generate a new set of backup codes.{% endblocktrans %}
             </p>
-            <p class="print:hidden">
+            <p class="print:!hidden">
                 {% blocktrans %}Once done, acknowledge you have stored the codes securely and then click "Finish".{% endblocktrans %}
             </p>
             <div class="form" x-data="{ agreed: false }" x-cloak>
