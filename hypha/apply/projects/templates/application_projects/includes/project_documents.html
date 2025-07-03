@@ -1,7 +1,7 @@
 {% load i18n approval_tools project_tags heroicons %}
 {% allow_collapsible_header object header_type='project_documents' as collapsible_header %}
 
-<section class="card card-border @container" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
+<section class="card overflow-hidden card-border @container" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
     <header
         class="cursor-pointer card-header flex-col items-start @md:flex-row @md:items-center"
         id="project-documents-section"
@@ -89,7 +89,6 @@
                     <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">{% trans "expand" %}</span>
                 </button>
             {% endif %}
-
         </div>
     </header>
 

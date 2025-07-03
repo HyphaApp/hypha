@@ -10,7 +10,7 @@
     <dt class="font-semibold">{% trans "E-mail" %}</dt>
     <dd>
         {% if object.user.email %}
-            <a href="mailto:{{ object.user.email }}">{{ object.user.email }}</a>
+            <a href="mailto:{{ object.user.email }}" class="link link-hover">{{ object.user.email }}</a>
         {% else %}
             -
         {% endif %}
@@ -32,8 +32,9 @@
             </a>
         {% endif %}
     </dt>
+
+    {% show_start_date object as show_start %}
     <dd {% if not show_start %} class="text-fg-muted"{% endif %}>
-        {% show_start_date object as show_start %}
         {% if show_start %}
             {{ object.proposed_start|date:"SHORT_DATE_FORMAT"|default:"-" }}
         {% else %}

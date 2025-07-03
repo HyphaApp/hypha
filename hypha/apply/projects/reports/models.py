@@ -256,7 +256,7 @@ class ReportConfig(models.Model):
 
     def get_frequency_display(self):
         if self.disable_reporting:
-            return _("Reporting Disabled")
+            return _("Disabled")
         if self.does_not_repeat:
             last_report = self.last_report()
             if last_report:
