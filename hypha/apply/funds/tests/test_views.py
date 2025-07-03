@@ -985,7 +985,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         buttons = (
             BeautifulSoup(response.content, "html5lib")
             .find(class_="layout-sidebar")
-            .find_all("a", class_="button--white", string="Reviewers")
+            .find_all("a", class_="btn-outline", string="Reviewers")
         )
         self.assertEqual(len(buttons), 0)
 
@@ -1368,7 +1368,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         buttons = (
             BeautifulSoup(response.content, "html5lib")
             .find(class_="layout-sidebar")
-            .find_all("a", class_="button--white", string="Reviewers")
+            .find_all("a", class_="btn-outline", string="Reviewers")
         )
         self.assertEqual(len(buttons), 0)
 
