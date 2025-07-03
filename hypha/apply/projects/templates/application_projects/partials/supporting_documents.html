@@ -33,7 +33,11 @@
                         {% if document_category not in remaining_document_categories %}
                             {% category_latest_file object document_category as latest_file %}
                             <div class="list-col-wrap">
-                                <span>{{ latest_file.title|truncatechars_middle:45 }}</span> - <span class="text-fg-muted">{{ latest_file.created_at }}</span>
+                                <span>{{ latest_file.title|truncatechars_middle:45 }}</span>
+                                &middot;
+                                <time datetime="{{ latest_file.created_at|date:'c' }}" class="text-fg-muted">
+                                    {{ latest_file.created_at|date:"SHORT_DATE_FORMAT" }}
+                                </time>
                             </div>
                         {% endif %}
                     </div>
@@ -48,7 +52,7 @@
                                 hx-target="#htmx-modal"
                                 aria-label="{% trans "Upload Supporting Documents" %}"
                             >
-                                {% heroicon_micro "arrow-up-tray" class="w-4 h-4" aria_hidden="true" %}
+                                {% heroicon_micro "arrow-up-tray" class="size-4" aria_hidden="true" %}
                                 {% trans "Upload" %}
                             </a>
                         {% else %}
@@ -59,19 +63,19 @@
                                     href="{% url 'apply:projects:document' pk=object.submission.pk file_pk=latest_file.pk %}"
                                     target="_blank"
                                 >
-                                    {% heroicon_micro "eye" class="opacity-80" aria_hidden=true %}
+                                    {% heroicon_outline "document" size=14 class="opacity-80 size-4" aria_hidden=true stroke_width=2 %}
                                     {% trans "View" %}
                                 </a>
 
                                 {% user_can_remove_supporting_documents object user as can_remove_supporting_doc %}
                                 {% if can_remove_supporting_doc %}
                                     <button
-                                        class="btn btn-square btn-error btn-ghost"
+                                        class="btn btn-square btn-sm btn-error btn-soft"
                                         hx-delete="{% url "apply:projects:remove_supporting_document" object.submission.pk latest_file.pk %}"
                                         hx-swap="none"
                                         hx-confirm="Are you sure you want to remove this document?"
                                     >
-                                        {% heroicon_micro "trash" aria_hidden=true %}
+                                        {% heroicon_micro "trash" class="size-4" aria_hidden=true %}
                                         <span class="sr-only">{% trans "Remove" %}</span>
                                     </button>
                                 {% endif %}

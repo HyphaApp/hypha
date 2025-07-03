@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static approval_tools project_tags apply_tags %}
+{% load i18n heroicons static approval_tools project_tags apply_tags %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -8,96 +8,135 @@
         <c-hero.header
             back_link="{{ object.get_absolute_url }}"
             back_link_text="{% trans 'Back to Project' %}"
-            title="{{ object.title }}"
-            subtitle="<div class='mt-1 text-sm heading heading--meta'><span>{{ object.submission.page }}</span><span>{{ object.submission.round }}</span><span>{% trans 'Lead' %}: {{ object.lead }}</span></div>"
+            title="{% translate 'Project form' %}: {{ object.title }} <span class='text-fg-muted'>#{{ object.submission.application_id }}</span>"
+            subtitle="{% translate 'Project form' %}"
         />
     </c-hero>
 {% endblock %}
 
 {% block content %}
     <div class="my-4">
-        <div class="wrapper wrapper--sidebar">
-            <article class="max-w-3xl grow">
-                <h2 class="section-header">{% trans "Project Information" %}</h2>
+        <div class="layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-start">
+            <article class="flex flex-col gap-8 layout-main">
 
-                <div class="p-4 mb-4 card card-border rounded-box bg-base-200">
-                    {% if object.output_answers %}
-                        <div class="rich-text">
-                            {{ object.output_answers }}
-                        </div>
-                    {% endif %}
+                <section>
+                    <h2 class="section-header">{% trans "Project Information" %}</h2>
 
-                    {% has_project_sow_form object as project_sow %}
-                    {% if project_sow and object.sow.output_answers %}
-                        <div class="rich-text">
-                            {{ object.sow.output_answers }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <h2 class="section-header">{% trans "Approvals" %}</h2>
-                <div class="p-4 mb-4 card card-border rounded-box bg-base-200">
-                    {% for approval in project.paf_approvals.all %}
-                        {% if approval.approved %}
-                            <p><b>{{ approval.paf_reviewer_role.label }}</b> - {{ approval.user }} ({{ approval.approved_at|date:"DATE_FORMAT" }})</p>
-                        {% else %}
-                            <p><b>{{ approval.paf_reviewer_role.label }}</b> {% trans " - Pending" %}</p>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-
-                <h2 class="section-header">{% trans "Reviews" %}</h2>
-                <div class="p-4 mb-4 card card-border rounded-box bg-base-200">
-                    <p class="mt-0 mb-0 font-bold">{% trans "Submission lead" %}</p>
-                    <p class="mt-2 mb-0">{{ project.submission.lead }}</p>
-
-                    <p class="mt-6 mb-0 font-bold">{% trans "Staff reviewers" %}</p>
-                    {% for review in project.submission.reviews.by_staff %}
-                        <p class="mt-2 mb-0">
-                            {{ review.author }}
-                            {% if review.author.role %}
-                                {% trans "as" %} {{ review.author.role }}
+                    <div class="card card-border">
+                        <div class="card-body">
+                            {% if object.output_answers %}
+                                <div class="flex flex-col gap-4 rich-text">
+                                    {{ object.output_answers }}
+                                </div>
                             {% endif %}
-                            - {{ review.created_at|date:"DATE_FORMAT" }}
-                        </p>
-                    {% empty %}
-                        <p class="mt-2 mb-0">{% trans "No reviews" %}</p>
-                    {% endfor %}
-                    <p class="mt-6 mb-0 font-bold">{% trans "Advisory council" %}</p>
-                    {% for review in project.submission.reviews.by_reviewers %}
-                        <p class="mt-2 mb-0">
-                            {{ review.author }} - {{ review.created_at|date:"DATE_FORMAT" }}
-                        </p>
-                    {% empty %}
-                        <p class="mt-2 mb-0">{% trans "No reviews" %}</p>
-                    {% endfor %}
-                </div>
 
-                <h2 class="section-header">{% trans "Supporting Documents" %}</h2>
-                <div class="p-4 mb-4 card card-border rounded-box bg-base-200">
-                    <p>
-                        <a href="{{ object.submission.get_absolute_url }}" class="link">
-                            {% trans "Application" %}
-                        </a>
-                    </p>
-                    {% for packet_file in object.packet_files.all %}
-                        <p>
-                            <a
-                                href="{% url 'apply:projects:document' pk=object.pk file_pk=packet_file.pk %}"
-                                class="link"
-                            >{{ packet_file.title }}</a>
-                        </p>
-                    {% endfor %}
-                </div>
+                            {% has_project_sow_form object as project_sow %}
+                            {% if project_sow and object.sow.output_answers %}
+                                <div class="flex flex-col gap-4 rich-text">
+                                    {{ object.sow.output_answers }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="section-header">{% trans "Approvals" %}</h2>
+                    <div class="card card-border rounded-box">
+                        <div class="card-body">
+                            {% for approval in project.paf_approvals.all %}
+                                {% if approval.approved %}
+                                    <p><b>{{ approval.paf_reviewer_role.label }}</b> - {{ approval.user }} ({{ approval.approved_at|date:"DATE_FORMAT" }})</p>
+                                {% else %}
+                                    <p>
+                                        <strong class="inline-block min-w-32">{{ approval.paf_reviewer_role.label }}:</strong>
+                                        <span class="badge badge-warning badge-outline">{% trans "Pending" %}</span>
+                                    </p>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="section-header">{% trans "Reviews" %}</h2>
+                    <div class="card card-border">
+                        <div class="card-body">
+
+                            <h3 class="font-bold">{% trans "Submission lead" %}:</h3>
+                            <p>{{ project.submission.lead }}</p>
+
+                            <h3 class="font-bold">{% trans "Staff reviewers" %}</h3>
+
+                            {% for review in project.submission.reviews.by_staff %}
+                                <p>
+                                    {{ review.author }}
+                                    {% if review.author.role %}
+                                        {% trans "as" %} {{ review.author.role }}
+                                    {% endif %}
+                                    -
+                                    <relative-time datetime="{{ review.created_at|date:'c' }}" class="text-fg-muted">
+                                        {{ review.created_at|date:'SHORT_DATETIME_FORMAT' }}
+                                    </relative-time>
+                                </p>
+                            {% empty %}
+                                <p>{% trans "No reviews" %}</p>
+                            {% endfor %}
+
+                            <h3 class="font-bold">{% trans "Advisory council" %}</h3>
+                            {% for review in project.submission.reviews.by_reviewers %}
+                                <p>
+                                    {{ review.author }} - <relative-time datetime="{{ review.created_at|date:'c' }}" class="text-fg-muted">
+                                        {{ review.created_at|date:'SHORT_DATETIME_FORMAT' }}
+                                    </relative-time>
+                                </p>
+                            {% empty %}
+                                <p>{% trans "No reviews" %}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="section-header">{% trans "Supporting Documents" %}</h2>
+
+                    <div class="card card-border rounded-box bg-base-200">
+                        <div class="card-body">
+                            <a href="{{ object.submission.get_absolute_url }}" class="flex gap-2 items-center link">
+                                {% heroicon_outline "document" size=14 class="opacity-80 size-4" aria_hidden=true %}
+                                {% trans "Application" %}
+                            </a>
+                            {% for packet_file in object.packet_files.all %}
+                                <a
+                                    href="{% url 'apply:projects:document' pk=object.pk file_pk=packet_file.pk %}"
+                                    class="flex gap-2 items-center link"
+                                >
+                                    {% heroicon_mini "paper-clip" class="opacity-80 size-4" aria_hidden=true %}
+                                    {{ packet_file.title|truncatechars_middle:45 }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
             </article>
 
-            {% user_can_update_paf_status object user request=request as can_update_paf_status %}
             {% user_can_take_actions object user as can_take_actions %}
             {% if can_take_actions %}
-                <aside class="sidebar">
+                <aside class="layout-sidebar">
                     <div class="card card-border shadow-xs" data-testid="sidebar-primary-actions">
                         <div class="card-body">
                             <h2 class="card-title">{% trans "Actions to take" %}</h2>
+
+                            {% user_can_update_paf_status object user request=request as can_update_paf_status %}
+                            {% if can_update_paf_status %}
+                                <a class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
+                                   href="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
+                                   hx-get="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
+                                   hx-target="#htmx-modal"
+                                >
+                                    {% trans "Update Status" %}
+                                </a>
+                            {% endif %}
 
                             {% user_can_edit_pfs object user as can_edit_pfs %}
                             {% if can_edit_pfs %}
@@ -121,7 +160,7 @@
 
                             {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
                             {% if can_assign_paf_approvers %}
-                                <a class="btn btn-primary btn-block btn-outline"
+                                <a class="btn btn-block btn-outline"
                                    href="{% url 'apply:projects:assign_pafapprovers' pk=object.submission.id %}"
                                    hx-get="{% url 'apply:projects:assign_pafapprovers' pk=object.submission.id %}"
                                    hx-target="#htmx-modal"
@@ -130,18 +169,9 @@
                                 </a>
                             {% endif %}
 
-                            {% if can_update_paf_status %}
-                                <a class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
-                                   href="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
-                                   hx-get="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
-                                   hx-target="#htmx-modal"
-                                >
-                                    {% trans "Update Status" %}
-                                </a>
-                            {% endif %}
 
                             <div class="dropdown dropdown-hover">
-                                <div tabindex="0" role="button" class="w-full btn btn-secondary btn-outline">{% trans 'Download Project Form' %}</div>
+                                <div tabindex="0" role="button" class="w-full btn btn-outline">{% trans 'Download' %}</div>
                                 <ul tabindex="0" class="p-2 w-52 shadow-sm dropdown-content menu bg-base-100 rounded-box z-1">
                                     <li>
                                         <a href="{% url 'apply:projects:download' pk=object.submission.pk export_type='pdf' %}">

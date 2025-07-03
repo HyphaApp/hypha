@@ -26,7 +26,7 @@
             {% trans "Note: All group members will be notified unless specific approvers are selected below." %}
         </p>
 
-        <div class="divider divider-start">{% trans "Select approvers " %} ({% trans "Optional" %})</div>
+        <div class="divider divider-start" style="--divider-m: 1rem 0 0 0">{% trans "Select approvers " %} ({% trans "Optional" %})</div>
         {% trans "Submit" as submit %}
         {% include 'includes/dialog_form_base.html' with form=form value=submit %}
     {% else %}
