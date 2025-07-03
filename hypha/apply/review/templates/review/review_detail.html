@@ -78,7 +78,7 @@
                         class="btn btn-primary btn-sm"
                         href="{% url 'apply:submissions:reviews:edit' submission_pk=object.submission.id pk=object.id %}"
                     >
-                        {% heroicon_micro "pencil-square" class="inline w-4 h-4" aria_hidden=true %}
+                        {% heroicon_micro "pencil-square" class="inline size-4" aria_hidden=true %}
                         {% trans "Edit" %}
                     </a>
                 {% endif %}
@@ -88,7 +88,7 @@
                         class="btn btn-error btn-outline btn-sm"
                         href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}"
                     >
-                        {% heroicon_micro "trash" class="inline w-4 h-4" aria_hidden=true %}
+                        {% heroicon_micro "trash" class="inline size-4" aria_hidden=true %}
                         {% trans "Delete" %}
                     </a>
                 {% endif %}

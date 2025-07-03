@@ -58,7 +58,7 @@
         <div class="flex flex-wrap gap-2 items-center my-2">
             <a href="./" class="btn btn-ghost btn-sm btn-link link-hover">
                 {% trans "Clear current filters & sorts" %}
-                {% heroicon_micro "x-mark" aria_hidden="true" class="w-4 h-4" %}
+                {% heroicon_micro "x-mark" aria_hidden="true" class="size-4" %}
             </a>
 
             {% for query in filtered_query %}
@@ -107,7 +107,7 @@
                              class="flex justify-between items-center py-1 w-full font-medium border cursor-pointer md:border-none hover:bg-gray-50 text-base-content/80 ps-2 pe-2 md:hover:bg-transparent md:hover:text-blue-700"
                              data-field-name="{{ field_name }}" data-filter-list>
                             {{ field.label }}
-                            {% heroicon_micro attributes.icon|default:"chevron-down" aria_hidden="true" size="16" class="hidden w-4 h-4 md:inline-block ms-0.5" %}
+                            {% heroicon_micro attributes.icon|default:"chevron-down" aria_hidden="true" size="16" class="hidden md:inline-block size-4 ms-0.5" %}
                         </div>
 
                         <script defer src="{% static 'js/vendor/moment.min.js' %}"></script>

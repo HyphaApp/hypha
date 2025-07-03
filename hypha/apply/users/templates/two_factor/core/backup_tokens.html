@@ -24,7 +24,7 @@
         <form method="post" class="actions actions-footer print:hidden">{% csrf_token %}{{ form }}
             <div class="my-4 card-actions">
                 <button class="btn btn-primary" onclick="window.print()">
-                    {% heroicon_mini "printer" class="w-4 h-4" aria_hidden="true" %}
+                    {% heroicon_mini "printer" class="size-4" aria_hidden="true" %}
                     {% trans "Print" %}
                 </button>
                 <a
@@ -35,7 +35,7 @@
                     data-tippy-content="{% trans 'Copied!' %}"
                     data-tippy-trigger="manual"
                 >
-                    {% heroicon_mini "clipboard" class="w-4 h-4" aria_hidden="true" %}
+                    {% heroicon_mini "clipboard" class="size-4" aria_hidden="true" %}
                     {% trans "Copy to Clipboard" %}
                 </a>
                 <button class="btn" type="submit">{% trans "Regenerate Codes" %}</button>

@@ -42,7 +42,7 @@
                  "#"
             {% endif %}
         >
-            {% heroicon_micro "pencil-square" aria_hidden=true class="w-4 h-4 opacity-80" %}
+            {% heroicon_micro "pencil-square" aria_hidden=true class="opacity-80 size-4" %}
             {% trans "Edit Invoice" %}
         </a>
     {% endif %}
@@ -55,7 +55,7 @@
             hx-get="{% url 'apply:projects:invoice-delete' pk=object.project.submission.pk invoice_pk=object.pk %}"
             hx-target="#htmx-modal"
         >
-            {% heroicon_micro "trash" aria_hidden=true class="w-4 h-4 opacity-80" %}
+            {% heroicon_micro "trash" aria_hidden=true class="opacity-80 size-4" %}
             {% trans "Delete" %}
         </a>
     {% endif %}

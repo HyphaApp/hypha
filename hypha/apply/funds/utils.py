@@ -26,7 +26,7 @@ def render_icon(image):
     if not image:
         return ""
     filter_spec = "fill-20x20"
-    return generate_image_tag(image, filter_spec, html_class="w-4 h-4")
+    return generate_image_tag(image, filter_spec, html_class="size-4")
 
 
 def get_or_create_default_screening_statuses(

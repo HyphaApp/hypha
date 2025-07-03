@@ -58,14 +58,14 @@
                                    href="{{ round.get_absolute_url }}"
                                    aria-label="{% trans 'View details for' %} {{ round }}"
                                 >
-                                    {% heroicon_outline "eye" aria_hidden="true" class="w-4 h-4 sm:hidden lg:block" stroke_width="1.5" %}
+                                    {% heroicon_outline "eye" aria_hidden="true" class="sm:hidden lg:block size-4" stroke_width="1.5" %}
                                     {% trans 'View' %}
                                 </a>
                                 {% if can_export %}
                                     <a class="flex-1 sm:flex-initial btn btn-outline btn-secondary btn-sm"
                                        href="{% url 'apply:submissions:list' %}{% if round.fund %}?round={{ round.pk }}{% else %}?fund={{ round.pk }}{% endif %}&format=csv"
                                        onclick="return confirm('{% blocktrans %}Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.{% endblocktrans %}');">
-                                        {% heroicon_mini "arrow-down-tray" aria_hidden="true" class="w-4 h-4 sm:hidden lg:block" stroke_width="1.5" %}
+                                        {% heroicon_mini "arrow-down-tray" aria_hidden="true" class="sm:hidden lg:block size-4" stroke_width="1.5" %}
                                         {% trans 'Export' %}
                                     </a>
                                 {% endif %}
@@ -78,7 +78,7 @@
                             <a href="{% url 'apply:rounds:list' %}{{ query }}"
                                class="btn btn-ghost btn-sm">
                                 {% trans 'Show all' %}
-                                {% heroicon_mini "arrow-right" class="w-4 h-4" aria_hidden="true" stroke_width="1.5" %}
+                                {% heroicon_mini "arrow-right" class="size-4" aria_hidden="true" stroke_width="1.5" %}
                             </a>
                         </div>
                     </li>

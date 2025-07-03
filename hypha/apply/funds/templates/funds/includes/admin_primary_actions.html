@@ -103,7 +103,7 @@
                 class="w-full btn btn-outline"
                 href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}"
             >
-                {% heroicon_outline "document-duplicate" aria_hidden="true" size=16 stroke_width=2 class="w-4 h-4" %}
+                {% heroicon_outline "document-duplicate" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
                 {% trans "Revisions" %}
             </a>
 
@@ -113,7 +113,7 @@
                     hx-get="{% url 'funds:submissions:translate' pk=object.pk %}"
                     hx-target="#htmx-modal"
                 >
-                    {% heroicon_outline "language" aria_hidden="true" size=16 stroke_width=2 class="w-4 h-4" %}
+                    {% heroicon_outline "language" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
                     {% trans "Translate" %}
                 </button>
             {% endif %}
@@ -123,7 +123,7 @@
                 hx-get="{% url 'funds:submissions:metaterms_update' pk=object.pk %}"
                 hx-target="#htmx-modal"
             >
-                {% heroicon_outline "tag" aria_hidden="true" size=16 stroke_width=2 class="w-4 h-4" %}
+                {% heroicon_outline "tag" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
                 {% trans "Tags" %}
             </button>
 
@@ -132,7 +132,7 @@
                 hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}"
                 hx-target="#htmx-modal"
             >
-                {% heroicon_outline "bell-snooze" aria_hidden="true" size=16 stroke_width=2 class="w-4 h-4" %}
+                {% heroicon_outline "bell-snooze" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
                 {% trans "Create Reminder" %}
             </button>
 
@@ -140,7 +140,7 @@
                 class="w-full btn btn-outline"
                 href="{% url "apply:submissions:download" pk=object.pk %}"
             >
-                {% heroicon_outline "arrow-down-tray" aria_hidden="true" size=16 stroke_width=2 class="w-4 h-4" %}
+                {% heroicon_outline "arrow-down-tray" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
                 {% trans "Download as PDF" %}
             </a>
 
@@ -150,7 +150,7 @@
                     hx-get="{% url 'funds:submissions:archive' pk=object.pk %}"
                     hx-target="#htmx-modal"
                 >
-                    {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="w-4 h-4" %}
+                    {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
                     {% trans "Archive" %}
                 </button>
             {% endif %}

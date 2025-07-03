@@ -65,7 +65,7 @@
                     <p>
                         {% if user.has_usable_password %}
                             <a class="btn btn-secondary btn-outline" href="{% url 'users:password_change' %}">
-                                {% heroicon_micro "key" class="inline w-4 h-4" aria_hidden=true %}
+                                {% heroicon_micro "key" class="inline size-4" aria_hidden=true %}
                                 {% trans "Update password" %}
                             </a>
                         {% else %}
@@ -73,7 +73,7 @@
                                     hx-post="{% url 'users:set_user_password' %}"
                                     hx-swap="outerHTML transition:true"
                             >
-                                {% heroicon_micro "key" class="inline w-4 h-4" aria_hidden=true %}
+                                {% heroicon_micro "key" class="inline size-4" aria_hidden=true %}
                                 {% trans "Set Password" %}
                             </button>
                         {% endif %}

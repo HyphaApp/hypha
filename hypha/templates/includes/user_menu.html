@@ -100,7 +100,7 @@
         class="btn btn-outline btn-secondary"
         href="{{ APPLY_SITE.root_url }}{% url 'users:passwordless_login_signup' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
     >
-        {% heroicon_micro "user" class="inline w-4 h-4 align-text-bottom me-1" aria_hidden=true %}
+        {% heroicon_micro "user" class="inline align-text-bottom size-4 me-1" aria_hidden=true %}
         {% trans "Log in" %} {% if ENABLE_PUBLIC_SIGNUP %} {% trans " or Sign up" %} {% endif %}
     </a>
 {% endif %}

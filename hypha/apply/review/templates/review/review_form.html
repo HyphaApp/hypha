@@ -24,11 +24,11 @@
                         :aria-selected="showSubmission"
                     >
                         <span x-show="!showSubmission" class="flex gap-2 items-center">
-                            {% heroicon_outline "eye" class="w-4 h-4" aria_hidden="true" %}
+                            {% heroicon_outline "eye" class="size-4" aria_hidden="true" %}
                             {% trans "Show application" %}
                         </span>
                         <span x-show="showSubmission" class="flex gap-2 items-center" x-cloak>
-                            {% heroicon_outline "eye-slash" class="w-4 h-4" aria_hidden="true" %}
+                            {% heroicon_outline "eye-slash" class="size-4" aria_hidden="true" %}
                             {% trans "Hide application" %}
                         </span>
                     </button>
