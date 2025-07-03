@@ -7,12 +7,12 @@
     </a>
 </h2>
 
-{% if my_review.data %}
+{% if my_review %}
     <c-submission-list
         show_more_link="{% url 'apply:submissions:list' %}?query=reviewer:@me"
         variant="table"
         rounded-top
-        :submissions="my_review.data"
+        :submissions="my_review"
         :show_more="display_more"
     />
 {% else %}
