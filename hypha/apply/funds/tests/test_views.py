@@ -505,7 +505,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
-                .find(class_="sidebar")
+                .find(class_="layout-sidebar")
                 .find_all("button", class_="btn-primary", string="Assign reviewers")
             )
             self.assertEqual(len(buttons), 1)
@@ -547,7 +547,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
-                .find(class_="sidebar")
+                .find(class_="layout-sidebar")
                 .find_all("a", class_="btn-primary", string="Assign reviewers")
             )
             self.assertEqual(len(buttons), 0)
@@ -570,7 +570,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
-                .find(class_="sidebar")
+                .find(class_="layout-sidebar")
                 .find_all("button", class_="btn-secondary", string="Reviewers")
             )
             self.assertEqual(len(buttons), 1)
@@ -968,7 +968,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
 
         buttons = (
             BeautifulSoup(response.content, "html5lib")
-            .find(class_="sidebar")
+            .find(class_="layout-sidebar")
             .find_all("a", class_="btn-primary", string="Assign reviewers")
         )
         self.assertEqual(len(buttons), 0)
@@ -978,9 +978,13 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
             status="internal_review", user=self.applicant, reviewers=[self.user]
         )
         response = self.get_page(submission)
+        import logging
+
+        logger = logging.getLogger("hypha")
+        logger.debug(response.content)
         buttons = (
             BeautifulSoup(response.content, "html5lib")
-            .find(class_="sidebar")
+            .find(class_="layout-sidebar")
             .find_all("a", class_="button--white", string="Reviewers")
         )
         self.assertEqual(len(buttons), 0)
@@ -1014,7 +1018,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
-                .find(class_="sidebar")
+                .find(class_="layout-sidebar")
                 .find_all("a", class_="btn-primary", string="View determination")
             )
             self.assertEqual(len(buttons), 0)
@@ -1350,7 +1354,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         response = self.get_page(submission)
         buttons = (
             BeautifulSoup(response.content, "html5lib")
-            .find(class_="sidebar")
+            .find(class_="layout-sidebar")
             .find_all("a", class_="btn-primary", string="Assign reviewers")
         )
         self.assertEqual(len(buttons), 0)
@@ -1363,7 +1367,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         response = self.get_page(submission)
         buttons = (
             BeautifulSoup(response.content, "html5lib")
-            .find(class_="sidebar")
+            .find(class_="layout-sidebar")
             .find_all("a", class_="button--white", string="Reviewers")
         )
         self.assertEqual(len(buttons), 0)
@@ -1393,7 +1397,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
-                .find(class_="sidebar")
+                .find(class_="layout-sidebar")
                 .find_all("a", class_="btn-primary", string="View determination")
             )
             self.assertEqual(len(buttons), 0)
