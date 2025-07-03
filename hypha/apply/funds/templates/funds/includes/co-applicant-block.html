@@ -1,4 +1,4 @@
-{% load i18n heroicons %}
+{% load i18n heroicons co-applicant_tags %}
 
 <div class="card card-border bg-base-100 shadow-xs">
     <div class="card-body">
@@ -8,17 +8,18 @@
                     {% trans "Co-applicants" %} <span class="text-xs text-fg-muted">({{ co_applicants.count }})</span>
                     {% heroicon_solid "chevron-down" size="16" class="transition-transform rotate-90 size-4 group-open:rotate-0" %}
                 </h2>
+                {% can_invite_coapplicant user object as can_invite %}
                 <button
                     role="button"
                     class="btn btn-sm btn-soft btn-secondary"
                     hx-get="{% url 'apply:submissions:invite_co_applicant' pk=object.id %}"
                     hx-target="#htmx-modal"
-                    {% if object.co_applicant_invites.count >= invite_max_limit %}
-                        disabled
-                        title='{% trans "Max limit reached" %}'
-                    {% else %}
+                    {% if can_invite %}
                         title='{% trans "Invite co-applicant" %}'
                         aria-label="{% trans "Invite co-applicant" %}"
+                    {% else %}
+                        disabled
+                        title='{% trans "Not allowed" %}'
                     {% endif %}
                 >
                     {% trans "Invite" %}
@@ -34,6 +35,7 @@
                 {% endif %}
 
                 {% for invite in co_applicants %}
+                    {% can_update_coapplicant user invite as can_update %}
                     <div class="list-row list-row-card">
                         <div class="min-w-0 list-col-grow">
                             <div class="font-medium truncate">
@@ -55,15 +57,17 @@
                             </div>
                         </div>
 
-                        <a
-                            href="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
-                            hx-get="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
-                            hx-target="#htmx-modal"
-                        >
-                            <div class="btn btn-sm btn-square btn-ghost">
-                                {% heroicon_mini "pencil-square" stroke_width=2 aria_hidden=true %}
-                            </div>
-                        </a>
+                        {% if can_update %}
+                            <a
+                                href="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
+                                hx-get="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
+                                hx-target="#htmx-modal"
+                            >
+                                <div class="btn btn-sm btn-square btn-ghost">
+                                    {% heroicon_mini "pencil-square" stroke_width=2 aria_hidden=true %}
+                                </div>
+                            </a>
+                        {% endif %}
                     </div>
                 {% empty %}
                     <div class="list-row list-row-card">
