@@ -17,9 +17,7 @@
 
 .choices.is-disabled .choices__inner,
 .choices.is-disabled .choices__input {
-  background-color: #eaeaea;
-
-  @apply cursor-not-allowed select-none;
+  @apply cursor-not-allowed select-none bg-base-200;
 }
 
 .choices.is-disabled .choices__item {
