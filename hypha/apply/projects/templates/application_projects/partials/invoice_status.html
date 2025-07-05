@@ -1,60 +1,74 @@
 {% load i18n invoice_tools heroicons %}
 
-<div class="card-body">
-    <div class="flex-none">
-        <p><b>{% trans "Status" %}: </b></p>
-    </div>
-    <div class="ps-2">
-        {% extract_status latest_activity user as latest_activity_status %}
-        {% get_comment_for_invoice_action object latest_activity as latest_activity_comment %}
-        <p>{{ latest_activity_status }} {% if user.is_applicant and latest_activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ latest_activity.user }}){% endif %}
-            <span class="text-fg-muted">
-                <relative-time datetime="{{ latest_activity.timestamp|date:'c' }}">
-                    {{ latest_activity.timestamp|date:'SHORT_DATETIME_FORMAT' }}
-                </relative-time>
-            </span>
+<div class="card-body" x-data="{ collapsed: true }">
+    <h2 class="card-title">
 
-            {% if latest_activity_comment %}
-                {% heroicon_outline "exclamation-circle" stroke_width=2 size=22 class="inline stroke-red-500" aria_hidden=true %}
-                <a
-                    href="{{ latest_activity_comment.get_absolute_url }}"
-                    class="link"
-                >{% trans "View comment" %}</a>
-            {% endif %}
-        </p>
+        {% trans "Status" %}
+    </h2>
+
+    {% extract_status latest_activity user as latest_activity_status %}
+    {% get_comment_for_invoice_action object latest_activity as latest_activity_comment %}
+    <p>
+        {{ latest_activity_status }}
+        {% if user.is_applicant and latest_activity.user != user %}
+            ({{ ORG_SHORT_NAME }})
+        {% else %}
+            ({{ latest_activity.user }})
+        {% endif %}
+        <span class="text-fg-muted">
+            <relative-time datetime="{{ latest_activity.timestamp|date:'c' }}">
+                {{ latest_activity.timestamp|date:'SHORT_DATETIME_FORMAT' }}
+            </relative-time>
+        </span>
+
+        {% if latest_activity_comment %}
+            {% heroicon_outline "exclamation-circle" stroke_width=2 size=22 class="inline stroke-red-500" aria_hidden=true %}
+            <a
+                href="{{ latest_activity_comment.get_absolute_url }}"
+                class="link"
+            >{% trans "View comment" %}</a>
+        {% endif %}
+    </p>
+
+    <ul class="list-disc list-inside">
         {% for activity in activities %}
             {% extract_status activity user as activity_status %}
             {% get_comment_for_invoice_action object activity as activity_comment %}
-            <p x-show="!collapsed">{{ activity_status }} {% if user.is_applicant and activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ activity.user }}){% endif %}
-                <span class="text-fg-muted">
-                    <relative-time datetime="{{ activity.timestamp|date:'c' }}">
-                        {{ activity.timestamp|date:'SHORT_DATETIME_FORMAT' }}
-                    </relative-time>
-                </span>
-                {% if activity_comment %}
-                    {% heroicon_outline "exclamation-circle" stroke_width=2 size=22 class="inline stroke-red-500" aria_hidden=true %}
-                    <a
-                        href="{{ activity_comment.get_absolute_url }}"
-                        class="font-bold"
-                    >{% trans "View comment" %}</a>
-                {% endif %}
-            </p>
+            <li class="flex flex-wrap gap-2 step step-neutral" x-show="!collapsed">
+                {{ activity_status }} {% if user.is_applicant and activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ activity.user }}){% endif %}
+                <div>
+                    <span class="text-fg-muted">
+                        <relative-time datetime="{{ activity.timestamp|date:'c' }}">
+                            {{ activity.timestamp|date:'SHORT_DATETIME_FORMAT' }}
+                        </relative-time>
+                    </span>
+                    {% if activity_comment %}
+                        &middot;
+                        <a
+                            href="{{ activity_comment.get_absolute_url }}"
+                            class="link"
+                        >
+                            {% heroicon_mini "chat-bubble-left" class="inline-block opacity-80 size-4" aria_hidden=true %}
+                            {% trans "View comment" %}</a>
+                    {% endif %}
+                </div>
+            </li>
         {% endfor %}
-    </div>
+    </ul>
     {% if activities %}
-        <button
-            type="button"
-            class="flex-1 font-bold transition-opacity hover:opacity-70 text-light-blue text-end"
-            x-on:click="collapsed = ! collapsed"
-        >
-            <span x-show="collapsed">
-                {% trans "Show" %}
-                {% heroicon_mini "arrow-down" class="inline align-text-bottom" aria_hidden=true %}
-            </span>
-            <span x-show="!collapsed">
-                {% trans "Hide" %}
-                {% heroicon_mini "arrow-up" class="inline align-text-bottom" aria_hidden=true %}
-            </span>
-        </button>
+        <div>
+            <button
+                type="button"
+                class="link"
+                x-on:click="collapsed = ! collapsed"
+            >
+                <span x-show="collapsed">
+                    {% trans "View all" %}
+                </span>
+                <span x-show="!collapsed">
+                    {% trans "show less" %}
+                </span>
+            </button>
+        </div>
     {% endif %}
 </div>

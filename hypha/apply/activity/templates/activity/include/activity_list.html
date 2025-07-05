@@ -1,7 +1,7 @@
 {% load i18n %}
 
 <div class="border-b-2 border-b-base-300">
-    <section class="ml-4 max-w-3xl md:ml-20">
+    <section class="max-w-3xl ms-4 md:ms-20">
 
         <div class="h-timeline">
             {% for activity in activities %}
@@ -15,7 +15,7 @@
             {% if page.has_next %}
                 <a
                     href="{{ request.path }}?page={{ page.next_page_number }}"
-                    class="block py-2 text-sm text-slate-500 hover:text-slate-700"
+                    class="btn btn-sm"
                     hx-get="{{ request.path }}?page={{ page.next_page_number }}"
                     hx-trigger="intersect"
                     hx-target="this"

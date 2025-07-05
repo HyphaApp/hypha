@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n humanize invoice_tools heroicons %}
+{% load i18n humanize invoice_tools heroicons apply_tags %}
 
 {% block title %}{% trans "Invoice" %}: {{ object.invoice_number }} - {{ object.project.title }}{% endblock %}
 
@@ -7,9 +7,9 @@
     <c-hero>
         <c-hero.header
             back_link="{{ object.project.get_absolute_url }}"
-            back_link_text="{% trans 'View project page' %}"
+            back_link_text="{% trans 'View project' %} #{{ object.project.application_id }}"
             title="{% trans 'Invoice' %}: {{ object.invoice_number }}"
-            subtitle="{% trans 'For' %}: {{ object.project.title }}"
+            subtitle="{% trans 'For' %} {{ object.project.title|truncatechars_middle:80 }}"
         />
     </c-hero>
 {% endblock %}
@@ -18,9 +18,11 @@
     {% display_invoice_status_for_user user object as invoice_status %}
     {% can_show_paid_date invoice as show_paid_date %}
     <div class="my-4 layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-end">
-        <div class="layout-main">
-            <div class="mb-4 card card-border bg-base-200">
-                <div class="grid grid-cols-1 lg:grid-cols-2 card-body">
+        <div class="flex flex-col gap-4 layout-main">
+
+            <!-- meta -->
+            <section class="card card-border bg-base-200">
+                <div class="grid grid-cols-1 text-base lg:grid-cols-2 card-body">
                     <p>
                         <b>{% trans "Invoice number" %}:</b> {{ object.invoice_number }}
                     </p>
@@ -48,31 +50,31 @@
                         <b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}
                     </p>
                 </div>
-            </div>
-            <div
+            </section>
+
+            <!-- status -->
+            <section
                 hx-get="{% url 'apply:projects:partial-invoice-status' pk=object.project.pk invoice_pk=object.pk %}"
                 hx-trigger="load, invoicesUpdated from:body"
-                class="flex mb-4 p card card-border bg-base-200"
-                x-data="{ collapsed: true }"
+                class="card card-border"
             >
                 <div class="flex-none content-center min-h-10">
                     <div class="h-4 rounded-full animate-pulse bg-base-300 min-w-96"></div>
                 </div>
-                <div class="ps-2"></div>
-            </div>
+            </section>
 
-            <div class="mb-4 card card-border bg-base-200">
+            <!-- invoice -->
+            <section class="card card-border bg-base-100">
                 <div class="card-body">
                     <h2 class="card-title">{% trans "Invoice" %}</h2>
                     <p>
-                        <a
-                            target="_blank"
+                        <c-card-attachment
                             href="{% url 'apply:projects:invoice-document' pk=object.project.submission.id invoice_pk=object.pk %}"
-                        >
-                            {{object.filename}}
-                        </a>
+                            :filename="object.filename"
+                            title="{% trans 'Download invoice' %}"
+                        />
                     </p>
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto mt-4">
                         <embed
                             src="{% url 'apply:projects:invoice-document' pk=object.project.submission.id invoice_pk=object.pk %}"
                             width="800px"
@@ -80,9 +82,10 @@
                         />
                     </div>
                 </div>
-            </div>
+            </section>
+
             {% if object.supporting_documents.exists %}
-                <div class="mb-4 card card-border bg-base-200">
+                <section class="card card-border">
                     <div class="card-body">
                         <h2 class="card-title">{% trans "Supporting Documents" %}</h2>
                         {% for document in object.supporting_documents.all %}
@@ -93,19 +96,19 @@
                             </p>
                         {% endfor %}
                     </div>
-                </div>
+                </section>
             {% endif %}
         </div>
 
         <aside class="layout-sidebar">
-            <section
+            <div
                 class="sticky top-8 card card-border bg-base-200 shadow-xs sidebar__inner--actions"
                 hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}"
                 hx-trigger="invoicesUpdated from:body"
                 data-testid="sidebar-primary-actions"
             >
                 {% include "application_projects/partials/invoice_detail_actions.html" %}
-            </section>
+            </div>
         </aside>
     </div>
 {% endblock %}

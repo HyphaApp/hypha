@@ -13,7 +13,7 @@
                 </div>
             </div>
 
-            <div class="{% if activity.user == request.user %}border-info/30{% else %}border-base-300{% endif %} flex-1 pb-2 bg-base-100 border rounded-sm target:ring-2 target:ring-cyan-500 scroll-m-2  z-1"
+            <div class="{% if activity.user == request.user %}border-info/30{% else %}border-base-300{% endif %} flex-1 pb-2 bg-base-100 border rounded-sm target:ring-2 target:ring-info scroll-m-2  z-1"
                  id="communications--{{ activity.id }}">
                 <header class="{% if activity.user == request.user %}bg-info/20{% else %}bg-base-200{% endif %} flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-t">
                     <div>
@@ -41,12 +41,10 @@
                                 >{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
                             </a>
                         </span>
-
-
                     </div>
+
                     <div class="flex gap-1 items-center">
                         {% if not request.user.is_applicant %}
-
                             {% if request.user.is_apply_staff and activity.assigned_to %}
 
                                 <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs rounded-xl border border-gray-300 text-fg-muted">
@@ -93,15 +91,16 @@
                     </div>
 
                     {% if not submission_title and activity|user_can_see_related:request.user %}
-                        <div class="px-3">
-                            {% with url=activity.related_object.get_absolute_url %}
-                                {% if url %}
-                                    <a href="{{ url }}" class="font-semibold uppercase">
-                                        {% trans "View " %}{{ activity.related_object|model_verbose_name }} {% heroicon_outline "arrow-right" aria_hidden="true" stroke_width=2 class="inline align-baseline size-4 ms-1" %}
+                        {% with url=activity.related_object.get_absolute_url %}
+                            {% if url %}
+                                <div class="px-3">
+                                    <a href="{{ url }}" class="mt-2 font-semibold uppercase btn btn-sm btn-info btn-soft">
+                                        {% trans "View " %}{{ activity.related_object|model_verbose_name }}
+                                        {% heroicon_mini "arrow-right" aria_hidden="true" class="opacity-80 size-4" %}
                                     </a>
-                                {% endif %}
-                            {% endwith %}
-                        </div>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
                     {% endif %}
                 </div>
             </div>
