@@ -37,20 +37,19 @@
         {% endif %}
 
         {% if object.invoices.rejected %}
-            <p class="text-center">
+            <p class="mb-2 text-center">
                 {% trans "Show rejected" as showrejectedtext %}
                 {% trans "Hide rejected" as hiderejectedtext %}
-                <a
-                    class="font-semibold"
-                    href="#"
+                <button
+                    class="btn btn-sm btn-ghost"
                     @click.prevent="showrejected = ! showrejected"
                     x-text="showrejected ? '{{ hiderejectedtext }}' : '{{ showrejectedtext }}'"
                 >
                     {{ showrejectedtext }}
-                </a>
+                </button>
             </p>
 
-            <table class="table"  x-show="showrejected">
+            <table class="table" x-show="showrejected">
                 <thead>
                     <tr>
                         <th>{% trans "Date submitted" %}</th>
