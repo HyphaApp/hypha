@@ -1,50 +1,62 @@
 {% extends "base-apply.html" %}
-{% load i18n static %}
+{% load i18n static heroicons %}
 {% block title %}{{ title }}{% endblock %}
+
+{% block body_attrs %}x-data="{ showSubmission: false }"{% endblock %}
 
 {% block alpine_scripts %}
     {{ block.super }}
     <script defer src="{% static 'js/behaviours/review-score.js' %}"></script>
 {% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{{ title }}"
+            subtitle="<a class='link link-hover' href='{% url 'funds:submissions:detail' submission.id %}'>{{ submission.title_text_display }}</a>"
+        >
+            <div class="self-end -mb-4">
+                <div class="tabs tabs-lift">
+                    <button
+                        class="tab tab-active text-base-content/70"
+                        x-data
+                        @click="showSubmission = !showSubmission"
+                        :aria-selected="showSubmission"
+                    >
+                        <span x-show="!showSubmission" class="flex gap-2 items-center">
+                            {% heroicon_outline "eye" class="size-4" aria_hidden="true" %}
+                            {% trans "Show application" %}
+                        </span>
+                        <span x-show="showSubmission" class="flex gap-2 items-center" x-cloak>
+                            {% heroicon_outline "eye-slash" class="size-4" aria_hidden="true" %}
+                            {% trans "Hide application" %}
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </c-hero.header>
+    </c-hero>
+{% endblock %}
+
 {% block content %}
+    <section class="flex relative gap-4 justify-between my-4" x-data="reviewScore">
 
-    {% adminbar %}
-        {% slot header %}{{ title }}{% endslot %}
-        {% slot sub_heading %}
-            <a class="text-gray-200 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>
-        {% endslot %}
-        {% slot buttons %}
-            <button
-                class="block pb-4 tab__item ms-auto"
-                x-data
-                @click="showSubmission = !showSubmission"
-            >
-                <span x-show="!showSubmission">{% trans "Show application" %}</span>
-                <span x-show="showSubmission">{% trans "Hide application" %}</span>
-            </button>
-            </a>
-        {% endslot %}
-    {% endadminbar %}
-
-    {% include "forms/includes/form_errors.html" with form=form %}
-
-    <section class="flex relative justify-between my-8" x-data="reviewScore">
-        <div class="absolute top-0 right-0 h-full lg:block">
+        <div class="absolute top-0 right-0 z-20 h-full lg:block" x-cloak>
             <div
-                class="inline-block sticky top-1 py-1.5 px-3 mt-1 font-semibold text-center text-white bg-arsenic float-end"
+                class="inline-block sticky top-1 py-1.5 px-3 mt-1 font-semibold text-center bg-neutral text-neutral-content float-end"
                 x-cloak
                 x-show="showScore"
             >
                 {% trans "Score:" %} <span x-text="totalScore">-</span>
             </div>
         </div>
+
         {% if not has_submitted_review %}
-            <form id="review-form-edit" class="flex-1 max-w-3xl form form--scoreable" action="" method="post" novalidate>
+            <form id="review-form-edit" class="flex-1 max-w-3xl form" action="" method="post" novalidate>
+                {% include "forms/includes/form_errors.html" with form=form %}
                 {% csrf_token %}
-                {% for hidden in form.hidden_fields %}
-                    {{ hidden }}
-                {% endfor %}
+
+                {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
 
                 {% for field in form.visible_fields %}
                     {# to be replaced with better logic when we use stream form #}
@@ -60,41 +72,40 @@
                         {% include "forms/includes/field.html" %}
                     {% else %}
                         <div class="max-w-none field-block prose">
-                            {{ field.block }}
+                            <div>
+                                {{ field.block }}
+                            </div>
                         </div>
                     {% endif %}
                 {% endfor %}
 
-                <div class="flex flex-wrap gap-4 items-center">
+                <div class="items-center mt-4 card-actions">
+                    <button class="btn btn-primary" type="submit" name="submit">
+                        {% trans "Submit" %}
+                    </button>
                     {% if not object.id or object.is_draft %}
-                        <button class="button button--white" type="submit" name="{{ form.draft_button_name }}" formnovalidate>
+                        <button class="btn btn-secondary btn-outline" type="submit" name="{{ form.draft_button_name }}" formnovalidate>
                             {% trans "Save draft" %}
                         </button>
                     {% endif %}
-                    <button class="button button--primary min-w-48" type="submit" name="submit">
-                        {% trans "Submit" %}
-                    </button>
                     <div class="text-fg-muted" x-cloak x-show="showScore">
                         {% trans "Total Score:" %} <span x-text="totalScore"></span>
                     </div>
                 </div>
 
             </form>
-            <aside :class="showSubmission ? 'flex-1 ps-4' : ''">
-                <section
-                    class="overflow-y-auto p-4 max-h-screen bg-white shadow-xl"
-                    x-show="showSubmission"
-                    x-transition:enter="transition ease-out duration-250"
-                    x-transition:enter-start="transform opacity-0 translate-x-full"
-                    x-transition:enter-end="transform opacity-100 translate-x-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="transform opacity-100 translate-x-0"
-                    x-transition:leave-end="transform opacity-0 translate-x-full"
+            <aside
+                x-cloak
+                x-show="showSubmission"
+                class="overflow-y-auto max-h-screen grow bg-base-200 card card-border lg:max-w-1/2"
+            >
+                <div
+                    class="card-body"
                     hx-get="{% url 'funds:submissions:partial-answers' submission.id %}"
                     hx-trigger="intersect once"
                 >
                     <p>{% trans "Loading…" %}</p>
-                </section>
+                </div>
             </aside>
         {% else %}
             <p>{% trans "You have already posted a review for this submission" %}</p>

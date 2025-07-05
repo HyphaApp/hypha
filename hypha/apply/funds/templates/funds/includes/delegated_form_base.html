@@ -25,14 +25,14 @@
         {% if cancel %}
             <button
                 type="button"
-                class="button button--{% if invert %}primary{% else %}white{% endif %}"
+                class="btn {% if invert %}btn-primary{% else %}btn-secondary btn-outline{% endif %}"
                 title="{% trans "Close" %}">
                 {% trans "Cancel" %}
             </button>
         {% endif %}
         {% trans "Delete" as delete %}
         <button
-            class="button button--{% if invert %}white{% elif value == delete %}warning{% else %}primary{% endif %}"
+            class="btn {% if invert %}btn-secondary btn-outline{% elif value == delete %}btn-error{% else %}btn-primary{% endif %}"
             id="{{ form.name }}-submit"
             name="{{ form_prefix }}{{ form.name }}"
             type="submit"

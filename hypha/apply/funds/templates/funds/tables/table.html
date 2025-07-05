@@ -5,168 +5,29 @@
     <tr {{ row.attrs.as_html }}>
         {% for column, cell in row.items %}
             <td {{ column.attrs.td.as_html }}>
-                {% if column.name != "selected" %}
-                    <span class="mobile-label {{ column.attrs.td.class }}">{{ column.header }}: </span>
-                {% endif %}
                 {% if column.localize == None %}{{ cell }}{% else %}{% if column.localize %}{{ cell|localize }}{% else %}{{ cell|unlocalize }}{% endif %}{% endif %}
             </td>
         {% endfor %}
     </tr>
-
-    {% with submission=row.record %}
-        <tr class="all-submissions-table__child" data-parent-id="{{ submission.id }}">
-            <td colspan="{{ table.columns|length }}">
-                <table class="submission-meta">
-                    <tr class="submission-meta__row">
-                        <th><h6 class="heading heading--normal heading--no-margin">{% trans "Applicant" %}</h6></th>
-                        <th><h6 class="heading heading--normal heading--no-margin">{% trans "Last updated" %}</h6></th>
-                        <th><h6 class="heading heading--normal heading--no-margin">{% trans "Screening decisions" %}</h6></th>
-                        <th><h6 class="heading heading--normal heading--no-margin">{% trans "Review outcomes" %}</h6></th>
-                    </tr>
-                    <tr class="submission-meta__row submission-meta__row--black">
-                        <td><strong>{{ submission.full_name }}</strong></td>
-                        <td>
-                            {% if submission.last_update %}
-                                <strong>{% trans "by" %} {{ submission.last_user_update }}</strong><br/>
-                                {{ submission.last_update|date:"SHORT_DATETIME_FORMAT" }}
-                            {% else %}
-                                &mdash;
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% trans "Awaiting" as awaiting %}
-                            <strong>{{ submission.joined_screening_statuses|default:awaiting }}</strong>
-                        </td>
-
-                        <td>
-                            <ul class="list list--no-margin">
-                                {% for reviewer in submission.has_reviewed %}
-                                    <li class="list__item list__item--reviewer">
-                                        <span class="list__item--reviewer-name">
-                                            {{ reviewer }}
-                                            {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
-                                        </span>
-                                        <span class="list__item list__item--reviewer-outcome">
-                                            {{ reviewer.review.get_recommendation_display }}
-                                        </span>
-                                    </li>
-                                    {% for opinion in reviewer.review.opinions.all %}
-                                        {% if forloop.first %}
-                                            <ul class="list list--opinion">
-                                        {% endif %}
-
-                                        <li class="list__item list__item--reviewer list__item--opinion">
-                                            <span class="list__item--reviewer-name">
-                                                {{ opinion.author }}
-                                                {% if opinion.author.role %}
-                                                    {% image opinion.author.role.icon max-12x12 %}
-                                                {% endif %}
-                                            </span>
-                                            <span class="list__item list__item--reviewer-outcome {{ opinion.get_opinion_display|lower }}">
-                                                {{ opinion.get_opinion_display }}
-                                            </span>
-                                        </li>
-
-                                        {% if forloop.last %}
-                                            </ul>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endfor %}
-                                {% for reviewer in submission.hasnt_reviewed %}
-                                    <li class="list__item list__item--reviewer">
-                                        <span class="list__item--reviewer-name">
-                                            {{ reviewer }}
-                                            {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
-                                        </span>
-                                        <span class="list__item list__item--reviewer-outcome">&mdash;</span>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    {% endwith %}
-
-    {% if row.record.previous %}
-        {# we have a linked application, re-render the header row #}
-        <tr class="all-submissions-table__child" data-parent-id="{{ row.record.id }}">
-            <td colspan="{{ table.columns|length }}">
-                <table class="submission-meta">
-                    <tr class="submission-meta__row">
-                        {% for column in row.table.columns %}
-                            {% if forloop.first %}
-                            {% elif forloop.counter == 2 %}
-                                <th>{% trans "Linked" %} {{ row.record.previous.stage }}</th>
-                            {% else %}
-                                <th class="th th--{{ column.header|lower }}">{{ column.header }}</th>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-
-                    {# mutate the row to render the data for the child row #}
-                    {% with row=row|row_from_record:row.record.previous %}
-                        <tr {{ row.attrs.as_html }}>
-                            {% for column, cell in row.items %}
-                                {% if column.name != "selected" %}
-                                    <td {{ column.attrs.td.as_html }}>
-                                        {% if column.localize == None %}{{ cell }}{% else %}{% if column.localize %}{{ cell|localize }}{% else %}{{ cell|unlocalize }}{% endif %}{% endif %}
-                                    </td>
-                                {% endif %}
-                            {% endfor %}
-                        </tr>
-                    {% endwith %}
-                </table>
-            </td>
-        </tr>
-    {% endif %}
-
 {% endblock %}
 
 {% block table.tbody.empty_text %}
-    <tr class="all-submissions-table__empty">
-        <td colspan="{{ table.columns|length }}">{{ table.empty_text }}</td>
+    <tr>
+        <td colspan="{{ table.columns|length }}" class="p-4">{{ table.empty_text }}</td>
     </tr>
 {% endblock table.tbody.empty_text %}
 
 {% block pagination %}
     {% if table.page and table.paginator.num_pages > 0 %}
-        <div class="pagination--wrapper">
-            <div class='per-page'>
+        <div class="relative">
+            <div class='hidden absolute top-2 left-4 text-sm md:block per-page text-fg-muted'>
                 {% trans "Show" %}
-                <a href="{% querystring "per_page"=25 %}" {% if table.paginator.per_page == 25 %}class="current"{% endif %}>25</a> |
-                <a href="{% querystring "per_page"=50 %}" {% if table.paginator.per_page == 50 %}class="current"{% endif %}>50</a> |
-                <a href="{% querystring "per_page"=100 %}" {% if table.paginator.per_page == 100 %}class="current"{% endif %}>100</a> |
+                <a href="{% querystring "per_page"=25 %}" class="link {% if not table.paginator.per_page == 25 %}link-hover current{% endif %}">25</a> |
+                <a href="{% querystring "per_page"=50 %}" class="link {% if not table.paginator.per_page == 50 %}link-hover current{% endif %}">50</a> |
+                <a href="{% querystring "per_page"=100 %}" class="link {% if not table.paginator.per_page == 100 %}link-hover current{% endif %}">100</a> |
                 {% trans "items" %}
             </div>
-
-            {% if table.paginator.num_pages > 1 %}
-                <ul class="pagination">
-                    {% if table.page.has_previous %}
-                        <li class="previous">
-                            <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}">
-                                {% trans 'previous' %}
-                            </a>
-                        </li>
-                    {% endif %}
-                    {% if table.page.has_previous or table.page.has_next %}
-                        {% total_num_of_pages table.rows|length table.paginator.per_page as total_pages %}
-                        <li class="cardinality">
-                            <p>
-                                {% trans "Page" %} {{ table.page.number }} / {{ total_pages }}
-                            </p>
-                        </li>
-                    {% endif %}
-                    {% if table.page.has_next %}
-                        <li class="next">
-                            <a href="{% querystring table.prefixed_page_field=table.page.next_page_number %}">
-                                {% trans 'next' %}
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
-            {% endif %}
+            <c-pagination :page="table.page" class="my-4" />
         </div>
     {% endif %}
 {% endblock pagination %}

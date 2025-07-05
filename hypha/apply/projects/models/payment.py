@@ -112,11 +112,10 @@ class Invoice(models.Model):
         null=True,
     )
     document = models.FileField(upload_to=invoice_path, storage=PrivateStorage())
-    requested_at = models.DateTimeField(auto_now_add=True)
     message_for_pm = models.TextField(
         blank=True,
         verbose_name=_("Comment"),
-        help_text="This will be displayed as a comment in the conversations tab",
+        help_text="This will be displayed as a comment in the comments tab",
     )
     comment = models.TextField(blank=True)
     invoice_number = models.CharField(
@@ -135,6 +134,7 @@ class Invoice(models.Model):
         default=SUBMITTED, choices=INVOICE_STATUS_CHOICES, max_length=30
     )
     status_field = State(default=SUBMITTED, states=INVOICE_STATUS_CHOICES)
+    requested_at = models.DateTimeField(auto_now_add=True)
     objects = InvoiceQueryset.as_manager()
 
     wagtail_reference_index_ignore = True

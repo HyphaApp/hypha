@@ -2,6 +2,7 @@ import json
 
 from django import template
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.template.defaultfilters import stringfilter
 from django.utils.translation import gettext_lazy as _
 
@@ -44,8 +45,12 @@ def display_activity_author(activity, user) -> str:
     ):
         return settings.ORG_LONG_NAME
 
-    if isinstance(activity.related_object, Review) and activity.source.user == user:
-        return _("Reviewer")
+    try:
+        if isinstance(activity.related_object, Review) and activity.source.user == user:
+            return _("Reviewer")
+    except (AttributeError, ObjectDoesNotExist):
+        # Handle case where related object or content type is missing
+        pass
 
     if (
         settings.HIDE_IDENTITY_FROM_REVIEWERS

@@ -220,6 +220,7 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
 
 class DeleteInvoiceView(DeleteView):
     model = Invoice
+    template_name = "application_projects/modals/invoice_confirm_delete.html"
 
     def get_object(self):
         project = get_object_or_404(Project, submission__pk=self.kwargs["pk"])
@@ -280,7 +281,7 @@ class CreateInvoiceView(SuccessMessageMixin, CreateView):
         return super().dispatch(request, *args, **kwargs)
 
     def buttons(self):
-        yield ("submit", "primary", _("Save"))
+        yield ("submit", "btn-primary", _("Save"))
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(
@@ -349,9 +350,9 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def buttons(self):
-        yield ("submit", "primary", _("Save"))
+        yield ("submit", "btn-primary", _("Update"))
         if self.object.can_user_delete(self.request.user):
-            yield ("delete", "warning", _("Delete"))
+            yield ("delete", "btn-error", _("Delete"))
 
     def get_initial(self):
         initial = super().get_initial()

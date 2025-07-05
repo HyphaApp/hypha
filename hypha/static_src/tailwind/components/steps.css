@@ -1,0 +1,12 @@
+.steps-sm {
+  .step {
+    @apply text-sm;
+  }
+  .step:before {
+    height: 0.3rem;
+  }
+  .step > .step-icon,
+  .step:not(:has(.step-icon)):after {
+    @apply size-7;
+  }
+}

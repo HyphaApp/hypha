@@ -97,37 +97,36 @@ How this works:
             @click="remove(toast.id)"
             @mouseenter="pause(toast.id)"
             @mouseleave="resume(toast.id)"
-            class="relative py-3 px-4 mt-4 w-full max-w-full text-sm font-semibold text-white rounded-md shadow-xl cursor-pointer sm:w-auto sm:max-w-sm break-anywhere hyphens-auto group sm:min-w-64"
+            class="relative mt-4 w-full max-w-full shadow-xl cursor-pointer sm:w-auto sm:max-w-sm alert break-anywhere hyphens-auto group sm:min-w-64"
             :class="{
-                    'bg-neutral-500': toast.type === 'debug',
-                    'bg-green-600': toast.type === 'success',
-                    'bg-blue-500': toast.type === 'info',
-                    'bg-orange-500': toast.type === 'warning',
-                    'bg-red-500': toast.type === 'error',
+                    '': toast.type === 'debug',
+                    'alert-success': toast.type === 'success',
+                    'alert-info': toast.type === 'info',
+                    'alert-warning': toast.type === 'warning',
+                    'alert-error': toast.type === 'error',
                     }"
             style="pointer-events:all"
         >
-            <div class="flex gap-4 items-center">
-                <span x-show="toast.type == 'info'" aria-hidden="true">
-                    {% heroicon_solid "light-bulb" size=24 class="inline-block rounded-full" %}
-                </span>
-                <span x-show="toast.type == 'success'" aria-hidden="true">
-                    {% heroicon_solid "check-circle" size=24 class="inline-block rounded-full" %}
-                </span>
-                <span x-show="toast.type == 'warning'" aria-hidden="true">
-                    {% heroicon_solid "exclamation-circle" size=24 class="inline-block rounded-full" %}
-                </span>
-                <span x-show="toast.type == 'error'" aria-hidden="true">
-                    {% heroicon_solid "exclamation-triangle" size=24 class="inline-block rounded-full" %}
-                </span>
-                <span x-show="toast.type == 'debug'" aria-hidden="true">
-                    {% heroicon_solid "wrench" size=24 class="inline-block rounded-full" %}
-                </span>
-                <span x-text="toast.text"></span>
-            </div>
-            <button class="absolute -top-3 -left-3 invisible p-1 transition-all group-hover:visible">
-                <span class="inline-block p-1 text-white rounded-full shadow-md bg-dark-blue" aria-label="Close">
-                    {% heroicon_mini "x-mark" size=18 class="" %}
+            <span x-show="toast.type == 'info'" aria-hidden="true">
+                {% heroicon_outline "information-circle" size=24 class="opacity-80 size-5" %}
+            </span>
+            <span x-show="toast.type == 'success'" aria-hidden="true">
+                {% heroicon_outline "check-circle" size=24 class="opacity-80 size-5" %}
+            </span>
+            <span x-show="toast.type == 'warning'" aria-hidden="true">
+                {% heroicon_outline "exclamation-circle" size=24 class="opacity-80 size-5" %}
+            </span>
+            <span x-show="toast.type == 'error'" aria-hidden="true">
+                {% heroicon_outline "exclamation-triangle" size=24 class="opacity-80 size-5" %}
+            </span>
+            <span x-show="toast.type == 'debug'" aria-hidden="true">
+                {% heroicon_outline "wrench" size=24 class="opacity-80 size-5" %}
+            </span>
+            <span x-text="toast.text"></span>
+
+            <button class="absolute -top-3 -left-3 invisible p-1 transition-all cursor-pointer group-hover:visible">
+                <span class="inline-block p-1 rounded-full shadow-sm text-primary-content bg-primary" aria-label="Close">
+                    {% heroicon_mini "x-mark" size=18 %}
                 </span>
             </button>
         </div>

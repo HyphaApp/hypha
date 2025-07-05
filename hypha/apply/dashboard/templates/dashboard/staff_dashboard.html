@@ -4,134 +4,150 @@
 
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
-{% block content %}
-    {% adminbar %}
-        {% slot header %}{% trans "Dashboard" %}{% endslot %}
-        {% slot sub_heading %}{% trans "Welcome" %}, {{ request.user }}!{% endslot %}
-
-        {% if perms.wagtailadmin.access_admin %}
-            <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="button button--primary">
-                {% heroicon_solid "cog-6-tooth" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
-                {% trans "Administration" %}
-            </a>
-        {% endif %}
-    {% endadminbar %}
-
-    <div class="wrapper wrapper--large wrapper--inner-space-medium">
-        <div class="wrapper wrapper--bottom-space">
-            {% if my_tasks.count %}
-                {% include "dashboard/includes/my-tasks.html" with mytasks=mytasks %}
-            {% endif %}
-
-            <div class="stat-block">
-                <a href="#submissions-awaiting-review" class="border shadow-xs stat-block__item">
-                    <p class="stat-block__number">{{ awaiting_reviews.count }}</p>
-                    <p class="stat-block__text">{% trans "Submissions waiting for your review" %}</p>
-                    {% if awaiting_reviews.count %}
-                        <div class="stat-block__view">{% trans "View" %}</div>
-                    {% endif %}
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Dashboard' %}"
+            subtitle="{% trans 'Welcome' %}, {{ request.user }}!"
+        >
+            {% if perms.wagtailadmin.access_admin %}
+                <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="btn btn-primary">
+                    {% heroicon_solid "cog-6-tooth" size=20 class="opacity-80" aria_hidden=true %}
+                    {% trans "Administration" %}
                 </a>
-                {% if PROJECTS_ENABLED %}
-                    <a href="#active-projects" class="border shadow-xs stat-block__item">
-                        <p class="stat-block__number">{{ projects.count }}</p>
-                        <p class="stat-block__text">{% trans "Live projects under your management" %}</p>
-                        {% if projects.count %}
-                            <div class="stat-block__view">{% trans "View" %}</div>
-                        {% endif %}
-                    </a>
-                    <a href="#active-invoices" class="border shadow-xs stat-block__item">
-                        <p class="stat-block__number">{{ active_invoices.count }}</p>
-                        <p class="stat-block__text">{% trans "Requests for invoices requiring your attention" %}</p>
-                        {% if active_invoices.count %}
-                            <div class="stat-block__view">{% trans "View" %}</div>
-                        {% endif %}
-                    </a>
-                {% else %}
-                    {% if my_flagged.count %}
-                        <a href="#submissions-flagged" class="border shadow-xs stat-block__item">
-                            <p class="stat-block__number">{{ my_flagged.count }}</p>
-                            <p class="stat-block__text">Your flagged submissions</p>
-                        </a>
-                    {% endif %}
-                    {% if my_reviewed.count %}
-                        <a href="#my-review" class="border shadow-xs stat-block__item">
-                            <p class="stat-block__number">{{ my_reviewed.count }}</p>
-                            <p class="stat-block__text">{% trans "Your previous reviews" %}</p>
-                        </a>
-                    {% endif %}
-                {% endif %}
-            </div>
-        </div>
-
-        <div id="submissions-awaiting-review" class="wrapper wrapper--bottom-space">
-            {% include "dashboard/includes/submissions-waiting-for-review.html" with in_review_count=awaiting_reviews.count my_review=awaiting_reviews.table display_more=awaiting_reviews.display_more active_statuses_filter=awaiting_reviews.active_statuses_filter %}
-        </div>
-
-        {% if my_flagged.count %}
-            <div id="submissions-flagged" class="wrapper wrapper--bottom-space">
-                <h3 class="mb-2 text-xl">
-                    <a href="{% url "apply:submissions:list" %}?query=flagged:@me">Your flagged submissions <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded-sm me-2">{{ my_flagged.count }}</span></a>
-                </h3>
-
-                {% include "submissions/partials/submissions-inline.html" with submissions=my_flagged.objects row_layout="table" %}
-
-                {% if my_flagged.display_more  %}
-                    <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
-                        <a href="{% url "apply:submissions:list" %}?query=flagged:@me">Show All</a>
-                    </div>
-                {% endif %}
-            </div>
-        {% endif %}
-
-        {% if rounds.closed or rounds.open %}
-            {% include "funds/includes/round-block.html" with can_export=can_export closed_rounds=rounds.closed open_rounds=rounds.open title="Your rounds and labs" page_type='dashboard' %}
-        {% endif %}
-
-        {% if PROJECTS_ENABLED and paf_for_review.count %}
-            <div id="paf_for_review" class="wrapper wrapper--bottom-space">
-                <h3 class="mb-2 text-xl">{% trans "Project forms for review" %}</h3>
-                {% render_table paf_for_review.table %}
-            </div>
-        {% endif %}
-
-        {% if PROJECTS_ENABLED and projects.table.data %}
-            <div id="active-projects" class="wrapper wrapper--bottom-space">
-                <h3 class="mb-2 text-xl">
-                    {% trans "Your projects" %}
-                </h3>
-
-                {% render_table projects.table %}
-
-                <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
-                    <a href="{{ projects.url }}?lead={{ request.user.pk }}">{% trans "Show all" %}</a>
-                </div>
-            </div>
-        {% endif %}
-
-        {% if PROJECTS_ENABLED and active_invoices.count %}
-            <div id="active-invoices" class="wrapper wrapper--bottom-space">
-                <h4 class="heading heading--normal">{% trans "Active Invoices" %}</h4>
-                {% render_table active_invoices.table %}
-            </div>
-        {% endif %}
-
-        {% if my_reviewed.count %}
-            <div class="wrapper wrapper--bottom-space">
-                <h3 class="mb-2 text-xl"><a href="{% url "apply:submissions:list" %}?query=reviewed-by:@me">{% trans "Your previous reviews" %} <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded-sm me-2">{{ my_reviewed.count }}</span></a></h3>
-                {% include "submissions/partials/submissions-inline.html" with submissions=my_reviewed.objects row_layout="table" %}
-
-                {% if my_reviewed.display_more %}
-                    <div class="flex justify-center items-center py-3 font-semibold border-b border-x">
-                        <a href="{% url "apply:submissions:list" %}?query=reviewed-by:@me">{% trans "Show all" %}</a>
-                    </div>
-                {% endif %}
-            </div>
-        {% endif %}
-
-    </div>
+            {% endif %}
+        </c-hero.header>
+    </c-hero>
 {% endblock %}
 
 
-{% block extra_js %}
-    <script src="{% static 'js/all-submissions-table.js' %}"></script>
+{% block content %}
+    <div class="flex flex-col gap-8 my-8">
+        {% if my_tasks.count %}
+            <section>
+                {% include "dashboard/includes/my-tasks.html" with mytasks=mytasks %}
+            </section>
+        {% endif %}
+
+        <section>
+            <div class="w-full shadow stats bg-base-100">
+                <div class="stat relative {% if awaiting_reviews.count > 0 %}hover:bg-primary/10 transition-colors{% endif %}" role="region" aria-labelledby="awaiting-reviews-title">
+                    <h4 id="awaiting-reviews-title" class="m-0 stat-title">{% trans "Submissions waiting for your review" %}</h4>
+                    <div class="stat-value" aria-live="polite">{{ awaiting_reviews.count }}</div>
+                    {% if awaiting_reviews.count > 0 %}
+                        <a href="#submissions-awaiting-review" class="absolute inset-0" aria-label="{% trans 'View submissions waiting for your review' %}"></a>
+                    {% endif %}
+                </div>
+                {% if PROJECTS_ENABLED %}
+                    <div class="stat relative {% if projects.count > 0 %}hover:bg-primary/10 transition-colors{% endif %}" role="region" aria-labelledby="projects-title">
+                        <h4 id="projects-title" class="m-0 stat-title">{% trans "Live projects under your management" %}</h4>
+                        <div class="stat-value" aria-live="polite">{{ projects.count }}</div>
+                        {% if projects.count > 0 %}
+                            <a href="#active-projects" class="absolute inset-0" aria-label="{% trans 'View live projects under your management' %}"></a>
+                        {% endif %}
+                    </div>
+                    <div class="stat relative {% if active_invoices.count > 0 %}hover:bg-primary/10 transition-colors{% endif %}" role="region" aria-labelledby="invoices-title">
+                        <h4 id="invoices-title" class="m-0 stat-title">{% trans "Requests for invoices requiring your attention" %}</h4>
+                        <div class="stat-value" aria-live="polite">{{ active_invoices.count }}</div>
+                        {% if active_invoices.count > 0 %}
+                            <a href="#active-invoices" class="absolute inset-0" aria-label="{% trans 'View invoice requests requiring your attention' %}"></a>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="stat relative {% if my_flagged.count > 0 %}hover:bg-primary/10 transition-colors{% endif %}" role="region" aria-labelledby="flagged-title">
+                        <h4 id="flagged-title" class="m-0 stat-title">{% trans "Submissions flagged by you" %}</h4>
+                        <div class="stat-value" aria-live="polite">{{ my_flagged.count }}</div>
+                        {% if my_flagged.count > 0 %}
+                            <a href="#submissions-flagged" class="absolute inset-0" aria-label="{% trans 'View submissions flagged by you' %}"></a>
+                        {% endif %}
+                    </div>
+                    <div class="stat relative {% if my_reviewed.count > 0 %}hover:bg-primary/10 transition-colors{% endif %}" role="region" aria-labelledby="my-reviews-title">
+                        <h4 id="my-reviews-title" class="m-0 stat-title">{% trans "Your previous reviews" %}</h4>
+                        <div class="stat-value" aria-live="polite">{{ my_reviewed.count }}</div>
+                        {% if my_reviewed.count > 0 %}
+                            <a href="#my-review" class="absolute inset-0" aria-label="{% trans 'View your previous reviews' %}"></a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section id="submissions-awaiting-review">
+            {% include "dashboard/includes/submissions-waiting-for-review.html" with in_review_count=awaiting_reviews.count my_review=awaiting_reviews.submissions display_more=awaiting_reviews.display_more %}
+        </section>
+
+        {% if my_flagged.count %}
+            <section id="submissions-flagged">
+                <h2 class="section-header">
+                    <a href="{% url "apply:submissions:list" %}?query=flagged:@me">
+                        Your flagged submissions <span class="badge badge-soft badge-secondary">{{ my_flagged.count }}</span>
+                    </a>
+                </h2>
+                <c-submission-list
+                    show_more_link="{% url 'apply:submissions:list' %}?query=flagged:@me"
+                    variant="table"
+                    rounded-top
+                    :submissions="my_flagged.objects"
+                    :show_more="my_flagged.display_more"
+                />
+            </section>
+        {% endif %}
+
+        {% if rounds.closed or rounds.open %}
+            <section>
+                {% include "funds/includes/round-block.html" with can_export=can_export closed_rounds=rounds.closed open_rounds=rounds.open title="Your rounds and labs" page_type='dashboard' %}
+            </section>
+        {% endif %}
+
+        {% if PROJECTS_ENABLED and paf_for_review.count %}
+            <section id="paf_for_review">
+                <h2 class="section-header">{% trans "Project forms for review" %}</h2>
+                <div class="overflow-x-auto border rounded-box shadow-x bg-base-100">
+                    {% render_table paf_for_review.table %}
+                </div>
+            </section>
+        {% endif %}
+
+        {% if PROJECTS_ENABLED and projects.table.data %}
+            <section id="active-projects">
+                <h2 class="section-header">{% trans "Your projects" %}</h2>
+
+                <div class="overflow-x-auto border rounded-t-box bg-base-100">
+                    {% render_table projects.table %}
+                </div>
+
+                <div class="flex justify-center py-2 border-b border-x rounded-b-box bg-base-100">
+                    <a href="{{ projects.url }}?lead={{ request.user.pk }}" class="font-semibold link">{% trans "Show all" %}</a>
+                </div>
+            </section>
+        {% endif %}
+
+        {% if PROJECTS_ENABLED and active_invoices.count %}
+            <section id="active-invoices">
+                <h2 class="section-header">{% trans "Active invoices" %}</h2>
+
+                <div class="overflow-x-auto border rounded-box shadow-x bg-base-100">
+                    {% render_table active_invoices.table %}
+                </div>
+            </section>
+        {% endif %}
+
+        {% if my_reviewed.count %}
+            <section>
+                <h2 class="section-header">
+                    <a href="{% url "apply:submissions:list" %}?query=reviewed-by:@me">
+                        {% trans "Your previous reviews" %} <span class="badge badge-soft badge-secondary">{{ my_reviewed.count }}</span>
+                    </a>
+                </h2>
+
+                <c-submission-list
+                    show_more_link="{% url 'apply:submissions:list' %}?query=reviewed-by:@me"
+                    variant="table"
+                    rounded-top
+                    :submissions="my_reviewed.objects"
+                    :show_more="my_reviewed.display_more"
+                />
+            </section>
+        {% endif %}
+    </div>
 {% endblock %}

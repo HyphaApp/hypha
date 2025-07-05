@@ -9,30 +9,30 @@
     x-transition:leave="transition ease-in duration-150"
     x-transition:leave-start="transform opacity-100 translate-x-0"
     x-transition:leave-end="transform opacity-0 translate-x-full"
-    class="overflow-y-auto fixed top-0 bottom-0 z-20 pt-10 bg-white shadow-xl md:static md:top-auto md:z-auto md:pt-0 md:bg-transparent md:shadow-none end-0 md:overflow-clip"
+    class="overflow-y-auto fixed top-0 bottom-0 z-20 pt-10 shadow-xl md:static md:top-auto md:z-auto md:pt-0 md:bg-transparent md:shadow-none bg-base-100 end-0 md:overflow-clip"
 >
     <!-- Mobile Menu Opener -->
     <button
-        class="absolute top-6 z-30 p-1.5 rounded-sm border transition-colors md:hidden end-4 hover:bg-slate-100"
+        class="absolute top-6 z-30 p-1.5 rounded-sm border transition-colors md:hidden end-4 hover:bg-base-200"
         @click="showDesktopMenu = false"
     >
         {% heroicon_outline "x-mark" aria_hidden="true" size=24 stroke_width=3 class="inline" %}
     </button>
 
     <!-- Menu -->
-    {% primary_navigation_items request.user as nav_items %}
+    {% primary_navigation_items request as nav_items %}
     <ul class="flex flex-col p-4 md:flex-row md:gap-8 md:p-0" role="menubar">
         {% for item in nav_items %}
             <li
                 role="presentation"
-                x-data="{open: false}"
+                x-data="{ open: false }"
                 class="p-0.5"
                 x-on:mouseover.away="open = false"
             >
                 {% if item.sub_items %}
-                    <a class="nav__link {% if item.url == request. %}nav__link--active{% endif %} has-[> .nav__link--active]:border"
-                       href="{{item.url}}"
-                       aria-label="{% trans "Menu Item" %}"
+                    <a class="link-expand-x font-semibold {% if item.is_active %}link-active{% endif %}"
+                       href="{{ item.url }}"
+                       aria-label="{% trans 'Menu Item' %}"
                        aria-haspopup="menu"
                        aria-expanded="false"
                        role="menuitem"
@@ -41,7 +41,7 @@
                     >
                         {{ item.title }}
 
-                        <span class="hidden md:block" :class="open ? '[&>svg]:translate-y-0.5': ''">
+                        <span class="hidden md:inline md:align-baseline" :class="open ? '[&>svg]:translate-y-0.5': ''">
                             {% heroicon_outline "chevron-down" aria_hidden="true" size=16 stroke_width=3 class="inline align-baseline transition-transform ms-1" %}
                         </span>
                     </a>
@@ -60,18 +60,17 @@
                         x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
                         x-transition:leave-end="transform opacity-0 scale-95 -translate-y-3"
                         @click.outside="open = false"
-                        class="block relative z-20 bg-white md:absolute md:shadow-xl rounded-xs min-w-48 md:border-y"
+                        class="block relative z-20 md:absolute md:shadow-xl bg-base-100 rounded-xs min-w-48 md:border-y"
                     >
                         {% for sub_item in item.sub_items %}
                             <a
                                 href="{{ sub_item.url }}"
                                 role="menuitem"
-                                class="pr-4 py-2 block font-normal hover:bg-slate-100
-                                       focus-visible:outline-dashed transition-colors
-                                       {% if sub_item.url == request.path %}
-                                           border-l-dark-blue bg-slate-100 pl-3 border-l-4 border-r text-dark-blue font-semibold
+                                class="pr-4 py-2 block font-normal hover:bg-base-200 focus-visible:outline-dashed transition-colors
+                                       {% if sub_item.is_active %}
+                                           border-l-primary bg-base-300 pl-3 border-l-4 border-r text-primary font-semibold
                                        {% else %}
-                                           border-l md:border-r pl-4 text-black hover:text-dark-blue hover:font-semibold
+                                           border-l md:border-r pl-4 text-base-content hover:text-primary hover:font-semibold
                                        {% endif %}"
                             >
                                 {{ sub_item.title }}
@@ -79,7 +78,7 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    <a class="nav__link {% if item.url == request.path %}nav__link--active{% endif %}"
+                    <a class="link-expand-x font-semibold align-baseline {% if item.url == request.path %}link-active{% endif %}"
                        href="{{ item.url }}"
                        role="menuitem"
                     >

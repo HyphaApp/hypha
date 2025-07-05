@@ -3,70 +3,77 @@
 
 {% block title %}{% trans "Account" %}{% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Welcome' %} {{ user }}"
+            subtitle="{% trans 'Manage your account details and security.' %}"
+        >
+            <span class="flex gap-4">
+                {% if user.can_access_dashboard %}
+                    <a href="{% url 'dashboard:dashboard' %}" class="btn btn-primary">
+                        {% heroicon_mini "squares-2x2" size=20 class="opacity-80" aria_hidden=true %}
+                        {% trans "Go to my dashboard" %}
+                    </a>
+                {% else %}
+                    <div class="flex items-center p-4 w-lg bg-base-100 text-base-content rounded-box">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-semibold">{% trans "Submit a new application" %}</h3>
+                            <p class="text-sm">{% trans "Apply now for our open rounds" %}</p>
+                        </div>
+                        <div>
+                            <a class="btn btn-primary btn-outline" href="{% pageurl APPLY_SITE.root_page %}">
+                                {% trans "Apply" %}
+                            </a>
+                        </div>
+                    </div>
+
+                {% endif %}
+                {% if perms.wagtailadmin.access_admin %}
+                    <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="btn btn-primary">
+                        {% heroicon_solid "cog-6-tooth" size=20 class="opacity-80" aria_hidden=true %}
+                        {% trans "Administration" %}
+                    </a>
+                {% endif %}
+            </span>
+        </c-hero.header>
+    </c-hero>
+{% endblock %}
+
 {% block content %}
-    {% adminbar %}
-        {% slot header %}{% trans "Welcome" %} {{ user }}{% endslot %}
-        {% slot sub_heading %}{% trans "Manage your account details and security." %}{% endslot %}
-
-        <span class="flex gap-4">
-            {% if user.can_access_dashboard %}
-                <a href="{% url 'dashboard:dashboard' %}" class="button button--primary">
-                    {% heroicon_mini "squares-2x2" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
-                    {% trans "Go to my dashboard" %}
-                </a>
-            {% else %}
-                <div class="flex items-center wrapper wrapper--cta-box">
-                    <div class="flex-1">
-                        <h3 class="font-bold heading heading--no-margin">{% trans "Submit a new application" %}</h3>
-                        <p class="m-0 text-base">{% trans "Apply now for our open rounds" %}</p>
-                    </div>
-                    <div>
-                        <a class="button button--blue-white" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
-                    </div>
-                </div>
-
-            {% endif %}
-            {% if perms.wagtailadmin.access_admin %}
-                <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="button button--primary">
-                    {% heroicon_solid "cog-6-tooth" size=20 class="inline align-text-bottom me-1" aria_hidden=true %}
-                    {% trans "Administration" %}
-                </a>
-            {% endif %}
-        </span>
-    {% endadminbar %}
-
     <div class="flex flex-col gap-8 justify-between my-8 md:flex-row md:divide-x">
         <div class="flex-1">
-            <h2 class="text-2xl">{% trans "Profile" %}</h2>
+            <h2 class="text-h3">{% trans "Profile" %}</h2>
 
             <form action="" method="post" class="form">
                 {% csrf_token %}
                 {% for field in form %}
                     {% include "forms/includes/field.html" %}
                 {% endfor %}
-                <div class="form__group">
-                    <button class="button button--primary" type="submit">{% trans "Update Profile" %}</button>
-                </div>
+                <button class="mt-4 w-full sm:w-auto btn btn-primary" type="submit">
+                    {% trans "Save" %}
+                </button>
             </form>
         </div>
 
-
         <div class="flex-1 md:ps-8">
-            <h2 class="text-2xl">{% trans "Account Security" %}</h2>
+            <h2 class="mb-4 text-h3">{% trans "Account Security" %}</h2>
 
             {% if show_change_password %}
                 <div class="mb-8 block_manage_password">
-                    <h3 class="mb-0 text-base">{% trans "Password" %}</h3>
+                    <h3 class="mb-2 text-sm font-semibold">{% trans "Password" %}</h3>
                     <p>
                         {% if user.has_usable_password %}
-                            <a class="button button--primary" href="{% url 'users:password_change' %}">
+                            <a class="btn btn-secondary btn-outline" href="{% url 'users:password_change' %}">
+                                {% heroicon_micro "key" class="inline size-4" aria_hidden=true %}
                                 {% trans "Update password" %}
                             </a>
                         {% else %}
-                            <button class="button button--primary"
+                            <button class="btn btn-primary"
                                     hx-post="{% url 'users:set_user_password' %}"
                                     hx-swap="outerHTML transition:true"
                             >
+                                {% heroicon_micro "key" class="inline size-4" aria_hidden=true %}
                                 {% trans "Set Password" %}
                             </button>
                         {% endif %}
@@ -74,15 +81,17 @@
                 </div>
             {% endif %}
 
-            <h3 class="mb-2 text-base">{% trans "Two-Factor Authentication (2FA)" %}</h3>
-            <div>
+            <h3 class="mb-2 text-sm font-semibold">
+                {% trans "Two-Factor Authentication (2FA)" %}
+            </h3>
+            <p class="card-actions">
                 {% if default_device %}
-                    <a class="mb-2 button button--primary" href="{% url 'users:backup_tokens' %}">{% trans "Backup codes" %}</a>
-                    <a class="mb-2 button button--primary button--warning w-fit" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a>
+                    <a class="btn btn-primary" href="{% url 'users:backup_tokens' %}">{% trans "Backup codes" %}</a>
+                    <a class="btn btn-warning" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a>
                 {% else %}
-                    <a class="button button--primary" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a>
+                    <a class="btn btn-primary" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a>
                 {% endif %}
-            </div>
+            </p>
 
             {# Remove the comment block tags below when such need arises. e.g. adding new providers #}
             {% comment %}

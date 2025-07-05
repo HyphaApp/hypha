@@ -12,17 +12,11 @@
     {% if attachments %}
         <div class="flex flex-wrap gap-2 pb-2 mt-4 max-w-xl min-w-40">
             {% for attachment in attachments %}
-                <a href="{{attachment.get_absolute_url }}"
-                   class="inline-flex items-center py-2 px-3 font-medium rounded-sm border transition-colors bg-slate-50 hover:bg-slate-200"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   title="{{ attachment.filename }}"
-                >
-                    <span class="text-sm truncate">
-                        {% heroicon_mini "paper-clip" class="inline align-text-bottom" aria_hidden=true %}
-                        {{ attachment.filename|truncatechars_middle:45 }}
-                    </span>
-                </a>
+                <c-card-attachment
+                    :href="attachment.get_absolute_url"
+                    :title="attachment.filename"
+                    :filename="attachment.filename"
+                />
             {% endfor %}
         </div>
     {% endif %}

@@ -86,6 +86,12 @@ class Report(BaseStreamForm, AccessFormData, models.Model):
     project = models.ForeignKey(
         "application_projects.Project", on_delete=models.CASCADE, related_name="reports"
     )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="owned_reports",
+    )
     form_fields = StreamField(
         # Re-use the Project Custom Form class. The original fields (used at the time of response) should be required.
         ProjectFormCustomFormFieldsBlock(),
@@ -250,7 +256,7 @@ class ReportConfig(models.Model):
 
     def get_frequency_display(self):
         if self.disable_reporting:
-            return _("Reporting Disabled")
+            return _("Disabled")
         if self.does_not_repeat:
             last_report = self.last_report()
             if last_report:

@@ -7,7 +7,7 @@
             <a href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "category_options" %}"
                hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "category_options" %}"
                hx-push-url="true"
-               class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
+               class="flex px-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200{% if s.selected %}bg-base-200{% endif %}">
                 {% trans "All Categories" %}
             </a>
         </li>
@@ -25,9 +25,9 @@
                     title="Add {{ item.title }} to current filters"
                 {% endif %}
                 hx-push-url="true"
-                class="flex {% if item.selected %}ps-2 font-medium bg-gray-100{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex {% if item.selected %}ps-2 font-medium bg-base-200{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
                 {% if item.selected %}
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 me-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 me-2">
                         <path fill-rule="evenodd"
                               d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
                               clip-rule="evenodd" />
@@ -37,7 +37,7 @@
             </a>
         </li>
     {% empty %}
-        <li class="py-2 max-w-xs text-gray-600 ps-4 pe-3">
+        <li class="py-2 max-w-xs text-base-content/80 ps-4 pe-3">
             {% trans "No categories found." %}
         </li>
     {% endfor %}

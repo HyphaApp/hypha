@@ -1,10 +1,10 @@
 {% load i18n project_tags %}
-{% modal_title %}{% trans "View/Update Approvers" %}{% endmodal_title %}
+<c-modal.header>{% trans "View/Update Approvers" %}</c-modal.header>
 
 <div class="p-4">
     {% if project_settings.paf_reviewers_roles.all %}
-        <p> {% trans "Are you sure you want to update the approvers?" %} {% if project_settings.paf_approval_sequential %} {% trans "The uppermost active approver will be notified via email." %} {% else %}{% trans "All approvers will be notified via email." %}{% endif %}</p>
-        <br>
+        <p class="text-sm">{% trans "Are you sure you want to update the approvers?" %} {% if project_settings.paf_approval_sequential %} {% trans "The uppermost active approver will be notified via email." %} {% else %}{% trans "All approvers will be notified via email." %}{% endif %}</p>
+
         {% include 'includes/dialog_form_base.html' with form=form value=value %}
     {% else %}
         <p>{% trans "No project form reviewer roles has been created yet, please create these in " %}

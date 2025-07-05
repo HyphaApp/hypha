@@ -2,10 +2,9 @@
 {% load i18n wagtailcore_tags heroicons %}
 
 {% block title %}{% trans "Log in" %}{% endblock %}
-{% block body_class %}bg-white{% endblock %}
 
 {% block content %}
-    <div class="my-5 max-w-2xl bg-white">
+    <div class="my-5 max-w-2xl">
 
         <section>
             <div class="px-4 pt-4">
@@ -44,38 +43,43 @@
 
                         <h2 class="text-2xl">{% blocktrans %}Log in to {{ ORG_SHORT_NAME }}{% endblocktrans %}</h2>
                         {% for field in form %}
-                            <div class="relative max-w-sm {% if field.auto_id == "id_auth-password" %}mb-4{% endif %}">
+                            <div class="relative max-w-sm">
                                 {% include "forms/includes/field.html" %}
                                 {% if field.auto_id == "id_auth-password" %}
                                     <div class="text-end">
-                                        <a class="text-sm hover:opacity-75 link" href="{% url 'users:password_reset' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true">{% trans "Forgot your password?" %}</a>
+                                        <a
+                                            class="link link-secondary link-hover"
+                                            href="{% url 'users:password_reset' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
+                                            hx-boost="true"
+                                        >
+                                            {% trans "Forgot your password?" %}
+                                        </a>
                                     </div>
                                 {% endif %}
                             </div>
                         {% endfor %}
 
                         {% if settings.users.AuthSettings.extra_text %}
-                            <div class="p-4 mb-6 rounded-xs prose prose-sm bg-slate-50">
+                            <div class="p-4 mb-6 rounded-xs prose prose-sm bg-base-200">
                                 {{ settings.users.AuthSettings.extra_text|richtext }}
                             </div>
                         {% endif %}
 
-                        <div class="flex gap-4 justify-between items-center max-w-sm form__group">
-                            <button class="button button--primary button--login" type="submit">{% trans "Log in" %}</button>
+                        <div class="mt-4">
+                            <button class="btn btn-primary btn-block sm:btn-wide" type="submit">
+                                {% trans "Log in" %}
+                            </button>
                         </div>
 
-                        <div class="flex relative justify-center items-center mb-4 min-[465px]:justify-start">
-                            <hr class="inline my-6 w-32 h-px bg-gray-300 border-0">
-                            <span class="px-3 font-medium text-gray-400">{% trans "or" %}</span>
-                            <hr class="inline my-6 w-32 h-px bg-gray-300 border-0">
-                        </div>
+                        <div class="my-8 max-w-xs divider text-fg-muted">{% translate "OR" %}</div>
 
-                        <section class="space-y-0.5">
+                        <section class="flex-wrap card-actions">
                             {% if GOOGLE_OAUTH2 %}
                                 {% include "includes/org_login_button.html" %}
                             {% endif %}
                             {% include "includes/passwordless_login_button.html" %}
-                            </section
+                        </section>
+
                     {% else %}
 
                         <div class="form__group">
@@ -93,10 +97,11 @@
                                             class="btn btn-default btn-block" type="submit">
                                         {{ other.generate_challenge_button_title }}
                                     </button>
-                                {% endfor %}</p>
+                                {% endfor %}
+                            </p>
                         {% endif %}
 
-                        <div class="wrapper">
+                        <div class="mt-2">
                             {% include "two_factor/_wizard_actions.html" %}
                         </div>
 
@@ -107,7 +112,7 @@
                                     type="submit"
                                     value="backup"
                                     aria-label="Click here to use a backup code"
-                                    class="inline font-bold transition-opacity hover:opacity-70 text-dark-blue"
+                                    class="font-semibold link link-primary"
                                 >
                                     {% trans "Use a Backup Code" %}
                                 </button>

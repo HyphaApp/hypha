@@ -1,11 +1,13 @@
 {% load i18n heroicons %}
+
 {% if request.user.is_apply_staff %}
-    <a class="flex items-center text-blue-400 transition-opacity hover:opacity-80 is-active"
-       href="{% url 'funds:submissions:lead_update' pk=submission.pk %}"
-       hx-get="{% url 'funds:submissions:lead_update' pk=submission.pk %}"
-       hx-target="#htmx-modal"
+    <a
+        class="link"
+        href="{% url 'funds:submissions:lead_update' pk=submission.pk %}"
+        hx-get="{% url 'funds:submissions:lead_update' pk=submission.pk %}"
+        hx-target="#htmx-modal"
     >
-        {% trans "Lead" %}: {{ submission.lead }}
+        <div class="inline-flex max-w-lg"><span class="truncate">{% trans "Lead" %}: {{ submission.lead }}</span></div>
         {% heroicon_micro "pencil-square" class="inline ms-1" aria_hidden=true %}
     </a>
 {% elif request.user.is_org_faculty or not HIDE_STAFF_IDENTITY %}

@@ -1,80 +1,80 @@
 {% load i18n heroicons co-applicant_tags %}
 
-<div class="sidebar__inner sidebar__inner--actions" data-testid="sidebar-primary-actions">
-    <details {% if user.is_applicant or not co_applicants %} open {% endif %} class="group">
-        <summary class="flex gap-4 justify-between items-center list-none">
-            <p class="flex items-center text-lg font-bold">
-                {% trans "Co-applicants" %} <span class="text-base font-medium"> ({{ co_applicants.count }})</span>
-                {% heroicon_solid "chevron-down" size="16" class="w-4 h-4 transition-transform rotate-90 ms-2 group-open:rotate-0" %}
-            </p>
-            {% can_invite_coapplicant user object as can_invite %}
-            <button
-                class="flex items-center py-1 pr-4 pl-2 font-bold rounded-sm -me-2 {% if object.co_applicant_invites.count >= invite_max_limit %} text-blue-200 {% else %}transition-colors cursor-pointer text-dark-blue hover:bg-slate-200{% endif %}"
-                hx-get="{% url 'apply:submissions:invite_co_applicant' pk=object.id %}"
-                hx-target="#htmx-modal"
-                {% if not can_invite %}disabled title='{% trans "Not allowed" %}'{% endif %}
-                role="button"
-                aria-label="{% trans "Invite co-applicant" %}"
-            >
-                {% heroicon_micro "plus" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
-                {% trans "Invite" %}
-            </button>
-        </summary>
-        {% if object.project %}
-            <div class="mb-2 text-sm text-gray-500">
-                {% trans "Project permissions are available now and can be updated for each co-applicant." %}
-            </div>
-        {% endif %}
-        {% if co_applicants %}
-            <div class="flex flex-col gap-2 justify-between">
+<div class="card card-border bg-base-100 shadow-xs">
+    <div class="card-body">
+        <details {% if user.is_applicant or not co_applicants %} open {% endif %} class="group">
+            <summary class="flex gap-4 justify-between items-center mb-2 list-none">
+                <h2 class="card-title">
+                    {% trans "Co-applicants" %} <span class="text-xs text-fg-muted">({{ co_applicants.count }})</span>
+                    {% heroicon_solid "chevron-down" size="16" class="transition-transform rotate-90 size-4 group-open:rotate-0" %}
+                </h2>
+                {% can_invite_coapplicant user object as can_invite %}
+                <button
+                    role="button"
+                    class="btn btn-sm btn-soft btn-secondary"
+                    hx-get="{% url 'apply:submissions:invite_co_applicant' pk=object.id %}"
+                    hx-target="#htmx-modal"
+                    {% if can_invite %}
+                        title='{% trans "Invite co-applicant" %}'
+                        aria-label="{% trans "Invite co-applicant" %}"
+                    {% else %}
+                        disabled
+                        title='{% trans "Not allowed" %}'
+                    {% endif %}
+                >
+                    {% trans "Invite" %}
+                </button>
+            </summary>
+
+            <div class="list">
+
+                {% if object.project %}
+                    <p class="mb-2 text-sm text-fg-muted">
+                        {% trans "Project permissions are enabled and can be updated for each co-applicant." %}
+                    </p>
+                {% endif %}
+
                 {% for invite in co_applicants %}
                     {% can_update_coapplicant user invite as can_update %}
-                    <div>
+                    <div class="list-row list-row-card">
+                        <div class="min-w-0 list-col-grow">
+                            <div class="font-medium truncate">
+                                {% if invite.status == "accepted" %}
+                                    {{ invite.co_applicant.user }}
+                                {% else %}
+                                    {{ invite.invited_user_email }}
+                                {% endif %}
+                            </div>
+
+                            <div class="label">
+                                {% if invite.status != "accepted" %}
+                                    {{ invite.get_role_display }}
+                                    &middot;
+                                    {{ invite.get_status_display }}
+                                {% else %}
+                                    {{ invite.co_applicant.get_role_display }}
+                                {% endif %}
+                            </div>
+                        </div>
+
                         {% if can_update %}
                             <a
-                                class="font-bold line-clamp-2 group/coapplicant"
                                 href="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
                                 hx-get="{% url 'apply:submissions:edit_co_applicant' invite_pk=invite.id %}"
                                 hx-target="#htmx-modal"
                             >
-                                <div class="flex justify-between">
-                                    {% if invite.status == "accepted" %}
-                                        {{ invite.co_applicant.user }}
-                                    {% else %}
-                                        {{ invite.invited_user_email }}
-                                    {% endif %}
-
-                                    {% heroicon_solid "pencil" class="hidden align-middle me-1 group-hover/coapplicant:inline" width=16 height=16 stroke_width=2 aria_hidden=true %}
-
+                                <div class="btn btn-sm btn-square btn-ghost">
+                                    {% heroicon_mini "pencil-square" stroke_width=2 aria_hidden=true %}
                                 </div>
                             </a>
-                        {% else %}
-                            <div class="font-bold line-clamp-2 group/coapplicant">
-                                <div class="flex justify-between">
-                                    {% if invite.status == "accepted" %}
-                                        {{ invite.co_applicant.user }}
-                                    {% else %}
-                                        {{ invite.invited_user_email }}
-                                    {% endif %}
-
-                                </div>
-                            </div>
-                        {% endif %}
-
-                        {% if invite.status == "accepted" %}
-                            <div class="text-xs text-fg-muted" >{{ invite.co_applicant.get_role_display }}</div>
-                        {% else %}
-                            <div class="text-xs text-fg-muted" >{{ invite.get_status_display }}</div>
                         {% endif %}
                     </div>
-
+                {% empty %}
+                    <div class="list-row list-row-card">
+                        {% trans "No co-applicants yet." %}
+                    </div>
                 {% endfor %}
             </div>
-        {% else %}
-            <div>
-                {% trans "No co-applicants yet." %}
-            </div>
-        {% endif %}
-    </details>
-
+        </details>
+    </div>
 </div>

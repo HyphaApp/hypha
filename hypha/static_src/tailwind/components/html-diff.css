@@ -1,0 +1,48 @@
+.html-diff {
+  --marker-border-width: 0.2em;
+  --marker-ms: -0.6em;
+  --marker-ps: 0.5em;
+
+  p:has(ins),
+  p:has(del) {
+    border-inline-start: var(--marker-border-width) solid var(--color-warning);
+    margin-inline-start: var(--marker-ms);
+    padding-inline-start: var(--marker-ps);
+  }
+
+  table,
+  .prose {
+    @apply relative;
+  }
+
+  .prose > del:before,
+  .prose > ins:before,
+  table:has(ins):before,
+  table:has(del):before {
+    @apply content-[''] block top-0 clear-both h-full absolute bg-warning;
+    inset-inline-start: var(--marker-ms);
+    width: var(--marker-border-width);
+  }
+
+  div:not(.prose) > del {
+    margin-inline-start: var(--marker-ms);
+    padding-inline-start: var(--marker-ps);
+    border-inline-start: var(--marker-border-width) solid var(--color-error);
+  }
+
+  div:not(.prose) > ins {
+    margin-inline-start: var(--marker-ms);
+    padding-inline-start: var(--marker-ps);
+    border-inline-start: var(--marker-border-width) solid var(--color-success);
+  }
+
+  del {
+    @apply bg-error text-error-content;
+  }
+
+  ins,
+  ins * {
+    @apply bg-success text-success-content;
+    text-decoration: none;
+  }
+}

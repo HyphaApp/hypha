@@ -23,12 +23,40 @@ This requirements file will specifically attempt to install the CPU version of [
 
 ## Installing languages
 
-Argostranslate handles translations via it's own packages - ie. Arabic -> English translation would be one package, while English -> Arabic would be another.
+Argostranslate handles translations via its own packages—e.g., Arabic → English translation is one package, while English → Arabic is another.
 
-Installing/uninstalling these packages can be done with the management commands `install_languages`/`uninstall_languages` respectively, utilizing the format of <from language code>_<to language code>. For example, installing the Arabic -> English & French -> English packages would look like:
+You can install/uninstall these packages using the management commands `install_languages` and `uninstall_languages`, respectively. The format for specifying a package is `<from language code>_<to language code>`. For example, to install the Arabic → English and French → English packages:
 
 ```bash
 python3 manage.py install_languages ar_en fr_en
+```
+
+### Additional options
+
+The `install_languages` command supports several options for flexibility:
+
+- **Install all available packages:**
+  ```bash
+  python3 manage.py install_languages --all
+  ```
+  > ⚠️ This may install many packages and consume significant disk space.
+
+- **Interactively select packages:**
+  ```bash
+  python3 manage.py install_languages --select
+  ```
+  This will present a numbered list of available language packages for you to choose from.
+
+- **Skip confirmation prompts:**
+  ```bash
+  python3 manage.py install_languages ar_en --noinput
+  ```
+  This will install the specified packages without asking for confirmation.
+
+You can combine these options as needed. For example, to interactively select packages and skip confirmation:
+
+```bash
+python3 manage.py install_languages --select --noinput
 ```
 
 ## Enabling on the system
