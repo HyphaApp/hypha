@@ -21,7 +21,7 @@
     }
 
     & .dff-delete {
-      @apply text-red-500! font-medium before:content-['•'] before:mr-2;
+      @apply text-error! font-medium before:content-['•'] before:mr-2;
     }
   }
 }

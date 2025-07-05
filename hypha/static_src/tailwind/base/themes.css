@@ -4,7 +4,7 @@
   --color-brand-base: 0.05;
   --color-brand-10: oklch(
     from var(--color-brand) 10%
-      calc(var(--color-brand-base) + (sin(1.0 * pi) * c)) h
+      calc(var(--color-brand-base) + (sin(1 * pi) * c)) h
   );
   --color-brand-20: oklch(
     from var(--color-brand) 20%
@@ -94,7 +94,7 @@
   --color-secondary-content: oklch(12.818% 0.005 229.389);
   --color-accent: oklch(67.271% 0.167 35.791);
   --color-accent-content: oklch(13.454% 0.033 35.791);
-  --color-neutral: oklch(30% 0.013 253.041);
+  --color-neutral: oklch(10% 0 0);
   --color-neutral-content: oklch(85.488% 0.002 253.041);
   --color-info: oklch(62.616% 0.143 240.033);
   --color-info-content: oklch(12.523% 0.028 240.033);

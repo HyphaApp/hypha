@@ -12,7 +12,7 @@
                 {% elif current_phase.step > phase.step %}
                     <li data-content="✓" class="step step-primary">{{ display_text }}</li>
                 {% else %}
-                    <li data-content="" class="step text-fg-muted">{{ display_text }}</li>
+                    <li data-content="" class="step">{{ display_text }}</li>
                 {% endif %}
             {% endifchanged %}
         {% endfor %}
