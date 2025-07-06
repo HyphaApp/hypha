@@ -3,6 +3,7 @@
 
   & .dff-files {
     @apply m-0! shadow-inner outline-dashed! rounded-field;
+    outline-width: var(--border) !important;
 
     & .dff-filesize {
       @apply text-fg-muted text-sm;

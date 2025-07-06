@@ -1,7 +1,7 @@
 /* TinyMCE Base Styles */
 .tox {
   @apply border-base-content/20! rounded-box!;
-  border-width: 1px !important;
+  border-width: var(--border) !important;
   border-radius: var(--radius-field) !important;
 
   /* Button States */

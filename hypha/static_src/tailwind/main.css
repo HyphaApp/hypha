@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "./base/variables.css" layer(base);
 
 @import "./components/card.css" layer(components);
 @import "./components/choices.css" layer(components);
@@ -20,5 +19,4 @@
 @plugin '@tailwindcss/typography';
 @plugin "daisyui" {
 }
-
 @import "./base/themes.css";

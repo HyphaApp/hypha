@@ -45,7 +45,7 @@
 }
 
 @plugin "daisyui/theme" {
-  name: "hyphalight";
+  name: "light";
   default: true;
   prefersdark: false;
   color-scheme: "light";
@@ -80,9 +80,9 @@
 }
 
 @plugin "daisyui/theme" {
-  name: "hyphadark";
+  name: "dark";
   default: false;
-  prefersdark: true;
+  /* prefersdark: true; */
   color-scheme: "dark";
   --color-base-100: oklch(30% 0 0);
   --color-base-200: oklch(28% 0 0);
@@ -112,4 +112,64 @@
   --border: 1px;
   --depth: 0;
   --noise: 0;
+}
+
+:root {
+  /* Default */
+  --color-white: #fff;
+  --color-black: #1f2328;
+  --color-light-mid-grey: #e8e8e8;
+  --color-mid-grey: #cfcfcf;
+
+  /* Brand */
+  --color-light-blue: #1d79a8;
+  --color-light-blue-90: rgb(29 121 168 / 10%);
+  --color-dark-blue: #0c72a0;
+  --color-mustard: #e6ab32;
+  --color-purple: #8c0bbf;
+  --color-light-pink: #ffe1df;
+
+  /* Transparent */
+  --color-black-60: rgb(0 0 0 / 60%);
+}
+
+@theme {
+  --default-border-width: var(--border);
+  --color-light-blue: #0d7db0;
+  --color-dark-blue: #0c72a0;
+  --color-mid-grey: #cfcfcf;
+  --color-fg-default: var(--color-base-content);
+  --color-fg-muted: color-mix(in oklab, currentColor 60%, transparent);
+}
+
+.theme-toggle svg {
+  display: none;
+}
+
+html[data-theme="auto"] .theme-toggle svg.theme-icon-when-auto {
+  display: block;
+}
+
+html[data-theme="dark"] .theme-toggle svg.theme-icon-when-dark {
+  display: block;
+}
+
+html[data-theme="light"] .theme-toggle svg.theme-icon-when-light {
+  display: block;
+}
+
+.theme-toggle .sr-only {
+  display: none;
+}
+
+html[data-theme="auto"] .theme-toggle .theme-label-when-auto {
+  display: block;
+}
+
+html[data-theme="dark"] .theme-toggle .theme-label-when-dark {
+  display: block;
+}
+
+html[data-theme="light"] .theme-toggle .theme-label-when-light {
+  display: block;
 }
