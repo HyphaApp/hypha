@@ -23,7 +23,7 @@
         </span>
     {% endif %}
 
-    {% if not HIDE_STAFF_IDENTITY or request.user.is_apply_staff %}
+    {% if not HIDE_STAFF_IDENTITY or request.user.is_org_faculty %}
         <span
             hx-get="{% url "apply:projects:project_lead" object.submission.id %}"
             hx-trigger="load, leadUpdated from:body"
