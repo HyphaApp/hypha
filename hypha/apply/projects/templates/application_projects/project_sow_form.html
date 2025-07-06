@@ -1,77 +1,105 @@
 {% extends "base-apply.html" %}
-{% load i18n static %}
-{% block title %}{% trans "Editing" %}: {{object.title }}{% endblock %}
+{% load i18n static apply_tags heroicons %}
+{% block title %}{% trans "SOW" %}: {{object.title }}{% endblock %}
 
 {% block hero %}
     <c-hero>
         <c-hero.header
             back_link="{{ object.get_absolute_url }}"
             back_link_text="{% trans 'View project' %} #{{ object.application_id }}"
-            title="{% trans 'Editing' %}: {{ object.title }}"
+            title="{% trans 'Statement of work' %}"
         />
+    </c-hero>
 {% endblock %}
 
 {% block content %}
-    {% if sow_form_exists %}
-        {% include "forms/includes/form_errors.html" with form=sow_form %}
-        <div class="pt-8 pb-8 mx-auto mt-4 mb-12 wrapper wrapper--sidebar">
-            <div class="grow">
-                <form class="form application-form" action="" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {% for field in sow_form %}
-                        {% if field.field %}
-                            {% if field.field.multi_input_field %}
-                                {% include "forms/includes/multi_input_field.html" %}
+    <div class="my-4">
+        {% if sow_form_exists %}
+            <div class="layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-start">
+                <section class="layout-main">
+                    {% include "forms/includes/form_errors.html" with form=sow_form %}
+
+                    <form
+                        class="max-w-3xl form application-form"
+                        action=""
+                        method="post"
+                        enctype="multipart/form-data"
+                    >
+                        {% csrf_token %}
+                        {% for hidden_field in sow_form.hidden_fields %}{{ hidden_field }}{% endfor %}
+
+                        {% for field in sow_form %}
+                            {% if field.field %}
+                                {% if field.field.multi_input_field %}
+                                    {% include "forms/includes/multi_input_field.html" %}
+                                {% else %}
+                                    {% include "forms/includes/field.html" %}
+                                {% endif %}
                             {% else %}
-                                {% include "forms/includes/field.html" %}
-                            {% endif %}
-                        {% else %}
-                            <div class="max-w-none field-block prose">
-                                <div>
-                                    {{ field.block }}
+                                <div class="max-w-none field-block prose">
+                                    <div>
+                                        {{ field.block }}
+                                    </div>
                                 </div>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-
-
-                    {% for hidden_field in sow_form.hidden_fields %}
-                        {{ hidden_field }}
-                    {% endfor %}
-                    {% trans "Save draft" as save_draft %}
-                    {% for button_name, button_type, button_value in buttons %}
-                        <button
-                            class="btn {{ button_type }}"
-                            type="submit"
-                            name="{{ button_name }}"
-                            {% if button_value == save_draft %}formnovalidate{% endif %}
-                        >
-                            {{ button_value }}
-                        </button>
-                    {% endfor %}
-                </form>
-            </div>
-            <aside class="sidebar sidebar__project">
-                {% if submissions_attachments %}
-                    <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
-                        <h5>{% trans "Proposal attachments" %}</h5>
-                        {% for file in submissions_attachments %}
-                            <p><b><a href="{{ file.url }}" target="_blank">{{ file.filename }}</a></b></p>
+                            {% endif %}
                         {% endfor %}
-                    </div>
+
+                        <div class="mt-4 card-actions">
+                            {% trans "Save draft" as save_draft %}
+                            {% for button_name, button_type, button_value in buttons %}
+                                <button
+                                    class="btn {{ button_type }}"
+                                    type="submit"
+                                    name="{{ button_name }}"
+                                    {% if button_value == save_draft %}formnovalidate{% endif %}
+                                >
+                                    {{ button_value }}
+                                </button>
+                            {% endfor %}
+                        </div>
+                    </form>
+                </section>
+
+                {% if submissions_attachments %}
+                    <aside class="layout-sidebar">
+                        <div class="lg:sticky lg:top-4 card card-border">
+                            <div class="card-body">
+                                <h2 class="card-title">{% trans "Proposal attachments" %}</h2>
+                                <ul>
+                                    {% for file in submissions_attachments %}
+                                        <li>
+                                            <a
+                                                href="{{ file.url }}"
+                                                target="_blank"
+                                                title="{{ file.filename }}"
+                                                class="link"
+                                            >
+                                                {{ file.filename|truncatechars_middle:45 }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </aside>
                 {% endif %}
-            </aside>
-        </div>
-    {% else %}
-        <div class="wrapper wrapper--form wrapper--sidebar">
-            <div class="grow">
-                <p>
-                    {% trans "Scope of work form not configured. Please add it in the" %}
-                    <a href="{% url 'wagtailadmin_pages:edit' object.submission.page.id %}" target="_blank">{% trans "fund settings" %}</a>.
-                </p>
             </div>
-        </div>
-    {% endif %}
+        {% else %}
+            <div class="mx-auto w-full max-w-2xl">
+                <div class="alert alert-vertical alert-error sm:alert-horizontal">
+                    {% heroicon_micro "exclamation-triangle" class="size-6 fill-error-content" aria_hidden=true %}
+
+                    {% trans "The statement of work form has not been set up yet." %}
+                    <div>
+                        <a
+                            href="{% url 'wagtailadmin_pages:edit' object.submission.page.id %}"
+                            target="_blank"
+                            class="btn btn-sm"
+                        >{% trans "configure" %}</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
 {% endblock %}
 
 {% block extra_css %}

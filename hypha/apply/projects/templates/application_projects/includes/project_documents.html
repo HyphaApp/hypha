@@ -152,17 +152,18 @@
                 <div class="inline-flex gap-3">
                     {% if can_edit_pfs %}
                         <a
-                            class="{% if not object.user_has_updated_sow_details %}btn btn-primary{% else %}btn{% endif %}"
+                            class="btn btn-sm {% if not object.user_has_updated_sow_details %}btn-primary{% else %}btn-outline{% endif %}"
                             href="{% url 'apply:projects:edit_sow' pk=object.submission.pk %}"
                         >
                             {% if object.user_has_updated_sow_details %}
-                                {% heroicon_micro "pencil-square" class="inline size-4 me-1" aria_hidden=true %}
+                                {% heroicon_micro "pencil-square" class="opacity-80 size-4" aria_hidden=true %}
                                 {% trans "Edit" %}
                             {% else %}
                                 {% trans "Fill in" %}
                             {% endif %}
                         </a>
                     {% endif %}
+
                     {% if object.user_has_updated_sow_details %}
                         <a
                             class="btn btn-outline btn-secondary btn-sm"
