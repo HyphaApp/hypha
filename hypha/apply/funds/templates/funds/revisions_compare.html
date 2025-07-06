@@ -15,7 +15,7 @@
 {% block content %}
     <div class="my-4 mx-auto layout layout-flowrow-until-md layout-sidebar-flowrow-start">
 
-        <div class="layout-main">
+        <article class="layout-main">
             <div class="mb-4">
                 <h2 class="section-header">{% trans "Changes" %}</h2>
                 <div class="flex flex-wrap gap-2">
@@ -77,9 +77,9 @@
                     {% endfor %}
                 </div>
             </div>
-        </div>
+        </article>
 
-        <div class="layout-sidebar">
+        <aside class="layout-sidebar">
             <div class="sticky top-4">
                 <h2 class="mb-4 card-title">{% trans "Revisions" %}</h2>
                 <div class="list">
@@ -123,6 +123,6 @@
                     {% endfor %}
                 </div>
             </div>
-        </div>
+        </aside>
     </div>
 {% endblock %}

@@ -1,60 +1,62 @@
 {% extends "application_projects/project_approval_detail.html" %}
-{% load i18n static approval_tools project_tags apply_tags %}
+{% load i18n static approval_tools project_tags apply_tags heroicons %}
 
 {% block hero %}
     <c-hero>
         <c-hero.header
             back_link="{{ object.get_absolute_url }}"
             back_link_text="{% trans 'View project' %} #{{ project.application_id }}"
-            title="{{ object.title }}"
-            subtitle="<div class='mt-1 text-sm heading heading--meta'><span>{{ object.submission.page }}</span><span>{{ object.submission.round }}</span><span>{% trans 'Lead' %}: {{ object.lead }}</span></div>"
+            title="{% trans 'Scope of work' %}: {{ object.title|truncatechars_middle:45 }}"
+            subtitle="<div class='text-sm'>{% trans 'Lead' %}: {{ object.lead }}</span></div>"
         />
     </c-hero>
 {% endblock %}
 
 {% block content %}
     <div class="my-4">
-        <div class="wrapper wrapper--sidebar">
-            <article class="grow">
+        <div class="layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-start">
+            <article class="layout-main">
                 <h2 class="section-header">{% trans "Scope of Work" %}</h2>
-                <div class="p-4 mb-4 card card-border rounded-box bg-base-200">
+
+                <div class="p-4 mb-4 card card-border">
                     {% if object.sow.output_answers %}
-                        <div class="rich-text">
+                        <div class="flex flex-col gap-8 rich-text">
                             {{ object.sow.output_answers }}
                         </div>
                     {% endif %}
                 </div>
             </article>
+
             {% user_can_take_actions object user as can_take_actions %}
             {% if can_take_actions %}
-                <aside class="sidebar sidebar__project">
-                    <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
-                        <h5>{% trans "Actions to take" %}</h5>
-                        {% user_can_edit_pfs object user as can_edit_pfs %}
-                        {% if can_edit_pfs %}
-                            <a
-                                class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
-                                href="{% url 'apply:projects:edit_sow' pk=object.submission.pk %}"
-                            >
-                                {% trans "Edit" %}
-                            </a>
-                        {% endif %}
-                        <div x-data="{ show: false }" class="relative">
-                            <button
-                                x-on:click="show = ! show"
-                                class="btn btn-primary btn-block"
-                                type="button"
-                            >
-                                {% trans 'Download SOW' %}
-                            </button>
-                            <div x-show="show" x-transition class="dropdown__content">
-                                <a href="{% url 'apply:projects:download-sow' pk=object.submission.id export_type='pdf' %}"
+                <aside class="layout-sidebar">
+                    <div class="card card-border">
+                        <div class="card-body">
+                            <h2 class="card-title">{% trans "Actions to take" %}</h2>
+
+                            {% user_can_edit_pfs object user as can_edit_pfs %}
+                            {% if can_edit_pfs %}
+                                <a
+                                    class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
+                                    href="{% url 'apply:projects:edit_sow' pk=object.submission.pk %}"
                                 >
-                                    {% trans 'Download as PDF' %}
+                                    {% heroicon_mini "pencil-square" class="opacity-80 size-4" %}
+                                    {% trans "Edit" %}
                                 </a>
-                                <a href="{% url 'apply:projects:download-sow' pk=object.submission.id export_type='docx' %}">
-                                    {% trans 'Download as DOCX' %}
-                                </a>
+                            {% endif %}
+
+                            <div class="dropdown dropdown-hover">
+                                <div tabindex="0" role="button" class="w-full btn btn-outline">{% trans 'Export' %}</div>
+                                <ul tabindex="0" class="p-2 w-52 shadow-sm dropdown-content menu bg-base-100 rounded-box z-1">
+                                    <li>
+                                        <a href="{% url 'apply:projects:download-sow' pk=object.submission.id export_type='pdf' %}">
+                                            {% trans 'Download as PDF' %}</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'apply:projects:download-sow' pk=object.submission.id export_type='docx' %}">
+                                            {% trans 'Download as DOCX' %}</a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>

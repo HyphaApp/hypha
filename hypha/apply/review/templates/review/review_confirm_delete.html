@@ -10,13 +10,16 @@
 {% endblock %}
 
 {% block content %}
-    <div class="wrapper wrapper--form wrapper--sidebar">
-        <div class="grow">
-            <form class="form" action="" method="post">
-                {% csrf_token %}
-                <p><strong>{% trans "Are you sure you want to delete" %} "{{ object }}"?</strong></p>
-                <button class="mt-4 btn btn-error" type="submit">{% trans "Confirm" %}</button>
-            </form>
-        </div>
-    </div>
+    <form
+        method="post"
+        class="my-4 mx-auto w-full max-w-3xl form"
+        action=""
+    >
+        {% csrf_token %}
+        <p>
+            <strong>{% trans "Are you sure you want to delete" %} "{{ object }}"?</strong>
+        </p>
+
+        <button class="mt-4 btn btn-error" type="submit">{% trans "Confirm" %}</button>
+    </form>
 {% endblock %}

@@ -150,27 +150,27 @@
                 </h3>
 
                 <div class="inline-flex gap-3">
-                    {% if can_edit_pfs %}
-                        <a
-                            class="btn btn-sm {% if not object.user_has_updated_sow_details %}btn-primary{% else %}btn-outline{% endif %}"
-                            href="{% url 'apply:projects:edit_sow' pk=object.submission.pk %}"
-                        >
-                            {% if object.user_has_updated_sow_details %}
-                                {% heroicon_micro "pencil-square" class="opacity-80 size-4" aria_hidden=true %}
-                                {% trans "Edit" %}
-                            {% else %}
-                                {% trans "Fill in" %}
-                            {% endif %}
-                        </a>
-                    {% endif %}
-
                     {% if object.user_has_updated_sow_details %}
                         <a
                             class="btn btn-outline btn-secondary btn-sm"
                             href="{% url 'apply:projects:sow' pk=project.submission.pk %}"
                         >
-                            {% heroicon_micro "eye" class="inline size-4" aria_hidden=true %}
+                            {% heroicon_micro "eye" class="opacity-80 size-4" aria_hidden=true %}
                             {% trans "View" %}
+                        </a>
+                    {% endif %}
+
+                    {% if can_edit_pfs %}
+                        <a
+                            class="btn btn-sm btn-square {% if not object.user_has_updated_sow_details %}btn-primary{% else %}btn-outline btn-secondary{% endif %}"
+                            href="{% url 'apply:projects:edit_sow' pk=object.submission.pk %}"
+                        >
+                            {% if object.user_has_updated_sow_details %}
+                                {% heroicon_micro "pencil-square" class="size-4" aria_hidden=true %}
+                                <span class="sr-only">{% trans "Edit" %}</span>
+                            {% else %}
+                                {% trans "Fill in" %}
+                            {% endif %}
                         </a>
                     {% endif %}
                 </div>

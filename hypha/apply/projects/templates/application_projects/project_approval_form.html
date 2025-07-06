@@ -14,7 +14,7 @@
 
 {% block content %}
     <div class="my-4 layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-end">
-        <section class="layout-main">
+        <article class="layout-main">
             {% if approval_form_exists %}
                 <h2 class="pb-1 font-semibold border-b text-h3">{% trans "Project form" %}</h2>
                 <form
@@ -66,7 +66,7 @@
                     <a href="{% url 'wagtailadmin_pages:edit' object.submission.page.id %}" target="_blank">{% trans "fund settings" %}</a>.
                 </p>
             {% endif %}
-        </section>
+        </article>
 
         {% if approval_form_exists and submissions_attachments %}
             <aside class="layout-sidebar">

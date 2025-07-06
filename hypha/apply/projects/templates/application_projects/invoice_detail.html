@@ -18,7 +18,7 @@
     {% display_invoice_status_for_user user object as invoice_status %}
     {% can_show_paid_date invoice as show_paid_date %}
     <div class="my-4 layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-end">
-        <div class="flex flex-col gap-4 layout-main">
+        <article class="flex flex-col gap-4 layout-main">
 
             <!-- meta -->
             <section class="card card-border bg-base-200">
@@ -98,7 +98,7 @@
                     </div>
                 </section>
             {% endif %}
-        </div>
+        </article>
 
         <aside class="layout-sidebar">
             <div

@@ -16,7 +16,7 @@
     <div class="my-4">
         {% if sow_form_exists %}
             <div class="layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-start">
-                <section class="layout-main">
+                <article class="layout-main">
                     {% include "forms/includes/form_errors.html" with form=sow_form %}
 
                     <form
@@ -58,7 +58,7 @@
                             {% endfor %}
                         </div>
                     </form>
-                </section>
+                </article>
 
                 {% if submissions_attachments %}
                     <aside class="layout-sidebar">
