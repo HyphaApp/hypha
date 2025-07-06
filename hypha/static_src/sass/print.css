@@ -1,7 +1,9 @@
-// stylelint-disable property-no-vendor-prefix, selector-class-pattern
+/* stylelint-disable property-no-vendor-prefix, selector-class-pattern */
+
 * {
   background: transparent !important;
-  color: #000 !important; // Black prints faster: h5bp.com/s
+  /* Black prints faster: h5bp.com/s */
+  color: #000 !important;
   box-shadow: none !important;
   text-shadow: none !important;
   filter: none !important;
@@ -27,7 +29,7 @@ body {
   margin: 1cm !important;
 }
 
-// Underline all links.
+/* Underline all links. */
 :link,
 :visited {
   text-decoration: none !important;
@@ -35,14 +37,14 @@ body {
   color: #000 !important;
 }
 
-// Add visible URL after links.
+/* Add visible URL after links. */
 a[href^="http:"]::after,
 a[href^="https:"]::after {
   content: " (" attr(href) ")";
 }
 
 abbr[title] {
-  // Add visible title after abbreviations.
+  /* Add visible title after abbreviations. */
   &::after {
     content: " (" attr(title) ")";
   }
