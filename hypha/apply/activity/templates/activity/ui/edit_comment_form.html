@@ -9,19 +9,21 @@
     class="form"
 >
     {% csrf_token %}
-    <div class="mb-4">
-        <div id="wmd-button-bar-edit-comment-{{ activity.id }}" class="wmd-button-bar not-prose"></div>
+    <div class="wmd-wrapper">
+        <div class="wmd-panel">
+            <div id="wmd-button-bar-edit-comment-{{ activity.id }}" class="wmd-button-bar not-prose"></div>
 
-        <textarea
-            id="wmd-input-edit-comment-{{ activity.id }}"
-            class="w-full wmd-input not-prose textarea"
-            rows="10" name="message"
-        >{{ activity.message }}</textarea>
+            <textarea
+                id="wmd-input-edit-comment-{{ activity.id }}"
+                class="w-full wmd-input not-prose textarea"
+                rows="10" name="message"
+            >{{ activity.message }}</textarea>
 
-        <div id="wmd-preview-edit-comment-{{ activity.id }}" class="p-4 w-full max-w-none bg-base-200 shadow-xs prose"></div>
+            <div id="wmd-preview-edit-comment-{{ activity.id }}" class="wmd-preview"></div>
+        </div>
     </div>
 
-    <div class="flex gap-2">
+    <div class="mt-4 card-actions">
         <button class="btn btn-primary" role="button" type="submit">{% trans "Submit" %}</button>
         <button class="btn btn-ghost" hx-get="{{ request.path}}?action=cancel">{% trans "Cancel" %}</button>
     </div>
