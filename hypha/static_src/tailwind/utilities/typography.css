@@ -73,3 +73,9 @@
     margin-bottom: 0;
   }
 }
+
+/* Depreciated */
+.rich-text {
+  word-break: break-word;
+  max-width: 50em;
+}
