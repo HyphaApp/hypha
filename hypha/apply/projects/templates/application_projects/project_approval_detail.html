@@ -7,8 +7,8 @@
     <c-hero>
         <c-hero.header
             back_link="{{ object.get_absolute_url }}"
-            back_link_text="{% trans 'Back to Project' %}"
-            title="{% translate 'Project form' %}: {{ object.title }} <span class='text-fg-muted'>#{{ object.submission.application_id }}</span>"
+            back_link_text="{% trans 'View project' %} #{{ object.application_id }}"
+            title="{% translate 'Project form' %}</span>"
             subtitle="{% translate 'Project form' %}"
         />
     </c-hero>

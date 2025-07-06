@@ -6,7 +6,7 @@
     <c-hero>
         <c-hero.header
             back_link="{{ review.submission.get_absolute_url }}"
-            back_link_text="{% trans 'View application' %}"
+            back_link_text="{% trans 'View application' %} #{{ review.submission.application_id }}"
             title="{% trans 'Review' %}"
             subtitle="{% trans 'For' %} {{ review.submission.title_text_display }} {% trans 'by' %} {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == review.author.reviewer %}{% trans 'Reviewer' %}{% else %}{{ review.author }}{% endif %} {% trans 'at' %} {{ review.created_at|date:'SHORT_DATE_FORMAT' }} {% if review.is_updated %}<small>({% trans 'Last updated' %}: {{ review.updated_at|date:'SHORT_DATE_FORMAT' }})</small>{% endif %}"
         >

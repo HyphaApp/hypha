@@ -1,14 +1,14 @@
 {% extends "base-apply.html" %}
-{% load i18n heroicons %}
+{% load i18n heroicons apply_tags %}
 {% block title %}{% blocktrans with title=submission.title %}Revisions for {{ title }}{% endblocktrans %}{% endblock %}
 
 {% block hero %}
     <c-hero>
         <c-hero.header
-            title="{% blocktranslate with title=submission.title_text_display %}Edits to {{ title }}{% endblocktranslate %}"
+            title="{% blocktranslate with title=submission.title_text_display|truncatechars_middle:60 %}Edits to {{ title }}{% endblocktranslate %}"
             subtitle="List of all edits made to this application"
             back_link="{{ submission.get_absolute_url }}"
-            back_link_text="{% trans 'View application' %}"
+            back_link_text="{% trans 'View application' %} #{{ submission.application_id }}"
         />
     </c-hero>
 {% endblock %}

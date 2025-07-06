@@ -6,7 +6,7 @@
     <c-hero>
         <c-hero.header
             back_link="{{ object.get_absolute_url }}"
-            back_link_text="{% trans 'View project page' %}"
+            back_link_text="{% trans 'View project' %} #{{ object.application_id }}"
             title="{% trans 'Editing' %}: {{ object.title }}"
         />
 {% endblock %}

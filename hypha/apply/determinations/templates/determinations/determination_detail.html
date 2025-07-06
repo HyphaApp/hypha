@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n nh3_tags heroicons %}
+{% load i18n nh3_tags heroicons apply_tags %}
 
 {% block title %}{% trans "Determination for" %} {{ determination.submission.title }}{% endblock %}
 
@@ -7,9 +7,9 @@
     <c-hero>
         <c-hero.header
             back_link="{{ determination.submission.get_absolute_url }}"
-            back_link_text="{% trans 'View application' %}"
+            back_link_text="{% trans 'View application' %} #{{ determination.submission.application_id }}"
             title="{% trans 'Determination' %} {% if determination.is_draft %}[{% trans 'DRAFT' %}] {% endif %}"
-            subtitle="{% trans 'For' %} <a class='link link-hover' href='{% url 'funds:submissions:detail' determination.submission.id %}'>{{ determination.submission.title_text_display }}</a>"
+            subtitle="{% trans 'For' %} <a class='link link-hover' href='{% url 'funds:submissions:detail' determination.submission.id %}'>{{ determination.submission.title_text_display|truncatechars_middle:60 }}</a>"
         />
     </c-hero>
 {% endblock %}
@@ -29,7 +29,7 @@
                     class="btn btn-sm {% if determination.is_draft %}btn-primary{% else %}btn-ghost{% endif %}"
                     href="{% url 'apply:submissions:determinations:edit' submission_pk=determination.submission.id pk=determination.id %}"
                 >
-                    {% heroicon_mini "pencil-square" size=18 aria_hidden=true %}
+                    {% heroicon_mini "pencil-square" size=18 aria_hidden=true class="opacity-80 size-4" %}
                     {% if determination.is_draft %}
                         {% trans "Continue editing" %}
                     {% else %}

@@ -10,7 +10,7 @@
     <c-hero>
         <c-hero.header
             back_link="{{ project.get_absolute_url }}"
-            back_link_text="{% trans 'View project page' %}"
+            back_link_text="{% trans 'View project' %} #{{ project.application_id }}"
             title="{% if object %}{% trans 'Editing' %}{% else %}{% trans 'Add' %}{% endif %} {% trans 'invoice' %}"
             subtitle="{% if object %}{{ object.project.title }}{% else %}{% trans 'For' %}: {{ project.title }}{% endif %}"
         />
