@@ -1,6 +1,6 @@
 {% load i18n heroicons %}
 
-<div class="relative"
+<div class="relative mt-2"
      x-data="{ isOpen: false, openedWithKeyboard: false, leaveTimeout: null }"
      @mouseleave.prevent="leaveTimeout = setTimeout(() => { isOpen = false }, 50)"
      @mouseenter="leaveTimeout ? clearTimeout(leaveTimeout) : true"
@@ -8,12 +8,8 @@
      @click.outside="isOpen = false, openedWithKeyboard = false"
 >
     <button
-        class="p-2 w-full h-full inline-flex flex-col items-center rounded-lg transition-colors text-sm border
-               hover:border-light-blue focus-visible:border-light-blue
-               {% if current_status %}
-                   font-bold
-                   {% if type == "yes" %}text-info bg-info/10{% else %} text-error bg-error/10 border-red-100{% endif %}
-               {% endif %}"
+        class="btn btn-ghost p-2 w-full h-full inline-flex flex-col gap-2 items-center text-sm
+               {% if current_status %} font-bold ring-2 btn-active {% if type == "yes" %}ring-info{% else %}ring-error{% endif %}{% endif %}"
 
         hx-post="{% url 'funds:submissions:partial-screening-card' submission.id %}"
         hx-swap="outerHTML transition:true"
@@ -21,13 +17,17 @@
         hx-target="#screening-status-{{ submission.id }}"
         hx-vals='{"action": "{% if not current_status %}{{ default_status.id }}{% else %}clear{% endif %}"}'
 
+        {% if current_status %}
+            aria-pressed="true"
+        {% endif %}
+
         {% if can_screen and screening_options.count > 1 %}
             @mouseover="isOpen = true"
             @focus="openedWithKeyboard = true"
             @keydown.space.prevent="openedWithKeyboard = true"
             @keydown.enter.prevent="openedWithKeyboard = true"
             @keydown.down.prevent="openedWithKeyboard = true"
-            :class="isOpen ? 'ring-1' : '{% if type == "yes" %}border-light-blue/10  {% else %} border-tomato/10{% endif %}'"
+            :class="isOpen ? 'btn-active' : ''"
         {% endif %}
 
         {% if current_status %}
@@ -38,9 +38,9 @@
         {% endif %}
     >
         {% if type == "yes" %}
-            {% heroicon_solid "hand-thumb-up" size=30 class="mb-2 transition-colors" aria_hidden=true %}
+            {% heroicon_solid "hand-thumb-up" size=30 class="transition-colors" aria_hidden=true %}
         {% else %}
-            {% heroicon_solid "hand-thumb-down" size=30 class="mb-2 transition-colors" aria_hidden=true %}
+            {% heroicon_solid "hand-thumb-down" size=30 class="transition-colors" aria_hidden=true %}
         {% endif %}
         <span>
             {{ current_status|default_if_none:default_status }}
@@ -50,7 +50,7 @@
     <!-- panel -->
     {% if can_screen and screening_options.count > 1 %}
         <div
-            class=" bg-base-100 tras min-w-48 text-sm top absolute {% if type == 'yes' %}md:start-0 {% else %}end-0{% endif %} divide-y rounded-sm border shadow-lg group-hover:absolute z-20"
+            class="bg-base-100 min-w-48 text-sm top absolute {% if type == 'yes' %}md:start-0 {% else %}end-0{% endif %} divide-y rounded-sm border shadow-lg group-hover:absolute z-20"
             x-cloak
             role="menu"
             x-show="isOpen || openedWithKeyboard"
@@ -72,7 +72,7 @@
                     {% heroicon_mini "x-mark" aria_hidden="true" width=16 height=16 class="stroke-1 hover:stroke-2" %}
                 </button>
             </header>
-            <div class="font-semibold divide-y text-inherit menu">
+            <div class="font-semibold divide-y text-inherit">
                 {% for status in screening_options  %}
                     {% if current_status.id == status.id %}
                         <span class="flex gap-2 items-center py-2 font-medium bg-base-200 pe-2 ps-2">
@@ -97,7 +97,7 @@
                 {% endfor %}
                 {% if current_status %}
                     <a
-                        class="flex py-3 font-normal whitespace-nowrap cursor-pointer text-warning ps-8 pe-3 hover:bg-light-blue/10"
+                        class="flex py-3 font-normal whitespace-nowrap cursor-pointer text-warning ps-8 pe-3 hover:bg-warning/10"
                         role='button'
                         hx-post="{% url 'funds:submissions:partial-screening-card' object.id %}"
                         hx-swap="outerHTML transition:true"
