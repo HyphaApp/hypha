@@ -3,9 +3,9 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
-    <div class="mx-auto mt-8 max-w-2xl">
+    <div class="mx-auto mt-8 max-w-2xl prose">
         {% if form_submission.status == 'draft' %}
-            <h3>{% trans "Your application is saved as a draft." %}</h3>
+            <h2>{% trans "Your application is saved as a draft." %}</h2>
 
             <p>{% trans "Please note that your application is not submitted for review." %}</p>
 
@@ -74,6 +74,5 @@
                 </a>
             {% endif %}
         </div>
-
     </div>
 {% endblock %}
