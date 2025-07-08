@@ -5,10 +5,7 @@
 // Only variables used in media queries and calculations are defined here.
 
 // Default
-$color--white: var(--color-white);
-$color--black: var(--color-black);
 $color--light-grey: var(--color-fg-muted);
-$color--light-mid-grey: var(--color-light-mid-grey);
 $color--mid-grey: var(--color-mid-grey);
 
 // Brand
@@ -16,10 +13,6 @@ $color--light-blue: var(--color-light-blue);
 $color--light-blue-90: var(--color-light-blue-90);
 $color--mustard: var(--color-mustard);
 $color--light-pink: var(--color-light-pink);
-
-// Transparent
-$color--black-60: var(--color-black-60);
-$color--black-20: rgb(0 0 0 / 20%);
 
 // Assignment
 $color--primary: var(--color-primary);

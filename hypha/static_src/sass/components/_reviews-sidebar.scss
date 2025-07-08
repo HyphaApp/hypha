@@ -28,7 +28,7 @@
           }
 
           &::after {
-            @include mixins.triangle(top, variables.$color--white, 8px);
+            @include mixins.triangle(top, var(--color-white), 8px);
             inset-block-start: -21px;
           }
 
@@ -40,7 +40,7 @@
     }
 
     &.no-response {
-      color: variables.$color--black-20;
+      color: var(--color-fg-muted);
     }
 
     .yes {
