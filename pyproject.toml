@@ -88,6 +88,7 @@ dependencies = [
     "time-machine>=2.16.0",
     "wagtail-factories>=4.2.1",
     "Werkzeug>=3.0.6",
+    "django-model-info>=2024.11.5",
 ]
 "docs" = [
     "mkdocs-material>=9.5.5",
