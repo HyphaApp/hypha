@@ -27,7 +27,7 @@
                             {% if document_category.required %}<sup>*</sup>{% endif %}
 
                             {% if document_category.template %}
-                                {% heroicon_mini "information-circle" class="inline align-middle fill-light-blue" aria_hidden=true %}
+                                {% heroicon_mini "information-circle" class="inline align-middle fill-primary" aria_hidden=true %}
                                 <a
                                     class="link"
                                     href="{% url 'apply:projects:category_template' pk=object.submission.pk type='contract_document' category_pk=document_category.pk %}"

@@ -163,7 +163,7 @@
                    title="{% trans "View communications" %}"
                    href="{% url "funds:submissions:comments" s.id %}"
                 >
-                    {% heroicon_outline "chat-bubble-left" aria_hidden="true" size=16 class="inline-block stroke-2 me-1 group-hover:stroke-light-blue" %}
+                    {% heroicon_outline "chat-bubble-left" aria_hidden="true" size=16 class="inline-block stroke-2 me-1 group-hover:stroke-primary" %}
                     <span class="inline-block font-medium">{{ s.comment_count }}</span>
                 </a>
             {% endif %}

@@ -1,19 +1,4 @@
 :root {
-  /* Default */
-  --color-mid-grey: #cfcfcf;
-
-  /* Brand */
-  --color-light-blue: #1d79a8;
-  --color-light-blue-90: rgb(29 121 168 / 10%);
-  --color-mustard: #e6ab32;
-  --color-purple: #8c0bbf;
-  --color-light-pink: #ffe1df;
-
-  /* Transparent */
-  --color-black-60: rgb(0 0 0 / 60%);
-}
-
-:root {
   /* https://oklchroma.utilitybend.com/?p=color-brand%3Aok%3A56.2%2C0.102%2C243.2%3A0.05 */
   --color-brand: oklch(56.2% 0.102 243);
   --color-brand-base: 0.05;
@@ -57,6 +42,14 @@
     from var(--color-brand) 100%
       calc(var(--color-brand-base) + (sin(0.1 * pi) * c)) h
   );
+}
+
+@theme {
+  --default-border-width: var(--border);
+  --color-fg-muted: color-mix(in oklab, currentColor 60%, transparent);
+
+  /* Depreciated */
+  --color-fg-default: var(--color-base-content);
 }
 
 @plugin "daisyui/theme" {
@@ -128,14 +121,4 @@
   --border: 1px;
   --depth: 1;
   --noise: 0;
-}
-
-@theme {
-  --default-border-width: var(--border);
-  --color-fg-muted: color-mix(in oklab, currentColor 60%, transparent);
-
-  /* Depreciated */
-  --color-light-blue: #0d7db0;
-  --color-mid-grey: #cfcfcf;
-  --color-fg-default: var(--color-base-content);
 }

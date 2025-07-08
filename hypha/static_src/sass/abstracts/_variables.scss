@@ -1,27 +1,10 @@
 // stylelint-disable scss/dollar-variable-pattern
 
-// Most variables are set from css variables defined in
-// tailwind/base/variables.css so they are easy to override.
-// Only variables used in media queries and calculations are defined here.
-
-// Default
-$color--light-grey: var(--color-fg-muted);
-$color--mid-grey: var(--color-mid-grey);
-
-// Brand
-$color--light-blue: var(--color-light-blue);
-$color--light-blue-90: var(--color-light-blue-90);
-$color--mustard: var(--color-mustard);
-$color--light-pink: var(--color-light-pink);
-
-// Assignment
-$color--primary: var(--color-primary);
+// This module is deprecated and will be removed in a future release.
+$color--mid-grey: var(--color-base-300);
 
 // Font sizes
 $base-font-size: 16px;
-
-// Wrappers
-$wrapper--medium: 1020px;
 
 // Breakpoints
 $breakpoints: (

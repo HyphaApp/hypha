@@ -48,7 +48,7 @@
     }
 
     .maybe {
-      color: variables.$color--mustard;
+      color: var(--color-warning);
     }
 
     .no {
