@@ -22,3 +22,19 @@
   themes: false;
 }
 @import "./base/themes.css";
+
+@theme {
+  --default-border-width: var(--border);
+
+  /* Custom colors */
+  --color-fg-muted: color-mix(in oklab, currentColor 60%, transparent);
+
+  /* Custom Animations */
+  --animate-flash: flash 1s ease 1;
+
+  @keyframes flash {
+    50% {
+      background-color: var(--color-base-300);
+    }
+  }
+}

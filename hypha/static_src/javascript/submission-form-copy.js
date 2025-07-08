@@ -99,7 +99,7 @@
 
     $(".js-clipboard-button").on("click", function (e) {
       e.preventDefault();
-      $application_form.addClass("flash-item");
+      $application_form.addClass("animate-flash");
       var questions = get_questions();
       var $textarea = $("<textarea>")
         .html(questions)
@@ -109,7 +109,7 @@
       document.execCommand("copy");
       $textarea.remove();
       setTimeout(function () {
-        $application_form.removeClass("flash-item");
+        $application_form.removeClass("animate-flash");
       }, 1200);
     });
   }

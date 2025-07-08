@@ -44,14 +44,6 @@
   );
 }
 
-@theme {
-  --default-border-width: var(--border);
-  --color-fg-muted: color-mix(in oklab, currentColor 60%, transparent);
-
-  /* Depreciated */
-  --color-fg-default: var(--color-base-content);
-}
-
 @plugin "daisyui/theme" {
   name: "dark";
   default: false;
