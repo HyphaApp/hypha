@@ -19,5 +19,6 @@
 
 @plugin '@tailwindcss/typography';
 @plugin "daisyui" {
+  themes: false;
 }
 @import "./base/themes.css";
