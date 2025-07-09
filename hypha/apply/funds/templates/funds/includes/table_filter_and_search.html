@@ -1,82 +1,77 @@
 {% load django_tables2 i18n heroicons %}
 {% load querystrings table_tags static %}
 
-<div class="wrapper wrapper--table-actions js-table-actions">
-    <div class="actions-bar">
-        {# Left #}
-        <div class="actions-bar__inner actions-bar__inner--left">
-            {% if heading %}
-                <h2 class="mb-2 text-xl">{{ heading }}</h2>
-            {% endif %}
+{% if heading or use_search %}
+    <div
+        class="flex flex-wrap gap-4 justify-between items-center mb-2 w-full"
+    >
+        {% if heading %}
+            <h2 class="section-header">{{ heading }}</h2>
+        {% endif %}
 
-            {% if invoice_batch_actions %}
-                <div class="actions-bar__inner actions-bar__inner--batch-actions">
-                    <p class="actions-bar__total"><span class="js-total-actions">0</span> {% trans "Selected" %}</p>
-                    <button
-                        class="button button--action js-batch-button js-batch-invoice-progress"
-                        href="{% url 'apply:projects:bulk_invoice_status_update' %}"
-                        hx-target="#htmx-modal"
-                    >
-                        {% heroicon_mini "arrows-right-left" class="inline" aria_hidden=true %}
-                        {% trans "Status" %}
-                    </button>
-                </div>
-            {% endif %}
+        {% if invoice_batch_actions %}
+            <div
+                class="hidden items-center card-actions"
+                data-js-batch-actions-bar
+            >
+                <span class="label ps-2">
+                    <span data-js-batch-actions="total-selections">0</span> {% trans "selected" %}
+                </span>
+                <button
+                    class="btn btn-primary btn-sm"
+                    href="{% url 'apply:projects:bulk_invoice_status_update' %}"
+                    hx-target="#htmx-modal"
+                    data-js-batch-actions="invoice-update-status"
+                >
+                    {% heroicon_micro "arrows-right-left" class="fill-fg-muted" aria_hidden=true %}
+                    {% trans "Update status" %}
+                </button>
+            </div>
+        {% endif %}
 
-        </div>
-
-        {# Right #}
-        <div class="flex gap-4 items-center">
-            {% if use_search|default:False %}
-                <form action="{{ search_action }}" method="get" role="search" class="relative form">
-                    <button class="button button--search" type="submit">
-                        <span class="sr-only">{% trans "Search" %}</span>
-                        {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" aria_hidden=true %}
-                    </button>
-                    {% if show_archive and archived_param is not None %}
-                        <input type="hidden" value="{{ archived_param }}" name="archived">
-                    {% endif %}
-                    {% trans "submissions" as submissions %}
+        {% if use_search|default:False %}
+            <form
+                action="{{ search_action }}"
+                method="get"
+                role="search"
+                class="relative grow"
+            >
+                <label class="flex gap-2 items-center w-auto input input-border">
+                    {% heroicon_mini "magnifying-glass" size=20 class="opacity-50 h-[1em]" aria_hidden=true %}
                     <input
-                        class="rounded-sm md:w-48 shadow-xs input input--search input--secondary"
-                        type="text"
-                        placeholder="{% trans 'Search' %} {{ search_placeholder|default:submissions }}"
+                        type="search"
+                        placeholder="{% trans 'Search...' %}"
                         name="query"
-                        {% if search_term %}value="{{ search_term }}"{% endif %}
+                        {% if search_term %}value="{{ request.GET.query }}"{% endif %}
                         aria-label="{% trans 'Search input' %}"
+                        class="sm:w-auto w-[15ch]"
                     >
-                </form>
-            {% endif %}
-        </div>
+                </label>
+            </form>
+        {% endif %}
     </div>
-</div>
+{% endif %}
 
 <div>
     {% get_filtered_query request filter.form as filtered_query %}
     {% if filtered_query %}
-        <div class="flex flex-wrap gap-1 mt-3">
-            <a
-                href="./"
-                class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2"
-            >
-                {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                {% trans "Clear current search query, filters and sorts" %}
+        <div class="flex flex-wrap gap-2 items-center my-2">
+            <a href="./" class="btn btn-ghost btn-sm btn-link link-hover">
+                {% trans "Clear current filters & sorts" %}
+                {% heroicon_micro "x-mark" aria_hidden="true" class="size-4" %}
             </a>
+
             {% for query in filtered_query %}
                 {% for key, data in query.items %}
-                    <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2">
+                    <c-badge.action btn_url="{% update_filter_query_params key data.value operation='remove' %}">
                         {{ data.key_label }}: {{ data.label }}
-                        <a href="{% update_filter_query_params key data.value operation='remove' %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent rounded-sm hover:text-blue-900 hover:bg-blue-200 ms-1" aria-label="Remove">
-                            {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                            <span class="sr-only">{% trans "Remove filter" %}</span>
-                        </a>
-                    </span>
+                    </c-badge.action>
                 {% endfor %}
             {% endfor %}
         </div>
     {% endif %}
 
-    <form method="GET" class="flex sticky top-0 flex-wrap gap-2 justify-end items-center py-2 px-3 mt-3 bg-gray-50 border-t border-gray-200 md:gap-5 md:text-sm md:font-medium z-[5] border-x">
+    <form method="GET" class="flex sticky top-0 z-10 flex-wrap gap-2 justify-end items-center py-2 px-3 border md:gap-5 md:text-sm md:font-medium bg-base-200 rounded-t-box">
         <span class="hidden items-center py-1 md:inline-flex"></span>
         {% for field_name, field in filter.form|get_filter_fields %}
             {% if filter.form %}
@@ -96,7 +91,7 @@
                                                 href="{% update_filter_query_params field_name value operation='modify' %}"
                                             {% endif %}
                                             role="menuitemradio"
-                                            class="flex {% if value|stringformat:'s' in selected_value %}bg-gray-100 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
+                                            class="flex {% if value|stringformat:'s' in selected_value %}bg-base-200 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200"
                                         >
                                             {% if value|stringformat:'s' in selected_value %}
                                                 {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-2" %}
@@ -109,10 +104,10 @@
                         {% enddropdown_menu %}
                     {% else %}
                         <div id="{{ field_name }}"
-                             class="flex justify-between items-center py-1 w-full font-medium text-gray-600 border cursor-pointer md:border-none hover:bg-gray-50 ps-2 pe-2 md:hover:bg-transparent md:hover:text-blue-700"
+                             class="flex justify-between items-center py-1 w-full font-medium border cursor-pointer md:border-none text-base-content/80 ps-2 pe-2 md:hover:bg-transparent md:hover:text-primary hover:bg-base-200"
                              data-field-name="{{ field_name }}" data-filter-list>
                             {{ field.label }}
-                            {% heroicon_micro attributes.icon|default:"chevron-down" aria_hidden="true" size="16" class="hidden w-4 h-4 md:inline-block ms-0.5" %}
+                            {% heroicon_micro attributes.icon|default:"chevron-down" aria_hidden="true" size="16" class="hidden md:inline-block size-4 ms-0.5" %}
                         </div>
 
                         <script defer src="{% static 'js/vendor/moment.min.js' %}"></script>
@@ -159,7 +154,6 @@
                                     let formattedEnd = end.format('YYYY-MM-DD');
                                     dateLink.textContent = formattedStart + ' - ' + formattedEnd;
                                     updateURL(fieldName + "_after", fieldName + "_before", formattedStart, formattedEnd);
-
                                 });
                             });
                         </script>

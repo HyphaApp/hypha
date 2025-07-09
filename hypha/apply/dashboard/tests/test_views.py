@@ -118,13 +118,13 @@ class TestStaffDashboard(BaseViewTestCase):
 
     def test_active_invoices_with_no_project(self):
         response = self.get_page()
-        self.assertNotContains(response, "Active Invoices")
+        self.assertNotContains(response, "Active invoices")
 
     def test_doesnt_show_active_invoices_with_none(self):
         ProjectFactory(lead=self.user)
 
         response = self.get_page()
-        self.assertNotContains(response, "Active Invoices")
+        self.assertNotContains(response, "Active invoices")
 
     def test_doest_show_active_invoices_when_paid_or_declined(self):
         project = ProjectFactory(lead=self.user)
@@ -132,7 +132,7 @@ class TestStaffDashboard(BaseViewTestCase):
         InvoiceFactory(project=project, status=DECLINED)
 
         response = self.get_page()
-        self.assertNotContains(response, "Active Invoices")
+        self.assertNotContains(response, "Active invoices")
 
     def test_active_invoices_with_invoices_in_correct_state(self):
         project = ProjectFactory(lead=self.user)
@@ -141,7 +141,7 @@ class TestStaffDashboard(BaseViewTestCase):
         InvoiceFactory(project=project, status=RESUBMITTED)
 
         response = self.get_page()
-        self.assertContains(response, "Active Invoices")
+        self.assertContains(response, "Active invoices")
 
     def test_doesnt_show_active_invoices_when_not_mine(self):
         project = ProjectFactory()
@@ -150,7 +150,7 @@ class TestStaffDashboard(BaseViewTestCase):
         InvoiceFactory(project=project, status=RESUBMITTED)
 
         response = self.get_page()
-        self.assertNotContains(response, "Active Invoices")
+        self.assertNotContains(response, "Active invoices")
 
     def test_unassigned_staff_cant_see_projects_awaiting_review_stats_or_table(self):
         ProjectFactory(is_locked=False, status=INTERNAL_APPROVAL)

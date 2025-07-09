@@ -1,11 +1,11 @@
 {% extends "base-apply.html" %}
 {% load i18n %}
 {% block title %}{{ title }}{% endblock %}
-{% block body_class %}bg-white{% endblock %}
+{% block body_class %}bg-base-100{% endblock %}
 
 {% block content %}
 
-    <div class="mt-12 max-w-xl wrapper">
+    <div class="mt-12 w-full max-w-xl">
         {% if validlink %}
 
             <h2 class="text-2xl">{% trans "Reset password" %}</h2>
@@ -39,7 +39,7 @@
                     {% include "forms/includes/field.html" %}
                 {% endfor %}
 
-                <button class="button button--primary button--login" type="submit">{% trans 'Reset' %}</button>
+                <button class="btn btn-primary btn-wide" type="submit">{% trans 'Reset' %}</button>
             </form>
         {% else %}
             <p>{% trans "The password reset link was invalid, possibly because it has already been used. Please request a new password reset." %}</p>

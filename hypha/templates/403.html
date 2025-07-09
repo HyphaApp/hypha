@@ -1,13 +1,40 @@
 {% extends "base-apply.html" %}
-{% load wagtailcore_tags wagtailsettings_tags %}
-
+{% load i18n wagtailcore_tags wagtailsettings_tags heroicons %}
 {% block title %}{{ settings.core.SystemSettings.title_403 }}{% endblock %}
 
-{% block body_class %}template-403{% endblock %}
-
 {% block content %}
-    <div class="wrapper wrapper--small wrapper--inner-space-large">
-        <h1>{{ settings.core.SystemSettings.title_403 }}</h1>
-        <div class="rich-text">{{ settings.core.SystemSettings.body_403|richtext }}</div>
+    <div class="flex flex-col justify-center items-center min-h-[60vh]" x-data="{ hasHistory: window.history.length > 1 }">
+        <div class="w-full max-w-2xl card bg-base-100 shadow-xs lg:card-xl">
+            <div class="items-center card-body">
+                <span class="flex justify-center items-center p-4 mb-4 rounded-full bg-error/10">
+                    {% heroicon_outline "lock-closed" class="w-14 h-14 text-error" %}
+                </span>
+                <h1 class="mb-2 text-4xl font-bold">
+                    {{ settings.core.SystemSettings.title_403 }}
+                </h1>
+                <div class="mb-6 prose">
+                    {{ settings.core.SystemSettings.body_403|richtext }}
+                </div>
+
+                <div class="card-actions">
+                    <button x-show="hasHistory" @click="window.history.back()" class="btn btn-outline">
+                        {% heroicon_outline "arrow-left" class="w-5 h-5" %}
+                        {% trans "Go Back" %}
+                    </button>
+
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'dashboard:dashboard' %}" class="btn btn-primary">
+                            {% heroicon_outline "arrow-left" class="w-5 h-5" x_show="!hasHistory" %}
+                            {% trans "Go to Dashboard" %}
+                        </a>
+                    {% else %}
+                        <a href="{{ settings.core.SystemSettings.site_logo_link|default:'/' }}" class="btn btn-primary">
+                            {% heroicon_outline "arrow-left" class="w-5 h-5" x_show="!hasHistory" %}
+                            {% trans "Go to homepage" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

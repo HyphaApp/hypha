@@ -1,0 +1,13 @@
+{% load heroicons i18n apply_tags %}
+
+<c-vars class="btn btn-sm truncate" />
+
+<a href="{{ href }}"
+   class="{{ class }}"
+   target="_blank"
+   rel="noopener noreferrer"
+   title="{{ title }}"
+>
+    {% heroicon_micro "paper-clip" class="opacity-80 size-4" aria_hidden=true %}
+    {{ filename|truncatechars_middle:45 }}
+</a>

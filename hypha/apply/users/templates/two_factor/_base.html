@@ -1,27 +1,25 @@
 {% extends 'base-apply.html' %}
 {% load i18n static heroicons %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            back_link="/account/"
+            back_link_text="{% trans 'Back to account' %}"
+            title="{% trans 'Two-Factor Authentication (2FA)' %}"
+        >
+            {% if user.can_access_dashboard %}
+                <a href="{% url 'dashboard:dashboard' %}" class="btn btn-primary" hx-boost='true'>
+                    {% heroicon_mini "squares-2x2" size=20 class="inline mr-1 align-text-bottom" %}
+                    {% trans "Go to my dashboard" %}
+                </a>
+            {% endif %}
+        </c-hero.header>
+    </c-hero>
+{% endblock %}
+
 {% block content %}
-    {% adminbar %}
-
-        {% slot back_link %}
-            <a href="/account/" class="admin-bar__back-link"> {% trans "Back to Account" %}</a>
-        {% endslot %}
-
-        {% slot header %}
-            {% trans "Two-Factor Authentication (2FA)" %}
-        {% endslot %}
-        {% comment %} {% slot sub_heading %}{% trans "All submissions ready for discussion." %}{% endslot %} {% endcomment %}
-
-        {% if user.can_access_dashboard %}
-            <a href="{% url 'dashboard:dashboard' %}" class="button button--primary" hx-boost='true'>
-                {% heroicon_mini "squares-2x2" size=20 class="inline mr-1 align-text-bottom" %}
-                {% trans "Go to my dashboard" %}
-            </a>
-        {% endif %}
-    {% endadminbar %}
-
-    <div class="max-w-2xl wrapper wrapper--inner-space-medium two-factor">
+    <div class="my-8 mx-auto max-w-2xl">
         {% block content_inner %}{% endblock %}
     </div>
 {% endblock %}

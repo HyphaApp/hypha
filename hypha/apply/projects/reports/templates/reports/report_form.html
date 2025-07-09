@@ -1,82 +1,91 @@
 {% extends "base-apply.html" %}
 {% load i18n static heroicons %}
 
-{% block extra_css %}
-    {{ block.super }}
+{% block title %}{% trans "Edit Report" %} | {{ object.project.title }}{% endblock %}
+
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ object.project.get_absolute_url }}"
+            back_link_text="{% trans 'View project' %} #{{ object.project.application_id }}"
+            title="{{ object.project.title }}"
+            subtitle="{% trans 'Submit a report' %}"
+        />
+    </c-hero>
 {% endblock %}
 
-{% block title %}{% trans "Edit Report" %} | {{ object.project.title }}{% endblock %}
 {% block content %}
+    <div class="mx-auto mt-4 mb-8 max-w-3xl">
 
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
-                {% trans "View project page" %}
-            </a>
-        {% endslot %}
-        {% slot header %}{{ object.project.title }}{% endslot %}
-        {% slot sub_heading %}{% trans "Submit a report" %}{% endslot %}
-    {% endadminbar %}
+        {% if report_form %}
+            <div role="alert" class="mb-4 alert alert-info">
+                {% heroicon_outline 'exclamation-circle' stroke_width=2 aria_hidden=true class="opacity-80 size-5" %}
+                <span>
+                    {% trans "This report is for the period" %} <strong class="font-semibold">{{ object.start_date }}</strong> {% trans "to" %} <strong class="font-semibold">{{ object.end_date }}</strong>
+                </span>
+            </div>
 
-    {% if report_form %}
+            <form class="form" action="" method="post" enctype="multipart/form-data" novalidate>
+                {% include "forms/includes/form_errors.html" with form=form %}
+                {% csrf_token %}
 
-        {% include "forms/includes/form_errors.html" with form=form %}
-
-        <div class="wrapper wrapper--default-bg wrapper--form">
-            <div class="wrapper--sidebar--inner">
-
-                <p class="flex items-center py-2 px-3 mt-0 mb-8 text-sm border bg-(--color-light-blue-90)">
-                    {% heroicon_outline 'exclamation-circle' stroke_width=2 size=18 class="inline me-1 stroke-dark-blue" aria_hidden=true %}
-                    <span>
-                        {% trans "This report is for the period" %} <strong class="font-semibold">{{ object.start_date }}</strong> {% trans "to" %} <strong class="font-semibold">{{ object.end_date }}</strong>
-                    </span>
-                </p>
-
-                <form class="form" action="" method="post" enctype="multipart/form-data" novalidate>
-                    {% csrf_token %}
-                    {% for field in form %}
-                        {% if field.field %}
-                            {% if field.field.multi_input_field %}
-                                {% include "forms/includes/multi_input_field.html" %}
-                            {% else %}
-                                {% include "forms/includes/field.html" %}
-                            {% endif %}
+                {% for field in form %}
+                    {% if field.field %}
+                        {% if field.field.multi_input_field %}
+                            {% include "forms/includes/multi_input_field.html" %}
                         {% else %}
-                            <div class="max-w-none field-block prose">
+                            {% include "forms/includes/field.html" %}
+                        {% endif %}
+                    {% else %}
+                        <div class="max-w-none field-block prose">
+                            <div>
                                 {{ field.block }}
                             </div>
-                        {% endif %}
-                    {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
 
-                    {% for hidden_field in form.hidden_fields %}
-                        {{ hidden_field }}
-                    {% endfor %}
-                    <input type="submit" id="submit-report-form-submit" name="submit" class="hidden" />
-                    <input type="submit" id="submit-report-form-save" name="save" class="hidden" />
-                    <label class="button button--submit button--top-space button--white" for="submit-report-form-save" onclick="return confirm('{% blocktrans %}Saving a draft means this report will be visible to you and staff from your project page.{% endblocktrans %}')">{% trans "Save draft" %}</label>
-                    <label class="button button--submit button--top-space button--primary" for="submit-report-form-submit" onclick="return confirm('Are you sure you want to submit your report?')">{% trans "Submit" %}</label>
-                </form>
-            </div>
-        </div>
-    {% else %}
-        <div class="wrapper wrapper--default-bg wrapper--form wrapper--sidebar">
-            <div class="wrapper--sidebar--inner">
+                {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field }}
+                {% endfor %}
+
+                <div class="mt-4 card-actions">
+                    <button
+                        type="submit"
+                        id="submit-report-form-submit"
+                        name="submit"
+                        class="sm:w-auto btn btn-block btn-primary"
+                        onclick="return confirm('Are you sure you want to submit your report?')"
+                    >
+                        {% trans "Submit" %}
+                    </button>
+                    <button
+                        type="submit"
+                        id="submit-report-form-save"
+                        name="save"
+                        class="sm:w-auto btn btn-block btn-secondary btn-outline"
+                        onclick="return confirm('{% blocktrans %}Saving a draft means this report will be visible to you and staff from your project page.{% endblocktrans %}')"
+                    >
+                        {% trans "Save draft" %}
+                    </button>
+                </div>
+            </form>
+        {% else %}
+            <p class="p-4">
                 {% if request.user.is_apply_staff %}
-                    <p>
-                        {% trans "Project Report Form not configured. Please add a project report form in the" %}
-                        <a href="{% url 'wagtailadmin_pages:edit' object.project.submission.page.id %}" target="_blank">{% trans "fund settings" %}</a>.
-                    </p>
+                    {% trans "Project report form not configured. Please add a project report form in the" %}
+                    <a href="{% url 'wagtailadmin_pages:edit' object.project.submission.page.id %}" target="_blank" class="link">
+                        {% trans "fund settings" %}
+                    </a>.
                 {% else %}
-                    <p>
-                        {% trans "Project Report Form not configured yet. Please contact us at " %}
-                        <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}.</a>
-                    </p>
+                    {% trans "Project report rorm not configured yet. Please contact us at " %}
+                    <a href="mailto:{{ ORG_EMAIL }}" class="link">{{ ORG_EMAIL }}.</a>
                 {% endif %}
-            </div>
-        </div>
-    {% endif %}
+            </p>
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/multi-input-fields.js' %}"></script>
+    <script src="{% static 'js/multi-input-fields-alpine.js' %}"></script>
 {% endblock %}

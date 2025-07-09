@@ -5,82 +5,75 @@
 
 {% block title %}{{ object.title }}{% endblock %}
 
-{% block body_class %}{% endblock %}
+{% block hero %}
+    <c-hero padding="pt-4">
+        {% include "application_projects/includes/project_header.html" %}
+
+        <div role="tablist" class="font-medium tabs tabs-lg tabs-lift text-base-content print-hidden">
+            <a
+                class="tab [--color-base-content:var(--color-neutral-content)]"
+                href="{{ project.submission.get_absolute_url }}"
+            >
+                {% trans "Application" %}
+            </a>
+
+            <a
+                class="tab tab-active"
+                href="{% url 'funds:submissions:project' pk=object.submission.id %}"
+            >
+                {% trans "Project" %}
+            </a>
+
+            <a
+                class="tab [--color-base-content:var(--color-neutral-content)]"
+                href="{% url 'funds:submissions:comments' pk=object.submission.id %}"
+            >
+                {% trans "Comments" %} ({{ comments_count }})
+            </a>
+        </div>
+    </c-hero>
+{% endblock %}
+
 
 {% block content %}
-    <div class="pt-4 pb-0 admin-bar">
-        <div class="admin-bar__inner">
+    <div class="my-4">
 
-            {% include "application_projects/includes/project_header.html" %}
-
-            <div class="tabs">
-                <div class="tabs__container">
-                    <a
-                        class="tab__item"
-                        href="{{ project.submission.get_absolute_url }}"
-                    >
-                        {% trans "Application" %}
-                    </a>
-
-                    <a
-                        class="tab__item tab__item--active"
-                        href="{% url 'funds:submissions:project' pk=object.submission.id %}"
-                    >
-                        {% trans "Project" %}
-                    </a>
-
-                    <a
-                        class="tab__item"
-                        href="{% url 'funds:submissions:comments' pk=object.submission.id %}"
-                    >
-                        {% trans "Conversation" %} ({{ comments_count }})
-                    </a>
-
+        {% block notifications %}
+            {% show_closing_banner object as show_banner %}
+            {% if show_banner %}
+                <div class="mb-4 alert alert-warning">
+                    {% display_project_status object request.user as project_status %}
+                    {% blocktrans with status=project_status %} This project is in {{ status }} state. {% endblocktrans %}
                 </div>
-            </div>
-        </div>
-    </div>
-
-    {% show_closing_banner object as show_banner %}
-    {% if show_banner %}
-        <div class="p-2 font-semibold text-center text-white bg-red-500">
-            {% display_project_status object request.user as project_status %}
-            {% blocktrans with status=project_status %} This project is in {{ status }} state. {% endblocktrans %}
-        </div>
-    {% endif %}
-
-    <div class="wrapper wrapper--large wrapper--tabs">
-
-        {% block notifications %}{% endblock %}
+            {% endif %}
+        {% endblock %}
 
         <div class="wrapper wrapper--sidebar">
-            <article class="wrapper--sidebar--inner">
-                <h3>{% trans "Project Information" %}</h3>
-                <div
-                    class="hypha-grid hypha-grid--proposal-info"
-                    hx-get='{% url "apply:projects:project_information" object.submission.id %}'
-                    hx-trigger="load, informationUpdated from:body"
-                >
-                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-14"></span>
-                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-14"></span>
-                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-12"></span>
-                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-12"></span>
-                </div>
+            <article class="grow @container flex flex-col gap-8">
+                <section>
+                    <h2 class="pb-2 mb-2 font-semibold border-b text-h3">
+                        {% trans "Project Information" %}
+                    </h2>
+
+                    <dl
+                        class="grid grid-cols-1 @md:grid-cols-2 gap-2"
+                        hx-get='{% url "apply:projects:project_information" object.submission.id %}'
+                        hx-trigger="informationUpdated from:body"
+                    >
+                        {% include "application_projects/partials/project_information.html" %}
+                    </dl>
+                </section>
 
                 {% project_can_have_invoices object as can_have_invoices %}
                 {% user_can_view_invoices object user as can_view_invoices %}
                 {% if can_have_invoices and can_view_invoices %}
-                    <div class="wrapper wrapper--outer-space-large">
-                        {% include "application_projects/includes/invoices.html" %}
-                    </div>
+                    {% include "application_projects/includes/invoices.html" %}
                 {% endif %}
 
                 {% project_show_reports_section object as show_reports_section %}
                 {% user_can_view_reports object user as can_view_reports %}
                 {% if show_reports_section and can_view_reports %}
-                    <div class="wrapper wrapper--outer-space-large">
-                        {% include "reports/includes/reports.html" %}
-                    </div>
+                    {% include "reports/includes/reports.html" %}
                 {% endif %}
 
                 {% project_can_have_contracting_section object as can_have_contracting_section %}
@@ -99,76 +92,85 @@
                 <aside class="sidebar">
                     {% user_next_step_on_project object user request=request as next_step %}
                     {% if next_step %}
-                        <div class="py-3 px-5 mb-8 bg-yellow-200 shadow-sm sidebar__inner--actions">
-                            <h5 class="flex pb-2 border-b border-b-orange-200">
-                                {% heroicon_solid "sparkles" class="align-text-top me-1 fill-orange-500" aria_hidden=true %}
-                                <span>{{ next_step.heading }}</span>
-                            </h5>
-                            <p class="">{{ next_step.text }}</p>
-                            {% user_next_step_instructions object user as instructions %}
-                            {% if instructions %}
-                                <div class="sidebar__inner--actions--instructions">
-                                    {% for instruction in instructions %}
-                                        <p>{{forloop.counter}}. {{ instruction }}</p>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
+                        <div class="card [--card-fs:1rem] bg-warning text-warning-content shadow-xs">
+                            <div class="card-body">
+                                <h2 class="card-title">
+                                    {% heroicon_solid "sparkles" class="align-text-top" aria_hidden=true %}
+                                    <span>{{ next_step.heading }}</span>
+                                </h2>
 
+                                <p>{{ next_step.text }}</p>
+
+                                {% user_next_step_instructions object user as instructions %}
+                                {% if instructions %}
+                                    <div class="sidebar__inner--actions--instructions">
+                                        {% for instruction in instructions %}
+                                            <p>{{forloop.counter}}. {{ instruction }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
                     {% endif %}
+
                     {% if object.paf_approvals.exists and not user.is_applicant %}
-                        <div class="sidebar__inner sidebar__inner--actions">
+                        <div class="card card-border shadow-xs">
+                            <div class="card-body">
+                                <h2 class="card-title">
+                                    {% trans "Project form approvals" %}
+                                </h2>
 
-                            <h5>{% trans "Project form approvals" %}</h5>
+                                <div>
+                                    {% for paf_approval in object.paf_approvals.all %}
 
-                            {% for paf_approval in object.paf_approvals.all %}
+                                        {% if not paf_approval.approved %}
+                                            {% project_rejected_by_user object paf_approval.user as rejected %}
+                                            {% if rejected %}
+                                                <div class="flex gap-2">
+                                                    {% heroicon_outline "exclamation-circle" class="inline stroke-red-500" aria_hidden=true %}
 
-                                {% if not paf_approval.approved %}
-                                    {% project_rejected_by_user object paf_approval.user as rejected %}
-                                    {% if rejected %}
-                                        <div class="flex gap-2">
-                                            {% heroicon_outline "exclamation-circle" class="inline stroke-red-500" aria_hidden=true %}
+                                                    <p class="m-0 sidebar__paf-approvals--approved">
+                                                        {% trans "Request changes or more information by " %}{{ paf_approval.user }}.
 
-                                            <p class="m-0 sidebar__paf-approvals--approved">
-                                                {% trans "Request changes or more information by " %}{{ paf_approval.user }}.
+                                                        {% get_comment_for_requested_approval paf_approval as rejected_comment %}
+                                                        {% if rejected_comment %}
+                                                            <a href="{{ rejected_comment.get_absolute_url }}" class="font-bold">
+                                                                {% trans "View comment" %}
+                                                            </a>
+                                                        {% endif %}
+                                                    </p>
 
-                                                {% get_comment_for_requested_approval paf_approval as rejected_comment %}
-                                                {% if rejected_comment %}
-                                                    <a href="{{ rejected_comment.get_absolute_url }}" class="font-bold">
-                                                        {% trans "View comment" %}
-                                                    </a>
-                                                {% endif %}
-                                            </p>
-
-                                        </div>
-                                    {% else %}
-                                        <p class="flex gap-2 items-center m-0 mb-2 text-red-600">
-                                            <span>{% heroicon_micro "clock" class="inline-block w-4 h-4 align-middle" aria_hidden=true %}</span>
-                                            <span>
-                                                {% trans "Pending approval from " %}
-                                                {% if paf_approval.user %}
-                                                    {{ paf_approval.user }}
-                                                {% else %}
-                                                    {{ paf_approval.paf_reviewer_role.label }} ({% trans "nobody assigned yet" %})
-                                                {% endif %}
-                                            </span>
-                                        </p>
-                                    {% endif %}
-                                {% else %}
-                                    <p class="flex gap-2 items-center m-0 mb-2">
-                                        {% heroicon_micro "check-circle" class="inline align-middle fill-green-500" aria_hidden=true %}
-                                        <span>{{ paf_approval.user }} {% trans "approved" %}
-                                            {% if paf_approval.approved_at %}
-                                                <relative-time datetime="{{ paf_approval.approved_at|date:"c" }}" class="text-fg-muted">
-                                                    {{ paf_approval.approved_at|date }}
-                                                </relative-time>
+                                                </div>
+                                            {% else %}
+                                                <p class="flex gap-2 items-center m-0 mb-2 text-error">
+                                                    <span>
+                                                        {% heroicon_micro "clock" class="inline-block align-middle size-4" aria_hidden=true %}
+                                                    </span>
+                                                    <span>
+                                                        {% trans "Pending approval from " %}
+                                                        {% if paf_approval.user %}
+                                                            {{ paf_approval.user }}
+                                                        {% else %}
+                                                            {{ paf_approval.paf_reviewer_role.label }} ({% trans "nobody assigned yet" %})
+                                                        {% endif %}
+                                                    </span>
+                                                </p>
                                             {% endif %}
-                                        </span>
-                                    </p>
-                                {% endif %}
-
-                            {% endfor %}
-
+                                        {% else %}
+                                            <p class="flex gap-2 items-center m-0 mb-2">
+                                                {% heroicon_micro "check-circle" class="inline align-middle fill-green-500" aria_hidden=true %}
+                                                <span>{{ paf_approval.user }} {% trans "approved" %}
+                                                    {% if paf_approval.approved_at %}
+                                                        <relative-time datetime="{{ paf_approval.approved_at|date:"c" }}" class="text-fg-muted">
+                                                            {{ paf_approval.approved_at|date }}
+                                                        </relative-time>
+                                                    {% endif %}
+                                                </span>
+                                            </p>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
                     {% endif %}
 
@@ -179,10 +181,12 @@
                     {% display_coapplicant_section user object as coapplicant_section %}
                     {% if coapplicant_section %}
                         {% block co_applicant %}
-                            <div hx-trigger="revealed, coApplicantUpdated from:body" hx-get="{% url 'funds:submissions:partial_coapplicant_invites' object.submission.id %}"></div>
+                            <div
+                                hx-trigger="revealed, coApplicantUpdated from:body"
+                                hx-get="{% url 'funds:submissions:partial_coapplicant_invites' object.submission.id %}"
+                            ></div>
                         {% endblock %}
                     {% endif %}
-
                 </aside>
             {% endblock sidebar %}
         </div>
@@ -192,6 +196,5 @@
 
 
 {% block extra_js %}
-    <script src="{% static 'js/past-reports-pagination.js' %}"></script>
     <script src="{% static 'js/report-calculator.js' %}"></script>
 {% endblock %}

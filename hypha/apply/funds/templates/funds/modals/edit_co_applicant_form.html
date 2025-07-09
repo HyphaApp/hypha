@@ -1,9 +1,9 @@
 {% load i18n %}
-{% modal_title %}{% trans "Edit Co-Applicant" %}{% endmodal_title %}
 
+<c-modal.header>{% translate "Edit co-applicant" %}</c-modal.header>
 
 <form
-    class="form {{ extra_classes }} p-4"
+    class="form p-4 {{ extra_classes }}"
     action="{{ action|default:request.path }}"
     method="post"
     hx-post="{{ action|default:request.path }}"
@@ -12,19 +12,18 @@
     enctype="multipart/form-data"
 >
     {% csrf_token %}
+    {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+
     {% if co_applicant_exists %}
-        <p class="text-sm text-gray-500">
-            {% trans "Update the role for co-applicant." %}
+        <p class="text-sm text-fg-muted">
+            {% translate "Update the role for co-applicant." %}
             <br>
-            {% trans "1. View: Co-applicant can only view/read the submission." %}
+            {% translate "1. View: They can only view the application." %}
             <br>
-            {% trans "2. Comment: Co-applicant can view and write comment." %}
+            {% translate "2. Comment: They can view and write comment." %}
             <br>
-            {% trans "3. Edit: Co-applicant can view, comment and edit the submission." %}
+            {% translate "3. Edit: They can view, comment and edit the application." %}
         </p>
-        {% for hidden in form.hidden_fields %}
-            {{ hidden }}
-        {% endfor %}
 
         <div class="fields--visible">
             {% for field in form.visible_fields %}
@@ -35,43 +34,47 @@
                 {% endif %}
             {% endfor %}
         </div>
-        <div class="mt-5 sm:flex sm:flex-row-reverse sm:gap-4 sm:mt-4">
+        <div class="mt-4 sm:flex-row-reverse card-actions">
             <button
-                class="w-full sm:w-auto button button--primary"
+                class="w-full sm:w-auto btn btn-primary"
                 type="submit"
             >
                 {{ value }}
             </button>
             <button
                 type="button"
-                class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 button button--warning rounded-xs shadow-xs"
+                class="btn btn-error btn-soft"
                 @click="show = false"
                 hx-post="{% url 'apply:submissions:delete_co_applicant_invite' invite_pk=invite.pk %}"
-                hx-confirm="{% trans 'Are you sure you want to delete co-applicant?' %}"
-            >{% trans "Delete" %}</button>
+                hx-confirm="{% translate 'Are you sure you want to delete co-applicant?' %}"
+            >
+                {% translate "Remove" %}
+            </button>
         </div>
     {% else %}
-        <div class="text-sm text-gray-500 fields--visible">
-            {% trans "You can not update until co-applicant accepts the invite. You may re-invite them." %}
+        <div class="text-sm text-fg-muted">
+            {% translate "You can not update until co-applicant accepts the invite. You may re-invite them." %}
         </div>
 
-        <div class="mt-5 sm:flex sm:flex-row-reverse sm:gap-4 sm:mt-4">
+        <div class="mt-5 sm:flex-row-reverse sm:mt-4 card-actions">
             <button
                 type="button"
-                class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 button button--warning rounded-xs shadow-xs"
-                @click="show = false"
-                hx-post="{% url 'apply:submissions:delete_co_applicant_invite' invite_pk=invite.pk %}"
-                hx-confirm="{% trans 'Are you sure you want to delete co-applicant?' %}"
-            >{% trans "Delete" %}</button>
-
-            <button
-                type="button"
-                class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 rounded-xs shadow-xs"
+                class="w-full sm:w-auto btn btn-primary"
                 @click="show = false"
                 hx-post="{% url 'apply:submissions:re_invite_co_applicant' invite_pk=invite.pk %}"
-            >{% trans "Re-invite" %}</button>
+            >
+                {% translate "Re-invite" %}
+            </button>
+            <button
+                type="button"
+                class="w-full sm:w-auto btn btn-error btn-soft"
+                @click="show = false"
+                hx-post="{% url 'apply:submissions:delete_co_applicant_invite' invite_pk=invite.pk %}"
+                hx-confirm="{% translate 'Are you sure you want to delete co-applicant?' %}"
+            >
+                {% translate "Delete" %}
+            </button>
         </div>
     {% endif %}
 
 </form>
-

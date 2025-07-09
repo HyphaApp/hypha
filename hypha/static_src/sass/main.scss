@@ -1,52 +1,13 @@
-// Base
-@use "base/base";
-@use "base/typography";
-
 // Components
-@use "components/nprogress";
 @use "components/all-submissions-table";
-@use "components/all-reviews-table";
-@use "components/admin-bar";
-@use "components/actions-bar";
-@use "components/card";
-@use "components/cookieconsent";
-@use "components/button";
-@use "components/editor";
-@use "components/feed";
-@use "components/hypha-grid";
-@use "components/heading";
-@use "components/list";
-@use "components/list-reveal";
-@use "components/modal";
-@use "components/rich-text";
-@use "components/sidebar";
-@use "components/tabs";
-@use "components/status-bar";
 @use "components/form";
-@use "components/nav";
-@use "components/pagination";
-@use "components/projects-table";
-@use "components/responsive-table";
 @use "components/reviews-list";
-@use "components/reviews-summary";
 @use "components/reviews-sidebar";
-@use "components/round-block";
-@use "components/status-block";
-@use "components/submission-meta";
-@use "components/table";
+@use "components/reviews-summary";
+@use "components/sidebar";
 @use "components/traffic-light";
-@use "components/wrapper";
-@use "components/revisions";
-@use "components/stat-block";
-@use "components/docs-block";
-@use "components/data-block";
-@use "components/invoice-block";
 @use "components/two-factor";
-@use "components/dropdown";
-@use "components/dashboard-table";
-
-// Layout
-@use "layout/header";
+@use "components/wrapper";
 
 // Custom overrides
 @use "custom/custom";

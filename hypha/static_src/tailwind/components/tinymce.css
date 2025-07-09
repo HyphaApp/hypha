@@ -1,0 +1,80 @@
+/* TinyMCE Base Styles */
+.tox {
+  @apply border-base-content/20! rounded-box!;
+  border-width: var(--border) !important;
+  border-radius: var(--radius-field) !important;
+
+  /* Button States */
+  .tox-tbtn--disabled {
+    @apply opacity-50;
+  }
+
+  .tox-tbtn {
+    @apply text-base-content! fill-base-content!;
+
+    svg {
+      @apply text-base-content! fill-base-content!;
+    }
+  }
+
+  .tox-editor-header {
+    @apply bg-base-200! text-base-content! shadow-none! border-b! border-base-300! p-0!;
+  }
+
+  /* Toolbar Components */
+  .tox-tbtn--bespoke,
+  .tox-toolbar,
+  .tox-toolbar__overflow,
+  .tox-toolbar__primary,
+  .tox-toolbar-overlord {
+    @apply bg-base-200! text-base-content!;
+  }
+
+  /* Status Bar Components */
+  .tox-statusbar {
+    @apply bg-base-200! text-base-content!;
+  }
+
+  .tox-statusbar__wordcount {
+    padding-inline: 0.5rem;
+  }
+
+  .tox-statusbar__wordcount::after {
+    content: attr(data-after-word-count);
+  }
+
+  .tox-statusbar__wordcount.word-count-warning,
+  .tox-statusbar__wordcount.word-count-warning-2 {
+    background-color: var(--color-warning);
+    color: var(--color-warning-content);
+    font-weight: bold;
+  }
+
+  .tox-statusbar__wordcount.word-count-warning-2 {
+    background-color: var(--color-error);
+    color: var(--color-error-content);
+  }
+
+  .tox-statusbar a,
+  .tox-statusbar__path-item,
+  .tox-statusbar__wordcount {
+    @apply text-fg-muted!;
+  }
+
+  /* Editor Header */
+  &:not(.tox-tinymce-inline) .tox-editor-header {
+    @apply bg-base-200! text-base-content!;
+  }
+  .tox-toolbar__group {
+    padding: 0 !important;
+  }
+  .tox-toolbar__group:first-child {
+    padding-inline-start: calc(var(--spacing, 0.25em) * 2) !important;
+  }
+}
+/* Error State */
+.fieldset-error {
+  .tox {
+    border-color: var(--color-error) !important;
+  }
+}

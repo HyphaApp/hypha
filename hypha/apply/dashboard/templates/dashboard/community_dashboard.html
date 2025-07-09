@@ -4,24 +4,35 @@
 
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Dashboard' %}"
+            subtitle="{% trans 'An overview of active and past submissions' %}"
+        >
+            <div class="flex items-center p-4 w-lg bg-base-100 text-base-content rounded-box">
+                <div class="flex-1">
+                    <h3 class="text-xl font-semibold">{% trans "Submit a new application" %}</h3>
+                    <p class="text-sm">{% trans "Apply now for our open rounds" %}</p>
+                </div>
+                <div>
+                    <a class="btn btn-primary btn-outline" href="{% pageurl APPLY_SITE.root_page %}">
+                        {% trans "Apply" %}
+                    </a>
+                </div>
+            </div>
+        </c-hero.header>
+    </c-hero>
+{% endblock %}
+
 {% block content %}
-
-    {% adminbar %}
-        {% slot header %}{% trans "Dashboard" %}{% endslot %}
-        {% slot sub_heading %}{% trans "An overview of active and past submissions" %}{% endslot %}
-
-        <div class="wrapper wrapper--cta-box">
-            <h3 class="mb-0 text-xl">{% trans "Submit a new application" %}</h3>
-            <p class="mt-0 mb-4 text-sm text-fg-muted">{% trans "Apply now for our open rounds" %}</p>
-            <a class="button button--primary" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
-        </div>
-    {% endadminbar %}
-
-    <div class="wrapper wrapper--large wrapper--inner-space-medium">
-
-        <div class="wrapper wrapper--bottom-space">
-            <h2 class="mb-2 text-xl">
-                {% trans "Community review submissions" %} <span class="py-0.5 px-2.5 text-sm font-medium text-blue-800 bg-blue-100 rounded-sm me-2">{{ my_community_review_count }}</span>
+    <div class="flex flex-col gap-8">
+        <section>
+            <h2 class="section-header">
+                {% trans "Community review submissions" %}
+                <span class="badge badge-soft badge-secondary">
+                    {{ my_community_review_count }}
+                </span>
             </h2>
 
             {% if my_community_review.data %}
@@ -29,19 +40,25 @@
             {% else %}
                 {% trans "No submissions" %}
             {% endif %}
-        </div>
+        </section>
 
         {% if my_reviewed.count %}
-            <div class="wrapper wrapper--bottom-space">
-                <h2 class="mb-2 text-xl">
+            <section>
+                <h2 class="section-header">
                     {% trans "Your previous reviews" %}
                 </h2>
-                {% include "submissions/partials/submissions-inline.html" with submissions=my_reviewed.objects row_layout="table" %}
-            </div>
+
+                <c-submission-list
+                    variant="table"
+                    rounded-top
+                    rounded-bottom
+                    :submissions="my_reviewed.objects"
+                />
+            </section>
         {% endif %}
 
-        <div class="wrapper wrapper--bottom-space">
-            <h2 class="mb-2 text-xl">
+        <section>
+            <h2 class="section-header">
                 {% trans "Your active submissions" %}
             </h2>
             {% for submission in my_submissions %}
@@ -49,19 +66,19 @@
                     <div class="wrapper wrapper--status-bar-inner">
                         <div class="flex flex-col gap-2 max-w-sm sm:max-w-lg md:flex-row md:justify-between md:w-full md:max-w-none lg:flex-col lg:justify-start lg:w-auto lg:max-w-sm">
                             <div>
-                                <h3 class="text-base font-bold heading heading--no-margin">
+                                <h3 class="text-base font-bold">
                                     <a class="{% if not submission.is_active %} text-slate-500 {% endif %} hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
                                         {{ submission.title }}
-                                        <span class="text-gray-400">#{{ submission.application_id }}</span>
+                                        <span class="text-fg-muted">#{{ submission.application_id }}</span>
                                     </a>
                                 </h3>
-                                <p class="text-sm heading heading--no-margin text-fg-muted">
+                                <p class="text-sm heading text-fg-muted">
                                     {% trans "Submitted" %}: {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}
                                 </p>
                             </div>
                             {% if request.user|has_edit_perm:submission %}
                                 <div>
-                                    <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
+                                    <a class="btn btn-primary" href="{% url 'funds:submissions:edit' submission.id %}">
                                         {% if submission.status == 'draft_proposal' %}
                                             {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
                                         {% else %}
@@ -81,15 +98,15 @@
             {% empty %}
                 {% trans "No active submissions" %}
             {% endfor %}
-        </div>
+        </section>
 
         {% if my_inactive_submissions.data %}
-            <div class="wrapper wrapper--bottom-space">
-                <h2 class="mb-2 text-xl">
+            <section>
+                <h2 class="section-header">
                     {% trans "Submission history" %}
                 </h2>
                 {% render_table my_inactive_submissions %}
-            </div>
+            </section>
         {% endif %}
     </div>
 

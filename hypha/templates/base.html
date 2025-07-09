@@ -2,7 +2,7 @@
 {% wagtail_site as current_site %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_current_language_bidi as LANGUAGE_BIDI %}
-<html class="h-full no-js" lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+<html class="h-full" lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
     <head>
         {# TODO fallbacks if page is not defined e.g. for 404 page #}
         <meta charset="utf-8">
@@ -24,17 +24,17 @@
         <link rel="mask-icon" href="{% static 'images/favicons/safari-pinned-tab.svg' %}" color="#5bbad5">
         <link rel="shortcut icon" href="{% static 'images/favicons/favicon.ico' %}">
 
-        <link rel="stylesheet" href="{% static 'css/tailwind-output.css' %}">
+        <!-- Theme initialization script - runs immediately to prevent flickering -->
+        <script src="{% static 'js/behaviours/theme-toggle.js' %}"></script>
+
         <link rel="stylesheet" href="{% static 'css/main.css' %}">
+        <link rel="stylesheet" href="{% static 'css/tailwind-output.css' %}">
         <!-- Needed for most forms so load it here once. -->
         <link rel="stylesheet" href="{% static 'file_form/file_form.css' %}">
         {{ form.media.css }}
         <!-- Load extra css. -->
         {% block extra_css %}{% endblock %}
         <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
-
-        {% comment %}Detect if javascript is enabled; helps with styling{% endcomment %}
-        <script>document.querySelector("html").classList.replace("no-js", "js")</script>
 
         <!-- Nprogressbar -->
         <script defer src="{% static 'js/vendor/nprogress-2.0.0.min.js' %}"></script>
@@ -60,6 +60,7 @@
         <!-- Modules for supporting <relative-time> and <filter-input> elements -->
         <script type="module" src="{% static 'js/esm/github-relative-time-element-4-3-0.js' %}"></script>
         <script type="module" src="{% static 'js/esm/github-filter-input-element-0-1-1.js' %}"></script>
+        <script defer src="{% static 'js/behaviours/prose-cleanup.js' %}"></script>
 
         {% include "includes/head_end.html" %}
     </head>
@@ -67,16 +68,18 @@
     <body
         hx-ext="multi-swap"
         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-        class="antialiased min-h-full flex flex-col {% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}"
+        class="antialiased bg-base-100 transition-colors duration-300 min-h-full flex flex-col {% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}"
+        {% block body_attrs %}{% endblock %}
     >
         {% if request.user.is_hijacked %}
             {% include "includes/hijack-bar.html" %}
         {% endif %}
 
         {% block header %}{% endblock header %}
+        {% block hero %}{% endblock hero %}
 
         {% block content_wrapper %}
-            <main class="wrapper wrapper--large wrapper--main grow" id="main" x-data="{ showSubmission: false }">
+            <main class="py-1 container-constrained grow" id="main">
                 {% block content %}{% endblock %}
             </main>
         {% endblock %}
@@ -185,25 +188,23 @@
         <!-- Load extra js. -->
         {% block extra_js %}{% endblock %}
 
-        {% block sentry_sdk %}
-            {% if SENTRY_PUBLIC_KEY %}
-                <script
-                    src="https://js.sentry-cdn.com/{{ SENTRY_PUBLIC_KEY }}.min.js"
-                    crossorigin="anonymous"
-                ></script>
-                <script>
-                    Sentry.onLoad(function() {
-                        Sentry.init({
-                            environment: "{{ SENTRY_ENVIRONMENT }}",
-                            debug: {% if SENTRY_DEBUG %}true{% else %}false{% endif %},
-                            integrations: [new BrowserTracing()],
-                            denyUrls: {{ SENTRY_DENY_URLS|safe }},
-                            tracesSampleRate: {{ SENTRY_TRACES_SAMPLE_RATE }}
-                        });
+        {% if SENTRY_PUBLIC_KEY %}
+            <script
+                src="https://js.sentry-cdn.com/{{ SENTRY_PUBLIC_KEY }}.min.js"
+                crossorigin="anonymous"
+            ></script>
+            <script>
+                Sentry.onLoad(function() {
+                    Sentry.init({
+                        environment: "{{ SENTRY_ENVIRONMENT }}",
+                        debug: {% if SENTRY_DEBUG %}true{% else %}false{% endif %},
+                        integrations: [new BrowserTracing()],
+                        denyUrls: {{ SENTRY_DENY_URLS|safe }},
+                        tracesSampleRate: {{ SENTRY_TRACES_SAMPLE_RATE }}
                     });
-                </script>
-            {% endif %}
-        {% endblock sentry_sdk %}
+                });
+            </script>
+        {% endif %}
         {% include "includes/body_end.html" %}
     </body>
 </html>

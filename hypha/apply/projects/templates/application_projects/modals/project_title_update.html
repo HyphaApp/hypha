@@ -1,5 +1,5 @@
 {% load i18n %}
-{% modal_title %}{% trans "Update title" %}{% endmodal_title %}
+<c-modal.header>{% trans "Update title" %}</c-modal.header>
 
 <div class="p-4">
     {% include 'includes/dialog_form_base.html' with form=form value=value %}

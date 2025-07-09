@@ -1,47 +1,76 @@
 {% extends "base-apply.html" %}
-{% load i18n nh3_tags heroicons %}
+{% load i18n nh3_tags heroicons apply_tags %}
 
 {% block title %}{% trans "Determination for" %} {{ determination.submission.title }}{% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ determination.submission.get_absolute_url }}"
+            back_link_text="{% trans 'View application' %} #{{ determination.submission.application_id }}"
+            title="{% trans 'Determination' %} {% if determination.is_draft %}[{% trans 'DRAFT' %}] {% endif %}"
+            subtitle="{% trans 'For' %} <a class='link link-hover' href='{% url 'funds:submissions:detail' determination.submission.id %}'>{{ determination.submission.title_text_display|truncatechars_middle:60 }}</a>"
+        />
+    </c-hero>
+{% endblock %}
+
+
 {% block content %}
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ determination.submission.get_absolute_url }}">
-                {% trans "View application" %}
-            </a>
-        {% endslot %}
+    <div class="flex flex-col gap-8 my-4 mx-auto max-w-3xl">
+        <div class="flex justify-between">
+            <dl>
+                <dt class="text-sm label">{% trans "Outcome" %}:</dt>
+                <dd><span class="badge badge-info badge-outline">{{ determination.get_outcome_display }}</span></dd>
+            </dl>
 
-        {% slot header %} {% trans "Determination" %} {% if determination.is_draft %}[{% trans "DRAFT" %}] {% endif %}{% endslot %}
-        {% slot sub_heading %}
-            {% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" determination.submission.id %}">{{ determination.submission.title_text_display }}</a>
-        {% endslot %}
 
-    {% endadminbar %}
-
-    <div class="flex justify-between pt-2 mt-2 mb-2 border-b max-w-[50em]">
-        <h5>
-            {% trans "Determination" %}: {{ determination.get_outcome_display }}
-        </h5>
-        {% if request.user.is_apply_staff %}
-            <a class="text-blue-500 hover:underline" href="{% url 'apply:submissions:determinations:edit' submission_pk=determination.submission.id pk=determination.id %}">
-                <span class="whitespace-nowrap">
-                    {% trans "Edit" %}{% heroicon_mini "pencil-square" size=18 class="inline align-text-bottom ms-1" aria_hidden=true %}
-                </span>
-            </a>
-        {% endif %}
-    </div>
-
-    <div class="rich-text rich-text--answers prose">
-        <h4>{% trans "Determination message" %}</h4>
-        {{ determination.message|nh3 }}
-        {% for group in determination.detailed_data.values %}
-            {% if group.title %}
-                <h4>{{ group.title|nh3 }}</h4>
+            {% if request.user.is_apply_staff %}
+                <a
+                    class="btn btn-sm {% if determination.is_draft %}btn-primary{% else %}btn-ghost{% endif %}"
+                    href="{% url 'apply:submissions:determinations:edit' submission_pk=determination.submission.id pk=determination.id %}"
+                >
+                    {% heroicon_mini "pencil-square" size=18 aria_hidden=true class="opacity-80 size-4" %}
+                    {% if determination.is_draft %}
+                        {% trans "Continue editing" %}
+                    {% else %}
+                        {% trans "Edit" %}
+                    {% endif %}
+                </a>
             {% endif %}
-            {% for question, answer in group.questions %}
-                <h5>{{ question }}</h5>
-                {% if answer %}{% if answer == True %}{{ answer|yesno:"Agree,Disagree" }}{% else %}{{ answer|nh3 }}{% endif %}{% else %}-{% endif %}
-            {% endfor %}
+        </div>
+
+        <section>
+            <h2 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300 question">
+                {% trans "Determination message" %}
+            </h2>
+
+            <div class="max-w-none prose">
+                {{ determination.message|nh3 }}
+            </div>
+        </section>
+
+        {% for group in determination.detailed_data.values %}
+            <section>
+                {% if group.title %}
+                    <h2 class="section-header">{{ group.title|nh3 }}</h2>
+                {% endif %}
+
+                {% for question, answer in group.questions %}
+                    <h3 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300 question">{{ question }}</h3>
+                    {% if answer %}
+                        {% if answer == True or answer == False %}
+                            {{ answer|yesno:"Agree,Disagree" }}
+                        {% else %}
+                            <div class="max-w-none prose">
+                                {{ answer|nh3 }}
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        -
+                    {% endif %}
+                {% endfor %}
+                <section>
         {% endfor %}
+
     </div>
 {% endblock %}

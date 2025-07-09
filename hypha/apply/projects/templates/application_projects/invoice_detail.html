@@ -1,63 +1,112 @@
 {% extends "base-apply.html" %}
-{% load i18n humanize invoice_tools heroicons %}
+{% load i18n humanize invoice_tools heroicons apply_tags %}
 
 {% block title %}{% trans "Invoice" %}: {{ object.invoice_number }} - {{ object.project.title }}{% endblock %}
+
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ object.project.get_absolute_url }}"
+            back_link_text="{% trans 'View project' %} #{{ object.project.application_id }}"
+            title="{% trans 'Invoice' %}: {{ object.invoice_number }}"
+            subtitle="{% trans 'For' %} {{ object.project.title|truncatechars_middle:80 }}"
+        />
+    </c-hero>
+{% endblock %}
+
 {% block content %}
     {% display_invoice_status_for_user user object as invoice_status %}
     {% can_show_paid_date invoice as show_paid_date %}
+    <div class="my-4 layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-end">
+        <article class="flex flex-col gap-4 layout-main">
 
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
-                {% trans "View project page" %}
-            </a>
-        {% endslot %}
-        {% slot header %}{% trans "Invoice" %}: {{ object.invoice_number }}{% endslot %}
-        {% slot sub_heading %}{% trans "For" %}: {{ object.project.title }}{% endslot %}
-    {% endadminbar %}
-
-    <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
-        <div class="wrapper--sidebar--inner">
-            <div class="card card--solid">
-                <p class="card__text"><b>{% trans "Invoice number" %}:</b> {{ object.invoice_number }}</p>
-                <p class="card__text"><b>{% trans "Invoice date" %}:</b> {% if invoice.invoice_date %}{{ invoice.invoice_date }}{% else %} {{ invoice.requested_at.date }} {% endif %}</p>
-                {% if show_paid_date %}
-                    <p class="card__text"><b>{% trans "Paid date" %}:</b> {{ invoice.paid_date }}</p>
-                {% endif %}
-                <p class="card__text"><b>{% trans "Vendor" %}:</b>
-                    {{ object.project.user }}</p>
-                {% if not HIDE_STAFF_IDENTITY or request.user.is_org_faculty %}
-                    <p class="card__text"><b>{% trans "Lead" %}:</b> {{ object.project.lead }}</p>
-                {% endif %}
-                <p class="card__text"><b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}</p>
-            </div>
-            <div hx-get="{% url 'apply:projects:partial-invoice-status' pk=object.project.pk invoice_pk=object.pk %}" hx-trigger="load, invoicesUpdated from:body" class="flex card card--solid" x-data="{ collapsed: true }">
-                <div class="flex-none content-center min-h-10"><div class="h-4 bg-gray-400 rounded-full animate-pulse min-w-96"></div></div>
-                <div class="ps-2"></div>
-            </div>
-
-            <div class="card card--solid">
-                <div class="card__inner">
-                    <h5 class="card__heading">{% trans "Invoice" %}</h5>
-                    <p class="card__text"><a target="_blank" href="{% url "apply:projects:invoice-document" pk=object.project.submission.id invoice_pk=object.pk %}">{{object.filename}}</a></p>
-                    <embed src="{% url "apply:projects:invoice-document" pk=object.project.submission.id invoice_pk=object.pk %}" width="800px" height="800px" />
+            <!-- meta -->
+            <section class="card card-border bg-base-200">
+                <div class="grid grid-cols-1 text-base lg:grid-cols-2 card-body">
+                    <p>
+                        <b>{% trans "Invoice number" %}:</b> {{ object.invoice_number }}
+                    </p>
+                    <p>
+                        <b>{% trans "Invoice date" %}:</b>
+                        {% if invoice.invoice_date %}
+                            {{ invoice.invoice_date }}
+                        {% else %}
+                            {{ invoice.requested_at.date }}
+                        {% endif %}
+                    </p>
+                    {% if show_paid_date %}
+                        <p>
+                            <b>{% trans "Paid date" %}:</b> {{ invoice.paid_date }}
+                        </p>
+                    {% endif %}
+                    <p><b>{% trans "Vendor" %}:</b>
+                        {{ object.project.user }}</p>
+                    {% if not HIDE_STAFF_IDENTITY or request.user.is_org_faculty %}
+                        <p>
+                            <b>{% trans "Lead" %}:</b> {{ object.project.lead }}
+                        </p>
+                    {% endif %}
+                    <p>
+                        <b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}
+                    </p>
                 </div>
-                {% if object.supporting_documents.exists %}
-                    <div class="card__inner">
-                        <h5 class="card__heading">{% trans "Supporting Documents" %}</h5>
+            </section>
+
+            <!-- status -->
+            <section
+                hx-get="{% url 'apply:projects:partial-invoice-status' pk=object.project.pk invoice_pk=object.pk %}"
+                hx-trigger="load, invoicesUpdated from:body"
+                class="card card-border"
+            >
+                <div class="flex-none content-center min-h-10">
+                    <div class="h-4 rounded-full animate-pulse bg-base-300 min-w-96"></div>
+                </div>
+            </section>
+
+            <!-- invoice -->
+            <section class="card card-border bg-base-100">
+                <div class="card-body">
+                    <h2 class="card-title">{% trans "Invoice" %}</h2>
+                    <p>
+                        <c-card-attachment
+                            href="{% url 'apply:projects:invoice-document' pk=object.project.submission.id invoice_pk=object.pk %}"
+                            :filename="object.filename"
+                            title="{% trans 'Download invoice' %}"
+                        />
+                    </p>
+                    <div class="overflow-x-auto mt-4">
+                        <embed
+                            src="{% url 'apply:projects:invoice-document' pk=object.project.submission.id invoice_pk=object.pk %}"
+                            width="800px"
+                            height="800px"
+                        />
+                    </div>
+                </div>
+            </section>
+
+            {% if object.supporting_documents.exists %}
+                <section class="card card-border">
+                    <div class="card-body">
+                        <h2 class="card-title">{% trans "Supporting Documents" %}</h2>
                         {% for document in object.supporting_documents.all %}
-                            <p class="card__text">
-                                <a href="{{ document.get_absolute_url }}">
+                            <p>
+                                <a href="{{ document.get_absolute_url }}" class="link">
                                     {{document.filename}}
                                 </a>
                             </p>
                         {% endfor %}
                     </div>
-                {% endif %}
-            </div>
-        </div>
-        <aside class="sidebar">
-            <div hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}" hx-trigger="invoicesUpdated from:body" class="sticky top-8 sidebar__inner sidebar__inner--light-blue sidebar__inner--actions" data-testid="sidebar-primary-actions">
+                </section>
+            {% endif %}
+        </article>
+
+        <aside class="layout-sidebar">
+            <div
+                class="sticky top-8 card card-border bg-base-200 shadow-xs sidebar__inner--actions"
+                hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}"
+                hx-trigger="invoicesUpdated from:body"
+                data-testid="sidebar-primary-actions"
+            >
                 {% include "application_projects/partials/invoice_detail_actions.html" %}
             </div>
         </aside>

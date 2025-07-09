@@ -1,18 +1,26 @@
 {% extends "base-apply.html" %}
 {% load wagtailcore_tags static i18n util_tags heroicons %}
 {% block title %}{% trans "Previewing" %}: {{object.title }}{% endblock %}
-{% block body_class %}bg-white{% endblock %}
+
+{% block hero %}
+    <c-hero>
+        <c-hero.header title="{% trans 'Previewing' %}: {{ object.title }}" />
+    </c-hero>
+{% endblock %}
 
 {% block content %}
+    <div class="my-4 mx-auto max-w-4xl">
 
-    {% adminbar %}
-        {% slot header %}{% trans "Previewing" %}: {{ object.title }}{% endslot %}
-    {% endadminbar %}
-
-    <div class="wrapper wrapper--medium wrapper--form">
         {% include "funds/includes/rendered_answers.html" %}
 
-        <form id="preview-form-submit" class="form application-form" action="{% url 'funds:submissions:edit' object.id %}" method="POST" enctype="multipart/form-data" novalidate>
+        <form
+            id="preview-form-submit"
+            class="form application-form"
+            action="{% url 'funds:submissions:edit' object.id %}"
+            method="POST"
+            enctype="multipart/form-data"
+            novalidate
+        >
             {% csrf_token %}
 
             {# Hidden form fields to allow for POSTing to funds:submissions:edit on submit/edit #}
@@ -26,7 +34,9 @@
                         {% endif %}
                     {% else %}
                         <div class="max-w-none field-block prose">
-                            {{ field.block }}
+                            <div>
+                                {{ field.block }}
+                            </div>
                         </div>
                     {% endif %}
                 {% endfor %}
@@ -36,16 +46,26 @@
                     {{ hidden_field }}
                 {% endfor %}
             </div>
+
+            <div class="mt-4 card-actions">
+                {# Submit button - uses form="preview-form-submit" #}
+                <button
+                    class="btn btn-primary"
+                    form="preview-form-submit"
+                    name="submit"
+                    type="submit"
+                    :disabled="isFormSubmitting"
+                >
+                    {% trans "Submit for review" %}
+                </button>
+
+                <a
+                    class="btn btn-secondary btn-outline"
+                    href="{% url 'funds:submissions:edit' object.id %}"
+                >
+                    {% trans "Continue editing" %}
+                </a>
+            </div>
         </form>
-
-        <form id="preview-form-edit" class="form application-form" action="{% url 'funds:submissions:edit' object.id %}" x-data="{ isFormSubmitting: false }" x-on:submit="isFormSubmitting = true">
-            {% csrf_token %}
-        </form>
-
-        <div class="form__group">
-            <button class="button button--primary" form="preview-form-submit" name="submit" type="submit" :disabled="isFormSubmitting">{% trans "Submit for review" %}</button>
-            <button class="button button--secondary" form="preview-form-edit">{% trans "Edit" %}</button>
-        </div>
-
     </div>
 {% endblock %}

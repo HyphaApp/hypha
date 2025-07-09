@@ -3,19 +3,23 @@
 
 {% block title %}{% trans "Deleting" %}: {{ object }}{% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header title="{% trans 'Deleting' %}: {{ object }}" />
+    </c-hero>
+{% endblock %}
+
 {% block content %}
+    <form
+        method="post"
+        class="my-4 mx-auto w-full max-w-3xl form"
+        action=""
+    >
+        {% csrf_token %}
+        <p>
+            <strong>{% trans "Are you sure you want to delete" %} "{{ object }}"?</strong>
+        </p>
 
-    {% adminbar %}
-        {% slot header %}{% trans "Deleting" %}: {{ object }}{% endslot %}
-    {% endadminbar %}
-
-    <div class="wrapper wrapper--default-bg wrapper--form wrapper--sidebar">
-        <div class="wrapper--sidebar--inner">
-            <form class="form" action="" method="post">
-                {% csrf_token %}
-                <p><strong>{% trans "Are you sure you want to delete" %} "{{ object }}"?</strong></p>
-                <button class="button button--warning button--submit button--top-space" type="submit">{% trans "Confirm" %}</button>
-            </form>
-        </div>
-    </div>
+        <button class="mt-4 btn btn-error" type="submit">{% trans "Confirm" %}</button>
+    </form>
 {% endblock %}

@@ -3,7 +3,7 @@
 
 {% block header %}
     <header
-        class="flex gap-4 justify-between items-center py-2 mx-auto w-full header max-w-[1280px]"
+        class="flex gap-4 justify-between items-center py-2 mx-auto w-full header container-constrained"
         x-data="{'showDesktopMenu': false, isDesktop: false, mm: null}"
         x-init="mm = window.matchMedia(`(min-width: 768px)`); isDesktop = mm.matches; mm.addListener((e) => { isDesktop = e.matches }); "
     >
@@ -21,22 +21,34 @@
         {% endblock %}
 
         {% block user_menu %}
-            <div class="flex gap-2 no-print">
+            <div class="flex gap-2 print-hidden">
+
+                <button class="theme-toggle btn btn-circle btn-soft btn-secondary" data-tippy-content="{% trans 'Toggle color theme' %}">
+                    <div class="sr-only theme-label-when-auto">{% trans "Toggle theme" %} ({% trans "current theme" %}: auto)</div>
+                    <div class="sr-only theme-label-when-light">{% trans "Toggle theme" %} ({% trans "current theme" %}: light)</div>
+                    <div class="sr-only theme-label-when-dark">{% trans "Toggle theme" %} ({% trans "current theme" %}: dark)</div>
+
+
+                    <div class="sr-only">{% trans "Toggle Light / Dark / Auto color theme" %}</div>
+
+                    <svg aria-hidden="true" class="w-5 h-5 theme-icon-when-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <!-- <path d="M0 0h24v24H0z" fill="currentColor"></path> -->
+                        <path fill="currentColor" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2V4a8 8 0 1 0 0 16z"></path>
+                    </svg>
+                    {% heroicon_solid "moon" class="w-5 h-5 theme-icon-when-dark" aria_hidden="true" %}
+                    {% heroicon_solid "sun" class="w-5 h-5 theme-icon-when-light" aria_hidden="true" %}
+                </button>
+
                 {% if request.user.is_authenticated and request.user.is_apply_staff %}
                     {% include "includes/menu-notifications.html" %}
                 {% endif %}
-
-                {% if LANGUAGE_SWITCHER %}
-                    {% include "includes/language-switcher.html" %}
-                {% endif %}
-
 
                 {% if request.path != '/auth/' and request.path != '/login/' %}
                     {% include "includes/user_menu.html" %}
                 {% endif %}
 
                 <button
-                    class="p-1.5 text-center rounded-sm border transition-colors md:hidden hover:bg-slate-100"
+                    class="md:hidden btn btn-soft btn-square btn-secondary"
                     @click="showDesktopMenu = true"
                 >
                     <span class="sr-only">{% trans "Menu" %}</span>
@@ -48,11 +60,38 @@
 {% endblock header %}
 
 {% block footer %}
-    {% if settings.core.SystemSettings.footer_content %}
-        <footer class="py-10 px-4 footer shrink-0 bg-dark-blue">
-            <div class="max-w-none text-white wrapper wrapper--large prose prose-invert">
-                {{ settings.core.SystemSettings.footer_content|safe }}
+    <footer>
+        {% if settings.core.SystemSettings.footer_content %}
+            <div class="bg-base-300 text-base-content">
+                <div class="py-10 container-constrained">
+                    {{ settings.core.SystemSettings.footer_content|safe }}
+                </div>
             </div>
-        </footer>
-    {% endif %}
+        {% endif %}
+
+        <div class="bg-neutral text-neutral-content">
+            <div class="items-center py-4 footer container-constrained sm:footer-horizontal">
+                <aside class="gap-1">
+                    {% if ORG_LONG_NAME %}
+                        <span class="text-fg-muted">{% translate "Copyright" %} &COPY; {{ ORG_LONG_NAME }}</span>
+                    {% endif %}
+                    <span class="text-neutral-400">
+                        {% translate "Built with" %} <a href="https://docs.hypha.app" class="font-semibold hover:underline text-neutral-400 hover:text-neutral-300">Hypha</a>
+                    </span>
+                </aside>
+
+                <div class="grid-flow-col gap-4 items-center md:justify-self-end md:place-self-center">
+                    {% if settings.cookieconsent.CookieConsentSettings.cookieconsent_active %}
+                        <button onclick="openConsentPrompt()" class="text-neutral-400 link link-hover">{% trans "Manage cookies" %}</button>
+                    {% endif %}
+
+                    {% if LANGUAGE_SWITCHER %}
+                        <div>
+                            {% include "includes/language-switcher.html" %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </footer>
 {% endblock footer %}

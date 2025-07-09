@@ -1,24 +1,32 @@
 {% extends "base-apply.html" %}
-{% load i18n static %}
+{% load i18n static heroicons apply_tags %}
 {% block title %}{% trans "Editing" %}: {{object.title }}{% endblock %}
+
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ object.get_absolute_url }}"
+            back_link_text="{% trans 'View project' %} #{{ object.application_id }}"
+            title="{% trans 'Editing' %}: {{ object.title }}"
+        />
+    </c-hero>
+{% endblock %}
+
 {% block content %}
-
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ object.get_absolute_url }}">
-                {% trans "View project page" %}
-            </a>
-        {% endslot %}
-        {% slot header %}{% trans "Editing" %}: {{ object.title }}{% endslot %}
-    {% endadminbar %}
-
-    {% if approval_form_exists %}
-        {% include "forms/includes/form_errors.html" with form=pf_form %}
-
-        <div class="pt-8 pb-8 mx-auto mt-4 mb-12 wrapper wrapper--default-bg wrapper--sidebar ps-20">
-            <div class="wrapper--sidebar--inner">
-                <form class="form application-form" action="" method="post" enctype="multipart/form-data">
+    <div class="my-4 layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-end">
+        <article class="layout-main">
+            {% if approval_form_exists %}
+                <h2 class="pb-1 font-semibold border-b text-h3">{% trans "Project form" %}</h2>
+                <form
+                    class="max-w-3xl grow form application-form"
+                    action=""
+                    method="post"
+                    enctype="multipart/form-data"
+                >
                     {% csrf_token %}
+
+                    {% include "forms/includes/form_errors.html" with form=pf_form %}
+
                     {% for field in pf_form %}
                         {% if field.field %}
                             {% if field.field.multi_input_field %}
@@ -28,7 +36,9 @@
                             {% endif %}
                         {% else %}
                             <div class="max-w-none field-block prose">
-                                {{ field.block }}
+                                <div>
+                                    {{ field.block }}
+                                </div>
                             </div>
                         {% endif %}
                     {% endfor %}
@@ -38,36 +48,52 @@
                         {{ hidden_field }}
                     {% endfor %}
 
-                    {% trans "Save draft" as save_draft %}
-                    {% for button_name, button_type, button_value in buttons %}
-                        <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }}" {% if button_value == save_draft %}formnovalidate{% endif %}>{{ button_value }}</button>
-                    {% endfor %}
-                </form>
-            </div>
-            <aside class="sidebar sidebar__project">
-                {% if submissions_attachments %}
-                    <div class="sidebar__inner sidebar__inner--actions">
-                        <h5>{% trans "Proposal attachments" %}</h5>
-                        {% for file in submissions_attachments %}
-                            <p><b><a href="{{ file.url }}" target="_blank">{{ file.filename }}</a></b></p>
+                    <div class="mt-4 card-actions">
+                        {% trans "Save draft" as save_draft %}
+                        {% for button_name, button_type, button_value in buttons %}
+                            <button
+                                class="btn {{ button_type }}"
+                                type="submit"
+                                name="{{ button_name }}"
+                                {% if button_value == save_draft %}formnovalidate{% endif %}
+                            >{{ button_value }}</button>
                         {% endfor %}
                     </div>
-                {% endif %}
-            </aside>
-        </div>
-
-    {% else %}
-        <div class="wrapper wrapper--default-bg wrapper--form wrapper--sidebar">
-            <div class="wrapper--sidebar--inner">
-                <p>
+                </form>
+            {% else %}
+                <p class="prose">
                     {% trans "Project Form not configured. Please add an project form in the" %}
                     <a href="{% url 'wagtailadmin_pages:edit' object.submission.page.id %}" target="_blank">{% trans "fund settings" %}</a>.
                 </p>
-            </div>
-        </div>
+            {% endif %}
+        </article>
 
-    {% endif %}
+        {% if approval_form_exists and submissions_attachments %}
+            <aside class="layout-sidebar">
+                <div class="lg:sticky lg:top-4 card card-border">
+                    <div class="card-body">
+                        <h2 class="card-title">{% trans "Proposal attachments" %}</h2>
 
+                        <ul class="flex flex-col">
+                            {% for file in submissions_attachments %}
+                                <li class="hover:bg-base-200">
+                                    <a
+                                        href="{{ file.url }}"
+                                        target="_blank"
+                                        title="{% translate 'View' %} {{file.filename }}"
+                                        class="flex gap-2 items-center py-1 link"
+                                    >
+                                        {% heroicon_mini "paper-clip" class="size-4" aria_hidden=true %}
+                                        {{ file.filename|truncatechars_middle:45 }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block extra_css %}
@@ -76,7 +102,7 @@
 
 {% block extra_js %}
     {{ pf_form.media.js }}
-    <script src="{% static 'js/multi-input-fields.js' %}"></script>
+    <script src="{% static 'js/multi-input-fields-alpine.js' %}"></script>
     {% if not show_all_group_fields %}
         <script src="{% static 'js/form-group-toggle.js' %}"></script>
     {% endif %}

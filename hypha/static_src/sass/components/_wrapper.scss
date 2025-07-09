@@ -4,139 +4,6 @@
 .wrapper {
   width: 100%;
 
-  &--small {
-    max-width: variables.$wrapper--small;
-    margin-inline: auto;
-  }
-
-  &--medium {
-    max-width: variables.$wrapper--medium;
-    margin-inline: auto;
-  }
-
-  &--large {
-    max-width: variables.$site-width;
-    margin-inline: auto;
-  }
-
-  &--main {
-    padding-inline: variables.$gutters;
-
-    @include mixins.media-query(xl) {
-      padding-inline: 0;
-    }
-  }
-
-  &--default-bg {
-    background-color: var(--color-bg-default);
-  }
-
-  &--embed {
-    width: 100%;
-    height: 100%;
-
-    iframe,
-    object,
-    embed {
-      width: 100%;
-      height: 100%;
-    }
-
-    &--pdf {
-      object {
-        height: 300mm;
-      }
-    }
-  }
-
-  &--form {
-    padding: 0;
-    margin: 2em auto;
-
-    @include mixins.media-query(lg) {
-      padding: 2rem 17rem 2rem 0;
-      margin: 1rem auto 3rem;
-    }
-  }
-
-  &--error {
-    display: flex;
-    align-items: center;
-    max-width: 830px;
-    padding: 10px;
-    margin: 0 auto 2rem;
-    background: variables.$color--light-pink;
-    border: 1px solid variables.$color--tomato;
-
-    .feed & {
-      margin: 0 0 1rem;
-    }
-  }
-
-  &--bottom-space {
-    padding-block-end: 20px;
-    margin-block-end: 20px;
-
-    @include mixins.media-query(md) {
-      padding-block-end: 3rem;
-      margin-block-end: 0;
-    }
-  }
-
-  // Inner spacing
-  &--inner-space-small {
-    padding: 20px 0;
-  }
-
-  &--inner-space-medium {
-    padding: 20px 0;
-
-    @include mixins.media-query(sm) {
-      padding: 2rem 0;
-    }
-
-    + .wrapper--inner-space-medium {
-      padding: 0;
-    }
-  }
-
-  &--inner-space-large {
-    padding: 20px 0;
-
-    @include mixins.media-query(md) {
-      padding: 3rem 0;
-    }
-  }
-
-  &--inner-space-xl {
-    padding: 2rem 20px;
-
-    @include mixins.media-query(md) {
-      padding: 4rem 20px;
-    }
-  }
-
-  // Outer spacing
-  &--top-outer-space-small {
-    margin: 20px 0 0;
-  }
-
-  &--outer-space-medium {
-    margin: 20px 0;
-
-    @include mixins.media-query(sm) {
-      margin: 2rem 0;
-    }
-  }
-
-  &--outer-space-large {
-    margin: 20px 0;
-
-    @include mixins.media-query(md) {
-      margin: 3rem 0;
-    }
-  }
-
   &--sidebar {
     display: flex;
     flex-direction: column;
@@ -149,48 +16,12 @@
         flex-basis: 210px;
       }
     }
-
-    &--inner {
-      flex: 1;
-    }
-
-    .card:first-child {
-      margin-block-start: 0;
-    }
-  }
-
-  &--search {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
-    @include mixins.media-query(sm) {
-      flex-direction: row;
-    }
-  }
-
-  &--sidebar-buttons {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  &--cta-box {
-    width: 500px;
-    padding: 20px;
-    color: variables.$color--default;
-    background-color: variables.$color--white;
-  }
-
-  &--applicant-dashboard {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
   }
 
   &--status-bar-outer {
     padding: 20px 0;
-    background-color: variables.$color--white;
-    border-block-end: 3px solid variables.$color--light-grey;
+    background-color: var(--color-base-100);
+    border-block-end: 3px solid var(--color-base-200);
   }
 
   &--status-bar-inner {
@@ -201,56 +32,6 @@
 
     @include mixins.media-query(md) {
       margin-block-end: 0;
-    }
-  }
-
-  &--activity-feed {
-    padding: 0 20px;
-    margin-block-start: 50px;
-
-    @include mixins.media-query(lg) {
-      margin-block-start: 70px;
-    }
-  }
-
-  &--comments {
-    margin-block-end: 1rem;
-    border-block-end: 1px solid variables.$color--mid-grey;
-
-    .helptext {
-      font-size: 15px;
-    }
-  }
-
-  &--tabs {
-    padding: 20px 0;
-
-    @include mixins.media-query(md) {
-      padding: 2rem 0;
-    }
-  }
-
-  &--table-actions {
-    @include mixins.media-query(md) {
-      display: flex;
-      justify-content: space-between;
-    }
-
-    @include mixins.media-query(lg) {
-      justify-content: flex-end;
-    }
-  }
-
-  &--submission-actions {
-    margin-inline-start: auto;
-    display: flex;
-    margin-block-start: 1rem;
-    align-items: flex-start;
-
-    @include mixins.media-query(lg) {
-      margin-block-start: 0;
-      justify-content: flex-end;
-      flex: 1;
     }
   }
 }

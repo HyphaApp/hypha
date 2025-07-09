@@ -1,8 +1,9 @@
 {% load i18n heroicons apply_tags %}
 
-<a class="flex justify-between items-center py-2 px-3 mb-2 max-w-2xl font-medium rounded-sm border transition-colors not-prose bg-slate-50 hover:bg-slate-200"
+<a class="flex justify-between items-center py-2 px-3 mb-2 max-w-2xl font-medium rounded-sm border transition-colors not-prose bg-base-200 hover:bg-base-300"
    href="{{ file.url }}"
-   target="_blank" rel="noopener noreferrer"
+   target="_blank"
+   rel="noopener noreferrer"
    title="View file - {{ file.filename }}"
 >
     <span class="text-sm truncate">
@@ -15,6 +16,6 @@
         </span>
     </span>
     <span>
-        {% heroicon_mini "arrow-down" class="inline align-text-bottom rounded-sm" aria_hidden=true %}
+        {% heroicon_mini "arrow-down" class="w-5 h-5" stoke_width=2 aria_hidden=true %}
     </span>
 </a>

@@ -2,62 +2,80 @@
 {% load can from permission_tags %}
 
 {% for submission in page.object_list %}
-    <div class="wrapper wrapper--status-bar-outer">
-        <div class="wrapper wrapper--status-bar-inner ms-4">
-            <div class="mt-5 lg:max-w-[30%]">
-                <h4 class="mb-0 font-bold heading line-clamp-3 hover:line-clamp-none">
-                    <a class="{% if not submission.is_active %} text-slate-500 {% endif %} hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
-                        {{ submission.title }}
-                        <span class="text-gray-400">#{{ submission.application_id }}</span>
-                    </a>
-                </h4>
-                <p class="m-0 mb-4 text-sm text-fg-muted">
+    <div class="list-row">
+        <div class="w-full sm:w-sm">
+            <h2 class="mb-1 font-bold text-h4 line-clamp-4">
+                <a
+                    class="link link-hover"
+                    href="{% url 'funds:submissions:detail' submission.id %}"
+                >
+                    {{ submission.title }}
+                    <span class="text-fg-muted">#{{ submission.application_id }}</span>
+
                     {% if submission.is_draft %}
-                        {% trans "Drafted on " %}
-                    {% else %}
-                        {% trans "Submitted on " %}
+                        <span class="badge badge-warning badge-sm badge-outline ms-1">{% trans "Draft" %}</span>
                     {% endif %}
-                    {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}
-                </p>
+                </a>
+            </h2>
+            <p class="text-xs text-fg-muted">
+                {% if submission.is_draft %}
+                    {% trans "Drafted" %}
+                {% else %}
+                    {% trans "Submitted" %}
+                {% endif %}
+                <relative-time datetime="{{ submission.submit_time|date:'c' }}">
+                    {{ submission.submit_time|date:'SHORT_DATETIME_FORMAT' }}
+                </relative-time>
+                {% if submission.user != request.user %}
+                    {% trans "by" %} {{ submission.user.get_full_name }}
+                {% endif %}
+            </p>
+            <div class="flex gap-2 mt-2">
                 {% if request.user|has_edit_perm:submission %}
-                    <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
+                    <a class="btn btn-primary btn-sm" href="{% url 'funds:submissions:edit' submission.id %}">
                         {% if submission.status == 'draft_proposal' %}
                             {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
                         {% else %}
-                            {% heroicon_micro "pencil" class="inline w-4 h-4 align-middle me-1" aria_hidden=true %}
+                            {% heroicon_micro "pencil-square" class="opacity-80 size-4" aria_hidden=true %}
                             {% trans "Edit" %}
                         {% endif %}
+                    </a>
+                {% else %}
+                    <a class="btn btn-sm btn-secondary" href="{% url 'funds:submissions:detail' submission.id %}">
+                        {% heroicon_micro "eye" class="opacity-80 size-4" aria_hidden=true %}
+                        {% trans "View" %}
                     </a>
                 {% endif %}
                 {% can "delete_submission" submission as can_delete_submission %}
                 {% if can_delete_submission %}
-                    <a class="button button--white" href="{% url 'funds:submissions:delete' submission.id %}" hx-get="{% url 'funds:submissions:delete' submission.id %}" hx-target="#htmx-modal">
-                        {% heroicon_micro "trash" class="inline mt-1 me-1 fill-red-600" aria_hidden=true %}
-                        {% trans "Delete" %}
+                    <a
+                        class="btn btn-sm btn-square btn-error btn-soft"
+                        href="{% url 'funds:submissions:delete' submission.id %}"
+                        hx-get="{% url 'funds:submissions:delete' submission.id %}"
+                        hx-target="#htmx-modal"
+                        role="button"
+                    >
+                        {% heroicon_micro "trash" class="opacity-80 size-4" aria_hidden=true %}
+                        <span class="sr-only">{% trans "Delete" %}</span>
                     </a>
                 {% endif %}
             </div>
-            {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
+        </div>
+
+        <div class="list-col-grow">
+            {% status_bar submission.workflow submission.phase request.user css_class="w-full" %}
         </div>
     </div>
 {% empty %}
-    {% trans "No active submissions" %}
+    <div class="list-row">
+        {% trans "No active submissions" %}
+    </div>
 {% endfor %}
 
-<nav class="mt-5 mb-20" aria-label="Pagination">
-    <span class="flex gap-2 justify-center items-center step-links">
-        {% if page.has_previous %}
-            <a href="#" hx-get="{% url 'dashboard:applicant_submissions' %}?page=1" hx-target="#submissions_list" class="py-2 px-3 border hover:bg-slate-300">&laquo;</a>
-            <a href="#" hx-get="{% url 'dashboard:applicant_submissions' %}?page={{ page.previous_page_number }}" hx-target="#submissions_list" class="py-2 px-3 border hover:bg-slate-300">&lsaquo;</a>
-        {% endif %}
+<c-pagination
+    :page="page"
 
-        <span class="current">
-            Page {{ page.number }} of {{ page.paginator.num_pages }}.
-        </span>
-
-        {% if page.has_next %}
-            <a href="#" hx-get="{% url 'dashboard:applicant_submissions' %}?page={{ page.next_page_number }}" hx-target="#submissions_list" class="py-2 px-3 border hover:bg-slate-300">&rsaquo;</a>
-            <a href="#" hx-get="{% url 'dashboard:applicant_submissions' %}?page={{ page.paginator.num_pages }}" hx-target="#submissions_list" class="py-2 px-3 border hover:bg-slate-300">&raquo;</a>
-        {% endif %}
-    </span>
-</nav>
+    target="#submissions_list"
+    class="my-4"
+    use_htmx
+></c-pagination>

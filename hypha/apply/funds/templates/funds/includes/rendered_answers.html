@@ -1,71 +1,88 @@
 {% load i18n wagtailusers_tags workflow_tags translate_tags heroicons %}
+
 {% if request.user|can_translate_submission %}
     {% if from_lang_name and to_lang_name %}
         {# For active translations #}
-        <div class="py-5 my-2 w-full text-center rounded-lg border shadow-md">
-            <span>
-                {% heroicon_outline "language" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
-                {% blocktrans %} This application is translated from {{from_lang_name}} to {{to_lang_name}}. {% endblocktrans %}
-                <a href="{% url 'funds:submissions:detail' object.id %}">
-                    {% trans "See original" %}
-                </a>
-            </span>
+        <div role="alert" class="mb-2 alert alert-info">
+            {% heroicon_mini "language" aria_hidden="true" stroke_width=2 class="opacity-80 size-5" %}
+            {% blocktrans %} This application is translated from {{from_lang_name}} to {{to_lang_name}}.{% endblocktrans %}
+            <a href="{% url 'funds:submissions:detail' object.id %}" class="btn btn-sm btn-outline">
+                {% trans "See original" %}
+            </a>
         </div>
     {% else %}
         {# For a translation loading indicator #}
-        <div id="translate-card-loading" class="overflow-hidden content-center p-0 m-0 w-full h-0 text-center rounded-lg shadow-md animate-pulse htmx-indicator">
-            <span class="bg-gray-200 rounded-lg w-[490px]"></span>
+        <div
+            role="alert"
+            id="translate-card-loading"
+            class="overflow-hidden content-center p-0 m-0 w-full h-0 text-center rounded-lg shadow-md"
+        >
+            <span class="loading loading-dots"></span>
         </div>
     {% endif %}
 {% endif %}
-<h3 class="pb-2 text-xl font-bold border-b">{% trans "Proposal Information" %}</h3>
-<div class="hypha-grid hypha-grid--proposal-info">
-    {% if object.get_value_display != "-" %}
-        <div>
-            <h5 class="text-base">{% trans "Requested Funding" %}</h5>
-            {{ object.get_value_display }}
-        </div>
-    {% endif %}
 
-    {% if object.get_duration_display != "-" %}
-        <div>
-            <h5 class="text-base">{% trans "Project Duration" %}</h5>
-            {{ object.get_duration_display }}
-        </div>
-    {% endif %}
+<section class="@container">
+    <h3 class="pb-2 mb-2 font-medium border-b text-h3">
+        {% trans "Proposal Information" %}
+    </h3>
 
-    {# Hide potential applicant PII if warranted #}
-    {% if object|show_applicant_identity:request.user %}
-        <div>
-            <h5 class="inline text-base">{% trans "Legal Name" %}</h5>{% if request.user.is_apply_staff %} <span class="text-sm">(<a class="underline" href="{% url 'wagtailusers_users:edit' object.user_id %}">{% trans "Edit" %}</a>)</span>{% endif %}
-            {{ object.get_full_name_display }}
-        </div>
-        <div>
-            <h5 class="text-base">{% trans "E-mail" %}</h5>
-            <a href="mailto:{{ object.user.email }}">{{ object.user.email }}</a>
-        </div>
-        {% if object.get_address_display != "-" %}
-            <div class="hypha-grid__cell--span-two">
-                <h5 class="text-base">{% trans "Address" %}</h5>
-                {{ object.get_address_display }}
+    <dl class="grid grid-cols-1 @md:grid-cols-2 @xl:grid-cols-3 gap-2 mb-4">
+        {% if object.get_value_display != "-" %}
+            <div class="fieldset">
+                <dt class="font-semibold">{% trans "Requested Funding" %}</dt>
+                <dd>{{ object.get_value_display }}</dd>
             </div>
         {% endif %}
-    {% endif %}
-    {% if object.get_organization_name_display != "-" %}
-        <div class="hypha-grid__cell--span-two">
-            <h5 class="text-base">{% trans "Organization name" %}</h5>
-            {{ object.get_organization_name_display }}
-        </div>
-    {% endif %}
-</div>
 
-<div class="rich-text rich-text--answers">
-    {{ object.output_answers }}
-</div>
+        {% if object.get_duration_display != "-" %}
+            <div class="fieldset">
+                <dt class="font-semibold">{% trans "Project Duration" %}</dt>
+                <dd>{{ object.get_duration_display }}</dd>
+            </div>
+        {% endif %}
+
+        {# Hide potential applicant PII if warranted #}
+        {% if object|show_applicant_identity:request.user %}
+            <div class="fieldset">
+                <dt class="font-semibold">{% trans "Legal Name" %}</dt>
+                <dd class="flex gap-2 items-center">
+                    {{ object.get_full_name_display }}
+                    {% if request.user.is_apply_staff %}
+                        <a class="link" href="{% url 'wagtailusers_users:edit' object.user_id %}">
+                            {% trans "Edit" %}
+                        </a>
+                    {% endif %}
+                </dd>
+            </div>
+            <div class="fieldset">
+                <dt class="font-semibold">{% trans "E-mail" %}</dt>
+                <dd><a href="mailto:{{ object.user.email }}">{{ object.user.email }}</a></dd>
+            </div>
+            {% if object.get_address_display != "-" %}
+                <div class="fieldset">
+                    <dt class="font-semibold">{% trans "Address" %}</dt>
+                    <dd>{{ object.get_address_display }}</dd>
+                </div>
+            {% endif %}
+        {% endif %}
+        {% if object.get_organization_name_display != "-" %}
+            <div class="fieldset">
+                <dt class="font-semibold">{% trans "Organization name" %}</dt>
+                <dd>{{ object.get_organization_name_display }}</dd>
+            </div>
+        {% endif %}
+    </dl>
+
+    <div class="flex flex-col gap-8 rich-text h-rendered-answers">
+        {{ object.output_answers }}
+    </div>
+
+</section>
 
 <style type="text/css">
     #translate-card-loading.htmx-request.htmx-indicator{
-        height: 64px;
+        height: 3rem;
         transition: height 0.25s ease-in;
         margin-top: 0.5rem;
         margin-bottom: 0.5rem;

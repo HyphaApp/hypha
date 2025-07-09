@@ -1,41 +1,12 @@
 {% load i18n wagtailimages_tags heroicons %}
 
 <li
-    class="reviews-sidebar__item {% if not reviewer.review %}no-response {% endif %}"
-    {% if hidden and  not reviewer.review %}x-cloak x-show="showHiddenReviewers" x-transition.opacity{% endif %}
+    class="px-0 py-2 {% if not reviewer.review %}text-base-content/80 {% endif %}"
+    {% if hidden and not reviewer.review %}x-cloak x-show="showHiddenReviewers" x-transition.opacity{% endif %}
 >
-    {% if not reviewer.review or reviewer.review.is_draft %}
-        <div class="reviews-sidebar__name">
-            <span>
-                {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == reviewer.reviewer %}
-                    {% trans "Reviewer" %}
-                {% else %}
-                    {{ reviewer }}
-                {% endif %}
-            </span>
-            {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
-        </div>
-        <div>-</div>
-        <div>-</div>
-    {% else %}
-        {% if request.user == reviewer.reviewer or request.user.is_reviewer and reviewer.review.reviewer_visibility or request.user.is_community_reviewer and reviewer.review.reviewer_visibility or request.user.is_apply_staff %}
-            <div>
-                <a href="{% url 'apply:submissions:reviews:review' submission_pk=reviewer.submission.id pk=reviewer.review.id %}">
-                    <div class="reviews-sidebar__name">
-                        <span>
-                            {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == reviewer.reviewer %}
-                                {% trans "Reviewer" %}
-                            {% else %}
-                                {{ reviewer }}
-                            {% endif %}
-                        </span>
-                        {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
-                    </div>
-                </a>
-                <div class="milli">{{ reviewer.review.created_at|date:"SHORT_DATE_FORMAT" }}</div>
-            </div>
-        {% else %}
-            <div class="reviews-sidebar__name">
+    <div class="grid grid-cols-6 col-span-2 w-full">
+        {% if not reviewer.review or reviewer.review.is_draft %}
+            <div class="col-span-4 reviews-sidebar__name">
                 <span>
                     {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == reviewer.reviewer %}
                         {% trans "Reviewer" %}
@@ -43,34 +14,81 @@
                         {{ reviewer }}
                     {% endif %}
                 </span>
-                {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
+                {% if reviewer.role and reviewer.role.icon %}{% image reviewer.role.icon max-12x12 %}{% endif %}
+            </div>
+            <div class="col-span-1">-</div>
+            <div class="col-span-1">-</div>
+        {% else %}
+            {% if request.user == reviewer.reviewer or request.user.is_reviewer and reviewer.review.reviewer_visibility or request.user.is_community_reviewer and reviewer.review.reviewer_visibility or request.user.is_apply_staff %}
+                <div class="col-span-4">
+                    <a class="font-semibold link link-hover" href="{% url 'apply:submissions:reviews:review' submission_pk=reviewer.submission.id pk=reviewer.review.id %}">
+                        <div class="flex gap-1 items-center">
+                            <span>
+                                {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == reviewer.reviewer %}
+                                    {% trans "Reviewer" %}
+                                {% else %}
+                                    {{ reviewer }}
+                                {% endif %}
+                            </span>
+                            {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
+                        </div>
+                    </a>
+                    <relative-time datetime="{{ reviewer.review.created_at|date:'c' }}" class="text-xs">
+                        {{ reviewer.review.created_at|date:'SHORT_DATETIME_FORMAT' }}
+                    </relative-time>
+                </div>
+            {% else %}
+                <div class="col-span-4">
+                    <span>
+                        {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == reviewer.reviewer %}
+                            {% trans "Reviewer" %}
+                        {% else %}
+                            {{ reviewer }}
+                        {% endif %}
+                    </span>
+                    {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
+                </div>
+            {% endif %}
+            {% with reviewer.review.get_recommendation_display as recommendation and reviewer.review.get_score_display as score %}
+                <div class="col-span-1 {{ recommendation|slugify }}">{{ recommendation }}</div>
+                <div class="col-span-1 {{ recommendation|slugify }}">{{ score }}</div>
+            {% endwith %}
+        {% endif %}
+    </div>
+
+    {% for opinion in reviewer.review.opinions.all %}
+        {% if forloop.first %}
+            <div class="list-col-wrap">
+                <ul class="steps steps-vertical">
+        {% endif %}
+
+        <li class="step">
+            <div class="flex gap-2 items-center">
+                <span>
+                    {{ opinion.author }}
+                    {% with role=opinion.author.role %}
+                        {% if role %}{% image role.icon max-12x12 %}{% endif %}
+                    {% endwith %}
+                </span>
+                <div class="reviews-sidebar__outcome {{ opinion.get_opinion_display|slugify }}">
+                    {{ opinion.get_opinion_display }}
+                </div>
+
+                {% if self.request.user == opinion.author.reviewer %}
+                    <button
+                        type="button"
+                        class="btn btn-square btn-ghost"
+                        hx-get="{% url 'apply:submissions:reviews:delete_opinion' submission_pk=opinion.review.submission.id pk=opinion.id %}"
+                        hx-target="#htmx-modal"
+                    >
+                        {% heroicon_outline "trash" aria_hidden="true" size=14 class="stroke-error" %}
+                    </button>
+                {% endif %}
+            </div>
+        </li>
+        {% if forloop.last %}
+            </ul>
             </div>
         {% endif %}
-        {% with reviewer.review.get_recommendation_display as recommendation and reviewer.review.get_score_display as score %}
-            <div class="{{ recommendation|slugify }}">{{ recommendation }}</div>
-            <div class="{{ recommendation|slugify }}">{{ score }}</div>
-        {% endwith %}
-    {% endif %}
+    {% endfor %}
 </li>
-
-{% for opinion in reviewer.review.opinions.all %}
-    {% if forloop.first %}
-        <ul class="reviews-sidebar__decision">
-    {% endif %}
-    <li class="reviews-sidebar__item reviews-sidebar__item--decision">
-        <div class="reviews-sidebar__name">
-            <span>{{ opinion.author }}</span>
-            {% with role=opinion.author.role %}
-                {% if role %}{% image role.icon max-12x12 %}{% endif %}
-            {% endwith %}
-        </div>
-        <div></div>
-        <div class="reviews-sidebar__outcome {{ opinion.get_opinion_display|slugify }}">{{ opinion.get_opinion_display}}</div>
-        <div class="text-center"><a href="{% url 'apply:submissions:reviews:delete_opinion' submission_pk=opinion.review.submission.id pk=opinion.id %}">
-            {% heroicon_outline "trash" aria_hidden="true" size=14 class="inline align-middle stroke-red-800" %}</a>
-        </div>
-    </li>
-    {% if forloop.last %}
-        </ul>
-    {% endif %}
-{% endfor %}

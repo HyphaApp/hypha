@@ -1,52 +1,55 @@
 {% extends "base-apply.html" %}
-{% load i18n %}
+{% load i18n heroicons apply_tags %}
 {% block title %}{% blocktrans with title=submission.title %}Revisions for {{ title }}{% endblocktrans %}{% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{% blocktranslate with title=submission.title_text_display|truncatechars_middle:60 %}Edits to {{ title }}{% endblocktranslate %}"
+            subtitle="List of all edits made to this application"
+            back_link="{{ submission.get_absolute_url }}"
+            back_link_text="{% trans 'View application' %} #{{ submission.application_id }}"
+        />
+    </c-hero>
+{% endblock %}
+
+
 {% block content %}
-    {% adminbar %}
-        {% slot header %}{% trans "Revisions" %}{% endslot %}
-        {% slot sub_heading %}
-            {% trans "For" %}
-            <a
-                class="text-blue-300 hover:underline"
-                href="{% url "funds:submissions:detail" submission.id %}"
-            >
-                {{ submission.title_text_display }}
-            </a>
-        {% endslot %}
-    {% endadminbar %}
+    <div class="my-4 mx-auto w-full max-w-2xl">
+        <h2 class="section-header">Application revisions</h2>
 
-    <div class="wrapper wrapper--medium">
-        <ul class="my-8 border border-slate-300">
+        <ol class="card card-border list">
             {% for revision in object_list %}
-                <li class="flex flex-col justify-between p-4 border-b border-dashed md:flex-row last:border-0 first:bg-sky-blue">
-                    <p class="m-0 font-semibold">
-                        {% trans "Edited by" %} {{ revision.author }}
+                <li class="list-row {% if not forloop.first %}hover:bg-base-200 cursor-pointer{% endif %}" {% if not forloop.first %}onclick="window.location.href='{{ revision.get_compare_url_to_latest }}'"{% endif %}>
+                    <p class="self-center list-col-grow">
+                        <span class="font-semibold">{{ revision.author }}</span> {% trans "edited" %}
 
-                        <relative-time datetime={{ revision.timestamp|date:"c" }}>
+                        <relative-time datetime={{ revision.timestamp|date:"c" }} class="text-fg-muted">
                             {{ revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}
                         </relative-time>
 
-                        {% if forloop.first %}
-                            ({% trans "current" %})
-                        {% endif %}
                         {% if revision.is_draft %}
-                            <span class="text-red-600">
+                            <span class="uppercase badge badge-warning badge-outline">
                                 ({% trans "draft" %})
                             </span>
                         {% endif %}
                     </p>
 
-                    {% if not forloop.first %}
+                    {% if forloop.first %}
+                        <span class="uppercase badge badge-info badge-outline">
+                            {% trans "latest" %}
+                        </span>
+                    {% else %}
                         <a
-                            class="button button--compare"
+                            class="btn btn-primary btn-sm"
                             href="{{ revision.get_compare_url_to_latest }}"
                         >
-                            {% trans "Compare" %}
+                            {% trans "Compare with latest" %}
+                            {% heroicon_mini "arrow-right" class="size-4" %}
                         </a>
                     {% endif %}
                 </li>
             {% endfor %}
-        </ul>
+        </ol>
     </div>
 {% endblock %}

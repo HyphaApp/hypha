@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
             name="message_for_pm",
             field=models.TextField(
                 blank=True,
-                help_text="This will be displayed as a comment in the conversations tab",
+                help_text="This will be displayed as a comment in the comments tab",
                 verbose_name="Comment",
             ),
         ),

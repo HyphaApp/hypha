@@ -1,0 +1,13 @@
+.table-container {
+  @apply overflow-x-auto;
+}
+
+.table-row-link {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.table-row-link:hover,
+.table-row-link:focus {
+  @apply bg-base-200;
+}

@@ -1,0 +1,48 @@
+.wmd-wrapper {
+  @apply border border-base-300 bg-base-200 rounded-field;
+}
+
+.wmd-panel {
+  --btn-width: 20px;
+
+  .wmd-button-row {
+    /* hard-coded white here to match with the icon bg color */
+    @apply flex items-center p-1 gap-1;
+  }
+
+  .wmd-spacer {
+    @apply bg-base-100 mx-1 h-(--btn-width) w-0.5;
+  }
+
+  .wmd-button {
+    @apply btn btn-square btn-sm bg-white btn-soft hover:border-secondary;
+
+    & > span {
+      @apply inline-block bg-no-repeat size-(--btn-width);
+      background-image: url("./../images/editor-buttons.png");
+      background-position: 0 0;
+    }
+  }
+  .wmd-input {
+    @apply field-sizing-content min-h-40;
+  }
+}
+
+.wmd-preview {
+  @apply px-3 rounded-b-field prose w-full max-w-none overflow-hidden bg-base-100;
+}
+
+.wmd-prompt-dialog {
+  @apply bg-base-100 rounded-box p-4 border;
+
+  input[type="text"] {
+    @apply input w-full my-2;
+  }
+  input[type="button"] {
+    @apply btn;
+  }
+}
+
+.wmd-prompt-background {
+  @apply bg-black;
+}

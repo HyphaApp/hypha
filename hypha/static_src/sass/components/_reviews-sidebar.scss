@@ -3,8 +3,6 @@
 
 .reviews-sidebar {
   $root: &;
-  margin-block-end: 20px;
-  font-weight: variables.$weight--bold;
 
   &__decision {
     position: relative;
@@ -16,19 +14,9 @@
   }
 
   &__item {
-    display: flex;
-    justify-content: space-between;
-    margin-block-end: 20px;
-
-    @supports (display: grid) {
-      display: grid;
-      grid-template-columns: 45% 25% 15% 15%;
-      gap: 5px;
-    }
-
     &--decision {
       margin-block-end: 10px;
-      font-weight: variables.$weight--semibold;
+      font-weight: var(--font-weight-semibold);
 
       &:first-child {
         #{$root}__outcome {
@@ -40,43 +28,31 @@
           }
 
           &::after {
-            @include mixins.triangle(
-              top,
-              variables.$color--white,
-              8px
-            );
+            @include mixins.triangle(top, var(--color-white), 8px);
             inset-block-start: -21px;
           }
 
           &::before {
-            @include mixins.triangle(
-              top,
-              variables.$color--mid-grey,
-              8px
-            );
+            @include mixins.triangle(top, variables.$color--mid-grey, 8px);
           }
         }
       }
     }
 
-    &.is-hidden {
-      display: none;
-    }
-
     &.no-response {
-      color: variables.$color--black-20;
+      color: var(--color-fg-muted);
     }
 
     .yes {
-      color: variables.$color--green;
+      color: var(--color-success);
     }
 
     .maybe {
-      color: variables.$color--mustard;
+      color: var(--color-warning);
     }
 
     .no {
-      color: variables.$color--tomato;
+      color: var(--color-error);
     }
   }
 
@@ -88,14 +64,6 @@
     position: relative;
     display: flex;
     align-items: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    background: variables.$color--white;
-
-    &:hover {
-      display: inline-flex;
-      overflow: visible;
-    }
 
     img {
       margin-inline-start: 7px;
@@ -106,15 +74,11 @@
     position: relative;
 
     &.agree {
-      color: variables.$color--green;
+      color: var(--color-success);
     }
 
     &.disagree {
-      color: variables.$color--tomato;
+      color: var(--color-error);
     }
-  }
-
-  &__split {
-    margin-block-end: 20px;
   }
 }

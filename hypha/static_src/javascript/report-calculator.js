@@ -54,15 +54,15 @@ document.addEventListener("htmx:afterRequest", function () {
     }
     function showHideFrequencyInputs() {
       const elements = document.querySelectorAll(
-        ".form__group--report-every, .form__group--schedule"
+        ".form__group--report-every, .form__group--schedule, [data-js-report-frequency-card]"
       );
       if (doesNotRepeatInput.checked) {
         elements.forEach((element) => {
-          element.classList.add("!hidden");
+          element.style.display = "none";
         });
       } else {
         elements.forEach((element) => {
-          element.classList.remove("!hidden");
+          element.style.display = "flex";
         });
       }
     }

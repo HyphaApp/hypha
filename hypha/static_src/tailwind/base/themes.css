@@ -1,0 +1,116 @@
+:root {
+  /* https://oklchroma.utilitybend.com/?p=color-brand%3Aok%3A56.2%2C0.102%2C243.2%3A0.05 */
+  --color-brand: oklch(56.2% 0.102 243);
+  --color-brand-base: 0.05;
+  --color-brand-10: oklch(
+    from var(--color-brand) 10%
+      calc(var(--color-brand-base) + (sin(1 * pi) * c)) h
+  );
+  --color-brand-20: oklch(
+    from var(--color-brand) 20%
+      calc(var(--color-brand-base) + (sin(0.9 * pi) * c)) h
+  );
+  --color-brand-30: oklch(
+    from var(--color-brand) 30%
+      calc(var(--color-brand-base) + (sin(0.8 * pi) * c)) h
+  );
+  --color-brand-40: oklch(
+    from var(--color-brand) 40%
+      calc(var(--color-brand-base) + (sin(0.7 * pi) * c)) h
+  );
+  --color-brand-50: oklch(
+    from var(--color-brand) 50%
+      calc(var(--color-brand-base) + (sin(0.6 * pi) * c)) h
+  );
+  --color-brand-60: oklch(
+    from var(--color-brand) 60%
+      calc(var(--color-brand-base) + (sin(0.5 * pi) * c)) h
+  );
+  --color-brand-70: oklch(
+    from var(--color-brand) 70%
+      calc(var(--color-brand-base) + (sin(0.4 * pi) * c)) h
+  );
+  --color-brand-80: oklch(
+    from var(--color-brand) 80%
+      calc(var(--color-brand-base) + (sin(0.3 * pi) * c)) h
+  );
+  --color-brand-90: oklch(
+    from var(--color-brand) 90%
+      calc(var(--color-brand-base) + (sin(0.2 * pi) * c)) h
+  );
+  --color-brand-100: oklch(
+    from var(--color-brand) 100%
+      calc(var(--color-brand-base) + (sin(0.1 * pi) * c)) h
+  );
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: false;
+  /* prefersdark: true; */
+  color-scheme: "dark";
+  --color-base-100: oklch(25.33% 0.016 252.42);
+  --color-base-200: oklch(23.26% 0.014 253.1);
+  --color-base-300: oklch(21.15% 0.012 254.09);
+  --color-base-content: oklch(97.807% 0.029 256.847);
+  --color-primary: var(--color-brand-50);
+  --color-primary-content: oklch(88.34% 0.019 251.473);
+  --color-secondary: oklch(64.092% 0.027 229.389);
+  --color-secondary-content: oklch(12.818% 0.005 229.389);
+  --color-accent: oklch(67.271% 0.167 35.791);
+  --color-accent-content: oklch(13.454% 0.033 35.791);
+  --color-neutral: oklch(10% 0 0);
+  --color-neutral-content: oklch(85.488% 0.002 253.041);
+  --color-info: oklch(62.616% 0.143 240.033);
+  --color-info-content: oklch(12.523% 0.028 240.033);
+  --color-success: oklch(70.226% 0.094 156.596);
+  --color-success-content: oklch(14.045% 0.018 156.596);
+  --color-warning: oklch(77.482% 0.115 81.519);
+  --color-warning-content: oklch(15.496% 0.023 81.519);
+  --color-error: oklch(51.61% 0.146 29.674);
+  --color-error-content: oklch(90.322% 0.029 29.674);
+  --radius-selector: 0.25rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.25rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+/* ensure this is after the dark mode, for the theme-toggle auto to work */
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: oklch(100% 0 0);
+  --color-base-200: oklch(98% 0 0);
+  --color-base-300: oklch(95% 0 0);
+  --color-base-content: oklch(22.389% 0.031 278.072);
+  --color-primary: var(--color-brand-60);
+  --color-primary-content: oklch(100% 0 0);
+  --color-secondary: oklch(55% 0.046 257.417);
+  --color-secondary-content: oklch(100% 0 0);
+  --color-accent: oklch(60% 0.118 184.704);
+  --color-accent-content: oklch(100% 0 0);
+  --color-neutral: oklch(0% 0 0);
+  --color-neutral-content: oklch(100% 0 0);
+  --color-info: oklch(60% 0.126 221.723);
+  --color-info-content: oklch(100% 0 0);
+  --color-success: oklch(62% 0.194 149.214);
+  --color-success-content: oklch(100% 0 0);
+  --color-warning: oklch(85% 0.199 91.936);
+  --color-warning-content: oklch(0% 0 0);
+  --color-error: oklch(70% 0.191 22.216);
+  --color-error-content: oklch(0% 0 0);
+  --radius-selector: 0.25rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.25rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}

@@ -18,28 +18,13 @@ from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import MetaTerm, Option
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.review.models import Review
-from hypha.apply.utils.image import generate_image_tag
-from hypha.images.models import CustomImage
+from hypha.core.tables import RelativeTimeColumn
 
 from .models import ApplicationSubmission, Round, ScreeningStatus
 from .widgets import MultiCheckboxesWidget
-from .workflows import STATUSES, get_review_active_statuses
+from .workflows import STATUSES
 
 User = get_user_model()
-
-
-def review_filter_for_user(user):
-    review_states = set(get_review_active_statuses(user))
-    statuses = [name for name, status in STATUSES.items() if review_states & status]
-    return [slugify(status) for status in statuses]
-
-
-def make_row_class(record):
-    css_class = (
-        "submission-meta__row" if record.next else "all-submissions-table__parent"
-    )
-    css_class += "" if record.active else " is-inactive"
-    return css_class
 
 
 def render_actions(table, record):
@@ -70,14 +55,14 @@ class SubmissionsTable(tables.Table):
         orderable=True,
         attrs={
             "td": {
-                "class": "js-title",
+                "class": "js-title max-w-sm",
             },
             "a": {
                 "data-tippy-content": lambda record: render_title(record),
                 "data-tippy-placement": "top",
                 # Use after:content-[''] after:block to hide the default browser tooltip on Safari
                 # https://stackoverflow.com/a/43915246
-                "class": "truncate inline-block w-[calc(100%-2rem)] after:content-[''] after:block",
+                "class": "link link-hover text-h4 font-semibold truncate inline-block w-[calc(100%-2rem)] after:content-[''] after:block",
             },
         },
     )
@@ -109,18 +94,17 @@ class SubmissionsTable(tables.Table):
         sequence = fields + ("comments",)
         template_name = "funds/tables/table.html"
         row_attrs = {
-            "class": make_row_class,
             "data-record-id": lambda record: record.id,
             "data-archived": lambda record: record.is_archive,
         }
-        attrs = {"class": "all-submissions-table"}
+        attrs = {"class": "table all-submissions-table"}
         empty_text = _("No submissions available")
 
     def render_user(self, value):
         return value.get_full_name()
 
     def render_phase(self, value):
-        return format_html("<span>{}</span>", value)
+        return format_html("<span class='badge badge-outline'>{}</span>", value)
 
     def order_last_update(self, qs, desc):
         update_order = getattr(F("last_update"), "desc" if desc else "asc")(
@@ -205,30 +189,6 @@ class BaseAdminSubmissionsTable(SubmissionsTable):
             return format_html(
                 "<span class='text-xs text-fg-muted'>{}</span>", "Awaiting"
             )
-
-
-class SummarySubmissionsTable(BaseAdminSubmissionsTable):
-    class Meta(BaseAdminSubmissionsTable.Meta):
-        orderable = False
-
-
-class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
-    """Adds Role Assigned to the 'Waiting for My Review' table"""
-
-    role_icon = tables.Column(verbose_name=_("Role"))
-
-    class Meta(BaseAdminSubmissionsTable.Meta):
-        sequence = BaseAdminSubmissionsTable.Meta.fields + ("role_icon", "comments")
-        orderable = False
-
-    def render_role_icon(self, value):
-        if value:
-            image = CustomImage.objects.filter(id=value).first()
-            if image:
-                filter_spec = "fill-20x20"
-                return generate_image_tag(image, filter_spec)
-
-        return ""
 
 
 def get_used_rounds(request):
@@ -421,21 +381,30 @@ class RoundsTable(tables.Table):
     title = tables.Column(
         linkify=lambda record: record.get_absolute_url(),
         orderable=True,
+        attrs={
+            "a": {"class": "link link-hover text-h4 font-semibold"},
+        },
     )
     fund = tables.Column(accessor=A("specific__fund"))
     lead = tables.Column()
     start_date = tables.Column()
     end_date = tables.Column()
-    progress = tables.Column(verbose_name=_("Determined"))
+    deterrmined = tables.Column(verbose_name=_("Determined"), accessor="progress")
+    start_date = RelativeTimeColumn(verbose_name=_("Start"))
+    end_date = RelativeTimeColumn(verbose_name=_("End"))
+
+    def __init__(self, *args, **kwargs):
+        self.prefix = kwargs.pop("prefix", "rounds")
+        super().__init__(*args, **kwargs)
 
     class Meta:
-        fields = ("title", "fund", "lead", "start_date", "end_date", "progress")
-        attrs = {"class": "responsive-table"}
+        fields = ("title", "fund", "lead", "start_date", "end_date", "deterrmined")
+        attrs = {"class": "table"}
 
     def render_lead(self, value):
         return format_html("<span>{}</span>", value)
 
-    def render_progress(self, record):
+    def render_deterrmined(self, record):
         return f"{record.progress}%"
 
     def _field_order(self, field, desc):
@@ -566,7 +535,10 @@ class ReviewerLeaderboardTable(tables.Table):
         args=[A("pk")],
         orderable=True,
         verbose_name=_("Reviewer"),
-        attrs={"td": {"class": "title"}},
+        attrs={
+            "a": {"class": "link link-hover text-h4 font-semibold"},
+            "td": {"class": "title"},
+        },
     )
 
     class Meta:
@@ -579,7 +551,7 @@ class ReviewerLeaderboardTable(tables.Table):
             "total",
         ]
         order_by = ("-ninety_days",)
-        attrs = {"class": "all-reviews-table"}
+        attrs = {"class": "table"}
         empty_text = _("No reviews available")
 
 
@@ -599,7 +571,7 @@ class ReviewerLeaderboardDetailTable(tables.Table):
                 "data-tippy-placement": "top",
                 # Use after:content-[''] after:block to hide the default browser tooltip on Safari
                 # https://stackoverflow.com/a/43915246
-                "class": "truncate inline-block w-[calc(100%-2rem)] after:content-["
+                "class": "link link-hover text-h4 font-semibold truncate inline-block w-[calc(100%-2rem)] after:content-["
                 "] after:block",
             },
         },
@@ -613,7 +585,7 @@ class ReviewerLeaderboardDetailTable(tables.Table):
             "created_at",
         ]
         order_by = ("-created_at",)
-        attrs = {"class": "all-reviews-table"}
+        attrs = {"class": "table"}
         empty_text = _("No reviews available")
 
 
@@ -630,5 +602,5 @@ class StaffAssignmentsTable(tables.Table):
         fields = [
             "full_name",
         ]
-        attrs = {"class": "all-reviews-table"}
+        attrs = {"class": "table"}
         empty_text = _("No staff available")

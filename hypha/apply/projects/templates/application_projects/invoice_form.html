@@ -1,49 +1,49 @@
 {% extends "base-apply.html" %}
 {% load i18n static %}
 
-{% block title %}{% if object %}{% trans "Edit" %}{% else %}{% trans "Add" %}{% endif %} {% trans "Invoice" %}: {% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
+{% block title %}
+    {% if object %}{% trans "Edit" %}{% else %}{% trans "Add" %}{% endif %}
+    {% trans "invoice" %}: {% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}
+{% endblock %}
+
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            back_link="{{ project.get_absolute_url }}"
+            back_link_text="{% trans 'View project' %} #{{ project.application_id }}"
+            title="{% if object %}{% trans 'Editing' %}{% else %}{% trans 'Add' %}{% endif %} {% trans 'invoice' %}"
+            subtitle="{% if object %}{{ object.project.title }}{% else %}{% trans 'For' %}: {{ project.title }}{% endif %}"
+        />
+    </c-hero>
+{% endblock %}
+
 {% block content %}
-
-    {% adminbar %}
-        {% slot back_link %}
-            <a class="admin-bar__back-link" href="{{ project.get_absolute_url }}">
-                {% trans "View project page" %}
-            </a>
-        {% endslot %}
-        {% slot header %}
-            {% if object %}
-                {% trans "Editing" %}
+    <form
+        class="my-4 mx-auto w-full max-w-3xl form"
+        action=""
+        method="post"
+        enctype="multipart/form-data"
+    >
+        {% include "forms/includes/form_errors.html" with form=form %}
+        {% csrf_token %}
+        {% for field in form %}
+            {% if field.field %}
+                {% include "forms/includes/field.html" %}
             {% else %}
-                {% trans "Add" %}
+                {{ field }}
             {% endif %}
-            {% trans "Invoice" %}
-        {% endslot %}
-        {% slot sub_heading %}
-            {% if object %}
-                {{ object.project.title }}
-            {% else %}
-                {% trans "For" %}: {{ project.title }}
-            {% endif %}
-        {% endslot %}
-    {% endadminbar %}
+        {% endfor %}
 
-    {% include "forms/includes/form_errors.html" with form=form %}
-
-    <div class="wrapper wrapper--default-bg wrapper--form wrapper--sidebar">
-        <div class="wrapper--sidebar--inner">
-            <form class="form" action="" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% for field in form %}
-                    {% if field.field %}
-                        {% include "forms/includes/field.html" %}
-                    {% else %}
-                        {{ field }}
-                    {% endif %}
-                {% endfor %}
-                {% for button_name, button_type, button_value in buttons %}
-                    <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }} {% if button_value == delete %}formnovalidate{% endif %}">{{ button_value }}</button>
-                {% endfor %}
-            </form>
+        <div class="mt-4 card-actions">
+            {% for button_name, button_type, button_value in buttons %}
+                <button
+                    class="btn {{ button_type }}"
+                    type="submit"
+                    name="{{ button_name }} {% if button_value == delete %}formnovalidate{% endif %}"
+                >
+                    {{ button_value }}
+                </button>
+            {% endfor %}
         </div>
-    </div>
+    </form>
 {% endblock %}

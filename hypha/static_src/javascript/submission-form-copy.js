@@ -85,9 +85,7 @@
   ) {
     var $button = $("<button/>")
       .text("Copy questions to clipboard")
-      .addClass(
-        "button button--primary button--narrow my-2 js-clipboard-button"
-      )
+      .addClass("btn sm:btn-sm w-full sm:w-auto js-clipboard-button")
       .attr(
         "title",
         "Copies all the questions and user input to the clipboard in plain text."
@@ -101,7 +99,7 @@
 
     $(".js-clipboard-button").on("click", function (e) {
       e.preventDefault();
-      $application_form.addClass("flash-item");
+      $application_form.addClass("animate-flash");
       var questions = get_questions();
       var $textarea = $("<textarea>")
         .html(questions)
@@ -111,7 +109,7 @@
       document.execCommand("copy");
       $textarea.remove();
       setTimeout(function () {
-        $application_form.removeClass("flash-item");
+        $application_form.removeClass("animate-flash");
       }, 1200);
     });
   }

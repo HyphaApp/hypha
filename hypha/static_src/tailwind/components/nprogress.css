@@ -1,0 +1,58 @@
+@layer base {
+  #nprogress {
+    /* Make clicks pass-through */
+    pointer-events: none;
+
+    .bar {
+      @apply bg-primary fixed w-full h-[2px];
+
+      z-index: 1031;
+      inset-block-start: 0;
+      inset-inline-start: 0;
+    }
+
+    /* Fancy blur effect */
+    .peg {
+      display: block;
+      position: absolute;
+      inset-inline-end: 0px;
+      width: 100px;
+      height: 100%;
+      box-shadow: 0 0 10px var(--color-primary), 0 0 5px var(--color-primary);
+      opacity: 1;
+
+      transform: rotate(3deg) translate(0px, -4px);
+    }
+
+    /* Remove these to get rid of the spinner */
+    .spinner {
+      display: block;
+      position: fixed;
+      z-index: 1031;
+      inset-block-start: 15px;
+      inset-inline-end: 15px;
+    }
+
+    .spinner-icon {
+      width: 18px;
+      height: 18px;
+      box-sizing: border-box;
+
+      border: solid 2px transparent;
+      border-top-color: var(--color-primary);
+      border-inline-start-color: var(--color-primary);
+      border-radius: 50%;
+
+      @apply animate-spin;
+    }
+  }
+
+  .nprogress-custom-parent {
+    @apply overflow-hidden relative;
+
+    #nprogress .spinner,
+    #nprogress .bar {
+      @apply absolute;
+    }
+  }
+}

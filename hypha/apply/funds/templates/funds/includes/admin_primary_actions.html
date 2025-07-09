@@ -1,11 +1,11 @@
 {% load i18n %}
 {% load heroicons primaryactions_tags translate_tags %}
 
-<h5>{% trans "Actions to take" %}</h5>
+<h2 class="mb-2 card-title">{% trans "Actions to take" %}</h2>
 
 {% if object.is_archive %}
     <a
-        class="w-full button button--bottom-space button--primary"
+        class="btn btn-primary btn-block"
         href="{% url 'funds:submissions:archive' pk=object.pk %}"
         hx-get="{% url 'funds:submissions:archive' pk=object.pk %}"
         hx-target="#htmx-modal"
@@ -15,123 +15,145 @@
         {% trans "Unarchive Submission" %}
     </a>
 {% else %}
-    {% if PROJECTS_ENABLED %}
-        {% if object.accepted_for_funding and not object.project %}
-            <button class="button button--bottom-space button--primary button--full-width"  hx-get="{% url 'funds:submissions:create_project' pk=object.pk %}" hx-target="#htmx-modal">
-                {% trans "Create Project" %}
-            </button>
-        {% endif %}
-    {% endif %}
-
-    {% if object.ready_for_determination %}
-        {% trans "Complete draft determination" as determination_draft %}
-        {% include 'determinations/includes/determination_button.html' with submission=object class="button--bottom-space" draft_text=determination_draft %}
-    {% endif %}
-
-    {% if object.in_internal_review_phase or object.in_external_review_phase %}
-        {% trans "Complete draft review" as review_draft %}
-        {% include 'review/includes/review_button.html' with submission=object class="button--full-width button--bottom-space" draft_text=review_draft %}
-
-        {% if object.in_external_review_phase or not object.has_all_reviewer_roles_assigned %}
-            <button
-                class="button button--bottom-space button--primary button--full-width"
-                hx-get="{% url 'funds:submissions:reviewers_update' pk=object.pk %}"
-                hx-target="#htmx-modal"
-            >{% trans "Assign reviewers" %}</button>
-        {% endif %}
-    {% endif %}
-
-    {% if object.is_finished %}
-        {% with determination=object.determinations.last %}
-            {% if determination %}
-                <a
-                    class="button button--primary button--full-width button--bottom-space"
-                    href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}"
-                >{% trans "View determination" %}</a>
+    <div class="flex flex-col gap-2">
+        {% if PROJECTS_ENABLED %}
+            {% if object.accepted_for_funding and not object.project %}
+                <button
+                    class="btn btn-primary btn-block"
+                    hx-get="{% url 'funds:submissions:create_project' pk=object.pk %}"
+                    hx-target="#htmx-modal"
+                >
+                    {% trans "Create project" %}
+                </button>
             {% endif %}
-        {% endwith %}
-    {% endif %}
+        {% endif %}
 
-    {% show_progress_button request.user object as show_progress_form %}
-    <div>
+        {% if object.ready_for_determination %}
+            {% trans "Complete draft determination" as determination_draft %}
+            {% include 'determinations/includes/determination_button.html' with submission=object draft_text=determination_draft %}
+        {% endif %}
+
+        {% if object.in_internal_review_phase or object.in_external_review_phase %}
+            {% trans "Complete draft review" as review_draft %}
+            {% include 'review/includes/review_button.html' with submission=object draft_text=review_draft %}
+
+            {% if object.in_external_review_phase or not object.has_all_reviewer_roles_assigned %}
+                <button
+                    class="btn btn-primary btn-block"
+                    hx-get="{% url 'funds:submissions:reviewers_update' pk=object.pk %}"
+                    hx-target="#htmx-modal"
+                >{% trans "Assign reviewers" %}</button>
+            {% endif %}
+        {% endif %}
+
+        {% if object.is_finished %}
+            {% with determination=object.determinations.last %}
+                {% if determination %}
+                    <a
+                        class="btn btn-primary btn-block"
+                        href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}"
+                    >{% trans "View determination" %}</a>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+
+        {% show_progress_button request.user object as show_progress_form %}
         <button
-            class="button button--primary button--full-width {% if show_progress_form %}is-not-disabled{% else %}is-disabled{% endif %}"
-            hx-get="{% url 'funds:submissions:progress' pk=object.pk %}"
-            hx-target="#htmx-modal"
-        >{% trans "Update status" %}</button>
+            class="btn btn-primary btn-block"
+            {% if show_progress_form %}
+                hx-get="{% url 'funds:submissions:progress' pk=object.pk %}"
+                hx-target="#htmx-modal"
+            {% else %}disabled{% endif %}
+        >
+            {% trans "Update status" %}
+        </button>
     </div>
 
-    <div class="mt-4 sidebar__separator">{% trans "Assign" %}</div>
+    <div class="mb-2 divider divider-start text-fg-muted">
+        {% trans "Assign" %}
+    </div>
 
-    <div class="gap-4 mt-2 wrapper wrapper--sidebar-buttons">
+    <div class="flex flex-wrap gap-2 justify-between">
         <button
-            class="button button--half-width button--white"
+            class="btn btn-outline grow"
             hx-get="{% url 'funds:submissions:reviewers_update' pk=object.pk %}"
             hx-target="#htmx-modal"
         >{% trans "Reviewers" %}</button>
 
         <button
-            class="button button--half-width button--white"
+            class="btn btn-outline grow"
             hx-get="{% url 'funds:submissions:partners_update' pk=object.pk %}"
             hx-target="#htmx-modal"
         >{% trans "Partners" %}</button>
 
         <button
-            class="button button--half-width button--white"
+            class="btn btn-outline grow"
             hx-get="{% url 'funds:submissions:lead_update' pk=object.pk %}"
             hx-target="#htmx-modal"
         >{% trans "Lead" %}</button>
     </div>
 
     <details class="mt-4">
-        <summary class="sidebar__separator sidebar__separator--medium">
+        <summary class="mb-2 font-semibold uppercase text-fg-muted">
             {% trans "More actions" %}
         </summary>
 
-        <a
-            class="button button--white button--full-width button--bottom-space"
-            href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}"
-        >{% trans "Revisions" %}</a>
+        <div class="flex flex-col gap-2">
+            <a
+                class="w-full btn btn-outline"
+                href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}"
+            >
+                {% heroicon_outline "document-duplicate" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
+                {% trans "Revisions" %}
+            </a>
 
-        {% if request.user|can_translate_submission %}
+            {% if request.user|can_translate_submission %}
+                <button
+                    class="w-full btn btn-outline"
+                    hx-get="{% url 'funds:submissions:translate' pk=object.pk %}"
+                    hx-target="#htmx-modal"
+                >
+                    {% heroicon_outline "language" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
+                    {% trans "Translate" %}
+                </button>
+            {% endif %}
+
             <button
-                class="button button--white button--full-width button--bottom-space"
-                hx-get="{% url 'funds:submissions:translate' pk=object.pk %}"
+                class="w-full btn btn-outline"
+                hx-get="{% url 'funds:submissions:metaterms_update' pk=object.pk %}"
                 hx-target="#htmx-modal"
             >
-                {% heroicon_outline "language" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
-                {% trans "Translate" %}
+                {% heroicon_outline "tag" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
+                {% trans "Tags" %}
             </button>
-        {% endif %}
 
-        <button
-            class="button button--white button--full-width button--bottom-space"
-            hx-get="{% url 'funds:submissions:metaterms_update' pk=object.pk %}"
-            hx-target="#htmx-modal"
-        >{% trans "Tags" %}</button>
-
-        <button
-            class="button button--white button--full-width button--bottom-space"
-            hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}"
-            hx-target="#htmx-modal"
-        >{% trans "Create Reminder" %}</button>
-
-        <a
-            class="button button--white button--full-width button--bottom-space"
-            href="{% url "apply:submissions:download" pk=object.pk %}"
-        >
-            {% trans "Download PDF" %}
-        </a>
-
-        {% if can_archive %}
             <button
-                class="button button--white button--full-width button--bottom-space"
-                hx-get="{% url 'funds:submissions:archive' pk=object.pk %}"
+                class="w-full btn btn-outline"
+                hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}"
                 hx-target="#htmx-modal"
             >
-                {% heroicon_outline "lock-closed" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
-                {% trans "Archive Submission" %}
+                {% heroicon_outline "bell-snooze" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
+                {% trans "Create Reminder" %}
             </button>
-        {% endif %}
+
+            <a
+                class="w-full btn btn-outline"
+                href="{% url "apply:submissions:download" pk=object.pk %}"
+            >
+                {% heroicon_outline "arrow-down-tray" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
+                {% trans "Download as PDF" %}
+            </a>
+
+            {% if can_archive %}
+                <button
+                    class="w-full btn btn-outline"
+                    hx-get="{% url 'funds:submissions:archive' pk=object.pk %}"
+                    hx-target="#htmx-modal"
+                >
+                    {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
+                    {% trans "Archive" %}
+                </button>
+            {% endif %}
+        </div>
     </details>
 {% endif %}

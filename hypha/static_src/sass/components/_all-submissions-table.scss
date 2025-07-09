@@ -2,23 +2,13 @@
 @use "../abstracts/variables";
 
 // stylelint-disable selector-class-pattern
-
 .all-submissions-table {
-  @include mixins.table-ordering-styles;
-
   $root: &;
-  font-size: 14px;
 
   thead {
-    display: none;
-
-    @include mixins.media-query(lg) {
-      display: table-header-group;
-    }
-
     th {
       &.reviews_stats {
-        color: variables.$color--black-60;
+        color: var(--color-fg-muted);
 
         div {
           font-size: 0.75rem;
@@ -36,21 +26,6 @@
         }
       }
 
-      &.phase {
-        @include mixins.media-query(lg) {
-          width: 150px;
-        }
-      }
-
-      &.selected {
-        @include mixins.table-checkbox;
-
-        @include mixins.media-query(lg) {
-          width: 50px;
-          padding-inline-end: 0;
-        }
-      }
-
       &.comments {
         @include mixins.media-query(lg) {
           width: 110px;
@@ -63,18 +38,12 @@
         }
       }
     }
-
-    tr {
-      &:hover {
-        box-shadow: none;
-      }
-    }
   }
 
   tbody {
     tr {
       &[data-archived="True"] {
-        background-color: variables.$color--light-mid-grey;
+        background-color: var(--color-base-200);
       }
     }
 
@@ -83,7 +52,7 @@
       &.title {
         position: relative;
         padding-block-start: 15px;
-        font-weight: variables.$weight--bold;
+        font-weight: var(--font-weight-bold);
 
         @include mixins.media-query(lg) {
           display: flex;
@@ -95,51 +64,19 @@
         }
       }
 
-      // project status label
-      &.phase {
-        span {
-          display: inline-block;
-          padding: 5px;
-          font-size: 13px;
-          font-weight: variables.$weight--bold;
-          color: variables.$color--marine;
-          text-align: center;
-          background-color: variables.$color--sky-blue;
-
-          @include mixins.media-query(lg) {
-            width: 100%;
-          }
-        }
-      }
-
       // comments
       &.comments {
-        display: none;
-
-        @include mixins.media-query(lg) {
-          display: table-cell;
-          font-size: 13px;
-          text-align: center;
-          vertical-align: middle;
-          background: url("./../images/quote-outline.svg") transparent
-            no-repeat center center;
-          background-size: 24px;
-        }
+        display: table-cell;
+        font-size: 13px;
+        text-align: center;
+        vertical-align: middle;
+        background: url("./../images/quote-outline.svg") transparent no-repeat
+          center center;
+        background-size: 24px;
       }
 
       &.reviews_stats {
         display: none;
-
-        @include mixins.media-query(lg) {
-          display: table-cell;
-        }
-      }
-
-      // batch action checkboxes
-      &.selected {
-        @include mixins.table-checkbox;
-        display: none;
-        padding-inline-end: 0;
 
         @include mixins.media-query(lg) {
           display: table-cell;
@@ -158,25 +95,6 @@
         }
       }
 
-      // arrow to toggle project info - added via js
-      @include mixins.media-query(lg) {
-        .arrow {
-          @include mixins.triangle(
-            right,
-            variables.$color--primary,
-            6px
-          );
-          position: relative;
-          display: inline-block;
-          transform: rotate(0);
-          transition: transform variables.$transition;
-
-          &:hover {
-            cursor: pointer;
-          }
-        }
-      }
-
       > span.mobile-label {
         display: inline-block;
         width: 90px;
@@ -190,72 +108,6 @@
           display: none;
         }
       }
-    }
-  }
-
-  &__parent {
-    &.is-expanded {
-      background-color: variables.$color--mist;
-      border-block-end: 1px solid variables.$color--light-mid-grey;
-
-      + #{$root}__child {
-        border-block-end: 1px solid variables.$color--light-mid-grey;
-      }
-
-      + #{$root}__child,
-      + #{$root}__child + #{$root}__child {
-        display: table-row;
-      }
-
-      .arrow {
-        transform: rotate(90deg);
-      }
-    }
-  }
-
-  &__child {
-    display: none;
-    color: variables.$color--mid-dark-grey;
-    vertical-align: top;
-    background-color: variables.$color--mist;
-    border: 0;
-    border-block-end: 2px solid variables.$color--light-grey;
-
-    &:hover {
-      box-shadow: none;
-    }
-
-    td {
-      padding: 10px;
-    }
-
-    p {
-      margin: 0;
-      font-weight: variables.$weight--bold;
-      color: variables.$color--default;
-    }
-
-    .title {
-      a {
-        visibility: hidden;
-      }
-    }
-  }
-
-  &__empty {
-    td {
-      padding: 20px;
-    }
-  }
-
-  &__toggle {
-    padding: 0.5em;
-    margin-block-start: -0.5em;
-    cursor: pointer;
-    vertical-align: top;
-
-    &:hover {
-      opacity: 0.7;
     }
   }
 }

@@ -1,29 +1,31 @@
 {% load i18n invoice_tools humanize heroicons %}
 {% load can from permission_tags %}
 
-<section id="invoices" class="docs-block wrapper--outer-space-large">
-    <div class="docs-block__header">
-        <h2 class="m-0 text-lg font-semibold">{% trans "Invoices" %}</h2>
+<section id="invoices" class="card card-border">
+    <header class="card-header">
+        <h2 class="card-title">{% trans "Invoices" %}</h2>
+
         {% can "add_invoice" object as can_add_invoice %}
         {% if can_add_invoice %}
             <a
-                class="button button--project-action button--project-action--white"
+                class="btn btn-primary btn-sm"
                 href="{% url "apply:projects:invoice" pk=object.submission.pk %}"
             >
                 {% trans "Add Invoice" %}
             </a>
         {% endif %}
-    </div>
-    <div class="docs-block__inner"  x-data="{ showrejected: false }">
+    </header>
+
+    <div class="overflow-x-auto p-2"  x-data="{ showrejected: false }">
         {% if object.invoices.not_rejected %}
-            <table class="data-block__table">
+            <table class="table">
                 <thead>
                     <tr>
-                        <th class="data-block__table-date">{% trans "Date submitted" %}</th>
-                        <th class="min-w-[180px] w-[15%]">{% trans "Invoice date" %}</th>
-                        <th class="data-block__table-amount">{% trans "Invoice no." %}</th>
-                        <th class="data-block__table-status">{% trans "Status" %}</th>
-                        <th class="data-block__table-update"></th>
+                        <th>{% trans "Date submitted" %}</th>
+                        <th>{% trans "Invoice date" %}</th>
+                        <th>{% trans "Invoice no." %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody hx-get="{% url 'apply:projects:partial-invoices-status' pk=object.pk %}" hx-trigger="invoicesUpdated from:body">
@@ -31,31 +33,30 @@
                 </tbody>
             </table>
         {% else %}
-            <p>{% trans "No active invoices yet." %}</p>
+            <p class="p-4 text-sm text-fg-muted">{% trans "No active invoices yet." %}</p>
         {% endif %}
 
         {% if object.invoices.rejected %}
-            <p class="text-center">
+            <p class="mb-2 text-center">
                 {% trans "Show rejected" as showrejectedtext %}
                 {% trans "Hide rejected" as hiderejectedtext %}
-                <a
-                    class="font-semibold"
-                    href="#"
+                <button
+                    class="btn btn-sm btn-ghost"
                     @click.prevent="showrejected = ! showrejected"
                     x-text="showrejected ? '{{ hiderejectedtext }}' : '{{ showrejectedtext }}'"
                 >
                     {{ showrejectedtext }}
-                </a>
+                </button>
             </p>
 
-            <table class="data-block__table"  x-show="showrejected">
+            <table class="table" x-show="showrejected">
                 <thead>
                     <tr>
-                        <th class="data-block__table-date">{% trans "Date submitted" %}</th>
-                        <th class="min-w-[180px] w-[15%]">{% trans "Invoice date" %}</th>
-                        <th class="data-block__table-amount">{% trans "Invoice no." %}</th>
-                        <th class="data-block__table-status">{% trans "Status" %}</th>
-                        <th class="data-block__table-update"></th>
+                        <th>{% trans "Date submitted" %}</th>
+                        <th>{% trans "Invoice date" %}</th>
+                        <th>{% trans "Invoice no." %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody id="rejected-invoice-table" hx-get="{% url 'apply:projects:partial-rejected-invoices-status' pk=object.pk %}" hx-trigger="rejectedInvoicesUpdated from:body">

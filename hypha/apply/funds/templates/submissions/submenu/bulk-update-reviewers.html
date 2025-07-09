@@ -40,11 +40,13 @@
         {% endif %}
     {% endfor %}
 
-    <button
-        class="mt-6 mb-3 button button--primary"
-        type="submit"
-        @click='open = false'
-    >
-        {% trans "Update" %}
-    </button>
+    <div class="flex my-4 flex-end">
+        <button
+            class="w-full sm:w-auto btn btn-primary btn-sm ms-auto"
+            type="submit"
+            @click='open = false'
+        >
+            {% trans "Update" %}
+        </button>
+    </div>
 </form>

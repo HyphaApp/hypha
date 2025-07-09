@@ -1,56 +1,62 @@
 {% load i18n heroicons project_tags %}
 
-<div>
-    <h5>{% trans "Contractor" %}</h5>
-    <p>{{ object.user |default:"-" }}</p>
+
+<div class="fieldset">
+    <dt class="font-semibold">{% trans "Contractor" %}</dt>
+    <dd>{{ object.user |default:"-" }}</dd>
 </div>
 
-<div>
-    <h5>{% trans "E-mail" %}</h5>
-    {% if object.user.email %}
-        <a href="mailto:{{ object.user.email }}">{{ object.user.email }}</a>
-    {% else %}
-        -
-    {% endif %}
+<div class="fieldset">
+    <dt class="font-semibold">{% trans "E-mail" %}</dt>
+    <dd>
+        {% if object.user.email %}
+            <a href="mailto:{{ object.user.email }}" class="link link-hover">{{ object.user.email }}</a>
+        {% else %}
+            -
+        {% endif %}
+    </dd>
 </div>
 
-<div>
-    {% show_start_date object as show_start %}
-    <h5>
+<div class="fieldset">
+    <dt class="font-semibold">
         {% trans "Start date" %}
         {% if request.user.is_apply_staff and show_start %}
-            <a class="transition-opacity hover:opacity-70 is-active"
-               href="{% url 'apply:projects:project_dates_update' object.submission.id %}"
-               hx-get="{% url 'apply:projects:project_dates_update' object.submission.id %}"
-               hx-target="#htmx-modal"
+            <a
+                class="btn btn-xs btn-ghost btn-square"
+                href="{% url 'apply:projects:project_dates_update' object.submission.id %}"
+                hx-get="{% url 'apply:projects:project_dates_update' object.submission.id %}"
+                hx-target="#htmx-modal"
             >
-                {% heroicon_solid "pencil-square" class="inline mt-2 align-text-bottom ms-1" aria_hidden=true size=20 %}
+                {% heroicon_micro "pencil-square" aria_hidden=true size=20 %}
                 <span class="sr-only">{% trans "edit dates" %}</span>
             </a>
         {% endif %}
-    </h5>
-    <p {% if not show_start %} class="text-gray-400"{% endif %}>
+    </dt>
+
+    {% show_start_date object as show_start %}
+    <dd {% if not show_start %} class="text-fg-muted"{% endif %}>
         {% if show_start %}
             {{ object.proposed_start|date:"SHORT_DATE_FORMAT"|default:"-" }}
         {% else %}
             {% trans "Awaiting contract finalization..." %}
         {% endif %}
-    </p>
+    </dd>
 </div>
 
-<div>
-    <h5>
+<div class="fieldset">
+    <dt class="font-semibold">
         {% trans "End date" %}
         {% if request.user.is_apply_staff %}
-            <a class="transition-opacity hover:opacity-70 is-active"
-               href="{% url 'apply:projects:project_dates_update' object.submission.id %}"
-               hx-get="{% url 'apply:projects:project_dates_update' object.submission.id %}"
-               hx-target="#htmx-modal"
+            <a
+                class="btn btn-xs btn-ghost btn-square"
+                href="{% url 'apply:projects:project_dates_update' object.submission.id %}"
+                hx-get="{% url 'apply:projects:project_dates_update' object.submission.id %}"
+                hx-target="#htmx-modal"
             >
-                {% heroicon_solid "pencil-square" class="inline mt-2 align-text-bottom ms-1" aria_hidden=true size=20 %}
+                {% heroicon_micro "pencil-square" aria_hidden=true size=20 %}
                 <span class="sr-only">{% trans "edit dates" %}</span>
             </a>
         {% endif %}
-    </h5>
-    <p>{{ object.proposed_end|date:"SHORT_DATE_FORMAT"|default:"-" }}</p>
+    </dt>
+    <dd>{{ object.proposed_end|date:"SHORT_DATE_FORMAT"|default:"-" }}</dd>
 </div>

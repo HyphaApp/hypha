@@ -1,21 +1,21 @@
 {% load i18n activity_tags nh3_tags markdown_tags submission_tags apply_tags heroicons users_tags %}
 
-<article class="relative timeline-item">
+<article class="relative h-timeline-item">
     <div
-        class="flex py-3 -ms-8 before:block before:-z-10 before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-slate-300 md:-ms-20"
+        class="flex py-3 -ms-8 before:block before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-base-300 md:-ms-20"
     >
         {% with activity|display_activity_author:request.user as author_name %}
-            <div class="inline-flex relative justify-center items-start me-4">
-                <div class="relative rounded-full inline-flex items-center justify-center border-white border-2 -ms-0.5 {% if activity.user.is_staff %}bg-slate-200 {% else %}bg-gray-100{% endif %}">
+            <div class="inline-flex relative z-0 justify-center items-start me-4">
+                <div class="relative rounded-full inline-flex items-center justify-center border-white border-2 -ms-0.5 {% if activity.user.is_staff %}bg-slate-200 {% else %}bg-base-200{% endif %}">
                     <div class="hidden p-2 md:block">
                         {% user_image author_name size=25 %}
                     </div>
                 </div>
             </div>
 
-            <div class="{% if activity.user == request.user %}border-cyan-300{% else %}border-gray-300{% endif %} flex-1 pb-2 bg-white border rounded-sm target:ring-2 target:ring-cyan-500 scroll-m-2"
+            <div class="{% if activity.user == request.user %}border-info/30{% else %}border-base-300{% endif %} flex-1 pb-2 bg-base-100 border rounded-box target:ring-2 target:ring-info scroll-m-2  z-1"
                  id="communications--{{ activity.id }}">
-                <header class="{% if activity.user == request.user %}bg-fuchsia-100{% else %}bg-slate-100{% endif %} flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-t">
+                <header class="{% if activity.user == request.user %}bg-info/20{% else %}bg-base-200{% endif %} flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-t-box">
                     <div>
                         <span>
                             <strong class="font-semibold">{{ author_name }}</strong>
@@ -41,12 +41,10 @@
                                 >{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
                             </a>
                         </span>
-
-
                     </div>
+
                     <div class="flex gap-1 items-center">
                         {% if not request.user.is_applicant %}
-
                             {% if request.user.is_apply_staff and activity.assigned_to %}
 
                                 <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs rounded-xl border border-gray-300 text-fg-muted">
@@ -74,9 +72,9 @@
                                 hx-get="{% url 'activity:edit-comment' activity.id %}"
                                 hx-target="#text-comment-{{activity.id}}"
                                 title="Edit Comment"
-                                class="inline-flex items-center p-0.5 rounded-md opacity-80 transition-all hover:bg-fuchsia-200 hover:opacity-100"
+                                class="btn btn-sm btn-square btn-ghost"
                             >
-                                {% heroicon_micro "pencil-square" size=18 class="inline" aria_hidden=true %}
+                                {% heroicon_micro "pencil-square" aria_hidden=true %}
                                 <span class="sr-only">{% trans "Edit" %}</span>
                             </a>
                         {% endif %}
@@ -93,15 +91,16 @@
                     </div>
 
                     {% if not submission_title and activity|user_can_see_related:request.user %}
-                        <div class="px-3">
-                            {% with url=activity.related_object.get_absolute_url %}
-                                {% if url %}
-                                    <a href="{{ url }}" class="font-semibold uppercase">
-                                        {% trans "View " %}{{ activity.related_object|model_verbose_name }} {% heroicon_outline "arrow-right" aria_hidden="true" stroke_width=2 class="inline w-4 h-4 align-baseline ms-1" %}
+                        {% with url=activity.related_object.get_absolute_url %}
+                            {% if url %}
+                                <div class="px-3">
+                                    <a href="{{ url }}" class="mt-2 font-semibold uppercase btn btn-sm btn-info btn-soft">
+                                        {% trans "View " %}{{ activity.related_object|model_verbose_name }}
+                                        {% heroicon_mini "arrow-right" aria_hidden="true" class="opacity-80 size-4" %}
                                     </a>
-                                {% endif %}
-                            {% endwith %}
-                        </div>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
                     {% endif %}
                 </div>
             </div>

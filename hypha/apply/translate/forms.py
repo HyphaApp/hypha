@@ -3,10 +3,10 @@ from django import forms
 from hypha.apply.translate.fields import LanguageChoiceField
 from hypha.apply.translate.utils import get_available_translations
 
+available_packages = get_available_translations()
+
 
 class TranslateSubmissionForm(forms.Form):
-    available_packages = get_available_translations()
-
     from_lang = LanguageChoiceField("from", available_packages)
     to_lang = LanguageChoiceField("to", available_packages)
 

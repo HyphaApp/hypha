@@ -21,75 +21,6 @@
   }
 }
 
-// Button mixin
-@mixin button($bg, $hover-bg) {
-  padding: 0.5em 2rem;
-  font-weight: variables.$weight--bold;
-  color: variables.$color--white;
-  text-align: center;
-  background: $bg;
-  border: 1px solid variables.$color--white;
-  transition: color, background, border, variables.$transition;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover,
-  &:focus,
-  &:active {
-    cursor: pointer;
-    background: $hover-bg;
-  }
-}
-
-// Narrow button mixin
-@mixin button--narrow {
-  padding: 0.25rem 0.75rem;
-  font-size: 15px;
-  vertical-align: middle;
-
-  @include media-query(lg) {
-    & {
-      padding: 0.25rem 0.75rem;
-    }
-  }
-}
-
-// Small button mixin
-@mixin button--small {
-  padding: 2px;
-  font-size: 12px;
-
-  @include media-query(lg) {
-    & {
-      padding: 3px 5px;
-    }
-  }
-}
-
-// Wide button mixin
-@mixin button--wide {
-  @include media-query(lg) {
-    & {
-      padding: 0.5em 80px;
-    }
-  }
-}
-
-// Viewport sized typography mixin that takes a min and max pixel-based value
-@mixin responsive-font-sizes($min, $max) {
-  $minbreakpoint: 640;
-  $maxbreakpoint: 1280;
-  $minsize: functions.strip-unit($min);
-  $maxsize: functions.strip-unit($max);
-  $minrem: functions.rem($min);
-  $maxrem: functions.rem($max);
-  $slope: math.div($maxsize - $minsize, $maxbreakpoint - $minbreakpoint);
-  $intersection: functions.rem($minsize - $slope * $minbreakpoint);
-
-  font-size: clamp($minrem, calc($intersection + $slope * 100vw), $maxrem);
-}
-
 // Triangle mixin
 // @param {Direction} $direction - Triangle direction, either `top`, `right`, `bottom` or `left`
 // @param {Color} $color [currentcolor] - Triangle color
@@ -102,8 +33,7 @@
   width: 0;
   height: 0;
   content: "";
-  border-#{functions.opposite-direction($direction)}: ($size * 1.5) solid
-    $color;
+  border-#{functions.opposite-direction($direction)}: ($size * 1.5) solid $color;
 
   $perpendicular-borders: $size solid transparent;
 
@@ -113,49 +43,5 @@
   } @else if $direction == right or $direction == left {
     border-block-start: $perpendicular-borders;
     border-block-end: $perpendicular-borders;
-  }
-}
-
-@mixin table-ordering-styles {
-  thead {
-    th {
-      // ordering
-      &.desc,
-      &.asc {
-        position: relative;
-        color: variables.$color--dark-grey;
-
-        &::after {
-          position: absolute;
-          inset-block-start: 50%;
-          margin-inline-start: 3px;
-        }
-
-        a {
-          color: inherit;
-        }
-      }
-
-      &.desc {
-        &::after {
-          @include triangle(top);
-        }
-      }
-
-      &.asc {
-        &::after {
-          @include triangle(bottom);
-        }
-      }
-    }
-  }
-}
-
-@mixin table-checkbox {
-  input[type="checkbox"] {
-    margin: 0 auto;
-    display: block;
-    width: 1.1rem;
-    height: 1.1rem;
   }
 }

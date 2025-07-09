@@ -1,88 +1,89 @@
 {% load i18n approval_tools apply_tags project_tags heroicons %}
 {% load can from permission_tags %}
 
-<li class="docs-block__row">
-    <div class="docs-block__row-inner">
+<div class="list-col-grow">
+    <h3 class="flex gap-2 items-center mb-2 font-medium text-h4">
         {% if remaining_document_categories %}
-            {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+            {% heroicon_outline "check-circle" size=16 class="w-5 h-5 stroke-gray-400" aria_hidden=true %}
         {% else %}
-            {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
+            {% heroicon_outline "check-circle" size=16 class="w-5 h-5 stroke-primary" stroke_width=2 aria_hidden=true %}
         {% endif %}
-        <p class="docs-block__title">{% trans "Supporting documents" %}</p>
-    </div>
+        {% trans "Supporting documents" %}
+    </h3>
 
     {% if all_document_categories %}
+        <ul class="list">
+            {% for document_category in all_document_categories %}
+                <li class="list-row hover:bg-base-200">
+                    <div class="self-center list-col-grow">
+                        <div>
+                            <span class="font-bold">{{ document_category.name }}</span>{% if document_category.required %}<sup>*</sup>{% endif %}
 
-        <div class="w-full ps-7">
-            <ul class="pt-3 space-y-2">
-                {% for document_category in all_document_categories %}
-                    <li class="flex justify-between py-2 px-3 bg-gray-100 rounded-sm">
-                        <div class="docs-block__document-inner">
-                            <span>{{ document_category.name }}
-                                {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
-                                {% if document_category.template %}
-                                    <a class="font-semibold transition-opacity hover:opacity-70"
-                                       href="{% url 'apply:projects:category_template' pk=object.submission.pk type='project_document' category_pk=document_category.pk %}"
-                                       target="_blank"
-                                    >
-                                        <span class="border-b-2 border-dashed">
-                                            {% trans "View template" %}
-                                        </span>{% heroicon_mini "information-circle" class="inline align-middle fill-light-blue me-1" aria_hidden=true %}
-                                    </a>
-                                {% endif %}
-                            </span>
-                            {% if document_category not in remaining_document_categories %}
-                                {% category_latest_file object document_category as latest_file %}
-                                <div class="text-sm">
-                                    <span>{{ latest_file.title|truncatechars_middle:45 }}</span> - <span class="text-fg-muted">{{ latest_file.created_at }}</span>
-                                </div>
+                            {% if document_category.template %}
+                                &middot;
+                                <a class="link"
+                                   href="{% url 'apply:projects:category_template' pk=object.submission.pk type='project_document' category_pk=document_category.pk %}"
+                                   target="_blank"
+                                >
+                                    {% trans "View template" %}
+                                </a>
                             {% endif %}
                         </div>
+
+                        {% if document_category not in remaining_document_categories %}
+                            {% category_latest_file object document_category as latest_file %}
+                            <div class="list-col-wrap">
+                                <span>{{ latest_file.title|truncatechars_middle:45 }}</span>
+                                &middot;
+                                <time datetime="{{ latest_file.created_at|date:'c' }}" class="text-fg-muted">
+                                    {{ latest_file.created_at|date:"SHORT_DATE_FORMAT" }}
+                                </time>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="card-actions">
                         {% can "upload_project_documents" object as can_upload_documents %}
                         {% if document_category in remaining_document_categories and can_upload_documents %}
-                            <div class="docs-block__document-inner__actions">
-                                <a class="flex items-center font-bold transition-opacity hover:opacity-70 me-0"
-                                   href="{% url 'apply:projects:supporting_doc_upload' object.submission.id document_category.id %}"
-                                   hx-get="{% url 'apply:projects:supporting_doc_upload' object.submission.id document_category.id %}"
-                                   hx-target="#htmx-modal"
-                                   aria-label="{% trans "Upload Supporting Documents" %}"
-                                >
-                                    {% heroicon_micro "arrow-up-tray" class="inline w-4 h-4 me-1" aria_hidden="true" %}
-                                    {% trans "Upload" %}
-                                </a>
-
-                            </div>
+                            <a
+                                class="btn btn-sm btn-primary"
+                                href="{% url 'apply:projects:supporting_doc_upload' object.submission.id document_category.id %}"
+                                hx-get="{% url 'apply:projects:supporting_doc_upload' object.submission.id document_category.id %}"
+                                hx-target="#htmx-modal"
+                                aria-label="{% trans "Upload Supporting Documents" %}"
+                            >
+                                {% heroicon_micro "arrow-up-tray" class="size-4" aria_hidden="true" %}
+                                {% trans "Upload" %}
+                            </a>
                         {% else %}
                             {% category_latest_file object document_category as latest_file %}
                             {% if latest_file %}
-                                <div class="docs-block__document-inner__actions">
-                                    <a
-                                        class="docs-block__icon-link"
-                                        href="{% url 'apply:projects:document' pk=object.submission.pk file_pk=latest_file.pk %}"
-                                        target="_blank"
+                                <a
+                                    class="btn btn-sm btn-secondary btn-outline"
+                                    href="{% url 'apply:projects:document' pk=object.submission.pk file_pk=latest_file.pk %}"
+                                    target="_blank"
+                                >
+                                    {% heroicon_outline "document" size=14 class="opacity-80 size-4" aria_hidden=true stroke_width=2 %}
+                                    {% trans "View" %}
+                                </a>
+
+                                {% user_can_remove_supporting_documents object user as can_remove_supporting_doc %}
+                                {% if can_remove_supporting_doc %}
+                                    <button
+                                        class="btn btn-square btn-sm btn-error btn-soft"
+                                        hx-delete="{% url "apply:projects:remove_supporting_document" object.submission.pk latest_file.pk %}"
+                                        hx-swap="none"
+                                        hx-confirm="Are you sure you want to remove this document?"
                                     >
-                                        {% heroicon_micro "eye" class="inline me-1" aria_hidden=true %}
-                                        {% trans "View" %}
-                                    </a>
-                                    {% user_can_remove_supporting_documents object user as can_remove_supporting_doc %}
-                                    {% if can_remove_supporting_doc %}
-                                        <button
-                                            class="docs-block__icon-link button button--link button--remove"
-                                            hx-delete="{% url "apply:projects:remove_supporting_document" object.submission.pk latest_file.pk %}"
-                                            hx-swap="none"
-                                            hx-confirm="Are you sure you want to remove this document?"
-                                        >
-                                            {% heroicon_micro "trash" class="inline me-1 fill-red-500" aria_hidden=true %}
-                                            {% trans "Remove" %}
-                                        </button>
-                                    {% endif %}
-                                </div>
+                                        {% heroicon_micro "trash" class="size-4" aria_hidden=true %}
+                                        <span class="sr-only">{% trans "Remove" %}</span>
+                                    </button>
+                                {% endif %}
                             {% endif %}
+                            </div>
                         {% endif %}
                     </li>
-                {% endfor %}
-            </ul>
-        </div>
+            {% endfor %}
+        </ul>
     {% endif %}
-
-</li>
+</div>

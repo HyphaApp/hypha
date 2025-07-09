@@ -1,7 +1,9 @@
 {% load i18n static heroicons translate_tags %}
-{% modal_title %}{% trans "Translate" %}{% endmodal_title %}
+
+<c-modal.header>{% trans "Translate application" %}</c-modal.header>
+
 <form
-    class="px-2 pb-4 form"
+    class="p-4 form"
     id="translate_form"
     method="POST"
     action="{{ request.path }}"
@@ -12,54 +14,48 @@
         {{ hidden }}
     {% endfor %}
 
-    <div>
+    <fi>
         {% if form.errors %}
             {% for field in form %}
                 {% for error in field.errors %}
-                    <div class="alert alert-danger">
-                        <strong>{{ error|escape }}</strong>
+                    <div class="alert alert-danger" role="alert">
+                        {{ error|escape }}
                     </div>
                 {% endfor %}
             {% endfor %}
             {% for error in form.non_field_errors %}
-                <div class="alert alert-danger">
-                    <strong>{{ error|escape }}</strong>
+                <div class="alert alert-danger" role="alert">
+                    {{ error|escape }}
                 </div>
             {% endfor %}
         {% endif %}
-        <div class="flex justify-center mt-3 space-x-2">
-            <fieldset class="w-2/5">
-                <div>
-                    {{ form.from_lang }}
-                </div>
-            </fieldset>
-            <div class="flex flex-col justify-center">
-                {% heroicon_outline "arrow-right" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
+        <fieldset class="flex gap-2 items-center my-4">
+            <div class="w-2/5">
+                {{ form.from_lang }}
             </div>
-            <fieldset class="w-2/5">
-                <div>
-                    {{ form.to_lang }}
-                </div>
-            </fieldset>
+            <div>
+                {% heroicon_outline "arrow-right" aria_hidden="true" size=15 stroke_width=2 %}
+                <span class="sr-only">{% trans "to" %}</span>
+            </div>
+            <div class="w-2/5">
+                {{ form.to_lang }}
+            </div>
+        </fieldset>
+        <div class="text-sm text-fg-muted">
+            <sup>*</sup> {% trans "Translations are an experimental feature and may be inaccurate" %}
         </div>
     </div>
 
-    <div class="mt-5 sm:flex sm:flex-row-reverse sm:gap-4 sm:mt-4">
+    <div class="mt-4 sm:flex-row-reverse card-actions">
 
         {# Button text inserted below to prevent redundant translations #}
-        <button id="translate-btn" class="w-full sm:w-auto button button--primary" type="submit"></button>
+        <button id="translate-btn" class="w-full sm:w-auto btn btn-primary" type="submit"></button>
 
         <button
             type="button"
-            class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 rounded-xs shadow-xs"
+            class="btn btn-secondary btn-outline"
             @click="show = false"
         >{% trans "Cancel" %}</button>
-        <span
-            class="inline-block"
-            data-tippy-content="{% trans "Translations are an experimental feature and may be inaccurate" %}"
-        >
-            {% heroicon_outline "information-circle" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
-        </span>
     </div>
 </form>
 

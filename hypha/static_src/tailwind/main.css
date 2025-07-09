@@ -1,66 +1,40 @@
 @import "tailwindcss";
-@import "./base/variables.css" layer(base);
-@import "./base/core.css" layer(base);
-@import "./base/forms.css" layer(components);
+
+@import "./components/card.css" layer(components);
+@import "./components/theme-toggle.css" layer(components);
 @import "./components/choices.css" layer(components);
 @import "./components/daterangepicker.css" layer(components);
 @import "./components/django-file-field.css" layer(components);
+@import "./components/html-diff.css" layer(components);
+@import "./components/layout.css" layer(components);
+@import "./components/table.css" layer(components);
+@import "./components/tinymce.css" layer(components);
+@import "./components/wmd.css" layer(components);
 
-@plugin '@tailwindcss/forms';
+@import "./utilities/typography.css" layer(utilities);
+@import "./components/link.css" layer(utilities);
+@import "./components/steps.css" layer(utilities);
+@import "./components/nprogress";
+@import "./utilities/misc.css";
+
 @plugin '@tailwindcss/typography';
+@plugin "daisyui" {
+  themes: false;
+}
+@import "./base/themes.css";
 
 @theme {
-  --color-light-blue: #0d7db0;
-  --color-dark-blue: #0c72a0;
-  --color-sky-blue: #e7f2f6;
-  --color-tomato: #f05e54;
-  --color-mid-grey: #cfcfcf;
-  --color-light-grey: #f7f7f7;
-  --color-arsenic: #404041;
-  --color-fg-muted: var(--color-fg-muted);
-  --color-fg-default: var(--color-fg-default);
-}
+  --default-border-width: var(--border);
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+  /* Custom colors */
+  --color-fg-muted: color-mix(in oklab, currentColor 60%, transparent);
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+  /* Custom Animations */
+  --animate-flash: flash 1s ease 1;
+
+  @keyframes flash {
+    50% {
+      background-color: var(--color-base-300);
+    }
   }
-
-  /* Transitioning page view. */
-  @view-transition {
-    navigation: auto;
-  }
-
-  :root {
-    /* Activate transition to intrinsic sizes like auto and fit-content. */
-    interpolate-size: allow-keywords;
-  }
-}
-
-@utility border-stripe {
-  border-image: repeating-linear-gradient(
-      -55deg,
-      #000 0,
-      #000 20px,
-      #ffb101 20px,
-      #ffb101 40px
-    )
-    10;
-}
-
-@utility break-anywhere {
-  /* see https://github.com/tailwindlabs/tailwindcss/pull/12128 */
-  overflow-wrap: anywhere;
 }
