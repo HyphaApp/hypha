@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="my-8 mx-auto max-w-4xl">
+    <div class="my-4 mx-auto max-w-4xl">
 
         {% include "funds/includes/rendered_answers.html" %}
 
@@ -47,14 +47,24 @@
                 {% endfor %}
             </div>
 
-
             <div class="mt-4 card-actions">
-                <button class="btn btn-primary" form="preview-form-submit" name="submit" type="submit" :disabled="isFormSubmitting">
+                {# Submit button - uses form="preview-form-submit" #}
+                <button
+                    class="btn btn-primary"
+                    form="preview-form-submit"
+                    name="submit"
+                    type="submit"
+                    :disabled="isFormSubmitting"
+                >
                     {% trans "Submit for review" %}
                 </button>
-                <button class="btn btn-secondary btn-outline" form="preview-form-edit">
+
+                <a
+                    class="btn btn-secondary btn-outline"
+                    href="{% url 'funds:submissions:edit' object.id %}"
+                >
                     {% trans "Continue editing" %}
-                </button>
+                </a>
             </div>
         </form>
     </div>
