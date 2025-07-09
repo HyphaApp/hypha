@@ -1,4 +1,4 @@
-/* stylelint-disable property-no-vendor-prefix, selector-class-pattern */
+/* Print styles. */
 
 * {
   background: transparent !important;
@@ -7,8 +7,7 @@
   box-shadow: none !important;
   text-shadow: none !important;
   filter: none !important;
-  -ms-filter: none !important;
-  font-family: "Garamond Premier Pro", serif !important;
+  font-family: ui-serif, serif !important;
   font-style: normal !important;
   letter-spacing: normal !important;
   text-align: start !important;
@@ -20,16 +19,22 @@ html {
 
 @page {
   margin: 1cm !important;
-  size: letter;
+  margin-inline-start: 1.5cm !important;
 }
 
 body {
-  font-size: 14px !important;
+  font-size: 12px !important;
   line-height: 1.3 !important;
-  margin: 1cm !important;
+  margin: 0 !important;
 }
 
-/* Underline all links. */
+/* Set print styles on tailwind prose class. */
+.prose {
+  font-size: 12px !important;
+  line-height: 1.3 !important;
+}
+
+/* All links as plain text. */
 :link,
 :visited {
   text-decoration: none !important;
@@ -59,29 +64,22 @@ h3 {
 
 h2,
 h3 {
-  page-break-after: avoid;
+  break-after: avoid;
 }
 
-.header__logo {
-  fill: #000;
+/* Set sidebar width to zero since we hide it on print. */
+.layout {
+  --layout-sidebar-width: 0;
 }
 
-.header {
-  height: auto;
-  padding: 0;
-
-  &::after {
-    background: transparent !important;
-  }
+/* When tailwind print:!hidden! refuse to work. */
+.print-hidden {
+  display: none !important;
 }
 
+[aria-hidden],
 nav,
 aside,
-footer,
-.icon,
-.card__icon,
-.tabs__container,
-.cookieconsent,
-.djhj {
+footer {
   display: none !important;
 }

@@ -14,7 +14,7 @@
             {% include "funds/includes/application_header.html" %}
         {% endif %}
 
-        <div role="tablist" class="font-medium tabs tabs-lg tabs-lift text-base-content">
+        <div role="tablist" class="font-medium tabs tabs-lg tabs-lift text-base-content print-hidden">
             <a
                 class="tab tab-active"
                 href="{% url 'funds:submissions:detail' pk=object.id %}"
@@ -102,7 +102,7 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-1 gap-2 justify-end items-center print:!hidden">
+                        <div class="flex flex-1 gap-2 justify-end items-center print-hidden">
                             {% if request.user|has_edit_perm:object %}
                                 <a
                                     class="btn btn-soft btn-secondary btn-sm"
