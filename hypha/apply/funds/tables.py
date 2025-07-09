@@ -104,7 +104,7 @@ class SubmissionsTable(tables.Table):
         return value.get_full_name()
 
     def render_phase(self, value):
-        return format_html("<span>{}</span>", value)
+        return format_html("<span class='badge badge-outline'>{}</span>", value)
 
     def order_last_update(self, qs, desc):
         update_order = getattr(F("last_update"), "desc" if desc else "asc")(

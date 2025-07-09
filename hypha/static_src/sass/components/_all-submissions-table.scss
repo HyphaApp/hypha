@@ -26,12 +26,6 @@
         }
       }
 
-      &.phase {
-        @include mixins.media-query(lg) {
-          width: 150px;
-        }
-      }
-
       &.comments {
         @include mixins.media-query(lg) {
           width: 110px;
@@ -67,22 +61,6 @@
 
         @include mixins.media-query(xl) {
           display: table-cell;
-        }
-      }
-
-      // project status label
-      &.phase {
-        span {
-          display: inline-block;
-          padding: 5px;
-          font-size: 13px;
-          font-weight: var(--font-weight-bold);
-          text-align: center;
-          background-color: var(--color-base-200);
-
-          @include mixins.media-query(lg) {
-            width: 100%;
-          }
         }
       }
 
