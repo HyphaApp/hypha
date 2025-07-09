@@ -1,0 +1,16 @@
+{% extends "stream_forms/render_field.html" %}
+{% load heroicons i18n %}
+
+{% block data_display %}
+    <span class="flex gap-2 items-center">
+        {% if data == "True" %}
+            {% heroicon_outline "check-circle" class="size-5 stroke-success" aria_hidden=true %}
+            {% trans "Yes" %}
+        {% elif data == "False" %}
+            {% heroicon_outline "x-circle" class="size-5 stroke-error" aria_hidden=true %}
+            {% trans "No" %}
+        {% else %}
+            {% trans "No selection" %}
+        {% endif %}
+    </span>
+{% endblock %}
