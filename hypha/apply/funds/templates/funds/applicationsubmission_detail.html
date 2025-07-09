@@ -67,15 +67,15 @@
 
                 {% if object.is_archive %}
                     <div role="alert" class="mb-4 alert alert-warning">
-                        {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 %}
+                        {% heroicon_outline "lock-closed" aria_hidden="true" stroke_width=2 class="opacity-80 size-5" %}
                         <span>{% trans "This application has been archived. This is visible to accounts with " %} {{ archive_access_groups|join_with_commas }} roles.</span>
                     </div>
                 {% endif %}
 
                 <article>
-                    {% if object.round.specific.is_sealed %}
+                    {% if object.round.specific.is_sealed and not request.user == object.user %}
                         <div role="alert" class="mb-4 alert alert-warning">
-                            {% heroicon_outline "clock" aria_hidden="true" size=16 stroke_width=2 %}
+                            {% heroicon_outline "clock" aria_hidden="true" stroke_width=2 class="opacity-80 size-5" %}
                             <span>{% trans "This application is sealed." %}</span>
                         </div>
                     {% endif %}

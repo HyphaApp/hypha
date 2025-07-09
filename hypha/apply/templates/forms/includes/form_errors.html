@@ -2,7 +2,7 @@
 
 {% if form.errors or form.non_field_errors %}
     <div class="alert alert-error" role="alert">
-        {% heroicon_solid "exclamation-triangle" aria_hidden=true %}
+        {% heroicon_solid "exclamation-triangle" aria_hidden=true class="opacity-80 size-5" %}
         <span>{% trans "There were some errors with your form. Please amend the fields highlighted below." %}</span>
         {% if form.non_field_errors %}
             <ul>

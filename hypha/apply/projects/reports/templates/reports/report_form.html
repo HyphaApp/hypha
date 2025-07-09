@@ -19,7 +19,7 @@
 
         {% if report_form %}
             <div role="alert" class="mb-4 alert alert-info">
-                {% heroicon_outline 'exclamation-circle' stroke_width=2 size=18 aria_hidden=true %}
+                {% heroicon_outline 'exclamation-circle' stroke_width=2 aria_hidden=true class="opacity-80 size-5" %}
                 <span>
                     {% trans "This report is for the period" %} <strong class="font-semibold">{{ object.start_date }}</strong> {% trans "to" %} <strong class="font-semibold">{{ object.end_date }}</strong>
                 </span>
