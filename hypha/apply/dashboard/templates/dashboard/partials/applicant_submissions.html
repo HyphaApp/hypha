@@ -11,15 +11,24 @@
                 >
                     {{ submission.title }}
                     <span class="text-fg-muted">#{{ submission.application_id }}</span>
+
+                    {% if submission.is_draft %}
+                        <span class="badge badge-warning badge-sm badge-outline ms-1">{% trans "Draft" %}</span>
+                    {% endif %}
                 </a>
             </h2>
             <p class="text-xs text-fg-muted">
                 {% if submission.is_draft %}
-                    {% trans "Drafted on " %}
+                    {% trans "Drafted" %}
                 {% else %}
-                    {% trans "Submitted on " %}
+                    {% trans "Submitted" %}
                 {% endif %}
-                {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}
+                <relative-time datetime="{{ submission.submit_time|date:'c' }}">
+                    {{ submission.submit_time|date:'SHORT_DATETIME_FORMAT' }}
+                </relative-time>
+                {% if submission.user != request.user %}
+                    {% trans "by" %} {{ submission.user.get_full_name }}
+                {% endif %}
             </p>
             <div class="flex gap-2 mt-2">
                 {% if request.user|has_edit_perm:submission %}
@@ -32,7 +41,7 @@
                         {% endif %}
                     </a>
                 {% else %}
-                    <a class="btn btn-sm" href="{% url 'funds:submissions:detail' submission.id %}">
+                    <a class="btn btn-sm btn-secondary" href="{% url 'funds:submissions:detail' submission.id %}">
                         {% heroicon_micro "eye" class="opacity-80 size-4" aria_hidden=true %}
                         {% trans "View" %}
                     </a>

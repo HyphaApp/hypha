@@ -1,8 +1,11 @@
 {% load i18n statusbar_tags %}
 
-<h1 class="text-h1 text-pretty">
+<h1 class="flex gap-1 items-center text-h1 text-pretty">
     <span id="app-title">{{ object.title }}</span>
     <span class="text-fg-muted">#{{ object.application_id }}</span>
+    {% if object.is_draft %}
+        <span class="badge badge-warning badge-sm badge-outline ms-1">{% trans "Draft" %}</span>
+    {% endif %}
 </h1>
 
 <div class="mb-4 font-medium text-fg-muted">
