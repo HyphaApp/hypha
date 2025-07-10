@@ -188,6 +188,7 @@ class CheckboxFieldBlock(OptionalFormFieldBlock):
     class Meta:
         label = _("Checkbox field")
         icon = "tick-inverse"
+        template = "stream_forms/render_checkbox_field.html"
 
     def get_searchable_content(self, value, data):
         return None
