@@ -1,5 +1,5 @@
 from django import template
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from ..models import MAYBE, NO, YES
@@ -8,25 +8,31 @@ from ..options import NA
 register = template.Library()
 
 
-TRAFFIC_LIGHT_COLORS = {
-    YES: {
-        "color": "green",
-        "value": "Y",
-    },
-    MAYBE: {
-        "color": "amber",
-        "value": "M",
-    },
-    NO: {"color": "red", "value": "N"},
-}
-
-TRAFFIC_LIGHT_TEMPLATE = '<span class="traffic-light traffic-light--{color}"></span>'
-
-
 @register.filter()
 def traffic_light(value):
+    mapping = {
+        YES: {
+            "label": _("Overall recommendation: Yes"),
+            "class": "triangle-up text-success",
+        },
+        MAYBE: {
+            "label": _("Overall recommendation: Maybe"),
+            "class": "circle text-warning",
+        },
+        NO: {
+            "label": _("Overall recommendation: No"),
+            "class": "triangle-down text-error",
+        },
+    }
+
     try:
-        return mark_safe(TRAFFIC_LIGHT_TEMPLATE.format(**TRAFFIC_LIGHT_COLORS[value]))
+        html = """
+            <div class="flex items-center">
+                <span class="size-3 {class}" aria-hidden=true></span>
+                <span class="sr-only">{label}</span>
+            </div>
+        """
+        return format_html(html, **mapping[value])
     except KeyError:
         return ""
 

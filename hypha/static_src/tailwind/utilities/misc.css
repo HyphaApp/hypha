@@ -97,3 +97,20 @@
 @utility js-hidden {
   @apply hidden noscript:block;
 }
+
+@utility triangle-up {
+  @apply size-4 inline-block aspect-square;
+  background-color: currentColor;
+  clip-path: polygon(50% 0, 0 100%, 100% 100%);
+}
+
+@utility triangle-down {
+  @apply size-4 inline-block aspect-square;
+  background-color: currentColor;
+  clip-path: polygon(100% 0, 0 0, 50% 100%);
+}
+
+@utility circle {
+  @apply size-4 inline-block aspect-square rounded-full;
+  background-color: currentColor;
+}
