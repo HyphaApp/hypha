@@ -108,6 +108,8 @@ def submissions_all(
     )
     selected_sort = request.GET.get("sort")
     page = request.GET.get("page", 1)
+    selected_updated_date = None
+    selected_submitted_date = None
 
     can_view_archives = permissions.can_view_archived_submissions(request.user)
     can_access_drafts = permissions.can_access_drafts(request.user)
@@ -143,12 +145,12 @@ def submissions_all(
         qs = qs.exclude_draft()
 
     if "submitted" in search_filters:
-        qs = apply_date_filter(
+        qs, selected_submitted_date = apply_date_filter(
             qs=qs, field="submit_time", values=search_filters["submitted"]
         )
 
     if "updated" in search_filters:
-        qs = apply_date_filter(
+        qs, selected_updated_date = apply_date_filter(
             qs=qs, field="last_update", values=search_filters["updated"]
         )
 
@@ -323,6 +325,8 @@ def submissions_all(
         "selected_reviewers": selected_reviewers,
         "selected_meta_terms": selected_meta_terms,
         "selected_category_options": selected_category_options,
+        "selected_updated_date": selected_updated_date,
+        "selected_submitted_date": selected_submitted_date,
         "status_counts": status_counts,
         "sort_options": sort_options,
         "selected_sort": selected_sort,

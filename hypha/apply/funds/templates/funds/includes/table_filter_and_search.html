@@ -103,59 +103,49 @@
                             </ul>
                         {% enddropdown_menu %}
                     {% else %}
-                        <div id="{{ field_name }}"
-                             class="flex justify-between items-center py-1 w-full font-medium border cursor-pointer md:border-none text-base-content/80 ps-2 pe-2 md:hover:bg-transparent md:hover:text-primary hover:bg-base-200"
-                             data-field-name="{{ field_name }}" data-filter-list>
-                            {{ field.label }}
-                            {% heroicon_micro attributes.icon|default:"chevron-down" aria_hidden="true" size="16" class="hidden md:inline-block size-4 ms-0.5" %}
-                        </div>
+                        {% dropdown_menu title=field.label heading=field|get_dropdown_heading position="right" %}
+                            <calendar-range class="mx-auto cally" onchange="updateURL(this.value, '{{field_name}}')" data-field-name='{{field_name}}'>
+                                {% heroicon_micro "chevron-left" aria_label="Previous" slot="previous" aria_hidden=true size=18 %}
+                                {% heroicon_micro "chevron-right" aria_label="Next" slot="next" aria_hidden=true size=18 %}
+                                <calendar-month></calendar-month>
+                            </calendar-range>
+                        {% enddropdown_menu %}
 
-                        <script defer src="{% static 'js/vendor/moment.min.js' %}"></script>
-                        <script defer src="{% static 'js/vendor/daterangepicker.min.js' %}"></script>
                         <script>
+                            /**
+                             * Update the current URL with the date params and reload the page
+                             *
+                             * @param {string} dateRange - the date range in the format of `YYYY-MM-DD/YYYY-MM-DD`
+                             * @param {string} fieldName - the field being used as a query param
+                             */
+                            function updateURL(dateRange, fieldName) {
+                                const [startDate, endDate] = dateRange.split('/');
+                                const paramStart = `${fieldName}_after`
+                                const paramEnd = `${fieldName}_before`
+
+                                let url = new URL(window.location);
+                                url.searchParams.set(paramStart, startDate);
+                                url.searchParams.set(paramEnd, endDate);
+
+                                window.history.pushState({}, '', url);
+                                location.reload(); // Reload to apply the filter
+                            }
+
                             document.addEventListener("DOMContentLoaded", function () {
-                                function updateURL(paramStart, paramEnd, startDate, endDate) {
-                                    let url = new URL(window.location);
-                                    if (startDate) {
-                                        url.searchParams.set(paramStart, startDate);
-                                    } else {
-                                        url.searchParams.delete(paramStart);
+                                // Get all date pickers and set their initial range values based on the URL params
+                                document.querySelectorAll(".cally").forEach((datepicker) => {
+                                    const fieldName = datepicker.getAttribute("data-field-name");
+
+                                    const params = new URL(window.location).searchParams;
+
+                                    const startDate = params.get(`${fieldName}_after`);
+                                    const endDate = params.get(`${fieldName}_before`);
+
+                                    if (startDate && endDate) {
+                                        datepicker.value = `${startDate}/${endDate}`
                                     }
-
-                                    if (endDate) {
-                                        url.searchParams.set(paramEnd, endDate);
-                                    } else {
-                                        url.searchParams.delete(paramEnd);
-                                    }
-                                    window.history.pushState({}, '', url);
-                                    location.reload(); // Reload to apply the filter
-                                }
-
-                                var fieldName = "{{ field_name }}";  // Django variable inside JS
-                                let dateLink = $("#{{ field_name }}");
-
-                                var start = moment().subtract(29, 'days');
-                                var end = moment();
-
-
-                                dateLink.daterangepicker({
-                                    startDate: start,
-                                    endDate: end,
-                                    ranges: {
-                                        'Today': [moment(), moment()],
-                                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                                        'This Month': [moment().startOf('month'), moment().endOf('month')],
-                                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                                    }
-                                }, function(start, end) {
-                                    let formattedStart = start.format('YYYY-MM-DD');
-                                    let formattedEnd = end.format('YYYY-MM-DD');
-                                    dateLink.textContent = formattedStart + ' - ' + formattedEnd;
-                                    updateURL(fieldName + "_after", fieldName + "_before", formattedStart, formattedEnd);
-                                });
-                            });
+                                })
+                            })
                         </script>
                     {% endif %}
                 </nav>

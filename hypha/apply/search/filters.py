@@ -1,23 +1,32 @@
 import datetime as dt
+from typing import Tuple
 
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 
 from hypha.apply.search.query_parser import tokenize_date_filter_value
 
 
-def apply_date_filter(qs, field, values):
-    """Given a queryset, a field name, and a list of date strings, filter the queryset."""
+def apply_date_filter(qs, field, values) -> Tuple[QuerySet, str]:
+    """Given a queryset, a field name, and a list of date strings, filter the queryset.
+
+    Returns:
+        tuple: the filtered queryset and the parsed date range in the format of `[YYYY-MM-DD start date]/[YYYY-MM-DD end date]`
+
+    """
     q_obj = Q()
+
+    date_range = []
 
     for date_str in values:
         tokens = tokenize_date_filter_value(date_str)
+        date_range.append(f"{tokens[-3]}-{tokens[-2]:02}-{tokens[-1]:02}")
 
         if q := date_filter_tokens_to_q_obj(tokens=tokens, field=field):
             q_obj &= q
         else:
             return qs.none()
 
-    return qs.filter(q_obj)
+    return (qs.filter(q_obj), "/".join(date_range))
 
 
 def date_filter_tokens_to_q_obj(tokens: list, field: str) -> Q:

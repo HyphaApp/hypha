@@ -46,6 +46,7 @@
             hx-target="#main"
             hx-push-url="true"
             hx-swap="outerHTML transition:true"
+            name="querySubmissions"
         >
 
             {% dropdown_menu title="Filters" heading="Filter submissions" %}
@@ -322,19 +323,21 @@
                 x-show="!showSelectedSubmissions"
                 class="flex flex-wrap gap-2 items-center menu-filters"
             >
-                <div id="filtersubmitted" aria-label="Filter by Submitted" class="flex items-center" data-query="submitted">
-                    <button class="flex justify-between items-center py-1 w-full font-medium border cursor-pointer md:p-0 md:border-none text-base-content/80 ps-2 pe-2 md:pe-4 md:hover:bg-transparent md:hover:text-primary hover:bg-base-200">
-                        {% trans "Submitted" %}
-                        {% heroicon_mini "chevron-down" aria_hidden="true" width=18 height=18 class="hidden md:inline-block" %}
-                    </button>
-                </div>
+                {% dropdown_menu title="Submitted" heading="Filter by submitted date(s)" %}
+                    <calendar-range class="mx-auto cally" {% if selected_submitted_date %}value="{{selected_submitted_date}}"{% endif %} onchange="setDateFromPicker(this.value, 'submitted')">
+                        {% heroicon_micro "chevron-left" aria_label="Previous" slot="previous" aria_hidden=true size=18 %}
+                        {% heroicon_micro "chevron-right" aria_label="Next" slot="next" aria_hidden=true size=18 %}
+                        <calendar-month></calendar-month>
+                    </calendar-range>
+                {% enddropdown_menu %}
 
-                <div id="filterupdated" aria-label="Filter by Updated" class="flex items-center" data-query="updated">
-                    <button class="flex justify-between items-center py-1 w-full font-medium border cursor-pointer md:p-0 md:border-none text-base-content/80 ps-2 pe-2 md:pe-4 md:hover:bg-transparent md:hover:text-primary hover:bg-base-200">
-                        {% trans "Updated" %}
-                        {% heroicon_mini "chevron-down" aria_hidden="true" width=18 height=18 class="hidden md:inline-block" %}
-                    </button>
-                </div>
+                {% dropdown_menu title="Updated" heading="Filter by updated date(s)" %}
+                    <calendar-range class="mx-auto cally" {% if selected_updated_date %}value="{{selected_updated_date}}"{% endif %} onchange="setDateFromPicker(this.value, 'updated')">
+                        {% heroicon_micro "chevron-left" aria_label="Previous" slot="previous" aria_hidden=true size=18 %}
+                        {% heroicon_micro "chevron-right" aria_label="Next" slot="next" aria_hidden=true size=18 %}
+                        <calendar-month></calendar-month>
+                    </calendar-range>
+                {% enddropdown_menu %}
 
                 {% dropdown_menu title="Status" heading="Filter by current status" enable_search=True %}
                     <ul
@@ -530,38 +533,22 @@
 {% endspaceless %}{% endblock content %}
 
 {% block extra_js %}
-    <!-- Datetime picker-->
-    <script src="{% static 'js/vendor/moment.min.js' %}"></script>
-    <script src="{% static 'js/vendor/daterangepicker.min.js' %}"></script>
     <script>
-        // Date Range Picker
-        // ---------------------------------------------
-        htmx.onLoad(function() {
-            var start = moment().subtract(29, 'days');
-            var end = moment();
+        /**
+         * Change the value of the query bar based on the provided date range and query param,
+         * then submit the query
+         *
+         * @param {string} dateRange - the date range in the format of `YYYY-MM-DD/YYYY-MM-DD`
+         * @param {string} query - the param to be used in the search bar. ie. `updated`
+         * 
+         */
+        function setDateFromPicker(dateRange, query) {
+            const searchBar = document.getElementById("search-navbar");
+            let [startDate, endDate] = dateRange.split("/");
 
-            // Add the picker for all elements that need it
-            $.each(['#filterupdated', '#filtersubmitted'], (index, element) => {
-                $(element).daterangepicker({
-                    startDate: start,
-                    endDate: end,
-                    ranges: {
-                        '{% trans "Today" %}': [moment(), moment()],
-                        '{% trans "Yesterday" %}': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                        '{% trans "Last 7 Days" %}': [moment().subtract(6, 'days'), moment()],
-                        '{% trans "Last 30 Days" %}': [moment().subtract(29, 'days'), moment()],
-                        '{% trans "This Month" %}': [moment().startOf('month'), moment().endOf('month')],
-                        '{% trans "Last Month" %}': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                    }
-                });
-
-                var query = $(element).attr("data-query");
-
-                $(element).on('apply.daterangepicker', function(ev, picker) {
-                    $('#search-navbar').val(`${query}:>=${picker.startDate.format('YYYY-MM-DD')} ${query}:<=${picker.endDate.format('YYYY-MM-DD')}`);
-                    $('#search-navbar').closest('form').trigger('submit');
-                });
-            })
-        });
+            // Update searchbar value and submit the query
+            searchBar.value = `${query}:>=${startDate} ${query}:<=${endDate}`
+            document.querySubmissions.submit()
+        }
     </script>
 {% endblock %}
