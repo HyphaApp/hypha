@@ -31,7 +31,6 @@
     "alpinejs": "^3.14.6",
     "core-js": "^3.39.0",
     "daisyui": "^5.0.43",
-    "daterangepicker": "^3.1.0",
     "htmx.org": "^2.0.3",
     "nodemon": "^3.1.7",
     "npm-run-all2": "^7.0.1",

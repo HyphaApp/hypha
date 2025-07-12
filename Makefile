@@ -74,6 +74,7 @@ download-esm-modules:  ## Download ECMAScript modules for the project
 	download-esm @github/relative-time-element $(JS_ESM_DIR)
 	download-esm @github/filter-input-element $(JS_ESM_DIR)
 	download-esm choices.js $(JS_ESM_DIR)
+	download-esm cally $(JS_ESM_DIR)
 
 
 .cache/tandem:  ## Install tandem, a tool for running multiple commands in parallel
@@ -100,6 +101,4 @@ download-esm-modules:  ## Download ECMAScript modules for the project
 	cp node_modules/htmx.org/dist/ext/multi-swap.js $(JS_VENDOR_DIR)/htmx-ext-multi-swap.min.js
 	cp node_modules/alpinejs/dist/cdn.min.js $(JS_VENDOR_DIR)/alpine.min.js
 	cp node_modules/@alpinejs/focus/dist/cdn.min.js $(JS_VENDOR_DIR)/alpine-focus.min.js
-	cp node_modules/daterangepicker/moment.min.js $(JS_VENDOR_DIR)/moment.min.js
-	cp node_modules/daterangepicker/daterangepicker.js $(JS_VENDOR_DIR)/daterangepicker.min.js
 	@touch $@

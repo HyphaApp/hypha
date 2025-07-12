@@ -57,9 +57,10 @@
         <script defer src="{% static 'js/vendor/alpine.min.js' %}"></script>
         <!-- alpine.js end -->
 
-        <!-- Modules for supporting <relative-time> and <filter-input> elements -->
-        <script type="module" src="{% static 'js/esm/github-relative-time-element-4-3-0.js' %}"></script>
+        <!-- Modules for supporting <relative-time>, <filter-input> and <calendar-date> elements -->
+        <script type="module" src="{% static 'js/esm/github-relative-time-element-4-4-8.js' %}"></script>
         <script type="module" src="{% static 'js/esm/github-filter-input-element-0-1-1.js' %}"></script>
+        <script type="module" src="{% static 'js/esm/cally-0-8-0.js' %}"></script>
         <script defer src="{% static 'js/behaviours/prose-cleanup.js' %}"></script>
 
         {% include "includes/head_end.html" %}
@@ -130,7 +131,7 @@
 
         <!-- choices select -->
         <script type="module">
-            import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+            import Choices from "{% static 'js/esm/choices.js-11-1-0.js' %}";
 
             htmx.onLoad(function() {
                 const selectElements = document.querySelectorAll("[data-js-choices]");
@@ -177,7 +178,7 @@
             <template x-init="$nextTick(() => {$dispatch('notice', {type: '{{ message.tags }}', text: '{{ message }}'})})"></template>
         {% endfor %}
 
-        <!-- We still need jQuery for daterangepicker and a few custom scripts. -->
+        <!-- We still need jQuery for a few custom scripts, will be removed soon -->
         <!-- Please do not add new features that require jQuery! -->
         <script src="{% static 'js/vendor/jquery.min.js' %}"></script>
 
