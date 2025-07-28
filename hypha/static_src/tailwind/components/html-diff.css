@@ -1,8 +1,14 @@
 .html-diff {
-  --marker-border-width: 0.2em;
-  --marker-ms: -0.6em;
-  --marker-ps: 0.5em;
+  --marker-border-width: 3px;
+  --marker-ms: -10px;
+  --marker-ps: 8px;
 
+  :is(h1, h2, h3, h4, h5, h6):has(ins),
+  :is(h1, h2, h3, h4, h5, h6):has(del),
+  ul:has(ins),
+  ul:has(del),
+  ol:has(ins),
+  ol:has(del),
   p:has(ins),
   p:has(del) {
     border-inline-start: var(--marker-border-width) solid var(--color-warning);
@@ -36,7 +42,8 @@
     border-inline-start: var(--marker-border-width) solid var(--color-success);
   }
 
-  del {
+  del,
+  del * {
     @apply bg-error text-error-content;
   }
 
