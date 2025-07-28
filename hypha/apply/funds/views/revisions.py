@@ -75,6 +75,17 @@ class RevisionCompareView(DetailView):
     template_name = "funds/revisions_compare.html"
     pk_url_kwarg = "submission_pk"
 
+    # Specified to ensure template block order always aligns
+    named_block_order = [
+        "title",
+        "full_name",
+        "email",
+        "address",
+        "duration",
+        "value",
+        "organization",
+    ]
+
     def compare_revisions(self, from_data, to_data):
         self.object.form_data = from_data.form_data
         from_rendered_text_fields = self.object.render_text_blocks_answers()
@@ -99,9 +110,15 @@ class RevisionCompareView(DetailView):
         return (required_fields, stream_fields)
 
     def render_required(self):
+        # Ensure named blocks are ordered according to the template
+        ordered_name_blocks = [
+            block
+            for block in self.named_block_order
+            if block in self.object.named_blocks
+        ]
         return [
             getattr(self.object, "get_{}_display".format(field))()
-            for field in self.object.named_blocks
+            for field in ordered_name_blocks
         ]
 
     def get_context_data(self, **kwargs):
