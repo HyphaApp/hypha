@@ -155,7 +155,7 @@ class RevisionCompareView(DetailView):
         for field in (a_field, b_field):
             # TODO: Using regex with HTML is not ideal but this temp until we move to xml parsing
             field_match = re.match(
-                r"^\s*<section class=\".*\">\s*(<h2 class=\".*\">(?:\s|.)*?</h2>)((?:\s|.)*)</section>",
+                r"^\s*<section class=\".*\">\s*(<h2 class=\".*\">[\s\S]*?</h2>)([\s\S]*?)</section>",
                 field,
             )
             try:
