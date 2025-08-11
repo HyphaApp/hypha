@@ -13,9 +13,9 @@
 {% endblock %}
 
 {% block content %}
-    <div class="my-4 mx-auto layout layout-flowrow-until-md layout-sidebar-flowrow-start">
+    <div class="my-4 layout layout-flowrow-until-md layout-sidebar-flowrow-start">
 
-        <article class="layout-main">
+        {% comment %} <article class="layout-main">
             <div class="mb-4">
                 <h2 class="section-header">{% trans "Changes" %}</h2>
                 <div class="flex flex-wrap gap-2">
@@ -77,7 +77,75 @@
                     {% endfor %}
                 </div>
             </div>
-        </article>
+        </article> {% endcomment %}
+        <div class="layout-main">
+            <div class="mb-4">
+                <h2 class="section-header">{% trans "Changes" %}</h2>
+                <div class="flex flex-wrap gap-2">
+                    <span class="badge badge-soft">
+                        <relative-time format='datetime' datetime="{{ to_revision.timestamp|date:'c' }}">
+                            {{ to_revision.timestamp|date:'SHORT_DATETIME_FORMAT' }}
+                        </relative-time>
+                    </span>
+
+                    {% if to_revision.id != from_revision.id %}
+                        {% trans "↔" %}
+                        <span class="badge badge-soft">
+                            <relative-time format='datetime' precision='second' datetime="{{ to_revision.timestamp|date:'c' }}">
+                                {{ to_revision.timestamp|date:'SHORT_DATETIME_FORMAT' }}
+                            </relative-time>
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+            <table class="px-4 pb-4 w-full max-w-none prose card card-border prose-h2:mt-0 prose-h2:text-lg html-diff">
+
+                {% for from_field, to_field in required_fields %}
+                    {% if forloop.first %}
+                        <tr>
+                            <td><h2>{% trans "Title" %}</h2>{{ from_field }}</td>
+                            <td><h2>{% trans "Title" %}</h2>{{ to_field }}</td>
+                        </tr>
+                    {% elif forloop.counter == 2 %}
+                        <tr>
+                            <td><h2>{% trans "Legal Name" %}</h2>{{ from_field }}</td>
+                            <td><h2>{% trans "Legal Name" %}</h2>{{ to_field }}</td>
+                        </tr>
+                    {% elif forloop.counter == 3 %}
+                        <tr>
+                            <td><h2>{% trans "E-mail" %}</h2>{{ from_field }}</td>
+                            <td><h2>{% trans "E-mail" %}</h2>{{ to_field }}</td>
+                        </tr>
+                    {% elif forloop.counter == 4 %}
+                        <tr>
+                            <td><h2>{% trans "Address" %}</h2>{{ from_field }}</td>
+                            <td><h2>{% trans "Address" %}</h2>{{ to_field }}</td>
+                        </tr>
+                    {% elif forloop.counter == 5 %}
+                        <tr>
+                            <td><h2>{% trans "Project Duration" %}</h2>{{ from_field }}</td>
+                            <td><h2>{% trans "Project Duration" %}</h2>{{ to_field }}</td>
+                        </tr>
+                    {% elif forloop.counter == 6 %}
+                        <tr>
+                            <td><h2>{% trans "Requested Funding" %}</h2>{{ from_field }}</td>
+                            <td><h2>{% trans "Requested Funding" %}</h2>{{ to_field }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td>{{ from_field }}</td>
+                            <td>{{ to_field }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                {% for from_field, to_field in stream_fields %}
+                    <tr>
+                        <td>{{ from_field }}</td>
+                        <td>{{ to_field }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
 
         <aside class="layout-sidebar">
             <div class="sticky top-4">

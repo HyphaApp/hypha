@@ -3,8 +3,10 @@
   --marker-ms: -10px;
   --marker-ps: 8px;
 
-  :is(h1, h2, h3, h4, h5, h6):has(ins),
+  /* :is(h1, h2, h3, h4, h5, h6):has(ins),
   :is(h1, h2, h3, h4, h5, h6):has(del),
+  tr:has(ins),
+  tr:has(del),
   ul:has(ins),
   ul:has(del),
   ol:has(ins),
@@ -14,7 +16,7 @@
     border-inline-start: var(--marker-border-width) solid var(--color-warning);
     margin-inline-start: var(--marker-ms);
     padding-inline-start: var(--marker-ps);
-  }
+  } */
 
   table,
   .prose {
@@ -42,8 +44,7 @@
     border-inline-start: var(--marker-border-width) solid var(--color-success);
   }
 
-  del,
-  del * {
+  del {
     @apply bg-error text-error-content;
   }
 

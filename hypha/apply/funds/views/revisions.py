@@ -1,7 +1,9 @@
-import html_diff
+import re
+from typing import List
+
+import nh3
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.utils.html import format_html
 from django.views.generic import (
     DetailView,
     ListView,
@@ -11,6 +13,7 @@ from hypha.apply.users.decorators import (
     staff_required,
 )
 
+from ..differ import compare
 from ..models import (
     ApplicationRevision,
     ApplicationSubmission,
@@ -96,12 +99,11 @@ class RevisionCompareView(DetailView):
         to_required = self.render_required()
 
         required_fields = [
-            format_html(html_diff.diff(*fields))
-            for fields in zip(from_required, to_required, strict=False)
+            compare(*fields) for fields in zip(from_required, to_required, strict=False)
         ]
 
         stream_fields = [
-            format_html(html_diff.diff(*fields))
+            compare(*self.cleanse_stream_fields(*fields), should_clean=False)
             for fields in zip(
                 from_rendered_text_fields, to_rendered_text_fields, strict=False
             )
@@ -135,3 +137,36 @@ class RevisionCompareView(DetailView):
             "stream_fields": stream_fields,
         }
         return super().get_context_data(**ctx, **kwargs)
+
+    def cleanse_stream_fields(self, a_field, b_field) -> List[str]:
+        """Sanitizes the HTML outside of the h2 heading
+        This is a temp fix and we should move to full HTML diffing
+
+        Args:
+            a_field: the field to sanitize
+            b_field: the field to sanitize
+
+        Returns:
+            The sanitized stream field answers in a list
+        """
+
+        sanitized_answers = []
+
+        for field in (a_field, b_field):
+            # TODO: Using regex with HTML is not ideal but this temp until we move to xml parsing
+            field_match = re.match(
+                r"^\s*<section class=\".*\">\s*(<h2 class=\".*\">(?:\s|.)*?</h2>)((?:\s|.)*)</section>",
+                field,
+            )
+            try:
+                heading = field_match.group(1)
+                answer = re.sub("(<li[^>]*>)", r"\1◦ ", field_match.group(2))
+                answer = nh3.clean(answer, attributes={}, tags=set())
+
+                sanitized_answers.append(f"{heading}{answer}")
+            except AttributeError:
+                # If it fails to match for some reason just cleanse the fields but leave h2s
+                answer = nh3.clean(answer, attributes={}, tags={"h2"})
+                sanitized_answers.append(field)
+
+        return sanitized_answers
