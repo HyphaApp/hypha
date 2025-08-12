@@ -159,8 +159,12 @@ class RevisionCompareView(DetailView):
                 field,
             )
             try:
-                heading = field_match.group(1)
+                # Keep h2 tags but purge any classes/attributes
+                heading = nh3.clean(field_match.group(1), tags={"h2"}, attributes={})
+
+                # Handle lists on the answer fields by subbing HTML for chars
                 answer = re.sub("(<li[^>]*>)", r"\1◦ ", field_match.group(2))
+                # Cleanse answer of HTML
                 answer = nh3.clean(answer, attributes={}, tags=set())
 
                 sanitized_answers.append(f"{heading}{answer}")
