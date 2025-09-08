@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block content %}{# fmt:off #}
-{% blocktrans with old_status=old_phase.public_name new_status=source.phase.public_name %}Your application is now in "{{ new_status }}" status (progressed from "{{ old_status }}").{% endblocktrans %}
+{% blocktrans with new_status=new_phase.public_name old_status=source.phase.public_name %}Your application is now in "{{ new_status }}" status (progressed from "{{ old_status }}").{% endblocktrans %}
 
 {% trans "Please submit any questions related to your application here" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'funds:submissions:comments' pk=source.pk %}
 {% endblock %}{# fmt:on #}

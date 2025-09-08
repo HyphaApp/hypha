@@ -163,10 +163,14 @@ class EmailAdapter(AdapterBase):
             "subject": self.get_subject(message_type, source),
         }
 
-    def handle_transition(self, old_phase, source, **kwargs):
+    def handle_transition(self, new_phase, source, old_phase=None, **kwargs):
         from hypha.apply.funds.workflows import PHASES
 
         submission = source
+
+        if old_phase is None:
+            old_phase = submission.phase
+
         # Retrieve status index to see if we are going forward or backward.
         old_index = list(dict(PHASES).keys()).index(old_phase.name)
         target_index = list(dict(PHASES).keys()).index(submission.status)
@@ -199,14 +203,14 @@ class EmailAdapter(AdapterBase):
             **kwargs,
         )
 
-    def handle_batch_transition(self, transitions, sources, **kwargs):
-        submissions = sources
-        kwargs.pop("source")
-        for submission in submissions:
-            old_phase = transitions[submission.id]
-            return self.handle_transition(
-                old_phase=old_phase, source=submission, **kwargs
-            )
+    # def handle_batch_transition(self, transitions, sources, **kwargs):
+    #     submissions = sources
+    #     kwargs.pop("source")
+    #     for submission in submissions:
+    #         old_phase = transitions[submission.id]
+    #         return self.handle_transition(
+    #             old_phase=old_phase, source=submission, **kwargs
+    #         )
 
     def handle_project_transition(self, source, **kwargs):
         from hypha.apply.projects.models.project import (
