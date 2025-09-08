@@ -175,12 +175,16 @@ class EmailAdapter(AdapterBase):
         old_index = list(dict(PHASES).keys()).index(old_phase.name)
         target_index = list(dict(PHASES).keys()).index(submission.status)
         is_forward = old_index < target_index
+        print("NEW PHASE")
+        print(new_phase.public_name)
+
+        kwargs["old_phase"] = old_phase.public_name
+        kwargs["new_phase"] = new_phase.public_name
 
         if is_forward:
             return self.render_message(
                 "messages/email/transition.html",
                 source=submission,
-                old_phase=old_phase,
                 **kwargs,
             )
 
