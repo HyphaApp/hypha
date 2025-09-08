@@ -203,14 +203,15 @@ class EmailAdapter(AdapterBase):
             **kwargs,
         )
 
-    # def handle_batch_transition(self, transitions, sources, **kwargs):
-    #     submissions = sources
-    #     kwargs.pop("source")
-    #     for submission in submissions:
-    #         old_phase = transitions[submission.id]
-    #         return self.handle_transition(
-    #             old_phase=old_phase, source=submission, **kwargs
-    #         )
+    def handle_batch_transition(self, transitions, sources, **kwargs):
+        submissions = sources
+        kwargs.pop("source")
+        for submission in submissions:
+            old_phase = transitions[submission.id]
+            new_phase = submission.phase
+            return self.handle_transition(
+                old_phase=old_phase, new_phase=new_phase, source=submission, **kwargs
+            )
 
     def handle_project_transition(self, source, **kwargs):
         from hypha.apply.projects.models.project import (
