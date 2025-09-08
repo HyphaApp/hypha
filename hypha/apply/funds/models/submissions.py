@@ -1038,7 +1038,10 @@ class ApplicationSubmission(
     @status_field.on_success()
     def log_status_update(self, descriptor, source, target, **kwargs):
         instance = self
-        old_phase = self.workflow[source]
+
+        # The status associated with the application at this time will be the old phase
+        # so provide the new phase as an arg when transitioning
+        new_phase = self.workflow[target]
 
         by = kwargs["by"]
         request = kwargs["request"]
@@ -1063,7 +1066,7 @@ class ApplicationSubmission(
                     user=by,
                     request=request,
                     source=instance,
-                    related=old_phase,
+                    related=new_phase,
                 )
 
             if instance.status in review_statuses:
