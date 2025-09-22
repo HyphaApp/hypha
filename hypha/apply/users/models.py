@@ -254,7 +254,7 @@ class User(AbstractUser):
         return [g.name for g in self.groups.all()]
 
     @cached_property
-    @override(language=settings.LANGUAGE_CODE)
+    @defaultlocale
     def is_apply_staff(self):
         return STAFF_GROUP_NAME in self.roles or self.is_superuser
 
