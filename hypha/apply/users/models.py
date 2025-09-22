@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core import exceptions
@@ -8,6 +9,7 @@ from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import override
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseGenericSetting, register_setting
 from wagtail.fields import RichTextField
@@ -185,6 +187,14 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         return user, _created
 
 
+# Some of the `is_XXX` properties on the User model compare database values
+# against lazily-translated strings, and this comparison must therefore be done
+# with the site's default language active, otherwise weird things can happen.
+# This `defaultlocale` can be used as a context manager or a decorator and will
+# activate the site's default language while inside the block/function.
+defaultlocale = override(language=settings.LANGUAGE_CODE)
+
+
 class User(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
     full_name = models.CharField(
@@ -244,34 +254,42 @@ class User(AbstractUser):
         return [g.name for g in self.groups.all()]
 
     @cached_property
+    @defaultlocale
     def is_apply_staff(self):
         return STAFF_GROUP_NAME in self.roles or self.is_superuser
 
     @cached_property
+    @defaultlocale
     def is_apply_staff_admin(self):
         return TEAMADMIN_GROUP_NAME in self.roles or self.is_superuser
 
     @cached_property
+    @defaultlocale
     def is_reviewer(self):
         return REVIEWER_GROUP_NAME in self.roles
 
     @cached_property
+    @defaultlocale
     def is_partner(self):
         return PARTNER_GROUP_NAME in self.roles
 
     @cached_property
+    @defaultlocale
     def is_community_reviewer(self):
         return COMMUNITY_REVIEWER_GROUP_NAME in self.roles
 
     @cached_property
+    @defaultlocale
     def is_applicant(self):
         return APPLICANT_GROUP_NAME in self.roles
 
     @cached_property
+    @defaultlocale
     def is_approver(self):
         return APPROVER_GROUP_NAME in self.roles
 
     @cached_property
+    @defaultlocale
     def is_finance(self):
         return FINANCE_GROUP_NAME in self.roles
 
@@ -292,6 +310,7 @@ class User(AbstractUser):
         )
 
     @cached_property
+    @defaultlocale
     def is_contracting(self):
         return CONTRACTING_GROUP_NAME in self.roles
 
