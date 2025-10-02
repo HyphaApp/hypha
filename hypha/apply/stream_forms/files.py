@@ -7,7 +7,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 class StreamFieldDataEncoder(DjangoJSONEncoder):
     def default(self, o):
-        if isinstance(o, StreamFieldFile):
+        if isinstance(o, File):
             return {
                 "name": o.name,
                 "filename": o.filename,

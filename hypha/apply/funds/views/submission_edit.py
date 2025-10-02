@@ -253,6 +253,7 @@ class BaseSubmissionEditView(UpdateView):
         return [
             PlaceholderUploadedFile(f.filename, size=f.size, file_id=f.name)
             for f in initial_file
+            if f
         ]
 
     def save_draft_and_refresh_page(self, form) -> HttpResponseRedirect:
