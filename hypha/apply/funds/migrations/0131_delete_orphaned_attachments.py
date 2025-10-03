@@ -37,6 +37,9 @@ def delete_orphaned_attachments(apps, schema_editor):
     folders_to_delete = []
     folders_to_check = []
 
+    if not default_storage.exists(submission_attachment_path):
+        return
+
     for folder in default_storage.listdir(submission_attachment_path)[0]:
         # `listdir` returns ([folders], [files]) ^
         try:
