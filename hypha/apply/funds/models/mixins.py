@@ -161,7 +161,6 @@ class AccessFormData:
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
                 files[field.id] = self.data(field.id) or []
-                self.form_data.pop(field.id, None)
         return files
 
     @classmethod
