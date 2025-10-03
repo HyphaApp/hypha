@@ -37,9 +37,8 @@ def delete_orphaned_attachments(apps, schema_editor):
     folders_to_delete = []
     folders_to_check = []
 
-    for folder in default_storage.listdir(submission_attachment_path)[
-        0
-    ]:  # `listdir` returns ([folders], [files])
+    for folder in default_storage.listdir(submission_attachment_path)[0]:
+        # `listdir` returns ([folders], [files]) ^
         try:
             folders_to_check.append(int(folder))
         except ValueError:
@@ -57,11 +56,11 @@ def delete_orphaned_attachments(apps, schema_editor):
     folders_to_delete += list(set(folders_to_check) - valid_ids)
 
     for folder in folders_to_delete:
-        # try:
-        delete_directory(f"{submission_attachment_path}/{folder}")
-        # except FileNotFoundError:
-        #     # Will get thrown when unit tests attempt to run migrations
-        #     pass
+        try:
+            delete_directory(f"{submission_attachment_path}/{folder}")
+        except FileNotFoundError:
+            # Will get thrown when unit tests attempt to run migrations
+            pass
 
 
 class Migration(migrations.Migration):
