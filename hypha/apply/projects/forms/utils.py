@@ -3,7 +3,6 @@ from typing import List, Tuple
 from django.conf import settings
 
 from hypha.apply.projects.models.project import (
-    COMPLETE,
     INTERNAL_APPROVAL,
     PROJECT_STATUS_CHOICES,
 )
@@ -16,9 +15,7 @@ def get_project_status_options() -> List[Tuple[str, str]]:
     being able to set these
     """
     return [
-        status
-        for status in PROJECT_STATUS_CHOICES
-        if status[0] not in [COMPLETE, INTERNAL_APPROVAL]
+        status for status in PROJECT_STATUS_CHOICES if status[0] != INTERNAL_APPROVAL
     ]
 
 
