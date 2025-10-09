@@ -1,5 +1,4 @@
 import json
-import random
 import uuid
 from collections import defaultdict
 
@@ -75,18 +74,6 @@ class FormDataFactory(factory.Factory, metaclass=AddFormFieldsMetaclass):
                 or for_factory.Meta.model.form_fields.field.to_python(form_fields)
             }
 
-        # Get UUIDs of the file fields to add "-uploads" fields later
-        file_fields = []
-        file_types = ("image", "file", "multi_file")
-        for field in form_fields:
-            try:
-                if field["type"] in file_types:
-                    file_fields.append(field["id"])
-            except TypeError:
-                if field.block_type in file_types:
-                    file_fields.append(field.id)
-        # field["id"] for field in form_fields if field["type"] in ("file", "multi_file")]
-
         form_data = {}
         for name, answer in kwargs.items():
             try:
@@ -105,25 +92,6 @@ class FormDataFactory(factory.Factory, metaclass=AddFormFieldsMetaclass):
             form_data = clean_object.form_data.copy()
             clean_object.delete()
             return form_data
-
-        for id in file_fields:
-            uploads = []
-            if entry := form_data.get(id):
-                if not isinstance(entry, list):
-                    entry = [entry]
-
-                for file in entry:
-                    uploads.append(
-                        {
-                            "id": str(uuid.uuid4()),
-                            "name": file._name,
-                            "size": random.randint(20, 100000),
-                            "type": "tus",
-                            "url": "",
-                        }
-                    )
-
-                form_data[f"{id}-uploads"] = json.dumps(uploads)
 
         return form_data
 
