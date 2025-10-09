@@ -2,33 +2,18 @@
 
 from django.db import migrations
 from django.core.files.storage import default_storage
-import os
-
-
-def delete_directory(directory_path):
-    """Delete a full directory (empty or not)"""
-
-    directories, files = default_storage.listdir(directory_path)
-
-    for item in directories:
-        item_path = os.path.join(directory_path, item)
-        if default_storage.exists(item_path):
-            # Recursively delete subdirectories
-            delete_directory(item_path)
-
-    for item in files:
-        item_path = os.path.join(directory_path, item)
-        if default_storage.exists(item_path):
-            # Delete files
-            default_storage.delete(item_path)
-
-    if default_storage.exists(directory_path):
-        # Delete the empty directory
-        default_storage.delete(directory_path)
+import sys
+from ..utils import delete_directory
 
 
 def delete_orphaned_attachments(apps, schema_editor):
     """Remove all attachments not associated with an application"""
+
+    # TODO: This solution is not ideal but due to our unit tests writing to the filesystem
+    #       this can cause files belonging to the dev's local server to be deleted. Until
+    #       these can be better isolated, this signal will do nothing when pytest is running
+    if "pytest" in sys.modules:
+        return
 
     ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
 
@@ -38,6 +23,8 @@ def delete_orphaned_attachments(apps, schema_editor):
     folders_to_check = []
 
     if not default_storage.exists(submission_attachment_path):
+        # If specified path doesn't exist, ignore
+        # edge case that typically comes up in tests
         return
 
     for folder in default_storage.listdir(submission_attachment_path)[0]:
