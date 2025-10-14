@@ -1,5 +1,6 @@
 import sys
 
+from django.core.files.storage import default_storage
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
@@ -35,4 +36,5 @@ def delete_attachments(sender, instance=None, **kwargs):
     elif issubclass(sender, ApplicationSubmission):
         submission_attachment_path = f"submission/{instance.id}"
 
-        delete_directory(submission_attachment_path)
+        if default_storage.exists(submission_attachment_path):
+            delete_directory(submission_attachment_path)
