@@ -17,7 +17,7 @@ def delete_orphaned_attachments(apps, schema_editor):
 
     ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
 
-    submission_attachment_path = f"{default_storage.base_location}/submission"
+    submission_attachment_path = "submission"
 
     folders_to_delete = []
     folders_to_check = []
