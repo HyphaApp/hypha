@@ -4,6 +4,7 @@ from collections import defaultdict
 
 import factory
 import wagtail_factories
+from django.core.files.base import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.serializers.json import DjangoJSONEncoder
 from wagtail.blocks import RichTextBlock, StructValue
@@ -242,6 +243,17 @@ class DropdownFieldBlockFactory(FormFieldBlockFactory):
         return cls.choices[0]
 
 
+class UploadedFile(SimpleUploadedFile):
+    """Utilized to make functionality closer to that of `StreamFieldFile`
+
+    Requires a `filename` attribute which is pulled from the existing `_name`
+    """
+
+    def __init__(self, name, content, content_type=...):
+        super().__init__(name, content, content_type)
+        self.filename = self._name
+
+
 class UploadableMediaFactory(FormFieldBlockFactory):
     default_value = factory.django.FileField()
 
@@ -252,7 +264,7 @@ class UploadableMediaFactory(FormFieldBlockFactory):
         if params.get("filename") is None:
             params["filename"] = "test_example.pdf"
         file_name, file = cls.default_value._make_content(params)
-        return SimpleUploadedFile(file_name, file.read())
+        return UploadedFile(file_name, file.read())
 
 
 class ImageFieldBlockFactory(UploadableMediaFactory):
@@ -274,6 +286,16 @@ class MultiFileFieldBlockFactory(UploadableMediaFactory):
     @classmethod
     def make_answer(cls, params=None):
         return [UploadableMediaFactory.make_answer() for _ in range(2)]
+
+
+class StreamFieldDataEncoder(DjangoJSONEncoder):
+    def default(self, o):
+        if isinstance(o, File):
+            return {
+                "name": o.name,
+                "filename": o.filename,
+            }
+        return super().default(o)
 
 
 class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):

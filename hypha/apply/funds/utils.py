@@ -1,4 +1,5 @@
 import csv
+import os
 import re
 from datetime import datetime
 from functools import reduce
@@ -8,6 +9,7 @@ from operator import iconcat
 from typing import Iterable
 
 import django_filters as filters
+from django.core.files.storage import default_storage
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.html import strip_tags
@@ -267,3 +269,28 @@ def generate_invite_path(invite):
         kwargs={"uidb64": uid, "token": token},
     )
     return login_path
+
+
+def delete_directory(directory_path):
+    """Delete a full directory (empty or not)
+
+    Used in attachment cleanup when deleting submissions/revisions
+    """
+
+    directories, files = default_storage.listdir(directory_path)
+
+    for item in directories:
+        item_path = os.path.join(directory_path, item)
+        if default_storage.exists(item_path):
+            # Recursively delete subdirectories
+            delete_directory(item_path)
+
+    for item in files:
+        item_path = os.path.join(directory_path, item)
+        if default_storage.exists(item_path):
+            # Delete files
+            default_storage.delete(item_path)
+
+    if default_storage.exists(directory_path):
+        # Delete the empty directory
+        default_storage.delete(directory_path)
