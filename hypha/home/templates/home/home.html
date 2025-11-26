@@ -13,7 +13,7 @@
         </h1>
 
         {% if settings.core.SystemSettings.home_strapline %}
-            <p class="mb-8 text-fg-muted text-pretty">{{ settings.core.SystemSettings.home_strapline|nh3|safe }}</p>
+            <div class="strapline">{{ settings.core.SystemSettings.home_strapline|nh3|safe }}</div>
         {% endif %}
 
         {% if funds %}

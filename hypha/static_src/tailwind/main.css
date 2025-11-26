@@ -13,6 +13,7 @@
 @import "./utilities/typography.css" layer(utilities);
 @import "./components/link.css" layer(utilities);
 @import "./components/steps.css" layer(utilities);
+@import "./components/strapline.css" layer(utilities);
 @import "./components/nprogress";
 @import "./utilities/misc.css";
 
