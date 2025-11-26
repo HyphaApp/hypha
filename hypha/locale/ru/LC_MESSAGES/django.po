@@ -1347,6 +1347,7 @@ msgid "Dear %(user)s,"
 msgstr "Уважаемый(ая) %(user)s,"
 
 #: hypha/apply/activity/templates/messages/email/base.html:8
+#: hypha/apply/users/templates/users/email_change/update_info_email.html:7
 #, python-format
 msgid ""
 "Kind Regards,\n"
@@ -7799,15 +7800,6 @@ msgstr ""
 "На сайте %(ORG_LONG_NAME)s была предпринята попытка изменить электронную "
 "почту вашей учетной записи. Если это действие было совершено не вами, "
 "обратитесь к нам по адресу %(ORG_EMAIL)s "
-
-#: hypha/apply/users/templates/users/email_change/update_info_email.html:7
-#, python-format
-msgid ""
-"Kind Regards,\n"
-"    The %(ORG_SHORT_NAME)s Team"
-msgstr ""
-"С наилучшими пожеланиями, \n"
-"    Команда %(ORG_SHORT_NAME)s"
 
 #: hypha/apply/users/templates/users/emails/confirm_access.md:4
 #, python-format

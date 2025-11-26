@@ -1250,6 +1250,7 @@ msgid "Dear %(user)s,"
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/base.html:8
+#: hypha/apply/users/templates/users/email_change/update_info_email.html:7
 #, python-format
 msgid ""
 "Kind Regards,\n"
@@ -7119,13 +7120,6 @@ msgid ""
 "There has been an attempt to change email of your account on the "
 "%(ORG_LONG_NAME)s web site. If this action wasn't made by you, please "
 "contact support at %(ORG_EMAIL)s "
-msgstr ""
-
-#: hypha/apply/users/templates/users/email_change/update_info_email.html:7
-#, python-format
-msgid ""
-"Kind Regards,\n"
-"    The %(ORG_SHORT_NAME)s Team"
 msgstr ""
 
 #: hypha/apply/users/templates/users/emails/confirm_access.md:4

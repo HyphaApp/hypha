@@ -1423,10 +1423,8 @@ msgid "Dear %(user)s,"
 msgstr "亲爱的 %(user)s，"
 
 #: hypha/apply/activity/templates/messages/email/base.html:8
-#, fuzzy, python-format
-#| msgid ""
-#| "Kind Regards,\n"
-#| "The %(ORG_SHORT_NAME)s Team"
+#: hypha/apply/users/templates/users/email_change/update_info_email.html:7
+#, python-format
 msgid ""
 "Kind Regards,\n"
 "    The %(ORG_SHORT_NAME)s Team"
@@ -7887,18 +7885,6 @@ msgid ""
 "%(ORG_LONG_NAME)s web site. If this action wasn't made by you, please "
 "contact support at %(ORG_EMAIL)s "
 msgstr ""
-
-#: hypha/apply/users/templates/users/email_change/update_info_email.html:7
-#, fuzzy, python-format
-#| msgid ""
-#| "Kind Regards,\n"
-#| "The %(ORG_SHORT_NAME)s Team"
-msgid ""
-"Kind Regards,\n"
-"    The %(ORG_SHORT_NAME)s Team"
-msgstr ""
-"谨致问候，\n"
-"%(ORG_SHORT_NAME)s 团队"
 
 #: hypha/apply/users/templates/users/emails/confirm_access.md:4
 #, python-format

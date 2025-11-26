@@ -1254,6 +1254,7 @@ msgid "Dear %(user)s,"
 msgstr "Vážený %(user)s,"
 
 #: hypha/apply/activity/templates/messages/email/base.html:8
+#: hypha/apply/users/templates/users/email_change/update_info_email.html:7
 #, python-format
 msgid ""
 "Kind Regards,\n"
@@ -7300,15 +7301,6 @@ msgstr ""
 "Na webových stránkách %(ORG_LONG_NAME)s došlo k pokusu o změnu e-mailu "
 "vašeho účtu.Pokud jste tuto akci neprovedli vy, kontaktujte prosím podporu "
 "na adrese %(ORG_EMAIL)s. "
-
-#: hypha/apply/users/templates/users/email_change/update_info_email.html:7
-#, python-format
-msgid ""
-"Kind Regards,\n"
-"    The %(ORG_SHORT_NAME)s Team"
-msgstr ""
-"S laskavým pozdravem,\n"
-"    Tým %(ORG_SHORT_NAME)s"
 
 #: hypha/apply/users/templates/users/emails/confirm_access.md:4
 #, python-format
