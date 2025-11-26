@@ -330,14 +330,14 @@ msgstr ""
 
 #: hypha/apply/activity/adapters/emails.py:137
 #, fuzzy, python-brace-format
-#| msgid "Your application to {org_long_name}: {source.title}"
-msgid "Your application to {org_long_name}: {source.title_text_display}"
-msgstr "您给 {org_long_name} 的项目：{source.title}"
+#| msgid "Your application to {ORG_LONG_NAME}: {source.title}"
+msgid "Your application to {ORG_LONG_NAME}: {source.title_text_display}"
+msgstr "您给 {ORG_LONG_NAME} 的项目：{source.title}"
 
 #: hypha/apply/activity/adapters/emails.py:140
 #, python-brace-format
-msgid "Your {org_long_name} Project: {source.title}"
-msgstr "您的 {org_long_name} 项目：{source.title}"
+msgid "Your {ORG_LONG_NAME} Project: {source.title}"
+msgstr "您的 {ORG_LONG_NAME} 项目：{source.title}"
 
 #: hypha/apply/activity/adapters/slack.py:31
 #, fuzzy, python-brace-format
@@ -1426,13 +1426,13 @@ msgstr "亲爱的 %(user)s，"
 #, fuzzy, python-format
 #| msgid ""
 #| "Kind Regards,\n"
-#| "The %(org_short_name)s Team"
+#| "The %(ORG_SHORT_NAME)s Team"
 msgid ""
 "Kind Regards,\n"
 "    The %(ORG_SHORT_NAME)s Team"
 msgstr ""
 "谨致问候，\n"
-"%(org_short_name)s 团队"
+"%(ORG_SHORT_NAME)s 团队"
 
 #: hypha/apply/activity/templates/messages/email/batch_ready_to_review.html:4
 #: hypha/apply/activity/templates/messages/email/ready_to_review.html:4
@@ -4812,8 +4812,8 @@ msgstr "需要审查（回复）"
 #: hypha/apply/funds/workflows/definitions/single_stage_external.py:70
 #: hypha/apply/funds/workflows/definitions/single_stage_same.py:70
 #, python-brace-format
-msgid "{org_short_name} Review"
-msgstr "{org_short_name} 审核"
+msgid "{ORG_SHORT_NAME} Review"
+msgstr "{ORG_SHORT_NAME} 审核"
 
 #: hypha/apply/funds/workflows/definitions/double_stage.py:87
 #: hypha/apply/funds/workflows/definitions/single_stage.py:87
@@ -6486,7 +6486,7 @@ msgstr "等待中"
 #: hypha/apply/projects/templatetags/project_tags.py:83
 #, python-brace-format
 msgid ""
-"Awaiting project documents to be created and approved by {org_short_name} "
+"Awaiting project documents to be created and approved by {ORG_SHORT_NAME} "
 "internally. Please check back when the project has moved to contracting "
 "stage."
 msgstr ""
@@ -6525,7 +6525,7 @@ msgstr ""
 
 #: hypha/apply/projects/templatetags/project_tags.py:158
 #, python-brace-format
-msgid "Awaiting signed contract from {org_short_name}"
+msgid "Awaiting signed contract from {ORG_SHORT_NAME}"
 msgstr ""
 
 #: hypha/apply/projects/templatetags/project_tags.py:165
@@ -6558,7 +6558,7 @@ msgstr ""
 
 #: hypha/apply/projects/templatetags/project_tags.py:207
 #, python-brace-format
-msgid "Awaiting contract approval from {org_short_name}"
+msgid "Awaiting contract approval from {ORG_SHORT_NAME}"
 msgstr ""
 
 #: hypha/apply/projects/templatetags/project_tags.py:212
@@ -6577,7 +6577,7 @@ msgstr ""
 
 #: hypha/apply/projects/templatetags/project_tags.py:242
 #, python-brace-format
-msgid "Please download the signed contract uploaded by {org_short_name}"
+msgid "Please download the signed contract uploaded by {ORG_SHORT_NAME}"
 msgstr ""
 
 #: hypha/apply/projects/templatetags/project_tags.py:244
@@ -7688,10 +7688,10 @@ msgstr "启用双重验证"
 #: hypha/apply/users/templates/users/activation/email.txt:4
 #, python-format
 msgid ""
-"Activate your account on the %(org_long_name)s web site by clicking this "
+"Activate your account on the %(ORG_LONG_NAME)s web site by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
-"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(org_long_name)s 网站的账"
+"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账"
 "户："
 
 #: hypha/apply/users/templates/users/activation/email.txt:8
@@ -7741,14 +7741,14 @@ msgstr ""
 #, python-format
 msgid ""
 "Kind Regards,\n"
-"The %(org_short_name)s Team"
+"The %(ORG_SHORT_NAME)s Team"
 msgstr ""
 "谨致问候，\n"
-"%(org_short_name)s 团队"
+"%(ORG_SHORT_NAME)s 团队"
 
 #: hypha/apply/users/templates/users/activation/email_subject.txt:2
 #, python-format
-msgid "Account details for %(username)s at %(org_long_name)s"
+msgid "Account details for %(username)s at %(ORG_LONG_NAME)s"
 msgstr ""
 
 #: hypha/apply/users/templates/users/activation/invalid.html:4
@@ -7808,11 +7808,11 @@ msgstr "返回账户"
 #: hypha/apply/users/templates/users/email_change/confirm_email.txt:4
 #, python-format
 msgid ""
-"Request to change email of your account on the %(org_long_name)s web site "
+"Request to change email of your account on the %(ORG_LONG_NAME)s web site "
 "has been accepted. Confirm your email by clicking this link or copying and "
 "pasting it to your browser:"
 msgstr ""
-"您在 %(org_long_name)s 网站账户的电子邮箱更改请求已被批准。请点击此链接确认邮"
+"您在 %(ORG_LONG_NAME)s 网站账户的电子邮箱更改请求已被批准。请点击此链接确认邮"
 "箱，或者将其复制并粘贴到浏览器中："
 
 #: hypha/apply/users/templates/users/email_change/confirm_email.txt:8
@@ -7884,26 +7884,26 @@ msgstr ""
 #, python-format
 msgid ""
 "There has been an attempt to change email of your account on the "
-"%(org_long_name)s web site. If this action wasn't made by you, please "
-"contact support at %(org_email)s "
+"%(ORG_LONG_NAME)s web site. If this action wasn't made by you, please "
+"contact support at %(ORG_EMAIL)s "
 msgstr ""
 
 #: hypha/apply/users/templates/users/email_change/update_info_email.html:7
 #, fuzzy, python-format
 #| msgid ""
 #| "Kind Regards,\n"
-#| "The %(org_short_name)s Team"
+#| "The %(ORG_SHORT_NAME)s Team"
 msgid ""
 "Kind Regards,\n"
-"    The %(org_short_name)s Team"
+"    The %(ORG_SHORT_NAME)s Team"
 msgstr ""
 "谨致问候，\n"
-"%(org_short_name)s 团队"
+"%(ORG_SHORT_NAME)s 团队"
 
 #: hypha/apply/users/templates/users/emails/confirm_access.md:4
 #, python-format
 msgid ""
-"To confirm access at %(org_long_name)s use the code below (valid for "
+"To confirm access at %(ORG_LONG_NAME)s use the code below (valid for "
 "%(timeout_minutes)s minutes):"
 msgstr ""
 
@@ -7919,19 +7919,19 @@ msgstr ""
 #: hypha/apply/users/templates/users/emails/passwordless_new_account_login.md:13
 #, fuzzy, python-format
 #| msgid "If you have any questions, please submit them here"
-msgid "If you have any questions, please contact us at %(org_email)s."
+msgid "If you have any questions, please contact us at %(ORG_EMAIL)s."
 msgstr "若您有任何问题，请在这里提交"
 
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:5
 #, fuzzy, python-format
 #| msgid ""
-#| "Activate your account on the %(org_long_name)s web site by clicking this "
+#| "Activate your account on the %(ORG_LONG_NAME)s web site by clicking this "
 #| "link or copying and pasting it to your browser:"
 msgid ""
-"Login to your account on the %(org_long_name)s web site by clicking this "
+"Login to your account on the %(ORG_LONG_NAME)s web site by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
-"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(org_long_name)s 网站的账"
+"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账"
 "户："
 
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:9
@@ -7945,13 +7945,13 @@ msgstr ""
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:12
 #, fuzzy, python-format
 #| msgid ""
-#| "Activate your account on the %(org_long_name)s web site by clicking this "
+#| "Activate your account on the %(ORG_LONG_NAME)s web site by clicking this "
 #| "link or copying and pasting it to your browser:"
 msgid ""
-"Your account on the %(org_long_name)s web site is deactivated. Please "
+"Your account on the %(ORG_LONG_NAME)s web site is deactivated. Please "
 "contact site administrators."
 msgstr ""
-"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(org_long_name)s 网站的账"
+"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账"
 "户："
 
 #: hypha/apply/users/templates/users/emails/passwordless_login_no_account_found.md:3
@@ -7962,37 +7962,37 @@ msgstr ""
 #: hypha/apply/users/templates/users/emails/passwordless_login_no_account_found.md:5
 #, python-format
 msgid ""
-"It looks like you are trying to login on %(org_long_name)s web site, but we "
+"It looks like you are trying to login on %(ORG_LONG_NAME)s web site, but we "
 "could not find any account with the email provided."
 msgstr ""
 
 #: hypha/apply/users/templates/users/emails/passwordless_new_account_login.md:4
 #, fuzzy, python-format
 #| msgid ""
-#| "Activate your account on the %(org_long_name)s web site by clicking this "
+#| "Activate your account on the %(ORG_LONG_NAME)s web site by clicking this "
 #| "link or copying and pasting it to your browser:"
 msgid ""
-"Welcome to %(org_long_name)s web site. Create your account by clicking this "
+"Welcome to %(ORG_LONG_NAME)s web site. Create your account by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
-"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(org_long_name)s 网站的账"
+"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账"
 "户："
 
 #: hypha/apply/users/templates/users/emails/set_password.txt:4
 #, fuzzy, python-format
 #| msgid ""
-#| "Activate your account on the %(org_long_name)s web site by clicking this "
+#| "Activate your account on the %(ORG_LONG_NAME)s web site by clicking this "
 #| "link or copying and pasting it to your browser:"
 msgid ""
-"Set your account password on the %(org_long_name)s web site by clicking this "
+"Set your account password on the %(ORG_LONG_NAME)s web site by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
-"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(org_long_name)s 网站的账"
+"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账"
 "户："
 
 #: hypha/apply/users/templates/users/emails/set_password_subject.txt:2
 #, python-format
-msgid "Set password for %(username)s at %(org_long_name)s"
+msgid "Set password for %(username)s at %(ORG_LONG_NAME)s"
 msgstr ""
 
 #: hypha/apply/users/templates/users/login.html:20
@@ -8180,7 +8180,7 @@ msgstr ""
 #, python-format
 msgid ""
 "You're receiving this email because you requested a password reset for your "
-"user account at %(org_long_name)s."
+"user account at %(ORG_LONG_NAME)s."
 msgstr ""
 
 #: hypha/apply/users/templates/users/password_reset/email.txt:6
@@ -8755,9 +8755,9 @@ msgstr "请输入密码以继续。"
 #~ msgstr "您正为如下阶段进行报告"
 
 #, fuzzy, python-brace-format
-#~| msgid "Your application to {org_long_name}: {source.title}"
-#~ msgid "Confirmation code for {org_long_name}: {token}"
-#~ msgstr "您给 {org_long_name} 的项目：{source.title}"
+#~| msgid "Your application to {ORG_LONG_NAME}: {source.title}"
+#~ msgid "Confirmation code for {ORG_LONG_NAME}: {token}"
+#~ msgstr "您给 {ORG_LONG_NAME} 的项目：{source.title}"
 
 #~ msgid "Submit for Approval"
 #~ msgstr "提交以批准"

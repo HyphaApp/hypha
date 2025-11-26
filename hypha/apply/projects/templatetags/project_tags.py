@@ -123,9 +123,9 @@ def user_next_step_on_project(project, user, request=None):
             return {
                 "heading": _("Waiting for"),
                 "text": _(
-                    "Awaiting project documents to be created and approved by {org_short_name} internally. "
+                    "Awaiting project documents to be created and approved by {ORG_SHORT_NAME} internally. "
                     "Please check back when the project has moved to contracting stage."
-                ).format(org_short_name=settings.ORG_SHORT_NAME),
+                ).format(ORG_SHORT_NAME=settings.ORG_SHORT_NAME),
             }
         if project.paf_approvals.exists():
             return {
@@ -141,9 +141,9 @@ def user_next_step_on_project(project, user, request=None):
             return {
                 "heading": _("Waiting for"),
                 "text": _(
-                    "Awaiting project documents to be created and approved by {org_short_name} internally. "
+                    "Awaiting project documents to be created and approved by {ORG_SHORT_NAME} internally. "
                     "Please check back when the project has moved to contracting stage."
-                ).format(org_short_name=settings.ORG_SHORT_NAME),
+                ).format(ORG_SHORT_NAME=settings.ORG_SHORT_NAME),
             }
 
         if request:
@@ -216,8 +216,8 @@ def user_next_step_on_project(project, user, request=None):
             if user.is_applicant:
                 return {
                     "heading": _("Waiting for"),
-                    "text": _("Awaiting signed contract from {org_short_name}").format(
-                        org_short_name=settings.ORG_SHORT_NAME
+                    "text": _("Awaiting signed contract from {ORG_SHORT_NAME}").format(
+                        ORG_SHORT_NAME=settings.ORG_SHORT_NAME
                     ),
                 }
             if settings.STAFF_UPLOAD_CONTRACT:
@@ -265,8 +265,8 @@ def user_next_step_on_project(project, user, request=None):
                     return {
                         "heading": _("Waiting for"),
                         "text": _(
-                            "Awaiting contract approval from {org_short_name}"
-                        ).format(org_short_name=settings.ORG_SHORT_NAME),
+                            "Awaiting contract approval from {ORG_SHORT_NAME}"
+                        ).format(ORG_SHORT_NAME=settings.ORG_SHORT_NAME),
                     }
                 return {
                     "heading": _("Waiting for"),
@@ -300,8 +300,8 @@ def user_next_step_instructions(project, user):
         if contract and not contract.signed_by_applicant:
             return [
                 _(
-                    "Please download the signed contract uploaded by {org_short_name}"
-                ).format(org_short_name=settings.ORG_SHORT_NAME),
+                    "Please download the signed contract uploaded by {ORG_SHORT_NAME}"
+                ).format(ORG_SHORT_NAME=settings.ORG_SHORT_NAME),
                 _("Countersign"),
                 _("Upload it back"),
                 _(

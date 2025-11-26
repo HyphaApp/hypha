@@ -85,8 +85,8 @@ def send_activation_email(
         "username": user.get_username(),
         "activation_path": activation_path,
         "timeout_days": timeout_days,
-        "org_long_name": settings.ORG_LONG_NAME,
-        "org_short_name": settings.ORG_SHORT_NAME,
+        "ORG_LONG_NAME": settings.ORG_LONG_NAME,
+        "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
     }
 
     if site:
@@ -120,14 +120,14 @@ def send_confirmation_email(user, token, updated_email=None, site=None):
         "unverified_email": updated_email,
         "activation_path": activation_path,
         "timeout_days": timeout_days,
-        "org_long_name": settings.ORG_LONG_NAME,
-        "org_short_name": settings.ORG_SHORT_NAME,
+        "ORG_LONG_NAME": settings.ORG_LONG_NAME,
+        "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
     }
 
     if site:
         context.update(site=site)
 
-    subject = "Confirmation email for {unverified_email} at {org_long_name}".format(
+    subject = "Confirmation email for {unverified_email} at {ORG_LONG_NAME}".format(
         **context
     )
     # Force subject to a single line to avoid header-injection issues.

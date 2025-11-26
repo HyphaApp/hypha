@@ -297,13 +297,13 @@ msgstr "Projektová dokumentace je připravena ke schválení: {source.title}"
 
 #: hypha/apply/activity/adapters/emails.py:137
 #, python-brace-format
-msgid "Your application to {org_long_name}: {source.title_text_display}"
-msgstr "Vaše žádost na {org_long_name}: {source.title_text_display}"
+msgid "Your application to {ORG_LONG_NAME}: {source.title_text_display}"
+msgstr "Vaše žádost na {ORG_LONG_NAME}: {source.title_text_display}"
 
 #: hypha/apply/activity/adapters/emails.py:140
 #, python-brace-format
-msgid "Your {org_long_name} Project: {source.title}"
-msgstr "Vaše {org_long_name} Projekt: {source.title}"
+msgid "Your {ORG_LONG_NAME} Project: {source.title}"
+msgstr "Vaše {ORG_LONG_NAME} Projekt: {source.title}"
 
 #: hypha/apply/activity/adapters/slack.py:31
 #, python-brace-format
@@ -4377,8 +4377,8 @@ msgstr "Vyžaduje screening (vrátit)"
 #: hypha/apply/funds/workflows/definitions/single_stage_external.py:70
 #: hypha/apply/funds/workflows/definitions/single_stage_same.py:70
 #, python-brace-format
-msgid "{org_short_name} Review"
-msgstr "Hodnocení {org_short_name}"
+msgid "{ORG_SHORT_NAME} Review"
+msgstr "Hodnocení {ORG_SHORT_NAME}"
 
 #: hypha/apply/funds/workflows/definitions/double_stage.py:87
 #: hypha/apply/funds/workflows/definitions/single_stage.py:87
@@ -5850,12 +5850,12 @@ msgstr "Čekání na"
 #: hypha/apply/projects/templatetags/project_tags.py:83
 #, python-brace-format
 msgid ""
-"Awaiting project documents to be created and approved by {org_short_name} "
+"Awaiting project documents to be created and approved by {ORG_SHORT_NAME} "
 "internally. Please check back when the project has moved to contracting "
 "stage."
 msgstr ""
 "Čeká se na vytvoření projektové dokumentace, kterou interně schválí "
-"{org_short_name}.Zkontrolujte prosím, až projekt přejde do fáze uzavírání "
+"{ORG_SHORT_NAME}.Zkontrolujte prosím, až projekt přejde do fáze uzavírání "
 "smluv."
 
 #: hypha/apply/projects/templatetags/project_tags.py:72
@@ -5892,8 +5892,8 @@ msgstr "Čeká se na projekt od přiřazených schvalovatelů"
 
 #: hypha/apply/projects/templatetags/project_tags.py:158
 #, python-brace-format
-msgid "Awaiting signed contract from {org_short_name}"
-msgstr "Čeká se na podepsanou smlouvu od {org_short_name}"
+msgid "Awaiting signed contract from {ORG_SHORT_NAME}"
+msgstr "Čeká se na podepsanou smlouvu od {ORG_SHORT_NAME}"
 
 #: hypha/apply/projects/templatetags/project_tags.py:165
 msgid "Awaiting signed contract from Staff/Contracting team"
@@ -5927,8 +5927,8 @@ msgstr ""
 
 #: hypha/apply/projects/templatetags/project_tags.py:207
 #, python-brace-format
-msgid "Awaiting contract approval from {org_short_name}"
-msgstr "Čeká se na schválení smlouvy od {org_short_name}"
+msgid "Awaiting contract approval from {ORG_SHORT_NAME}"
+msgstr "Čeká se na schválení smlouvy od {ORG_SHORT_NAME}"
 
 #: hypha/apply/projects/templatetags/project_tags.py:212
 msgid "Awaiting contract approval from Staff"
@@ -5944,8 +5944,8 @@ msgstr "Zkontrolujte fakturu a přijměte opatření"
 
 #: hypha/apply/projects/templatetags/project_tags.py:242
 #, python-brace-format
-msgid "Please download the signed contract uploaded by {org_short_name}"
-msgstr "Stáhněte si podepsanou smlouvu nahranou od {org_short_name}"
+msgid "Please download the signed contract uploaded by {ORG_SHORT_NAME}"
+msgstr "Stáhněte si podepsanou smlouvu nahranou od {ORG_SHORT_NAME}"
 
 #: hypha/apply/projects/templatetags/project_tags.py:244
 msgid "Countersign"
@@ -7102,10 +7102,10 @@ msgstr "Zapnout 2FA"
 #: hypha/apply/users/templates/users/activation/email.txt:4
 #, python-format
 msgid ""
-"Activate your account on the %(org_long_name)s web site by clicking this "
+"Activate your account on the %(ORG_LONG_NAME)s web site by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
-"Aktivujte si účet na webových stránkách %(org_long_name)s kliknutím na tento "
+"Aktivujte si účet na webových stránkách %(ORG_LONG_NAME)s kliknutím na tento "
 "odkaz nebo jeho zkopírováním a vložením do prohlížeče:"
 
 #: hypha/apply/users/templates/users/activation/email.txt:8
@@ -7156,15 +7156,15 @@ msgstr ""
 #, python-format
 msgid ""
 "Kind Regards,\n"
-"The %(org_short_name)s Team"
+"The %(ORG_SHORT_NAME)s Team"
 msgstr ""
 "S laskavým pozdravem,\n"
-"Tým %(org_short_name)s"
+"Tým %(ORG_SHORT_NAME)s"
 
 #: hypha/apply/users/templates/users/activation/email_subject.txt:2
 #, python-format
-msgid "Account details for %(username)s at %(org_long_name)s"
-msgstr "Údaje o účtu %(username)s u %(org_long_name)s"
+msgid "Account details for %(username)s at %(ORG_LONG_NAME)s"
+msgstr "Údaje o účtu %(username)s u %(ORG_LONG_NAME)s"
 
 #: hypha/apply/users/templates/users/activation/invalid.html:4
 msgid "Invalid activation"
@@ -7219,11 +7219,11 @@ msgstr "Zpět na účet"
 #: hypha/apply/users/templates/users/email_change/confirm_email.txt:4
 #, python-format
 msgid ""
-"Request to change email of your account on the %(org_long_name)s web site "
+"Request to change email of your account on the %(ORG_LONG_NAME)s web site "
 "has been accepted. Confirm your email by clicking this link or copying and "
 "pasting it to your browser:"
 msgstr ""
-"Žádost o změnu e-mailu vašeho účtu na webových stránkách %(org_long_name)s "
+"Žádost o změnu e-mailu vašeho účtu na webových stránkách %(ORG_LONG_NAME)s "
 "byla přijata. Potvrďte svůj e-mail kliknutím na tento odkaz nebo jeho "
 "zkopírováním a vložením do prohlížeče:"
 
@@ -7294,29 +7294,29 @@ msgstr ""
 #, python-format
 msgid ""
 "There has been an attempt to change email of your account on the "
-"%(org_long_name)s web site. If this action wasn't made by you, please "
-"contact support at %(org_email)s "
+"%(ORG_LONG_NAME)s web site. If this action wasn't made by you, please "
+"contact support at %(ORG_EMAIL)s "
 msgstr ""
-"Na webových stránkách %(org_long_name)s došlo k pokusu o změnu e-mailu "
+"Na webových stránkách %(ORG_LONG_NAME)s došlo k pokusu o změnu e-mailu "
 "vašeho účtu.Pokud jste tuto akci neprovedli vy, kontaktujte prosím podporu "
-"na adrese %(org_email)s. "
+"na adrese %(ORG_EMAIL)s. "
 
 #: hypha/apply/users/templates/users/email_change/update_info_email.html:7
 #, python-format
 msgid ""
 "Kind Regards,\n"
-"    The %(org_short_name)s Team"
+"    The %(ORG_SHORT_NAME)s Team"
 msgstr ""
 "S laskavým pozdravem,\n"
-"    Tým %(org_short_name)s"
+"    Tým %(ORG_SHORT_NAME)s"
 
 #: hypha/apply/users/templates/users/emails/confirm_access.md:4
 #, python-format
 msgid ""
-"To confirm access at %(org_long_name)s use the code below (valid for "
+"To confirm access at %(ORG_LONG_NAME)s use the code below (valid for "
 "%(timeout_minutes)s minutes):"
 msgstr ""
-"Pro potvrzení přístupu na %(org_long_name)s použijte níže uvedený kód ("
+"Pro potvrzení přístupu na %(ORG_LONG_NAME)s použijte níže uvedený kód ("
 "platný po dobu %(timeout_minutes)s minut):"
 
 #: hypha/apply/users/templates/users/emails/confirm_access.md:8
@@ -7330,16 +7330,16 @@ msgstr "Pokud jste si tento e-mail nevyžádali, ignorujte jej."
 #: hypha/apply/users/templates/users/emails/passwordless_login_no_account_found.md:8
 #: hypha/apply/users/templates/users/emails/passwordless_new_account_login.md:13
 #, python-format
-msgid "If you have any questions, please contact us at %(org_email)s."
-msgstr "V případě jakýchkoli dotazů nás prosím kontaktujte na %(org_email)s."
+msgid "If you have any questions, please contact us at %(ORG_EMAIL)s."
+msgstr "V případě jakýchkoli dotazů nás prosím kontaktujte na %(ORG_EMAIL)s."
 
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:5
 #, python-format
 msgid ""
-"Login to your account on the %(org_long_name)s web site by clicking this "
+"Login to your account on the %(ORG_LONG_NAME)s web site by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
-"Přihlaste se ke svému účtu na webu %(org_long_name)s kliknutím na tento "
+"Přihlaste se ke svému účtu na webu %(ORG_LONG_NAME)s kliknutím na tento "
 "odkaz nebo jeho zkopírováním a vložením do prohlížeče:"
 
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:9
@@ -7355,10 +7355,10 @@ msgstr ""
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:12
 #, python-format
 msgid ""
-"Your account on the %(org_long_name)s web site is deactivated. Please "
+"Your account on the %(ORG_LONG_NAME)s web site is deactivated. Please "
 "contact site administrators."
 msgstr ""
-"Váš účet na webu %(org_long_name)s je deaktivován. Kontaktujte prosím "
+"Váš účet na webu %(ORG_LONG_NAME)s je deaktivován. Kontaktujte prosím "
 "správce stránek."
 
 #: hypha/apply/users/templates/users/emails/passwordless_login_no_account_found.md:3
@@ -7369,34 +7369,34 @@ msgstr "Vážený,"
 #: hypha/apply/users/templates/users/emails/passwordless_login_no_account_found.md:5
 #, python-format
 msgid ""
-"It looks like you are trying to login on %(org_long_name)s web site, but we "
+"It looks like you are trying to login on %(ORG_LONG_NAME)s web site, but we "
 "could not find any account with the email provided."
 msgstr ""
-"Vypadá to, že se snažíte přihlásit na webové stránky %(org_long_name)s, ale "
+"Vypadá to, že se snažíte přihlásit na webové stránky %(ORG_LONG_NAME)s, ale "
 "nepodařilo se nám najít žádný účet se zadaným e-mailem."
 
 #: hypha/apply/users/templates/users/emails/passwordless_new_account_login.md:4
 #, python-format
 msgid ""
-"Welcome to %(org_long_name)s web site. Create your account by clicking this "
+"Welcome to %(ORG_LONG_NAME)s web site. Create your account by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
-"Vítejte na stránkách %(org_long_name)s. Vytvořte si účet kliknutím na tento "
+"Vítejte na stránkách %(ORG_LONG_NAME)s. Vytvořte si účet kliknutím na tento "
 "odkaz nebo jeho zkopírováním a vložením do prohlížeče:"
 
 #: hypha/apply/users/templates/users/emails/set_password.txt:4
 #, python-format
 msgid ""
-"Set your account password on the %(org_long_name)s web site by clicking this "
+"Set your account password on the %(ORG_LONG_NAME)s web site by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
-"Heslo k účtu nastavíte na webu %(org_long_name)s kliknutím na tento odkaz "
+"Heslo k účtu nastavíte na webu %(ORG_LONG_NAME)s kliknutím na tento odkaz "
 "nebo jeho zkopírováním a vložením do prohlížeče:"
 
 #: hypha/apply/users/templates/users/emails/set_password_subject.txt:2
 #, python-format
-msgid "Set password for %(username)s at %(org_long_name)s"
-msgstr "Nastavte heslo pro %(username)s na %(org_long_name)s"
+msgid "Set password for %(username)s at %(ORG_LONG_NAME)s"
+msgstr "Nastavte heslo pro %(username)s na %(ORG_LONG_NAME)s"
 
 #: hypha/apply/users/templates/users/login.html:20
 #: hypha/apply/users/templates/users/login.html:24
@@ -7576,10 +7576,10 @@ msgstr ""
 #, python-format
 msgid ""
 "You're receiving this email because you requested a password reset for your "
-"user account at %(org_long_name)s."
+"user account at %(ORG_LONG_NAME)s."
 msgstr ""
 "Tento e-mail jste obdrželi, protože jste požádali o obnovení hesla ke svému "
-"uživatelskému účtu na %(org_long_name)s."
+"uživatelskému účtu na %(ORG_LONG_NAME)s."
 
 #: hypha/apply/users/templates/users/password_reset/email.txt:6
 msgid "Please follow the link below to reset your password:"
@@ -8237,8 +8237,8 @@ msgstr "Pro pokračování zadejte heslo."
 #~ "Opravdu chcete tuto úlohu odebrat? Odstraní tuto úlohu ze seznamu úloh."
 
 #, python-brace-format
-#~ msgid "Confirmation code for {org_long_name}: {token}"
-#~ msgstr "Potvrzovací kód pro {org_long_name}:{token}"
+#~ msgid "Confirmation code for {ORG_LONG_NAME}: {token}"
+#~ msgstr "Potvrzovací kód pro {ORG_LONG_NAME}:{token}"
 
 #~ msgid "Submit for Approval"
 #~ msgstr "Předložit ke schválení"

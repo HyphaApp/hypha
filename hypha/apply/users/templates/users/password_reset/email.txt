@@ -1,15 +1,15 @@
 {% load i18n wagtailadmin_tags %}{% base_url_setting as base_url %}
 {% blocktranslate %}Dear {{ user }},{% endblocktranslate %}
 
-{% blocktranslate %}You're receiving this email because you requested a password reset for your user account at {{ org_long_name }}.{% endblocktranslate %}
+{% blocktranslate %}You're receiving this email because you requested a password reset for your user account at {{ ORG_LONG_NAME }}.{% endblocktranslate %}
 
 {% trans "Please follow the link below to reset your password:" %}
 
 {{ protocol }}://{{ domain }}{% url 'users:password_reset_confirm' uidb64=uid token=token %}{% if redirect_url %}?next={{ redirect_url }}{% endif%}
 
 {% blocktrans %}Kind Regards,
-The {{ org_short_name }} Team{% endblocktrans %}
+The {{ ORG_SHORT_NAME }} Team{% endblocktrans %}
 
 --
-{{ org_long_name }}
+{{ ORG_LONG_NAME }}
 {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}
