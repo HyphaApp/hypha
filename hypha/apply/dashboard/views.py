@@ -137,9 +137,13 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
         }
 
     def active_invoices(self):
-        invoices = Invoice.objects.filter(
-            project__lead=self.request.user,
-        ).in_progress()
+        invoices = (
+            Invoice.objects.filter(
+                project__lead=self.request.user,
+            )
+            .in_progress()
+            .select_related("project", "by")
+        )
 
         return {
             "count": invoices.count(),
@@ -153,13 +157,18 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
             data=self.request.GET or None, request=self.request, queryset=projects
         )
 
+        filtered_qs = filterset.qs
+
         limit = 10
+        limited_qs = list(filtered_qs[: limit + 1])
+        has_more = len(limited_qs) > limit
+        table_data = limited_qs[:limit]
 
         return {
-            "count": projects.count(),
+            "count": filtered_qs.count(),
             "filterset": filterset,
-            "table": ProjectsDashboardTable(data=projects[:limit], prefix="project-"),
-            "display_more": projects.count() > limit,
+            "table": ProjectsDashboardTable(data=table_data, prefix="project-"),
+            "display_more": has_more,
             "url": reverse("apply:projects:all"),
         }
 
@@ -481,6 +490,7 @@ class ApplicantDashboardView(TemplateView):
         )
         return {"count": active_invoices.count(), "data": active_invoices}
 
+    # todo: if we don't need, we can remove these historical tables
     def historical_project_data(self):
         historical_projects = (
             Project.objects.filter(user=self.request.user).complete().for_table()
