@@ -45,14 +45,14 @@
 
   .tox-statusbar__wordcount.word-count-warning,
   .tox-statusbar__wordcount.word-count-warning-2 {
-    background-color: var(--color-warning);
-    color: var(--color-warning-content);
-    font-weight: bold;
+    background-color: var(--color-warning) !important;
+    color: var(--color-warning-content) !important;
+    font-weight: bold !important;
   }
 
   .tox-statusbar__wordcount.word-count-warning-2 {
-    background-color: var(--color-error);
-    color: var(--color-error-content);
+    background-color: var(--color-error) !important;
+    color: var(--color-error-content) !important;
   }
 
   .tox-statusbar a,
