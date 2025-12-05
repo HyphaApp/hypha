@@ -64,6 +64,7 @@ dependencies = [
     "django-viewflow~=2.2.11",
     "django-cotton~=2.1",
     "html-diff>=0.4.1",
+    "urllib3==2.6.0",
 ]
 
 [dependency-groups]
