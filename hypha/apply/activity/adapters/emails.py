@@ -150,11 +150,11 @@ class EmailAdapter(AdapterBase):
             else:
                 try:
                     subject = source.page.specific.subject or _(
-                        "Your application to {org_long_name}: {source.title_text_display}"
-                    ).format(org_long_name=settings.ORG_LONG_NAME, source=source)
+                        "Your application to {ORG_LONG_NAME}: {source.title_text_display}"
+                    ).format(ORG_LONG_NAME=settings.ORG_LONG_NAME, source=source)
                 except AttributeError:
-                    subject = _("Your {org_long_name} Project: {source.title}").format(
-                        org_long_name=settings.ORG_LONG_NAME, source=source
+                    subject = _("Your {ORG_LONG_NAME} Project: {source.title}").format(
+                        ORG_LONG_NAME=settings.ORG_LONG_NAME, source=source
                     )
             return subject
 

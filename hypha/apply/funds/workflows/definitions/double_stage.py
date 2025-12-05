@@ -72,8 +72,8 @@ DoubleStageDefinition = [
                 "invited_to_proposal": _("Invite to Proposal"),
             },
             "display": _("Internal Review"),
-            "public": _("{org_short_name} Review").format(
-                org_short_name=settings.ORG_SHORT_NAME
+            "public": _("{ORG_SHORT_NAME} Review").format(
+                ORG_SHORT_NAME=settings.ORG_SHORT_NAME
             ),
             "stage": Concept,
             "permissions": default_permissions,
@@ -209,8 +209,8 @@ DoubleStageDefinition = [
                 "proposal_discussion": _("Proposal Received (revert)"),
             },
             "display": _("Internal Review"),
-            "public": _("{org_short_name} Review").format(
-                org_short_name=settings.ORG_SHORT_NAME
+            "public": _("{ORG_SHORT_NAME} Review").format(
+                ORG_SHORT_NAME=settings.ORG_SHORT_NAME
             ),
             "stage": Proposal,
             "permissions": default_permissions,

@@ -72,8 +72,8 @@ SingleStageDefinition = [
                 INITIAL_STATE: _("Need screening (revert)"),
             },
             "display": _("Internal Review"),
-            "public": _("{org_short_name} Review").format(
-                org_short_name=settings.ORG_SHORT_NAME
+            "public": _("{ORG_SHORT_NAME} Review").format(
+                ORG_SHORT_NAME=settings.ORG_SHORT_NAME
             ),
             "stage": Request,
             "permissions": default_permissions,

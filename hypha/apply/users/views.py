@@ -213,9 +213,9 @@ def account_email_change(request):
             {
                 "name": request.user.get_full_name(),
                 "username": request.user.get_username(),
-                "org_email": settings.ORG_EMAIL,
-                "org_short_name": settings.ORG_SHORT_NAME,
-                "org_long_name": settings.ORG_LONG_NAME,
+                "ORG_EMAIL": settings.ORG_EMAIL,
+                "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
+                "ORG_LONG_NAME": settings.ORG_LONG_NAME,
             },
         ),
         from_email=settings.DEFAULT_FROM_EMAIL,
@@ -393,8 +393,8 @@ class PasswordResetView(DjPasswordResetView):
         return {
             "redirect_url": get_redirect_url(self.request, self.redirect_field_name),
             "site": Site.find_for_request(self.request),
-            "org_short_name": settings.ORG_SHORT_NAME,
-            "org_long_name": settings.ORG_LONG_NAME,
+            "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
+            "ORG_LONG_NAME": settings.ORG_LONG_NAME,
         }
 
     def form_valid(self, form):
@@ -728,16 +728,16 @@ def send_confirm_access_email_view(request):
         user=request.user, token=generate_numeric_token
     )
     email_context = {
-        "org_long_name": settings.ORG_LONG_NAME,
-        "org_email": settings.ORG_EMAIL,
-        "org_short_name": settings.ORG_SHORT_NAME,
+        "ORG_LONG_NAME": settings.ORG_LONG_NAME,
+        "ORG_EMAIL": settings.ORG_EMAIL,
+        "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
         "token": token_obj.token,
         "username": request.user.email,
         "site": Site.find_for_request(request),
         "user": request.user,
         "timeout_minutes": settings.PASSWORDLESS_LOGIN_TIMEOUT // 60,
     }
-    subject = "Confirmation code for {org_long_name}: {token}".format(**email_context)
+    subject = "Confirmation code for {ORG_LONG_NAME}: {token}".format(**email_context)
     email = MarkdownMail("users/emails/confirm_access.md")
     email.send(
         to=request.user.email,

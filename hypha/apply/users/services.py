@@ -94,15 +94,15 @@ class PasswordlessAuthService:
 
     def get_email_context(self) -> dict:
         return {
-            "org_long_name": settings.ORG_LONG_NAME,
-            "org_email": settings.ORG_EMAIL,
-            "org_short_name": settings.ORG_SHORT_NAME,
+            "ORG_LONG_NAME": settings.ORG_LONG_NAME,
+            "ORG_EMAIL": settings.ORG_EMAIL,
+            "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
             "site": self.site,
         }
 
     def send_email_no_account_found(self, to):
         context = self.get_email_context()
-        subject = "Log in attempt at {org_long_name}".format(**context)
+        subject = "Log in attempt at {ORG_LONG_NAME}".format(**context)
         # Force subject to a single line to avoid header-injection issues.
         subject = "".join(subject.splitlines())
 
@@ -130,7 +130,7 @@ class PasswordlessAuthService:
             }
         )
 
-        subject = "Log in to {username} at {org_long_name}".format(**context)
+        subject = "Log in to {username} at {ORG_LONG_NAME}".format(**context)
         # Force subject to a single line to avoid header-injection issues.
         subject = "".join(subject.splitlines())
 
@@ -154,7 +154,7 @@ class PasswordlessAuthService:
             }
         )
 
-        subject = "Welcome to {org_long_name}".format(**context)
+        subject = "Welcome to {ORG_LONG_NAME}".format(**context)
         # Force subject to a single line to avoid header-injection issues.
         subject = "".join(subject.splitlines())
 
