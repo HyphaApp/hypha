@@ -18,7 +18,6 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
         review_forms = self.formsets["review_forms"]
         external_review_forms = self.formsets["external_review_forms"]
         determination_forms = self.formsets["determination_forms"]
-        paf_forms = self.formsets["approval_forms"]
         number_of_stages = len(workflow.stages)
 
         self.validate_application_forms(workflow, application_forms)
@@ -33,7 +32,10 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
         self.validate_stages_equal_forms(
             workflow, determination_forms, form_type="Determination form"
         )
-        self.validate_paf_form(paf_forms)
+
+        if settings.PROJECTS_ENABLED:
+            paf_forms = self.formsets["approval_forms"]
+            self.validate_paf_form(paf_forms)
 
         return cleaned_data
 
