@@ -728,16 +728,13 @@ def send_confirm_access_email_view(request):
         user=request.user, token=generate_numeric_token
     )
     email_context = {
-        "ORG_LONG_NAME": settings.ORG_LONG_NAME,
-        "ORG_EMAIL": settings.ORG_EMAIL,
-        "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
         "token": token_obj.token,
         "username": request.user.email,
         "site": Site.find_for_request(request),
         "user": request.user,
         "timeout_minutes": settings.PASSWORDLESS_LOGIN_TIMEOUT // 60,
     }
-    subject = "Confirmation code for {ORG_LONG_NAME}: {token}".format(**email_context)
+    subject = f"Confirmation code for {settings.ORG_LONG_NAME}: {token_obj.token}"
     email = MarkdownMail("users/emails/confirm_access.md")
     email.send(
         to=request.user.email,
