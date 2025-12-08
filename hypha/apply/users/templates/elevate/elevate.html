@@ -51,7 +51,7 @@
                     <ul class="list-disc ms-4">
                         <li>
                             <a
-                                class="m-0"
+                                class="m-0 link"
                                 type="submit"
                                 hx-post="{% url 'users:elevate_send_confirm_access_email' %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}"
                                 hx-target="#section-form"
