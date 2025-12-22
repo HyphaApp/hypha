@@ -1116,9 +1116,9 @@ markupsafe==3.0.3 \
     #   mkdocs-autorefs
     #   mkdocstrings
     #   werkzeug
-marshmallow==4.1.0 \
-    --hash=sha256:9901660499be3b880dc92d6b5ee0b9a79e94265b7793f71021f92040c07129f1 \
-    --hash=sha256:daa9862f74e2f7864980d25c29b4ea72944cde48aa17537e3bd5797a4ae62d71
+marshmallow==4.1.2 \
+    --hash=sha256:083f250643d2e75fd363f256aeb6b1af369a7513ad37647ce4a601f6966e3ba5 \
+    --hash=sha256:a8cfa18bd8d0e5f7339e734edf84815fe8db1bdb57358c7ccc05472b746eeadc
     # via environs
 mdurl==0.1.2 \
     --hash=sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8 \
