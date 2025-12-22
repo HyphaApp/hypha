@@ -742,9 +742,9 @@ lxml==6.0.2 \
     #   pyhanko
     #   python-docx
     #   svglib
-marshmallow==4.1.0 \
-    --hash=sha256:9901660499be3b880dc92d6b5ee0b9a79e94265b7793f71021f92040c07129f1 \
-    --hash=sha256:daa9862f74e2f7864980d25c29b4ea72944cde48aa17537e3bd5797a4ae62d71
+marshmallow==4.1.2 \
+    --hash=sha256:083f250643d2e75fd363f256aeb6b1af369a7513ad37647ce4a601f6966e3ba5 \
+    --hash=sha256:a8cfa18bd8d0e5f7339e734edf84815fe8db1bdb57358c7ccc05472b746eeadc
     # via environs
 mistune==3.1.4 \
     --hash=sha256:93691da911e5d9d2e23bc54472892aff676df27a75274962ff9edc210364266d \
