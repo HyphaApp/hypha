@@ -25,23 +25,23 @@
 
     getMatchingCopy(value) {
       const proposal_form = document.querySelector("#id_proposal_form");
-      if (value === "0") {
-        this.text = document.querySelector(
-          'div[data-type="rejected"]'
-        ).textContent;
+      if (["", "0", "1"].includes(value)) {
         if (proposal_form) {
           proposal_form.disabled = true;
           proposal_form.required = false;
         }
-      } else if (value === "1") {
-        this.text = document.querySelector(
-          'div[data-type="more_info"]'
-        ).textContent;
-        if (proposal_form) {
-          proposal_form.disabled = true;
-          proposal_form.required = false;
+        if (value === "") {
+          this.text = "";
+        } else if (value === "0") {
+          this.text = document.querySelector(
+            'div[data-type="rejected"]'
+          ).textContent;
+        } else if (value === "1") {
+          this.text = document.querySelector(
+            'div[data-type="more_info"]'
+          ).textContent;
         }
-      } else {
+      } else if (value === "2") {
         this.text = document.querySelector(
           'div[data-type="accepted"]'
         ).textContent;

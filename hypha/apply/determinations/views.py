@@ -359,6 +359,10 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                     form_fields[field_block.id].initial = TRANSITION_DETERMINATION[
                         action
                     ]
+            # Make capitalization consistent
+            form_fields[field_block.id].label = form_fields[
+                field_block.id
+            ].label.title()
         form_fields = self.add_proposal_form_field(form_fields, action)
         return type("WagtailStreamForm", (self.submission_form_class,), form_fields)
 
@@ -389,7 +393,11 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                     help_text=proposal_form_help_text,
                     required=True if action == "invited_to_proposal" else False,
                 )
+                # Move proposal form the be the second field as it's disabled until the first (determination) is input
                 fields.move_to_end("proposal_form", last=False)
+                fields.move_to_end(
+                    list(fields.keys())[1], last=False
+                )  # `last=False` moves the item to the start
         return fields
 
     def get_success_url(self):
