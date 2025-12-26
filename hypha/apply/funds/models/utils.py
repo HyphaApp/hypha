@@ -115,7 +115,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
             stage_num = 1
         else:
             stage_num = self.workflow.stages.index(stage) + 1
-        return self.forms.filter(stage=stage_num)[form_index].fields
+        return list(self.forms.filter(stage=stage_num))[form_index].fields
 
     def render_landing_page(self, request, form_submission=None, *args, **kwargs):
         # We only reach this page after creation of a new submission
