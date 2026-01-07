@@ -1260,7 +1260,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -1316,20 +1316,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/bb/29/745f7d30d47fe0f251d3ad3dc2978a23141917661998763bebb6da007eb1/filetype-1.2.0.tar.gz", hash = "sha256:66b56cd6474bf41d8c54660347d37afcc3f7d1970648de365c102ef77548aadb", size = 998020, upload-time = "2022-11-02T17:34:04.141Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/18/79/1b8fa1bb3568781e84c9200f951c735f3f157429f44be0495da55894d620/filetype-1.2.0-py2.py3-none-any.whl", hash = "sha256:7ce71b6880181241cf7ac8697a2f1eb6a8bd9b429f7ad6d27b8db9ba5f1c2d25", size = 19970, upload-time = "2022-11-02T17:34:01.425Z" },
-]
-
-[[package]]
-name = "freetype-py"
-version = "2.5.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d0/9c/61ba17f846b922c2d6d101cc886b0e8fb597c109cedfcb39b8c5d2304b54/freetype-py-2.5.1.zip", hash = "sha256:cfe2686a174d0dd3d71a9d8ee9bf6a2c23f5872385cf8ce9f24af83d076e2fbd", size = 851738, upload-time = "2024-08-29T18:32:26.37Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/38/a8/258dd138ebe60c79cd8cfaa6d021599208a33f0175a5e29b01f60c9ab2c7/freetype_py-2.5.1-py3-none-macosx_10_9_universal2.whl", hash = "sha256:d01ded2557694f06aa0413f3400c0c0b2b5ebcaabeef7aaf3d756be44f51e90b", size = 1747885, upload-time = "2024-08-29T18:32:17.604Z" },
-    { url = "https://files.pythonhosted.org/packages/a2/93/280ad06dc944e40789b0a641492321a2792db82edda485369cbc59d14366/freetype_py-2.5.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5d2f6b3d68496797da23204b3b9c4e77e67559c80390fc0dc8b3f454ae1cd819", size = 1051055, upload-time = "2024-08-29T18:32:19.153Z" },
-    { url = "https://files.pythonhosted.org/packages/b6/36/853cad240ec63e21a37a512ee19c896b655ce1772d803a3dd80fccfe63fe/freetype_py-2.5.1-py3-none-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:289b443547e03a4f85302e3ac91376838e0d11636050166662a4f75e3087ed0b", size = 1043856, upload-time = "2024-08-29T18:32:20.565Z" },
-    { url = "https://files.pythonhosted.org/packages/93/6f/fcc1789e42b8c6617c3112196d68e87bfe7d957d80812d3c24d639782dcb/freetype_py-2.5.1-py3-none-musllinux_1_1_aarch64.whl", hash = "sha256:cd3bfdbb7e1a84818cfbc8025fca3096f4f2afcd5d4641184bf0a3a2e6f97bbf", size = 1108180, upload-time = "2024-08-29T18:32:21.871Z" },
-    { url = "https://files.pythonhosted.org/packages/2a/1b/161d3a6244b8a820aef188e4397a750d4a8196316809576d015f26594296/freetype_py-2.5.1-py3-none-musllinux_1_1_x86_64.whl", hash = "sha256:3c1aefc4f0d5b7425f014daccc5fdc7c6f914fb7d6a695cc684f1c09cd8c1660", size = 1106792, upload-time = "2024-08-29T18:32:23.134Z" },
-    { url = "https://files.pythonhosted.org/packages/93/6e/bd7fbfacca077bc6f34f1a1109800a2c41ab50f4704d3a0507ba41009915/freetype_py-2.5.1-py3-none-win_amd64.whl", hash = "sha256:0b7f8e0342779f65ca13ef8bc103938366fecade23e6bb37cb671c2b8ad7f124", size = 814608, upload-time = "2024-08-29T18:32:24.648Z" },
 ]
 
 [[package]]
@@ -1561,6 +1547,7 @@ dependencies = [
     { name = "sentry-sdk" },
     { name = "setuptools" },
     { name = "social-auth-app-django" },
+    { name = "svglib" },
     { name = "svgwrite" },
     { name = "urllib3" },
     { name = "wagtail" },
@@ -1661,6 +1648,7 @@ requires-dist = [
     { name = "sentry-sdk", specifier = "~=2.48.0" },
     { name = "setuptools", specifier = "~=80.9.0" },
     { name = "social-auth-app-django", specifier = "~=5.4.3" },
+    { name = "svglib", specifier = "==1.5.1" },
     { name = "svgwrite", specifier = "~=1.4.3" },
     { name = "urllib3", specifier = "~=2.6.2" },
     { name = "wagtail", specifier = "==5.2.8" },
@@ -3132,31 +3120,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pycairo"
-version = "1.29.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/22/d9/1728840a22a4ef8a8f479b9156aa2943cd98c3907accd3849fb0d5f82bfd/pycairo-1.29.0.tar.gz", hash = "sha256:f3f7fde97325cae80224c09f12564ef58d0d0f655da0e3b040f5807bd5bd3142", size = 665871, upload-time = "2025-11-11T19:13:01.584Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/23/e2/c08847af2a103517f7785830706b6d1d55274494d76ab605eb744404c22f/pycairo-1.29.0-cp310-cp310-win32.whl", hash = "sha256:96c67e6caba72afd285c2372806a0175b1aa2f4537aa88fb4d9802d726effcd1", size = 751339, upload-time = "2025-11-11T19:11:21.266Z" },
-    { url = "https://files.pythonhosted.org/packages/eb/36/2a934c6fd4f32d2011c4d9cc59a32e34e06a97dd9f4b138614078d39340b/pycairo-1.29.0-cp310-cp310-win_amd64.whl", hash = "sha256:65bddd944aee9f7d7d72821b1c87e97593856617c2820a78d589d66aa8afbd08", size = 845074, upload-time = "2025-11-11T19:11:27.111Z" },
-    { url = "https://files.pythonhosted.org/packages/1b/f0/ee0a887d8c8a6833940263b7234aaa63d8d95a27d6130a9a053867ff057c/pycairo-1.29.0-cp310-cp310-win_arm64.whl", hash = "sha256:15b36aea699e2ff215cb6a21501223246032e572a3a10858366acdd69c81a1c8", size = 694758, upload-time = "2025-11-11T19:11:32.635Z" },
-    { url = "https://files.pythonhosted.org/packages/31/92/1b904087e831806a449502786d47d3a468e5edb8f65755f6bd88e8038e53/pycairo-1.29.0-cp311-cp311-win32.whl", hash = "sha256:12757ebfb304b645861283c20585c9204c3430671fad925419cba04844d6dfed", size = 751342, upload-time = "2025-11-11T19:11:37.386Z" },
-    { url = "https://files.pythonhosted.org/packages/db/09/a0ab6a246a7ede89e817d749a941df34f27a74bedf15551da51e86ae105e/pycairo-1.29.0-cp311-cp311-win_amd64.whl", hash = "sha256:3391532db03f9601c1cee9ebfa15b7d1db183c6020f3e75c1348cee16825934f", size = 845036, upload-time = "2025-11-11T19:11:43.408Z" },
-    { url = "https://files.pythonhosted.org/packages/3c/b2/bf455454bac50baef553e7356d36b9d16e482403bf132cfb12960d2dc2e7/pycairo-1.29.0-cp311-cp311-win_arm64.whl", hash = "sha256:b69be8bb65c46b680771dc6a1a422b1cdd0cffb17be548f223e8cbbb6205567c", size = 694644, upload-time = "2025-11-11T19:11:48.599Z" },
-    { url = "https://files.pythonhosted.org/packages/f6/28/6363087b9e60af031398a6ee5c248639eefc6cc742884fa2789411b1f73b/pycairo-1.29.0-cp312-cp312-win32.whl", hash = "sha256:91bcd7b5835764c616a615d9948a9afea29237b34d2ed013526807c3d79bb1d0", size = 751486, upload-time = "2025-11-11T19:11:54.451Z" },
-    { url = "https://files.pythonhosted.org/packages/3a/d2/d146f1dd4ef81007686ac52231dd8f15ad54cf0aa432adaefc825475f286/pycairo-1.29.0-cp312-cp312-win_amd64.whl", hash = "sha256:3f01c3b5e49ef9411fff6bc7db1e765f542dc1c9cfed4542958a5afa3a8b8e76", size = 845383, upload-time = "2025-11-11T19:12:01.551Z" },
-    { url = "https://files.pythonhosted.org/packages/01/16/6e6f33bb79ec4a527c9e633915c16dc55a60be26b31118dbd0d5859e8c51/pycairo-1.29.0-cp312-cp312-win_arm64.whl", hash = "sha256:eafe3d2076f3533535ad4a361fa0754e0ee66b90e548a3a0f558fed00b1248f2", size = 694518, upload-time = "2025-11-11T19:12:06.561Z" },
-    { url = "https://files.pythonhosted.org/packages/f0/21/3f477dc318dd4e84a5ae6301e67284199d7e5a2384f3063714041086b65d/pycairo-1.29.0-cp313-cp313-win32.whl", hash = "sha256:3eb382a4141591807073274522f7aecab9e8fa2f14feafd11ac03a13a58141d7", size = 750949, upload-time = "2025-11-11T19:12:12.198Z" },
-    { url = "https://files.pythonhosted.org/packages/43/34/7d27a333c558d6ac16dbc12a35061d389735e99e494ee4effa4ec6d99bed/pycairo-1.29.0-cp313-cp313-win_amd64.whl", hash = "sha256:91114e4b3fbf4287c2b0788f83e1f566ce031bda49cf1c3c3c19c3e986e95c38", size = 844149, upload-time = "2025-11-11T19:12:19.171Z" },
-    { url = "https://files.pythonhosted.org/packages/15/43/e782131e23df69e5c8e631a016ed84f94bbc4981bf6411079f57af730a23/pycairo-1.29.0-cp313-cp313-win_arm64.whl", hash = "sha256:09b7f69a5ff6881e151354ea092137b97b0b1f0b2ab4eb81c92a02cc4a08e335", size = 693595, upload-time = "2025-11-11T19:12:23.445Z" },
-    { url = "https://files.pythonhosted.org/packages/2d/fa/87eaeeb9d53344c769839d7b2854db7ff2cd596211e00dd1b702eeb1838f/pycairo-1.29.0-cp314-cp314-win32.whl", hash = "sha256:69e2a7968a3fbb839736257bae153f547bca787113cc8d21e9e08ca4526e0b6b", size = 767198, upload-time = "2025-11-11T19:12:42.336Z" },
-    { url = "https://files.pythonhosted.org/packages/3c/90/3564d0f64d0a00926ab863dc3c4a129b1065133128e96900772e1c4421f8/pycairo-1.29.0-cp314-cp314-win_amd64.whl", hash = "sha256:e91243437a21cc4c67c401eff4433eadc45745275fa3ade1a0d877e50ffb90da", size = 871579, upload-time = "2025-11-11T19:12:48.982Z" },
-    { url = "https://files.pythonhosted.org/packages/5e/91/93632b6ba12ad69c61991e3208bde88486fdfc152be8cfdd13444e9bc650/pycairo-1.29.0-cp314-cp314-win_arm64.whl", hash = "sha256:b72200ea0e5f73ae4c788cd2028a750062221385eb0e6d8f1ecc714d0b4fdf82", size = 719537, upload-time = "2025-11-11T19:12:55.016Z" },
-    { url = "https://files.pythonhosted.org/packages/93/23/37053c039f8d3b9b5017af9bc64d27b680c48a898d48b72e6d6583cf0155/pycairo-1.29.0-cp314-cp314t-win_amd64.whl", hash = "sha256:5e45fce6185f553e79e4ef1722b8e98e6cde9900dbc48cb2637a9ccba86f627a", size = 874015, upload-time = "2025-11-11T19:12:28.47Z" },
-    { url = "https://files.pythonhosted.org/packages/d7/54/123f6239685f5f3f2edc123f1e38d2eefacebee18cf3c532d2f4bd51d0ef/pycairo-1.29.0-cp314-cp314t-win_arm64.whl", hash = "sha256:caba0837a4b40d47c8dfb0f24cccc12c7831e3dd450837f2a356c75f21ce5a15", size = 721404, upload-time = "2025-11-11T19:12:36.919Z" },
-]
-
-[[package]]
 name = "pycparser"
 version = "2.23"
 source = { registry = "https://pypi.org/simple" }
@@ -3737,19 +3700,6 @@ wheels = [
 ]
 
 [[package]]
-name = "rlpycairo"
-version = "0.4.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "freetype-py" },
-    { name = "pycairo" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/4b/24/09b18821e06de45394d34dda706d34169db6bddd6a403346caa3496b3668/rlpycairo-0.4.0.tar.gz", hash = "sha256:07c2c3c47828e83d9c09657a54ecbcd1a97aac9dc199780234456d3473faadc7", size = 7692, upload-time = "2025-08-15T12:25:22.761Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/6a/00/d26b61e82163a59334e9f2ae31ba95ac01922da3792f090e11762d4422e8/rlpycairo-0.4.0-py3-none-any.whl", hash = "sha256:3ce83825d5761c03bc3571c7db12a336ad51417e63189e3512d11b8922576aa9", size = 7558, upload-time = "2025-08-15T12:24:52.544Z" },
-]
-
-[[package]]
 name = "ruff"
 version = "0.14.10"
 source = { registry = "https://pypi.org/simple" }
@@ -4015,19 +3965,15 @@ wheels = [
 
 [[package]]
 name = "svglib"
-version = "1.6.0"
+version = "1.5.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cssselect2" },
     { name = "lxml" },
     { name = "reportlab" },
-    { name = "rlpycairo" },
     { name = "tinycss2" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/88/16/6b5f9f8c8b18d9ab5112d11e2d6c40c965e3d7ab2948b744685fe6d2f9f5/svglib-1.6.0.tar.gz", hash = "sha256:4c38a274a744ef0d1677f55d5d62fc0fb798819f813e52872a796e615741733d", size = 1318276, upload-time = "2025-09-25T09:48:37.839Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/6d/93/01273a1b8d8454d45f2e18b3d6098c7be13a0864a55fbd0ebda7815c201a/svglib-1.6.0-py3-none-any.whl", hash = "sha256:9aea8e2e81cbbf9c844460e4c7dc90e0a06aea7983bc201975ccd279d7b2d194", size = 39163, upload-time = "2025-09-25T09:48:35.927Z" },
-]
+sdist = { url = "https://files.pythonhosted.org/packages/56/5b/53ca0fd447f73423c7dc59d34e523530ef434481a3d18808ff7537ad33ec/svglib-1.5.1.tar.gz", hash = "sha256:3ae765d3a9409ee60c0fb4d24c2deb6a80617aa927054f5bcd7fc98f0695e587", size = 913900, upload-time = "2023-01-07T14:11:52.99Z" }
 
 [[package]]
 name = "svgwrite"

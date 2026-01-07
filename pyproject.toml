@@ -53,6 +53,7 @@ dependencies = [
     "reportlab~=4.4.7 ",
     "setuptools~=80.9.0",
     "social_auth_app_django~=5.4.3",
+    "svglib==1.5.1",
     "svgwrite~=1.4.3",
     "wagtail==5.2.8",
     "whitenoise~=6.11.0",

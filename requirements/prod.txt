@@ -558,15 +558,6 @@ filetype==1.2.0 \
     --hash=sha256:66b56cd6474bf41d8c54660347d37afcc3f7d1970648de365c102ef77548aadb \
     --hash=sha256:7ce71b6880181241cf7ac8697a2f1eb6a8bd9b429f7ad6d27b8db9ba5f1c2d25
     # via willow
-freetype-py==2.5.1 \
-    --hash=sha256:0b7f8e0342779f65ca13ef8bc103938366fecade23e6bb37cb671c2b8ad7f124 \
-    --hash=sha256:289b443547e03a4f85302e3ac91376838e0d11636050166662a4f75e3087ed0b \
-    --hash=sha256:3c1aefc4f0d5b7425f014daccc5fdc7c6f914fb7d6a695cc684f1c09cd8c1660 \
-    --hash=sha256:5d2f6b3d68496797da23204b3b9c4e77e67559c80390fc0dc8b3f454ae1cd819 \
-    --hash=sha256:cd3bfdbb7e1a84818cfbc8025fca3096f4f2afcd5d4641184bf0a3a2e6f97bbf \
-    --hash=sha256:cfe2686a174d0dd3d71a9d8ee9bf6a2c23f5872385cf8ce9f24af83d076e2fbd \
-    --hash=sha256:d01ded2557694f06aa0413f3400c0c0b2b5ebcaabeef7aaf3d756be44f51e90b
-    # via rlpycairo
 gunicorn==23.0.0 \
     --hash=sha256:ec400d38950de4dfd418cff8328b2c8faed0edb0d517d3394e457c317908ca4d \
     --hash=sha256:f014447a0101dc57e294f6c18ca6b40227a4c90e9bdb586042628030cba004ec
@@ -1005,26 +996,6 @@ pwned-passwords-django==5.2.0 \
     --hash=sha256:a8666fb427479796ee9940e92df834a188ca7246905e4b9dc7be6248415ff5df \
     --hash=sha256:dfa7c4fc8879396b8304759260c5fb8b6055c07ed9241010e5bc319f195d5197
     # via hypha
-pycairo==1.29.0 \
-    --hash=sha256:09b7f69a5ff6881e151354ea092137b97b0b1f0b2ab4eb81c92a02cc4a08e335 \
-    --hash=sha256:12757ebfb304b645861283c20585c9204c3430671fad925419cba04844d6dfed \
-    --hash=sha256:15b36aea699e2ff215cb6a21501223246032e572a3a10858366acdd69c81a1c8 \
-    --hash=sha256:3391532db03f9601c1cee9ebfa15b7d1db183c6020f3e75c1348cee16825934f \
-    --hash=sha256:3eb382a4141591807073274522f7aecab9e8fa2f14feafd11ac03a13a58141d7 \
-    --hash=sha256:3f01c3b5e49ef9411fff6bc7db1e765f542dc1c9cfed4542958a5afa3a8b8e76 \
-    --hash=sha256:5e45fce6185f553e79e4ef1722b8e98e6cde9900dbc48cb2637a9ccba86f627a \
-    --hash=sha256:65bddd944aee9f7d7d72821b1c87e97593856617c2820a78d589d66aa8afbd08 \
-    --hash=sha256:69e2a7968a3fbb839736257bae153f547bca787113cc8d21e9e08ca4526e0b6b \
-    --hash=sha256:91114e4b3fbf4287c2b0788f83e1f566ce031bda49cf1c3c3c19c3e986e95c38 \
-    --hash=sha256:91bcd7b5835764c616a615d9948a9afea29237b34d2ed013526807c3d79bb1d0 \
-    --hash=sha256:96c67e6caba72afd285c2372806a0175b1aa2f4537aa88fb4d9802d726effcd1 \
-    --hash=sha256:b69be8bb65c46b680771dc6a1a422b1cdd0cffb17be548f223e8cbbb6205567c \
-    --hash=sha256:b72200ea0e5f73ae4c788cd2028a750062221385eb0e6d8f1ecc714d0b4fdf82 \
-    --hash=sha256:caba0837a4b40d47c8dfb0f24cccc12c7831e3dd450837f2a356c75f21ce5a15 \
-    --hash=sha256:e91243437a21cc4c67c401eff4433eadc45745275fa3ade1a0d877e50ffb90da \
-    --hash=sha256:eafe3d2076f3533535ad4a361fa0754e0ee66b90e548a3a0f558fed00b1248f2 \
-    --hash=sha256:f3f7fde97325cae80224c09f12564ef58d0d0f655da0e3b040f5807bd5bd3142
-    # via rlpycairo
 pycparser==2.23 ; implementation_name != 'PyPy' and platform_python_implementation != 'PyPy' \
     --hash=sha256:78816d4f24add8f10a06d6f05b4d424ad9e96cfebf68a4ddc99c65c0720d00c2 \
     --hash=sha256:e5c6e8d3fbad53479cab09ac03729e0a9faf2bee3db8208a550daf5af81a5934
@@ -1239,10 +1210,6 @@ requests-oauthlib==2.0.0 \
     --hash=sha256:7dd8a5c40426b779b0868c404bdef9768deccf22749cde15852df527e6269b36 \
     --hash=sha256:b3dffaebd884d8cd778494369603a9e7b58d29111bf6b41bdc2dcd87203af4e9
     # via social-auth-core
-rlpycairo==0.4.0 \
-    --hash=sha256:07c2c3c47828e83d9c09657a54ecbcd1a97aac9dc199780234456d3473faadc7 \
-    --hash=sha256:3ce83825d5761c03bc3571c7db12a336ad51417e63189e3512d11b8922576aa9
-    # via svglib
 s3transfer==0.16.0 \
     --hash=sha256:18e25d66fed509e3868dc1572b3f427ff947dd2c56f844a5bf09481ad3f3b2fe \
     --hash=sha256:8e990f13268025792229cd52fa10cb7163744bf56e719e0b9cb925ab79abf920
@@ -1330,10 +1297,11 @@ sqlparse==0.5.5 \
     --hash=sha256:12a08b3bf3eec877c519589833aed092e2444e68240a3577e8e26148acc7b1ba \
     --hash=sha256:e20d4a9b0b8585fdf63b10d30066c7c94c5d7a7ec47c889a2d83a3caa93ff28e
     # via django
-svglib==1.6.0 \
-    --hash=sha256:4c38a274a744ef0d1677f55d5d62fc0fb798819f813e52872a796e615741733d \
-    --hash=sha256:9aea8e2e81cbbf9c844460e4c7dc90e0a06aea7983bc201975ccd279d7b2d194
-    # via xhtml2pdf
+svglib==1.5.1 \
+    --hash=sha256:3ae765d3a9409ee60c0fb4d24c2deb6a80617aa927054f5bcd7fc98f0695e587
+    # via
+    #   hypha
+    #   xhtml2pdf
 svgwrite==1.4.3 \
     --hash=sha256:a8fbdfd4443302a6619a7f76bc937fc683daf2628d9b737c891ec08b8ce524c3 \
     --hash=sha256:bb6b2b5450f1edbfa597d924f9ac2dd099e625562e492021d7dd614f65f8a22d
