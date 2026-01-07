@@ -1,4 +1,4 @@
-FROM python:3.14-bookworm
+FROM python:3.12-bookworm
 
 # Add venv/bin to PATH.
 ENV PATH="/opt/app/.venv/bin:/usr/local/bin:$PATH"

@@ -3,7 +3,7 @@ name = "hypha"
 description = "A open source submission management platform to receive and manage applications for funding"
 readme = "README.md"
 version = "5.36.0"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 license = "BSD-3-Clause"
 
 dependencies = [
@@ -48,7 +48,7 @@ dependencies = [
     "nh3~=0.3.2",
     "phonenumbers~=9.0.21",
     "pillow~=10.4.0",
-    "psycopg[binary]~=3.3.2",
+    "psycopg[binary]~=3.2.13",
     "pwned-passwords-django~=5.2.0",
     "reportlab~=4.4.7 ",
     "setuptools~=80.9.0",
