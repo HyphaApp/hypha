@@ -439,10 +439,6 @@ django-debug-toolbar==6.1.0 \
 django-dynamic-fixture==4.0.1 \
     --hash=sha256:2a2197578b7702db8f5eed9ad704f6be33bac8bf0111c7c92f6063c2a4d02933 \
     --hash=sha256:d0611b6dc594fb1bccad1fd94dade89cc8deca12385bc2763baded3e48322547
-django-elevate==2.0.3 \
-    --hash=sha256:00422cb5742ea3de06a189e245a4ad28eb645a1cde8946ff2e6922132134ae84 \
-    --hash=sha256:b715c74451d49e45e8e6f9aba2bc4a839470e3e62e4f53d51d872396371e8082
-    # via hypha
 django-extensions==4.1 \
     --hash=sha256:0699a7af28f2523bf8db309a80278519362cd4b6e1fd0a8cd4bf063e1e023336 \
     --hash=sha256:7b70a4d28e9b840f44694e3f7feb54f55d495f8b3fa6c5c0e5e12bcb2aa3cdeb

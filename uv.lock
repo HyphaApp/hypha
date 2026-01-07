@@ -690,15 +690,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-elevate"
-version = "2.0.3"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/36/28/b6c94d3c8c22d54ddb207e3e0923018752b595daea356efb5df54d1bc43d/django-elevate-2.0.3.tar.gz", hash = "sha256:b715c74451d49e45e8e6f9aba2bc4a839470e3e62e4f53d51d872396371e8082", size = 8382, upload-time = "2022-07-28T18:06:31.165Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/4c/1c/50cf9dece141be826eaf3d9957c8479e4b7902f624a6582726b1722eb511/django_elevate-2.0.3-py3-none-any.whl", hash = "sha256:00422cb5742ea3de06a189e245a4ad28eb645a1cde8946ff2e6922132134ae84", size = 10714, upload-time = "2022-07-28T18:06:29.548Z" },
-]
-
-[[package]]
 name = "django-extensions"
 version = "4.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1355,7 +1346,6 @@ dependencies = [
     { name = "django-basic-auth-ip-whitelist" },
     { name = "django-cotton" },
     { name = "django-countries" },
-    { name = "django-elevate" },
     { name = "django-extensions" },
     { name = "django-file-form" },
     { name = "django-filter" },
@@ -1456,7 +1446,6 @@ requires-dist = [
     { name = "django-basic-auth-ip-whitelist", specifier = "~=0.8.0" },
     { name = "django-cotton", specifier = "~=2.6" },
     { name = "django-countries", specifier = "~=8.2.0" },
-    { name = "django-elevate", specifier = "~=2.0.3" },
     { name = "django-extensions", specifier = "~=4.1" },
     { name = "django-file-form", specifier = "~=3.8.2" },
     { name = "django-filter", specifier = "==23.5" },
