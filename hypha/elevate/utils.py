@@ -9,7 +9,8 @@ elevate.utils
 
 from django.core.signing import BadSignature
 from django.utils.crypto import constant_time_compare, get_random_string
-from elevate.settings import COOKIE_AGE, COOKIE_NAME, COOKIE_SALT, TOKEN_LENGTH
+
+from .settings import COOKIE_AGE, COOKIE_NAME, COOKIE_SALT, TOKEN_LENGTH
 
 
 def grant_elevated_privileges(request, max_age=COOKIE_AGE):

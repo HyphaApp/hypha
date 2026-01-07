@@ -14,4 +14,4 @@ try:
 except Exception:  # pragma: no cover
     VERSION = "unknown"
 
-default_app_config = "elevate.apps.ElevateConfig"
+default_app_config = "hypha.elevate.apps.ElevateConfig"

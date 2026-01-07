@@ -9,7 +9,7 @@ elevate.decorators
 
 from functools import wraps
 
-from elevate.views import redirect_to_elevate
+from .views import redirect_to_elevate
 
 
 def elevate_required(func):

@@ -8,7 +8,8 @@ elevate.middleware
 """
 
 from django.utils.deprecation import MiddlewareMixin
-from elevate.settings import (
+
+from .settings import (
     COOKIE_DOMAIN,
     COOKIE_HTTPONLY,
     COOKIE_NAME,
@@ -16,7 +17,7 @@ from elevate.settings import (
     COOKIE_SALT,
     COOKIE_SECURE,
 )
-from elevate.utils import has_elevated_privileges
+from .utils import has_elevated_privileges
 
 
 class ElevateMiddleware(MiddlewareMixin):
@@ -34,7 +35,7 @@ class ElevateMiddleware(MiddlewareMixin):
             "The Elevate middleware requires session middleware to be installed."
             "Edit your MIDDLEWARE_CLASSES setting to insert "
             "'django.contrib.sessions.middleware.SessionMiddleware' before "
-            "'elevate.middleware.ElevateMiddleware'."
+            "'hypha.elevate.middleware.ElevateMiddleware'."
         )
         request.is_elevated = lambda: self.has_elevated_privileges(request)
 

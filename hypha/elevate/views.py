@@ -19,14 +19,15 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import View
-from elevate.forms import ElevateForm
-from elevate.settings import (
+
+from .forms import ElevateForm
+from .settings import (
     REDIRECT_FIELD_NAME,
     REDIRECT_TO_FIELD_NAME,
     REDIRECT_URL,
     URL,
 )
-from elevate.utils import grant_elevated_privileges
+from .utils import grant_elevated_privileges
 
 try:
     from django.utils.http import url_has_allowed_host_and_scheme

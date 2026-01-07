@@ -10,9 +10,9 @@ from django.apps import AppConfig
 
 
 class ElevateConfig(AppConfig):
-    name = "elevate"
+    name = "hypha.elevate"
     verbose_name = "Django Elevate"
 
     def ready(self):
         # register signals
-        import elevate.signals  # noqa
+        import hypha.elevate.signals  # noqa

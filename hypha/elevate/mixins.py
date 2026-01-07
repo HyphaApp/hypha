@@ -1,4 +1,4 @@
-from elevate.decorators import elevate_required
+from .decorators import elevate_required
 
 
 class ElevateMixin:

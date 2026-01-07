@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     "django_file_form",
     "rolepermissions",
     "hijack",
-    "elevate",  # https://django-elevate.readthedocs.io/
+    "hypha.elevate",
     "pagedown",
     "django.contrib.admin",
     "django.contrib.auth",

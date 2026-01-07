@@ -9,7 +9,8 @@ elevate.signals
 
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.dispatch import receiver
-from elevate.utils import grant_elevated_privileges, revoke_elevated_privileges
+
+from .utils import grant_elevated_privileges, revoke_elevated_privileges
 
 
 @receiver(user_logged_in)
