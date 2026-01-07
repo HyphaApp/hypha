@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: "0.6.14"
+    rev: "0.9.22"
     hooks:
       - id: uv-export
         name: uv-export requirements/prod.txt
@@ -36,7 +36,7 @@ repos:
           ]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.11.6"
+    rev: "v0.14.10"
     hooks:
       # Run the linter.
       - id: ruff
@@ -45,7 +45,7 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/rtts/djhtml
-    rev: "3.0.7"
+    rev: "3.0.10"
     hooks:
       - id: djhtml
         files: .*/templates/.*\.html$
@@ -62,7 +62,7 @@ repos:
         types_or: [html, css]
 
   - repo: https://github.com/biomejs/pre-commit
-    rev: "v2.0.0-beta.1"
+    rev: "v2.3.10"
     hooks:
       - id: biome-check
         additional_dependencies: ["@biomejs/biome@1.9.4"]
@@ -77,11 +77,11 @@ repos:
           - stylelint@16.11.0
           - stylelint-config-standard-scss@13.1.0
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.24.3
+    rev: v8.30.0
     hooks:
       - id: gitleaks
 
   - repo: https://github.com/crate-ci/typos
-    rev: v1.31.1
+    rev: v1
     hooks:
       - id: typos
