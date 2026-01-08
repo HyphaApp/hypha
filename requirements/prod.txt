@@ -68,9 +68,9 @@ backports-datetime-fromisoformat==2.0.3 ; python_full_version < '3.11' \
     --hash=sha256:ee68bc8735ae5058695b76d3bb2aee1d137c052a11c8303f1e966aa23b72b65b \
     --hash=sha256:ffe5f793db59e2f1d45ec35a1cf51404fdd69df9f6952a0c87c3060af4c00e32
     # via marshmallow
-beautifulsoup4==4.11.2 \
-    --hash=sha256:0e79446b10b3ecb499c1556f7e228a53e64a2bfcebd455f370d8927cb5b59e39 \
-    --hash=sha256:bc4bdda6717de5a2987436fb8d72f45dc90dd856bdfd512a1314ce90349a0106
+beautifulsoup4==4.12.3 \
+    --hash=sha256:74e3d1928edc070d21748185c46e3fb33490f22f52a3addee9aee0f4f7781051 \
+    --hash=sha256:b80878c9f40111313e55da8ba20bdba06d8fa3969fc68304167741bbf9e082ed
     # via
     #   html-diff
     #   htmldocx
@@ -79,13 +79,13 @@ billiard==4.2.4 \
     --hash=sha256:525b42bdec68d2b983347ac312f892db930858495db601b5836ac24e6477cde5 \
     --hash=sha256:55f542c371209e03cd5862299b74e52e4fbcba8250ba611ad94276b369b6a85f
     # via celery
-boto3==1.42.23 \
-    --hash=sha256:2ed797bdb394b08550f6269babf0a31bbeb853684bb2cb67116620df0ed632dc \
-    --hash=sha256:f681a8d43b46b3d8acf0be4f3894eb85e40e75945431d0dfe0542edda7025512
+boto3==1.42.24 \
+    --hash=sha256:8ed6ad670a5a2d7f66c1b0d3362791b48392c7a08f78479f5d8ab319a4d9118f \
+    --hash=sha256:c47a2f40df933e3861fc66fd8d6b87ee36d4361663a7e7ba39a87f5a78b2eae1
     # via hypha
-botocore==1.42.23 \
-    --hash=sha256:453ce449bd1021acd67e75c814aae1b132b1ab3ee0ecff248de863bf19e58be8 \
-    --hash=sha256:d5042e0252b81f25ca1152fff9ed25463bab2438fbc4530ba53d5390d00ca1b1
+botocore==1.42.24 \
+    --hash=sha256:8fca9781d7c84f7ad070fceffaff7179c4aa7a5ffb27b43df9d1d957801e0a8d \
+    --hash=sha256:be8d1bea64fb91eea08254a1e5fea057e4428d08e61f4e11083a02cafc1f8cc6
     # via
     #   boto3
     #   s3transfer
@@ -400,6 +400,7 @@ django==4.2.27 \
     #   djangorestframework
     #   djp
     #   hypha
+    #   laces
     #   pwned-passwords-django
     #   social-auth-app-django
     #   wagtail
@@ -460,9 +461,9 @@ django-nh3==0.2.1 \
     --hash=sha256:0f99cb6ea099d76a9e401cdc09ec10e001204562230bd5a3b0e6f27bccd69178 \
     --hash=sha256:de453061c16c12fa5ebfcc6d0691d35ca1802cc477632ed504a2f21ac878a4a8
     # via hypha
-django-otp==1.6.3 \
-    --hash=sha256:93f0011bc4cb6ef278733d75de351f3e2de6fd13ece56cf27b63e1da42322d24 \
-    --hash=sha256:f7ff9e6980c4aa9e6b9f7a7477de0a65583891a78e5b8c6cae0ec7cc0f78ce55
+django-otp==1.7.0 \
+    --hash=sha256:406d2d7f797dc313569270e06d6c360c7d986c9f653eab80b190d663ed5f1133 \
+    --hash=sha256:961ccf2d80a67303cb46d97427b16c476ee075acfa2b4c82a59d8f1e0745a454
     # via django-two-factor-auth
 django-pagedown==2.2.1 \
     --hash=sha256:2e6373a3f1ec1886ec0bdd16a0db1d5f5d14437a0fdddefa7fba905cef50d6e8 \
@@ -504,9 +505,9 @@ django-tables2==2.8.0 \
     --hash=sha256:0dea3401bb99a0164ba09e20d59a7d90856fdc05e5ae2da9a14d0fa14d99257c \
     --hash=sha256:860633b0f448216af73fca6005c7e38dc9b46931dc36c08a9281a71ee250b1ee
     # via hypha
-django-taggit==4.0.0 \
-    --hash=sha256:4d52de9d37245a9b9f98c0ec71fdccf1d2283e38e8866d40a7ae6a3b6787a161 \
-    --hash=sha256:eb800dabef5f0a4e047ab0751f82cf805bc4a9e972037ef12bf519f52cd92480
+django-taggit==6.1.0 \
+    --hash=sha256:ab776264bbc76cb3d7e49e1bf9054962457831bd21c3a42db9138b41956e4cf0 \
+    --hash=sha256:c4d1199e6df34125dd36db5eb0efe545b254dec3980ce5dd80e6bab3e78757c3
     # via wagtail
 django-tinymce==5.0.0 \
     --hash=sha256:6257669ed596accf5fa967ff3061276b2c5352baac1bbc658fcd8252b12ca38a \
@@ -536,9 +537,9 @@ djp==0.3.1 \
     --hash=sha256:7d447c2f42282ec7628567e4ece5090ef37095b87e0853ebe8f0b876a1143e83 \
     --hash=sha256:dd2490907d503fef0f1a729d00268fbcb7c11c77b33b9a46b6d13cc7cb5dc389
     # via hypha
-draftjs-exporter==2.1.7 \
-    --hash=sha256:5839cbc29d7bce2fb99837a404ca40c3a07313f2a20e2700de7ad6aa9a9a18fb \
-    --hash=sha256:d415a9964690a2cddb66a31ef32dd46c277e9b80434b94e39e3043188ed83e33
+draftjs-exporter==5.2.0 \
+    --hash=sha256:4d665f8c75fd173d2c99326405300e8defcf4961b9b2f16ff117486489c6760b \
+    --hash=sha256:f5255510a9c1de60807c1ba4be9666fb44ba263841b63329c8ce70d66146764c
     # via wagtail
 environs==14.5.0 \
     --hash=sha256:1abd3e3a5721fb09797438d6c902bc2f35d4580dfaffe68b8ee588b67b504e13 \
@@ -577,9 +578,7 @@ html-diff==0.4.1 \
 html5lib==1.1 \
     --hash=sha256:0d78f8fde1c230e99fe37986a60526d7049ed4bf8a9fadbad5f00e22e58e041d \
     --hash=sha256:b2e5b40261e20f354d198eae92afc10d750afb487ed5e50f9c4eaf07c184146f
-    # via
-    #   wagtail
-    #   xhtml2pdf
+    # via xhtml2pdf
 htmldocx==0.0.6 \
     --hash=sha256:adf5e95ad8ba8121e606cf138c614de13327a1192a5782acdb4a0abdc23db1b7 \
     --hash=sha256:b4bcec895f86d7a50ffc7133ca24d85c24f3614db2b37d33a30d9d04654a5486
@@ -613,6 +612,10 @@ kombu==5.6.2 \
 l18n==2021.3 \
     --hash=sha256:1956e890d673d17135cc20913253c154f6bc1c00266c22b7d503cc1a5a42d848 \
     --hash=sha256:78495d1df95b6f7dcc694d1ba8994df709c463a1cbac1bf016e1b9a5ce7280b9
+    # via wagtail
+laces==0.1.2 \
+    --hash=sha256:3218e09c1889ae5cf3fc7a82f5bb63ec0c7879889b6a9760bfc42323c694b84d \
+    --hash=sha256:980cdaf9a31e883a2b8198132e2388931a4eb8814f5bfa5d8bba13ff9f657b7c
     # via wagtail
 lark==1.3.1 \
     --hash=sha256:b426a7a6d6d53189d318f2b6236ab5d6429eaf09259f1ca33eb716eed10d2905 \
@@ -1401,9 +1404,9 @@ uritools==6.0.1 \
     --hash=sha256:2f9e9cb954e7877232b2c863f724a44a06eb98d9c7ebdd69914876e9487b94f8 \
     --hash=sha256:d9507b82206c857d2f93d8fcc84f3b05ae4174096761102be690aa76a360cc1b
     # via pyhanko-certvalidator
-urllib3==2.6.2 \
-    --hash=sha256:016f9c98bb7e98085cb2b4b17b87d2c702975664e4f060c6532e64d1c1a5e797 \
-    --hash=sha256:ec21cddfe7724fc7cb4ba4bea7aa8e2ef36f607a4bab81aa6ce42a13dc3f03dd
+urllib3==2.6.3 \
+    --hash=sha256:1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed \
+    --hash=sha256:bf272323e553dfb2e87d9bfd225ca7b0f467b919d7bbd355436d3fd37cb0acd4
     # via
     #   botocore
     #   django-anymail
@@ -1418,9 +1421,9 @@ vine==5.1.0 \
     #   amqp
     #   celery
     #   kombu
-wagtail==5.2.8 \
-    --hash=sha256:92262336a6744de1b3015ae3c04135edd5e4d7722fb2e99e1b6e9191686bc3f9 \
-    --hash=sha256:dc2bfa1b7f434515182bc81c7a6e7a3b59c93f15f3ccd06c6389de2f26e4099d
+wagtail==6.3.5 \
+    --hash=sha256:142fb81f4040ddc22d9b600fac33c62e6a65cef0393919d0cb171941e10c41cd \
+    --hash=sha256:ff3051159da6864c40b2fc564f2016d8d6916ad9ef7964ee18f8d83cc518a3a0
     # via
     #   hypha
     #   wagtail-modeladmin
@@ -1445,9 +1448,9 @@ whitenoise==6.11.0 \
     # via
     #   django-heroku
     #   hypha
-willow==1.6.3 \
-    --hash=sha256:143cefd30d3bb816cdff857c454da24991dda35a0315ea795101675e0b14262f \
-    --hash=sha256:f4b17a16c6315864604dadb6cdf2987d0b685e295cca74c6da28b94167a3126e
+willow==1.11.0 \
+    --hash=sha256:0a4388dbf18726eef8f27449659047689c39b7023045ca5a8a75410d3864ee6f \
+    --hash=sha256:70292b2d0cd2d5bb4076f0b3d61308aeaa0b225f3970d00752f08a8fd386c3d1
     # via wagtail
 wrapt==1.17.3 \
     --hash=sha256:042ec3bb8f319c147b1301f2393bc19dba6e176b7da446853406d041c36c7828 \

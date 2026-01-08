@@ -55,7 +55,7 @@ dependencies = [
     "social_auth_app_django~=5.4.3",
     "svglib==1.5.1",
     "svgwrite~=1.4.3",
-    "wagtail==5.2.8",
+    "wagtail==6.3.5",
     "whitenoise~=6.11.0",
     "xhtml2pdf~=0.2.17",
     "xmltodict~=1.0.2",
