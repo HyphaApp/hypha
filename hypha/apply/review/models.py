@@ -42,7 +42,7 @@ class ReviewFormFieldsMixin(models.Model):
     class Meta:
         abstract = True
 
-    form_fields = StreamField(ReviewCustomFormFieldsBlock(), use_json_field=True)
+    form_fields = StreamField(ReviewCustomFormFieldsBlock())
 
     @property
     def score_fields(self):
