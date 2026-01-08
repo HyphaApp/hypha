@@ -95,7 +95,6 @@ class Report(BaseStreamForm, AccessFormData, models.Model):
     form_fields = StreamField(
         # Re-use the Project Custom Form class. The original fields (used at the time of response) should be required.
         ProjectFormCustomFormFieldsBlock(),
-        use_json_field=True,
         null=True,
     )
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
