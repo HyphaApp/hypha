@@ -15,7 +15,9 @@
 
                 <ul class="fields">
                     {% block fields %}
-                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.confirmation_text %}
+                        <li>
+                            {% include "wagtailadmin/shared/field.html" with field=form.confirmation_text %}
+                        </li>
                     {% endblock %}
 
                     <li>
