@@ -3,10 +3,10 @@
 
 {% block fields %}
     {% if form.separate_username_field %}
-        {% include "wagtailadmin/shared/field_as_li.html" with field=form.username_field %}
+        <li>{% include "wagtailadmin/shared/field.html" with field=form.username_field %}</li>
     {% endif %}
-    {% include "wagtailadmin/shared/field_as_li.html" with field=form.email %}
-    {% include "wagtailadmin/shared/field_as_li.html" with field=form.full_name %}
+    <li>{% include "wagtailadmin/shared/field.html" with field=form.email %}</li>
+    <li>{% include "wagtailadmin/shared/field.html" with field=form.full_name %}</li>
 
     {% comment %}
         First/last name hidden input with dummy values because.. Wagtail admin
@@ -16,13 +16,13 @@
     {{ form.last_name }}
 
     {% if form.password1 %}
-        {% include "wagtailadmin/shared/field_as_li.html" with field=form.password1 %}
+        <li>{% include "wagtailadmin/shared/field.html" with field=form.password1 %}</li>
     {% endif %}
     {% if form.password2 %}
-        {% include "wagtailadmin/shared/field_as_li.html" with field=form.password2 %}
+        <li>{% include "wagtailadmin/shared/field.html" with field=form.password2 %}</li>
     {% endif %}
     {% if form.is_active %}
-        {% include "wagtailadmin/shared/field_as_li.html" with field=form.is_active %}
+        <li>{% include "wagtailadmin/shared/field.html" with field=form.is_active %}</li>
     {% endif %}
 {% endblock fields %}
 
