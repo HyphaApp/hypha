@@ -37,9 +37,6 @@ from django.views.generic.edit import FormView
 from django_htmx.http import HttpResponseClientRedirect
 from django_otp import devices_for_user
 from django_ratelimit.decorators import ratelimit
-from elevate.mixins import ElevateMixin
-from elevate.utils import grant_elevated_privileges
-from elevate.views import redirect_to_elevate
 from hijack.views import AcquireUserView
 from social_django.utils import psa
 from social_django.views import complete
@@ -54,6 +51,9 @@ from wagtail.models import Site
 from wagtail.users.views.users import change_user_perm
 
 from hypha.core.mail import MarkdownMail
+from hypha.elevate.mixins import ElevateMixin
+from hypha.elevate.utils import grant_elevated_privileges
+from hypha.elevate.views import redirect_to_elevate
 
 from .decorators import require_oauth_whitelist
 from .forms import (

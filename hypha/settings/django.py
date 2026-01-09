@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     "django_file_form",
     "rolepermissions",
     "hijack",
-    "elevate",  # https://django-elevate.readthedocs.io/
+    "hypha.elevate",
     "pagedown",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -82,7 +82,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "elevate.middleware.ElevateMiddleware",
+    "hypha.elevate.middleware.ElevateMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",

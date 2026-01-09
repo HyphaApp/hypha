@@ -1,7 +1,7 @@
 #
 # Builder stage.
 #
-FROM python:3.12.11-bookworm AS builder
+FROM python:3.12-bookworm AS builder
 
 # Add venv/bin to PATH.
 ENV PATH="/opt/app/.venv/bin:/usr/local/bin:$PATH"
@@ -19,11 +19,11 @@ WORKDIR /opt/app
 RUN mkdir -p ./hypha/static_compiled && mkdir -p ./hypha/media
 
 # Install node.
-COPY --from=node:24.1-slim /usr/local/bin /usr/local/bin
-COPY --from=node:24.1-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
+COPY --from=node:24-slim /usr/local/bin /usr/local/bin
+COPY --from=node:24-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
 
 # Install uv.
-COPY --from=ghcr.io/astral-sh/uv:0.5.13 /uv /uvx /usr/local/bin
+COPY --from=ghcr.io/astral-sh/uv:0.5.36 /uv /uvx /usr/local/bin
 
 # Install node dependencies.
 COPY package*.json ./
@@ -45,7 +45,7 @@ RUN npm run build && python manage.py collectstatic --noinput --verbosity=0
 #
 # Production stage.
 #
-FROM python:3.12.11-slim-bookworm
+FROM python:3.12-slim-bookworm
 
 # Add venv/bin to PATH.
 ENV PATH="/opt/app/.venv/bin:/usr/local/bin:$PATH"

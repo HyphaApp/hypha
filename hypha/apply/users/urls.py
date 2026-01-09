@@ -3,7 +3,8 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path, reverse_lazy
 from django.views.generic import RedirectView
 from django_ratelimit.decorators import ratelimit
-from elevate.views import elevate as elevate_view
+
+from hypha.elevate.views import elevate as elevate_view
 
 from .views import (
     AccountView,
