@@ -1870,9 +1870,9 @@ smmap==5.0.2 \
     --hash=sha256:26ea65a03958fa0c8a1c7e8c7a58fdc77221b8910f6be2131affade476898ad5 \
     --hash=sha256:b30115f0def7d7531d22a0fb6502488d879e75b260a9db4d0819cfb25403af5e
     # via gitdb
-social-auth-app-django==5.4.3 \
-    --hash=sha256:d1f4286d5ca1e512c9b2f686e7ecb2a0128148f1a33d853b69dc07b58508362e \
-    --hash=sha256:db70b972faeb10ee1ec83d0dc7dbd0558d5f5830417bba317b712b10ff58d031
+social-auth-app-django==5.6.0 \
+    --hash=sha256:43ca88cc5cd9161710896165ced58b3155e8aafaaff847e859879194770f138d \
+    --hash=sha256:c695501fcbf6fe87f68f5a79e379abe853662f5129e7ec6cb758a75d5b28c888
     # via hypha
 social-auth-core==4.8.3 \
     --hash=sha256:7225e57d7cef530aa7ebbb3892493002025b45e894be1d5cb0b78b9e8293ec2c \
