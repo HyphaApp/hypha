@@ -8,6 +8,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template import TemplateDoesNotExist, loader
 from django.utils import translation
 
+from hypha.core.context_processors import global_vars
 from hypha.core.utils import markdown_to_html
 
 logger = logging.getLogger(__name__)
@@ -53,6 +54,7 @@ class MarkdownMail(object):
 
     def _render_template(self, context: Dict) -> str:
         try:
+            context.update(global_vars(None))
             return loader.render_to_string(self.template_name, context)
         except TemplateDoesNotExist as e:
             logger.warning("Template '{0}' does not exists.".format(e))

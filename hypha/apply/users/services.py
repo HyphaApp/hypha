@@ -92,45 +92,28 @@ class PasswordlessAuthService:
 
         return None
 
-    def get_email_context(self) -> dict:
-        return {
-            "ORG_LONG_NAME": settings.ORG_LONG_NAME,
-            "ORG_EMAIL": settings.ORG_EMAIL,
-            "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
-            "site": self.site,
-        }
-
     def send_email_no_account_found(self, to):
-        context = self.get_email_context()
-        subject = "Log in attempt at {ORG_LONG_NAME}".format(**context)
+        subject = f"Log in attempt at {settings.ORG_LONG_NAME}"
         # Force subject to a single line to avoid header-injection issues.
         subject = "".join(subject.splitlines())
 
         email = MarkdownMail("users/emails/passwordless_login_no_account_found.md")
-        email.send(
-            to=to,
-            subject=subject,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            context=context,
-        )
+        email.send(to=to, subject=subject, from_email=settings.DEFAULT_FROM_EMAIL)
 
     def send_login_email(self, user):
         login_path = self._get_login_path(user)
         timeout_minutes = self.login_token_generator_class().TIMEOUT // 60
 
-        context = self.get_email_context()
-        context.update(
-            {
-                "user": user,
-                "is_active": user.is_active,
-                "name": user.get_full_name(),
-                "username": user.get_username(),
-                "login_path": login_path,
-                "timeout_minutes": timeout_minutes,
-            }
-        )
+        context = {
+            "user": user,
+            "is_active": user.is_active,
+            "name": user.get_full_name(),
+            "username": user.get_username(),
+            "login_path": login_path,
+            "timeout_minutes": timeout_minutes,
+        }
 
-        subject = "Log in to {username} at {ORG_LONG_NAME}".format(**context)
+        subject = f"Log in to {user.get_username()} at {settings.ORG_LONG_NAME}"
         # Force subject to a single line to avoid header-injection issues.
         subject = "".join(subject.splitlines())
 
@@ -146,15 +129,12 @@ class PasswordlessAuthService:
         signup_path = self._get_signup_path(signup_obj)
         timeout_minutes = self.login_token_generator_class().TIMEOUT // 60
 
-        context = self.get_email_context()
-        context.update(
-            {
-                "signup_path": signup_path,
-                "timeout_minutes": timeout_minutes,
-            }
-        )
+        context = {
+            "signup_path": signup_path,
+            "timeout_minutes": timeout_minutes,
+        }
 
-        subject = "Welcome to {ORG_LONG_NAME}".format(**context)
+        subject = f"Welcome to {settings.ORG_LONG_NAME}"
         # Force subject to a single line to avoid header-injection issues.
         subject = "".join(subject.splitlines())
 
