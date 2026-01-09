@@ -21,21 +21,21 @@
   },
   "browserslist": ["> 0.5%", "last 2 versions", "Firefox ESR", "not dead"],
   "devDependencies": {
-    "@alpinejs/focus": "^3.14.6",
-    "@babel/cli": "^7.25.9",
-    "@babel/core": "^7.25.9",
-    "@babel/preset-env": "^7.25.9",
-    "@biomejs/biome": "^1.9.4",
-    "@tailwindcss/cli": "^4.1.7",
-    "@tailwindcss/typography": "^0.5.16",
-    "alpinejs": "^3.14.6",
-    "core-js": "^3.39.0",
-    "daisyui": "^5.0.43",
-    "htmx.org": "^2.0.3",
-    "nodemon": "^3.1.7",
-    "npm-run-all2": "^7.0.1",
-    "sass": "^1.81.1",
-    "stylelint": "^16.11.0",
+    "@alpinejs/focus": "^3.15.3",
+    "@babel/cli": "^7.28.3",
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "@biomejs/biome": "^2.3.11",
+    "@tailwindcss/cli": "^4.1.18",
+    "@tailwindcss/typography": "^0.5.19",
+    "alpinejs": "^3.15.3",
+    "core-js": "^3.47.0",
+    "daisyui": "^5.5.14",
+    "htmx.org": "^2.0.8",
+    "nodemon": "^3.1.11",
+    "npm-run-all2": "^8.0.4",
+    "sass": "^1.97.2",
+    "stylelint": "^16.26.1",
     "stylelint-config-standard": "^36.0.1",
     "stylelint-config-standard-scss": "^13.1.0"
   },
@@ -64,7 +64,7 @@
     "clean": "rm -rf ./static ./hypha/static_compiled"
   },
   "engines": {
-    "node": "24.1.x"
+    "node": "24.12.x"
   },
   "private": true
 }
