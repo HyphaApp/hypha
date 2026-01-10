@@ -1,16 +1,24 @@
 import django_filters
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.db.models import CharField, Q, Value
+from django.db.models import CharField, Value
 from django.db.models.functions import Coalesce, Lower, NullIf
+from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext
 from rolepermissions import roles
 from wagtail.admin.filters import WagtailFilterSet
+from wagtail.admin.utils import set_query_params
+from wagtail.admin.widgets.button import HeaderButton
 from wagtail.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME
-from wagtail.users.views.groups import GroupViewSet
+from wagtail.users.views.groups import EditView as GroupEditView
+from wagtail.users.views.groups import GroupViewSet as WagtailGroupViewSet
 from wagtail.users.views.groups import IndexView as GroupIndexView
-from wagtail.users.views.users import Index as UserIndexView
-from wagtail.users.views.users import get_users_filter_query
+from wagtail.users.views.users import IndexView as UserIndexView
+from wagtail.users.views.users import UserViewSet as WagtailUserViewSet
+
+from .forms import CustomUserCreationForm, CustomUserEditForm
 
 User = get_user_model()
 
@@ -55,12 +63,6 @@ class UserFilterSet(WagtailFilterSet):
 
 
 class CustomUserIndexView(UserIndexView):
-    """
-    Override wagtail's users index view to filter by full_name. This view
-    also allows for the addition of custom fields to the list_export
-    and list filtering.
-    """
-
     list_export = [
         "email",
         "full_name",
@@ -72,39 +74,8 @@ class CustomUserIndexView(UserIndexView):
         "last_login",
     ]
 
-    default_ordering = "name"
-    list_filter = ("is_active",)
-
-    filterset_class = UserFilterSet
-
-    def get_context_data(self, *args, object_list=None, **kwargs):
-        ctx = super().get_context_data(*args, object_list=object_list, **kwargs)
-        ctx["filters"] = self.get_filterset_class()(
-            self.request.GET, queryset=self.get_queryset(), request=self.request
-        )
-        return ctx
-
-    def get_queryset(self):
-        """
-        Override the original queryset to filter by full_name, mostly copied from
-        super().get_queryset() with the addition of the custom code
-        """
-        model_fields = set(self.model_fields)
-        if self.is_searching:
-            conditions = get_users_filter_query(self.search_query, model_fields)
-
-            # == custom code
-            for term in self.search_query.split():
-                if "full_name" in model_fields:
-                    conditions |= Q(full_name__icontains=term)
-            # == custom code end
-
-            users = User.objects.filter(self.group_filter & conditions)
-        else:
-            users = User.objects.filter(self.group_filter)
-
-        if self.locale:
-            users = users.filter(locale=self.locale)
+    def get_base_queryset(self):
+        users = User._default_manager.all()
 
         users = users.annotate(
             display_name=Coalesce(
@@ -112,29 +83,32 @@ class CustomUserIndexView(UserIndexView):
             ),
         )
 
-        if "wagtail_userprofile" in model_fields:
+        if "wagtail_userprofile" in self.model_fields:
             users = users.select_related("wagtail_userprofile")
 
         # == custom code
-        if "full_name" in model_fields:
+        if "full_name" in self.model_fields:
             users = users.order_by(Lower("display_name"))
         # == custom code end
 
-        if self.get_ordering() == "username":
-            users = users.order_by(User.USERNAME_FIELD)
-
-        if self.get_ordering() == "name":
-            users = users.order_by(Lower("display_name"))
-
-        # == custom code
-        if not self.group:
-            filterset_class = self.get_filterset_class()
-            users = filterset_class(
-                self.request.GET, queryset=users, request=self.request
-            ).qs
-        # == end custom code
-
         return users
+
+    def order_queryset(self, queryset):
+        if self.ordering == "name":
+            return queryset.order_by(Lower("display_name"))
+        if self.ordering == "-name":
+            return queryset.order_by(Lower("-display_name"))
+        return super().order_queryset(queryset)
+
+
+class CustomUserViewSet(WagtailUserViewSet):
+    filterset_class = UserFilterSet
+    index_view_class = CustomUserIndexView
+
+    def get_form_class(self, for_update=False):
+        if for_update:
+            return CustomUserEditForm
+        return CustomUserCreationForm
 
 
 class CustomGroupIndexView(GroupIndexView):
@@ -167,13 +141,29 @@ class CustomGroupIndexView(GroupIndexView):
         return custom_groups
 
 
-class CustomGroupViewSet(GroupViewSet):
+class CustomGroupEditView(GroupEditView):
+    @cached_property
+    def header_buttons(self):
+        return [
+            HeaderButton(
+                gettext("View users in this group"),
+                url=set_query_params(
+                    reverse("wagtailusers_users:index"),
+                    {"roles": self.object.pk},
+                ),
+                icon_name="user",
+            )
+        ]
+
+
+class CustomGroupViewSet(WagtailGroupViewSet):
     """
     Overriding the wagtail.users.views.groups.GroupViewSet just to use custom users view(index)
     when getting all users for a group.
     """
 
     index_view_class = CustomGroupIndexView
+    edit_view_class = CustomGroupEditView
 
     @property
     def users_view(self):

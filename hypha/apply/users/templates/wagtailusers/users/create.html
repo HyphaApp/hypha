@@ -1,31 +1,6 @@
 {% extends "wagtailusers/users/create.html" %}
-{% load  static %}
 
-{% block fields %}
-    {% if form.separate_username_field %}
-        <li>{% include "wagtailadmin/shared/field.html" with field=form.username_field %}</li>
-    {% endif %}
-    <li>{% include "wagtailadmin/shared/field.html" with field=form.email %}</li>
+{% block extra_fields %}
     <li>{% include "wagtailadmin/shared/field.html" with field=form.full_name %}</li>
-
-    {% comment %}
-        First/last name hidden input with dummy values because.. Wagtail admin
-        See hypha.apply.users.forms.CustomUserCreationForm
-    {% endcomment %}
-    {{ form.first_name }}
-    {{ form.last_name }}
-
-    {% if form.password1 %}
-        <li>{% include "wagtailadmin/shared/field.html" with field=form.password1 %}</li>
-    {% endif %}
-    {% if form.password2 %}
-        <li>{% include "wagtailadmin/shared/field.html" with field=form.password2 %}</li>
-    {% endif %}
-    {% if form.is_active %}
-        <li>{% include "wagtailadmin/shared/field.html" with field=form.is_active %}</li>
-    {% endif %}
-{% endblock fields %}
-
-{% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/wagtail_groups_list.css' %}">
-{% endblock %}
+    <li>{% include "wagtailadmin/shared/field.html" with field=form.slack %}</li>
+{% endblock extra_fields %}

@@ -91,9 +91,13 @@ class CustomUserAdminFormBase:
         super().__init__(*args, **kwargs)
 
         # HACK: Wagtail admin doesn't work with custom User models that do not have first/last name.
+        self.fields["first_name"].label = ""
+        self.fields["first_name"].required = False
         self.fields["first_name"].widget = forms.HiddenInput(
             attrs={"value": "Not used - see full_name"}
         )
+        self.fields["last_name"].label = ""
+        self.fields["last_name"].required = False
         self.fields["last_name"].widget = forms.HiddenInput(
             attrs={"value": "Not used - see full_name"}
         )
@@ -130,13 +134,12 @@ class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
         )
         if help_text:
             return mark_safe(
-                f'{group_obj.name}<p class="group-help-text">{help_text}</p>'
+                f'<div><div>{group_obj.name}</div><div class="help">{help_text}</div></div>'
             )
         return group_obj.name
 
 
 class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
-    #    pass
     """
     A custom UserEditForm used to provide custom fields (ie. custom group fields)
     """
@@ -148,6 +151,9 @@ class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
         self.fields["groups"] = GroupsModelMultipleChoiceField.get_group_mmcf(
             self.fields["groups"]
         )
+
+    class Meta(UserEditForm.Meta):
+        fields = UserEditForm.Meta.fields | {"full_name", "slack"}
 
 
 class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
@@ -167,6 +173,9 @@ class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
         self.fields["groups"] = GroupsModelMultipleChoiceField.get_group_mmcf(
             self.fields["groups"]
         )
+
+    class Meta(UserCreationForm.Meta):
+        fields = UserCreationForm.Meta.fields | {"full_name", "slack"}
 
 
 class ProfileForm(forms.ModelForm):
