@@ -89,7 +89,7 @@ dependencies = [
     "responses>=0.25.8",
     "ruff>=0.14.10",
     "time-machine>=3.2.0",
-    "wagtail-factories~=4.2.1",
+    "wagtail-factories>=4.3.0",
     "Werkzeug>=3.1.4",
 ]
 "docs" = [
