@@ -2125,9 +2125,9 @@ wagtail==7.0.3 \
     #   hypha
     #   wagtail-factories
     #   wagtail-modeladmin
-wagtail-factories==4.2.1 \
-    --hash=sha256:7a180fc1b074af7a78648c634740ee89d4dbb45899917744b66431d38155b6ae \
-    --hash=sha256:bfe158092982a2b30a3e603c482242905df0b163fc69573fa6f159df482175c5
+wagtail-factories==4.3.0 \
+    --hash=sha256:27c19078ceade5e408aef0edfa3378b7992e5bed4d4c7e8216cbdd53f9732464 \
+    --hash=sha256:6d3129244642a400462344e35168e5eb89598d5b63a4cfb7f26a5a6052f50d95
 wagtail-modeladmin==2.2.0 \
     --hash=sha256:41e12f9a79f8c1595fce73bd6b51007422f258089564f9df8e09a82246a8e133 \
     --hash=sha256:60ea08b128761b5b6a1cbfe3c8ab828fba13e41ff3d7563a0b8c62c8fe36c4ce
