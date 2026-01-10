@@ -68,9 +68,9 @@ backports-datetime-fromisoformat==2.0.3 ; python_full_version < '3.11' \
     --hash=sha256:ee68bc8735ae5058695b76d3bb2aee1d137c052a11c8303f1e966aa23b72b65b \
     --hash=sha256:ffe5f793db59e2f1d45ec35a1cf51404fdd69df9f6952a0c87c3060af4c00e32
     # via marshmallow
-beautifulsoup4==4.12.3 \
-    --hash=sha256:74e3d1928edc070d21748185c46e3fb33490f22f52a3addee9aee0f4f7781051 \
-    --hash=sha256:b80878c9f40111313e55da8ba20bdba06d8fa3969fc68304167741bbf9e082ed
+beautifulsoup4==4.14.3 \
+    --hash=sha256:0918bfe44902e6ad8d57732ba310582e98da931428d231a5ecb9e7c703a735bb \
+    --hash=sha256:6292b1c5186d356bba669ef9f7f051757099565ad9ada5dd630bd9de5fa7fb86
     # via
     #   html-diff
     #   htmldocx
@@ -79,13 +79,13 @@ billiard==4.2.4 \
     --hash=sha256:525b42bdec68d2b983347ac312f892db930858495db601b5836ac24e6477cde5 \
     --hash=sha256:55f542c371209e03cd5862299b74e52e4fbcba8250ba611ad94276b369b6a85f
     # via celery
-boto3==1.42.24 \
-    --hash=sha256:8ed6ad670a5a2d7f66c1b0d3362791b48392c7a08f78479f5d8ab319a4d9118f \
-    --hash=sha256:c47a2f40df933e3861fc66fd8d6b87ee36d4361663a7e7ba39a87f5a78b2eae1
+boto3==1.42.25 \
+    --hash=sha256:8128bde4f9d5ffce129c76d1a2efe220e3af967a2ad30bc305ba088bbc96343d \
+    --hash=sha256:ccb5e757dd62698d25766cc54cf5c47bea43287efa59c93cf1df8c8fbc26eeda
     # via hypha
-botocore==1.42.24 \
-    --hash=sha256:8fca9781d7c84f7ad070fceffaff7179c4aa7a5ffb27b43df9d1d957801e0a8d \
-    --hash=sha256:be8d1bea64fb91eea08254a1e5fea057e4428d08e61f4e11083a02cafc1f8cc6
+botocore==1.42.25 \
+    --hash=sha256:470261966aab1d09a1cd4ba56810098834443602846559ba9504f6613dfa52dc \
+    --hash=sha256:7ae79d1f77d3771e83e4dd46bce43166a1ba85d58a49cffe4c4a721418616054
     # via
     #   boto3
     #   s3transfer
@@ -392,6 +392,7 @@ django==4.2.27 \
     #   django-stubs-ext
     #   django-tables2
     #   django-taggit
+    #   django-tasks
     #   django-tinymce
     #   django-treebeard
     #   django-two-factor-auth
@@ -500,7 +501,9 @@ django-stubs==5.2.8 \
 django-stubs-ext==5.2.8 \
     --hash=sha256:1dd5470c9675591362c78a157a3cf8aec45d0e7a7f0cf32f227a1363e54e0652 \
     --hash=sha256:b39938c46d7a547cd84e4a6378dbe51a3dd64d70300459087229e5fee27e5c6b
-    # via django-stubs
+    # via
+    #   django-stubs
+    #   django-tasks
 django-tables2==2.8.0 \
     --hash=sha256:0dea3401bb99a0164ba09e20d59a7d90856fdc05e5ae2da9a14d0fa14d99257c \
     --hash=sha256:860633b0f448216af73fca6005c7e38dc9b46931dc36c08a9281a71ee250b1ee
@@ -508,6 +511,10 @@ django-tables2==2.8.0 \
 django-taggit==6.1.0 \
     --hash=sha256:ab776264bbc76cb3d7e49e1bf9054962457831bd21c3a42db9138b41956e4cf0 \
     --hash=sha256:c4d1199e6df34125dd36db5eb0efe545b254dec3980ce5dd80e6bab3e78757c3
+    # via wagtail
+django-tasks==0.7.0 \
+    --hash=sha256:499f80d1a051566443cfa88a300d8b03435af7fc5708cad4d8da6d285614f739 \
+    --hash=sha256:8a8d64f2dc6e29ac2f45092d90e2dd82dc1dca100dfe3a4f2ce1209db99f3527
     # via wagtail
 django-tinymce==5.0.0 \
     --hash=sha256:6257669ed596accf5fa967ff3061276b2c5352baac1bbc658fcd8252b12ca38a \
@@ -609,10 +616,6 @@ kombu==5.6.2 \
     --hash=sha256:8060497058066c6f5aed7c26d7cd0d3b574990b09de842a8c5aaed0b92cc5a55 \
     --hash=sha256:efcfc559da324d41d61ca311b0c64965ea35b4c55cc04ee36e55386145dace93
     # via celery
-l18n==2021.3 \
-    --hash=sha256:1956e890d673d17135cc20913253c154f6bc1c00266c22b7d503cc1a5a42d848 \
-    --hash=sha256:78495d1df95b6f7dcc694d1ba8994df709c463a1cbac1bf016e1b9a5ce7280b9
-    # via wagtail
 laces==0.1.2 \
     --hash=sha256:3218e09c1889ae5cf3fc7a82f5bb63ec0c7879889b6a9760bfc42323c694b84d \
     --hash=sha256:980cdaf9a31e883a2b8198132e2388931a4eb8814f5bfa5d8bba13ff9f657b7c
@@ -1017,9 +1020,9 @@ pyjwt==2.10.1 \
     --hash=sha256:3cc5772eb20009233caf06e9d8a0577824723b44e6648ee0a2aedb6cf9381953 \
     --hash=sha256:dcdd193e30abefd5debf142f9adfcdd2b58004e644f25406ffaebd50bd98dacb
     # via social-auth-core
-pypdf==6.5.0 \
-    --hash=sha256:9cef8002aaedeecf648dfd9ff1ce38f20ae8d88e2534fced6630038906440b25 \
-    --hash=sha256:9e78950906380ae4f2ce1d9039e9008098ba6366a4d9c7423c4bdbd6e6683404
+pypdf==6.6.0 \
+    --hash=sha256:4c887ef2ea38d86faded61141995a3c7d068c9d6ae8477be7ae5de8a8e16592f \
+    --hash=sha256:bca9091ef6de36c7b1a81e09327c554b7ce51e88dad68f5890c2b4a4417f1fd7
     # via xhtml2pdf
 python-bidi==0.6.7 \
     --hash=sha256:05fe5971110013610f0db40505d0b204edc756e92eafac1372a464f8b9162b11 \
@@ -1120,10 +1123,6 @@ python3-openid==3.2.0 \
     --hash=sha256:33fbf6928f401e0b790151ed2b5290b02545e8775f982485205a066f874aaeaf \
     --hash=sha256:6626f771e0417486701e0b4daff762e7212e820ca5b29fcc0d05f6f8736dfa6b
     # via social-auth-core
-pytz==2025.2 \
-    --hash=sha256:360b9e3dbb49a209c21ad61809c7fb453643e048b38924c765813546746e81c3 \
-    --hash=sha256:5ddf76296dd8c44c26eb8f4b6f35488f3ccbf6fbbd7adee0b7262d43f0ec2f00
-    # via l18n
 pyyaml==6.0.3 \
     --hash=sha256:00c4bdeba853cc34e7dd471f16b4114f4162dc03e6b7afcc2128711f0eca823c \
     --hash=sha256:02893d100e99e03eda1c8fd5c441d8c60103fd175728e23e431db1b589cf5ab3 \
@@ -1282,7 +1281,6 @@ six==1.17.0 \
     --hash=sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81
     # via
     #   html5lib
-    #   l18n
     #   python-dateutil
 social-auth-app-django==5.4.3 \
     --hash=sha256:d1f4286d5ca1e512c9b2f686e7ecb2a0128148f1a33d853b69dc07b58508362e \
@@ -1373,12 +1371,14 @@ typing-extensions==4.15.0 \
     # via
     #   anyio
     #   asgiref
+    #   beautifulsoup4
     #   cryptography
     #   django-anymail
     #   django-countries
     #   django-nh3
     #   django-stubs
     #   django-stubs-ext
+    #   django-tasks
     #   environs
     #   exceptiongroup
     #   marshmallow
@@ -1421,9 +1421,9 @@ vine==5.1.0 \
     #   amqp
     #   celery
     #   kombu
-wagtail==6.3.5 \
-    --hash=sha256:142fb81f4040ddc22d9b600fac33c62e6a65cef0393919d0cb171941e10c41cd \
-    --hash=sha256:ff3051159da6864c40b2fc564f2016d8d6916ad9ef7964ee18f8d83cc518a3a0
+wagtail==7.0.3 \
+    --hash=sha256:6c4925f7b56b8ce0275da03b219b4b382f17aa7f8517a2487e48c3b7ee9c2b1c \
+    --hash=sha256:d336623405db81f799ea231509d8da3b46a7539932cc1c1ad509d856786b88e8
     # via
     #   hypha
     #   wagtail-modeladmin
