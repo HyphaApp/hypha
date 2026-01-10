@@ -91,9 +91,9 @@ class CustomFormFieldsBlock(StreamBlock):
 
         super().__init__(child_blocks, *args, **kwargs)
 
-    def clean(self, value):
+    def clean(self, value, ignore_required_constraints=False):
         try:
-            value = super().clean(value)
+            value = super().clean(value, ignore_required_constraints)
         except ValidationError as e:
             error_dict = e.params or {}
         else:
