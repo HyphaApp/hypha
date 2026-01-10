@@ -6,16 +6,23 @@ from django.db.models.functions import Coalesce, Lower, NullIf
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext
+from django.utils.translation import gettext, gettext_lazy
 from rolepermissions import roles
 from wagtail.admin.filters import WagtailFilterSet
-from wagtail.admin.utils import set_query_params
+from wagtail.admin.ui.tables import (
+    BulkActionsCheckboxColumn,
+    Column,
+    DateColumn,
+    StatusTagColumn,
+)
+from wagtail.admin.utils import get_user_display_name, set_query_params
 from wagtail.admin.widgets.button import HeaderButton
 from wagtail.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME
 from wagtail.users.views.groups import EditView as GroupEditView
 from wagtail.users.views.groups import GroupViewSet as WagtailGroupViewSet
 from wagtail.users.views.groups import IndexView as GroupIndexView
 from wagtail.users.views.users import IndexView as UserIndexView
+from wagtail.users.views.users import UserColumn
 from wagtail.users.views.users import UserViewSet as WagtailUserViewSet
 
 from .forms import CustomUserCreationForm, CustomUserEditForm
@@ -74,6 +81,62 @@ class CustomUserIndexView(UserIndexView):
         "last_login",
     ]
 
+    @cached_property
+    def columns(self):
+        # Override to add roles column
+        _UserColumn = self._get_title_column_class(UserColumn)
+        return [
+            BulkActionsCheckboxColumn("bulk_actions", obj_type="user"),
+            _UserColumn(
+                "name",
+                accessor=lambda u: get_user_display_name(u),
+                label=gettext_lazy("Name"),
+                get_url=self.get_edit_url,
+                classname="name",
+            ),
+            Column(
+                self.model.USERNAME_FIELD,
+                accessor="get_username",
+                label=gettext_lazy("Username"),
+                sort_key=self.model.USERNAME_FIELD,
+                classname="username",
+                width="20%",
+            ),
+            Column(
+                "is_superuser",
+                accessor=lambda u: gettext_lazy("Admin") if u.is_superuser else None,
+                label=gettext_lazy("Access level"),
+                sort_key="is_superuser",
+                classname="level",
+                width="10%",
+            ),
+            Column(
+                "roles",
+                accessor=lambda u: ", ".join(u.roles),
+                label=gettext_lazy("Roles"),
+                classname="level",
+                width="10%",
+            ),
+            StatusTagColumn(
+                "is_active",
+                accessor=lambda u: gettext_lazy("Active")
+                if u.is_active
+                else gettext_lazy("Inactive"),
+                primary=lambda u: u.is_active,
+                label=gettext_lazy("Status"),
+                sort_key="is_active" if "is_active" in self.model_fields else None,
+                classname="status",
+                width="10%",
+            ),
+            DateColumn(
+                "last_login",
+                label=gettext_lazy("Last login"),
+                sort_key="last_login",
+                classname="last-login",
+                width="10%",
+            ),
+        ]
+
     def get_base_queryset(self):
         users = User._default_manager.all()
 
@@ -86,18 +149,13 @@ class CustomUserIndexView(UserIndexView):
         if "wagtail_userprofile" in self.model_fields:
             users = users.select_related("wagtail_userprofile")
 
-        # == custom code
-        if "full_name" in self.model_fields:
-            users = users.order_by(Lower("display_name"))
-        # == custom code end
-
         return users
 
     def order_queryset(self, queryset):
         if self.ordering == "name":
             return queryset.order_by(Lower("display_name"))
         if self.ordering == "-name":
-            return queryset.order_by(Lower("-display_name"))
+            return queryset.order_by(Lower("display_name"))
         return super().order_queryset(queryset)
 
 
