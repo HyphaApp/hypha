@@ -158,7 +158,7 @@ class TestReportConfig(TestCase):
         """Test that past_due_reports includes overdue reports."""
         report = ReportFactory(past_due=True)
         config = report.project.report_config
-        self.assertQuerysetEqual(
+        self.assertQuerySetEqual(
             config.past_due_reports(), [report], transform=lambda x: x
         )
 
@@ -166,7 +166,7 @@ class TestReportConfig(TestCase):
         """Test that past_due_reports includes draft reports."""
         report = ReportFactory(past_due=True, is_draft=True)
         config = report.project.report_config
-        self.assertQuerysetEqual(
+        self.assertQuerySetEqual(
             config.past_due_reports(), [report], transform=lambda x: x
         )
 
@@ -174,19 +174,19 @@ class TestReportConfig(TestCase):
         """Test that past_due_reports excludes submitted reports."""
         report = ReportFactory(is_submitted=True, past_due=True)
         config = report.project.report_config
-        self.assertQuerysetEqual(config.past_due_reports(), [], transform=lambda x: x)
+        self.assertQuerySetEqual(config.past_due_reports(), [], transform=lambda x: x)
 
     def test_past_due_no_future(self):
         """Test that past_due_reports excludes future reports."""
         report = ReportFactory(end_date=self.today + relativedelta(days=1))
         config = report.project.report_config
-        self.assertQuerysetEqual(config.past_due_reports(), [], transform=lambda x: x)
+        self.assertQuerySetEqual(config.past_due_reports(), [], transform=lambda x: x)
 
     def test_past_due_no_skipped(self):
         """Test that past_due_reports excludes skipped reports."""
         report = ReportFactory(skipped=True, past_due=True)
         config = report.project.report_config
-        self.assertQuerysetEqual(config.past_due_reports(), [], transform=lambda x: x)
+        self.assertQuerySetEqual(config.past_due_reports(), [], transform=lambda x: x)
 
 
 class TestReport(TestCase):
@@ -232,19 +232,19 @@ class TestReport(TestCase):
     def test_queryset_done_includes_submitted(self):
         """Test that done() queryset includes submitted reports."""
         report = ReportFactory(is_submitted=True)
-        self.assertQuerysetEqual(Report.objects.done(), [report], transform=lambda x: x)
+        self.assertQuerySetEqual(Report.objects.done(), [report], transform=lambda x: x)
 
     def test_queryset_done_includes_skipped(self):
         """Test that done() queryset includes skipped reports."""
         report = ReportFactory(skipped=True)
-        self.assertQuerysetEqual(Report.objects.done(), [report], transform=lambda x: x)
+        self.assertQuerySetEqual(Report.objects.done(), [report], transform=lambda x: x)
 
     def test_queryset_done_doesnt_includes_draft(self):
         """Test that done() queryset excludes draft reports."""
         ReportFactory(is_draft=True)
-        self.assertQuerysetEqual(Report.objects.done(), [], transform=lambda x: x)
+        self.assertQuerySetEqual(Report.objects.done(), [], transform=lambda x: x)
 
     def test_queryset_done_doesnt_includes_to_do(self):
         """Test that done() queryset excludes to-do reports."""
         ReportFactory()
-        self.assertQuerysetEqual(Report.objects.done(), [], transform=lambda x: x)
+        self.assertQuerySetEqual(Report.objects.done(), [], transform=lambda x: x)
