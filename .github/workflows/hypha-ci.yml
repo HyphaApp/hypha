@@ -74,16 +74,15 @@ jobs:
           uv venv
           uv pip install -r requirements/dev.txt -r requirements/translate.txt
 
+      - name: Run django collectstatic
+        run: |
+          .venv/bin/python manage.py collectstatic --noinput --no-post-process --verbosity=1
+
       - name: Check Django migrations
         if: matrix.group == 1
         run: |
           .venv/bin/python manage.py makemigrations --dry-run --verbosity=3
           .venv/bin/python manage.py makemigrations --check
-
-      - name: Run django collectstatic
-        if: matrix.group == 1
-        run: |
-          .venv/bin/python manage.py collectstatic --noinput --no-post-process --verbosity=1
 
       - name: Check Django checks
         if: matrix.group == 3
