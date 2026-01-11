@@ -7,10 +7,6 @@ providers e.g. Azure
 Most private files are served through the webapp to allow users to share links
 to the file and the recipient is then authenticated through the app rather than
 with the original file url with auth string.
-
-Please set the following settings in order to configure this:
-DEFAULT_FILE_STORAGE
-PRIVATE_FILE_STORAGE
 """
 
 from urllib import parse

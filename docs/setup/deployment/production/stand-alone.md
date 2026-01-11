@@ -257,9 +257,6 @@ SERVER_EMAIL:                                  app@example.org
 ANYMAIL_WEBHOOK_SECRET:                        [KEY]
 AWS_ACCESS_KEY_ID:                             [KEY]
 AWS_DEFAULT_ACL:                               None
-AWS_MIGRATION_ACCESS_KEY_ID:                   [KEY]
-AWS_MIGRATION_BUCKET_NAME:                     backup.example.org
-AWS_MIGRATION_SECRET_ACCESS_KEY:               [KEY]
 AWS_PRIVATE_BUCKET_NAME:                       private.example.org
 AWS_PUBLIC_BUCKET_NAME:                        public.example.org
 AWS_PUBLIC_CUSTOM_DOMAIN:                      public.example.org
