@@ -86,13 +86,10 @@
                 </form>
             {% endif %}
             <hr />
-            <a
-                href="{% url 'users:logout' %}"
-                title="Log out"
-                class="block py-2 px-3 font-semibold text-center transition-all hover:font-semibold text-error border-x hover:bg-error/10 focus-visible:outline-dashed"
-            >
-                {% trans "Log out" %}
-            </a>
+            <form id="logout-form" method="post" action="{% url 'users:logout' %}">
+                {% csrf_token %}
+                <button class="block py-2 px-3 w-full font-semibold text-center transition-all cursor-pointer hover:font-semibold text-error border-x hover:bg-error/10 focus-visible:outline-dashed" title="Log out" type="submit">{% trans "Log out" %}</button>
+            </form>
         </div>
     </div>
 {% else %}
