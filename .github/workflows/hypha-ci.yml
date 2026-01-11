@@ -80,12 +80,12 @@ jobs:
           .venv/bin/python manage.py makemigrations --dry-run --verbosity=3
           .venv/bin/python manage.py makemigrations --check
 
-      - name: Run django checks
-        if: matrix.group == 2
+      - name: Run django collectstatic
+        if: matrix.group == 1
         run: |
           .venv/bin/python manage.py collectstatic --noinput --no-post-process --verbosity=1
 
-      - name: Check Django Setup
+      - name: Check Django checks
         if: matrix.group == 3
         run: |
           .venv/bin/python manage.py check
