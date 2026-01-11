@@ -326,7 +326,14 @@ CACHES["django_file_form"] = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/stable/howto/static-files/
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, "static_compiled"),
@@ -538,8 +545,16 @@ CELERY_REDIS_MAX_CONNECTIONS = env.int("CELERY_REDIS_MAX_CONNECTIONS", 20)
 # S3 settings
 
 if env.str("AWS_STORAGE_BUCKET_NAME", None):
-    DEFAULT_FILE_STORAGE = "hypha.storage_backends.PublicMediaStorage"
-    PRIVATE_FILE_STORAGE = "hypha.storage_backends.PrivateMediaStorage"
+    STORAGES = {
+        **STORAGES,
+        "public_media_storage": {
+            "BACKEND": "hypha.storage_backends.PublicMediaStorage",
+        },
+        "private_media_storage": {
+            "BACKEND": "hypha.storage_backends.PrivateMediaStorage",
+        },
+    }
+
     AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
     AWS_PUBLIC_BUCKET_NAME = env.str("AWS_PUBLIC_BUCKET_NAME", AWS_STORAGE_BUCKET_NAME)
     AWS_PRIVATE_BUCKET_NAME = env.str(
@@ -551,10 +566,6 @@ if env.str("AWS_STORAGE_BUCKET_NAME", None):
     AWS_PUBLIC_CUSTOM_DOMAIN = env.str("AWS_PUBLIC_CUSTOM_DOMAIN", None)
     INSTALLED_APPS += ("storages",)
 
-# Settings to connect to the Bucket from which we are migrating data
-AWS_MIGRATION_BUCKET_NAME = env.str("AWS_MIGRATION_BUCKET_NAME", "")
-AWS_MIGRATION_ACCESS_KEY_ID = env.str("AWS_MIGRATION_ACCESS_KEY_ID", "")
-AWS_MIGRATION_SECRET_ACCESS_KEY = env.str("AWS_MIGRATION_SECRET_ACCESS_KEY", "")
 
 # Apply nav items settings
 
