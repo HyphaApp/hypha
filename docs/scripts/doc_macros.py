@@ -56,7 +56,9 @@ def get_python_version() -> str:
             version = py_ver.read()
 
         if not valid_semver(version):
-            raise InvalidVersionException(f'Unrecognized Python version: "{version}"!')
+            raise InvalidVersionException(
+                f'Unrecognized Python version: "{version.strip()}"!'
+            )
 
         return version
     except FileNotFoundError as err:
