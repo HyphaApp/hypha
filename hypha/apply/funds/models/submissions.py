@@ -439,7 +439,7 @@ class ApplicationSubmission(
     metaclass=ApplicationSubmissionMetaclass,
 ):
     form_data = models.JSONField(encoder=StreamFieldDataEncoder)
-    form_fields = StreamField(ApplicationCustomFormFieldsBlock(), use_json_field=True)
+    form_fields = StreamField(ApplicationCustomFormFieldsBlock())
     public_id = models.CharField(
         max_length=255, null=True, blank=True, unique=True, db_index=True
     )

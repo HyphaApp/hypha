@@ -326,7 +326,14 @@ CACHES["django_file_form"] = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/stable/howto/static-files/
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, "static_compiled"),
@@ -346,9 +353,6 @@ WAGTAIL_FRONTEND_LOGIN_URL = "/auth/"
 WAGTAIL_SITE_NAME = "hypha"
 WAGTAILIMAGES_IMAGE_MODEL = "images.CustomImage"
 WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
-WAGTAIL_USER_EDIT_FORM = "hypha.apply.users.forms.CustomUserEditForm"
-WAGTAIL_USER_CREATION_FORM = "hypha.apply.users.forms.CustomUserCreationForm"
-WAGTAIL_USER_CUSTOM_FIELDS = ["full_name"]
 WAGTAIL_PASSWORD_MANAGEMENT_ENABLED = False
 WAGTAILUSERS_PASSWORD_ENABLED = False
 WAGTAILUSERS_PASSWORD_REQUIRED = False
@@ -541,8 +545,13 @@ CELERY_REDIS_MAX_CONNECTIONS = env.int("CELERY_REDIS_MAX_CONNECTIONS", 20)
 # S3 settings
 
 if env.str("AWS_STORAGE_BUCKET_NAME", None):
-    DEFAULT_FILE_STORAGE = "hypha.storage_backends.PublicMediaStorage"
-    PRIVATE_FILE_STORAGE = "hypha.storage_backends.PrivateMediaStorage"
+    STORAGES["public_media_storage"] = {
+        "BACKEND": "hypha.storage_backends.PublicMediaStorage",
+    }
+    STORAGES["private_media_storage"] = {
+        "BACKEND": "hypha.storage_backends.PrivateMediaStorage",
+    }
+
     AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
     AWS_PUBLIC_BUCKET_NAME = env.str("AWS_PUBLIC_BUCKET_NAME", AWS_STORAGE_BUCKET_NAME)
     AWS_PRIVATE_BUCKET_NAME = env.str(
@@ -554,10 +563,6 @@ if env.str("AWS_STORAGE_BUCKET_NAME", None):
     AWS_PUBLIC_CUSTOM_DOMAIN = env.str("AWS_PUBLIC_CUSTOM_DOMAIN", None)
     INSTALLED_APPS += ("storages",)
 
-# Settings to connect to the Bucket from which we are migrating data
-AWS_MIGRATION_BUCKET_NAME = env.str("AWS_MIGRATION_BUCKET_NAME", "")
-AWS_MIGRATION_ACCESS_KEY_ID = env.str("AWS_MIGRATION_ACCESS_KEY_ID", "")
-AWS_MIGRATION_SECRET_ACCESS_KEY = env.str("AWS_MIGRATION_SECRET_ACCESS_KEY", "")
 
 # Apply nav items settings
 
@@ -630,7 +635,7 @@ FILE_FORM_UPLOAD_DIR = "temp_uploads"
 os.makedirs(os.path.join(MEDIA_ROOT, FILE_FORM_UPLOAD_DIR), exist_ok=True)
 # Store temporary files on S3 too (files are still uploaded to local filesystem first)
 if env.str("AWS_STORAGE_BUCKET_NAME", None):
-    FILE_FORM_TEMP_STORAGE = PRIVATE_FILE_STORAGE
+    FILE_FORM_TEMP_STORAGE = "hypha.storage_backends.PrivateMediaStorage"
 
 
 # Misc settings

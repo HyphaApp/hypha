@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.utils.html import escape
+from django.utils.safestring import mark_safe
 
 from hypha.apply.review.options import NA
 from hypha.apply.stream_forms.forms import StreamBaseForm
@@ -113,10 +114,12 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 class SubmitButtonWidget(forms.Widget):
     def render(self, name, value, attrs=None, renderer=None):
         disabled = "disabled" if attrs.get("disabled") else ""
-        return '<input type="submit" name="{name}" value="{value}" class="btn btn-primary" {disabled}>'.format(
-            disabled=disabled,
-            name=escape(name),
-            value=escape(name.title()),
+        return mark_safe(
+            '<input type="submit" name="{name}" value="{value}" class="btn btn-primary" {disabled}>'.format(
+                disabled=disabled,
+                name=escape(name),
+                value=escape(name.title()),
+            )
         )
 
 
