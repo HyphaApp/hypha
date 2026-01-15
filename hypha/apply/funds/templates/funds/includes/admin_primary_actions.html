@@ -1,5 +1,6 @@
 {% load i18n %}
-{% load heroicons primaryactions_tags translate_tags %}
+{% load heroicons primaryactions_tags translate_tags workflow_tags %}
+{% load can from permission_tags %}
 
 <h2 class="mb-2 card-title">{% trans "Actions to take" %}</h2>
 
@@ -152,6 +153,19 @@
                 >
                     {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
                     {% trans "Archive" %}
+                </button>
+            {% endif %}
+
+            {% can "delete_submission" object as can_delete_submission %}
+            {% skeletoning_enabled as skeletoning_enabled %}
+            {% if can_delete_submission and skeletoning_enabled %}
+                <button
+                    class="w-full btn btn-outline"
+                    hx-get="{% url 'funds:submissions:archive' pk=object.pk %}"
+                    hx-target="#htmx-modal"
+                >
+                    {% heroicon_outline "user-minus" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
+                    {% trans "Anonymize Submission" %}
                 </button>
             {% endif %}
         </div>

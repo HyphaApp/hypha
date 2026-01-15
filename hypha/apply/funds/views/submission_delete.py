@@ -5,6 +5,7 @@ from rolepermissions.checkers import has_object_permission
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Event
+from hypha.apply.funds.forms import DeleteSubmissionForm
 
 from ..models import ApplicationSubmission
 from ..workflows.constants import DRAFT_STATE
@@ -21,6 +22,7 @@ class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """
 
     model = ApplicationSubmission
+    form_class = DeleteSubmissionForm
 
     def test_func(self):
         return has_object_permission(

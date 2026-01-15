@@ -1,0 +1,19 @@
+.deletion-warning {
+    display: flex;
+    background-color: oklch(70.4% 0.191 22.216deg); // Tailwind color scheme but it works
+    border-radius: .1875rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    width: fit-content;
+
+    span {
+        margin: 0;
+        padding-left: 0.25rem;
+    }
+
+    .icon.icon-warning {
+        height: 2rem;
+        width: 2rem;
+    }
+}

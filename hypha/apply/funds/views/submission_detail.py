@@ -102,12 +102,17 @@ class AdminSubmissionDetailView(ActivityContextMixin, DetailView):
         if self.object.next:
             other_submissions = other_submissions.exclude(id=self.object.next.id)
 
-        return super().get_context_data(
+        ret = super().get_context_data(
             other_submissions=other_submissions,
             archive_access_groups=get_archive_view_groups(),
             can_archive=can_alter_archived_submissions(self.request.user),
             **kwargs,
         )
+
+        print("APPLICATION SUBMISSION GET CONTEXT DATA")
+        for key, val in ret.items():
+            print(f"{key}: {val}")
+        return ret
 
 
 class ReviewerSubmissionDetailView(ActivityContextMixin, DetailView):

@@ -197,7 +197,9 @@ class ActivityAttachment(models.Model):
 class Activity(models.Model):
     timestamp = models.DateTimeField()
     type = models.CharField(choices=ACTIVITY_TYPES.items(), max_length=30)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True
+    )
 
     source_content_type = models.ForeignKey(
         ContentType,
@@ -372,7 +374,7 @@ class Event(models.Model):
     when = models.DateTimeField(auto_now_add=True)
     type = models.CharField(_("verb"), choices=MESSAGES.choices, max_length=50)
     by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True
     )
     content_type = models.ForeignKey(
         ContentType, blank=True, null=True, on_delete=models.CASCADE

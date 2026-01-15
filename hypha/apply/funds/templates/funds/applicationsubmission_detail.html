@@ -114,17 +114,32 @@
                             {% endif %}
 
                             {% can "delete_submission" object as can_delete_submission %}
+                            {% skeletoning_enabled as skeletoning_enabled %}
                             {% if can_delete_submission %}
-                                <a
-                                    class="btn btn-soft btn-error btn-sm btn-square"
-                                    href="{% url 'funds:submissions:delete' object.id %}"
-                                    hx-get="{% url 'funds:submissions:delete' object.id %}"
-                                    hx-target="#htmx-modal"
-                                    aria-label="{% trans "Delete Submission" %}"
-                                >
-                                    {% heroicon_micro "trash" class="size-4" aria_hidden=true %}
-                                    <span class="sr-only">{% trans "Delete" %}</span>
-                                </a>
+                                {# Default when skeletoning is enabled shouldn't be delete #}
+                                {% if skeletoning_enabled %}
+                                    <a
+                                        class="btn btn-soft btn-error btn-sm btn-square"
+                                        href="{% url 'funds:submissions:delete' object.id %}"
+                                        hx-get="{% url 'funds:submissions:delete' object.id %}"
+                                        hx-target="#htmx-modal"
+                                        aria-label="{% trans 'Anonymize Submission' %}"
+                                    >
+                                        {% heroicon_micro "user-minus" class="size-4" aria_hidden=true %}
+                                        <span class="sr-only">{% trans 'Anonymize' %}</span>
+                                    </a>
+                                {% else %}
+                                    <a
+                                        class="btn btn-soft btn-error btn-sm btn-square"
+                                        href="{% url 'funds:submissions:delete' object.id %}"
+                                        hx-get="{% url 'funds:submissions:delete' object.id %}"
+                                        hx-target="#htmx-modal"
+                                        aria-label="{% trans 'Delete Submission' %}"
+                                    >
+                                        {% heroicon_micro "trash" class="size-4" aria_hidden=true %}
+                                        <span class="sr-only">{% trans "Delete" %}</span>
+                                    </a>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </header>

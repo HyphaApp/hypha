@@ -495,6 +495,13 @@ class InviteCoApplicantForm(forms.ModelForm):
         fields = ["invited_user_email", "submission"]
 
 
+class DeleteSubmissionForm(forms.Form):
+    skeleton_or_delete = forms.RadioSelect(
+        attrs={"class", "input"},
+        choices=[("SKELETON", "Anonymize submission"), ("DELETE", "Delete submission")],
+    )
+
+
 class EditCoApplicantForm(forms.ModelForm):
     role = forms.ChoiceField(
         choices=CoApplicantRole.choices, label="Role", required=False

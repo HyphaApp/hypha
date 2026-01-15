@@ -19,6 +19,7 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity, Event
+from hypha.apply.funds.exceptions import FailedToConvertToSkeletonApplication
 from hypha.apply.funds.models.assigned_reviewers import AssignedReviewers
 from hypha.apply.funds.workflows import INITIAL_STATE
 from hypha.apply.review.options import DISAGREE, MAYBE
@@ -297,3 +298,29 @@ def annotate_review_recommendation_and_count(submissions: QuerySet) -> QuerySet:
         ),
     )
     return submissions
+
+
+def convert_to_skeleton_submission(submission, save_user: bool = True):
+    """Converts an ApplicationSubmission to a ApplicationSubmissionSkeleton
+
+    NOTE: This WILL delete the provided ApplicationSubmission!
+
+    Args:
+        submission: The ApplicationSubmission to convert to a ApplicationSubmissionSkeleton
+        save_user: bool to save the user associated on the ApplicationSubmission to the ApplicationSubmissionSkeleton
+
+    Returns: Converted ApplicationSubmissionSkeleton
+    """
+
+    ApplicationSubmissionSkeleton = apps.get_model(
+        "funds", "ApplicationSubmissionSkeleton"
+    )
+
+    skeleton = ApplicationSubmissionSkeleton.from_submission(submission, save_user)
+
+    if skeleton:
+        submission.delete()
+    else:
+        raise FailedToConvertToSkeletonApplication(
+            f"Conversion method resulted in None! ApplicationSubmission #{submission.id} will not be deleted."
+        )

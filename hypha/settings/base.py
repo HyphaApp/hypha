@@ -538,6 +538,12 @@ CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", True)
 CELERY_REDIS_MAX_CONNECTIONS = env.int("CELERY_REDIS_MAX_CONNECTIONS", 20)
 
 
+# Data Retention
+
+# Enable the "skeletoning" of applications
+# Instead of deleting, applications will be reduced to an object with user (if applicable), value, category, fund, round, submit time, status, & screening statuses
+SUBMISSION_SKELETONING_ENABLED = env.bool("SUBMISSION_SKELETONING_ENABLED", False)
+
 # S3 settings
 
 if env.str("AWS_STORAGE_BUCKET_NAME", None):

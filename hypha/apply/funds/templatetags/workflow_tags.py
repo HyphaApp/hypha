@@ -50,6 +50,11 @@ def show_applicant_identity(submission: ApplicationSubmission, user: User) -> bo
     return True
 
 
+@register.simple_tag
+def skeletoning_enabled() -> bool:
+    return settings.SUBMISSION_SKELETONING_ENABLED
+
+
 @register.simple_tag(takes_context=True)
 def display_submission_author(context: dict, revision_author: bool = False) -> str:
     """Creates a formatted author string based on the submission and viewer role.

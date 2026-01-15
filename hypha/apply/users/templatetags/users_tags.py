@@ -1,4 +1,6 @@
 from django import template
+from django.apps import apps
+from django.conf import settings
 from django.utils.safestring import SafeString
 from django_otp import devices_for_user
 
@@ -50,3 +52,14 @@ def tokens_text(token_set):
 @register.simple_tag()
 def user_image(identifier: str, size=20):
     return SafeString(get_identicon(identifier, size=size))
+
+
+@register.simple_tag
+def skeletoning_enabled() -> bool:
+    return settings.SUBMISSION_SKELETONING_ENABLED
+
+
+@register.simple_tag
+def get_user_submission_count(user) -> int:
+    ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
+    return ApplicationSubmission.objects.filter(user=user).count()

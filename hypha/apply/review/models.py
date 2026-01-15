@@ -1,3 +1,5 @@
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.urls import reverse
@@ -151,6 +153,15 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     submission = models.ForeignKey(
         "funds.ApplicationSubmission", on_delete=models.CASCADE, related_name="reviews"
     )
+
+    related_submission_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, null=True
+    )  # , primary_key=True)
+    related_submission_id = models.PositiveIntegerField(null=True)
+    related_submission = GenericForeignKey(
+        "related_submission_type", "related_submission_id"
+    )
+
     revision = models.ForeignKey(
         "funds.ApplicationRevision",
         on_delete=models.SET_NULL,
@@ -251,3 +262,38 @@ class ReviewOpinion(models.Model):
     @property
     def opinion_display(self):
         return self.get_opinion_display()
+
+
+# class ReviewSkeleton(models.Model):
+#     submission = models.ForeignKey(
+#         "funds.ApplicationSubmission", on_delete=models.CASCADE, related_name="reviews"
+#     )
+#     revision = models.ForeignKey(
+#         "funds.ApplicationRevision",
+#         on_delete=models.SET_NULL,
+#         related_name="reviews",
+#         null=True,
+#     )
+#     author = models.OneToOneField(
+#         "funds.AssignedReviewers",
+#         related_name="review",
+#         on_delete=models.CASCADE,
+#     )
+
+#     recommendation = models.IntegerField(
+#         verbose_name=_("Recommendation"), choices=RECOMMENDATION_CHOICES, default=0
+#     )
+#     score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
+
+#     created_at = models.DateTimeField(
+#         verbose_name=_("Creation time"), auto_now_add=True
+#     )
+
+#     updated_at = models.DateTimeField(verbose_name=_("Update time"), auto_now=True)
+
+#     visibility = models.CharField(
+#         verbose_name=_("Visibility"),
+#         choices=VISIBILITY.items(),
+#         default=PRIVATE,
+#         max_length=10,
+#     )

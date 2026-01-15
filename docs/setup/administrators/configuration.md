@@ -293,6 +293,12 @@ See [here](machine-translations.md) for more information on setting up machine t
 
 ----
 
+Enable the "skeletoning" of applications
+
+Instead of deleting, applications will be reduced to an object with user (if applicable), value, category, fund, round, submit time, status, & screening statuses
+
+    SUBMISSION_SKELETONING_ENABLED = env.bool("SUBMISSION_SKELETONING_ENABLED", False)
+
 ## Slack settings
 
     SLACK_TOKEN = env.str('SLACK_TOKEN', None)

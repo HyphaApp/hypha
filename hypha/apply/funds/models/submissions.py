@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser, AnonymousUser, Group
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.exceptions import PermissionDenied
@@ -1084,3 +1085,73 @@ class ApplicationSubmission(
                 user=by,
                 source=instance,
             )
+
+
+class ApplicationSubmissionSkeleton(models.Model):
+    """The class to be used for stripping PII from an application and making it minimal"""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True
+    )
+
+    value = models.FloatField(null=True)
+
+    status = models.CharField(
+        max_length=100,
+        choices=get_all_possible_states(),
+        default=INITIAL_STATE,
+    )
+
+    category = ArrayField(models.CharField(), null=True)
+
+    page = models.ForeignKey("wagtailcore.Page", on_delete=models.PROTECT)
+    round = models.ForeignKey(
+        "wagtailcore.Page",
+        on_delete=models.PROTECT,
+        related_name="skeleton_submissions",
+        null=True,
+    )
+
+    submit_time = models.DateTimeField(
+        verbose_name=_("submit time"), auto_now_add=False
+    )
+
+    screening_statuses = models.ManyToManyField(
+        "funds.ScreeningStatus", related_name="skeleton_submissions", blank=True
+    )
+
+    @classmethod
+    def from_submission(
+        cls, submission: ApplicationSubmission, save_user: bool = True
+    ) -> Self:
+        """Creates a submission from a given ApplicationSubmission object
+
+        Note that this will not delete the provided ApplicationSubmission, just creates a ApplicationSubmissionSkeleton.
+
+        Args:
+            submission: The ApplicationSubmission to create a ApplicationSubmissionSkeleton from
+            save_user: bool to save the user associated on the ApplicationSubmission to the ApplicationSubmissionSkeleton
+
+        Returns: Populated ApplicationSubmissionSkeleton
+        """
+
+        user = None
+        if save_user:
+            user = submission.user
+
+        skeleton = ApplicationSubmissionSkeleton.objects.create(
+            user=user,
+            page=submission.page,
+            round=submission.round,
+            value=submission.form_data.get("value", None),
+            status=submission.status,
+            submit_time=submission.submit_time,
+        )
+
+        # TODO: Handle categories here
+
+        skeleton.screening_statuses.set(submission.screening_statuses.all())
+
+        skeleton.save()
+
+        return skeleton
