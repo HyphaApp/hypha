@@ -1,2 +1,0 @@
-# Required for the heroku buildpack
--r requirements/prod.txt
