@@ -635,7 +635,7 @@ FILE_FORM_UPLOAD_DIR = "temp_uploads"
 os.makedirs(os.path.join(MEDIA_ROOT, FILE_FORM_UPLOAD_DIR), exist_ok=True)
 # Store temporary files on S3 too (files are still uploaded to local filesystem first)
 if env.str("AWS_STORAGE_BUCKET_NAME", None):
-    FILE_FORM_TEMP_STORAGE = PRIVATE_FILE_STORAGE
+    FILE_FORM_TEMP_STORAGE = "hypha.storage_backends.PrivateMediaStorage"
 
 
 # Misc settings
