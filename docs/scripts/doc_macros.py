@@ -8,7 +8,7 @@ NVM_VERSION_FILE = ".nvmrc"
 
 # RegEx string recommended for semver:
 # https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
-SEMVER_REGEX = r"^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
+SEMVER_REGEX = r"^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)(?:\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)?$"
 
 
 # Exception classes
@@ -56,7 +56,9 @@ def get_python_version() -> str:
             version = py_ver.read()
 
         if not valid_semver(version):
-            raise InvalidVersionException(f'Unrecognized Python version: "{version}"!')
+            raise InvalidVersionException(
+                f'Unrecognized Python version: "{version.strip()}"!'
+            )
 
         return version
     except FileNotFoundError as err:
