@@ -6,7 +6,7 @@ from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin import messages
-from wagtail.blocks import ListBlock, StaticBlock, StreamBlock, StreamValue
+from wagtail.blocks import ListBlock, StaticBlock, StreamBlock
 
 from hypha.apply.stream_forms.blocks import (
     FormFieldBlock,
@@ -91,9 +91,9 @@ class CustomFormFieldsBlock(StreamBlock):
 
         super().__init__(child_blocks, *args, **kwargs)
 
-    def clean(self, value):
+    def clean(self, value, ignore_required_constraints=False):
         try:
-            value = super().clean(value)
+            value = super().clean(value, ignore_required_constraints)
         except ValidationError as e:
             error_dict = e.params or {}
         else:
@@ -162,17 +162,19 @@ class CustomFormFieldsBlock(StreamBlock):
                 [ValidationError("Error", params={field: new_error})]
             )
 
-    def to_python(self, value):
-        """
-        This allows historic data to still be accessible even
-        if a custom field type is removed from the code in the future.
-        """
-        # If the data type is missing, fallback to a CharField
-        for child_data in value:
-            if child_data["type"] not in self.child_blocks:
-                child_data["type"] = "char"
+    # TODO: This result in a TypeError: 'StreamChild' object is not subscriptable.
+    # Do we need it or can we fallback on the default function in BaseStreamBlock Class.
+    # def to_python(self, value):
+    #     """
+    #     This allows historic data to still be accessible even
+    #     if a custom field type is removed from the code in the future.
+    #     """
+    #     # If the data type is missing, fallback to a CharField
+    #     for child_data in value:
+    #         if child_data["type"] not in self.child_blocks:
+    #             child_data["type"] = "char"
 
-        return StreamValue(self, value, is_lazy=True)
+    #     return StreamValue(self, value, is_lazy=True)
 
 
 class SingleIncludeStatic(StaticBlock):

@@ -51,7 +51,6 @@ class DeterminationFormFieldsMixin(models.Model):
     form_fields = StreamField(
         DeterminationCustomFormFieldsBlock(),
         default=[],
-        use_json_field=True,
     )
 
     @property

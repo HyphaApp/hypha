@@ -13,7 +13,7 @@ class ApplicationForm(models.Model):
     wagtail_reference_index_ignore = True
 
     name = models.CharField(max_length=255)
-    form_fields = StreamField(ApplicationCustomFormFieldsBlock(), use_json_field=True)
+    form_fields = StreamField(ApplicationCustomFormFieldsBlock())
 
     panels = [
         FieldPanel("name"),

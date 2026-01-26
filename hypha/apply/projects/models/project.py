@@ -254,9 +254,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=DRAFT)
 
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
-    form_fields = StreamField(
-        ProjectFormCustomFormFieldsBlock(), null=True, use_json_field=True
-    )
+    form_fields = StreamField(ProjectFormCustomFormFieldsBlock(), null=True)
 
     # tracks read/write state of the Project
     is_locked = models.BooleanField(default=False)
@@ -500,14 +498,12 @@ class ProjectSOW(BaseStreamForm, AccessFormData, models.Model):
         Project, related_name="sow", on_delete=models.CASCADE
     )
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
-    form_fields = StreamField(
-        ProjectFormCustomFormFieldsBlock(), null=True, use_json_field=True
-    )
+    form_fields = StreamField(ProjectFormCustomFormFieldsBlock(), null=True)
 
 
 class ProjectBaseStreamForm(BaseStreamForm, models.Model):
     name = models.CharField(max_length=255)
-    form_fields = StreamField(ProjectFormCustomFormFieldsBlock(), use_json_field=True)
+    form_fields = StreamField(ProjectFormCustomFormFieldsBlock())
 
     panels = [
         FieldPanel("name"),
