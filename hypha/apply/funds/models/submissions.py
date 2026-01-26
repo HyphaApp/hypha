@@ -1054,6 +1054,7 @@ class ApplicationSubmission(
                     code=SUBMISSION_DRAFT, user=by, related_obj=instance
                 )
                 # notify for a new submission
+                instance.status = target
                 messenger(
                     MESSAGES.NEW_SUBMISSION,
                     request=request,
