@@ -5,6 +5,7 @@ import wagtail.blocks
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
+from django.core import mail
 from django.http import Http404
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
@@ -26,7 +27,7 @@ from hypha.apply.funds.tests.factories import (
     SealedSubmissionFactory,
 )
 from hypha.apply.funds.views.submission_detail import SubmissionDetailView
-from hypha.apply.funds.workflows import INITIAL_STATE
+from hypha.apply.funds.workflows import DRAFT_STATE, INITIAL_STATE
 from hypha.apply.projects.models import Project
 from hypha.apply.projects.models.project import CONTRACTING
 from hypha.apply.projects.tests.factories import ProjectFactory
@@ -1251,6 +1252,25 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         self.assertRedirects(response, url)
         submission = self.refresh(self.draft_proposal_submission)
         self.assertNotEqual(old_status, submission.status)
+
+    @override_settings(SEND_MESSAGES=True)
+    def test_submitting_application_in_draft_state_sends_correct_email(self):
+        draft_submission = ApplicationSubmissionFactory(
+            user=self.user, status=DRAFT_STATE
+        )
+        data = {**prepare_form_data(draft_submission), "submit": True}
+
+        self.post_page(draft_submission, {"submit": True, **data}, "edit")
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(
+            "We will review and reply to your submission as quickly as possible.",
+            mail.outbox[0].body,
+        )
+        self.assertNotIn(
+            "Please note that it is not submitted for review because it's still in draft.",
+            mail.outbox[0].body,
+        )
 
     def test_gets_draft_on_edit_submission(self):
         draft_revision = ApplicationRevisionFactory(
