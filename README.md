@@ -66,6 +66,7 @@ We are grateful to organizations that have chosen to implement Hypha and appreci
 - [Digital Defenders Partnership](https://www.digitaldefenders.org/)
 - [Amateur Radio Digital Communications](https://www.ardc.net/)
 - [Digital Freedom Fund](https://digitalfreedomfund.org/)
+- [DigitalHub.SH](https://digitalhub.sh/)
 - [Open Technology Fund](https://www.opentech.fund/)
 
 ## More information
