@@ -1274,7 +1274,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -1665,7 +1665,7 @@ requires-dist = [
     { name = "svglib", specifier = "==1.5.1" },
     { name = "svgwrite", specifier = "~=1.4.3" },
     { name = "urllib3", specifier = "~=2.6.2" },
-    { name = "wagtail", specifier = "==7.0.3" },
+    { name = "wagtail", specifier = "==7.0.4" },
     { name = "wagtail-modeladmin", specifier = "~=2.2.0" },
     { name = "whitenoise", specifier = "~=6.11.0" },
     { name = "xhtml2pdf", specifier = "~=0.2.17" },
@@ -4407,7 +4407,7 @@ wheels = [
 
 [[package]]
 name = "wagtail"
-version = "7.0.3"
+version = "7.0.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyascii" },
@@ -4428,9 +4428,9 @@ dependencies = [
     { name = "telepath" },
     { name = "willow", extra = ["heif"] },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a9/92/86205d993fba9c9e9cbf9048bf0a54050274778368369adfb9e8b018fb4c/wagtail-7.0.3.tar.gz", hash = "sha256:d336623405db81f799ea231509d8da3b46a7539932cc1c1ad509d856786b88e8", size = 6676558, upload-time = "2025-08-28T18:20:46.857Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/bb/03/09d88f704e039568125341d71aba0aa53966e5b61a02f0a94e93c427303e/wagtail-7.0.4.tar.gz", hash = "sha256:241841ff27019accbc73055c7a39249dec21262f94a9c5db8239659d2e6916af", size = 6672248, upload-time = "2026-02-03T11:54:42.66Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f7/96/e0a555dd91b2dfd1f6badcc831aeeeba4c8950fe62bc23a94ac66ebdd174/wagtail-7.0.3-py3-none-any.whl", hash = "sha256:6c4925f7b56b8ce0275da03b219b4b382f17aa7f8517a2487e48c3b7ee9c2b1c", size = 9150119, upload-time = "2025-08-28T18:20:41.09Z" },
+    { url = "https://files.pythonhosted.org/packages/cd/fe/d7befe2681392b2ef363cb8fbccb763537879247a8c900e51b7f9fbda351/wagtail-7.0.4-py3-none-any.whl", hash = "sha256:dc455f321223a8a22656298b8324bad1ede7e5fe8c12b674b74668b3919c052a", size = 9150944, upload-time = "2026-02-03T11:54:39.947Z" },
 ]
 
 [[package]]
