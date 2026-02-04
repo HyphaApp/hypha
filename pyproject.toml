@@ -1,14 +1,12 @@
 [project]
 name = "hypha"
-description = "A open source submission management platform to receive and manage applications for funding"
+description = "A open source submission management platform to receive and manage applications for funding."
 readme = "README.md"
-version = "5.36.0"
+version = "6.1.0"
 requires-python = ">=3.10"
 license = "BSD-3-Clause"
 
 dependencies = [
-    "scout-apm~=3.5.2",
-    "sentry-sdk~=2.49.0",
     "babel~=2.17.0",
     "boto3~=1.42.23",
     "celery~=5.6.2",
@@ -16,6 +14,7 @@ dependencies = [
     "dj-database-url~=3.1.0",
     "django-anymail~=14.0",
     "django-basic-auth-ip-whitelist~=0.8.0",
+    "django-cotton~=2.6",
     "django-countries~=8.2.0",
     "django-extensions~=4.1",
     "django-file-form~=4.0.0",
@@ -30,17 +29,18 @@ dependencies = [
     "django-role-permissions~=3.2.0",
     "django-slack~=5.19.0",
     "django-storages~=1.14.6",
+    "django-stubs~=5.2.8",
     "django-tables2~=2.8.0",
     "django-tinymce~=5.0.0",
     "django-two-factor-auth~=1.18.1",
+    "django-viewflow~=2.2.15",
     "django-web-components~=0.2.0",
     "django~=5.2.11",
-    "django-stubs~=5.2.8",
     "djp~=0.3.1",
     "environs~=14.5.0",
     "gunicorn~=23.0.0",
     "heroicons~=2.13.0",
-    "python-docx~=1.2.0",
+    "html-diff~=0.4.1",
     "htmldocx~=0.0.6",
     "lark~=1.3.1",
     "mistune~=3.2.0",
@@ -50,26 +50,25 @@ dependencies = [
     "pillow~=11.3.0",
     "psycopg[binary]~=3.3.2",
     "pwned-passwords-django~=5.2.0",
+    "python-docx~=1.2.0",
+    "redis~=7.1.0",
     "reportlab~=4.4.7 ",
+    "scout-apm~=3.5.2",
+    "sentry-sdk~=2.49.0",
     "setuptools~=80.9.0",
     "social_auth_app_django~=5.7.0",
     "svglib==1.5.1",
     "svgwrite~=1.4.3",
+    "urllib3~=2.6.2",
+    "wagtail-modeladmin~=2.2.0",
     "wagtail==7.0.4",
     "whitenoise~=6.11.0",
     "xhtml2pdf~=0.2.17",
     "xmltodict~=1.0.2",
-    "wagtail-modeladmin~=2.2.0",
-    "redis~=7.1.0",
-    "django-viewflow~=2.2.15",
-    "django-cotton~=2.6",
-    "html-diff~=0.4.1",
-    "urllib3~=2.6.2",
 ]
 
 [dependency-groups]
 "dev" = [
-    "mypy>=1.19.1 ",
     "coverage>=7.13.1",
     "django-browser-reload>=1.21.0",
     "django-coverage-plugin>=3.2.0",
@@ -81,6 +80,7 @@ dependencies = [
     "faker>=40.1.0",
     "freezegun>=1.5.5",
     "model-bakery>=1.21.0",
+    "mypy>=1.19.1 ",
     "pre-commit>=4.5.1",
     "pytest-cov>=7.0.0",
     "pytest-django>=4.11.1",
@@ -93,13 +93,13 @@ dependencies = [
     "Werkzeug>=3.1.4",
 ]
 "docs" = [
-    "mkdocs-material>=9.7.1",
+    "griffe>=1.15.0",
     "mkdocs-awesome-pages-plugin>=2.10.1",
+    "mkdocs-gen-files>=0.6.0",
     "mkdocs-git-revision-date-localized-plugin>=1.5.0",
     "mkdocs-macros-plugin>=1.5.0",
+    "mkdocs-material>=9.7.1",
     "mkdocstrings[python]>=1.0.0",
-    "mkdocs-gen-files>=0.6.0",
-    "griffe>=1.15.0",
 ]
 
 # Requirements for machine translations
@@ -112,7 +112,7 @@ required-version = ">=0.5.0"
 [tool.mypy]
 plugins = ["mypy_django_plugin.main"]
 
-[tool.pytest.ini_options]
+[tool.pytest]
 DJANGO_SETTINGS_MODULE = 'hypha.settings.test'
 addopts = ['-n=auto', '--failed-first']
 python_files = ['tests.py', 'test_*.py', '*_tests.py']
