@@ -375,11 +375,7 @@ class AddTransitions(models.base.ModelBase):
                 raise PermissionDenied(f'You do not have permission to "{action}"')
 
             # Execute the transition
-            result = transition_method(by=user, request=request, **kwargs)
-            if result:
-                self.status = action
-                self.save(update_fields=["status"])
-
+            transition_method(by=user, request=request, **kwargs)
             self.progress_stage_when_possible(user, request, **kwargs)
 
         attrs["perform_transition"] = perform_transition
@@ -1038,6 +1034,9 @@ class ApplicationSubmission(
     @status_field.on_success()
     def log_status_update(self, descriptor, source, target, **kwargs):
         instance = self
+        # Update status on instance.
+        instance.status = target
+        instance.save(update_fields=["status"])
 
         # The status associated with the application at this time will be the old phase
         # so provide the new phase as an arg when transitioning
