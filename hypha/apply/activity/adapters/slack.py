@@ -49,7 +49,7 @@ class SlackAdapter(AdapterBase):
             "{user} has updated the partners on <{link}|{source.title_text_display}>"
         ),
         MESSAGES.TRANSITION: _(
-            "{user} has updated the status of <{link}|{source.title_text_display}>: {source.phase.display_name} → {new_phase.display_name}"
+            "{user} has updated the status of <{link}|{source.title_text_display}>: {old_phase.display_name} → {source.phase.display_name}"
         ),
         MESSAGES.BATCH_TRANSITION: "handle_batch_transition",
         MESSAGES.DETERMINATION_OUTCOME: "handle_determination",
