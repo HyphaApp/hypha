@@ -163,13 +163,10 @@ class EmailAdapter(AdapterBase):
             "subject": self.get_subject(message_type, source),
         }
 
-    def handle_transition(self, new_phase, source, old_phase=None, **kwargs):
+    def handle_transition(self, old_phase, source, **kwargs):
         from hypha.apply.funds.workflows import PHASES
 
         submission = source
-
-        if old_phase is None:
-            old_phase = submission.phase
 
         # Retrieve status index to see if we are going forward or backward.
         old_index = list(dict(PHASES).keys()).index(old_phase.name)
@@ -177,7 +174,7 @@ class EmailAdapter(AdapterBase):
         is_forward = old_index < target_index
 
         kwargs["old_phase"] = old_phase.public_name
-        kwargs["new_phase"] = new_phase.public_name
+        kwargs["new_phase"] = submission.phase.public_name
 
         if is_forward:
             return self.render_message(
@@ -210,9 +207,8 @@ class EmailAdapter(AdapterBase):
         kwargs.pop("source")
         for submission in submissions:
             old_phase = transitions[submission.id]
-            new_phase = submission.phase
             return self.handle_transition(
-                old_phase=old_phase, new_phase=new_phase, source=submission, **kwargs
+                old_phase=old_phase, source=submission, **kwargs
             )
 
     def handle_project_transition(self, source, **kwargs):
