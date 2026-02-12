@@ -63,5 +63,8 @@ COPY --from=builder /opt/app/static /opt/app/static
 # Copy the project into the image
 COPY ./ ./
 
+# Expose the port gunicorn is running on for other Docker containers.
+EXPOSE 8000
+
 # Run entrypoint.sh.
 ENTRYPOINT ["/opt/app/docker/prod/entrypoint.sh"]
