@@ -30,7 +30,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 COPY ./ ./
 
 # Create directories.
-RUN mkdir -p ./hypha/static_compiled && mkdir -p ./hypha/media
+RUN mkdir -p ./hypha/static_compiled && mkdir -p ./media
 
 # Build front end.
 RUN npm run dev:build
