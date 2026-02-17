@@ -9,9 +9,7 @@ from hypha.apply.users.decorators import (
     staff_required,
 )
 
-from ..models import (
-    ApplicationSubmission,
-)
+from ..models import ApplicationSubmission, ApplicationSubmissionSkeleton
 from ..tables import (
     SubmissionFilterAndSearch,
 )
@@ -50,12 +48,15 @@ class SubmissionStatsMixin:
         review_count = reviews.count()
         review_my_score = reviews.by_user(user).score()
 
+        skeleton_count = skeletons.count()
+
         return super().get_context_data(
             submission_undetermined_count=submission_undetermined_count,
             review_my_count=review_my_count,
             submission_sum=submission_sum,
             submission_accepted_count=submission_accepted_count,
             submission_accepted_sum=submission_accepted_sum,
+            skeleton_count=skeleton_count,
             review_count=review_count,
             review_my_score=review_my_score,
             **kwargs,

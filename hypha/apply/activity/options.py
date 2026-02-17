@@ -34,6 +34,7 @@ class MESSAGES(TextChoices):
     OPENED_SEALED = "OPENED_SEALED", _("opened sealed submission")
     REVIEW_OPINION = "REVIEW_OPINION", _("reviewed opinion")
     DELETE_SUBMISSION = "DELETE_SUBMISSION", _("deleted submission")
+    ANONYMIZE_SUBMISSION = "ANONYMIZE_SUBMISSION", _("anonymized submission")
     DELETE_REVIEW = "DELETE_REVIEW", _("deleted review")
     DELETE_REVIEW_OPINION = "DELETE_REVIEW_OPINION", _("deleted review opinion")
     CREATED_PROJECT = "CREATED_PROJECT", _("created project")

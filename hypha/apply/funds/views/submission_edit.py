@@ -56,9 +56,7 @@ from ..forms import (
     UpdateReviewersForm,
     UpdateSubmissionLeadForm,
 )
-from ..models import (
-    ApplicationSubmission,
-)
+from ..models import ApplicationSubmission
 from ..permissions import (
     has_permission,
 )
