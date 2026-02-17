@@ -1,3 +1,5 @@
+from django.apps import apps
+from django.conf import settings
 from wagtail import hooks
 from wagtail.models import Site
 
@@ -33,6 +35,27 @@ def notify_after_edit_user(request, user):
             source=user,
             roles=roles,
         )
+
+
+@hooks.register("before_delete_user")
+def anonymize_delete_user_submissions(request, user):
+    if (
+        settings.SUBMISSION_SKELETONING_ENABLED
+        and request.method == "POST"
+        and request.POST.get("handle_subs") == "anon"
+    ):
+        ApplicationSubmissionSkeleton = apps.get_model(
+            "funds", "ApplicationSubmissionSkeleton"
+        )
+
+        submissions_to_skeleton = list(
+            user.applicationsubmission_set.values(
+                "form_data", "page_id", "round_id", "status", "submit_time"
+            )
+        )
+
+        for submission_dict in submissions_to_skeleton:
+            ApplicationSubmissionSkeleton.from_dict(submission_dict)
 
 
 # Handle setting of `is_staff` after updating a user
