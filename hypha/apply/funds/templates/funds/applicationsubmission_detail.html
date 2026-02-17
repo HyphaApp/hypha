@@ -120,7 +120,7 @@
                                     href="{% url 'funds:submissions:delete' object.id %}"
                                     hx-get="{% url 'funds:submissions:delete' object.id %}"
                                     hx-target="#htmx-modal"
-                                    aria-label="{% trans "Delete Submission" %}"
+                                    aria-label="{% trans 'Delete Submission' %}"
                                 >
                                     {% heroicon_micro "trash" class="size-4" aria_hidden=true %}
                                     <span class="sr-only">{% trans "Delete" %}</span>

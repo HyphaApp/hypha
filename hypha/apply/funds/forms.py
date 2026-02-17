@@ -5,6 +5,7 @@ from operator import methodcaller
 
 import nh3
 from django import forms
+from django.conf import settings
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -493,6 +494,28 @@ class InviteCoApplicantForm(forms.ModelForm):
     class Meta:
         model = CoApplicantInvite
         fields = ["invited_user_email", "submission"]
+
+
+class DeleteSubmissionForm(forms.Form):
+    # Alpine.js code added as an attribute to update confirmation text (ie. when a user has to type `delete` to finalize deletion)
+    anon_or_delete = forms.ChoiceField(
+        choices=[
+            ("ANONYMIZE", "Anonymize submission"),
+            ("DELETE", "Delete submission"),
+        ],
+        widget=forms.RadioSelect(
+            attrs={
+                "class": "text-sm radio-sm",
+                "@click": "mode = $el.value.toLowerCase()",
+            }
+        ),
+        initial="ANONYMIZE",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not settings.SUBMISSION_SKELETONING_ENABLED:
+            del self.fields["anon_or_delete"]
 
 
 class EditCoApplicantForm(forms.ModelForm):
