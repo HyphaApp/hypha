@@ -5,8 +5,9 @@ from rolepermissions.checkers import has_object_permission
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Event
+from hypha.apply.funds.forms import DeleteSubmissionForm
 
-from ..models import ApplicationSubmission
+from ..models import ApplicationSubmission, ApplicationSubmissionSkeleton
 from ..workflows.constants import DRAFT_STATE
 
 
@@ -21,6 +22,7 @@ class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """
 
     model = ApplicationSubmission
+    form_class = DeleteSubmissionForm
 
     def test_func(self):
         return has_object_permission(
@@ -33,12 +35,20 @@ class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return reverse_lazy("funds:submissions:list")
 
     def form_valid(self, form):
+        print(form.cleaned_data)
+
         submission = self.get_object()
+
+        message = MESSAGES.DELETE_SUBMISSION
+
+        if form.cleaned_data.get("anon_or_delete") == "ANONYMIZE":
+            ApplicationSubmissionSkeleton.from_submission(submission)
+            message = MESSAGES.ANONYMIZE_SUBMISSION
 
         # Notify unless author delete own draft.
         if submission.status != DRAFT_STATE and submission.user != self.request.user:
             messenger(
-                MESSAGES.DELETE_SUBMISSION,
+                message,
                 user=self.request.user,
                 request=self.request,
                 source=submission,
