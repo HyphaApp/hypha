@@ -1,11 +1,22 @@
 {% load i18n %}
 
 <c-modal.confirm title="{% trans 'Delete application' %}">
-    <p class="text-sm text-fg-muted">
-        {% blocktranslate trimmed %}
-            Are you sure you want to delete this application? All of your data for
-            this application will be permanently removed from our servers forever.
-            This action cannot be undone.
-        {% endblocktranslate %}
-    </p>
+    {% if SUBMISSION_SKELETONING_ENABLED %}
+        <p class="pb-2 text-sm text-fg-muted">
+            {% blocktranslate trimmed %}
+                If deleted, all of the data for this application will be permanently removed from our servers. Alternatively, the application can be anonymized resulting in identifying user information being removed while statistical information will be preserved. <strong>Neither action can be undone.</strong>
+            {% endblocktranslate %}
+        </p>
+        <div x-init="mode = 'anonymize'">
+            {% for field in form.visible_fields %}
+                {{field}}
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="pb-2 text-sm text-fg-muted">
+            {% blocktranslate trimmed %}
+                If deleted, all of the data for this application will be permanently removed from our servers. <strong>This action cannot be undone.</strong>
+            {% endblocktranslate %}
+        </p>
+    {% endif %}
 </c-modal.confirm>

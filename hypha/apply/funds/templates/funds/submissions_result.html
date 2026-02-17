@@ -48,7 +48,6 @@
                             <dd class="stat-value">
                                 {{ object_list.count }}
                             </dd>
-
                         </dl>
                         <dl role="list" aria-label="{% trans 'Accepted submissions' %}" class="stat">
                             <dt class="stat-title">
@@ -64,6 +63,14 @@
                             </dt>
                             <dd class="stat-value">
                                 {{ submission_undetermined_count|default:"0" }}
+                            </dd>
+                        </dl>
+                        <dl role="list" aria-label="{% trans 'Anonymized submissions' %}" class="stat">
+                            <dt class="stat-title">
+                                {% trans "Anonymized" %}
+                            </dt>
+                            <dd class="stat-value">
+                                {{ skeleton_count }}
                             </dd>
                         </dl>
                     </div>
