@@ -156,3 +156,7 @@ GitHub.sublime-settings
 
 # Zed
 .zed/
+
+# Keys and certs
+*.key
+*.crt
