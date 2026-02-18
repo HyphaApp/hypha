@@ -37,6 +37,33 @@ def edit_comment(activity: Activity, message: str) -> Activity:
     return activity
 
 
+def delete_comment(activity: Activity) -> Activity:
+    """
+    Soft delete a comment by creating a clone of the original comment with a delete message.
+
+    Args:
+        activity (Activity): The original comment activity to be soft deleted.
+
+    Returns:
+        Activity: The soft deleted comment activitye.
+    """
+
+    # Create a clone of the comment to soft delete
+    previous = Activity.objects.get(pk=activity.pk)
+    previous.pk = None
+    previous.current = False
+    previous.save()
+
+    activity.previous = previous
+    activity.deleted = timezone.now()
+    activity.edited = None
+    activity.message = ""
+    activity.current = True
+    activity.save()
+
+    return activity
+
+
 def get_related_activities_for_user(obj, user):
     """Return comments/communications related to an object, esp. useful with
     ApplicationSubmission and Project.
