@@ -18,16 +18,18 @@
     {% endif %}
     <form action="{% url 'wagtailusers_users:delete' user.pk %}" method="POST">
         {% csrf_token %}
-        <div style="padding-bottom: 1rem;">
-            <div style="display: flex; align-content: center; padding-bottom: 0.25rem;">
-                <input type="radio" id="anon" name="handle_subs" value="anon" required checked>
-                <label for="anon">Anonymize all user submissions</label>
+        {% if SUBMISSION_SKELETONING_ENABLED %}
+            <div style="padding-bottom: 1rem;">
+                <div style="display: flex; align-content: center; padding-bottom: 0.25rem;">
+                    <input type="radio" id="anon" name="handle_subs" value="anon" required checked>
+                    <label for="anon">Anonymize all user submissions</label>
+                </div>
+                <div style="display: flex; align-content: center;">
+                    <input type="radio" id="delete" name="handle_subs" value="delete">
+                    <label for="delete">Delete all user submissions</label>
+                </div>
             </div>
-            <div style="display: flex; align-content: center;">
-                <input type="radio" id="delete" name="handle_subs" value="delete">
-                <label for="delete">Delete all user submissions</label>
-            </div>
-        </div>
+        {% endif %}
         <input type="submit" value="{% trans 'Yes, delete' %}" class="button serious" />
     </form>
 {% endblock %}
