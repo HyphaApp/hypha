@@ -29,7 +29,6 @@ dependencies = [
     "django-role-permissions~=3.2.0",
     "django-slack~=5.19.0",
     "django-storages~=1.14.6",
-    "django-stubs~=5.2.8",
     "django-tables2~=2.8.0",
     "django-tinymce~=5.0.0",
     "django-two-factor-auth~=1.18.1",
@@ -74,6 +73,7 @@ dependencies = [
     "django-coverage-plugin>=3.2.0",
     "django-debug-toolbar>=6.1.0",
     "django-dynamic-fixture>=4.0.1",
+    "django-stubs[compatible-mypy]>=5.2.9",
     "djhtml>=3.0.10",
     "dslr>=0.6.0",
     "factory_boy>=3.3.3",
@@ -111,6 +111,9 @@ required-version = ">=0.5.0"
 
 [tool.mypy]
 plugins = ["mypy_django_plugin.main"]
+
+[tool.django-stubs]
+DJANGO_SETTINGS_MODULE = 'hypha.settings.dev'
 
 [tool.pytest]
 DJANGO_SETTINGS_MODULE = 'hypha.settings.test'
