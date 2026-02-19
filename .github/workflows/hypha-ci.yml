@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      DATABASE_URL: postgresql://hypha:hypha@localhost/hypha?sslmode=disable
+      DATABASE_URL: postgres://hypha:hypha@localhost/hypha?sslmode=disable
       DJANGO_SETTINGS_MODULE: hypha.settings.test
       SEND_MESSAGES: false
       PYTHONDONTWRITEBYTECODE: 1
@@ -40,14 +40,13 @@ jobs:
       postgres:
         image: postgres:17
         env:
-          POSTGRES_USERNAME: hypha
+          POSTGRES_USER: hypha
           POSTGRES_PASSWORD: hypha
-          POSTGRES_DATABASE: hypha
-          POSTGRES_FSYNC: "off"
+          POSTGRES_DB: hypha
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -d hypha -U hypha -p 5432"
+          --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
