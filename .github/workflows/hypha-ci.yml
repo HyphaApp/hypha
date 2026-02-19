@@ -40,10 +40,10 @@ jobs:
       postgres:
         image: postgres:17
         env:
-          POSTGRESQL_USERNAME: hypha
-          POSTGRESQL_PASSWORD: hypha
-          POSTGRESQL_DATABASE: hypha
-          POSTGRESQL_FSYNC: "off"
+          POSTGRES_USERNAME: hypha
+          POSTGRES_PASSWORD: hypha
+          POSTGRES_DATABASE: hypha
+          POSTGRES_FSYNC: "off"
         ports:
           - 5432:5432
         options: >-
