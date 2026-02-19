@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
@@ -8,7 +8,7 @@ from django.views.generic import ListView
 from rolepermissions.checkers import has_object_permission
 
 from hypha.apply.funds.models.submissions import ApplicationSubmission
-from hypha.apply.users.decorators import staff_required
+from hypha.apply.users.decorators import is_apply_staff, staff_required
 from hypha.apply.utils.storage import PrivateMediaView
 
 from . import services
@@ -59,6 +59,9 @@ def edit_comment(request, pk):
     if activity.type != COMMENT or activity.user != request.user:
         raise PermissionError("You can only edit your own comments")
 
+    if activity.deleted:
+        raise PermissionError("You can not edit a deleted comment")
+
     if request.GET.get("action") == "cancel":
         return render(
             request,
@@ -76,6 +79,34 @@ def edit_comment(request, pk):
         )
 
     return render(request, "activity/ui/edit_comment_form.html", {"activity": activity})
+
+
+@login_required
+@user_passes_test(is_apply_staff)
+def delete_comment(request, pk):
+    """Soft delete a comment."""
+    activity = get_object_or_404(Activity, id=pk)
+
+    if activity.type != COMMENT or activity.user != request.user:
+        raise PermissionError("You can only delete your own comments")
+
+    if activity.deleted:
+        raise PermissionError("You can not delete a deleted comment")
+
+    if request.method == "DELETE":
+        activity = services.delete_comment(activity)
+
+        return render(
+            request,
+            "activity/ui/activity-comment-item.html",
+            {"activity": activity, "success": True},
+        )
+
+    return render(
+        request,
+        "activity/ui/activity-comment-item.html",
+        {"activity": activity},
+    )
 
 
 class ActivityContextMixin:

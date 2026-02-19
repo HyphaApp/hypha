@@ -1,6 +1,6 @@
 {% load i18n activity_tags nh3_tags markdown_tags submission_tags apply_tags heroicons users_tags %}
 
-<article class="relative h-timeline-item">
+<article class="relative h-timeline-item" id="communications-wrapper--{{ activity.id }}">
     <div
         class="flex py-3 -ms-8 before:block before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-base-300 md:-ms-20"
     >
@@ -46,7 +46,6 @@
                     <div class="flex gap-1 items-center">
                         {% if not request.user.is_applicant %}
                             {% if request.user.is_apply_staff and activity.assigned_to %}
-
                                 <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs rounded-xl border border-gray-300 text-fg-muted">
                                     {% heroicon_outline "user-plus" size=14 class="inline" aria_hidden=true %}
                                     {% if activity.assigned_to.id == request.user.id %}
@@ -64,18 +63,30 @@
                                     {{ visibility_text }}
                                 </span>
                             {% endwith %}
-
                         {% endif %}
 
-                        {% if editable and activity.user == request.user %}
+                        {% if editable and activity.user == request.user and not activity.deleted %}
                             <a
                                 hx-get="{% url 'activity:edit-comment' activity.id %}"
                                 hx-target="#text-comment-{{activity.id}}"
-                                title="Edit Comment"
+                                title="{% trans "Edit comment" %}"
                                 class="btn btn-sm btn-square btn-ghost"
                             >
                                 {% heroicon_micro "pencil-square" aria_hidden=true %}
                                 <span class="sr-only">{% trans "Edit" %}</span>
+                            </a>
+                        {% endif %}
+
+                        {% if editable and activity.user == request.user  and not activity.deleted and request.user.is_apply_staff %}
+                            <a
+                                hx-delete="{% url 'activity:delete-comment' activity.id %}"
+                                hx-target="#communications-wrapper--{{activity.id}}"
+                                hx-confirm="{% trans "Are you sure you want to delete this comment? This action cannot be undone." %}"
+                                title="{% trans "Delete comment" %}"
+                                class="btn btn-error btn-sm btn-square btn-ghost"
+                            >
+                                {% heroicon_micro "trash" class="opacity-80 size-4" aria_hidden=true %}
+                                <span class="sr-only">{% trans "Delete" %}</span>
                             </a>
                         {% endif %}
                     </div>

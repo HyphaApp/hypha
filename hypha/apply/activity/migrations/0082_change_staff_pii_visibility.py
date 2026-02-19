@@ -4,7 +4,7 @@ from django.db import migrations
 import re
 
 from hypha.apply.activity.adapters.activity_feed import ActivityAdapter
-from hypha.apply.activity.models import TEAM, Activity
+from hypha.apply.activity.models import TEAM
 from hypha.apply.activity.options import MESSAGES
 
 
@@ -27,6 +27,7 @@ def change_updatelead_visibility(apps, schema_editor):
         ActivityAdapter.messages[MESSAGES.UNARCHIVE_SUBMISSION],
     ]
 
+    Activity = apps.get_model("activity", "Activity")
     staff_identity_set = Activity.objects.none()
 
     for message in lead_messages:

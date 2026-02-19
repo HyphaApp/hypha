@@ -1,11 +1,15 @@
-{% load heroicons activity_tags nh3_tags markdown_tags submission_tags apply_tags users_tags %}
+{% load i18n heroicons activity_tags nh3_tags markdown_tags submission_tags apply_tags users_tags %}
 
 <div class="max-w-none prose">
     {{ activity|display_for:request.user|submission_links|markdown|nh3 }}
 </div>
 
 {% if activity.edited %}
-    <span class="text-sm text-fg-muted" data-tippy-content="{{ activity.edited|date:"SHORT_DATETIME_FORMAT" }}">(edited)</span>
+    <span class="text-sm text-fg-muted" data-tippy-content="{{ activity.edited|date:"SHORT_DATETIME_FORMAT" }}">({% trans "edited" %})</span>
+{% endif %}
+
+{% if activity.deleted %}
+    <span class="text-sm text-fg-muted" data-tippy-content="{{ activity.deleted|date:"SHORT_DATETIME_FORMAT" }}">({% trans "deleted" %})</span>
 {% endif %}
 
 {% with activity.attachments.all as attachments %}

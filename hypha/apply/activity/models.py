@@ -216,6 +216,7 @@ class Activity(models.Model):
 
     # Fields for handling versioning of the comment activity models
     edited = models.DateTimeField(default=None, null=True)
+    deleted = models.DateTimeField(default=None, null=True)
     current = models.BooleanField(default=True)
     previous = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
 
