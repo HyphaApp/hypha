@@ -76,6 +76,10 @@ jobs:
           uv venv
           uv pip install -r requirements/dev.txt -r requirements/translate.txt
 
+      - name: Create static_compiled dir
+        run: |
+          mkdir hypha/static_compiled
+
       - name: Check Django migrations
         if: matrix.group == 1
         run: |
@@ -93,4 +97,5 @@ jobs:
           .venv/bin/python manage.py check
 
       - name: Run pytest
-        run: .venv/bin/pytest --splits 3 --group ${{ matrix.group }}
+        run: |
+          .venv/bin/pytest --splits 3 --group ${{ matrix.group }}
