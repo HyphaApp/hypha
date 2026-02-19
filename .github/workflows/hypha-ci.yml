@@ -70,7 +70,7 @@ jobs:
       - name: Install python dependencies
         run: |
           uv venv
-          uv sync --frozen --translate
+          uv sync --frozen --group translate
 
       - name: Create static_compiled dir
         run: |
