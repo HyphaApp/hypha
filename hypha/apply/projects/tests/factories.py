@@ -61,11 +61,13 @@ class DocumentCategoryFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = DocumentCategory
+        skip_postgeneration_save = True
 
 
 class ProjectFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ProjectForm
+        skip_postgeneration_save = True
 
     name = factory.Faker("word")
     form_fields = FormFieldsBlockFactory
@@ -74,6 +76,7 @@ class ProjectFormFactory(factory.django.DjangoModelFactory):
 class ProjectSOWFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ProjectSOWForm
+        skip_postgeneration_save = True
 
     name = factory.Faker("word")
     form_fields = FormFieldsBlockFactory
@@ -86,6 +89,7 @@ class ProjectFormDataFactory(FormDataFactory):
 class ProjectReportFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ProjectReportForm
+        skip_postgeneration_save = True
 
     name = factory.Faker("word")
     form_fields = FormFieldsBlockFactory
@@ -111,6 +115,7 @@ class ProjectFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Project
+        skip_postgeneration_save = True
 
     class Params:
         in_approval = factory.Trait(
@@ -129,6 +134,7 @@ class PAFReviewerRoleFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = PAFReviewersRole
+        skip_postgeneration_save = True
 
     @factory.post_generation
     def user_roles(self, create, extracted, **kwargs):
@@ -137,6 +143,7 @@ class PAFReviewerRoleFactory(factory.django.DjangoModelFactory):
                 GroupFactory(name=STAFF_GROUP_NAME),
                 GroupFactory(name=APPROVER_GROUP_NAME),
             )
+            self.save()
 
 
 class PAFApprovalsFactory(factory.django.DjangoModelFactory):
@@ -146,6 +153,7 @@ class PAFApprovalsFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = PAFApprovals
+        skip_postgeneration_save = True
 
 
 class ContractFactory(factory.django.DjangoModelFactory):
@@ -158,6 +166,7 @@ class ContractFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Contract
+        skip_postgeneration_save = True
 
 
 class PacketFileFactory(factory.django.DjangoModelFactory):
@@ -169,6 +178,7 @@ class PacketFileFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = PacketFile
+        skip_postgeneration_save = True
 
 
 class InvoiceFactory(factory.django.DjangoModelFactory):
@@ -181,6 +191,7 @@ class InvoiceFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Invoice
+        skip_postgeneration_save = True
 
 
 class SupportingDocumentFactory(factory.django.DjangoModelFactory):
@@ -190,6 +201,7 @@ class SupportingDocumentFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = SupportingDocument
+        skip_postgeneration_save = True
 
 
 class ApprovedProjectFactory(ProjectFactory):
