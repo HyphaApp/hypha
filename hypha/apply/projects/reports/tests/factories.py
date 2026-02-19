@@ -18,6 +18,7 @@ class ReportConfigFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = ReportConfig
+        skip_postgeneration_save = True
         django_get_or_create = ("project",)
 
     class Params:
@@ -43,6 +44,7 @@ class ReportVersionFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = ReportVersion
+        skip_postgeneration_save = True
 
     @factory.post_generation
     def relate(obj, create, should_relate, **kwargs):
@@ -56,6 +58,7 @@ class ReportVersionFactory(factory.django.DjangoModelFactory):
                 obj.report.current = obj
                 obj.report.submitted = obj.submitted
             obj.report.save()
+            obj.save()
 
 
 class ReportFactory(factory.django.DjangoModelFactory):
@@ -72,6 +75,7 @@ class ReportFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Report
+        skip_postgeneration_save = True
 
     class Params:
         past_due = factory.Trait(

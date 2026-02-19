@@ -120,10 +120,6 @@ DJANGO_SETTINGS_MODULE = 'hypha.settings.test'
 addopts = ['-n=auto', '--failed-first']
 python_files = ['tests.py', 'test_*.py', '*_tests.py']
 testpaths = ["hypha"]
-filterwarnings = [
-    'ignore::DeprecationWarning',
-    'ignore::PendingDeprecationWarning',
-]
 
 [tool.coverage.run]
 parallel = true

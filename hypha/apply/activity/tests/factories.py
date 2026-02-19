@@ -18,6 +18,7 @@ from hypha.apply.users.tests.factories import UserFactory
 class ActivityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Activity
+        skip_postgeneration_save = True
 
     class Params:
         internal = factory.Trait(visibility=TEAM)
@@ -38,6 +39,7 @@ class CommentFactory(ActivityFactory):
 class EventFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Event
+        skip_postgeneration_save = True
 
     type = factory.Iterator([choice[0] for choice in MESSAGES.choices])
     by = factory.SubFactory(UserFactory)
@@ -47,6 +49,7 @@ class EventFactory(factory.django.DjangoModelFactory):
 class MessageFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Message
+        skip_postgeneration_save = True
 
     type = "Email"
     content = factory.Faker("sentence")

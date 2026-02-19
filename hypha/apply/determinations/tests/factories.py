@@ -39,6 +39,7 @@ class DeterminationDataFactory(factory.DictFactory):
 class DeterminationFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Determination
+        skip_postgeneration_save = True
 
     class Params:
         accepted = factory.Trait(outcome=ACCEPTED)
@@ -94,6 +95,7 @@ DeterminationFormFieldsFactory = StreamFieldUUIDFactory(
 class DeterminationFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = DeterminationForm
+        skip_postgeneration_save = True
 
     name = factory.Faker("word")
     form_fields = DeterminationFormFieldsFactory
