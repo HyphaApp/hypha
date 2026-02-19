@@ -59,6 +59,9 @@ def edit_comment(request, pk):
     if activity.type != COMMENT or activity.user != request.user:
         raise PermissionError("You can only edit your own comments")
 
+    if activity.deleted:
+        raise PermissionError("You can not edit a deleted comment")
+
     if request.GET.get("action") == "cancel":
         return render(
             request,
@@ -87,18 +90,21 @@ def delete_comment(request, pk):
     if activity.type != COMMENT or activity.user != request.user:
         raise PermissionError("You can only delete your own comments")
 
+    if activity.deleted:
+        raise PermissionError("You can not delete a deleted comment")
+
     if request.method == "DELETE":
         activity = services.delete_comment(activity)
 
         return render(
             request,
-            "activity/partial_comment_message.html",
+            "activity/ui/activity-comment-item.html",
             {"activity": activity, "success": True},
         )
 
     return render(
         request,
-        "activity/partial_comment_message.html",
+        "activity/ui/activity-comment-item.html",
         {"activity": activity},
     )
 
