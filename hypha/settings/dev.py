@@ -159,4 +159,10 @@ DEBUG_TOOLBAR_CONFIG = {
     "SHOW_COLLAPSED": True,
 }
 
+# Add django-model-info.
+INSTALLED_APPS = [
+    *INSTALLED_APPS,
+    "django_model_info.apps.DjangoModelInfoConfig",
+]
+
 SENTRY_DENY_URLS += ["__reload__", "/favicon.ico", "/media/", "/static/", "__debug__"]
