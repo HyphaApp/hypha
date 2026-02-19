@@ -545,7 +545,7 @@ CELERY_REDIS_MAX_CONNECTIONS = env.int("CELERY_REDIS_MAX_CONNECTIONS", 20)
 # S3 settings
 
 if env.str("AWS_STORAGE_BUCKET_NAME", None):
-    STORAGES["public_media_storage"] = {
+    STORAGES["default"] = {
         "BACKEND": "hypha.storage_backends.PublicMediaStorage",
     }
     STORAGES["private_media_storage"] = {
