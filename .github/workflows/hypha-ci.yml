@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      DATABASE_URL: postgresql://hypha:hypha@localhost/hypha?sslmode=disable
+      DATABASE_URL: postgres://hypha:hypha@localhost/hypha?sslmode=disable
       DJANGO_SETTINGS_MODULE: hypha.settings.test
       SEND_MESSAGES: false
       PYTHONDONTWRITEBYTECODE: 1
@@ -38,17 +38,15 @@ jobs:
 
     services:
       postgres:
-        image: bitnamilegacy/postgresql:17
+        image: postgres:17
         env:
-          POSTGRESQL_USERNAME: hypha
-          POSTGRESQL_PASSWORD: hypha
-          POSTGRESQL_DATABASE: hypha
-          POSTGRESQL_FSYNC: "off"
-          POSTGRESQL_REPLICATION_USE_PASSFILE: "no"
+          POSTGRES_USER: hypha
+          POSTGRES_PASSWORD: hypha
+          POSTGRES_DB: hypha
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -d hypha -U hypha -p 5432"
+          --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -59,36 +57,35 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
-        with:
-          python-version-file: ".python-version"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          cache-dependency-glob: "requirements**.txt"
 
       - name: Install python dependencies
         run: |
           uv venv
-          uv pip install -r requirements/dev.txt -r requirements/translate.txt
+          uv sync --frozen --group translate
+
+      - name: Create static_compiled dir
+        run: |
+          mkdir hypha/static_compiled
 
       - name: Check Django migrations
         if: matrix.group == 1
         run: |
-          .venv/bin/python manage.py makemigrations --dry-run --verbosity=3
-          .venv/bin/python manage.py makemigrations --check
+          uv run python manage.py makemigrations --dry-run --verbosity=3
+          uv run python manage.py makemigrations --check
 
       - name: Run django collectstatic
         if: matrix.group == 2
         run: |
-          .venv/bin/python manage.py collectstatic --noinput --no-post-process --verbosity=1
+          uv run python manage.py collectstatic --noinput --no-post-process --verbosity=1
 
       - name: Check Django Setup
         if: matrix.group == 3
         run: |
-          .venv/bin/python manage.py check
+          uv run python manage.py check
 
       - name: Run pytest
-        run: .venv/bin/pytest --splits 3 --group ${{ matrix.group }}
+        run: |
+          uv run pytest --splits 3 --group ${{ matrix.group }}

@@ -157,9 +157,11 @@ class DateFieldBlockFactory(FormFieldBlockFactory):
 
 class TimeFieldBlockFactory(FormFieldBlockFactory):
     default_value = factory.LazyFunction(
-        lambda: factory.Faker("time_object")
-        .evaluate(None, None, {"locale": None})
-        .replace(microsecond=0)
+        lambda: (
+            factory.Faker("time_object")
+            .evaluate(None, None, {"locale": None})
+            .replace(microsecond=0)
+        )
     )
 
     class Meta:
@@ -168,9 +170,11 @@ class TimeFieldBlockFactory(FormFieldBlockFactory):
 
 class DateTimeFieldBlockFactory(FormFieldBlockFactory):
     default_value = factory.LazyFunction(
-        lambda: factory.Faker("date_time")
-        .evaluate(None, None, {"locale": None})
-        .replace(microsecond=0)
+        lambda: (
+            factory.Faker("date_time")
+            .evaluate(None, None, {"locale": None})
+            .replace(microsecond=0)
+        )
     )
 
     class Meta:
