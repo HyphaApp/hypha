@@ -49,7 +49,9 @@ class BaseInvoiceTable(tables.Table):
 
     class Meta:
         row_attrs = {
-            "onclick": lambda record: f"window.location.href='{reverse('funds:projects:invoice-detail', args=[record.project.submission.pk, record.pk])}'",
+            "onclick": lambda record: (
+                f"window.location.href='{reverse('funds:projects:invoice-detail', args=[record.project.submission.pk, record.pk])}'"
+            ),
             "class": "table-row-link",
             "role": "button",
             "tabindex": "0",  # Accessibility

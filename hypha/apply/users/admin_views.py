@@ -119,9 +119,9 @@ class CustomUserIndexView(UserIndexView):
             ),
             StatusTagColumn(
                 "is_active",
-                accessor=lambda u: gettext_lazy("Active")
-                if u.is_active
-                else gettext_lazy("Inactive"),
+                accessor=lambda u: (
+                    gettext_lazy("Active") if u.is_active else gettext_lazy("Inactive")
+                ),
                 primary=lambda u: u.is_active,
                 label=gettext_lazy("Status"),
                 sort_key="is_active" if "is_active" in self.model_fields else None,
