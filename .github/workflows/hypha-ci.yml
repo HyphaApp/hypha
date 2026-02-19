@@ -64,7 +64,11 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
+          cache-python: true
+          prune-cache: false
           cache-dependency-glob: |
+            .python-version
+            pyproject.toml
             uv.lock
 
       - name: Install python dependencies
@@ -79,19 +83,19 @@ jobs:
       - name: Check Django migrations
         if: matrix.group == 1
         run: |
-          .venv/bin/python manage.py makemigrations --dry-run --verbosity=3
-          .venv/bin/python manage.py makemigrations --check
+          uv run python manage.py makemigrations --dry-run --verbosity=3
+          uv run python manage.py makemigrations --check
 
       - name: Run django collectstatic
         if: matrix.group == 2
         run: |
-          .venv/bin/python manage.py collectstatic --noinput --no-post-process --verbosity=1
+          uv run python manage.py collectstatic --noinput --no-post-process --verbosity=1
 
       - name: Check Django Setup
         if: matrix.group == 3
         run: |
-          .venv/bin/python manage.py check
+          uv run python manage.py check
 
       - name: Run pytest
         run: |
-          .venv/bin/pytest --splits 3 --group ${{ matrix.group }}
+          uv run pytest --splits 3 --group ${{ matrix.group }}
