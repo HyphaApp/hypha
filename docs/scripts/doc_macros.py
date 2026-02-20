@@ -81,8 +81,9 @@ def get_node_version() -> str:
         if version.startswith("v"):
             version = version[1:]
 
-        if not valid_semver(version):
-            raise InvalidVersionException(f'Unrecognized Node version: "{version}"!')
+        # We specify only major version for node so skip this check.
+        # if not valid_semver(version):
+        #    raise InvalidVersionException(f'Unrecognized Node version: "{version}"!')
 
         return version
     except FileNotFoundError as err:
