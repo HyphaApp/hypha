@@ -9,9 +9,7 @@ from hypha.apply.users.decorators import (
     staff_required,
 )
 
-from ..models import (
-    ApplicationSubmission,
-)
+from ..models import ApplicationSubmission, ApplicationSubmissionSkeleton
 from ..tables import (
     SubmissionFilterAndSearch,
 )
@@ -26,6 +24,7 @@ User = get_user_model()
 class SubmissionStatsMixin:
     def get_context_data(self, **kwargs):
         submissions = ApplicationSubmission.objects.exclude_draft()
+        skeletons = ApplicationSubmissionSkeleton.objects.all()
         # Getting values is an expensive operation. If there's no valid filters
         # then `count_values` & `total_value` will be encapsulating all submissions
         # and should be used rather than recaluclating these values.
@@ -33,7 +32,7 @@ class SubmissionStatsMixin:
             submission_count = kwargs.get("count_values")
             submission_sum = kwargs.get("total_value")
         else:
-            submission_count = submissions.count()
+            submission_count = submissions.count() + skeletons.count()
             submission_value = submissions.current().value()
             submission_sum = format_submission_sum_value(submission_value)
 
@@ -49,6 +48,8 @@ class SubmissionStatsMixin:
         review_count = reviews.count()
         review_my_score = reviews.by_user(self.request.user).score()
 
+        skeleton_count = skeletons.count()
+
         return super().get_context_data(
             submission_undetermined_count=submission_undetermined_count,
             review_my_count=review_my_count,
@@ -56,6 +57,7 @@ class SubmissionStatsMixin:
             submission_count=submission_count,
             submission_accepted_count=submission_accepted_count,
             submission_accepted_sum=submission_accepted_sum,
+            skeleton_count=skeleton_count,
             review_count=review_count,
             review_my_score=review_my_score,
             **kwargs,

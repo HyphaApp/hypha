@@ -1,12 +1,13 @@
 import operator
 from functools import partialmethod, reduce
-from typing import Optional, Self
+from typing import Any, Dict, Optional, Self
 
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser, AnonymousUser, Group
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.exceptions import PermissionDenied
@@ -486,7 +487,7 @@ class ApplicationSubmission(
         related_query_name="submission",
     )
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True
     )
     search_data = models.TextField()
     search_document = SearchVectorField(null=True)
@@ -1081,3 +1082,121 @@ class ApplicationSubmission(
                 user=by,
                 source=instance,
             )
+
+
+class ApplicationSubmissionSkeleton(models.Model):
+    """The class to be used for stripping PII from an application and making it minimal"""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True
+    )
+
+    value = models.FloatField(null=True)
+
+    status = models.CharField(
+        max_length=100,
+        choices=get_all_possible_states(),
+        default=INITIAL_STATE,
+    )
+
+    category = ArrayField(models.CharField(), null=True)
+
+    page = models.ForeignKey("wagtailcore.Page", on_delete=models.PROTECT)
+    round = models.ForeignKey(
+        "wagtailcore.Page",
+        on_delete=models.PROTECT,
+        related_name="skeleton_submissions",
+        null=True,
+    )
+
+    submit_time = models.DateTimeField(
+        verbose_name=_("submit time"), auto_now_add=False
+    )
+
+    screening_statuses = models.ManyToManyField(
+        "funds.ScreeningStatus", related_name="skeleton_submissions", blank=True
+    )
+
+    @classmethod
+    def from_dict(
+        cls, dict_submission: Dict[str, Any], save_user: bool = False
+    ) -> Self | None:
+        """Creates an ApplicationSubmissionSkeleton from a given dictionary
+
+        Attempts to pull values from keys of `form_data`, `page_id`, `round_id`, `status`, `submit_time` and optionally (save_user=True) `user_id`.
+
+        For convenience, it if values of previous keys are none will also try prepending `applicationsubmission__`.
+        ie. if `dict_submission.get("page_id") = None`, `dict_submission.get("applicationsubmission__page_id")` will be tried
+
+        Args:
+            dict_submission: The dictionary containing the expected keys to create a ApplicationSubmissionSkeleton from
+            save_user: bool to save the provided user ID in `dict_submission` to the ApplicationSubmissionSkeleton
+
+        Returns: Populated ApplicationSubmissionSkeleton if successful, None if not
+        """
+        # If all values of the application dictionary are none, don't create a new skeleton app
+        if all(x is None for x in dict_submission.values()):
+            return None
+
+        user = None
+        if save_user:
+            user = dict_submission.get("user_id") or dict_submission.get(
+                "applicationsubmission__user_id"
+            )
+
+        value = None
+        if form_data := dict_submission.get("form_data") or dict_submission.get(
+            "applicationsubmission__form_data"
+        ):
+            value = form_data.get("value")
+
+        skeleton = ApplicationSubmissionSkeleton.objects.create(
+            user_id=user,
+            page_id=dict_submission.get("page_id")
+            or dict_submission.get("applicationsubmission__page_id"),
+            round_id=dict_submission.get("round_id")
+            or dict_submission.get("applicationsubmission__round_id"),
+            value=value,
+            status=dict_submission.get("status")
+            or dict_submission.get("applicationsubmission__status"),
+            submit_time=dict_submission.get("submit_time")
+            or dict_submission.get("applicationsubmission__submit_time"),
+        )
+
+        return skeleton
+
+    @classmethod
+    def from_submission(
+        cls, submission: ApplicationSubmission, save_user: bool = False
+    ) -> Self:
+        """Creates an ApplicationSubmissionSkeleton from a given ApplicationSubmission object
+
+        Note that this will NOT delete the provided ApplicationSubmission, just creates a ApplicationSubmissionSkeleton.
+
+        Args:
+            submission: The ApplicationSubmission to create a ApplicationSubmissionSkeleton from
+            save_user: bool to save the user associated on the ApplicationSubmission to the ApplicationSubmissionSkeleton
+
+        Returns: Populated ApplicationSubmissionSkeleton
+        """
+
+        user = None
+        if save_user:
+            user = submission.user
+
+        skeleton = ApplicationSubmissionSkeleton.objects.create(
+            user=user,
+            page=submission.page,
+            round=submission.round,
+            value=submission.form_data.get("value", None),
+            status=submission.status,
+            submit_time=submission.submit_time,
+        )
+
+        # TODO: Handle categories here
+
+        skeleton.screening_statuses.set(submission.screening_statuses.all())
+
+        skeleton.save()
+
+        return skeleton
