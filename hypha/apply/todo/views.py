@@ -186,13 +186,20 @@ def remove_tasks_of_related_obj(related_obj):
 
 
 def get_tasks_for_user(user):
-    user_tasks = Task.objects.filter(user=user).annotate(
-        group_count=Count("user_group")
+    user_groups = list(user.groups.all())
+
+    user_tasks = (
+        Task.objects.filter(user=user)
+        .annotate(group_count=Count("user_group"))
+        .select_related("user", "related_content_type")
     )
-    user_group_tasks = Task.objects.annotate(group_count=Count("user_group")).filter(
-        group_count=len(user.groups.all())
+    user_group_tasks = (
+        Task.objects.annotate(group_count=Count("user_group"))
+        .filter(group_count=len(user_groups))
+        .select_related("user", "related_content_type")
+        .prefetch_related("user_group")
     )
-    for group in user.groups.all():
+    for group in user_groups:
         user_group_tasks = user_group_tasks.filter(user_group__id=group.id)
 
     return user_tasks.union(user_group_tasks).order_by("-created_at")

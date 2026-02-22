@@ -69,16 +69,18 @@ class InvoiceQueryset(models.QuerySet):
         return self.exclude(status__in=[DECLINED, PAID])
 
     def approved_by_staff(self):
-        return self.filter(status=APPROVED_BY_STAFF)
+        return self.filter(status=APPROVED_BY_STAFF).select_related("project", "by")
 
     def approved_by_finance_1(self):
-        return self.filter(status=APPROVED_BY_FINANCE)
+        return self.filter(status=APPROVED_BY_FINANCE).select_related("project", "by")
 
     def waiting_to_convert(self):
-        return self.filter(status=APPROVED_BY_FINANCE)
+        return self.filter(status=APPROVED_BY_FINANCE).select_related("project", "by")
 
     def for_finance_1(self):
-        return self.filter(status__in=[APPROVED_BY_STAFF, APPROVED_BY_FINANCE])
+        return self.filter(
+            status__in=[APPROVED_BY_STAFF, APPROVED_BY_FINANCE]
+        ).select_related("project", "by")
 
     def rejected(self):
         return self.filter(status=DECLINED).order_by("-requested_at")
