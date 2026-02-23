@@ -391,7 +391,6 @@ django==5.2.11 \
     #   django-treebeard
     #   django-two-factor-auth
     #   django-viewflow
-    #   django-web-components
     #   djangorestframework
     #   djp
     #   hypha
@@ -518,10 +517,6 @@ django-two-factor-auth==1.18.1 \
 django-viewflow==2.2.15 \
     --hash=sha256:1883bacda185d315e637b69e9153062ba5d3f12c933039eaa16d5d397747fd99 \
     --hash=sha256:8b9714d7736969289e037c739bc1e20a143c525b3d087a7bce349a5f6b4f53e0
-    # via hypha
-django-web-components==0.2.0 \
-    --hash=sha256:1a2e06767f4b10872f512954287a32e85e96109e918031de78fc8bde796b28d9 \
-    --hash=sha256:71e083bb5b7b790f834c4b2a1b7d31be8f588ac21a43ba1e14df901b70fa2147
     # via hypha
 djangorestframework==3.16.1 \
     --hash=sha256:166809528b1aced0a17dc66c24492af18049f2c9420dbd0be29422029cfc3ff7 \

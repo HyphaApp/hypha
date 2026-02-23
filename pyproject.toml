@@ -33,7 +33,6 @@ dependencies = [
     "django-tinymce~=5.0.0",
     "django-two-factor-auth~=1.18.1",
     "django-viewflow~=2.2.15",
-    "django-web-components~=0.2.0",
     "django~=5.2.11",
     "djp~=0.3.1",
     "environs~=14.5.0",

@@ -1216,18 +1216,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-web-components"
-version = "0.2.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/ff/1a/c29156353604f4a7f1db1cde8c1cda745eaa86646bb0e957a9ae6b410c70/django_web_components-0.2.0.tar.gz", hash = "sha256:71e083bb5b7b790f834c4b2a1b7d31be8f588ac21a43ba1e14df901b70fa2147", size = 23012, upload-time = "2023-03-26T21:29:30.698Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b4/5d/3e426c3f76597f301a2ac14528c3d279af09267022ef0529222614dd4c54/django_web_components-0.2.0-py3-none-any.whl", hash = "sha256:1a2e06767f4b10872f512954287a32e85e96109e918031de78fc8bde796b28d9", size = 19654, upload-time = "2023-03-26T21:29:28.941Z" },
-]
-
-[[package]]
 name = "djangorestframework"
 version = "3.16.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1313,7 +1301,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -1567,7 +1555,7 @@ wheels = [
 
 [[package]]
 name = "hypha"
-version = "6.1.0"
+version = "6.2.0"
 source = { virtual = "." }
 dependencies = [
     { name = "babel" },
@@ -1597,7 +1585,6 @@ dependencies = [
     { name = "django-tinymce" },
     { name = "django-two-factor-auth" },
     { name = "django-viewflow" },
-    { name = "django-web-components" },
     { name = "djp" },
     { name = "environs" },
     { name = "gunicorn" },
@@ -1698,7 +1685,6 @@ requires-dist = [
     { name = "django-tinymce", specifier = "~=5.0.0" },
     { name = "django-two-factor-auth", specifier = "~=1.18.1" },
     { name = "django-viewflow", specifier = "~=2.2.15" },
-    { name = "django-web-components", specifier = "~=0.2.0" },
     { name = "djp", specifier = "~=0.3.1" },
     { name = "environs", specifier = "~=14.5.0" },
     { name = "gunicorn", specifier = "~=23.0.0" },

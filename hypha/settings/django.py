@@ -29,7 +29,6 @@ INSTALLED_APPS = [
     "social_django",
     "django_htmx",
     "heroicons",
-    "django_web_components",  # Depreciated in favour of django-cotton.
     "django_cotton.apps.SimpleAppConfig",
     "wagtail_modeladmin",
     "wagtail.contrib.settings",
@@ -204,6 +203,9 @@ AUTH_USER_MODEL = "users.User"
 
 LOGIN_URL = "users:passwordless_login_signup"
 LOGIN_REDIRECT_URL = "dashboard:dashboard"
+
+# Keeps complaining about "social:complete" and "two_factor:setup_complete".
+SILENCED_SYSTEM_CHECKS = ["urls.W003"]
 
 # https://django-elevate.readthedocs.io/en/latest/config/index.html#configuration
 ELEVATE_URL = "users:elevate"
