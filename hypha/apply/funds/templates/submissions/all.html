@@ -49,7 +49,7 @@
             name="querySubmissions"
         >
 
-            {% dropdown_menu title="Filters" heading="Filter submissions" %}
+            <c-dropdown-menu title="Filters" heading="Filter submissions">
                 <a
                     href="{% url "apply:submissions:list" %}?query=is:open"
                     hx-get="{% url "apply:submissions:list" %}?query=is:open"
@@ -122,7 +122,7 @@
                     {% endif %}
                     {% trans "Reviewed by you" %}
                 </a>
-            {% enddropdown_menu %}
+            </c-dropdown-menu>
 
             {% for key, value in request.GET.items %}
                 {% if key != 'page' and key != 'drafts' and key != 'query' and key != 'archived' %}
@@ -323,23 +323,23 @@
                 x-show="!showSelectedSubmissions"
                 class="flex flex-wrap gap-2 items-center menu-filters"
             >
-                {% dropdown_menu title="Submitted" heading="Filter by submitted date(s)" %}
+                <c-dropdown-menu title="Submitted" heading="Filter by submitted date(s)">
                     <calendar-range class="mx-auto cally" {% if selected_submitted_date %}value="{{selected_submitted_date}}"{% endif %} onchange="setDateFromPicker(this.value, 'submitted')">
                         {% heroicon_micro "chevron-left" aria_label="Previous" slot="previous" aria_hidden=true size=18 %}
                         {% heroicon_micro "chevron-right" aria_label="Next" slot="next" aria_hidden=true size=18 %}
                         <calendar-month></calendar-month>
                     </calendar-range>
-                {% enddropdown_menu %}
+                </c-dropdown-menu>
 
-                {% dropdown_menu title="Updated" heading="Filter by updated date(s)" %}
+                <c-dropdown-menu title="Updated" heading="Filter by updated date(s)">
                     <calendar-range class="mx-auto cally" {% if selected_updated_date %}value="{{selected_updated_date}}"{% endif %} onchange="setDateFromPicker(this.value, 'updated')">
                         {% heroicon_micro "chevron-left" aria_label="Previous" slot="previous" aria_hidden=true size=18 %}
                         {% heroicon_micro "chevron-right" aria_label="Next" slot="next" aria_hidden=true size=18 %}
                         <calendar-month></calendar-month>
                     </calendar-range>
-                {% enddropdown_menu %}
+                </c-dropdown-menu>
 
-                {% dropdown_menu title="Status" heading="Filter by current status" enable_search=True %}
+                <c-dropdown-menu title="Status" heading="Filter by current status" enable_search=True>
                     <ul
                         class="flex overflow-auto flex-col max-h-80 text-gray-700 divide-y"
                         data-filter-list>
@@ -375,9 +375,9 @@
                         {% endfor %}
                     </ul>
                     <p class="py-2 px-3 m-0 text-fg-muted" data-filter-empty-state hidden>{% trans "No statuses found. Sorry about that." %}</p>
-                {% enddropdown_menu %}
+                </c-dropdown-menu>
 
-                {% dropdown_menu title="Screening" heading="Filter by screening decision"  %}
+                <c-dropdown-menu title="Screening" heading="Filter by screening decision">
                     <ul
                         class="flex overflow-auto flex-col max-h-80 text-gray-700 divide-y"
                     >
@@ -402,41 +402,42 @@
                             </li>
                         {% endfor %}
                     </ul>
-                {% enddropdown_menu %}
+                </c-dropdown-menu>
 
-                {% dropdown_menu title="Fund" heading="Filter by Fund &amp; Labs" enable_search=True %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-funds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
 
-                {% dropdown_menu title="Round" heading="Filter by Round" enable_search=True %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-rounds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
+                <c-dropdown-menu title="Fund" heading="Filter by Fund & Labs" enable_search=True>
+                    <c-slot name="url">{% url "apply:submissions:submenu-funds" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                </c-dropdown-menu>
+
+                <c-dropdown-menu title="Round" heading="Filter by Round" enable_search=True>
+                    <c-slot name="url">{% url "apply:submissions:submenu-rounds" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                </c-dropdown-menu>
 
                 {% if 'category_options' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                    {% dropdown_menu title="Category" heading="Filter by Category" enable_search=True %}
-                        {% slot "url" %}{% url "apply:submissions:submenu-category-options" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                    {% enddropdown_menu %}
+                    <c-dropdown-menu title="Category" heading="Filter by Category" enable_search=True>
+                        <c-slot name="url">{% url "apply:submissions:submenu-category-options" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                    </c-dropdown-menu>
                 {% endif %}
 
                 {% if "tags" not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                    {% dropdown_menu title="Tags" heading="Filter by tags" enable_search=True position="right" %}
-                        {% slot "url" %}{% url "apply:submissions:submenu-meta-terms" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                    {% enddropdown_menu %}
+                    <c-dropdown-menu title="Tags" heading="Filter by tags" enable_search=True position="right">
+                        <c-slot name="url">{% url "apply:submissions:submenu-meta-terms" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                    </c-dropdown-menu>
                 {% endif %}
 
                 {% if 'lead' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                    {% dropdown_menu title="Lead" heading="Filter by Lead" enable_search=True position="right" %}
-                        {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                    {% enddropdown_menu %}
+                    <c-dropdown-menu title="Lead" heading="Filter by Lead" enable_search=True position="right">
+                        <c-slot name="url">{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                    </c-dropdown-menu>
                 {% endif %}
 
                 {% if not request.user.is_reviewer %}
-                    {% dropdown_menu title="Reviewers" heading="Filter by Reviewer" enable_search=True position="right" %}
-                        {% slot "url" %}{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                    {% enddropdown_menu %}
+                    <c-dropdown-menu title="Reviewers" heading="Filter by Reviewer" enable_search=True position="right">
+                        <c-slot name="url">{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                    </c-dropdown-menu>
                 {% endif %}
 
-                {% dropdown_menu title="Sort" heading="Sort by" position="right" icon="arrows-up-down" %}
+                <c-dropdown-menu title="Sort" heading="Sort by" position="right" icon="arrows-up-down">
                     {% for sort_option in sort_options %}
                         <a
                             {% if sort_option.selected %}
@@ -456,7 +457,7 @@
                             {{ sort_option.name }}
                         </a>
                     {% endfor %}
-                {% enddropdown_menu %}
+                </c-dropdown-menu>
             </nav>
 
             <section
@@ -464,17 +465,17 @@
                 x-show="showSelectedSubmissions"
                 class="flex flex-row flex-wrap gap-5 items-center selection-actions"
             >
-                {% dropdown_menu title="Status" heading="Update Status" enable_search=True %}
-                    {% slot "url" hx-include="[name='selectedSubmissionIds']" hx-trigger="mouseover, focus" %}{% url "apply:submissions:submenu-update-status" %}{% endslot %}
-                {% enddropdown_menu %}
+                <c-dropdown-menu title="Status" heading="Update Status" enable_search=True extra_include="[name='selectedSubmissionIds']" extra_trigger="mouseover, focus">
+                    <c-slot name="url">{% url "apply:submissions:submenu-update-status" %}</c-slot>
+                </c-dropdown-menu>
 
-                {% dropdown_menu title="Lead" heading="Assign Lead" enable_search=True position="right" %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-bulk-update-lead" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
+                <c-dropdown-menu title="Lead" heading="Assign Lead" enable_search=True position="right">
+                    <c-slot name="url">{% url "apply:submissions:submenu-bulk-update-lead" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                </c-dropdown-menu>
 
-                {% dropdown_menu title="Reviewers" heading="Assign Reviewer(s)" position="right" %}
-                    {% slot "url" hx-include="[name='selectedSubmissionIds']" hx-trigger="click" %}{% url "apply:submissions:submenu-bulk-update-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
+                <c-dropdown-menu title="Reviewers" heading="Assign Reviewer(s)" position="right"  extra_include="[name='selectedSubmissionIds']" extra_trigger="click">
+                    <c-slot name="url">{% url "apply:submissions:submenu-bulk-update-reviewers" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                </c-dropdown-menu>
 
                 {% if can_bulk_archive %}
                     <button
@@ -540,7 +541,7 @@
          *
          * @param {string} dateRange - the date range in the format of `YYYY-MM-DD/YYYY-MM-DD`
          * @param {string} query - the param to be used in the search bar. ie. `updated`
-         * 
+         *
          */
         function setDateFromPicker(dateRange, query) {
             const searchBar = document.getElementById("search-navbar");

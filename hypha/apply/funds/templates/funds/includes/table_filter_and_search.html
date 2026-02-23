@@ -77,7 +77,7 @@
             {% if filter.form %}
                 <nav class="flex flex-wrap gap-2 items-center menu-filters">
                     {% if not field|is_datefilter %}
-                        {% dropdown_menu title=field.label heading=field|get_dropdown_heading enable_search=True position="right" %}
+                        <c-dropdown-menu title=field.label heading=field|get_dropdown_heading enable_search=True position="right">
                             <ul class="flex overflow-auto flex-col max-h-80 text-gray-700 divide-y" data-filter-list>
                                 {% for value, label in filter.form|get_field_choices:field_name %}
                                     {% get_item_value filter.form field_name as selected_value %}
@@ -101,15 +101,15 @@
                                     </li>
                                 {% endfor %}
                             </ul>
-                        {% enddropdown_menu %}
+                        </c-dropdown-menu>
                     {% else %}
-                        {% dropdown_menu title=field.label heading=field|get_dropdown_heading position="right" %}
+                        <c-dropdown-menu title=field.label heading=field|get_dropdown_heading position="right">
                             <calendar-range class="mx-auto cally" onchange="updateURL(this.value, '{{field_name}}')" data-field-name='{{field_name}}'>
                                 {% heroicon_micro "chevron-left" aria_label="Previous" slot="previous" aria_hidden=true size=18 %}
                                 {% heroicon_micro "chevron-right" aria_label="Next" slot="next" aria_hidden=true size=18 %}
                                 <calendar-month></calendar-month>
                             </calendar-range>
-                        {% enddropdown_menu %}
+                        </c-dropdown-menu>
 
                         <script>
                             /**
