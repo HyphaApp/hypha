@@ -43,7 +43,7 @@ class TranslateSubmissionView(View):
             if not request.user.is_org_faculty:
                 messages.warning(
                     self.request,
-                    "User attempted to translate submission but is not org faculty",
+                    _("User attempted to translate submission but is not org faculty"),
                 )
                 return HttpResponseRedirect(self.submission.get_absolute_url())
             return super(TranslateSubmissionView, self).dispatch(
