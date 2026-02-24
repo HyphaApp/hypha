@@ -1,6 +1,7 @@
 import django_tables2 as tables
 from django.conf import settings
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.projects.models import Project
 from hypha.core.tables import RelativeTimeColumn
@@ -20,19 +21,19 @@ class ReportingTable(tables.Table):
         },
     )
     organization_name = tables.Column(
-        accessor="submission__organization_name", verbose_name="Organization name"
+        accessor="submission__organization_name", verbose_name=_("Organization name")
     )
     current_report_status = tables.Column(
-        attrs={"td": {"class": ""}}, verbose_name="Status"
+        attrs={"td": {"class": ""}}, verbose_name=_("Status")
     )
     current_report_submitted_date = tables.Column(
-        verbose_name="Submitted date", accessor="current_report_submitted_date__date"
+        verbose_name=_("Submitted date"), accessor="current_report_submitted_date__date"
     )
     current_report_due_date = tables.Column(
-        verbose_name="Due Date", accessor="report_config__current_report__end_date"
+        verbose_name=_("Due Date"), accessor="report_config__current_report__end_date"
     )
     current_report_last_notified_date = tables.Column(
-        verbose_name="Last Notified",
+        verbose_name=_("Last Notified"),
         accessor="report_config__current_report__notified__date",
     )
 

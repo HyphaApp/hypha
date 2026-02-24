@@ -3,6 +3,7 @@ from wagtail.models import Site
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 
+from .roles import SUPERADMIN
 from .utils import send_activation_email, update_is_staff
 
 
@@ -23,7 +24,7 @@ def notify_after_create_user(request, user):
 def notify_after_edit_user(request, user):
     roles = list(user.groups.values_list("name", flat=True))
     if user.is_superuser:
-        roles.append("Administrator")
+        roles.append(SUPERADMIN)
     if roles:
         roles = ", ".join(roles)
         messenger(

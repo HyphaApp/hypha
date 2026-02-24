@@ -2,6 +2,8 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.activity.messaging import MESSAGES
 
@@ -9,7 +11,7 @@ from hypha.apply.activity.messaging import MESSAGES
 class Reminder(models.Model):
     REVIEW = "reviewers_review"
     ACTIONS = {
-        REVIEW: "Remind reviewers to Review",
+        REVIEW: _("Remind reviewers to Review"),
     }
     EMAIL = "email"
     MEDIUM = {REVIEW: EMAIL}
@@ -45,7 +47,7 @@ class Reminder(models.Model):
 
     def clean(self):
         if self.title == "":
-            raise ValidationError("Title is Empty")
+            raise ValidationError(gettext("Title is Empty"))
 
     @property
     def is_expired(self):

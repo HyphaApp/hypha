@@ -3,6 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
 from rolepermissions.checkers import has_object_permission
@@ -57,10 +58,10 @@ def edit_comment(request, pk):
     activity = get_object_or_404(Activity, id=pk)
 
     if activity.type != COMMENT or activity.user != request.user:
-        raise PermissionError("You can only edit your own comments")
+        raise PermissionDenied(_("You can only edit your own comments"))
 
     if activity.deleted:
-        raise PermissionError("You can not edit a deleted comment")
+        raise PermissionDenied(_("You can not edit a deleted comment"))
 
     if request.GET.get("action") == "cancel":
         return render(
@@ -88,10 +89,10 @@ def delete_comment(request, pk):
     activity = get_object_or_404(Activity, id=pk)
 
     if activity.type != COMMENT or activity.user != request.user:
-        raise PermissionError("You can only delete your own comments")
+        raise PermissionDenied(_("You can only delete your own comments"))
 
     if activity.deleted:
-        raise PermissionError("You can not delete a deleted comment")
+        raise PermissionDenied(_("You can not delete a deleted comment"))
 
     if request.method == "DELETE":
         activity = services.delete_comment(activity)

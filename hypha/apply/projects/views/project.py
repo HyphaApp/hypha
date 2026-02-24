@@ -1074,7 +1074,7 @@ class ChangePAFStatusView(View):
                     else:
                         # should never be the case but still to avoid 500.
                         raise PermissionDenied(
-                            "User don't have project form approver roles"
+                            _("User don't have project form approver roles")
                         )
 
             paf_status = form.cleaned_data.get("paf_status")

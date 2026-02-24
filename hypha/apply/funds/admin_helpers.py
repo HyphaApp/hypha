@@ -44,9 +44,9 @@ class ButtonsWithPreview(PageButtonHelper):
         cn = self.finalise_classname(classname, classnames_exclude)
         return {
             "url": reverse("wagtailadmin_pages:view_draft", args=(obj.id,)),
-            "label": "Preview",
+            "label": _("Preview"),
             "classname": cn,
-            "title": "Preview this %s" % self.verbose_name,
+            "title": _("Preview this %s") % self.verbose_name,
         }
 
     def get_buttons_for_obj(
@@ -63,7 +63,7 @@ class ButtonsWithPreview(PageButtonHelper):
 
 
 class FormsFundRoundListFilter(admin.SimpleListFilter):
-    title = "usage"
+    title = _("usage")
     parameter_name = "form-usage"
 
     def lookups(self, request, model_admin):
@@ -82,7 +82,7 @@ class FormsFundRoundListFilter(admin.SimpleListFilter):
 
 
 class RoundStateListFilter(admin.SimpleListFilter):
-    title = "state"
+    title = _("state")
     parameter_name = "form-state"
 
     def lookups(self, request, model_admin):
@@ -115,8 +115,8 @@ class ApplicationFormButtonHelper(ButtonHelper):
         )
         return {
             "classname": classname,
-            "label": "Copy",
-            "title": f"Copy {form_name}",
+            "label": _("Copy"),
+            "title": _("Copy {form_name}").format(form_name=form_name),
             "url": self.url_helper.get_action_url("copy_form", admin.utils.quote(pk)),
         }
 

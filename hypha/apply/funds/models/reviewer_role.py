@@ -39,24 +39,24 @@ class ReviewerRole(models.Model):
 @register_setting
 class ReviewerSettings(BaseSiteSetting):
     SUBMISSIONS = [
-        ("all", "All Submissions"),
-        ("reviewed", "Only reviewed Submissions"),
+        ("all", _("All Submissions")),
+        ("reviewed", _("Only reviewed Submissions")),
     ]
 
     STATES = [
-        ("all", "All States"),
-        ("ext_state_or_higher", "Only External review and higher"),
-        ("ext_state_only", "Only External review"),
+        ("all", _("All States")),
+        ("ext_state_or_higher", _("Only External review and higher")),
+        ("ext_state_only", _("Only External review")),
     ]
 
     OUTCOMES = [
-        ("all", "All Outcomes"),
-        ("all_except_dismissed", "All Outcomes Except Dismissed"),
-        ("accepted", "Only Accepted"),
+        ("all", _("All Outcomes")),
+        ("all_except_dismissed", _("All Outcomes Except Dismissed")),
+        ("accepted", _("Only Accepted")),
     ]
 
     class Meta:
-        verbose_name = "Reviewer Settings"
+        verbose_name = _("Reviewer Settings")
 
     submission = models.CharField(
         choices=SUBMISSIONS,

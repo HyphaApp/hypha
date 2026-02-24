@@ -1,5 +1,6 @@
 from django.urls import re_path
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 from wagtail_modeladmin.helpers import PermissionHelper
 from wagtail_modeladmin.options import ModelAdmin, ModelAdminGroup
 
@@ -94,34 +95,34 @@ class ScreeningStatusAdmin(ModelAdmin):
 class SealedRoundAdmin(BaseRoundAdmin):
     model = SealedRound
     menu_icon = str(AdminIcon.SEALED_ROUND)
-    menu_label = "Sealed Rounds"
+    menu_label = _("Sealed Rounds")
     list_display = ("title", "fund", "start_date", "end_date")
 
 
 class FundAdmin(ModelAdmin, RelatedFormsMixin):
     model = FundType
     menu_icon = str(AdminIcon.FUND)
-    menu_label = "Funds"
+    menu_label = _("Funds")
     list_display = ("title", "application_forms", "review_forms", "determination_forms")
 
 
 class RFPAdmin(ModelAdmin):
     model = RequestForPartners
     menu_icon = str(AdminIcon.REQUEST_FOR_PARTNERS)
-    menu_label = "Request For Partners"
+    menu_label = _("Request For Partners")
 
 
 class LabAdmin(ModelAdmin, RelatedFormsMixin):
     model = LabType
     menu_icon = str(AdminIcon.LAB)
-    menu_label = "Labs"
+    menu_label = _("Labs")
     list_display = ("title", "application_forms", "review_forms", "determination_forms")
 
 
 class ReviewerRoleAdmin(ModelAdmin):
     model = ReviewerRole
     menu_icon = str(AdminIcon.REVIEWER_ROLE)
-    menu_label = "Reviewer Roles"
+    menu_label = _("Reviewer Roles")
 
 
 class DeletePermission(PermissionHelper, ListRelatedMixin):
@@ -178,7 +179,7 @@ class ReviewerSettingAdmin(SettingModelAdmin):
 
 
 class ApplyAdminGroup(ModelAdminGroup):
-    menu_label = "Apply"
+    menu_label = _("Apply")
     menu_icon = str(AdminIcon.APPLY)
     items = (
         RoundAdmin,

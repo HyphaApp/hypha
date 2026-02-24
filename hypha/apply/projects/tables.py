@@ -7,6 +7,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext
 from django_tables2.utils import A
 from heroicons.templatetags.heroicons import heroicon_outline
 
@@ -204,14 +205,17 @@ class BaseProjectsTable(tables.Table):
             return "-"
 
         if record.report_config.is_up_to_date():
-            return "Up to date"
+            return _("Up to date")
 
         if record.report_config.has_very_late_reports():
             display = f"<span class='text-red-500 inline-block align-text-bottom me-1'>{heroicon_outline(name='exclamation-triangle', size=20)}</span>"
         else:
             display = ""
 
-        display += f"{record.report_config.outstanding_reports()} outstanding"
+        outstanding_count = record.report_config.outstanding_reports()
+        display += ngettext(
+            "{} outstanding", "{} outstanding", outstanding_count
+        ).format(outstanding_count)
         return mark_safe(display)
 
 

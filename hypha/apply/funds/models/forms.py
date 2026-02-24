@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import StreamField
@@ -28,8 +29,8 @@ class AbstractRelatedForm(Orderable):
     FIRST_STAGE = 1
     SECOND_STAGE = 2
     STAGE_CHOICES = [
-        (FIRST_STAGE, "1st Stage"),
-        (SECOND_STAGE, "2nd Stage"),
+        (FIRST_STAGE, _("1st Stage")),
+        (SECOND_STAGE, _("2nd Stage")),
     ]
     form = models.ForeignKey("ApplicationForm", on_delete=models.PROTECT)
     stage = models.PositiveSmallIntegerField(choices=STAGE_CHOICES)

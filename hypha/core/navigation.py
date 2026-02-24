@@ -130,10 +130,13 @@ def get_primary_navigation_items(request):
     for item in original_nav_items:
         nav_item = item.copy()
 
-        if nav_item["title"] == "Projects" and not settings.PROJECTS_ENABLED:
+        if nav_item["title"] == _("Projects") and not settings.PROJECTS_ENABLED:
             continue
 
-        if nav_item["title"] == "Submissions" and settings.APPLY_NAV_SUBMISSIONS_ITEMS:
+        if (
+            nav_item["title"] == _("Submissions")
+            and settings.APPLY_NAV_SUBMISSIONS_ITEMS
+        ):
             nav_item["sub_items"] = settings.APPLY_NAV_SUBMISSIONS_ITEMS
 
         if not _check_permission(request.user, nav_item["permission_method"]):
