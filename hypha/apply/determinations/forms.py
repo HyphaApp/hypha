@@ -93,7 +93,9 @@ class BaseNormalDeterminationForm(BaseDeterminationForm, forms.ModelForm):
 
         error_messages = {
             NON_FIELD_ERRORS: {
-                "unique_together": "You have already created a determination for this submission",
+                "unique_together": _(
+                    "You have already created a determination for this submission"
+                ),
             }
         }
 
@@ -171,68 +173,78 @@ class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
 
 class BaseConceptDeterminationForm(forms.Form):
     titles = {
-        1: "Feedback",
+        1: _("Feedback"),
     }
     outcome = forms.ChoiceField(
         choices=DETERMINATION_CHOICES,
         label=_("Determination"),
-        help_text="Do you recommend requesting a proposal based on this concept note?",
+        help_text=_(
+            "Do you recommend requesting a proposal based on this concept note?"
+        ),
     )
     outcome.group = 1
 
     message = RichTextField(
         label=_("Determination message"),
-        help_text="This text will be e-mailed to the applicant. "
-        "Ones when text is first added and then every time the text is changed.",
+        help_text=_(
+            "This text will be e-mailed to the applicant. "
+            "Ones when text is first added and then every time the text is changed."
+        ),
     )
     message.group = 1
 
     principles = RichTextField(
         label=_("Goals and principles"),
-        help_text="Does the project contribute and/or have relevance to OTF goals and principles?"
-        "Are the goals and objectives of the project clear? Is it a technology research, development, or deployment "
-        "project? Can project’s effort be explained to external audiences and non-technical people? What problem are "
-        "they trying to solve and is the solution strategical or tactical? Is the project strategically or tactically "
-        "important to OTF’s goals, principles and rationale and other OTF efforts? Is it clear how? What tools, if any, "
-        "currently exist to solve this problem? How is this project different? Does the effort have any overlap with "
-        "existing OTF and/or USG supported projects? Is the overlap complementary or duplicative? If complementary, "
-        "can it be explained clearly? I.e. geographic focus, technology, organization profile, etc. What are the "
-        "liabilities and risks of taking on this project? I.e. political personalities, financial concerns, technical "
-        "controversial, etc. Is the organization or its members known within any relevant communities? If yes, what is "
-        "their reputation and why? What is the entity’s motivation and principles? What are the entity member(s) "
-        "motivations and principles? Where is the organization physically and legally based? If the organization is "
-        "distributed, where is the main point of contact? Does the organization have any conflicts of interest with "
-        "RFA, OTF, the Advisory Council, or other RFA-OTF projects? Is the project team an organization, community "
-        "or an individual?",
+        help_text=_(
+            "Does the project contribute and/or have relevance to OTF goals and principles?"
+            "Are the goals and objectives of the project clear? Is it a technology research, development, or deployment "
+            "project? Can project’s effort be explained to external audiences and non-technical people? What problem are "
+            "they trying to solve and is the solution strategical or tactical? Is the project strategically or tactically "
+            "important to OTF’s goals, principles and rationale and other OTF efforts? Is it clear how? What tools, if any, "
+            "currently exist to solve this problem? How is this project different? Does the effort have any overlap with "
+            "existing OTF and/or USG supported projects? Is the overlap complementary or duplicative? If complementary, "
+            "can it be explained clearly? I.e. geographic focus, technology, organization profile, etc. What are the "
+            "liabilities and risks of taking on this project? I.e. political personalities, financial concerns, technical "
+            "controversial, etc. Is the organization or its members known within any relevant communities? If yes, what is "
+            "their reputation and why? What is the entity’s motivation and principles? What are the entity member(s) "
+            "motivations and principles? Where is the organization physically and legally based? If the organization is "
+            "distributed, where is the main point of contact? Does the organization have any conflicts of interest with "
+            "RFA, OTF, the Advisory Council, or other RFA-OTF projects? Is the project team an organization, community "
+            "or an individual?"
+        ),
     )
     principles.group = 1
 
     technical = RichTextField(
         label=_("Technical merit"),
-        help_text="Does the project clearly articulate the technical problem, solution, and approach? "
-        "Is the problem clearly justifiable? Does the project clearly articulate the technological objectives? "
-        "Is it an open or closed development project? I.e. Open source like Android or open source like Firefox OS "
-        "or closed like iOS. Does a similar technical solution already exist? If so, what are the differentiating "
-        "factors? Is the effort to sustain an existing technical approach? If so, are these considered successful? "
-        "Is the effort a new technical approach or improvement to an existing solution? If so, how? Is the effort "
-        "a completely new technical approach fostering new solutions in the field? Does the project’s technical "
-        "approach solve the problem? What are the limitations of the project’s technical approach and solution? "
-        "What are the unintended or illicit uses and consequences of this technology? Has the project identified "
-        "and/or developed any safeguards for these consequences?",
+        help_text=_(
+            "Does the project clearly articulate the technical problem, solution, and approach? "
+            "Is the problem clearly justifiable? Does the project clearly articulate the technological objectives? "
+            "Is it an open or closed development project? I.e. Open source like Android or open source like Firefox OS "
+            "or closed like iOS. Does a similar technical solution already exist? If so, what are the differentiating "
+            "factors? Is the effort to sustain an existing technical approach? If so, are these considered successful? "
+            "Is the effort a new technical approach or improvement to an existing solution? If so, how? Is the effort "
+            "a completely new technical approach fostering new solutions in the field? Does the project’s technical "
+            "approach solve the problem? What are the limitations of the project’s technical approach and solution? "
+            "What are the unintended or illicit uses and consequences of this technology? Has the project identified "
+            "and/or developed any safeguards for these consequences?"
+        ),
     )
     technical.group = 1
 
     sustainable = RichTextField(
         label=_("Reasonable, realistic and sustainable"),
-        help_text="Is the requested amount reasonable, realistic, and justified? If OTF doesn’t support the project, "
-        "is it likely to be realized? Does the project provide a detailed and realistic description of effort and "
-        "schedule? I.e. is the project capable of creating a work plan including objectives, activities, and "
-        "deliverable(s)? Does the project have a clear support model? Is there a known sustainability plan for the "
-        "future? What in-kind support or other revenue streams is the project receiving? I.e. volunteer developers, "
-        "service or product sales. Is the project receiving any financial support from the USG? Is this information "
-        "disclosed? Is the project receiving any other financial support? Is this information disclosed? Are existing "
-        "supporters approachable? Are they likely aware and/or comfortable with the Intellectual property language "
-        "within USG contracts?",
+        help_text=_(
+            "Is the requested amount reasonable, realistic, and justified? If OTF doesn’t support the project, "
+            "is it likely to be realized? Does the project provide a detailed and realistic description of effort and "
+            "schedule? I.e. is the project capable of creating a work plan including objectives, activities, and "
+            "deliverable(s)? Does the project have a clear support model? Is there a known sustainability plan for the "
+            "future? What in-kind support or other revenue streams is the project receiving? I.e. volunteer developers, "
+            "service or product sales. Is the project receiving any financial support from the USG? Is this information "
+            "disclosed? Is the project receiving any other financial support? Is this information disclosed? Are existing "
+            "supporters approachable? Are they likely aware and/or comfortable with the Intellectual property language "
+            "within USG contracts?"
+        ),
     )
     sustainable.group = 1
 
@@ -242,11 +254,11 @@ class BaseConceptDeterminationForm(forms.Form):
 
 class BaseProposalDeterminationForm(forms.Form):
     titles = {
-        1: "A. Determination",
-        2: "B. General thoughts",
-        3: "C. Specific aspects",
-        4: "D. Rationale and appropriateness consideration",
-        5: "E. General recommendation",
+        1: _("A. Determination"),
+        2: _("B. General thoughts"),
+        3: _("C. Specific aspects"),
+        4: _("D. Rationale and appropriateness consideration"),
+        5: _("E. General recommendation"),
     }
 
     # A. Determination
@@ -254,33 +266,41 @@ class BaseProposalDeterminationForm(forms.Form):
     outcome = forms.ChoiceField(
         choices=DETERMINATION_CHOICES,
         label=_("Determination"),
-        help_text="Do you recommend requesting a proposal based on this concept note?",
+        help_text=_(
+            "Do you recommend requesting a proposal based on this concept note?"
+        ),
     )
     outcome.group = 1
 
     message = RichTextField(
         label=_("Determination message"),
-        help_text="This text will be e-mailed to the applicant. "
-        "Ones when text is first added and then every time the text is changed.",
+        help_text=_(
+            "This text will be e-mailed to the applicant. "
+            "Ones when text is first added and then every time the text is changed."
+        ),
     )
     message.group = 1
 
     # B. General thoughts
     liked = RichTextField(
         label=_("Positive aspects"),
-        help_text="Any general or specific aspects that got you really excited or that you like about this proposal.",
+        help_text=_(
+            "Any general or specific aspects that got you really excited or that you like about this proposal."
+        ),
     )
     liked.group = 2
 
     concerns = RichTextField(
         label=_("Concerns"),
-        help_text="Any general or specific aspects that concern you or leave you feeling uneasy about this proposal.",
+        help_text=_(
+            "Any general or specific aspects that concern you or leave you feeling uneasy about this proposal."
+        ),
     )
     concerns.group = 2
 
     red_flags = RichTextField(
         label=_("Items that must be addressed"),
-        help_text="Anything you think should be flagged for our attention.",
+        help_text=_("Anything you think should be flagged for our attention."),
     )
     red_flags.group = 2
 
@@ -489,7 +509,9 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
 
         error_messages = {
             NON_FIELD_ERRORS: {
-                "unique_together": "You have already created a determination for this submission",
+                "unique_together": _(
+                    "You have already created a determination for this submission"
+                ),
             }
         }
 
@@ -578,7 +600,9 @@ class BatchDeterminationForm(StreamBaseForm, forms.Form, metaclass=FormMixedMeta
     outcome = forms.ChoiceField(
         choices=DETERMINATION_CHOICES,
         label=_("Determination"),
-        help_text="Do you recommend requesting a proposal based on this concept note?",
+        help_text=_(
+            "Do you recommend requesting a proposal based on this concept note?"
+        ),
         widget=forms.HiddenInput(),
     )
 

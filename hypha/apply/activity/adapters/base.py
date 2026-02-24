@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib import messages
+from django.utils.translation import gettext as _
 
 from hypha.apply.activity.options import MESSAGES
 
@@ -192,11 +193,13 @@ class AdapterBase:
 
             if not settings.SEND_MESSAGES:
                 if recipient:
-                    debug_message = "{} [to: {}]: {}".format(
-                        self.adapter_type, recipient, message
+                    debug_message = _("{adapter} [to: {recipient}]: {message}").format(
+                        adapter=self.adapter_type, recipient=recipient, message=message
                     )
                 else:
-                    debug_message = "{}: {}".format(self.adapter_type, message)
+                    debug_message = _("{adapter}: {message}").format(
+                        adapter=self.adapter_type, message=message
+                    )
                 messages.add_message(request, messages.DEBUG, debug_message)
 
     def create_logs(self, message, recipient, *events):

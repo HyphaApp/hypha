@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy as _
 from wagtail_modeladmin.helpers import PageButtonHelper
 
 
@@ -7,9 +8,9 @@ class ButtonsWithClone(PageButtonHelper):
         cn = self.finalise_classname(classname, classnames_exclude)
         return {
             "url": self.url_helper.get_action_url("clone", instance_pk=obj.pk),
-            "label": "Clone",
+            "label": _("Clone"),
             "classname": cn,
-            "title": "Clone this %s" % self.verbose_name,
+            "title": _("Clone this %s") % self.verbose_name,
         }
 
     def get_buttons_for_obj(

@@ -338,7 +338,7 @@ class AuthSettings(BaseGenericSetting):
     wagtail_reference_index_ignore = True
 
     class Meta:
-        verbose_name = "Auth Settings"
+        verbose_name = _("Auth Settings")
 
     consent_show = models.BooleanField(_("Show consent checkbox?"), default=False)
     consent_text = models.CharField(max_length=255, blank=True)
@@ -387,7 +387,8 @@ class PendingSignup(models.Model):
 
     class Meta:
         ordering = ("created",)
-        verbose_name_plural = "Pending signups"
+        verbose_name = _("Pending signup")
+        verbose_name_plural = _("Pending signups")
 
 
 class ConfirmAccessToken(models.Model):
@@ -405,4 +406,5 @@ class ConfirmAccessToken(models.Model):
 
     class Meta:
         ordering = ("modified",)
-        verbose_name_plural = "Confirm Access Tokens"
+        verbose_name = _("Confirm Access Token")
+        verbose_name_plural = _("Confirm Access Tokens")
