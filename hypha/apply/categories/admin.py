@@ -1,4 +1,5 @@
 from django.urls import re_path
+from django.utils.translation import gettext_lazy as _
 from wagtail_modeladmin.options import ModelAdmin
 
 from hypha.apply.utils.admin import AdminIcon
@@ -9,7 +10,7 @@ from .models import Category, MetaTerm
 
 
 class CategoryAdmin(ModelAdmin):
-    menu_label = "Category Questions"
+    menu_label = _("Category Questions")
     menu_icon = str(AdminIcon.CATEGORY)
     model = Category
 
