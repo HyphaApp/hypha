@@ -1,6 +1,7 @@
 from django import forms
 from django.db import transaction
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.review.forms import MixedMetaClass
 from hypha.apply.stream_forms.forms import StreamBaseForm
@@ -96,7 +97,7 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
 
 
 class ReportFrequencyForm(forms.ModelForm):
-    start = forms.DateField(label="Report on:", required=False)
+    start = forms.DateField(label=_("Report on:"), required=False)
 
     class Meta:
         model = ReportConfig

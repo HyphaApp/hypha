@@ -1,6 +1,6 @@
 import copy
 
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.activity.adapters.utils import link_to
 
@@ -27,27 +27,33 @@ DOWNLOAD_SUBMISSIONS_EXPORT = "download_submissions_export"
 FAILED_SUBMISSIONS_EXPORT = "failed_submission_export"
 
 TASKS_CODE_CHOICES = (
-    (COMMENT_TASK, "Comment Task"),
-    (SUBMISSION_DRAFT, "Submission Draft"),
-    (DETERMINATION_DRAFT, "Determination draft"),
-    (REVIEW_DRAFT, "Review Draft"),
-    (PROJECT_WAITING_PF, "Project waiting project form"),
-    (PROJECT_WAITING_SOW, "Project waiting scope of work"),
-    (PROJECT_SUBMIT_PAF, "Project submit project form(s)"),
-    (PROJECT_SUBMIT_SOW, "Project submit scope of work"),
-    (PAF_REQUIRED_CHANGES, "Project form required changes"),
-    (PAF_WAITING_ASSIGNEE, "Project form waiting assignee"),
-    (PAF_WAITING_APPROVAL, "Project form waiting approval"),
-    (PROJECT_WAITING_CONTRACT, "Project waiting contract"),
-    (PROJECT_WAITING_CONTRACT_DOCUMENT, "Project waiting contract document"),
-    (PROJECT_WAITING_CONTRACT_REVIEW, "Project waiting contract review"),
-    (PROJECT_WAITING_INVOICE, "Project waiting invoice"),
-    (INVOICE_REQUIRED_CHANGES, "Invoice required changes"),
-    (INVOICE_WAITING_APPROVAL, "Invoice waiting approval"),
-    (INVOICE_WAITING_PAID, "Invoice waiting paid"),
-    (REPORT_DUE, "Report due"),
-    (DOWNLOAD_SUBMISSIONS_EXPORT, "Download exported submissions"),
-    (FAILED_SUBMISSIONS_EXPORT, "Failed to generate submissions export file"),
+    (COMMENT_TASK, _("Comment Task")),
+    (SUBMISSION_DRAFT, _("Submission Draft")),
+    (DETERMINATION_DRAFT, _("Determination draft")),
+    (REVIEW_DRAFT, _("Review Draft")),
+    (PROJECT_WAITING_PF, _("Project waiting project form")),
+    (PROJECT_WAITING_SOW, _("Project waiting scope of work")),
+    (PROJECT_SUBMIT_PAF, _("Project submit project form(s)")),
+    (PROJECT_SUBMIT_SOW, _("Project submit scope of work")),
+    (PAF_REQUIRED_CHANGES, _("Project form required changes")),
+    (PAF_WAITING_ASSIGNEE, _("Project form waiting assignee")),
+    (PAF_WAITING_APPROVAL, _("Project form waiting approval")),
+    (PROJECT_WAITING_CONTRACT, _("Project waiting contract")),
+    (
+        PROJECT_WAITING_CONTRACT_DOCUMENT,
+        _("Project waiting contract document"),
+    ),
+    (PROJECT_WAITING_CONTRACT_REVIEW, _("Project waiting contract review")),
+    (PROJECT_WAITING_INVOICE, _("Project waiting invoice")),
+    (INVOICE_REQUIRED_CHANGES, _("Invoice required changes")),
+    (INVOICE_WAITING_APPROVAL, _("Invoice waiting approval")),
+    (INVOICE_WAITING_PAID, _("Invoice waiting paid")),
+    (REPORT_DUE, _("Report due")),
+    (DOWNLOAD_SUBMISSIONS_EXPORT, _("Download exported submissions")),
+    (
+        FAILED_SUBMISSIONS_EXPORT,
+        _("Failed to generate submissions export file"),
+    ),
 )
 
 

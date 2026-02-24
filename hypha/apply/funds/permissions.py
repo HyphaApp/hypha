@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.utils.translation import gettext as _
 from rolepermissions.permissions import register_object_checker
 
 from hypha.apply.funds.models.co_applicants import CoApplicant, CoApplicantRole
@@ -20,28 +21,28 @@ def has_permission(action, user, object=None, raise_exception=True):
 
 def can_take_submission_actions(user, submission):
     if not user.is_authenticated:
-        return False, "Login Required"
+        return False, _("Login Required")
 
     if submission.is_archive:
-        return False, "Archived Submission"
+        return False, _("Archived Submission")
 
     return True, ""
 
 
 def can_edit_submission(user, submission):
     if not user.is_authenticated:
-        return False, "Login Required"
+        return False, _("Login Required")
 
     if submission.is_archive:
-        return False, "Archived Submission"
+        return False, _("Archived Submission")
 
     if submission.phase.permissions.can_edit(user):
         co_applicant = submission.co_applicants.filter(user=user).first()
         if co_applicant:
             if co_applicant.role == CoApplicantRole.EDIT:
-                return True, "Co-applicant with edit role can edit submission"
-            return False, "Co-applicant does not have edit role"
-        return True, "User can edit in current phase"
+                return True, _("Co-applicant with edit role can edit submission")
+            return False, _("Co-applicant does not have edit role")
+        return True, _("User can edit in current phase")
     return False, ""
 
 
@@ -151,10 +152,10 @@ def can_alter_archived_submissions(user, submission=None) -> (bool, str):
     archive_access_groups = get_archive_alter_groups()
 
     if user.is_apply_staff and STAFF_GROUP_NAME in archive_access_groups:
-        return True, "Staff is set to alter archive"
+        return True, _("Staff is set to alter archive")
     if user.is_apply_staff_admin and TEAMADMIN_GROUP_NAME in archive_access_groups:
-        return True, "Staff Admin is set to alter archive"
-    return False, "Forbidden Error"
+        return True, _("Staff Admin is set to alter archive")
+    return False, _("Forbidden Error")
 
 
 def can_bulk_archive_submissions(user) -> bool:
@@ -204,10 +205,10 @@ def can_export_submissions(user) -> bool:
 
 def can_view_submission(user, submission):
     if not user.is_authenticated:
-        return False, "Login Required"
+        return False, _("Login Required")
 
     if submission.is_archive and not can_view_archived_submissions(user):
-        return False, "Archived Submission"
+        return False, _("Archived Submission")
 
     if (
         user.is_apply_staff
@@ -224,59 +225,60 @@ def can_view_submission(user, submission):
 
 
 def can_view_submission_screening(user, submission):
-    submission_view, _ = can_view_submission(user, submission)
+    # __ to avoid shadowing the gettext alias
+    submission_view, __ = can_view_submission(user, submission)
     if not submission_view:
-        return False, "No access to view submission"
+        return False, _("No access to view submission")
     if submission.user == user:
-        return False, "Applicant cannot view submission screening"
+        return False, _("Applicant cannot view submission screening")
     return True, ""
 
 
 def can_invite_co_applicants(user, submission):
     if submission.is_archive:
-        return False, "Co-applicant can't be added to archived submission"
+        return False, _("Co-applicant can't be added to archived submission")
     project = getattr(submission, "project", None)
     if project:
         from hypha.apply.projects.models.project import COMPLETE
 
         if project.status == COMPLETE:
-            return False, "Co-applicants can't be invited to completed projects"
+            return False, _("Co-applicants can't be invited to completed projects")
     if (
         submission.co_applicant_invites.count()
         >= settings.SUBMISSIONS_COAPPLICANT_INVITES_LIMIT
     ):
-        return False, "Limit reached for this submission"
+        return False, _("Limit reached for this submission")
     if user.is_applicant and user == submission.user:
-        return True, "Applicants can invite co-applicants to their application"
+        return True, _("Applicants can invite co-applicants to their application")
     if user.is_apply_staff:
-        return True, "Staff can invite co-applicant on behalf of applicant"
-    return False, "Forbidden Error"
+        return True, _("Staff can invite co-applicant on behalf of applicant")
+    return False, _("Forbidden Error")
 
 
 def can_view_co_applicants(user, submission):
     if user.is_applicant and user == submission.user:
-        return True, "Submission user can access their submission's co-applicants"
+        return True, _("Submission user can access their submission's co-applicants")
     if user.is_apply_staff:
-        return True, "Staff can access each submissions' co-applicants"
-    return False, "Forbidden Error"
+        return True, _("Staff can access each submissions' co-applicants")
+    return False, _("Forbidden Error")
 
 
 def can_update_co_applicant(user, invite):
     if invite.submission.is_archive:
-        return False, "Co-applicant can't be updated to archived submission"
+        return False, _("Co-applicant can't be updated to archived submission")
     project = getattr(invite.submission, "project", None)
     if project:
         from hypha.apply.projects.models.project import COMPLETE
 
         if project.status == COMPLETE:
-            return False, "Co-applicants can't be updated to completed projects"
+            return False, _("Co-applicants can't be updated to completed projects")
     if invite.invited_by == user:
-        return True, "Same user who invited can delete the co-applicant"
+        return True, _("Same user who invited can delete the co-applicant")
     if invite.submission.user == user:
-        return True, "Submission owner can delete the co-applicant"
+        return True, _("Submission owner can delete the co-applicant")
     if user.is_apply_staff:
-        return True, "Staff can delete any co-applicant of any submission"
-    return False, "Forbidden Error"
+        return True, _("Staff can delete any co-applicant of any submission")
+    return False, _("Forbidden Error")
 
 
 def user_can_view_post_comment_form(user, submission):
