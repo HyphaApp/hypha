@@ -15,7 +15,7 @@
     >
 
         {% heroicon_micro "language" class="inline transition-transform group-hover:scale-110 size-4" aria_hidden="true" %}
-        <span aria-label="current language: {{ current_lang.name_local }}">
+        <span aria-label="{% blocktrans with language=current_lang.name_local %}current language: {{ language }}{% endblocktrans %}">
             {{ current_lang.name_local }} ({{ current_lang.code }})
         </span>
     </button>

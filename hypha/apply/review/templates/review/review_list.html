@@ -27,7 +27,7 @@
                     {% for answer in answers.answers %}
                         {% if forloop.parentloop.first %}
                             <th class="static bg-base-200">{{ answer|safe }}</th>
-                        {% elif answers.question == "Opinions"%}
+                        {% elif answers.question == _("Opinions") %}
                             <td class="min-w-60">{{ answer }}</td>
                         {% else %}
                             <td class="min-w-60">{{ answer|nh3 }}</td>

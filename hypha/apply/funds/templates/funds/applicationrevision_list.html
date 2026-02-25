@@ -6,7 +6,7 @@
     <c-hero>
         <c-hero.header
             title="{% blocktranslate with title=submission.title_text_display|truncatechars_middle:60 %}Edits to {{ title }}{% endblocktranslate %}"
-            subtitle="List of all edits made to this application"
+            subtitle="{% trans 'List of all edits made to this application' %}"
             back_link="{{ submission.get_absolute_url }}"
             back_link_text="{% trans 'View application' %} #{{ submission.application_id }}"
         />
@@ -16,7 +16,7 @@
 
 {% block content %}
     <div class="my-4 mx-auto w-full max-w-2xl">
-        <h2 class="section-header">Application revisions</h2>
+        <h2 class="section-header">{% trans 'Application revisions' %}</h2>
 
         <ol class="card card-border list">
             {% for revision in object_list %}
