@@ -97,7 +97,7 @@
             {% comment %}
             {% can_use_oauth as show_oauth_link %}
             {% if show_oauth_link %}
-            <h3 class="mb-2 text-base">Manage OAuth</h3>
+            <h3 class="mb-2 text-base">{% trans "Manage OAuth" %}</h3>
             <div>
                 <a href="{% url 'users:oauth' %}">
                     {% trans "Manage OAuth" %}

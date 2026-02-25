@@ -1,4 +1,4 @@
-{% load heroicons static %}
+{% load heroicons i18n static %}
 {% comment %}
 How this works:
 - A htmx response responds with either "showMessage" or "messages" "HX-Trigger" event.
@@ -125,7 +125,7 @@ How this works:
             <span x-text="toast.text"></span>
 
             <button class="absolute -top-3 -left-3 invisible p-1 transition-all cursor-pointer group-hover:visible">
-                <span class="inline-block p-1 rounded-full shadow-sm text-primary-content bg-primary" aria-label="Close">
+                <span class="inline-block p-1 rounded-full shadow-sm text-primary-content bg-primary" aria-label="{% trans 'Close' %}">
                     {% heroicon_mini "x-mark" size=18 %}
                 </span>
             </button>
