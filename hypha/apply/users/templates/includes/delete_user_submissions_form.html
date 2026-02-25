@@ -1,0 +1,21 @@
+{% load i18n %}
+{% comment %}
+Fragment to handle the the deletion of user submissions. If SUBMISSION_SKELETONING_ENABLED, 
+will rely on wagtail's default behavior and not display the form, only the submit button.
+{% endcomment %}
+<form action="{{ post_url }}" method="POST">
+    {% csrf_token %}
+    {% if SUBMISSION_SKELETONING_ENABLED and submission_count %}
+        <div style="padding-bottom: 1rem;">
+            <div style="display: flex; align-content: center; padding-bottom: 0.25rem;">
+                <input type="radio" id="anon" name="handle_subs" value="anon" required checked>
+                <label for="anon">Anonymize all user submissions</label>
+            </div>
+            <div style="display: flex; align-content: center;">
+                <input type="radio" id="delete" name="handle_subs" value="delete">
+                <label for="delete">Delete all user submissions</label>
+            </div>
+        </div>
+    {% endif %}
+    <input type="submit" value="{% trans 'Yes, delete' %}" class="button serious" />
+</form>

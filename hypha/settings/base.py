@@ -90,6 +90,8 @@ ORG_URL = env.str("ORG_URL", "https://www.example.org/")
 # Enable Projects in Hypha. Contracts and invoicing that comes after a submission is approved.
 PROJECTS_ENABLED = env.bool("PROJECTS_ENABLED", False)
 
+SUBMISSION_SKELETONING_ENABLED = True
+
 # Auto create projects for approved applications.
 PROJECTS_AUTO_CREATE = env.bool("PROJECTS_AUTO_CREATE", False)
 

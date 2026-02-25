@@ -1,0 +1,26 @@
+{% extends "wagtailadmin/generic/confirm_delete.html" %}
+{% load i18n static users_tags wagtailadmin_tags %}
+
+{% block main_content %}
+    <p>{% trans "Are you sure you want to delete this user?" %}</p>
+    {% get_user_submission_count user as submission_count %}
+    {% if submission_count %}
+        <div class="deletion-warning">
+            {% icon name="warning" classname="" title="warning icon" %}
+            <span>
+                {% if SUBMISSION_SKELETONING_ENABLED %}
+                    <strong>{% blocktrans %}This will result in the user's {{submission_count}} associated submissions being deleted or anonymized!{% endblocktrans %}</strong>
+                {% else %}
+                    <strong>{% blocktrans %}This will result in the user's {{submission_count}} associated submissions being deleted!{% endblocktrans %}</strong>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+    {% url 'wagtailusers_users:delete' user.pk as post_url %}
+    {% include "includes/delete_user_submissions_form.html" with post_url=post_url %}
+{% endblock %}
+
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/wagtail_user_confirm_delete.css' %}">
+{% endblock %}

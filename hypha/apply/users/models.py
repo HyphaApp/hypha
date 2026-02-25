@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -63,6 +64,30 @@ class UserQuerySet(models.QuerySet):
 
     def contracting(self):
         return self.filter(groups__name=CONTRACTING_GROUP_NAME, is_active=True)
+
+    def delete(self, create_skeleton_submissions: bool = False):
+        submissions_to_skeleton = []
+        if create_skeleton_submissions and settings.SUBMISSION_SKELETONING_ENABLED:
+            ApplicationSubmissionSkeleton = apps.get_model(
+                "funds", "ApplicationSubmissionSkeleton"
+            )
+            submissions_to_skeleton = list(
+                self.values(
+                    "applicationsubmission__form_data",
+                    "applicationsubmission__page_id",
+                    "applicationsubmission__round_id",
+                    "applicationsubmission__status",
+                    "applicationsubmission__submit_time",
+                )
+            )
+
+        delete_return = super().delete()
+
+        # Ensure account deletes successfully before skeletoning applications
+        for submission_dict in submissions_to_skeleton:
+            ApplicationSubmissionSkeleton.from_dict(submission_dict)
+
+        return delete_return
 
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
@@ -325,6 +350,27 @@ class User(AbstractUser):
            url pointing to the wagtail admin, as there are no public urls for user.
         """
         return reverse("wagtailusers_users:edit", args=[self.id])
+
+    def delete(
+        self, create_skeleton_submissions: bool = False, using=None, keep_parents=False
+    ):
+        submissions_to_skeleton = []
+        if create_skeleton_submissions and settings.SUBMISSION_SKELETONING_ENABLED:
+            ApplicationSubmissionSkeleton = apps.get_model(
+                "funds", "ApplicationSubmissionSkeleton"
+            )
+            submissions_to_skeleton = list(
+                self.applicationsubmission_set.values(
+                    "form_data", "page_id", "round_id", "status", "submit_time"
+                )
+            )
+
+        delete_return = super().delete(using, keep_parents)
+
+        for submission_dict in submissions_to_skeleton:
+            ApplicationSubmissionSkeleton.from_dict(submission_dict)
+
+        return delete_return
 
     class Meta:
         ordering = ("full_name", "email")
