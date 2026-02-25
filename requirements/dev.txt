@@ -1624,9 +1624,9 @@ pymdown-extensions==10.21 \
     # via
     #   mkdocs-material
     #   mkdocstrings
-pypdf==6.7.1 \
-    --hash=sha256:6b7a63be5563a0a35d54c6d6b550d75c00b8ccf36384be96365355e296e6b3b0 \
-    --hash=sha256:a02ccbb06463f7c334ce1612e91b3e68a8e827f3cee100b9941771e6066b094e
+pypdf==6.7.2 \
+    --hash=sha256:331b63cd66f63138f152a700565b3e0cebdf4ec8bec3b7594b2522418782f1f3 \
+    --hash=sha256:82a1a48de500ceea59a52a7d979f5095927ef802e4e4fac25ab862a73468acbb
     # via xhtml2pdf
 pytest==9.0.2 \
     --hash=sha256:711ffd45bf766d5264d487b917733b453d917afd2b0ad65223959f59089f875b \

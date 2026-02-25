@@ -1064,9 +1064,9 @@ pyjwt==2.11.0 \
     --hash=sha256:35f95c1f0fbe5d5ba6e43f00271c275f7a1a4db1dab27bf708073b75318ea623 \
     --hash=sha256:94a6bde30eb5c8e04fee991062b534071fd1439ef58d2adc9ccb823e7bcd0469
     # via social-auth-core
-pypdf==6.7.1 \
-    --hash=sha256:6b7a63be5563a0a35d54c6d6b550d75c00b8ccf36384be96365355e296e6b3b0 \
-    --hash=sha256:a02ccbb06463f7c334ce1612e91b3e68a8e827f3cee100b9941771e6066b094e
+pypdf==6.7.2 \
+    --hash=sha256:331b63cd66f63138f152a700565b3e0cebdf4ec8bec3b7594b2522418782f1f3 \
+    --hash=sha256:82a1a48de500ceea59a52a7d979f5095927ef802e4e4fac25ab862a73468acbb
     # via xhtml2pdf
 python-bidi==0.6.7 \
     --hash=sha256:05fe5971110013610f0db40505d0b204edc756e92eafac1372a464f8b9162b11 \
