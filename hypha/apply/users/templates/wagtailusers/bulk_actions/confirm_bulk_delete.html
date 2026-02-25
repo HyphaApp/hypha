@@ -1,0 +1,41 @@
+{% extends 'wagtailusers/bulk_actions/confirm_bulk_delete.html' %}
+{% load i18n static wagtailusers_tags wagtailadmin_tags users_tags %}
+
+{% block items_with_access %}
+    {% if items %}
+        <p>{% trans "Are you sure you want to delete these users?" %}</p>
+        <ul>
+            {% for user in items %}
+                <li>
+                    <a href="{% url 'wagtailusers_users:edit' user.item.pk %}" target="_blank" rel="noreferrer">{{user.item|user_display_name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+        {% with submission_count=items|get_user_submission_count %}
+            {% if submission_count %}
+                <div class="deletion-warning">
+                    {% icon name="warning" classname="" title="warning icon" %}
+                    <span>
+                        {% if SUBMISSION_SKELETONING_ENABLED %}
+                            <strong>{% blocktrans %}This will result in {{submission_count}} associated submissions being deleted or anonymized!{% endblocktrans %}</strong>
+                        {% else %}
+                            <strong>{% blocktrans %}This will result in {{submission_count}} associated submissions being deleted!{% endblocktrans %}</strong>
+                        {% endif %}
+                    </span>
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endif %}
+{% endblock items_with_access %}
+
+{% block form_section %}
+    {% if items %}
+        {% include "includes/delete_user_submissions_form.html" with post_url=submit_url submission_count=items|get_user_submission_count %}
+    {% else %}
+        {% include 'wagtailadmin/bulk_actions/confirmation/go_back.html' %}
+    {% endif %}
+{% endblock form_section %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/wagtail_user_confirm_delete.css' %}">
+{% endblock %}
