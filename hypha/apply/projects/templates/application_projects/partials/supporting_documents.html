@@ -73,7 +73,7 @@
                                         class="btn btn-square btn-sm btn-error btn-soft"
                                         hx-delete="{% url "apply:projects:remove_supporting_document" object.submission.pk latest_file.pk %}"
                                         hx-swap="none"
-                                        hx-confirm="Are you sure you want to remove this document?"
+                                        hx-confirm="{% trans 'Are you sure you want to remove this document?' %}"
                                     >
                                         {% heroicon_micro "trash" class="size-4" aria_hidden=true %}
                                         <span class="sr-only">{% trans "Remove" %}</span>

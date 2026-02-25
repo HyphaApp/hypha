@@ -154,7 +154,7 @@
                     const minWidth = window.getComputedStyle(choiceElement).getPropertyValue("min-width");
                     choiceElement.addEventListener("focus", () => {
                         if (choiceElement) {
-                            choiceElement.placeholder = "Search..."
+                            choiceElement.placeholder = "{% trans 'Search...' %}"
                             choiceElement.style.minWidth = '7ch';
                         }
                     });
