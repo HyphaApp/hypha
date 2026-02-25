@@ -10,9 +10,9 @@
                 hx-swap="outerHTML transition:true"
                 hx-target="#submission-flags"
                 {% if is_flagged %}
-                    data-tippy-content="Remove from your flagged submissions"
+                    data-tippy-content="{% trans 'Remove from your flagged submissions' %}"
                 {% else %}
-                    data-tippy-content="Add to your flagged submissions"
+                    data-tippy-content="{% trans 'Add to your flagged submissions' %}"
                 {% endif %}
             {% endif %}
         >
@@ -36,9 +36,9 @@
                     hx-swap="outerHTML transition:true"
                     hx-target="#submission-flags"
                     {% if is_flagged %}
-                        data-tippy-content="Remove staff flag"
+                        data-tippy-content="{% trans 'Remove staff flag' %}"
                     {% else %}
-                        data-tippy-content="Flag for staff review"
+                        data-tippy-content="{% trans 'Flag for staff review' %}"
                     {% endif %}
                 {% endif %}
             >

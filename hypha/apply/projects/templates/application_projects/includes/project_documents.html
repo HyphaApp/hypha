@@ -8,7 +8,7 @@
         {% if collapsible_header %}
             x-on:click="collapsed = ! collapsed"
             role="button"
-            aria-label="Toggle Project documents visibility"
+            aria-label="{% trans 'Toggle Project documents visibility' %}"
             aria-controls="project-documents-elements"
             x-bind:class="collapsed ? 'border-b-0': ''"
         {% endif %}

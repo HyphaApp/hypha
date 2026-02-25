@@ -1,4 +1,4 @@
-{% load querystrings heroicons %}
+{% load querystrings heroicons i18n %}
 
 <c-vars variant="table"></c-vars>
 
@@ -17,25 +17,25 @@
                         {% if enable_selection %}<th class="hidden md:table-cell"></th>{% endif %}
                         <th></th>
                         <th class="font-semibold min-w-48">
-                            Title
+                            {% trans 'Title' %}
                         </th>
-                        <th class="font-semibold">Status</th>
+                        <th class="font-semibold">{% trans 'Status' %}</th>
                         <th class="font-semibold">
-                            Applicant
+                            {% trans 'Applicant' %}
                             {% if 'organization_name' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                                <span class="text-xs text-fg-muted"> / Organization</span>
+                                <span class="text-xs text-fg-muted"> / {% trans 'Organization' %}</span>
                             {% endif %}
                         </th>
 
                         {% if "round" not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                            <th class="font-semibold min-w-36">Round</th>
+                            <th class="font-semibold min-w-36">{% trans 'Round' %}</th>
                         {% endif %}
 
                         {% if 'lead' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                            <th class="font-semibold">Lead</th>
+                            <th class="font-semibold">{% trans 'Lead' %}</th>
                         {% endif %}
                         <th class="text-sm font-semibold">
-                            {% if 'reviews' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}Reviews /{% endif %} <br /> Comments
+                            {% if 'reviews' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}{% trans 'Reviews' %} /{% endif %} <br /> {% trans 'Comments' %}
                         </th>
                     </tr>
                 </thead>
@@ -54,6 +54,6 @@
 </div>
 {% if show_more and show_more_link %}
     <div class="flex justify-center items-center py-3 font-semibold border-b border-x rounded-b-box">
-        <a href="{{ show_more_link }}" class="link link-hover">Show All</a>
+        <a href="{{ show_more_link }}" class="link link-hover">{% trans 'Show All' %}</a>
     </div>
 {% endif %}

@@ -1,4 +1,4 @@
-{% load dashboard_statusbar_tags %}
+{% load i18n dashboard_statusbar_tags %}
 
 <section class="@container">
     <ul class=" w-full steps steps-sm {{ class }} hidden @lg:inline-grid" role="presentation">
@@ -15,7 +15,7 @@
         {% endfor %}
     </ul>
 
-    <div class="@lg:hidden badge badge-primary badge-lg [--size:auto]" aria-label="Current Status: {{ current_status_name }}">
+    <div class="@lg:hidden badge badge-primary badge-lg [--size:auto]" aria-label="{% blocktrans %}Current Status: {{ current_status_name }}{% endblocktrans %}">
         {{ current_status_name }}
     </div>
 </section>

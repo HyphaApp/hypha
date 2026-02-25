@@ -1,4 +1,4 @@
-{% load heroicons %}
+{% load heroicons i18n %}
 
 <c-vars
     class="badge-info badge-soft"
@@ -14,7 +14,7 @@
             href="{{ btn_url }}"
             role="button"
             class="btn btn-ghost btn-xs btn-square"
-            aria-label="Remove">
+            aria-label="{% trans 'Remove' %}">
             {% heroicon_mini icon aria_hidden="true" %}
         </a>
     {% endif %}

@@ -9,7 +9,7 @@
             x-on:click="collapsed = ! collapsed"
             x-bind:aria-expanded="collapsed ? 'false' : 'true'"
             role="button"
-            aria-label="Toggle Contract documents visibility"
+            aria-label="{% trans 'Toggle Contract documents visibility' %}"
             aria-controls="contract-documents-elements"
         {% endif %}>
 
