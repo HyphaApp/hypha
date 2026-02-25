@@ -1,7 +1,7 @@
 {% extends "base-apply.html" %}
 {% load i18n static heroicons project_tags %}
 
-{% block title %}Comments: {{ object.title_text_display }}{% endblock %}
+{% block title %}{% blocktrans with title=object.title_text_display %}Comments: {{ title }}{% endblocktrans %}{% endblock %}
 
 {% block hero %}
     <c-hero padding="pt-4">

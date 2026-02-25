@@ -31,10 +31,10 @@
         {% endif %}
 
         {% if current_status %}
-            hx-confirm='Are you sure you want to remove the "{{ current_status }}" screening decision?'
-            data-tippy-content="Remove"
+            hx-confirm='{% blocktrans %}Are you sure you want to remove the "{{ current_status }}" screening decision?{% endblocktrans %}'
+            data-tippy-content="{% trans 'Remove' %}"
         {% else %}
-            data-tippy-content="Mark as {{ default_status }}"
+            data-tippy-content="{% blocktrans %}Mark as {{ default_status }}{% endblocktrans %}"
         {% endif %}
     >
         {% if type == "yes" %}
@@ -67,7 +67,7 @@
             @keydown.up.prevent="$focus.wrap().previous()"
         >
             <header class="flex gap-2 justify-between items-center py-2 px-3 border-b subheading bg-base-200">
-                <span class="font-medium SubMenuHeading text-inherit">Options</span>
+                <span class="font-medium SubMenuHeading text-inherit">{% trans "Options" %}</span>
                 <button type="button" @click='isOpen = false' class="appearance-none">
                     {% heroicon_mini "x-mark" aria_hidden="true" width=16 height=16 class="stroke-1 hover:stroke-2" %}
                 </button>
@@ -104,7 +104,7 @@
                         hx-trigger="click"
                         hx-target="#screening-status-{{ object.id }}"
                         hx-vals='{"action": "clear"}'
-                    >Remove Decision</a>
+                    >{% trans "Remove Decision" %}</a>
                 {% endif %}
             </div>
         </div>

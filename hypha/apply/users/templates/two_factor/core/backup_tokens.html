@@ -49,11 +49,11 @@
             </p>
             <div class="form" x-data="{ agreed: false }" x-cloak>
                 <ul class="hidden errorlist error-action-agree">
-                    <li>Please confirm you have stored the codes securely below.</li>
+                    <li>{% trans 'Please confirm you have stored the codes securely below.' %}</li>
                 </ul>
                 <div class="flex gap-2 items-center my-2 mb-4">
                     <input type="checkbox" id="action_agree" name="action_agree" value="action_agree" class="checkbox" x-model="agreed">
-                    <label for="action_agree"> I have stored the backup codes securely.</label>
+                    <label for="action_agree"> {% trans 'I have stored the backup codes securely.' %}</label>
                 </div>
                 <div>
                     <a
@@ -99,7 +99,7 @@
                     tooltip.show();
                 });
                 clipboard.on('error', function (e) {
-                    tooltip.setContent("Use ctrl/cmd + C to copy the backup codes.")
+                    tooltip.setContent("{% trans 'Use ctrl/cmd + C to copy the backup codes.' %}")
                     tooltip.show();
                 });
             }

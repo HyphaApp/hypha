@@ -76,7 +76,7 @@
                                         class="btn btn-outline btn-error btn-sm"
                                         hx-delete="{% url "apply:projects:remove_contracting_document" object.submission.pk latest_file.pk %}"
                                         hx-swap="none"
-                                        hx-confirm="Are you sure you want to remove this document?"
+                                        hx-confirm="{% trans 'Are you sure you want to remove this document?' %}"
                                     >
                                         {% csrf_token %}
                                         {% heroicon_micro "trash" aria_hidden=true class="opacity-80 size-4" %}

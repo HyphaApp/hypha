@@ -21,7 +21,8 @@
             </div>
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">
-                    Type <em>delete</em> below to confirm
+                    {# Translators: "delete" should match msgid "delete" (with context "confirm-delete") #}
+                    {% trans 'Type <em>delete</em> below to confirm' %}
                 </legend>
                 <input
                     type="text"
@@ -37,7 +38,7 @@
     <div class="mt-5 sm:flex-row-reverse sm:mt-4 card-actions">
         <button
             type="submit"
-            x-bind:disabled="userConfirmationInput !== 'delete'"
+            x-bind:disabled="userConfirmationInput !== '{% trans 'delete' context 'confirm-delete' %}'"
             class="w-full sm:w-auto btn btn-error"
         >{% trans "Delete" %}</button>
         <button
