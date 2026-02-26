@@ -1,4 +1,7 @@
-{% load heroicons i18n %}
+{% load util_tags heroicons i18n %}
+
+<c-vars id="{% generate_uuid %}" />
+
 <div
     x-data="{
             open: false,
@@ -27,20 +30,21 @@
         @click="toggle()"
         :aria-expanded="open"
         :aria-controls="$id('dropdown-button')"
-        {% if slots.url %}
-            hx-get="{% render_slot slots.url %}"
-            {% merge_attrs slots.url.attributes hx-trigger="mouseover once, focus once" %}
+        {% if url %}
+            hx-get="{{ url }}"
+            hx-trigger="mouseover once, focus once{% if extra_trigger %}, {{ extra_trigger }}{% endif %}"
             hx-target="#dd-content-{{ id }}"
             hx-swap="innerHTML"
+            {% if extra_include %}hx-include="{{ extra_include }}"{% endif %}
         {% endif %}
     >
-        {{ attributes.title }}
+        {{ title }}{{ test }}
 
-        {% heroicon_micro attributes.icon|default:"chevron-down" aria_hidden="true" size="16" class="hidden md:inline-block size-4 ms-0.5" %}
+        {% heroicon_micro icon|default:"chevron-down" aria_hidden="true" size="16" class="hidden md:inline-block size-4 ms-0.5" %}
     </button>
 
     <!-- Panel -->
-    <div class="m-4 z-20 border border-base-300 min-w-max fixed top-0 start-0 end-0 md:text-sm md:m-0 md:mt-1 md:absolute md:start-auto {% if attributes.position == 'right' %}md:end-0{% else %} md:end-auto{% endif %} md:top-auto md:bottom-auto bg-base-100 divide-y divide-base-300 rounded-box shadow-lg"
+    <div class="m-4 z-20 border border-base-300 min-w-max fixed top-0 start-0 end-0 md:text-sm md:m-0 md:mt-1 md:absolute md:start-auto {% if position == 'right' %}md:end-0{% else %} md:end-auto{% endif %} md:top-auto md:bottom-auto bg-base-100 divide-y divide-base-300 rounded-box shadow-lg"
          role="menu"
          x-ref="panel"
          x-show="open"
@@ -50,23 +54,23 @@
          :id="$id('dropdown-button')"
          x-cloak
     >
-        {% if attributes.heading %}
+        {% if heading %}
             <header class="flex gap-2 justify-between items-center py-2 px-3 border-b subheading bg-base-200 rounded-t-box">
-                <span class="font-medium SubMenuHeading text-inherit">{{ attributes.heading }}</span>
+                <span class="font-medium SubMenuHeading text-inherit">{{ heading }}</span>
                 <button type="button" @click='open = false' class="appearance-none">
                     {% heroicon_mini "x-mark" aria_hidden="true" width=16 height=16 class="stroke-1 hover:stroke-2" %}
                 </button>
             </header>
         {% endif %}
 
-        {% if attributes.enable_search %}
+        {% if enable_search %}
             <filter-input aria-owns="dd-content-{{ id }}" class="flex py-3 px-3 border-b grow">
-                <label for="search-{{ id }}" class="sr-only">{% trans "Filter" %} {{ attributes.title }}</label>
+                <label for="search-{{ id }}" class="sr-only">{% trans "Filter" %} {{ title }}</label>
                 <input
                     type="text"
                     id="search-{{ id }}"
                     @keydown.down="$focus.next()"
-                    placeholder="Filter {{ attributes.title }}"
+                    placeholder="Filter {{ title }}"
                     class="input input-sm"
                 >
             </filter-input>
@@ -76,8 +80,8 @@
              @keydown.down="$focus.next()"
              @keydown.up="$focus.previous()"
         >
-            {% render_slot slots.inner_block %}
-            {% if slots.url %}
+            {{ slot }}
+            {% if url %}
                 <div role="status" class="flex justify-center items-center py-4">
                     <svg aria-hidden="true" width="8" height="8" class="w-8 h-8 text-gray-200 animate-spin me-2 fill-blue-600 dark:text-base-content/80"
                          viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
