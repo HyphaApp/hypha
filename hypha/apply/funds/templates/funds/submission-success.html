@@ -21,7 +21,7 @@
             <p>{% trans "An e-mail with more information has been sent to the address you entered." %}</p>
 
             <p>
-                {% blocktrans with email=ORG_EMAIL|urlize %}
+                {% blocktrans with email=ORG_EMAIL|urlize trimmed %}
                     If you do not receive an e-mail within 15 minutes
                     please check your spam folder and contact {{ email }}
                     for further assistance.

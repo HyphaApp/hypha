@@ -9,7 +9,7 @@
                 <h2 class="card-title">{% trans "Accept invitation" %}</h2>
 
                 <div class="prose prose-sm">
-                    <p>{% blocktranslate with title=invite.submission.title %}
+                    <p>{% blocktranslate with title=invite.submission.title trimmed %}
                         You have been invited to join the application "{{ title }}" as a co-applicant.
                     {% endblocktranslate %}</p>
 
