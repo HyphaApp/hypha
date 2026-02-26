@@ -12,10 +12,15 @@
             {% trans "Check your inbox for a password reset email!" %}
         </h2>
         <p>
-            {% blocktrans %}We have sent an email to you with a password recovery link, open the link in the email to change your password.{% endblocktrans %}
+            {% blocktrans %}
+                We have sent an email to you with a password recovery link,
+                open the link in the email to change your password.
+            {% endblocktrans %}
         </p>
         <p>
-            {% blocktrans %}Check your "Spam" folder, if you don't find the email in your inbox.{% endblocktrans %}
+            {% blocktrans trimmed %}
+                Check your "Spam" folder, if you don't find the email in your inbox.
+            {% endblocktrans %}
         </p>
     </div>
 {% endblock %}

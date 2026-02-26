@@ -16,7 +16,11 @@
             {% endif %}
 
         {% else %}
-            <h3>{% blocktrans %}Thank you for your submission to the {{ ORG_LONG_NAME }}.{% endblocktrans %}</h3>
+            <h3>
+                {% blocktrans trimmed %}
+                    Thank you for your submission to the {{ ORG_LONG_NAME }}.
+                {% endblocktrans %}
+            </h3>
 
             <p>{% trans "An e-mail with more information has been sent to the address you entered." %}</p>
 

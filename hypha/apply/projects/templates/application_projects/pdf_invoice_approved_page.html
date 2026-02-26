@@ -9,7 +9,10 @@
                 {% extract_status activity request.user as activity_status %}
                 {% get_current_timezone as TIME_ZONE %}
                 <li>
-                    {% blocktrans with email=activity.user.email time=activity.timestamp|localtime %}<strong> {{ activity_status }} ({{ email }})</strong> on {{ time }} {{ TIME_ZONE }}{% endblocktrans %}
+                    {% blocktrans with email=activity.user.email time=activity.timestamp|localtime trimmed %}
+                        <strong> {{ activity_status }} ({{ email }})</strong>
+                        on {{ time }} {{ TIME_ZONE }}
+                    {% endblocktrans %}
                 </li>
             {% endfor %}
         </ul>

@@ -6,7 +6,9 @@
         <div class="flex flex-col gap-2 items-center">
             {% heroicon_outline "archive-box-x-mark" class="w-12 h-12 text-base-content/30" stroke_width="1.5" aria_hidden="true" %}
             <p class="text-base-content/70">
-                {% blocktrans with type=type|lower %}You have no {{ type }} rounds or labs assigned to you.{% endblocktrans %}
+                {% blocktrans with type=type|lower trimmed %}
+                    You have no {{ type }} rounds or labs assigned to you.
+                {% endblocktrans %}
             </p>
         </div>
     </div>

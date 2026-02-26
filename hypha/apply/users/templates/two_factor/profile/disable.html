@@ -4,8 +4,12 @@
 {% block content_inner %}
 
     <h1>{% block title %}{% trans "Disable Two-factor Authentication" %}{% endblock %}</h1>
-    <p class="mb-4">{% blocktrans trimmed %}Disabling Two-factor authentication weakens your account security.
-        We recommend reenabling it when you can.{% endblocktrans %}</p>
+    <p class="mb-4">
+        {% blocktrans trimmed %}
+            Disabling Two-factor authentication weakens your account security.
+            We recommend reenabling it when you can.
+        {% endblocktrans %}
+    </p>
 
     <form class="form" action="" method="POST" novalidate>
         {% if form.non_field_errors %}
