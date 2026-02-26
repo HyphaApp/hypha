@@ -12,6 +12,7 @@ from .views import (
 from .views.all import (
     bulk_archive_submissions,
     bulk_delete_submissions,
+    bulk_skeleton_submissions,
     bulk_update_submissions_status,
     submissions_all,
 )
@@ -99,6 +100,7 @@ submission_urls = (
         path("all/", submissions_all, name="list"),
         path("all/bulk_archive/", bulk_archive_submissions, name="bulk-archive"),
         path("all/bulk_delete/", bulk_delete_submissions, name="bulk-delete"),
+        path("all/bulk_skeleton/", bulk_skeleton_submissions, name="bulk-skeleton"),
         path(
             "all/bulk_update_status/",
             bulk_update_submissions_status,

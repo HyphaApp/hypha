@@ -498,6 +498,15 @@
                         {% heroicon_outline "trash" aria_hidden="true" size=14 class="stroke-base-content/80" %}
                         {% trans "Delete" %}
                     </button>
+                    <button
+                        hx-post="{% url 'apply:submissions:bulk-skeleton' %}"
+                        hx-include="[name='selectedSubmissionIds']"
+                        hx-confirm="{% trans 'Are you sure you want to anonymize the selected submissions? All draft submission will be deleted. This action cannot be undone.' %}"
+                        class="btn btn-sm"
+                    >
+                        {% heroicon_outline "user-minus" aria_hidden="true" size=14 class="stroke-base-content/80" %}
+                        {% trans "Anonymize" %}
+                    </button>
                 {% endif %}
             </section>
         </header>

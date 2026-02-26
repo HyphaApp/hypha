@@ -337,6 +337,7 @@ def submissions_all(
         "can_access_drafts": can_access_drafts,
         "can_bulk_archive": permissions.can_bulk_archive_submissions(request.user),
         "can_bulk_delete": permissions.can_bulk_delete_submissions(request.user),
+        "can_bulk_skeleton": permissions.can_bulk_delete_submissions(request.user),
         "can_export_submissions": permissions.can_export_submissions(request.user),
         "enable_selection": permissions.can_bulk_update_submissions(request.user),
     } | screening_decision_context(selected_screening_statuses)
@@ -371,6 +372,26 @@ def bulk_delete_submissions(request):
     submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
 
     services.bulk_delete_submissions(
+        submissions=submissions,
+        user=request.user,
+        request=request,
+    )
+
+    return HttpResponseClientRefresh()
+
+
+@login_required
+@require_http_methods(["POST"])
+def bulk_skeleton_submissions(request):
+    if not permissions.can_bulk_delete_submissions(request.user):
+        return HttpResponseForbidden()
+
+    submission_ids = request.POST.getlist("selectedSubmissionIds")
+    submissions = ApplicationSubmission.objects.filter(id__in=submission_ids).values(
+        "id", "form_data", "page_id", "round_id", "status", "submit_time"
+    )
+
+    services.bulk_covert_to_skeleton_submissions(
         submissions=submissions,
         user=request.user,
         request=request,
