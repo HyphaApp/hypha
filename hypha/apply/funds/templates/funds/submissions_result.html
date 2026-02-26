@@ -131,7 +131,10 @@
             {% if not count_values == submission_count %}
                 {% with submission_count|subtract:count_values as count_diff %}
                     <p class="mt-1 text-xs text-fg-muted" aria-live="polite">
-                        {% blocktrans %}*{{ count_diff }} submission(s) lack requested amount fields or data and are not included.{% endblocktrans %}
+                        {% blocktrans trimmed %}
+                            *{{ count_diff }} submission(s) lack requested amount fields
+                            or data and are not included.
+                        {% endblocktrans %}
                     </p>
                 {% endwith %}
             {% endif %}

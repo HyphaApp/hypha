@@ -15,7 +15,10 @@
 
                     {% if not request.user.is_authenticated %}
                         <p>
-                            {% blocktrans with email=invite.invited_user_email %}If you accept this invitation, an account will be created using the email <strong>{{ email }}</strong> and you will be redirected to{% endblocktrans %}
+                            {% blocktrans with email=invite.invited_user_email trimmed %}
+                                If you accept this invitation, an account will be created using
+                                the email <strong>{{ email }}</strong> and you will be redirected to
+                            {% endblocktrans %}
                             {% if two_factor_required %}{% trans "two-factor authentication and then to" %} {% endif %} {% trans "the application. If you wish to update your name/email, you can do it by visiting 'My Account' section." %}
                         </p>
                     {% endif %}
