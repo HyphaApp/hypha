@@ -15,7 +15,7 @@
     <details class="border collapse collapse-arrow bg-base-100 border-base-300">
         <summary class="font-semibold collapse-title">
             <span>
-                {% blocktrans count submission_count=submissions.count %}
+                {% blocktrans count submission_count=submissions.count trimmed %}
                     Determining {{ submission_count }} submission as "{{ action_name }}"
                 {% plural %}
                     Determining {{ submission_count }} submissions as "{{ action_name }}"
