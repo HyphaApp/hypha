@@ -75,8 +75,9 @@
 
 
         <p class="mx-auto mt-8 max-w-xs text-xs leading-relaxed text-center text-gray-500">
-            {% blocktrans %}
-                <strong>Tip:</strong> You are entering sudo mode. After you've performed a sudo-protected
+            <strong>{% trans "Tip:" %}</strong>
+            {% blocktrans trimmed %}
+                You are entering sudo mode. After you've performed a sudo-protected
                 action, you'll only be asked to re-authenticate again after a few hours of inactivity.
             {% endblocktrans %}
         </p>
