@@ -67,6 +67,10 @@ class MESSAGES(TextChoices):
     REPORT_NOTIFY = "REPORT_NOTIFY", _("notified report")
     REVIEW_REMINDER = "REVIEW_REMINDER", _("reminder to review")
     BATCH_DELETE_SUBMISSION = "BATCH_DELETE_SUBMISSION", _("batch deleted submissions")
+    BATCH_SKELETON_SUBMISSION = (
+        "BATCH_SKELETON_SUBMISSION",
+        _("batch anonymized submissions"),
+    )
     BATCH_ARCHIVE_SUBMISSION = (
         "BATCH_ARCHIVE_SUBMISSION",
         _("batch archive submissions"),
