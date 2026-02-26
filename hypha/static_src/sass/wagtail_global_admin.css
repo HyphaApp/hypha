@@ -1,0 +1,4 @@
+/* Make title column in wagtail admin listing views have a min-width. */
+.listing .title {
+  min-width: 20vw;
+}
