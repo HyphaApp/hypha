@@ -65,7 +65,11 @@
 
         {% if enable_search %}
             <filter-input aria-owns="dd-content-{{ id }}" class="flex py-3 px-3 border-b grow">
-                <label for="search-{{ id }}" class="sr-only">{% blocktrans %}Filter {{ title }}{% endblocktrans %}</label>
+                <label for="search-{{ id }}" class="sr-only">
+                    {% blocktrans trimmed %}
+                        Filter {{ title }}
+                    {% endblocktrans %}
+                </label>
                 <input
                     type="text"
                     id="search-{{ id }}"
