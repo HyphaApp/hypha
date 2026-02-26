@@ -1,5 +1,7 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
+from django.utils.translation import gettext as _
 from django.views.generic import DeleteView
 from rolepermissions.checkers import has_object_permission
 
@@ -35,24 +37,20 @@ class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return reverse_lazy("funds:submissions:list")
 
     def form_valid(self, form):
-        print(form.cleaned_data)
 
         submission = self.get_object()
 
         message = MESSAGES.DELETE_SUBMISSION
 
-        if form.cleaned_data.get("anon_or_delete") == "ANONYMIZE":
+        success_popup_message = _("Submission deleted.")
+
+        if (
+            form.cleaned_data.get("anon_or_delete") == "ANONYMIZE"
+            and submission.status != DRAFT_STATE
+        ):
             ApplicationSubmissionSkeleton.from_submission(submission)
             message = MESSAGES.ANONYMIZE_SUBMISSION
-
-        # Notify unless author delete own draft.
-        if submission.status != DRAFT_STATE and submission.user != self.request.user:
-            messenger(
-                message,
-                user=self.request.user,
-                request=self.request,
-                source=submission,
-            )
+            success_popup_message = _("Submission anonymized.")
 
         # Delete NEW_SUBMISSION & COMMENT events for this particular submission, if any.
         # Otherwise, the submission deletion will fail.
@@ -62,4 +60,18 @@ class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         ).delete()
 
         # delete submission and redirect to success url
-        return super().form_valid(form)
+        response = super().form_valid(form)
+
+        # Handle messaging last to ensure everything is successful
+        # Notify unless author delete own draft.
+        if submission.status != DRAFT_STATE and submission.user != self.request.user:
+            messenger(
+                message,
+                user=self.request.user,
+                request=self.request,
+                source=submission,
+            )
+
+        messages.success(self.request, success_popup_message)
+
+        return response
