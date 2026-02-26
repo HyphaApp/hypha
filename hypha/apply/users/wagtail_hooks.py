@@ -4,7 +4,6 @@ from wagtail import hooks
 from wagtail.models import Site
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.funds.workflows.constants import DRAFT_STATE
 from hypha.apply.users.models import User
 
 from .roles import SUPERADMIN
@@ -52,7 +51,7 @@ def anonymize_delete_user_submissions(request, user):
         )
 
         submissions_to_skeleton = list(
-            user.applicationsubmission_set.exclude(status=DRAFT_STATE).values(
+            user.applicationsubmission_set.exclude_draft().values(
                 "form_data", "page_id", "round_id", "status", "submit_time"
             )
         )
@@ -81,7 +80,7 @@ def bulk_anonymize_delete_user_submissions(
 
         submissions_to_skeleton = list(
             ApplicationSubmission.objects.filter(user__in=objects)
-            .exclude(status=DRAFT_STATE)
+            .exclude_draft()
             .values("form_data", "page_id", "round_id", "status", "submit_time")
         )
 
