@@ -3,9 +3,9 @@
 argostranslate==1.9.6 \
     --hash=sha256:285b194bd64d65617ee2fa8969a40ce790c6b3acf875f94f1d2b0373f3ae691c \
     --hash=sha256:dd8cc1327aa67132299f950e160dd20d314b8cf484f540f0d22f1f07c2d8876b
-certifi==2026.1.4 \
-    --hash=sha256:9943707519e4add1115f44c2bc244f782c0249876bf51b6599fee1ffbedd685c \
-    --hash=sha256:ac726dd470482006e014ad384921ed6438c457018f4b3d204aea4281258b2120
+certifi==2026.2.25 \
+    --hash=sha256:027692e4402ad994f1c42e52a4997a9763c646b73e4096e4d5d6db8af1d6f0fa \
+    --hash=sha256:e887ab5cee78ea814d3472169153c2d12cd43b14bd03329a39a9c6e2e80bfba7
     # via requests
 charset-normalizer==3.4.4 \
     --hash=sha256:027f6de494925c0ab2a55eab46ae5129951638a49a34d87f4c3eda90f696b4ad \
@@ -142,8 +142,8 @@ cuda-bindings==12.9.4 ; platform_machine == 'x86_64' and sys_platform == 'linux'
     --hash=sha256:d80bffc357df9988dca279734bc9674c3934a654cab10cadeed27ce17d8635ee \
     --hash=sha256:fda147a344e8eaeca0c6ff113d2851ffca8f7dfc0a6c932374ee5c47caa649c8
     # via torch
-cuda-pathfinder==1.3.4 ; platform_machine == 'x86_64' and sys_platform == 'linux' \
-    --hash=sha256:fb983f6e0d43af27ef486e14d5989b5f904ef45cedf40538bfdcbffa6bb01fb2
+cuda-pathfinder==1.4.0 ; platform_machine == 'x86_64' and sys_platform == 'linux' \
+    --hash=sha256:437079ca59e7b61ae439ecc501d69ed87b3accc34d58153ef1e54815e2c2e118
     # via cuda-bindings
 filelock==3.24.3 \
     --hash=sha256:011a5644dc937c22699943ebbfc46e969cdde3e171470a6e40b9533e5a72affa \
