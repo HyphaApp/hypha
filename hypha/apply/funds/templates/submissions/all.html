@@ -8,7 +8,7 @@
 {% block hero %}
     <c-hero>
         <c-hero.header
-            title="{% trans 'All Submissions' %}<span class='submissions-count'> ({{ page.paginator.count }})</span>"
+            title="{% trans 'All Submissions' %}"
             subtitle="{% trans 'Search and filter all submissions' %}"
         >
             <div class="self-end -mb-4">
@@ -39,6 +39,7 @@
 
 {% block content %}{% spaceless %}
     <div class="flex gap-2 justify-between items-center mt-4 md:gap-4">
+        <span class="badge badge-info badge-soft badge-lg ms-3" title="{% trans "Submission count" %}">{{ page.paginator.count }}</span>
         <form
             class="flex gap-2 justify-between items-center w-full md:gap-4"
             hx-trigger="change"
