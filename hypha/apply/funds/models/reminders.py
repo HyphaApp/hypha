@@ -44,6 +44,8 @@ class Reminder(models.Model):
 
     class Meta:
         ordering = ["-time"]
+        verbose_name = _("reminder")
+        verbose_name_plural = _("reminders")
 
     def clean(self):
         if self.title == "":
