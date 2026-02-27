@@ -233,6 +233,10 @@ class SubmissionExportManager(models.Model):
 
     total_export = models.IntegerField(null=True)
 
+    class Meta:
+        verbose_name = _("submission export manager")
+        verbose_name_plural = _("submission export managers")
+
     def set_completed_and_save(self) -> None:
         """Sets the status to completed and saves the object"""
         self.status = "success"

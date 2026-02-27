@@ -3,6 +3,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 
 
 class Flag(models.Model):
@@ -25,3 +26,7 @@ class Flag(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
     )
+
+    class Meta:
+        verbose_name = pgettext_lazy("computing", "flag")
+        verbose_name_plural = pgettext_lazy("computing", "flags")

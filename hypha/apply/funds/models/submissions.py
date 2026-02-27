@@ -536,6 +536,8 @@ class ApplicationSubmission(
         indexes = [
             GinIndex(fields=["search_document"]),
         ]
+        verbose_name = _("application submission")
+        verbose_name_plural = _("application submissions")
 
     @property
     def is_draft(self):

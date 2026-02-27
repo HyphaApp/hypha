@@ -27,6 +27,10 @@ class ReviewerRole(models.Model):
         FieldPanel("order"),
     ]
 
+    class Meta:
+        verbose_name = _("reviewer role")
+        verbose_name_plural = _("reviewer roles")
+
     def icon_url(self, filter_spec):
         return generate_image_url(self.icon, filter_spec)
 

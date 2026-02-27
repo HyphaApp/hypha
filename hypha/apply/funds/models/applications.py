@@ -168,6 +168,10 @@ class ApplicationBase(EmailForm, WorkflowStreamForm, AsJsonMixin):  # type: igno
 
     parent_page_types = ["apply_home.ApplyHomePage"]
 
+    class Meta:
+        verbose_name = _("application base")
+        verbose_name_plural = _("application bases")
+
     def get_template(self, request, *args, **kwargs):
         # We want to force children to use our base template
         # template attribute is ignored by children
@@ -344,6 +348,10 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             ObjectList(SubmittableStreamForm.promote_panels, heading=_("Promote")),
         ]
     )
+
+    class Meta:
+        verbose_name = _("round base")
+        verbose_name_plural = _("round bases")
 
     def get_template(self, request, *args, **kwargs):
         # Make sure all children use the shared template
@@ -683,6 +691,10 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm, AsJsonMixin)
         ]
     )
 
+    class Meta:
+        verbose_name = _("lab base")
+        verbose_name_plural = _("lab bases")
+
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
             page=self,
@@ -857,6 +869,8 @@ class RoundsAndLabs(Page):
 
     class Meta:
         proxy = True
+        verbose_name = _("round and lab")
+        verbose_name_plural = _("rounds and labs")
 
     def __eq__(self, other):
         # This is one way equality RoundAndLab == Round/Lab

@@ -53,6 +53,8 @@ class CoApplicantInvite(models.Model):
 
     class Meta:
         unique_together = ("submission", "invited_user_email")
+        verbose_name = _("co-applicant invite")
+        verbose_name_plural = _("co-applicant invites")
 
     def __str__(self):
         return f"{self.invited_user_email} invited to {self.submission})"
@@ -78,6 +80,8 @@ class CoApplicant(models.Model):
 
     class Meta:
         unique_together = ("submission", "user")
+        verbose_name = _("co-applicant")
+        verbose_name_plural = _("co-applicants")
 
     def __str__(self):
         return self.user.get_display_name()
