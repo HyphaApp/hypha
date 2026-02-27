@@ -317,6 +317,9 @@ class ReportConfig(models.Model):
     def past_due_reports(self):
         return self.project.reports.to_do()
 
+    def submitted_reports(self):
+        return self.project.reports.submitted()
+
     def last_report(self):
         today = timezone.now().date()
         # Get the most recent report that was either:
