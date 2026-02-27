@@ -18,6 +18,10 @@ class Option(Orderable):
     value = models.CharField(max_length=255)
     category = ParentalKey("Category", related_name="options")
 
+    class Meta:
+        verbose_name = _("option")
+        verbose_name_plural = _("options")
+
     def __str__(self):
         return self.value
 
@@ -46,6 +50,7 @@ class Category(ClusterableModel):
         return self.name
 
     class Meta:
+        verbose_name = _("Category")
         verbose_name_plural = _("Categories")
 
 

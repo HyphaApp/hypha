@@ -28,7 +28,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.html import strip_tags
-from django.utils.translation import gettext
+from django.utils.translation import gettext, pgettext_lazy
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
@@ -294,6 +294,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     wagtail_reference_index_ignore = True
 
+    class Meta:
+        verbose_name = _("project")
+        verbose_name_plural = _("projects")
+
     def __str__(self):
         return self.title
 
@@ -505,6 +509,11 @@ class ProjectSOW(BaseStreamForm, AccessFormData, models.Model):
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
     form_fields = StreamField(ProjectFormCustomFormFieldsBlock(), null=True)
 
+    class Meta:
+        # Translators: SOW = Statement of Work
+        verbose_name = pgettext_lazy("singular", "project SOW")
+        verbose_name_plural = pgettext_lazy("plural", "project SOW")
+
 
 class ProjectBaseStreamForm(BaseStreamForm, models.Model):
     name = models.CharField(max_length=255)
@@ -525,11 +534,15 @@ class ProjectBaseStreamForm(BaseStreamForm, models.Model):
 class ProjectForm(ProjectBaseStreamForm):
     class Meta:
         db_table = "project_form"
+        verbose_name = _("project form")
+        verbose_name_plural = _("project forms")
 
 
 class ProjectSOWForm(ProjectBaseStreamForm):
     class Meta:
         db_table = "project_sow_form"
+        verbose_name = _("project SOW form")
+        verbose_name_plural = _("project SOW forms")
 
 
 class ProjectReportForm(ProjectBaseStreamForm):
@@ -540,7 +553,9 @@ class ProjectReportForm(ProjectBaseStreamForm):
     See Also ReportVersion where the fields from the form get copied and the response data gets filled in.
     """
 
-    pass
+    class Meta:
+        verbose_name = _("project report form")
+        verbose_name_plural = _("project report forms")
 
 
 class PAFReviewersRole(Orderable, ClusterableModel):
@@ -559,6 +574,10 @@ class PAFReviewersRole(Orderable, ClusterableModel):
         FieldPanel("label"),
         FieldPanel("user_roles", widget=forms.CheckboxSelectMultiple),
     ]
+
+    class Meta:
+        verbose_name = _("PAF reviewers role")
+        verbose_name_plural = _("PAF reviewers roles")
 
     def __str__(self):
         return str(self.label)
@@ -582,6 +601,10 @@ class ProjectReminderFrequency(Orderable, ClusterableModel):
         FieldPanel("reminder_days", heading=_("Number of days")),
         FieldPanel("relation", heading=_("Relation to report due date")),
     ]
+
+    class Meta:
+        verbose_name = _("project reminder frequency")
+        verbose_name_plural = _("project reminder frequencies")
 
 
 @register_setting
@@ -625,6 +648,9 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
         ),
     ]
 
+    class Meta:
+        verbose_name = _("project settings")
+
 
 class PAFApprovals(models.Model):
     project = models.ForeignKey(
@@ -648,6 +674,8 @@ class PAFApprovals(models.Model):
     class Meta:
         unique_together = ["project", "paf_reviewer_role"]
         ordering = ["paf_reviewer_role__sort_order"]
+        verbose_name = _("PAF approval")
+        verbose_name_plural = _("PAF approvals")
 
     def __str__(self):
         return _("Approval of {project} by {user}").format(
@@ -690,6 +718,10 @@ class Contract(models.Model):
 
     objects = ContractQuerySet.as_manager()
 
+    class Meta:
+        verbose_name = _("contract")
+        verbose_name_plural = _("contracts")
+
     def save(self, *args, **kwargs):
         self.updated_at = timezone.now()
         return super().save(*args, **kwargs)
@@ -729,6 +761,8 @@ class PacketFile(models.Model):
 
     class Meta:
         ordering = ("-created_at",)
+        verbose_name = _("packet files")
+        verbose_name_plural = _("packet files")
 
 
 @receiver(post_delete, sender=PacketFile)
@@ -753,6 +787,10 @@ class ContractPacketFile(models.Model):
         upload_to=contract_document_path, storage=PrivateStorage()
     )
     created_at = models.DateField(auto_now_add=True, null=True)
+
+    class Meta:
+        verbose_name = _("contract packet file")
+        verbose_name_plural = _("contract packet files")
 
     def __str__(self):
         return _("Contract file: {title}").format(title=self.title)
