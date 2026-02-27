@@ -3,6 +3,7 @@ from os import path
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 
 from .widgets import AddressWidget
 
@@ -49,7 +50,7 @@ class AddressField(forms.CharField):
         try:
             country_data = self.data[country]
         except KeyError:
-            raise ValidationError("Invalid country selected") from None
+            raise ValidationError(_("Invalid country selected")) from None
 
         fields = flatten_data(country_data["fields"])
 
@@ -59,7 +60,7 @@ class AddressField(forms.CharField):
         if missing_fields:
             missing_field_name = [fields[field]["label"] for field in missing_fields]
             raise ValidationError(
-                "Please provide data for: {}".format(", ".join(missing_field_name))
+                _("Please provide data for: {}").format(", ".join(missing_field_name))
             )
 
         return super().clean(value, **kwargs)

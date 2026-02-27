@@ -24,7 +24,7 @@
         >
             <a
                 href="{% url 'users:account' %}"
-                title="Goto your account"
+                title="{% trans 'Goto your account' %}"
                 class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
             >
                 {% heroicon_outline "user" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
@@ -33,7 +33,7 @@
             {% if request.user.is_apply_staff %}
                 <a
                     href="{% url 'activity:notifications' %}"
-                    title="Check latest notifications"
+                    title="{% trans 'Check latest notifications' %}"
                     class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
                 >
                     {% heroicon_outline "bolt" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
@@ -41,7 +41,7 @@
                 </a>
                 <a
                     href="{% url "apply:submissions:list" %}?query=flagged:@me"
-                    title="Goto your flagged submissions"
+                    title="{% trans 'Goto your flagged submissions' %}"
                     class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
                 >
                     {% heroicon_outline "flag" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
@@ -50,7 +50,7 @@
                 {% if perms.wagtailadmin.access_admin %}
                     <a
                         href="{% url 'wagtailadmin_home' %}"
-                        title="Goto wagtail admin"
+                        title="{% trans 'Goto wagtail admin' %}"
                         class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
                     >
                         {% heroicon_outline "cog-6-tooth" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
@@ -88,7 +88,7 @@
             <hr />
             <form id="logout-form" method="post" action="{% url 'users:logout' %}">
                 {% csrf_token %}
-                <button class="block py-2 px-3 w-full font-semibold text-center transition-all cursor-pointer hover:font-semibold text-error border-x hover:bg-error/10 focus-visible:outline-dashed" title="Log out" type="submit">{% trans "Log out" %}</button>
+                <button class="block py-2 px-3 w-full font-semibold text-center transition-all cursor-pointer hover:font-semibold text-error border-x hover:bg-error/10 focus-visible:outline-dashed" title="{% trans 'Log out' %}" type="submit">{% trans "Log out" %}</button>
             </form>
         </div>
     </div>

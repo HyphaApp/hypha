@@ -13,7 +13,7 @@
         <span>
             {{ task.text|nh3 }}
 
-            {% if task.type == "Draft" %}
+            {% if task.type == _("Draft") %}
                 <span class="badge badge-sm badge-warning">{{ task.type }}</span>
             {% endif %}
         </span>

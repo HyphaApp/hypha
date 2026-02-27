@@ -8,12 +8,15 @@
             {% heroicon_outline "exclamation-triangle" class="w-6 h-6 text-error" stroke_width="1.5" aria_hidden="true" %}
         </div>
         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-            <h3 class="text-base font-semibold leading-6 text-base-content" id="modal-title">Archive Submission</h3>
+            <h3 class="text-base font-semibold leading-6 text-base-content" id="modal-title">
+                {% trans "Archive Submission" %}
+            </h3>
             <div class="mt-2">
                 <p class="text-sm text-fg-muted">
-                    {% blocktrans %}
-                        Are you sure you want to archive submission? Archived submissions will be hidden from the
-                        main list of submissions and can not be edited.
+                    {% blocktrans trimmed %}
+                        Are you sure you want to archive submission?
+                        Archived submissions will be hidden from the main list of submissions
+                        and can not be edited.
                     {% endblocktrans %}
                 </p>
             </div>

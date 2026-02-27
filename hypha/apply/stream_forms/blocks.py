@@ -217,7 +217,7 @@ class GroupToggleBlock(FormFieldBlock):
     required = BooleanBlock(label=_("Required"), default=True, required=False)
     choices = ListBlock(
         CharBlock(label=_("Choice")),
-        help_text=(
+        help_text=_(
             "Please create only two choices for toggle. "
             "First choice will revel the group and the second hide it. "
             "Additional choices will be ignored."
@@ -230,7 +230,7 @@ class GroupToggleBlock(FormFieldBlock):
     class Meta:
         label = _("Group fields")
         icon = "group"
-        help_text = "Remember to end group using Group fields end block."
+        help_text = _("Remember to end group using Group fields end block.")
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
@@ -241,8 +241,8 @@ class GroupToggleBlock(FormFieldBlock):
             field_choices = field_choices[:2]
         elif total_choices < 2:
             field_choices = [
-                ("yes", "Yes"),
-                ("no", "No"),
+                ("yes", _("Yes")),
+                ("no", _("No")),
             ]
         kwargs["choices"] = field_choices
         return kwargs
@@ -250,9 +250,9 @@ class GroupToggleBlock(FormFieldBlock):
 
 class GroupToggleEndBlock(StaticBlock):
     class Meta:
-        label = "Group fields end"
+        label = _("Group fields end")
         icon = "group"
-        admin_text = "End of Group fields Block"
+        admin_text = _("End of Group fields Block")
 
 
 class DropdownFieldBlock(RadioButtonsFieldBlock):

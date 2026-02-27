@@ -28,6 +28,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.html import strip_tags
+from django.utils.translation import gettext, pgettext_lazy
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
@@ -71,8 +72,8 @@ def contract_document_path(instance, filename):
 APPROVE = "approve"
 REQUEST_CHANGE = "request_change"
 PAF_STATUS_CHOICES = (
-    (APPROVE, "Approve"),
-    (REQUEST_CHANGE, "Request changes or more information"),
+    (APPROVE, _("Approve")),
+    (REQUEST_CHANGE, _("Request changes or more information")),
 )
 
 DRAFT = "draft"
@@ -209,15 +210,19 @@ class ProjectQuerySet(models.QuerySet):
                     .order_by("end_date")
                     .annotate(
                         report_status=Case(
-                            When(draft__isnull=False, then=Value("In progress")),
-                            When(current__isnull=False, then=Value("Submitted")),
-                            default=Value("Not started"),
+                            When(
+                                draft__isnull=False, then=Value(gettext("In progress"))
+                            ),
+                            When(
+                                current__isnull=False, then=Value(gettext("Submitted"))
+                            ),
+                            default=Value(gettext("Not started")),
                         )
                     )
                     .values("report_status")[:1],
                     output_field=models.CharField(),
                 ),
-                Value("Not started"),
+                Value(gettext("Not started")),
             ),
         )
 
@@ -260,7 +265,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     is_locked = models.BooleanField(default=False)
 
     submitted_contract_documents = models.BooleanField(
-        "Submit Contracting Documents", default=False
+        _("Submit Contracting Documents"), default=False
     )
 
     activities = GenericRelation(
@@ -273,21 +278,25 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     external_projectid = models.CharField(
         max_length=30,
         blank=True,
-        help_text="ID of this project at integrated payment service.",
+        help_text=_("ID of this project at integrated payment service."),
     )
     external_project_information = models.JSONField(
         default=dict,
-        help_text="More details of the project integrated at payment service.",
+        help_text=_("More details of the project integrated at payment service."),
     )
     sent_to_compliance_at = models.DateTimeField(null=True)
 
     paf_reviews_meta_data = models.JSONField(
-        default=dict, help_text="Reviewers role and their actions/comments"
+        default=dict, help_text=_("Reviewers role and their actions/comments")
     )
 
     objects = ProjectQuerySet.as_manager()
 
     wagtail_reference_index_ignore = True
+
+    class Meta:
+        verbose_name = _("project")
+        verbose_name_plural = _("projects")
 
     def __str__(self):
         return self.title
@@ -500,6 +509,11 @@ class ProjectSOW(BaseStreamForm, AccessFormData, models.Model):
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
     form_fields = StreamField(ProjectFormCustomFormFieldsBlock(), null=True)
 
+    class Meta:
+        # Translators: SOW = Statement of Work
+        verbose_name = pgettext_lazy("singular", "project SOW")
+        verbose_name_plural = pgettext_lazy("plural", "project SOW")
+
 
 class ProjectBaseStreamForm(BaseStreamForm, models.Model):
     name = models.CharField(max_length=255)
@@ -520,11 +534,15 @@ class ProjectBaseStreamForm(BaseStreamForm, models.Model):
 class ProjectForm(ProjectBaseStreamForm):
     class Meta:
         db_table = "project_form"
+        verbose_name = _("project form")
+        verbose_name_plural = _("project forms")
 
 
 class ProjectSOWForm(ProjectBaseStreamForm):
     class Meta:
         db_table = "project_sow_form"
+        verbose_name = _("project SOW form")
+        verbose_name_plural = _("project SOW forms")
 
 
 class ProjectReportForm(ProjectBaseStreamForm):
@@ -535,7 +553,9 @@ class ProjectReportForm(ProjectBaseStreamForm):
     See Also ReportVersion where the fields from the form get copied and the response data gets filled in.
     """
 
-    pass
+    class Meta:
+        verbose_name = _("project report form")
+        verbose_name_plural = _("project report forms")
 
 
 class PAFReviewersRole(Orderable, ClusterableModel):
@@ -554,6 +574,10 @@ class PAFReviewersRole(Orderable, ClusterableModel):
         FieldPanel("label"),
         FieldPanel("user_roles", widget=forms.CheckboxSelectMultiple),
     ]
+
+    class Meta:
+        verbose_name = _("PAF reviewers role")
+        verbose_name_plural = _("PAF reviewers roles")
 
     def __str__(self):
         return str(self.label)
@@ -578,16 +602,20 @@ class ProjectReminderFrequency(Orderable, ClusterableModel):
         FieldPanel("relation", heading=_("Relation to report due date")),
     ]
 
+    class Meta:
+        verbose_name = _("project reminder frequency")
+        verbose_name_plural = _("project reminder frequencies")
+
 
 @register_setting
 class ProjectSettings(BaseSiteSetting, ClusterableModel):
     contracting_gp_email = models.TextField(
-        "Contracting Group Email", null=True, blank=True
+        _("Contracting Group Email"), null=True, blank=True
     )
-    finance_gp_email = models.TextField("Finance Group Email", null=True, blank=True)
-    staff_gp_email = models.TextField("Staff Group Email", null=True, blank=True)
+    finance_gp_email = models.TextField(_("Finance Group Email"), null=True, blank=True)
+    staff_gp_email = models.TextField(_("Staff Group Email"), null=True, blank=True)
     paf_approval_sequential = models.BooleanField(
-        default=True, help_text="Uncheck it to approve project parallelly"
+        default=True, help_text=_("Uncheck it to approve project parallelly")
     )
 
     panels = [
@@ -597,7 +625,7 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
         MultiFieldPanel(
             [
                 FieldPanel(
-                    "paf_approval_sequential", heading="Approve Project Sequentially"
+                    "paf_approval_sequential", heading=_("Approve Project Sequentially")
                 ),
                 InlinePanel(
                     "paf_reviewers_roles", label=_("Project Form Reviewers Roles")
@@ -619,6 +647,9 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
             ),
         ),
     ]
+
+    class Meta:
+        verbose_name = _("project settings")
 
 
 class PAFApprovals(models.Model):
@@ -643,6 +674,8 @@ class PAFApprovals(models.Model):
     class Meta:
         unique_together = ["project", "paf_reviewer_role"]
         ordering = ["paf_reviewer_role__sort_order"]
+        verbose_name = _("PAF approval")
+        verbose_name_plural = _("PAF approvals")
 
     def __str__(self):
         return _("Approval of {project} by {user}").format(
@@ -674,9 +707,9 @@ class Contract(models.Model):
 
     file = models.FileField(upload_to=contract_path, storage=PrivateStorage())
 
-    signed_and_approved = models.BooleanField("Signed and approved", default=False)
+    signed_and_approved = models.BooleanField(_("Signed and approved"), default=False)
 
-    signed_by_applicant = models.BooleanField("Counter Signed?", default=False)
+    signed_by_applicant = models.BooleanField(_("Counter Signed?"), default=False)
     uploaded_by_contractor_at = models.DateTimeField(null=True)
     uploaded_by_applicant_at = models.DateTimeField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -684,6 +717,10 @@ class Contract(models.Model):
     updated_at = models.DateTimeField(null=True)
 
     objects = ContractQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = _("contract")
+        verbose_name_plural = _("contracts")
 
     def save(self, *args, **kwargs):
         self.updated_at = timezone.now()
@@ -724,6 +761,8 @@ class PacketFile(models.Model):
 
     class Meta:
         ordering = ("-created_at",)
+        verbose_name = _("packet files")
+        verbose_name_plural = _("packet files")
 
 
 @receiver(post_delete, sender=PacketFile)
@@ -748,6 +787,10 @@ class ContractPacketFile(models.Model):
         upload_to=contract_document_path, storage=PrivateStorage()
     )
     created_at = models.DateField(auto_now_add=True, null=True)
+
+    class Meta:
+        verbose_name = _("contract packet file")
+        verbose_name_plural = _("contract packet files")
 
     def __str__(self):
         return _("Contract file: {title}").format(title=self.title)
@@ -775,7 +818,8 @@ class DocumentCategory(models.Model):
 
     class Meta:
         ordering = ("-required", "name")
-        verbose_name_plural = "Project Document Categories"
+        verbose_name = _("Document Category")
+        verbose_name_plural = _("Project Document Categories")
 
     panels = [
         FieldPanel("name"),
@@ -808,7 +852,8 @@ class ContractDocumentCategory(models.Model):
 
     class Meta:
         ordering = ("-required", "name")
-        verbose_name_plural = "Contract Document Categories"
+        verbose_name = _("Contrat Document Category")
+        verbose_name_plural = _("Contract Document Categories")
 
     panels = [
         FieldPanel("name"),

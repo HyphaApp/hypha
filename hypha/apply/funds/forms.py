@@ -408,7 +408,7 @@ class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
     meta_terms = GroupedModelMultipleChoiceField(
         queryset=None,  # updated in init method
         widget=MetaTermWidget(
-            attrs={"data-placeholder": "Select...", "data-js-choices": ""}
+            attrs={"data-placeholder": _("Select..."), "data-js-choices": ""}
         ),
         label=_("Tags"),
         choices_groupby="get_parent",
@@ -462,9 +462,9 @@ class CreateReminderForm(forms.ModelForm):
 
 
 class InviteCoApplicantForm(forms.ModelForm):
-    invited_user_email = forms.EmailField(required=True, label="Email")
+    invited_user_email = forms.EmailField(required=True, label=_("Email"))
     role = forms.ChoiceField(
-        choices=CoApplicantRole.choices, label="Role", required=False
+        choices=CoApplicantRole.choices, label=_("Role"), required=False
     )
     project_permission = forms.MultipleChoiceField(
         choices=CoApplicantProjectPermission.choices,
@@ -497,7 +497,7 @@ class InviteCoApplicantForm(forms.ModelForm):
 
 class EditCoApplicantForm(forms.ModelForm):
     role = forms.ChoiceField(
-        choices=CoApplicantRole.choices, label="Role", required=False
+        choices=CoApplicantRole.choices, label=_("Role"), required=False
     )
     project_permission = forms.MultipleChoiceField(
         choices=CoApplicantProjectPermission.choices,

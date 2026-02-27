@@ -115,7 +115,7 @@ class Invoice(models.Model):
     message_for_pm = models.TextField(
         blank=True,
         verbose_name=_("Comment"),
-        help_text="This will be displayed as a comment in the comments tab",
+        help_text=_("This will be displayed as a comment in the comments tab"),
     )
     comment = models.TextField(blank=True)
     invoice_number = models.CharField(
@@ -138,6 +138,10 @@ class Invoice(models.Model):
     objects = InvoiceQueryset.as_manager()
 
     wagtail_reference_index_ignore = True
+
+    class Meta:
+        verbose_name = _("invoice")
+        verbose_name_plural = _("invoices")
 
     def __str__(self):
         return _("Invoice requested for {project}").format(project=self.project)
@@ -286,6 +290,10 @@ class SupportingDocument(models.Model):
         on_delete=models.CASCADE,
         related_name="supporting_documents",
     )
+
+    class Meta:
+        verbose_name = _("supporting document")
+        verbose_name_plural = _("supporting documents")
 
     def __str__(self):
         return "{invoice}".format(invoice=self.invoice) + " -> " + self.document.name

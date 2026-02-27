@@ -15,7 +15,11 @@
     <details class="border collapse collapse-arrow bg-base-100 border-base-300">
         <summary class="font-semibold collapse-title">
             <span>
-                {% trans "Determining" %} {{ submissions.count }} {% trans "submission" %}{{ submissions.count|pluralize }} {% trans "as" %} "{{ action_name }}"
+                {% blocktrans count submission_count=submissions.count trimmed %}
+                    Determining {{ submission_count }} submission as "{{ action_name }}"
+                {% plural %}
+                    Determining {{ submission_count }} submissions as "{{ action_name }}"
+                {% endblocktrans %}
             </span>
         </summary>
         <div class="text-sm collapse-content prose">

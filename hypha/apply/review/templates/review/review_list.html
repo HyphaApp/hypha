@@ -28,7 +28,7 @@
                     {% for answer in answers.answers %}
                         {% if forloop.parentloop.first %}
                             <th class="reviews-list__th reviews-list__th--author">{{ answer|safe }}</th>
-                        {% elif answers.question == "Opinions"%}
+                        {% elif answers.question == _("Opinions") %}
                             <td class="reviews-list__td">{{ answer }}</td>
                         {% else %}
                             <td class="reviews-list__td">{{ answer|nh3 }}</td>

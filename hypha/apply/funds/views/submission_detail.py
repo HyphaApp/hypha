@@ -12,6 +12,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.text import slugify
+from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic import (
     DetailView,
@@ -319,7 +320,7 @@ class SubmissionDetailPDFView(SingleObjectMixin, View):
         context["round"] = self.object.round
         context["lead"] = self.object.lead
         context["show_header"] = True
-        context["header_title"] = "Submission details"
+        context["header_title"] = _("Submission details")
         template_path = "funds/submission-pdf.html"
         return render_as_pdf(
             request=request,

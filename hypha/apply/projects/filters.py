@@ -21,8 +21,8 @@ from .models.project import (
 User = get_user_model()
 
 REPORTING_CHOICES = (
-    (0, "Up to date"),
-    (1, "Behind schedule"),
+    (0, _("Up to date")),
+    (1, _("Behind schedule")),
 )
 
 
@@ -63,7 +63,7 @@ class ProjectListFilter(filters.FilterSet):
         choices=REPORTING_CHOICES,
         method="filter_reporting",
         field_name="reporting",
-        label="Reporting",
+        label=_("Reporting"),
     )
 
     class Meta:

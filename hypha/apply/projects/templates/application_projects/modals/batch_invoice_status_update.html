@@ -5,7 +5,7 @@
     <details class="border collapse collapse-arrow bg-base-100 border-base-300">
         <summary class="font-semibold collapse-title">
             <span class="batch-title-count">
-                {% blocktrans count counter=invoices|length %}
+                {% blocktrans count counter=invoices|length trimmed %}
                     {{ counter }} invoice selected
                 {% plural %}
                     {{ counter }} invoices selected

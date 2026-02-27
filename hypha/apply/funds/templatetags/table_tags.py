@@ -2,6 +2,7 @@ import copy
 import math
 
 from django import forms, template
+from django.utils.translation import gettext as _
 from django_filters.fields import DateRangeField
 
 from hypha.apply.categories.models import MetaTerm
@@ -60,7 +61,7 @@ def get_field_choices(form, field_name):
 
 @register.filter
 def get_dropdown_heading(field):
-    return f"Filter by {field.label}"
+    return _("Filter by {label}").format(label=field.label)
 
 
 @register.filter

@@ -111,28 +111,28 @@ class CustomFormFieldsBlock(StreamBlock):
         all_errors = []
         if missing:
             all_errors.append(
-                "You are missing the following required fields: {}".format(
+                _("You are missing the following required fields: {}").format(
                     ", ".join(prettify_names(missing))
                 )
             )
 
         if duplicates:
             all_errors.append(
-                "The following fields must be included only once: {}".format(
+                _("The following fields must be included only once: {}").format(
                     ", ".join(prettify_names(duplicates))
                 )
             )
             for i, block_name in enumerate(block_types):
                 if block_name in duplicates:
-                    self.add_error_to_child(error_dict, i, "info", "Duplicate field")
+                    self.add_error_to_child(error_dict, i, "info", _("Duplicate field"))
 
         for block in value:
             if hasattr(block.block, "child_blocks"):
                 for child_block_name, child_block in block.block.child_blocks.items():
                     if child_block.required and not block.value[child_block_name]:
                         all_errors.append(
-                            "{} cannot be empty for {}".format(
-                                child_block.label, block.block.label
+                            _("{child} cannot be empty for {parent}").format(
+                                child=child_block.label, parent=block.block.label
                             )
                         )
                     if (
@@ -142,8 +142,9 @@ class CustomFormFieldsBlock(StreamBlock):
                         for child_value in block.value[child_block_name]:
                             if not child_value:
                                 all_errors.append(
-                                    "{} cannot be empty for {}".format(
-                                        child_block.label, block.block.label
+                                    _("{child} cannot be empty for {parent}").format(
+                                        child=child_block.label,
+                                        parent=block.block.label,
                                     )
                                 )
 
@@ -187,7 +188,7 @@ class SingleIncludeStatic(StaticBlock):
         super().__init__(*args, **kwargs)
 
     class Meta:
-        admin_text = "Must be included in the form only once."
+        admin_text = _("Must be included in the form only once.")
 
     def render_form(self, *args, **kwargs):
         errors = kwargs.pop("errors")
@@ -211,10 +212,8 @@ class SingleIncludeStatic(StaticBlock):
 
 class SingleIncludeMixin:
     def __init__(self, *args, **kwargs):
-        info_name = (
-            f"{self._meta_class.label} Field"
-            if self._meta_class.label
-            else f"{self.name.title()} Field"
+        info_name = _("{} Field").format(
+            self._meta_class.label if self._meta_class.label else self.name.title()
         )
         child_blocks = [
             ("info", SingleIncludeStatic(label=info_name, description=self.description))

@@ -43,7 +43,9 @@
             {% if show_banner %}
                 <div class="mb-4 alert alert-warning">
                     {% display_project_status object request.user as project_status %}
-                    {% blocktrans with status=project_status %} This project is in {{ status }} state. {% endblocktrans %}
+                    {% blocktrans with status=project_status trimmed %}
+                        This project is in {{ status }} state.
+                    {% endblocktrans %}
                 </div>
             {% endif %}
         {% endblock %}

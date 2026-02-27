@@ -10,13 +10,13 @@ class PDFPageSettings(BaseGenericSetting):
     LEGAL = "legal"
     LETTER = "letter"
     PAGE_SIZES = [
-        (A4, "A4"),
-        (LEGAL, "Legal"),
-        (LETTER, "Letter"),
+        (A4, _("A4")),
+        (LEGAL, _("Legal")),
+        (LETTER, _("Letter")),
     ]
 
     class Meta:
-        verbose_name = "pdf settings"
+        verbose_name = _("pdf settings")
 
     download_page_size = models.CharField(
         choices=PAGE_SIZES,

@@ -6,7 +6,7 @@
       <a
         class="link link-hover"
         href="{% pageurl page %}"
-        title="Click to apply for {{ page.title }}"
+        title="{% blocktrans with title=page.title %}Click to apply for {{ title }}{% endblocktrans %}"
       >
         {{ page.title }}
       </a>
@@ -28,7 +28,7 @@
     <a
       class="btn btn-primary"
       href="{% pageurl page %}"
-      title="Click to apply for {{ page.title }}"
+      title="{% blocktrans with title=page.title %}Click to apply for {{ title }}{% endblocktrans %}"
     >
       {% trans 'Apply' %}
     </a>

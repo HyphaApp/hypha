@@ -100,7 +100,7 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
         """
         rate_choices = list(choices)
         rate_choices.pop(-1)
-        rate_choices.append(("", "n/a - choose not to answer"))
+        rate_choices.append(("", _("n/a - choose not to answer")))
         return tuple(rate_choices)
 
 
@@ -110,7 +110,7 @@ class ReviewMustIncludeFieldBlock(MustIncludeFieldBlock):
 
 class RecommendationBlock(ReviewMustIncludeFieldBlock):
     name = "recommendation"
-    description = "Overall recommendation"
+    description = _("Overall recommendation")
     field_class = forms.ChoiceField
 
     class Meta:
@@ -131,7 +131,7 @@ class RecommendationBlock(ReviewMustIncludeFieldBlock):
 
 class RecommendationCommentsBlock(ReviewMustIncludeFieldBlock):
     name = "comments"
-    description = "Recommendation comments"
+    description = _("Recommendation comments")
     widget = RICH_TEXT_WIDGET_SHORT
 
     class Meta:
@@ -146,7 +146,7 @@ class RecommendationCommentsBlock(ReviewMustIncludeFieldBlock):
 
 class VisibilityBlock(ReviewMustIncludeFieldBlock):
     name = "visibility"
-    description = "Visibility"
+    description = _("Visibility")
     field_class = forms.ChoiceField
     widget = forms.RadioSelect()
 

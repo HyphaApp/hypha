@@ -17,7 +17,13 @@
                 <div class="prose">
                     <p>{% trans "The confirmation link you used is either invalid or has expired." %}</p>
 
-                    <p>{% blocktrans %}Try again to change email from accounts page. If that fails please contact {{ ORG_SHORT_NAME }} at{% endblocktrans %} <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}</a></p>
+                    <p>
+                        {% blocktrans trimmed %}
+                            Try again to change email from accounts page.
+                            If that fails please contact {{ ORG_SHORT_NAME }} at
+                            <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}</a>.
+                        {% endblocktrans %}
+                    </p>
                 </div>
             </div>
         </section>

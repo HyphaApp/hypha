@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 from wagtail.fields import StreamField
 
 from hypha.apply.funds.models.mixins import AccessFormData
@@ -120,6 +121,8 @@ class Report(BaseStreamForm, AccessFormData, models.Model):
     class Meta:
         ordering = ("-end_date",)
         db_table = "application_projects_report"
+        verbose_name = pgettext_lazy("project report (noun)", "report")
+        verbose_name_plural = pgettext_lazy("project report (noun)", "reports")
 
     def get_absolute_url(self):
         return reverse("apply:projects:reports:detail", kwargs={"pk": self.pk})
@@ -198,6 +201,8 @@ class ReportVersion(BaseStreamForm, AccessFormData, models.Model):
 
     class Meta:
         db_table = "application_projects_reportversion"
+        verbose_name = _("report version")
+        verbose_name_plural = _("report versions")
 
     @property
     def form_fields(self):
@@ -212,6 +217,8 @@ class ReportPrivateFiles(models.Model):
 
     class Meta:
         db_table = "application_projects_reportprivatefiles"
+        verbose_name = _("report private file")
+        verbose_name_plural = _("report private files")
 
     @property
     def filename(self):
@@ -252,6 +259,8 @@ class ReportConfig(models.Model):
 
     class Meta:
         db_table = "application_projects_reportconfig"
+        verbose_name = _("report config")
+        verbose_name_plural = _("report configs")
 
     def get_frequency_display(self):
         if self.disable_reporting:

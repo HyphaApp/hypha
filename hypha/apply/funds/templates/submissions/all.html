@@ -324,7 +324,7 @@
                 x-show="!showSelectedSubmissions"
                 class="flex flex-wrap gap-2 items-center menu-filters"
             >
-                <c-dropdown-menu title="Submitted" heading="Filter by submitted date(s)">
+                <c-dropdown-menu title="{% trans 'Submitted' %}" heading="{% trans 'Filter by submitted date(s)' %}">
                     <calendar-range class="mx-auto cally" {% if selected_submitted_date %}value="{{selected_submitted_date}}"{% endif %} onchange="setDateFromPicker(this.value, 'submitted')">
                         {% heroicon_micro "chevron-left" aria_label="Previous" slot="previous" aria_hidden=true size=18 %}
                         {% heroicon_micro "chevron-right" aria_label="Next" slot="next" aria_hidden=true size=18 %}
@@ -332,7 +332,7 @@
                     </calendar-range>
                 </c-dropdown-menu>
 
-                <c-dropdown-menu title="Updated" heading="Filter by updated date(s)">
+                <c-dropdown-menu title="{% trans 'Updated' %}" heading="{% trans 'Filter by updated date(s)' %}">
                     <calendar-range class="mx-auto cally" {% if selected_updated_date %}value="{{selected_updated_date}}"{% endif %} onchange="setDateFromPicker(this.value, 'updated')">
                         {% heroicon_micro "chevron-left" aria_label="Previous" slot="previous" aria_hidden=true size=18 %}
                         {% heroicon_micro "chevron-right" aria_label="Next" slot="next" aria_hidden=true size=18 %}
@@ -340,7 +340,7 @@
                     </calendar-range>
                 </c-dropdown-menu>
 
-                <c-dropdown-menu title="Status" heading="Filter by current status" enable_search=True>
+                <c-dropdown-menu title="{% trans 'Status' %}" heading="{% trans 'Filter by current status' %}" enable_search=True>
                     <ul
                         class="flex overflow-auto flex-col max-h-80 text-gray-700 divide-y"
                         data-filter-list>
@@ -378,7 +378,7 @@
                     <p class="py-2 px-3 m-0 text-fg-muted" data-filter-empty-state hidden>{% trans "No statuses found. Sorry about that." %}</p>
                 </c-dropdown-menu>
 
-                <c-dropdown-menu title="Screening" heading="Filter by screening decision">
+                <c-dropdown-menu title="{% trans 'Screening' %}" heading="{% trans 'Filter by screening decision' %}">
                     <ul
                         class="flex overflow-auto flex-col max-h-80 text-gray-700 divide-y"
                     >
@@ -406,39 +406,39 @@
                 </c-dropdown-menu>
 
 
-                <c-dropdown-menu title="Fund" heading="Filter by Fund & Labs" enable_search=True>
+                <c-dropdown-menu title="{% trans 'Fund' %}" heading="{% trans 'Filter by Fund & Labs' %}" enable_search=True>
                     <c-slot name="url">{% url "apply:submissions:submenu-funds" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
                 </c-dropdown-menu>
 
-                <c-dropdown-menu title="Round" heading="Filter by Round" enable_search=True>
+                <c-dropdown-menu title="{% trans 'Round' %}" heading="{% trans 'Filter by Round' %}" enable_search=True>
                     <c-slot name="url">{% url "apply:submissions:submenu-rounds" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
                 </c-dropdown-menu>
 
                 {% if 'category_options' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                    <c-dropdown-menu title="Category" heading="Filter by Category" enable_search=True>
+                    <c-dropdown-menu title="{% trans 'Category' %}" heading="{% trans 'Filter by Category' %}" enable_search=True>
                         <c-slot name="url">{% url "apply:submissions:submenu-category-options" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
                     </c-dropdown-menu>
                 {% endif %}
 
                 {% if "tags" not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                    <c-dropdown-menu title="Tags" heading="Filter by tags" enable_search=True position="right">
+                    <c-dropdown-menu title="{% trans 'Tags' %}" heading="{% trans 'Filter by tags' %}" enable_search=True position="right">
                         <c-slot name="url">{% url "apply:submissions:submenu-meta-terms" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
                     </c-dropdown-menu>
                 {% endif %}
 
                 {% if 'lead' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                    <c-dropdown-menu title="Lead" heading="Filter by Lead" enable_search=True position="right">
+                    <c-dropdown-menu title="{% trans 'Lead' %}" heading="{% trans 'Filter by Lead' %}" enable_search=True position="right">
                         <c-slot name="url">{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
                     </c-dropdown-menu>
                 {% endif %}
 
                 {% if not request.user.is_reviewer %}
-                    <c-dropdown-menu title="Reviewers" heading="Filter by Reviewer" enable_search=True position="right">
+                    <c-dropdown-menu title="{% trans 'Reviewers' %}" heading="{% trans 'Filter by Reviewer' %}" enable_search=True position="right">
                         <c-slot name="url">{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
                     </c-dropdown-menu>
                 {% endif %}
 
-                <c-dropdown-menu title="Sort" heading="Sort by" position="right" icon="arrows-up-down">
+                <c-dropdown-menu title="{% trans 'Sort' %}" heading="{% trans 'Sort by' %}" position="right" icon="arrows-up-down">
                     {% for sort_option in sort_options %}
                         <a
                             {% if sort_option.selected %}
@@ -466,15 +466,15 @@
                 x-show="showSelectedSubmissions"
                 class="flex flex-row flex-wrap gap-5 items-center selection-actions"
             >
-                <c-dropdown-menu title="Status" heading="Update Status" enable_search=True extra_include="[name='selectedSubmissionIds']" extra_trigger="mouseover, focus">
+                <c-dropdown-menu title="{% trans 'Status' %}" heading="{% trans 'Update Status' %}" enable_search=True extra_include="[name='selectedSubmissionIds']" extra_trigger="mouseover, focus">
                     <c-slot name="url">{% url "apply:submissions:submenu-update-status" %}</c-slot>
                 </c-dropdown-menu>
 
-                <c-dropdown-menu title="Lead" heading="Assign Lead" enable_search=True position="right">
+                <c-dropdown-menu title="{% trans 'Lead' %}" heading="{% trans 'Assign Lead' %}" enable_search=True position="right">
                     <c-slot name="url">{% url "apply:submissions:submenu-bulk-update-lead" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
                 </c-dropdown-menu>
 
-                <c-dropdown-menu title="Reviewers" heading="Assign Reviewer(s)" position="right"  extra_include="[name='selectedSubmissionIds']" extra_trigger="click">
+                <c-dropdown-menu title="{% trans 'Reviewers' %}" heading="{% trans 'Assign Reviewer(s)' %}" position="right"  extra_include="[name='selectedSubmissionIds']" extra_trigger="click">
                     <c-slot name="url">{% url "apply:submissions:submenu-bulk-update-reviewers" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
                 </c-dropdown-menu>
 

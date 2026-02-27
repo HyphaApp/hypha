@@ -5,7 +5,9 @@
         {# For active translations #}
         <div role="alert" class="mb-2 alert alert-info">
             {% heroicon_mini "language" aria_hidden="true" stroke_width=2 class="opacity-80 size-5" %}
-            {% blocktrans %} This application is translated from {{from_lang_name}} to {{to_lang_name}}.{% endblocktrans %}
+            {% blocktrans trimmed %}
+                This application is translated from {{from_lang_name}} to {{to_lang_name}}.
+            {% endblocktrans %}
             <a href="{% url 'funds:submissions:detail' object.id %}" class="btn btn-sm btn-outline">
                 {% trans "See original" %}
             </a>

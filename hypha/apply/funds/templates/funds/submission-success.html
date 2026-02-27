@@ -16,12 +16,16 @@
             {% endif %}
 
         {% else %}
-            <h3>{% blocktrans %}Thank you for your submission to the {{ ORG_LONG_NAME }}.{% endblocktrans %}</h3>
+            <h3>
+                {% blocktrans trimmed %}
+                    Thank you for your submission to the {{ ORG_LONG_NAME }}.
+                {% endblocktrans %}
+            </h3>
 
             <p>{% trans "An e-mail with more information has been sent to the address you entered." %}</p>
 
             <p>
-                {% blocktrans with email=ORG_EMAIL|urlize %}
+                {% blocktrans with email=ORG_EMAIL|urlize trimmed %}
                     If you do not receive an e-mail within 15 minutes
                     please check your spam folder and contact {{ email }}
                     for further assistance.

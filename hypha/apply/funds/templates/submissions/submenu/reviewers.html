@@ -17,11 +17,11 @@
                 {% if user.selected %}
                     href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" reviewers=user.id %}"
                     hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" reviewers=user.id %}"
-                    title="Remove {{ user.title }} from current filters"
+                    title="{% blocktrans with user=user.title %}Remove {{ user }} from current filters{% endblocktrans %}"
                 {% else %}
                     href="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" reviewers=user.id %}"
                     hx-get="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" reviewers=user.id %}"
-                    title="Add {{ user.title }} to current filters"
+                    title="{% blocktrans with user=user.title %}Add {{ user }} to current filters{% endblocktrans %}"
                 {% endif %}
                 hx-push-url="true"
                 class="flex {% if user.selected %}ps-2 font-medium bg-base-200{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200">

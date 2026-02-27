@@ -151,7 +151,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
             "external_review_forms",
             label=_("External Review Forms"),
             max_num=1,
-            help_text="Add a form to be used by external reviewers.",
+            help_text=_("Add a form to be used by external reviewers."),
         ),
         InlinePanel("determination_forms", label=_("Determination Forms")),
     ]
@@ -232,6 +232,10 @@ class SubmissionExportManager(models.Model):
     status = models.CharField(choices=STATUS_CHOICES, default=STATUS_GENERATING)
 
     total_export = models.IntegerField(null=True)
+
+    class Meta:
+        verbose_name = _("submission export manager")
+        verbose_name_plural = _("submission export managers")
 
     def set_completed_and_save(self) -> None:
         """Sets the status to completed and saves the object"""

@@ -59,9 +59,15 @@
         <article class="layout-main">
             {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
                 <h4>{% trans "Congratulations!" %}</h4>
-                <h5>{% blocktrans with stage=object.previous.stage %}Your {{ stage }} application has been accepted.{% endblocktrans %}</h5>
+                <h5>
+                    {% blocktrans with stage=object.previous.stage trimmed %}
+                        Your {{ stage }} application has been accepted.
+                    {% endblocktrans %}
+                </h5>
                 <a class="btn btn-primary" href="{% url 'funds:submissions:edit' object.id %}">
-                    {% blocktrans with stage=object.stage %}Start your {{ stage }} application.{% endblocktrans %}
+                    {% blocktrans with stage=object.stage trimmed %}
+                        Start your {{ stage }} application.
+                    {% endblocktrans %}
                 </a>
             {% else %}
 

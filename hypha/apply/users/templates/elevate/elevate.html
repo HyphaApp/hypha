@@ -10,7 +10,15 @@
         <h2 class="text-2xl text-center">{% trans "Confirm access" %}</h2>
 
         <p class="mb-4 text-center">
-            Signed in as <strong>{% if request.user.full_name %} {{ request.user.full_name }} ({{ request.user.email }}) {% else %}{{ request.user.email }} {% endif %}</strong>
+            {% if request.user.full_name %}
+                {% blocktrans with name=request.user.full_name email=request.user.email trimmed %}
+                    Signed in as <strong>{{ name }}({{ email }})</strong>
+                {% endblocktrans %}
+            {% else %}
+                {% blocktrans with email=request.user.email trimmed %}
+                    Signed in as <strong>{{ email }}</strong>
+                {% endblocktrans %}
+            {% endif %}
         </p>
 
         <section id="section-form">
@@ -67,8 +75,9 @@
 
 
         <p class="mx-auto mt-8 max-w-xs text-xs leading-relaxed text-center text-gray-500">
-            {% blocktrans %}
-                <strong>Tip:</strong> You are entering sudo mode. After you've performed a sudo-protected
+            <strong>{% trans "Tip:" %}</strong>
+            {% blocktrans trimmed %}
+                You are entering sudo mode. After you've performed a sudo-protected
                 action, you'll only be asked to re-authenticate again after a few hours of inactivity.
             {% endblocktrans %}
         </p>

@@ -17,9 +17,9 @@
              aria-labelledby="tab-open-rounds"
              id="panel-open-rounds">
             {% if page_type == 'dashboard' %}
-                {% include "funds/includes/no_round_block_dashboard.html" with rounds=open_rounds display_text="Open until" query=open_query type="Open" %}
+                {% include "funds/includes/no_round_block_dashboard.html" with rounds=open_rounds display_text="Open until" query=open_query type=_("Open") %}
             {% else %}
-                {% include "funds/includes/round-block-listing.html" with can_export=can_export rounds=open_rounds display_text="Open until" query=open_query type="Open" %}
+                {% include "funds/includes/round-block-listing.html" with can_export=can_export rounds=open_rounds display_text=_("Open until") query=open_query type=_("Open") %}
             {% endif %}
         </div>
 
@@ -34,9 +34,9 @@
              aria-labelledby="tab-closed-rounds"
              id="panel-closed-rounds">
             {% if page_type == 'dashboard' %}
-                {% include "funds/includes/no_round_block_dashboard.html" with rounds=closed_rounds display_text="Closed" query=closed_query type="Closed" %}
+                {% include "funds/includes/no_round_block_dashboard.html" with rounds=closed_rounds display_text=_("Closed") query=closed_query type=_("Closed") %}
             {% else %}
-                {% include "funds/includes/round-block-listing.html" with rounds=closed_rounds display_text="Closed" query=closed_query type="Closed" %}
+                {% include "funds/includes/round-block-listing.html" with rounds=closed_rounds display_text=_("Closed") query=closed_query type=_("Closed") %}
             {% endif %}
         </div>
     </div>

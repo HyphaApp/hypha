@@ -105,8 +105,8 @@
                     {% else %}
                         <c-dropdown-menu title=field.label heading=field|get_dropdown_heading position="right">
                             <calendar-range class="mx-auto cally" onchange="updateURL(this.value, '{{field_name}}')" data-field-name='{{field_name}}'>
-                                {% heroicon_micro "chevron-left" aria_label="Previous" slot="previous" aria_hidden=true size=18 %}
-                                {% heroicon_micro "chevron-right" aria_label="Next" slot="next" aria_hidden=true size=18 %}
+                                {% heroicon_micro "chevron-left" aria_label=_("Previous") slot="previous" aria_hidden=true size=18 %}
+                                {% heroicon_micro "chevron-right" aria_label=_("Next") slot="next" aria_hidden=true size=18 %}
                                 <calendar-month></calendar-month>
                             </calendar-range>
                         </c-dropdown-menu>

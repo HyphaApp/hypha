@@ -307,9 +307,9 @@ class ActivityAdapter(AdapterBase):
 
     def handle_skipped_report(self, report, **kwargs):
         if report.skipped:
-            return "Skipped a Report"
+            return _("Skipped a Report")
         else:
-            return "Marked a Report as required"
+            return _("Marked a Report as required")
 
     def handle_update_invoice_status(self, invoice, **kwargs):
         base_message = _("Updated Invoice status to: {invoice_status}.")

@@ -150,7 +150,7 @@ class BaseAdminSubmissionsTable(SubmissionsTable):
     reviews_stats = tables.TemplateColumn(
         template_name="funds/tables/column_reviews.html",
         verbose_name=mark_safe(
-            'Reviews<div>Comp. <span class="counts-separator">/</span> Assgn.</div>'
+            _('Reviews<div>Comp. <span class="counts-separator">/</span> Assgn.</div>')
         ),
         orderable=False,
     )
@@ -435,7 +435,7 @@ class ActiveRoundFilter(MultipleChoiceFilter):
         super().__init__(
             self,
             *args,
-            choices=[("active", "Active"), ("inactive", "Inactive")],
+            choices=[("active", _("Active")), ("inactive", _("Inactive"))],
             **kwargs,
         )
 
@@ -455,7 +455,11 @@ class OpenRoundFilter(MultipleChoiceFilter):
         super().__init__(
             self,
             *args,
-            choices=[("open", "Open"), ("closed", "Closed"), ("new", "Not Started")],
+            choices=[
+                ("open", _("Open")),
+                ("closed", _("Closed")),
+                ("new", _("Not Started")),
+            ],
             **kwargs,
         )
 

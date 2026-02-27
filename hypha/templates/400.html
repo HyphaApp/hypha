@@ -25,7 +25,13 @@
                             {% trans "Bad Request" %}
                         </h1>
                         <div class="mb-6 prose">
-                            <p>{% blocktranslate %}The request could not be understood by the server due to malformed syntax or invalid parameters. Please check your request and try again.{% endblocktranslate %}</p>
+                            <p>
+                                {% blocktranslate trimmed %}
+                                    The request could not be understood by the server due to
+                                    malformed syntax or invalid parameters.
+                                    Please check your request and try again.
+                                {% endblocktranslate %}
+                            </p>
                         </div>
 
                         <div class="card-actions">

@@ -87,6 +87,10 @@ class ReviewForm(ReviewFormFieldsMixin, models.Model):
         FieldPanel("form_fields"),
     ]
 
+    class Meta:
+        verbose_name = _("review form")
+        verbose_name_plural = _("review forms")
+
     def __str__(self):
         return self.name
 
@@ -185,6 +189,8 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
 
     class Meta:
         unique_together = ("author", "submission")
+        verbose_name = _("review")
+        verbose_name_plural = _("reviews")
 
     @property
     def outcome(self):
@@ -244,6 +250,8 @@ class ReviewOpinion(models.Model):
 
     class Meta:
         unique_together = ("author", "review")
+        verbose_name = _("review opinion")
+        verbose_name_plural = _("review opinions")
 
     def __str__(self):
         return f"Review Opinion for {self.review}"

@@ -7,8 +7,10 @@
     </h1>
 
     <p class="mb-2 print:!hidden">
-        {% blocktrans %}You should now print these codes or copy them to your
-            clipboard and store them in your password manager.{% endblocktrans %}
+        {% blocktrans trimmed %}
+            You should now print these codes or copy them to your
+            clipboard and store them in your password manager.
+        {% endblocktrans %}
     </p>
 
     {% if device.token_set.count %}
@@ -42,18 +44,25 @@
             </div>
 
             <p class="mb-2 text-sm text-fg-muted">
-                {% blocktrans trimmed %} <strong>Note:</strong> Each of the code can be used only once. When they are used up, you can generate a new set of backup codes.{% endblocktrans %}
+                <strong>{% trans "Note:" %}</strong>
+                {% blocktrans trimmed %}
+                    Each of the code can be used only once.
+                    When they are used up, you can generate a new set of backup codes.
+                {% endblocktrans %}
             </p>
             <p class="print:!hidden">
-                {% blocktrans %}Once done, acknowledge you have stored the codes securely and then click "Finish".{% endblocktrans %}
+                {% blocktrans trimmed %}
+                    Once done, acknowledge you have stored the codes securely
+                    and then click "Finish".
+                {% endblocktrans %}
             </p>
             <div class="form" x-data="{ agreed: false }" x-cloak>
                 <ul class="hidden errorlist error-action-agree">
-                    <li>Please confirm you have stored the codes securely below.</li>
+                    <li>{% trans 'Please confirm you have stored the codes securely below.' %}</li>
                 </ul>
                 <div class="flex gap-2 items-center my-2 mb-4">
                     <input type="checkbox" id="action_agree" name="action_agree" value="action_agree" class="checkbox" x-model="agreed">
-                    <label for="action_agree"> I have stored the backup codes securely.</label>
+                    <label for="action_agree"> {% trans 'I have stored the backup codes securely.' %}</label>
                 </div>
                 <div>
                     <a
@@ -99,7 +108,7 @@
                     tooltip.show();
                 });
                 clipboard.on('error', function (e) {
-                    tooltip.setContent("Use ctrl/cmd + C to copy the backup codes.")
+                    tooltip.setContent("{% trans 'Use ctrl/cmd + C to copy the backup codes.' %}")
                     tooltip.show();
                 });
             }

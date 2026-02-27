@@ -37,6 +37,7 @@ class FundType(ApplicationBase):
 
     class Meta:
         verbose_name = _("Fund")
+        verbose_name_plural = _("Funds")
 
 
 class RequestForPartners(ApplicationBase):
@@ -44,14 +45,23 @@ class RequestForPartners(ApplicationBase):
 
     class Meta:
         verbose_name = _("RFP")
+        verbose_name_plural = _("RFPs")
 
 
 class Round(RoundBase):
     parent_page_types = ["funds.FundType", "funds.RequestForPartners"]
 
+    class Meta:
+        verbose_name = _("Round")
+        verbose_name_plural = _("Rounds")
+
 
 class SealedRound(RoundBase):
     parent_page_types = ["funds.RequestForPartners"]
+
+    class Meta:
+        verbose_name = _("Sealed round")
+        verbose_name_plural = _("Sealed rounds")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -61,3 +71,4 @@ class SealedRound(RoundBase):
 class LabType(LabBase):
     class Meta:
         verbose_name = _("Lab")
+        verbose_name_plural = _("Labs")
