@@ -25,6 +25,10 @@ class ReviewerRole(models.Model):
         FieldPanel("order"),
     ]
 
+    class Meta:
+        verbose_name = _("reviewer role")
+        verbose_name_plural = _("reviewer roles")
+
     def icon_url(self, filter_spec):
         return self.icon.get_rendition(filter_spec).url
 

@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from wagtail.images.models import AbstractImage, AbstractRendition, Image
 
 
@@ -16,6 +17,10 @@ class CustomImage(AbstractImage):
         "credit",
     )
 
+    class Meta:
+        verbose_name = _("custom image")
+        verbose_name_plural = _("custom images")
+
     # When you save the image, check if alt text has been set. If not, set it as the title.
     def save(self, *args, **kwargs):
         if not self.alt:
@@ -31,3 +36,5 @@ class Rendition(AbstractRendition):
 
     class Meta:
         unique_together = (("image", "filter_spec", "focal_point_key"),)
+        verbose_name = _("rendition")
+        verbose_name_plural = _("renditions")

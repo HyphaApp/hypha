@@ -88,6 +88,10 @@ class DeterminationForm(DeterminationFormFieldsMixin, models.Model):
         FieldPanel("form_fields"),
     ]
 
+    class Meta:
+        verbose_name = _("determination form")
+        verbose_name_plural = _("determination forms")
+
     def __str__(self):
         return self.name
 
@@ -123,6 +127,10 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
     )
 
     objects = DeterminationQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = _("determination")
+        verbose_name_plural = _("determinations")
 
     @property
     def stripped_message(self):
