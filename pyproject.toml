@@ -102,7 +102,7 @@ dependencies = [
 ]
 
 # Requirements for machine translations
-"translate" = ["torch~=2.7", "argostranslate~=1.9.6"]
+"translate" = ["torch~=2.10.0", "argostranslate~=1.11.0"]
 
 [tool.uv]
 default-groups = ["dev", "docs"]
