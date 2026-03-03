@@ -98,12 +98,14 @@ def bulk_covert_to_skeleton_submissions(
 
     Args:
         submissions: queryset of submissions to convert to skeleton applications
-        user: user who is archiving the submissions
+        user: user who is anonymizing the submissions
         request: django request object
 
     Returns:
         QuerySet of submissions that have been archived
     """
+    print("REQUEST PATH")
+    print(request.path)
     ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
     ApplicationSubmissionSkeleton = apps.get_model(
         "funds", "ApplicationSubmissionSkeleton"
@@ -111,7 +113,14 @@ def bulk_covert_to_skeleton_submissions(
 
     # delete NEW_SUBMISSION events for all submissions
     submission_dict_list = submissions.values(
-        "id", "form_data", "page_id", "round_id", "status", "submit_time"
+        "id",
+        "form_data",
+        "page_id",
+        "round_id",
+        "status",
+        "submit_time",
+        "user_id",
+        "screening_statuses",
     )
 
     submission_ids = [x["id"] for x in submission_dict_list]
@@ -120,9 +129,12 @@ def bulk_covert_to_skeleton_submissions(
         type=MESSAGES.NEW_SUBMISSION, object_id__in=submission_ids
     ).delete()
 
+    skeletons = []
     for submission_dict in submission_dict_list:
         if submission_dict["status"] != DRAFT_STATE:
-            ApplicationSubmissionSkeleton.from_dict(submission_dict)
+            skeletons.append(
+                ApplicationSubmissionSkeleton.from_dict(submission_dict, save_user=True)
+            )
 
     # delete submissions
     submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
@@ -144,7 +156,7 @@ def bulk_covert_to_skeleton_submissions(
         sources=submissions,
     )
 
-    return submissions
+    return skeletons
 
 
 def bulk_update_lead(

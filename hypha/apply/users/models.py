@@ -62,6 +62,16 @@ class UserQuerySet(models.QuerySet):
         return self.filter(groups__name=CONTRACTING_GROUP_NAME, is_active=True)
 
     def delete(self, create_skeleton_submissions: bool = False):
+        """Handling the deletion of users
+
+        Deletes the user and deletes/anonymizes their submissions depending on the provided argument
+
+        NOTE: if global setting `SUBMISSION_SKELETONING_ENABLED` is not enabled no submissions will be anonymized
+
+        Args:
+            create_skeleton_submissions: whether or not to anonymize all the user's submissions that aren't drafts.
+
+        """
         submissions_to_skeleton = []
         if create_skeleton_submissions and settings.SUBMISSION_SKELETONING_ENABLED:
             ApplicationSubmissionSkeleton = apps.get_model(
@@ -74,6 +84,7 @@ class UserQuerySet(models.QuerySet):
                     "applicationsubmission__round_id",
                     "applicationsubmission__status",
                     "applicationsubmission__submit_time",
+                    "applicationsubmission__screening_statuses",
                 )
             )
 
@@ -344,6 +355,16 @@ class User(AbstractUser):
     def delete(
         self, create_skeleton_submissions: bool = False, using=None, keep_parents=False
     ):
+        """Handling the deletion of a user
+
+        Deletes the user and deletes/anonymizes their submissions depending on the provided argument
+
+        NOTE: if global setting `SUBMISSION_SKELETONING_ENABLED` is not enabled no submissions will be anonymized
+
+        Args:
+            create_skeleton_submissions: whether or not to anonymize all the user's submissions that aren't drafts.
+
+        """
         submissions_to_skeleton = []
         if create_skeleton_submissions and settings.SUBMISSION_SKELETONING_ENABLED:
             ApplicationSubmissionSkeleton = apps.get_model(
@@ -351,7 +372,12 @@ class User(AbstractUser):
             )
             submissions_to_skeleton = list(
                 self.applicationsubmission_set.values(
-                    "form_data", "page_id", "round_id", "status", "submit_time"
+                    "form_data",
+                    "page_id",
+                    "round_id",
+                    "status",
+                    "submit_time",
+                    "screening_statuses",
                 )
             )
 
