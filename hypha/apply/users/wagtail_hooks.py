@@ -51,7 +51,12 @@ def anonymize_delete_user_submissions(request, user):
 
         submissions_to_skeleton = list(
             user.applicationsubmission_set.exclude_draft().values(
-                "form_data", "page_id", "round_id", "status", "submit_time"
+                "form_data",
+                "page_id",
+                "round_id",
+                "status",
+                "submit_time",
+                "screening_statuses",
             )
         )
 
@@ -80,7 +85,14 @@ def bulk_anonymize_delete_user_submissions(
         submissions_to_skeleton = list(
             ApplicationSubmission.objects.filter(user__in=objects)
             .exclude_draft()
-            .values("form_data", "page_id", "round_id", "status", "submit_time")
+            .values(
+                "form_data",
+                "page_id",
+                "round_id",
+                "status",
+                "submit_time",
+                "screening_statuses",
+            )
         )
 
         for submission_dict in submissions_to_skeleton:
