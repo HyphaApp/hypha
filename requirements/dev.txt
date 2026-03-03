@@ -501,9 +501,9 @@ dj-database-url==3.1.2 \
     # via
     #   django-heroku
     #   hypha
-django==5.2.11 \
-    --hash=sha256:7f2d292ad8b9ee35e405d965fbbad293758b858c34bbf7f3df551aeeac6f02d3 \
-    --hash=sha256:e7130df33ada9ab5e5e929bc19346a20fe383f5454acb2cc004508f242ee92c0
+django==5.2.12 \
+    --hash=sha256:4853482f395c3a151937f6991272540fcbf531464f254a347bf7c89f53c8cff7 \
+    --hash=sha256:6b809af7165c73eff5ce1c87fdae75d4da6520d6667f86401ecf55b681eb1eeb
     # via
     #   dj-database-url
     #   django-anymail
@@ -2215,9 +2215,9 @@ virtualenv==21.1.0 \
     --hash=sha256:164f5e14c5587d170cf98e60378eb91ea35bf037be313811905d3a24ea33cc07 \
     --hash=sha256:1990a0188c8f16b6b9cf65c9183049007375b26aad415514d377ccacf1e4fb44
     # via pre-commit
-wagtail==7.0.5 \
-    --hash=sha256:83851ff26ca451d56b26c4d162eddfe6fa8f876e26acb610d5480c1d042c4c2f \
-    --hash=sha256:e82b4f9ca12d0c64027fd4002581aec42c85d60203091e003036f7b7f1782494
+wagtail==7.0.6 \
+    --hash=sha256:67616060f3336691691a5653c4568fe55e3529baa39559d0dc9add89ade166cc \
+    --hash=sha256:dca609072ce558970b5852fabcbe10dbf4bbbf314a913851814ddb7737ef60fd
     # via
     #   hypha
     #   wagtail-factories
