@@ -726,9 +726,9 @@ faker==40.5.1 \
     --hash=sha256:70222361cd82aa10cb86066d1a4e8f47f2bcdc919615c412045a69c4e6da0cd3 \
     --hash=sha256:c69640c1e13bad49b4bcebcbf1b52f9f1a872b6ea186c248ada34d798f1661bf
     # via factory-boy
-filelock==3.24.3 \
-    --hash=sha256:011a5644dc937c22699943ebbfc46e969cdde3e171470a6e40b9533e5a72affa \
-    --hash=sha256:426e9a4660391f7f8a810d71b0555bce9008b0a1cc342ab1f6947d37639e002d
+filelock==3.25.0 \
+    --hash=sha256:5ccf8069f7948f494968fc0713c10e5c182a9c9d9eef3a636307a20c2490f047 \
+    --hash=sha256:8f00faf3abf9dc730a1ffe9c354ae5c04e079ab7d3a683b7c32da5dd05f26af3
     # via
     #   python-discovery
     #   virtualenv
@@ -800,9 +800,9 @@ httpx==0.28.1 \
     --hash=sha256:75e98c5f16b0f35b567856f597f06ff2270a374470a5c2392242528e3e3e42fc \
     --hash=sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad
     # via pwned-passwords-django
-identify==2.6.16 \
-    --hash=sha256:391ee4d77741d994189522896270b787aed8670389bfd60f326d677d64a6dfb0 \
-    --hash=sha256:846857203b5511bbe94d5a352a48ef2359532bc8f6727b5544077a0dcfb24980
+identify==2.6.17 \
+    --hash=sha256:be5f8412d5ed4b20f2bd41a65f920990bdccaa6a4a18a08f1eefdcd0bdd885f0 \
+    --hash=sha256:f816b0b596b204c9fdf076ded172322f2723cf958d02f9c3587504834c8ff04d
     # via pre-commit
 idna==3.11 \
     --hash=sha256:771a87f49d9defaf64091e6e6fe9c18d4833f140bd19464795bc32d966ca37ea \
@@ -1629,9 +1629,9 @@ pymdown-extensions==10.21 \
     # via
     #   mkdocs-material
     #   mkdocstrings
-pypdf==6.7.4 \
-    --hash=sha256:527d6da23274a6c70a9cb59d1986d93946ba8e36a6bc17f3f7cce86331492dda \
-    --hash=sha256:9edd1cd47938bb35ec87795f61225fd58a07cfaf0c5699018ae1a47d6f8ab0e3
+pypdf==6.7.5 \
+    --hash=sha256:07ba7f1d6e6d9aa2a17f5452e320a84718d4ce863367f7ede2fd72280349ab13 \
+    --hash=sha256:40bb2e2e872078655f12b9b89e2f900888bb505e88a82150b64f9f34fa25651d
     # via xhtml2pdf
 pytest==9.0.2 \
     --hash=sha256:711ffd45bf766d5264d487b917733b453d917afd2b0ad65223959f59089f875b \
@@ -1751,9 +1751,9 @@ python-docx==1.2.0 \
     # via
     #   htmldocx
     #   hypha
-python-dotenv==1.2.1 \
-    --hash=sha256:42667e897e16ab0d66954af0e60a9caa94f0fd4ecf3aaf6d2d260eec1aa36ad6 \
-    --hash=sha256:b81ee9561e9ca4004139c6cbba3a238c32b03e4894671e181b671e8cb8425d61
+python-dotenv==1.2.2 \
+    --hash=sha256:1d8214789a24de455a8b8bd8ae6fe3c6b69a5e3d64aa8a8e5d68e694bbcb285a \
+    --hash=sha256:2c371a91fbd7ba082c2c1dc1f8bf89ca22564a087c2c287cd9b662adde799cf3
     # via environs
 python3-openid==3.2.0 \
     --hash=sha256:33fbf6928f401e0b790151ed2b5290b02545e8775f982485205a066f874aaeaf \
