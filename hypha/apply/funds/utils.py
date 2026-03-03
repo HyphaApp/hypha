@@ -15,6 +15,7 @@ from django.utils.encoding import force_bytes
 from django.utils.html import strip_tags
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
 
 # from django.contrib.sites.models import Site
 from hypha.apply.funds.models.submissions import ApplicationSubmission
@@ -117,14 +118,14 @@ def export_submissions_to_csv(
     submissions_list: Iterable[ApplicationSubmission], base_uri: str
 ):
     csv_stream = StringIO()
-    header_row = ["Application #", "URL"]
+    header_row = [gettext_lazy("Application #"), gettext_lazy("URL")]
     index = 2
     data_list = []
 
     for submission in submissions_list:
         values = {}
-        values["Application #"] = submission.id
-        values["URL"] = f"{base_uri}{submission.get_absolute_url().lstrip('/')}"
+        values[_("Application #")] = submission.id
+        values[_("URL")] = f"{base_uri}{submission.get_absolute_url().lstrip('/')}"
         for field_id in submission.question_text_field_ids:
             question_field = submission.serialize(field_id)
             field_name = question_field["question"]

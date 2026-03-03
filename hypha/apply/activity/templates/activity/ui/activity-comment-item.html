@@ -25,7 +25,7 @@
                                     {% for role in activity.user.get_role_names  %}
                                         <span
                                             class="inline-block py-0.5 px-2 text-sm font-semibold rounded-xl border border-gray-300 text-fg-muted"
-                                            data-tippy-content="This user is a {{ role }}"
+                                            data-tippy-content="{% blocktrans %}This user is a {{ role }}{% endblocktrans %}"
                                         >
                                             {{ role }}
                                         </span>
@@ -34,7 +34,7 @@
                             {% endif %}
 
                             <a href="#communications--{{activity.id}}" class="hover:underline">
-                                <span class="text-fg-muted">commented</span>
+                                <span class="text-fg-muted">{% trans "commented" %}</span>
                                 <relative-time
                                     class="text-fg-muted"
                                     datetime="{{ activity.timestamp|date:"c" }}"
@@ -58,7 +58,7 @@
 
                             {% with activity.visibility|visibility_display:request.user as visibility_text  %}
                                 <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs uppercase rounded-xl border border-gray-300 text-fg-muted"
-                                      data-tippy-content="This is visible to {{ visibility_text }}">
+                                      data-tippy-content="{% blocktrans %}This is visible to {{ visibility_text }}{% endblocktrans %}">
                                     {% heroicon_outline "eye" size=14 class="inline" aria_hidden=true %}
                                     {{ visibility_text }}
                                 </span>

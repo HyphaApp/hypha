@@ -2,6 +2,7 @@ from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.users.models import User
 
@@ -31,6 +32,8 @@ class Task(models.Model):
 
     class Meta:
         ordering = ("-created_at",)
+        verbose_name = _("task")
+        verbose_name_plural = _("tasks")
 
     def save(self, **kwargs):
         return super().save(**kwargs)

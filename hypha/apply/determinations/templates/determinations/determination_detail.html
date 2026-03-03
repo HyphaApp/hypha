@@ -59,7 +59,7 @@
                     <h3 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300 question">{{ question }}</h3>
                     {% if answer %}
                         {% if answer == True or answer == False %}
-                            {{ answer|yesno:"Agree,Disagree" }}
+                            {{ answer|yesno:_("Agree,Disagree") }}
                         {% else %}
                             <div class="max-w-none prose">
                                 {{ answer|nh3 }}
