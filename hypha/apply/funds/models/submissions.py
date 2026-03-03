@@ -1122,8 +1122,12 @@ class ApplicationSubmissionSkeleton(models.Model):
         verbose_name=_("submit time"), auto_now_add=False
     )
 
-    screening_statuses = models.ManyToManyField(
-        "funds.ScreeningStatus", related_name="skeleton_submissions", blank=True
+    screening_status = models.ForeignKey(
+        "funds.ScreeningStatus",
+        related_name="skeleton_submissions",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
     )
 
     @classmethod
@@ -1168,8 +1172,9 @@ class ApplicationSubmissionSkeleton(models.Model):
             value=value,
             status=dict_submission.get("status")
             or dict_submission.get("applicationsubmission__status"),
-            submit_time=dict_submission.get("submit_time")
-            or dict_submission.get("applicationsubmission__submit_time"),
+            submit_time=dict_submission.get("submit_time"),
+            screening_status_id=dict_submission.get("screening_statuses")
+            or dict_submission.get("applicationsubmission__screening_statuses"),
         )
 
         return skeleton
@@ -1200,11 +1205,10 @@ class ApplicationSubmissionSkeleton(models.Model):
             value=submission.form_data.get("value", None),
             status=submission.status,
             submit_time=submission.submit_time,
+            screening_status=submission.get_current_screening_status(),
         )
 
         # TODO: Handle categories here
-
-        skeleton.screening_statuses.set(submission.screening_statuses.all())
 
         skeleton.save()
 
