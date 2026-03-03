@@ -1,5 +1,5 @@
 from collections import abc
-from typing import Iterable
+from typing import Dict, Iterable, Literal
 
 from django import template
 from django.apps import apps
@@ -58,7 +58,22 @@ def user_image(identifier: str, size=20):
 
 
 @register.filter
-def get_user_submission_count(user: User | Iterable[User]):
+def get_user_submission_count(
+    user: User | Iterable[User | Dict[Literal["item"], User]],
+) -> int:
+    """Get the number of submissions associated to either one user or a list of users
+
+    Also handles Wagtail's user deletion view where a list of dicts containing {"item": <User Object>} gets passed
+
+    Args:
+        user: A user object OR an iterable containing either User objects/dictionaries of {"item": <User Object>}
+
+    Returns:
+        Count of all submissions associated to the user(s)
+
+    Raises:
+        TypeError: when none of the previously specified types are provided in `user`
+    """
     ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
     if isinstance(user, User):
         return ApplicationSubmission.objects.filter(user=user).count()
