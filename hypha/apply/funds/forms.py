@@ -510,6 +510,7 @@ class DeleteSubmissionForm(forms.Form):
             }
         ),
         initial="ANONYMIZE",
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):
