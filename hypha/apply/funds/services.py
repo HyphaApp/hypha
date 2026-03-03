@@ -104,8 +104,6 @@ def bulk_covert_to_skeleton_submissions(
     Returns:
         QuerySet of submissions that have been archived
     """
-    print("REQUEST PATH")
-    print(request.path)
     ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
     ApplicationSubmissionSkeleton = apps.get_model(
         "funds", "ApplicationSubmissionSkeleton"

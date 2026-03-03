@@ -37,7 +37,6 @@ class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return reverse_lazy("funds:submissions:list")
 
     def form_valid(self, form):
-
         submission = self.get_object()
 
         message = MESSAGES.DELETE_SUBMISSION
