@@ -360,9 +360,9 @@ dj-database-url==3.1.2 \
     # via
     #   django-heroku
     #   hypha
-django==5.2.11 \
-    --hash=sha256:7f2d292ad8b9ee35e405d965fbbad293758b858c34bbf7f3df551aeeac6f02d3 \
-    --hash=sha256:e7130df33ada9ab5e5e929bc19346a20fe383f5454acb2cc004508f242ee92c0
+django==5.2.12 \
+    --hash=sha256:4853482f395c3a151937f6991272540fcbf531464f254a347bf7c89f53c8cff7 \
+    --hash=sha256:6b809af7165c73eff5ce1c87fdae75d4da6520d6667f86401ecf55b681eb1eeb
     # via
     #   dj-database-url
     #   django-anymail
@@ -1066,9 +1066,9 @@ pyjwt==2.11.0 \
     --hash=sha256:35f95c1f0fbe5d5ba6e43f00271c275f7a1a4db1dab27bf708073b75318ea623 \
     --hash=sha256:94a6bde30eb5c8e04fee991062b534071fd1439ef58d2adc9ccb823e7bcd0469
     # via social-auth-core
-pypdf==6.7.4 \
-    --hash=sha256:527d6da23274a6c70a9cb59d1986d93946ba8e36a6bc17f3f7cce86331492dda \
-    --hash=sha256:9edd1cd47938bb35ec87795f61225fd58a07cfaf0c5699018ae1a47d6f8ab0e3
+pypdf==6.7.5 \
+    --hash=sha256:07ba7f1d6e6d9aa2a17f5452e320a84718d4ce863367f7ede2fd72280349ab13 \
+    --hash=sha256:40bb2e2e872078655f12b9b89e2f900888bb505e88a82150b64f9f34fa25651d
     # via xhtml2pdf
 python-bidi==0.6.7 \
     --hash=sha256:05fe5971110013610f0db40505d0b204edc756e92eafac1372a464f8b9162b11 \
@@ -1161,9 +1161,9 @@ python-docx==1.2.0 \
     # via
     #   htmldocx
     #   hypha
-python-dotenv==1.2.1 \
-    --hash=sha256:42667e897e16ab0d66954af0e60a9caa94f0fd4ecf3aaf6d2d260eec1aa36ad6 \
-    --hash=sha256:b81ee9561e9ca4004139c6cbba3a238c32b03e4894671e181b671e8cb8425d61
+python-dotenv==1.2.2 \
+    --hash=sha256:1d8214789a24de455a8b8bd8ae6fe3c6b69a5e3d64aa8a8e5d68e694bbcb285a \
+    --hash=sha256:2c371a91fbd7ba082c2c1dc1f8bf89ca22564a087c2c287cd9b662adde799cf3
     # via environs
 python3-openid==3.2.0 \
     --hash=sha256:33fbf6928f401e0b790151ed2b5290b02545e8775f982485205a066f874aaeaf \
@@ -1418,9 +1418,9 @@ vine==5.1.0 \
     #   amqp
     #   celery
     #   kombu
-wagtail==7.0.5 \
-    --hash=sha256:83851ff26ca451d56b26c4d162eddfe6fa8f876e26acb610d5480c1d042c4c2f \
-    --hash=sha256:e82b4f9ca12d0c64027fd4002581aec42c85d60203091e003036f7b7f1782494
+wagtail==7.0.6 \
+    --hash=sha256:67616060f3336691691a5653c4568fe55e3529baa39559d0dc9add89ade166cc \
+    --hash=sha256:dca609072ce558970b5852fabcbe10dbf4bbbf314a913851814ddb7737ef60fd
     # via
     #   hypha
     #   wagtail-modeladmin
