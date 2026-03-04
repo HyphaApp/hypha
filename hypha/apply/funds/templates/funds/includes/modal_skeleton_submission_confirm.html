@@ -1,0 +1,33 @@
+{% load i18n static heroicons %}
+
+<form class="px-4 pt-5 pb-4 sm:p-6 form" action="{{ request.path }}" method="post" x-data="{value: ''}">
+    {% csrf_token %}
+
+    <div class="sm:flex sm:items-start">
+        <div class="flex justify-center items-center mx-auto w-12 h-12 rounded-full sm:mx-0 sm:w-10 sm:h-10 bg-error/10 shrink-0">
+            {% heroicon_outline "exclamation-triangle" class="w-6 h-6 text-error" stroke_width="1.5" aria_hidden="true" %}
+        </div>
+        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <h3 class="text-base font-semibold leading-6 text-base-content" id="modal-title">Anonymize Submission</h3>
+            <div class="mt-2">
+                <p class="text-sm text-fg-muted">
+                    {% blocktrans %}
+                        Are you sure you want to anonymize this submission? Anonymizing submissions makes them inacccesible except via statistics in the "Results" view.
+                    {% endblocktrans %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 sm:flex-row-reverse sm:mt-4 card-actions">
+        <button
+            type="submit"
+            class="w-full sm:w-auto btn btn-warning"
+        >{% trans "Anonymize" %}</button>
+        <button
+            type="button"
+            class="w-full sm:w-auto btn btn-secondary btn-outline btn-soft"
+            @click="show = false"
+        >{% trans "Cancel" %}</button>
+    </div>
+</form>

@@ -9,9 +9,7 @@ from hypha.apply.users.decorators import (
     staff_required,
 )
 
-from ..models import (
-    ApplicationSubmission,
-)
+from ..models import ApplicationSubmission
 from ..tables import (
     SubmissionFilterAndSearch,
 )
