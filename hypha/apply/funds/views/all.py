@@ -9,7 +9,12 @@ from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db import models
-from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseForbidden,
+    HttpResponseNotAllowed,
+)
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
@@ -383,21 +388,24 @@ def bulk_delete_submissions(request):
 @login_required
 @require_http_methods(["POST"])
 def bulk_skeleton_submissions(request):
-    if not permissions.can_bulk_delete_submissions(request.user):
-        return HttpResponseForbidden()
+    if settings.SUBMISSION_SKELETONING_ENABLED:
+        if not permissions.can_bulk_delete_submissions(request.user):
+            return HttpResponseForbidden()
 
-    submission_ids = request.POST.getlist("selectedSubmissionIds")
-    submissions = ApplicationSubmission.objects.filter(id__in=submission_ids).values(
-        "id", "form_data", "page_id", "round_id", "status", "submit_time"
-    )
+        submission_ids = request.POST.getlist("selectedSubmissionIds")
+        submissions = ApplicationSubmission.objects.filter(
+            id__in=submission_ids
+        ).values("id", "form_data", "page_id", "round_id", "status", "submit_time")
 
-    services.bulk_covert_to_skeleton_submissions(
-        submissions=submissions,
-        user=request.user,
-        request=request,
-    )
+        services.bulk_covert_to_skeleton_submissions(
+            submissions=submissions,
+            user=request.user,
+            request=request,
+        )
 
-    return HttpResponseClientRefresh()
+        return HttpResponseClientRefresh()
+
+    return HttpResponseNotAllowed()
 
 
 @login_required
