@@ -2,13 +2,10 @@ import csv
 import os
 import re
 from datetime import datetime
-from functools import reduce
 from io import StringIO
 from itertools import chain
-from operator import iconcat
 from typing import Iterable
 
-import django_filters as filters
 from django.core.files.storage import default_storage
 from django.urls import reverse
 from django.utils.encoding import force_bytes
@@ -148,38 +145,6 @@ def export_submissions_to_csv(
         writer.writerow(data)
     csv_stream.seek(0)
     return csv_stream
-
-
-def format_submission_sum_value(submission_value: dict) -> str | None:
-    """Formats a submission value dict that contains a key of `value__sum`
-
-    Args:
-        submission_value: the dict containing the `value_sum`
-
-    Returns:
-        either a string of the formatted sum value or `None` if invalid
-    """
-
-    value_sum = submission_value.get("value__sum")
-
-    return value_sum if value_sum else None
-
-
-def is_filter_empty(filter: filters.FilterSet) -> bool:
-    """Determines if a given FilterSet has valid query params or if they're empty
-
-    Args:
-        filter: the FilterSet to evaluate
-
-    Returns:
-        bool: True if filter has valid params, False if empty
-    """
-
-    if not (query := filter.data):
-        return False
-
-    # Flatten the QueryDict values in filter.data to a single list, check for validity with any()
-    return any(reduce(iconcat, [param[1] for param in query.lists()], []))
 
 
 def get_copied_form_name(original_form_name: str) -> str:
