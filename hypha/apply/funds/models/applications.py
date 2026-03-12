@@ -101,6 +101,7 @@ class AsJsonMixin:
             "image": image,
             "weight": weight,
             "next_deadline": next_deadline,
+            "url": self.get_url(),
         }
 
 
