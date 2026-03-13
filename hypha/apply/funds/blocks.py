@@ -2,6 +2,7 @@ import json
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext_lazy
 from wagtail import blocks
 
 from hypha.addressfield.fields import ADDRESS_FIELDS_ORDER, AddressField
@@ -27,7 +28,7 @@ class ApplicationMustIncludeFieldBlock(MustIncludeFieldBlock):
 
 class TitleBlock(ApplicationMustIncludeFieldBlock):
     name = "title"
-    description = "The title of the project"
+    description = _("The title of the project")
     field_label = blocks.CharBlock(
         label=_("Label"), default=_("What is the title of your application?")
     )
@@ -50,7 +51,7 @@ class TitleBlock(ApplicationMustIncludeFieldBlock):
 
 class ValueBlock(ApplicationSingleIncludeFieldBlock):
     name = "value"
-    description = "The value of the project"
+    description = _("The value of the project")
     widget = forms.NumberInput(attrs={"min": 0})
     field_class = forms.FloatField
 
@@ -66,7 +67,7 @@ class ValueBlock(ApplicationSingleIncludeFieldBlock):
 
 class OrganizationNameBlock(ApplicationSingleIncludeFieldBlock):
     name = "organization_name"
-    description = "The name of the organization"
+    description = _("The name of the organization")
     widget = forms.TextInput()
 
     class Meta:
@@ -75,7 +76,7 @@ class OrganizationNameBlock(ApplicationSingleIncludeFieldBlock):
 
 class EmailBlock(ApplicationMustIncludeFieldBlock):
     name = "email"
-    description = "The applicant email address"
+    description = _("The applicant email address")
     field_label = blocks.CharBlock(
         label=_("Label"), default=_("What email address should we use to contact you?")
     )
@@ -96,7 +97,7 @@ class EmailBlock(ApplicationMustIncludeFieldBlock):
 
 class AddressFieldBlock(ApplicationSingleIncludeFieldBlock):
     name = "address"
-    description = "The postal address of the user"
+    description = _("The postal address of the user")
 
     field_class = AddressField
 
@@ -122,7 +123,7 @@ class AddressFieldBlock(ApplicationSingleIncludeFieldBlock):
 
 class FullNameBlock(ApplicationMustIncludeFieldBlock):
     name = "full_name"
-    description = "Full name"
+    description = _("Full name")
     field_label = blocks.CharBlock(label=_("Label"), default=_("What is your name?"))
     help_text = blocks.RichTextBlock(
         required=False,
@@ -145,55 +146,29 @@ class FullNameBlock(ApplicationMustIncludeFieldBlock):
 
 class DurationBlock(ApplicationSingleIncludeFieldBlock):
     name = "duration"
-    description = "Duration"
+    description = _("Duration")
 
     DAYS = "days"
     WEEKS = "weeks"
     MONTHS = "months"
-    DURATION_TYPE_CHOICES = ((DAYS, "Days"), (WEEKS, "Weeks"), (MONTHS, "Months"))
+    DURATION_TYPE_CHOICES = (
+        (DAYS, _("Days")),
+        (WEEKS, _("Weeks")),
+        (MONTHS, _("Months")),
+    )
     DURATION_DAY_OPTIONS = {
-        1: "1 day",
-        2: "2 days",
-        3: "3 days",
-        4: "4 days",
-        5: "5 days",
-        6: "6 days",
-        7: "7 days",
+        i: ngettext_lazy("{} day", "{} days", i).format(i) for i in range(1, 8)
     }
     DURATION_WEEK_OPTIONS = {
-        1: "1 week",
-        2: "2 weeks",
-        3: "3 weeks",
-        4: "4 weeks",
-        5: "5 weeks",
-        6: "6 weeks",
-        7: "7 weeks",
-        8: "8 weeks",
-        9: "9 weeks",
-        10: "10 weeks",
-        11: "11 weeks",
-        12: "12 weeks",
+        i: ngettext_lazy("{} week", "{} weeks", i).format(i) for i in range(1, 13)
     }
     DURATION_MONTH_OPTIONS = {
-        1: "1 month",
-        2: "2 months",
-        3: "3 months",
-        4: "4 months",
-        5: "5 months",
-        6: "6 months",
-        7: "7 months",
-        8: "8 months",
-        9: "9 months",
-        10: "10 months",
-        11: "11 months",
-        12: "12 months",
-        18: "18 months",
-        24: "24 months",
-        36: "36 months",
+        i: ngettext_lazy("{} month", "{} months", i).format(i)
+        for i in [*range(1, 13), 18, 24, 36]
     }
     field_class = forms.ChoiceField
     duration_type = blocks.ChoiceBlock(
-        help_text=(
+        help_text=_(
             "Duration type is used to display duration choices in Days, Weeks or Months in application forms. "
             "Be careful, changing the duration type in the active round can result in data inconsistency."
         ),

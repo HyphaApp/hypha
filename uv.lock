@@ -1148,16 +1148,16 @@ wheels = [
 
 [[package]]
 name = "django-nh3"
-version = "0.2.1"
+version = "0.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
     { name = "nh3" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/34/82/8e5035eb6a11f8f6060669e5761f30548f31945bbf90346453cca2f16496/django_nh3-0.2.1.tar.gz", hash = "sha256:de453061c16c12fa5ebfcc6d0691d35ca1802cc477632ed504a2f21ac878a4a8", size = 13908, upload-time = "2025-11-09T23:50:58.75Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/73/89/8a38f9325e794de02b386e5596bc14921a67484a6c15c82946ff3a104d35/django_nh3-0.3.1.tar.gz", hash = "sha256:5682981d5aeff0577ada7414a57e7a0fd1f59a2ca682c5408d0b197aec8d5d80", size = 16144, upload-time = "2026-02-28T00:48:29.107Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fb/a4/485bcf6640d30aab65be85d7ca8b1dff9f19f5fbb8565ede77df27afd082/django_nh3-0.2.1-py3-none-any.whl", hash = "sha256:0f99cb6ea099d76a9e401cdc09ec10e001204562230bd5a3b0e6f27bccd69178", size = 9545, upload-time = "2025-11-09T23:50:57.516Z" },
+    { url = "https://files.pythonhosted.org/packages/11/dd/65a4ff54541caec25cc794efa2835bfab8cd5fb12beb8f6349a6d238f370/django_nh3-0.3.1-py3-none-any.whl", hash = "sha256:858444153cc3073a741951fdf7b108785d2a267fc98dc1401b6e7206fc13e524", size = 11114, upload-time = "2026-02-28T00:48:27.982Z" },
 ]
 
 [[package]]
@@ -1857,7 +1857,7 @@ requires-dist = [
     { name = "django-heroku", specifier = "~=0.3.1" },
     { name = "django-hijack", specifier = "~=3.7.6" },
     { name = "django-htmx", specifier = "~=1.27.0" },
-    { name = "django-nh3", specifier = "~=0.2.1" },
+    { name = "django-nh3", specifier = "==0.3.1" },
     { name = "django-pagedown", specifier = "~=2.2.1" },
     { name = "django-ratelimit", specifier = "~=4.1.0" },
     { name = "django-role-permissions", specifier = "~=3.2.0" },

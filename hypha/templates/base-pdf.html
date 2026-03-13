@@ -78,7 +78,7 @@
                         <tr>
                             <td>{% blocktrans %}Exported by {{ export_user }} on {{ export_date }}{% endblocktrans %}</td>
                             <td align="right">
-                                Page: <pdf:pagenumber />
+                                {% trans 'Page:' %} <pdf:pagenumber />
                             </td>
                         </tr>
                     </table>
