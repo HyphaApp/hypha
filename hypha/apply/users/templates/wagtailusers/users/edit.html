@@ -1,4 +1,17 @@
 {% extends "wagtailusers/users/edit.html" %}
+{% load users_tags i18n %}
+
+{% block actions %}
+    {{ block.super }}
+    {% user_2fa_enabled user as is_2fa_enabled %}
+    {% if is_2fa_enabled %}
+        <a class="button serious button-longrunning" href="{% url 'users:admin_disable' user.pk %}">
+            {% trans "Disable 2FA" %}
+        </a>
+    {% else %}
+        <button type="button" title="{% trans "This account does not have 2FA enabled." %}" class="button" disabled>{% trans "2FA is disabled" %}</button>
+    {% endif %}
+{% endblock %}
 
 {% block extra_fields %}
     <li>{% include "wagtailadmin/shared/field.html" with field=form.full_name %}</li>
