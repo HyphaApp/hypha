@@ -79,13 +79,13 @@ billiard==4.2.4 \
     --hash=sha256:525b42bdec68d2b983347ac312f892db930858495db601b5836ac24e6477cde5 \
     --hash=sha256:55f542c371209e03cd5862299b74e52e4fbcba8250ba611ad94276b369b6a85f
     # via celery
-boto3==1.42.65 \
-    --hash=sha256:c740af6bdaebcc1a00f3827a5729050bf6fc820ee148bf7d06f28db11c80e2a1 \
-    --hash=sha256:cc7f2e0aec6c68ee5b10232cf3e01326acf6100bc785a770385b61a0474b31f4
+boto3==1.42.68 \
+    --hash=sha256:3f349f967ab38c23425626d130962bcb363e75f042734fe856ea8c5a00eef03c \
+    --hash=sha256:dbff353eb7dc93cbddd7926ed24793e0174c04adbe88860dfa639568442e4962
     # via hypha
-botocore==1.42.65 \
-    --hash=sha256:0283c332ce00cbd1b894e86b7bed89dd624a5ca3a4ee62ec4db3898d16652e98 \
-    --hash=sha256:7d52c148df07f70c375eeda58f99b439c7c7836c25df74cccfba3bb6e12444d2
+botocore==1.42.68 \
+    --hash=sha256:3951c69e12ac871dda245f48dac5c7dd88ea1bfdd74a8879ec356cf2874b806a \
+    --hash=sha256:9df7da26374601f890e2f115bfa573d65bf15b25fe136bb3aac809f6145f52ab
     # via
     #   boto3
     #   s3transfer
@@ -406,9 +406,9 @@ django-basic-auth-ip-whitelist==0.8.0 \
     --hash=sha256:e4e46c2c59b4dde3a318d8812b6640b4a714bc2d1a0647854dead7743f1202ee \
     --hash=sha256:edcff4ad789c9cf0c335c12366d5356f1f07d44172c2ecbfa5cb8ec914ea8252
     # via hypha
-django-cotton==2.6.1 \
-    --hash=sha256:775dda0336c08d33a6daf10557eb261746b1b8e5f260b669cc6b37115571cb08 \
-    --hash=sha256:bedfa4561e2505fca5b88396acb9bdfaea85167eeef11813676fedab45906088
+django-cotton==2.6.2 \
+    --hash=sha256:292d35ad2d2c1da4ae21e688cc44aa18f84716ab64a619ff7b7296e0e30275fc \
+    --hash=sha256:d4131517d8ec1080495a4779fb8d984264d671e6c850f4fa34c14822817dd693
     # via hypha
 django-countries==8.2.0 \
     --hash=sha256:2b2617bec7c15dc735bdec38ae89f0058e38fddfffdb19a7f6b75ef1e3d5380f \
@@ -791,9 +791,9 @@ packaging==26.0 \
     # via
     #   gunicorn
     #   kombu
-phonenumbers==9.0.25 \
-    --hash=sha256:a5f236fa384c6a77378d7836c8e486ade5f984ad2e8e6cc0dbe5124315cdc81b \
-    --hash=sha256:b1fd6c20d588f5bcd40af3899d727a9f536364211ec6eac554fcd75ca58992a3
+phonenumbers==9.0.26 \
+    --hash=sha256:9e582c827f0f5503cddeebef80099475a52ffa761551d8384099c7ec71298cbf \
+    --hash=sha256:ff473da5712965b6c7f7a31cbff8255864df694eb48243771133ecb761e807c1
     # via hypha
 pillow==12.1.1 \
     --hash=sha256:02f84dfad02693676692746df05b89cf25597560db2857363a208e393429f5e9 \
@@ -1062,9 +1062,9 @@ pyhanko-certvalidator==0.30.1 \
     # via
     #   pyhanko
     #   xhtml2pdf
-pyjwt==2.11.0 \
-    --hash=sha256:35f95c1f0fbe5d5ba6e43f00271c275f7a1a4db1dab27bf708073b75318ea623 \
-    --hash=sha256:94a6bde30eb5c8e04fee991062b534071fd1439ef58d2adc9ccb823e7bcd0469
+pyjwt==2.12.1 \
+    --hash=sha256:28ca37c070cad8ba8cd9790cd940535d40274d22f80ab87f3ac6a713e6e8454c \
+    --hash=sha256:c74a7a2adf861c04d002db713dd85f84beb242228e671280bf709d765b03672b
     # via social-auth-core
 pypdf==6.8.0 \
     --hash=sha256:2a025080a8dd73f48123c89c57174a5ff3806c71763ee4e49572dc90454943c7 \
@@ -1381,6 +1381,7 @@ typing-extensions==4.15.0 \
     #   marshmallow
     #   mistune
     #   psycopg
+    #   pyjwt
     #   pypdf
     #   python-docx
 tzdata==2025.3 \

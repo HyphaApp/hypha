@@ -277,9 +277,9 @@ emoji==2.15.0 \
     --hash=sha256:205296793d66a89d88af4688fa57fd6496732eb48917a87175a023c8138995eb \
     --hash=sha256:eae4ab7d86456a70a00a985125a03263a5eac54cd55e51d7e184b1ed3b6757e4
     # via stanza
-filelock==3.25.1 \
-    --hash=sha256:18972df45473c4aa2c7921b609ee9ca4925910cc3a0fb226c96b92fc224ef7bf \
-    --hash=sha256:b9a2e977f794ef94d77cdf7d27129ac648a61f585bff3ca24630c1629f701aa9
+filelock==3.25.2 \
+    --hash=sha256:b64ece2b38f4ca29dd3e810287aa8c48182bbecd1ae6e9ae126c9b35f1382694 \
+    --hash=sha256:ca8afb0da15f229774c9ad1b455ed96e85a81373065fb10446672f64444ddf70
     # via
     #   minisbd
     #   torch
