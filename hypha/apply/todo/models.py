@@ -32,5 +32,8 @@ class Task(models.Model):
     class Meta:
         ordering = ("-created_at",)
 
+    def __str__(self):
+        return f"{self.get_code_display()} – {self.user or 'group'}"
+
     def save(self, **kwargs):
         return super().save(**kwargs)

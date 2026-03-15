@@ -24,3 +24,6 @@ class Flag(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
     )
+
+    def __str__(self):
+        return f"{self.FLAG_TYPES.get(self.type, self.type)} flag by {self.user} on {self.target}"
