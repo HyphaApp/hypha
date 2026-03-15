@@ -147,7 +147,7 @@ def remove_tasks_for_user_group(code, user_group, related_obj):
     )
     user_group_matching_tasks = matching_tasks.annotate(
         group_count=Count("user_group")
-    ).filter(group_count=len(user_group.all()))
+    ).filter(group_count=user_group.count())
     for group in user_group.all():
         user_group_matching_tasks = user_group_matching_tasks.filter(
             user_group__id=group.id
@@ -190,7 +190,7 @@ def get_tasks_for_user(user):
         group_count=Count("user_group")
     )
     user_group_tasks = Task.objects.annotate(group_count=Count("user_group")).filter(
-        group_count=len(user.groups.all())
+        group_count=user.groups.count()
     )
     for group in user.groups.all():
         user_group_tasks = user_group_tasks.filter(user_group__id=group.id)

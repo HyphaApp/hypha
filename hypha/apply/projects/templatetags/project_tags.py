@@ -171,7 +171,7 @@ def user_next_step_on_project(project, user, request=None):
             else:
                 matched_roles = PAFReviewersRole.objects.annotate(
                     roles_count=Count("user_roles")
-                ).filter(roles_count=len(user.groups.all()))
+                ).filter(roles_count=user.groups.count())
                 for group in user.groups.all():
                     matched_roles = matched_roles.filter(user_roles__id=group.id)
                 if not matched_roles:
