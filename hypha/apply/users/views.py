@@ -305,6 +305,23 @@ class ActivationView(TemplateView):
         user = self.get_user(kwargs.get("uidb64"))
 
         if self.valid(user, kwargs.get("token")):
+            # Token valid — show confirmation page before consuming it.
+            # Prevents link-preview bots from activating the account on GET.
+            return render(
+                request,
+                "users/activation/confirm.html",
+                {
+                    "is_activation": True,
+                    "next": request.GET.get(self.redirect_field_name, ""),
+                },
+            )
+
+        return render(request, "users/activation/invalid.html")
+
+    def post(self, request, *args, **kwargs):
+        user = self.get_user(kwargs.get("uidb64"))
+
+        if self.valid(user, kwargs.get("token")):
             user.backend = settings.CUSTOM_AUTH_BACKEND
             login(request, user)
             url = reverse("users:activate_password")
@@ -625,8 +642,9 @@ class PasswordLessLoginSignupView(FormView):
 class PasswordlessLoginView(LoginView):
     """This view is used to capture the passwordless login token and log the user in.
 
-    If the token is valid, the user is logged in and redirected to the dashboard.
-    If the token is invalid, the user is shown invalid token page.
+    If the token is valid, the user is shown a confirmation page requiring a click
+    before login is completed. This prevents link-preview bots (e.g. MS Outlook's
+    MicrosoftPreview) from consuming the one-time token on a GET request.
 
     This view inherits from LoginView to reuse the 2FA views, if a mfa device is added
     to the user.
@@ -639,20 +657,46 @@ class PasswordlessLoginView(LoginView):
             user = None
 
         if user and self.check_token(user, token):
+            # Token is valid — show a confirmation page that requires a POST to
+            # complete login. This prevents link-preview bots from consuming
+            # the token before the user clicks it.
+            return render(
+                request,
+                "users/activation/confirm.html",
+                {
+                    "remember_me": "remember-me" in request.GET,
+                    "next": request.GET.get(self.redirect_field_name, ""),
+                },
+            )
+
+        return render(request, "users/activation/invalid.html")
+
+    def post(self, request, uidb64, token, *args, **kwargs):
+        # If storage already has an authenticated user we are in the MFA step
+        # (user confirmed the link, now submitting their OTP). Delegate to the
+        # parent WizardView which handles the OTP form.
+        if self.storage.authenticated_user:
+            return super().post(request, *args, **kwargs)
+
+        # Initial confirmation POST — validate token and log the user in.
+        try:
+            user = User.objects.get(pk=force_str(urlsafe_base64_decode(uidb64)))
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+
+        if user and self.check_token(user, token):
             user.backend = settings.CUSTOM_AUTH_BACKEND
 
-            # Check for "?remember-me" query param, set the session age to long if exists
-            if "remember-me" in request.GET:
+            if request.POST.get("remember_me"):
                 self.request.session.set_expiry(settings.SESSION_COOKIE_AGE_LONG)
 
             if default_device(user):
-                # User has mfa, set the user details and redirect to 2fa login
+                # User has MFA — store details and redirect to OTP step.
                 self.storage.reset()
                 self.storage.authenticated_user = user
                 self.storage.data["authentication_time"] = int(time.time())
                 return self.render_goto_step("token")
 
-            # No mfa, log the user in
             login(request, user)
 
             if redirect_url := get_redirect_url(request, self.redirect_field_name):
@@ -668,10 +712,14 @@ class PasswordlessLoginView(LoginView):
 
 
 class PasswordlessSignupView(TemplateView):
-    """This view is used to capture the passwordless login token and log the user in.
+    """This view is used to capture the passwordless signup token and create the account.
 
-    If the token is valid, the user is logged in and redirected to the dashboard.
-    If the token is invalid, the user is shown invalid token page.
+    On GET the token is validated but the account is NOT created yet. A confirmation
+    page is shown requiring a click before account creation completes. This prevents
+    link-preview bots (e.g. MS Outlook's MicrosoftPreview) from consuming the
+    one-time token before the user clicks it.
+
+    If the token is invalid, the user is shown the invalid token page.
     """
 
     redirect_field_name = "next"
@@ -682,13 +730,30 @@ class PasswordlessSignupView(TemplateView):
         token_generator = PasswordlessSignupTokenGenerator()
 
         if pending_signup and token_generator.check_token(pending_signup, token):
+            return render(
+                request,
+                "users/activation/confirm.html",
+                {
+                    "is_signup": True,
+                    "remember_me": "remember-me" in request.GET,
+                    "next": request.GET.get(self.redirect_field_name, ""),
+                },
+            )
+
+        return render(request, "users/activation/invalid.html")
+
+    def post(self, request, *args, **kwargs):
+        pending_signup = self.get_pending_signup(kwargs.get("uidb64"))
+        token = kwargs.get("token")
+        token_generator = PasswordlessSignupTokenGenerator()
+
+        if pending_signup and token_generator.check_token(pending_signup, token):
             user = User.objects.create(email=pending_signup.email, is_active=True)
             user.set_unusable_password()
             user.save()
             pending_signup.delete()
 
-            # Check for "?remember-me" query param, set the session age to long if exists
-            if "remember-me" in request.GET:
+            if request.POST.get("remember_me"):
                 self.request.session.set_expiry(settings.SESSION_COOKIE_AGE_LONG)
 
             user.backend = settings.CUSTOM_AUTH_BACKEND
