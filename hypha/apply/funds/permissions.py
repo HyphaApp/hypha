@@ -38,12 +38,9 @@ def can_edit_submission(user, submission):
     if submission.phase.permissions.can_edit(user):
         co_applicant = submission.co_applicants.filter(user=user).first()
         if co_applicant:
-            if co_applicant.role not in [CoApplicantRole.VIEW, CoApplicantRole.COMMENT]:
-                return (
-                    True,
-                    "Co-applicant with read/view only or comment access can't edit submission",
-                )
-            return False, ""
+            if co_applicant.role == CoApplicantRole.EDIT:
+                return True, "Co-applicant with edit role can edit submission"
+            return False, "Co-applicant does not have edit role"
         return True, "User can edit in current phase"
     return False, ""
 
@@ -147,6 +144,7 @@ def get_archive_alter_groups() -> list:
 def can_alter_archived_submissions(user, submission=None) -> (bool, str):
     """
     Return a boolean based on if a user can alter archived submissions
+    (submission is accepted for compatibility with permissions_map but not used)
     """
     archive_access_groups = get_archive_alter_groups()
 
@@ -245,7 +243,7 @@ def can_invite_co_applicants(user, submission):
         if project.status == COMPLETE:
             return False, "Co-applicants can't be invited to completed projects"
     if (
-        submission.co_applicant_invites.all().count()
+        submission.co_applicant_invites.count()
         >= settings.SUBMISSIONS_COAPPLICANT_INVITES_LIMIT
     ):
         return False, "Limit reached for this submission"
