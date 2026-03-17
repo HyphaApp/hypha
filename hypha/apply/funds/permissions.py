@@ -55,10 +55,12 @@ def view_comments(role, user, submission) -> bool:
     if role == StaffAdmin:
         return True
 
-    if is_user_has_access_to_view_submission(user, submission):
+    submission_view, _ = can_view_submission(user, submission)
+    if submission_view:
         return True
 
-    if submission.project and can_access_project(user, submission.project):
+    project = getattr(submission, "project", None)
+    if project and can_access_project(user, project):
         return True
 
     return False
@@ -156,10 +158,8 @@ def can_alter_archived_submissions(user, submission=None) -> (bool, str):
 
 
 def can_bulk_archive_submissions(user) -> bool:
-    if can_alter_archived_submissions(user) and can_bulk_delete_submissions(user):
-        return True
-
-    return False
+    can_alter, _ = can_alter_archived_submissions(user)
+    return can_alter and can_bulk_delete_submissions(user)
 
 
 def can_change_external_reviewers(user, submission) -> bool:
@@ -202,7 +202,7 @@ def can_export_submissions(user) -> bool:
     return False
 
 
-def is_user_has_access_to_view_submission(user, submission):
+def can_view_submission(user, submission):
     if not user.is_authenticated:
         return False, "Login Required"
 
@@ -227,7 +227,7 @@ def is_user_has_access_to_view_submission(user, submission):
 
 
 def can_view_submission_screening(user, submission):
-    submission_view, _ = is_user_has_access_to_view_submission(user, submission)
+    submission_view, _ = can_view_submission(user, submission)
     if not submission_view:
         return False, "No access to view submission"
     if submission.user == user:
@@ -238,10 +238,11 @@ def can_view_submission_screening(user, submission):
 def can_invite_co_applicants(user, submission):
     if submission.is_archive:
         return False, "Co-applicant can't be added to archived submission"
-    if hasattr(submission, "project"):
+    project = getattr(submission, "project", None)
+    if project:
         from hypha.apply.projects.models.project import COMPLETE
 
-        if submission.project.status == COMPLETE:
+        if project.status == COMPLETE:
             return False, "Co-applicants can't be invited to completed projects"
     if (
         submission.co_applicant_invites.all().count()
@@ -266,10 +267,11 @@ def can_view_co_applicants(user, submission):
 def can_update_co_applicant(user, invite):
     if invite.submission.is_archive:
         return False, "Co-applicant can't be updated to archived submission"
-    if hasattr(invite.submission, "project"):
+    project = getattr(invite.submission, "project", None)
+    if project:
         from hypha.apply.projects.models.project import COMPLETE
 
-        if invite.submission.project.status == COMPLETE:
+        if project.status == COMPLETE:
             return False, "Co-applicants can't be updated to completed projects"
     if invite.invited_by == user:
         return True, "Same user who invited can delete the co-applicant"
@@ -288,7 +290,7 @@ def user_can_view_post_comment_form(user, submission):
 
 
 permissions_map = {
-    "submission_view": is_user_has_access_to_view_submission,
+    "submission_view": can_view_submission,
     "submission_edit": can_edit_submission,
     "submission_action": can_take_submission_actions,
     "can_view_submission_screening": can_view_submission_screening,
