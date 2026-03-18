@@ -20,8 +20,11 @@
                     <p>{% trans "This usually happens because your activation link has expired, or your account is already activated." %}</p>
 
                     <p>
-                        {% blocktrans %}Try <a href="{{ password_reset }}">resetting your password</a> first. If you're still having trouble, contact us at {{ ORG_SHORT_NAME }}:{% endblocktrans %}
-                        <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}</a>
+                        {% blocktrans trimmed %}
+                            Try <a href="{{ password_reset }}">resetting your password</a> first.
+                            If you're still having trouble, contact us at {{ ORG_SHORT_NAME }}:
+                            <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}</a>.
+                        {% endblocktrans %}
                     </p>
                 </div>
             </div>

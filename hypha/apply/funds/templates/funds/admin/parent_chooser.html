@@ -15,7 +15,12 @@
 
         <div class="nice-padding">
             <h2>{% blocktrans %}Choose a Fund{% endblocktrans %}</h2>
-            <p>{% blocktrans %}Rounds must be associated with a Fund or RFP. What are you creating a new Round for?{% endblocktrans %}</p>
+            <p>
+                {% blocktrans trimmed %}
+                    Rounds must be associated with a Fund or RFP.
+                    What are you creating a new Round for?
+                {% endblocktrans %}
+            </p>
 
             <form action="" method="post" novalidate>
                 {% csrf_token %}

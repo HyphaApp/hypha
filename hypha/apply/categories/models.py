@@ -2,6 +2,7 @@ from django import forms
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.template.loader import render_to_string
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
@@ -16,6 +17,10 @@ from wagtail.search import index
 class Option(Orderable):
     value = models.CharField(max_length=255)
     category = ParentalKey("Category", related_name="options")
+
+    class Meta:
+        verbose_name = _("option")
+        verbose_name_plural = _("options")
 
     def __str__(self):
         return self.value
@@ -45,7 +50,8 @@ class Category(ClusterableModel):
         return self.name
 
     class Meta:
-        verbose_name_plural = "Categories"
+        verbose_name = _("Category")
+        verbose_name_plural = _("Categories")
 
 
 class MetaTerm(index.Indexed, MP_Node):
@@ -106,13 +112,13 @@ class MetaTerm(index.Indexed, MP_Node):
         )
         return rendered
 
-    get_as_listing_header.short_description = "Name"
+    get_as_listing_header.short_description = _("Name")
     get_as_listing_header.admin_order_field = "name"
 
     def get_parent(self, *args, **kwargs):
         return super().get_parent(*args, **kwargs)
 
-    get_parent.short_description = "Parent"
+    get_parent.short_description = _("Parent")
 
     search_fields = [
         index.SearchField("name"),
@@ -120,7 +126,7 @@ class MetaTerm(index.Indexed, MP_Node):
 
     def delete(self):
         if self.is_root():
-            raise PermissionDenied("Cannot delete root term.")
+            raise PermissionDenied(gettext("Cannot delete root term."))
         else:
             super().delete()
 
@@ -160,10 +166,12 @@ class MetaTermForm(WagtailAdminModelForm):
         if instance.is_root() or MetaTerm.objects.count() == 0:
             self.fields["parent"].disabled = True
             self.fields["parent"].required = False
-            self.fields["parent"].empty_label = "N/A - Root Term"
+            self.fields["parent"].empty_label = gettext("N/A - Root Term")
             self.fields["parent"].widget = forms.HiddenInput()
 
-            self.fields["name"].label += " (Root - First term can be named root)"
+            self.fields["name"].label += gettext(
+                " (Root - First term can be named root)"
+            )
         elif instance.id:
             self.fields["parent"].initial = instance.get_parent()
 
@@ -172,7 +180,7 @@ class MetaTermForm(WagtailAdminModelForm):
 
         if parent and parent.is_archived:
             raise forms.ValidationError(
-                "The parent is archived therefore can not add child under it."
+                gettext("The parent is archived therefore can not add child under it.")
             )
 
         return parent
