@@ -1124,6 +1124,8 @@ class ApplicationSubmissionSkeleton(models.Model):
         on_delete=models.PROTECT,
     )
 
+    objects = ApplicationSubmissionSkeletonQueryset.as_manager()
+
     @classmethod
     def from_dict(
         cls, dict_submission: Dict[str, Any], save_user: bool = False

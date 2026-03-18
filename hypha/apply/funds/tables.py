@@ -15,6 +15,7 @@ from wagtail.models import Page
 
 from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import MetaTerm, Option
+from hypha.apply.funds.models.submissions import ApplicationSubmissionSkeleton
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.review.models import Review
 from hypha.core.tables import RelativeTimeColumn
@@ -145,12 +146,19 @@ class LabeledCheckboxColumn(tables.CheckBoxColumn):
 
 
 def get_used_rounds(request):
-    return Round.objects.filter(submissions__isnull=False).distinct()
+    return Round.objects.filter(
+        Q(Q(submissions__isnull=False) | Q(skeleton_submissions__isnull=False))
+    ).distinct()
 
 
 def get_used_funds(request):
     # Use page to pick up on both Labs and Funds
-    return Page.objects.filter(applicationsubmission__isnull=False).distinct()
+    return Page.objects.filter(
+        Q(
+            Q(applicationsubmission__isnull=False)
+            | Q(applicationsubmissionskeleton__isnull=False)
+        )
+    ).distinct()
 
 
 def get_round_leads(request):
@@ -158,11 +166,13 @@ def get_round_leads(request):
 
 
 def get_screening_statuses(request):
-    return ScreeningStatus.objects.filter(
+    sub_filter = Q(
         id__in=ApplicationSubmission.objects.all()
         .values("screening_statuses__id")
         .distinct("screening_statuses__id")
     )
+    skele_filter = Q(skeleton_submissions__isnull=False)
+    return ScreeningStatus.objects.filter(sub_filter | skele_filter)
 
 
 def get_meta_terms(request):
@@ -306,6 +316,37 @@ class SubmissionFilterAndSearch(SubmissionFilter):
             # if value is 0 or None
             queryset = queryset.exclude(is_archive=True)
         return queryset
+
+
+class SubmissionSkeletonFilter(filters.FilterSet):
+    fund = ModelMultipleChoiceFilter(
+        field_name="page", queryset=get_used_funds, label=_("Funds")
+    )
+    round = ModelMultipleChoiceFilter(queryset=get_used_rounds, label=_("Rounds"))
+    screening_statuses = ModelMultipleChoiceFilter(
+        queryset=get_screening_statuses, label=_("Screening"), null_label=_("No Status")
+    )
+
+    class Meta:
+        model = ApplicationSubmissionSkeleton
+        fields = ("fund", "round")
+
+    def __init__(self, *args, exclude=None, limit_statuses=None, **kwargs):
+        if exclude is None:
+            exclude = []
+
+        super().__init__(*args, **kwargs)
+
+        self.filters["status"] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
+        # self.filters["category_options"].extra["choices"] = [
+        #     (option.id, option.value)
+        #     for option in Option.objects.filter(category__filter_on_dashboard=True)
+        # ]
+        self.filters = {
+            field: filter
+            for field, filter in self.filters.items()
+            if field not in exclude
+        }
 
 
 class SubmissionDashboardFilter(filters.FilterSet):
