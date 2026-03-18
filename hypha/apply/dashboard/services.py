@@ -9,7 +9,7 @@ def get_paf_for_review(user, is_paf_approval_sequential):
     paf_approvals = PAFApprovals.objects.annotate(
         roles_count=Count("paf_reviewer_role__user_roles")
     ).filter(
-        roles_count=len(list(user.groups.all())),
+        roles_count=user.groups.count(),
         approved=False,
     )
 

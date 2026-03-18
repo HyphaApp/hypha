@@ -319,7 +319,7 @@ class CreateInvoiceView(SuccessMessageMixin, CreateView):
             related=self.object,
         )
 
-        if len(self.project.invoices.all()) == 1:
+        if self.project.invoices.count() == 1:
             # remove Project waiting invoices task for applicant on first invoice
             remove_tasks_for_user(
                 code=PROJECT_WAITING_INVOICE,
