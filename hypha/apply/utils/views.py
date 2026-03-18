@@ -144,13 +144,6 @@ class DelegateableListView(DelegatableBase):
 class DelegatedViewMixin(View):
     """For use on create views accepting forms from another view"""
 
-    # TODO: REMOVE IN DJANGO 2.2
-    def setup(self, request, *args, **kwargs):
-        """Initialize attributes shared by all view methods."""
-        self.request = request
-        self.args = args
-        self.kwargs = kwargs
-
     def get_object(self):
         # Make sure the form instance, bound at the parent class level,  is the same as the
         # value we work with on the class.
