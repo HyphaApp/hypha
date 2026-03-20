@@ -61,6 +61,7 @@ from .forms import (
     CustomAuthenticationForm,
     Disable2FAConfirmationForm,
     PasswordlessAuthForm,
+    PasswordResetForm,
     ProfileForm,
 )
 from .models import ConfirmAccessToken, PendingSignup
@@ -383,6 +384,7 @@ class PasswordResetView(DjPasswordResetView):
     email_template_name = "users/password_reset/email.txt"
     template_name = "users/password_reset/form.html"
     success_url = reverse_lazy("users:password_reset_done")
+    form_class = PasswordResetForm
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
