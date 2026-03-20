@@ -9,7 +9,7 @@
         {% if validlink %}
 
             <h2 class="text-2xl">{% trans "Reset password" %}</h2>
-            <p>{% trans "Please enter your new password twice so we can verify you typed it in correctly." %}</p>
+            <p class="text-sm whitespace-normal label">{% trans "Please enter your new password twice so we can verify you typed it in correctly." %}</p>
 
             <form class="form" method="post" novalidate>
                 {% csrf_token %}
@@ -39,7 +39,7 @@
                     {% include "forms/includes/field.html" %}
                 {% endfor %}
 
-                <button class="btn btn-primary btn-wide" type="submit">{% trans 'Reset' %}</button>
+                <button class="mt-4 btn btn-wide btn-primary" type="submit">{% trans 'Reset' %}</button>
             </form>
         {% else %}
             <p>{% trans "The password reset link was invalid, possibly because it has already been used. Please request a new password reset." %}</p>
