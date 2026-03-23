@@ -2,15 +2,16 @@ import base64
 import json
 
 from django.conf import settings
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views import View
-from django.views.decorators.csrf import csrf_protect
+from django_ratelimit.decorators import ratelimit
 from webauthn import (
     generate_authentication_options,
     generate_registration_options,
@@ -31,8 +32,6 @@ from webauthn.helpers.structs import (
 )
 
 from .models import Passkey
-
-User = get_user_model()
 
 SESSION_CHALLENGE_KEY = "webauthn_challenge"
 
@@ -73,7 +72,6 @@ def _load_challenge(request) -> bytes:
 
 
 @method_decorator(login_required, name="dispatch")
-@method_decorator(csrf_protect, name="dispatch")
 class PasskeyRegisterBeginView(View):
     def post(self, request):
         user = request.user
@@ -98,7 +96,6 @@ class PasskeyRegisterBeginView(View):
 
 
 @method_decorator(login_required, name="dispatch")
-@method_decorator(csrf_protect, name="dispatch")
 class PasskeyRegisterCompleteView(View):
     def post(self, request):
         try:
@@ -153,7 +150,10 @@ class PasskeyRegisterCompleteView(View):
 # ---------------------------------------------------------------------------
 
 
-@method_decorator(csrf_protect, name="dispatch")
+@method_decorator(
+    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
 class PasskeyAuthBeginView(View):
     def post(self, request):
         options = generate_authentication_options(
@@ -164,7 +164,10 @@ class PasskeyAuthBeginView(View):
         return JsonResponse(json.loads(options_to_json(options)))
 
 
-@method_decorator(csrf_protect, name="dispatch")
+@method_decorator(
+    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
 class PasskeyAuthCompleteView(View):
     def post(self, request):
         try:
@@ -223,7 +226,13 @@ class PasskeyAuthCompleteView(View):
         login(request, user, backend="django.contrib.auth.backends.ModelBackend")
         request.session["passkey_authenticated"] = True
 
-        next_url = request.POST.get("next") or data.get("next") or "/"
+        next_url = data.get("next") or "/"
+        if not url_has_allowed_host_and_scheme(
+            next_url,
+            allowed_hosts={request.get_host()},
+            require_https=request.is_secure(),
+        ):
+            next_url = settings.LOGIN_REDIRECT_URL
         return JsonResponse({"status": "ok", "redirect_url": next_url})
 
 
@@ -242,7 +251,6 @@ class PasskeyListView(View):
 
 
 @method_decorator(login_required, name="dispatch")
-@method_decorator(csrf_protect, name="dispatch")
 class PasskeyDeleteView(View):
     def post(self, request, pk):
         passkey = get_object_or_404(Passkey, pk=pk, user=request.user)
@@ -252,7 +260,6 @@ class PasskeyDeleteView(View):
 
 
 @method_decorator(login_required, name="dispatch")
-@method_decorator(csrf_protect, name="dispatch")
 class PasskeyRenameView(View):
     def post(self, request, pk):
         passkey = get_object_or_404(Passkey, pk=pk, user=request.user)
