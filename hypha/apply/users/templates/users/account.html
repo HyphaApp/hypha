@@ -86,10 +86,10 @@
             </h3>
             <p class="card-actions">
                 {% if default_device %}
-                    <a class="btn btn-primary" href="{% url 'users:backup_tokens' %}">{% trans "Backup codes" %}</a>
-                    <a class="btn btn-warning" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a>
+                    <a class="btn btn-secondary btn-outline" href="{% url 'users:backup_tokens' %}">{% trans "Backup codes" %}</a>
+                    <a class="btn btn-warning btn-outline" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a>
                 {% else %}
-                    <a class="btn btn-primary" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a>
+                    <a class="btn btn-secondary btn-outline" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a>
                 {% endif %}
             </p>
 
