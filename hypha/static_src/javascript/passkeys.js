@@ -208,7 +208,11 @@ window.hypha.passkeys = (function () {
 
       if (!credential) return;
 
-      const completeResp = await jsonPost(completeUrl, credential.toJSON());
+      const nextUrl = document.getElementById("passkey-next-url")?.value || "";
+      const completeResp = await jsonPost(completeUrl, {
+        ...credential.toJSON(),
+        next: nextUrl,
+      });
       if (!completeResp.ok) return;
       const data = await completeResp.json();
       window.location.href = data.redirect_url || "/";
