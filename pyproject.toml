@@ -93,7 +93,7 @@ dependencies = [
 ]
 "docs" = [
     "griffe>=1.15.0",
-    "mkdocs-awesome-pages-plugin>=2.10.1",
+    "mkdocs-awesome-nav>=3.0.0",
     "mkdocs-gen-files>=0.6.0",
     "mkdocs-git-revision-date-localized-plugin>=1.5.0",
     "mkdocs-macros-plugin>=1.5.0",

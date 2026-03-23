@@ -38,7 +38,7 @@ theme:
     - toc.follow
 
 plugins:
-  - awesome-pages
+  - awesome-nav
   - search
   - macros:
       module_name: docs/scripts/doc_macros
@@ -107,11 +107,6 @@ markdown_extensions:
   - pymdownx.tilde
   - pymdownx.details
   - pymdownx.keys
-
-nav:
-  - Home: index.md
-  - ...
-  - Issues: https://github.com/HyphaApp/hypha/issues
 
 extra:
   social:
