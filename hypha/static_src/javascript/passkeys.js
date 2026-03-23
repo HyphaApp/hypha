@@ -14,6 +14,7 @@
 window.hypha = window.hypha || {};
 
 window.hypha.passkeys = (function () {
+  let _conditionalAbortController = null;
   function getCsrfToken() {
     const el = document.querySelector("[name=csrfmiddlewaretoken]");
     if (el) return el.value;
@@ -126,6 +127,12 @@ window.hypha.passkeys = (function () {
    * Authenticate with a passkey via an explicit button click on the login page.
    */
   async function authenticate() {
+    // Abort any in-progress conditional mediation before starting explicit auth.
+    if (_conditionalAbortController) {
+      _conditionalAbortController.abort();
+      _conditionalAbortController = null;
+    }
+
     const beginUrl = document.getElementById("passkey-auth-begin-url")?.value;
     const completeUrl = document.getElementById(
       "passkey-auth-complete-url"
@@ -182,6 +189,8 @@ window.hypha.passkeys = (function () {
     )?.value;
     if (!beginUrl || !completeUrl) return;
 
+    _conditionalAbortController = new AbortController();
+
     try {
       const beginResp = await jsonPost(beginUrl, {});
       if (!beginResp.ok) return;
@@ -192,6 +201,7 @@ window.hypha.passkeys = (function () {
       const credential = await navigator.credentials.get({
         publicKey: PublicKeyCredential.parseRequestOptionsFromJSON(authOptions),
         mediation: "conditional",
+        signal: _conditionalAbortController.signal,
       });
 
       if (!credential) return;
