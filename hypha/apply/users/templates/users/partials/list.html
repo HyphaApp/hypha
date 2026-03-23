@@ -1,0 +1,58 @@
+{% load i18n heroicons %}
+<div id="passkey-list">
+    {% if passkeys %}
+        <ul class="flex flex-col gap-2">
+            {% for passkey in passkeys %}
+                <li class="flex gap-2 items-center p-2 rounded border bg-base-100">
+                    {% heroicon_micro "key" class="shrink-0 size-4 text-fg-muted" aria_hidden=true %}
+                    <form
+                        hx-post="{% url 'users:passkey_rename' passkey.pk %}"
+                        hx-target="#passkey-list"
+                        hx-swap="outerHTML"
+                        class="flex flex-1 gap-2 items-center"
+                    >
+                        {% csrf_token %}
+                        <input
+                            type="text"
+                            name="name"
+                            value="{{ passkey.name }}"
+                            class="flex-1 input input-xs input-ghost"
+                            aria-label="{% trans 'Passkey name' %}"
+                            required
+                        />
+                        <button type="submit" class="btn btn-ghost btn-xs" title="{% trans 'Save name' %}">
+                            {% heroicon_micro "check" class="size-3" aria_hidden=true %}
+                        </button>
+                    </form>
+                    <span class="text-xs text-fg-muted shrink-0">{{ passkey.created_at|date:"Y-m-d" }}</span>
+                    <form
+                        hx-post="{% url 'users:passkey_delete' passkey.pk %}"
+                        hx-target="#passkey-list"
+                        hx-swap="outerHTML"
+                        hx-confirm="{% trans 'Delete this passkey?' %}"
+                    >
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-ghost btn-xs text-error" title="{% trans 'Delete passkey' %}">
+                            {% heroicon_micro "trash" class="size-3" aria_hidden=true %}
+                        </button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-sm text-fg-muted">{% trans "No passkeys registered." %}</p>
+    {% endif %}
+
+    <div class="mt-3">
+        <button
+            type="button"
+            id="btn-add-passkey"
+            class="btn btn-sm btn-secondary btn-outline"
+            onclick="hypha.passkeys.register(this)"
+        >
+            {% heroicon_micro "plus" class="size-3" aria_hidden=true %}
+            {% trans "Add passkey" %}
+        </button>
+    </div>
+    <p id="passkey-error" class="mt-2 text-sm text-error" hidden></p>
+</div>

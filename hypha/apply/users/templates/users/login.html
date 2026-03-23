@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n wagtailcore_tags heroicons %}
+{% load i18n wagtailcore_tags heroicons static %}
 
 {% block title %}{% trans "Log in" %}{% endblock %}
 
@@ -73,9 +73,10 @@
 
                     <section class="flex-wrap card-actions">
                         {% if GOOGLE_OAUTH2 %}
-                            {% include "includes/org_login_button.html" %}
+                            {% include "users/includes/org_login_button.html" %}
                         {% endif %}
-                        {% include "includes/passwordless_login_button.html" %}
+                        {% include "users/includes/passwordless_login_button.html" %}
+                        {% include "users/includes/passkey_login_button.html" %}
                     </section>
 
                 {% else %}
@@ -124,6 +125,12 @@
 
 {% block extra_js %}
     {{ block.super }}
+    <script src="{% static 'js/passkeys.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            hypha.passkeys.initUI();
+        });
+    </script>
     {# Fix copy of dynamic fields label #}
     <script>
         var labelOtpToken = document.querySelector("label[for=id_token-otp_token]");
