@@ -33,6 +33,17 @@ DEFAULT_RATE_LIMIT = env.str("DEFAULT_RATE_LIMIT", "5/m")
 # IF Hypha should enforce 2FA for all users.
 ENFORCE_TWO_FACTOR = env.bool("ENFORCE_TWO_FACTOR", False)
 
+# WebAuthn / Passkey settings.
+# WEBAUTHN_RP_ID: the relying party domain, e.g. "example.com" (no port, no scheme).
+#   Defaults to the request host if not set.
+# WEBAUTHN_ORIGIN: the full origin, e.g. "https://example.com".
+#   Defaults to the request origin if not set.
+# WEBAUTHN_RP_NAME: display name shown in the browser passkey UI.
+#   Defaults to ORG_LONG_NAME.
+WEBAUTHN_RP_ID = env.str("WEBAUTHN_RP_ID", None)
+WEBAUTHN_RP_NAME = env.str("WEBAUTHN_RP_NAME", None)
+WEBAUTHN_ORIGIN = env.str("WEBAUTHN_ORIGIN", None)
+
 # Set the allowed file extension for all uploads fields.
 FILE_ALLOWED_EXTENSIONS = [
     "doc",
