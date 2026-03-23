@@ -105,8 +105,8 @@ class PasskeyRegisterCompleteView(View):
 
         try:
             challenge = _load_challenge(request)
-        except PermissionDenied as e:
-            return JsonResponse({"error": str(e)}, status=400)
+        except PermissionDenied:
+            return JsonResponse({"error": "No active WebAuthn challenge"}, status=400)
 
         try:
             credential = RegistrationCredential(
@@ -177,12 +177,12 @@ class PasskeyAuthCompleteView(View):
 
         try:
             challenge = _load_challenge(request)
-        except PermissionDenied as e:
-            return JsonResponse({"error": str(e)}, status=400)
+        except PermissionDenied:
+            return JsonResponse({"error": "No active WebAuthn challenge"}, status=400)
 
         try:
             credential_id_b64 = bytes_to_base64url(base64url_to_bytes(data["rawId"]))
-        except (KeyError, Exception):
+        except Exception:
             return JsonResponse({"error": "Invalid credential"}, status=400)
 
         try:
