@@ -35,33 +35,21 @@ window.hypha.passkeys = (function () {
   }
 
   /**
-   * Returns true when the current device has a platform authenticator
-   * (Touch ID, Windows Hello, Face ID, …) and the browser supports passkeys.
-   */
-  async function isPlatformAuthenticatorAvailable() {
-    if (
-      !window.PublicKeyCredential ||
-      !PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable
-    )
-      return false;
-    return PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-  }
-
-  /**
    * Show passkey-related UI elements only when the platform supports them.
    * Call this on DOMContentLoaded — elements with data-passkey-ui are hidden
    * by default and revealed here.
    */
   async function initUI() {
-    const [platformOk, conditionalOk] = await Promise.all([
-      isPlatformAuthenticatorAvailable().catch(() => false),
-      (
-        window.PublicKeyCredential?.isConditionalMediationAvailable?.() ??
-        Promise.resolve(false)
-      ).catch(() => false),
-    ]);
+    const webAuthnAvailable = !!(
+      window.PublicKeyCredential && navigator.credentials
+    );
 
-    if (platformOk) {
+    const conditionalOk = await (
+      window.PublicKeyCredential?.isConditionalMediationAvailable?.() ??
+      Promise.resolve(false)
+    ).catch(() => false);
+
+    if (webAuthnAvailable) {
       document
         .querySelectorAll("[data-passkey-ui]")
         .forEach((el) => el.removeAttribute("hidden"));
