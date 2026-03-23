@@ -6,9 +6,9 @@
  *   - PublicKeyCredential.parseRequestOptionsFromJSON()
  *   - PublicKeyCredential.prototype.toJSON()
  *
- * Availability is checked via isUserVerifyingPlatformAuthenticatorAvailable()
- * (not just window.PublicKeyCredential) so macOS Touch ID, Windows Hello,
- * iOS Face ID etc. are properly detected.
+ * Availability is checked via window.PublicKeyCredential && navigator.credentials,
+ * which covers platform authenticators (Touch ID, Windows Hello, Face ID) as well
+ * as roaming authenticators (security keys) and cross-device auth (QR code).
  */
 
 window.hypha = window.hypha || {};

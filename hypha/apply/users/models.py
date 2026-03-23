@@ -412,9 +412,9 @@ class Passkey(models.Model):
     )
     name = models.CharField(max_length=255, blank=True)
     # base64url-encoded credential id (unique per authenticator)
-    credential_id = models.TextField(unique=True)
-    # base64url-encoded CASE public key
-    public_key = models.TextField()
+    credential_id = models.CharField(max_length=2048, unique=True)
+    # base64url-encoded public key
+    public_key = models.CharField(max_length=1024)
     sign_count = models.PositiveBigIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     last_used_at = models.DateTimeField(null=True, blank=True)
