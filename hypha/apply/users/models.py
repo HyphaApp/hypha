@@ -490,6 +490,7 @@ class Passkey(models.Model):
     # base64url-encoded public key
     public_key = models.CharField(max_length=1024)
     sign_count = models.PositiveBigIntegerField(default=0)
+    transports = models.JSONField(default=list, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_used_at = models.DateTimeField(null=True, blank=True)
 
