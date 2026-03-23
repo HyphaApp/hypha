@@ -1,5 +1,5 @@
 {% extends 'base-apply.html' %}
-{% load i18n users_tags wagtailcore_tags heroicons %}
+{% load i18n users_tags wagtailcore_tags heroicons static %}
 
 {% block title %}{% trans "Account" %}{% endblock %}
 
@@ -93,6 +93,23 @@
                 {% endif %}
             </p>
 
+            <h3 class="mt-6 mb-2 text-sm font-semibold">{% trans "Passkeys" %}</h3>
+            <p class="mb-2 text-sm text-fg-muted">
+                {% trans "Passkeys use your device's biometrics or PIN to sign in securely without a password." %}
+            </p>
+
+            {# Hidden inputs supply the API URLs to passkeys.js #}
+            <input type="hidden" id="passkey-register-begin-url" value="{% url 'users:passkey_register_begin' %}">
+            <input type="hidden" id="passkey-register-complete-url" value="{% url 'users:passkey_register_complete' %}">
+
+            <div
+                hx-get="{% url 'users:passkey_list' %}"
+                hx-trigger="load"
+                hx-swap="innerHTML"
+            >
+                <div class="w-full h-8 rounded animate-pulse bg-base-300"></div>
+            </div>
+
             {# Remove the comment block tags below when such need arises. e.g. adding new providers #}
             {% comment %}
             {% can_use_oauth as show_oauth_link %}
@@ -107,4 +124,8 @@
             {% endcomment %}
         </div>
     </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/passkeys.js' %}"></script>
 {% endblock %}

@@ -1,0 +1,207 @@
+/**
+ * WebAuthn passkey support using native browser APIs.
+ *
+ * Uses the stable native APIs available in all major browsers since March 2025:
+ *   - PublicKeyCredential.parseCreationOptionsFromJSON()
+ *   - PublicKeyCredential.parseRequestOptionsFromJSON()
+ *   - PublicKeyCredential.prototype.toJSON()
+ *
+ * Availability is checked via isUserVerifyingPlatformAuthenticatorAvailable()
+ * (not just window.PublicKeyCredential) so macOS Touch ID, Windows Hello,
+ * iOS Face ID etc. are properly detected.
+ */
+
+window.hypha = window.hypha || {};
+
+window.hypha.passkeys = (function () {
+  function getCsrfToken() {
+    const el = document.querySelector("[name=csrfmiddlewaretoken]");
+    if (el) return el.value;
+    const cookie = document.cookie
+      .split(";")
+      .find((c) => c.trim().startsWith("csrftoken="));
+    return cookie ? cookie.split("=")[1] : "";
+  }
+
+  function jsonPost(url, body) {
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCsrfToken(),
+      },
+      body: JSON.stringify(body),
+    });
+  }
+
+  /**
+   * Returns true when the current device has a platform authenticator
+   * (Touch ID, Windows Hello, Face ID, …) and the browser supports passkeys.
+   */
+  async function isPlatformAuthenticatorAvailable() {
+    if (
+      !window.PublicKeyCredential ||
+      !PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable
+    )
+      return false;
+    return PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+  }
+
+  /**
+   * Show passkey-related UI elements only when the platform supports them.
+   * Call this on DOMContentLoaded — elements with data-passkey-ui are hidden
+   * by default and revealed here.
+   */
+  async function initUI() {
+    const [platformOk, conditionalOk] = await Promise.all([
+      isPlatformAuthenticatorAvailable().catch(() => false),
+      (
+        window.PublicKeyCredential?.isConditionalMediationAvailable?.() ??
+        Promise.resolve(false)
+      ).catch(() => false),
+    ]);
+
+    if (platformOk) {
+      document
+        .querySelectorAll("[data-passkey-ui]")
+        .forEach((el) => el.removeAttribute("hidden"));
+    }
+
+    if (conditionalOk) {
+      _startConditionalMediation();
+    }
+  }
+
+  /**
+   * Register a new passkey for the currently authenticated user.
+   * Called from the account page "Add passkey" button.
+   */
+  async function register(triggerEl) {
+    const beginUrl = document.getElementById(
+      "passkey-register-begin-url"
+    )?.value;
+    const completeUrl = document.getElementById(
+      "passkey-register-complete-url"
+    )?.value;
+    if (!beginUrl || !completeUrl) return;
+
+    const name = prompt("Name this passkey (e.g. 'MacBook Touch ID'):", "");
+    if (name === null) return; // user cancelled
+
+    const errorEl = document.getElementById("passkey-error");
+
+    try {
+      if (triggerEl) triggerEl.disabled = true;
+
+      // Step 1: fetch registration options from server
+      const beginResp = await jsonPost(beginUrl, {});
+      if (!beginResp.ok) {
+        const err = await beginResp.json();
+        throw new Error(err.error || "Server error");
+      }
+      const options = await beginResp.json();
+
+      // Step 2: trigger native OS passkey creation UI (Touch ID / Windows Hello / …)
+      const credential = await navigator.credentials.create({
+        publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(options),
+      });
+
+      // Step 3: send the signed response to the server
+      const completeResp = await jsonPost(completeUrl, {
+        ...credential.toJSON(),
+        name: name.trim(),
+      });
+      if (!completeResp.ok) {
+        const err = await completeResp.json();
+        throw new Error(err.error || "Registration failed");
+      }
+
+      // Reload to show the new passkey in the list
+      window.location.reload();
+    } catch (err) {
+      // NotAllowedError means the user dismissed the native OS dialog — not an error.
+      if (err.name !== "NotAllowedError" && errorEl) {
+        errorEl.textContent = err.message;
+        errorEl.hidden = false;
+      }
+    } finally {
+      if (triggerEl) triggerEl.disabled = false;
+    }
+  }
+
+  /**
+   * Authenticate with a passkey via an explicit button click on the login page.
+   */
+  async function authenticate() {
+    const beginUrl = document.getElementById("passkey-auth-begin-url")?.value;
+    const completeUrl = document.getElementById(
+      "passkey-auth-complete-url"
+    )?.value;
+    if (!beginUrl || !completeUrl) return;
+
+    const errorEl = document.getElementById("passkey-auth-error");
+
+    try {
+      const beginResp = await jsonPost(beginUrl, {});
+      if (!beginResp.ok) throw new Error("Failed to begin authentication");
+      const authOptions = await beginResp.json();
+
+      // Triggers native OS passkey selection UI
+      const credential = await navigator.credentials.get({
+        publicKey: PublicKeyCredential.parseRequestOptionsFromJSON(authOptions),
+      });
+
+      const completeResp = await jsonPost(completeUrl, credential.toJSON());
+      if (!completeResp.ok) {
+        const err = await completeResp.json();
+        throw new Error(err.error || "Authentication failed");
+      }
+      const data = await completeResp.json();
+      window.location.href = data.redirect_url || "/";
+    } catch (err) {
+      // NotAllowedError / AbortError = user dismissed the native UI.
+      if (err.name !== "NotAllowedError" && err.name !== "AbortError") {
+        if (errorEl) {
+          errorEl.textContent = err.message;
+          errorEl.hidden = false;
+        }
+      }
+    }
+  }
+
+  /**
+   * Internal: start conditional mediation (passkey autofill on the login page).
+   * The email input needs autocomplete="username webauthn" for this to work.
+   */
+  async function _startConditionalMediation() {
+    const beginUrl = document.getElementById("passkey-auth-begin-url")?.value;
+    const completeUrl = document.getElementById(
+      "passkey-auth-complete-url"
+    )?.value;
+    if (!beginUrl || !completeUrl) return;
+
+    try {
+      const beginResp = await jsonPost(beginUrl, {});
+      if (!beginResp.ok) return;
+      const authOptions = await beginResp.json();
+
+      // mediation:"conditional" shows registered passkeys in the browser
+      // autofill dropdown next to the email field — no explicit user gesture needed.
+      const credential = await navigator.credentials.get({
+        publicKey: PublicKeyCredential.parseRequestOptionsFromJSON(authOptions),
+        mediation: "conditional",
+      });
+
+      if (!credential) return;
+
+      const completeResp = await jsonPost(completeUrl, credential.toJSON());
+      if (!completeResp.ok) return;
+      const data = await completeResp.json();
+      window.location.href = data.redirect_url || "/";
+    } catch (_err) {
+      // Expected: aborted when user submits the password form normally.
+    }
+  }
+
+  return { initUI, register, authenticate };
+})();

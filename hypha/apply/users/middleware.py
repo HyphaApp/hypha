@@ -103,7 +103,11 @@ class TwoFactorAuthenticationMiddleware:
         # code to execute before the view
         user = request.user
         if user.is_authenticated:
-            if user.social_auth.exists() or user.is_verified():
+            if (
+                user.social_auth.exists()
+                or user.is_verified()
+                or request.session.get("passkey_authenticated")
+            ):
                 return self._accept(request)
 
             # Allow rounds and lab detail pages
