@@ -6,6 +6,7 @@
                 <li class="flex gap-2 items-center p-2 rounded border bg-base-100">
                     {% heroicon_micro "key" class="shrink-0 size-4 text-fg-muted" aria_hidden=true %}
                     <form
+                        x-data="{ dirty: false }"
                         hx-post="{% url 'users:passkey_rename' passkey.pk %}"
                         hx-target="#passkey-list"
                         hx-swap="outerHTML"
@@ -18,10 +19,12 @@
                             value="{{ passkey.name }}"
                             class="flex-1 input input-xs input-ghost"
                             aria-label="{% trans 'Passkey name' %}"
+                            data-tippy-content="{% trans 'Click to edit name' %}"
+                            @input="dirty = true"
                             required
                         />
-                        <button type="submit" class="btn btn-ghost btn-xs" title="{% trans 'Save name' %}">
-                            {% heroicon_micro "check" class="size-3" aria_hidden=true %}
+                        <button type="submit" class="btn btn-ghost btn-xs" :class="dirty && 'text-success'" title="{% trans 'Save name' %}">
+                            {% heroicon_micro "check" class="size-4" aria_hidden=true %}
                         </button>
                     </form>
                     <span class="text-xs text-fg-muted shrink-0" title="{{ passkey.created_at|date:'Y-m-d' }}">
