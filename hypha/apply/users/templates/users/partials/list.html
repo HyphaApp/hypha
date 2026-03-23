@@ -24,7 +24,13 @@
                             {% heroicon_micro "check" class="size-3" aria_hidden=true %}
                         </button>
                     </form>
-                    <span class="text-xs text-fg-muted shrink-0">{{ passkey.created_at|date:"Y-m-d" }}</span>
+                    <span class="text-xs text-fg-muted shrink-0" title="{{ passkey.created_at|date:'Y-m-d' }}">
+                        {% if passkey.last_used_at %}
+                            {% blocktrans with when=passkey.last_used_at|timesince %}Used {{ when }} ago{% endblocktrans %}
+                        {% else %}
+                            {% trans "Never used" %}
+                        {% endif %}
+                    </span>
                     <form
                         hx-post="{% url 'users:passkey_delete' passkey.pk %}"
                         hx-target="#passkey-list"
@@ -43,16 +49,24 @@
         <p class="text-sm text-fg-muted">{% trans "No passkeys registered." %}</p>
     {% endif %}
 
-    <div class="mt-3">
-        <button
-            type="button"
-            id="btn-add-passkey"
-            class="btn btn-sm btn-secondary btn-outline"
-            onclick="hypha.passkeys.register(this)"
-        >
+    <form
+        class="flex gap-2 mt-3"
+        data-error-server="{% trans "Server error" %}"
+        data-error-register="{% trans "Registration failed" %}"
+        onsubmit="hypha.passkeys.register(this); return false;"
+    >
+        <input
+            type="text"
+            name="name"
+            class="flex-1 input input-sm"
+            placeholder="{% trans "e.g. MacBook Touch ID" %}"
+            aria-label="{% trans "Passkey name" %}"
+            required
+        />
+        <button type="submit" class="btn btn-sm btn-secondary btn-outline">
             {% heroicon_micro "plus" class="size-3" aria_hidden=true %}
             {% trans "Add passkey" %}
         </button>
-    </div>
+    </form>
     <p id="passkey-error" class="mt-2 text-sm text-error" hidden></p>
 </div>
