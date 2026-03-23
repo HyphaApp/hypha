@@ -25,6 +25,7 @@ from webauthn.helpers.structs import (
     AuthenticatorAssertionResponse,
     AuthenticatorAttestationResponse,
     AuthenticatorSelectionCriteria,
+    AuthenticatorTransport,
     PublicKeyCredentialDescriptor,
     RegistrationCredential,
     ResidentKeyRequirement,
@@ -90,7 +91,10 @@ class PasskeyRegisterBeginView(View):
                 status=400,
             )
         existing = [
-            PublicKeyCredentialDescriptor(id=base64url_to_bytes(pk.credential_id))
+            PublicKeyCredentialDescriptor(
+                id=base64url_to_bytes(pk.credential_id),
+                transports=[AuthenticatorTransport(t) for t in pk.transports] or None,
+            )
             for pk in existing_passkeys
         ]
         options = generate_registration_options(
@@ -159,6 +163,7 @@ class PasskeyRegisterCompleteView(View):
             credential_id=bytes_to_base64url(verification.credential_id),
             public_key=bytes_to_base64url(verification.credential_public_key),
             sign_count=verification.sign_count,
+            transports=data["response"].get("transports", []),
         )
         return JsonResponse({"status": "ok"})
 
