@@ -6,7 +6,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, resolve_url
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -250,16 +250,17 @@ class PasskeyAuthCompleteView(View):
         passkey.save(update_fields=["sign_count", "last_used_at"])
 
         user = passkey.user
-        login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+        user.backend = settings.CUSTOM_AUTH_BACKEND
+        login(request, user)
         request.session["passkey_authenticated"] = True
 
-        next_url = data.get("next") or "/"
+        next_url = data.get("next") or resolve_url(settings.LOGIN_REDIRECT_URL)
         if not url_has_allowed_host_and_scheme(
             next_url,
             allowed_hosts={request.get_host()},
             require_https=request.is_secure(),
         ):
-            next_url = settings.LOGIN_REDIRECT_URL
+            next_url = resolve_url(settings.LOGIN_REDIRECT_URL)
         return JsonResponse({"status": "ok", "redirect_url": next_url})
 
 
