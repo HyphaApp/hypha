@@ -33,7 +33,8 @@ from webauthn.helpers.structs import (
 
 from .models import Passkey
 
-SESSION_CHALLENGE_KEY = "webauthn_challenge"
+SESSION_CHALLENGE_KEY_REGISTER = "webauthn_challenge_register"
+SESSION_CHALLENGE_KEY_AUTH = "webauthn_challenge_auth"
 
 
 def _get_rp_id(request):
@@ -55,12 +56,12 @@ def _get_origin(request):
     return f"{scheme}://{request.get_host()}"
 
 
-def _store_challenge(request, challenge: bytes):
-    request.session[SESSION_CHALLENGE_KEY] = base64.b64encode(challenge).decode()
+def _store_challenge(request, challenge: bytes, key: str):
+    request.session[key] = base64.b64encode(challenge).decode()
 
 
-def _load_challenge(request) -> bytes:
-    encoded = request.session.pop(SESSION_CHALLENGE_KEY, None)
+def _load_challenge(request, key: str) -> bytes:
+    encoded = request.session.pop(key, None)
     if not encoded:
         raise PermissionDenied("No active WebAuthn challenge.")
     return base64.b64decode(encoded)
@@ -104,7 +105,7 @@ class PasskeyRegisterBeginView(View):
             ),
             exclude_credentials=existing,
         )
-        _store_challenge(request, options.challenge)
+        _store_challenge(request, options.challenge, SESSION_CHALLENGE_KEY_REGISTER)
         return JsonResponse(json.loads(options_to_json(options)))
 
 
@@ -121,7 +122,7 @@ class PasskeyRegisterCompleteView(View):
             return JsonResponse({"error": "Invalid JSON"}, status=400)
 
         try:
-            challenge = _load_challenge(request)
+            challenge = _load_challenge(request, SESSION_CHALLENGE_KEY_REGISTER)
         except PermissionDenied:
             return JsonResponse({"error": "No active WebAuthn challenge"}, status=400)
 
@@ -177,7 +178,7 @@ class PasskeyAuthBeginView(View):
             rp_id=_get_rp_id(request),
             user_verification=UserVerificationRequirement.REQUIRED,
         )
-        _store_challenge(request, options.challenge)
+        _store_challenge(request, options.challenge, SESSION_CHALLENGE_KEY_AUTH)
         return JsonResponse(json.loads(options_to_json(options)))
 
 
@@ -193,7 +194,7 @@ class PasskeyAuthCompleteView(View):
             return JsonResponse({"error": "Invalid JSON"}, status=400)
 
         try:
-            challenge = _load_challenge(request)
+            challenge = _load_challenge(request, SESSION_CHALLENGE_KEY_AUTH)
         except PermissionDenied:
             return JsonResponse({"error": "No active WebAuthn challenge"}, status=400)
 
