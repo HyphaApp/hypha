@@ -129,8 +129,8 @@ class PasskeyRegisterCompleteView(View):
                 expected_origin=_get_origin(request),
                 require_user_verification=True,
             )
-        except Exception as exc:
-            return JsonResponse({"error": str(exc)}, status=400)
+        except Exception:
+            return JsonResponse({"error": "Verification failed"}, status=400)
 
         name = (data.get("name") or "").strip() or timezone.now().strftime(
             "Passkey %Y-%m-%d"
@@ -180,7 +180,11 @@ class PasskeyAuthCompleteView(View):
         except PermissionDenied as e:
             return JsonResponse({"error": str(e)}, status=400)
 
-        credential_id_b64 = bytes_to_base64url(base64url_to_bytes(data["rawId"]))
+        try:
+            credential_id_b64 = bytes_to_base64url(base64url_to_bytes(data["rawId"]))
+        except (KeyError, Exception):
+            return JsonResponse({"error": "Invalid credential"}, status=400)
+
         try:
             passkey = Passkey.objects.select_related("user").get(
                 credential_id=credential_id_b64
@@ -215,8 +219,8 @@ class PasskeyAuthCompleteView(View):
                 credential_current_sign_count=passkey.sign_count,
                 require_user_verification=True,
             )
-        except Exception as exc:
-            return JsonResponse({"error": str(exc)}, status=400)
+        except Exception:
+            return JsonResponse({"error": "Verification failed"}, status=400)
 
         passkey.sign_count = verification.new_sign_count
         passkey.last_used_at = timezone.now()
