@@ -6,6 +6,15 @@ from django_ratelimit.decorators import ratelimit
 
 from hypha.elevate.views import elevate as elevate_view
 
+from .passkey_views import (
+    PasskeyAuthBeginView,
+    PasskeyAuthCompleteView,
+    PasskeyDeleteView,
+    PasskeyListView,
+    PasskeyRegisterBeginView,
+    PasskeyRegisterCompleteView,
+    PasskeyRenameView,
+)
 from .views import (
     AccountView,
     ActivationView,
@@ -39,6 +48,17 @@ public_urlpatterns = [
     ),
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page="/"), name="logout"),
+    # Passkey authentication — public (no login required)
+    path(
+        "passkeys/auth/begin/",
+        PasskeyAuthBeginView.as_view(),
+        name="passkey_auth_begin",
+    ),
+    path(
+        "passkeys/auth/complete/",
+        PasskeyAuthCompleteView.as_view(),
+        name="passkey_auth_complete",
+    ),
 ]
 
 account_urls = [
@@ -115,6 +135,28 @@ account_urls = [
         name="activate",
     ),
     path("hijack/", hijack_view, name="hijack"),
+    # Passkey management
+    path("passkeys/", PasskeyListView.as_view(), name="passkey_list"),
+    path(
+        "passkeys/register/begin/",
+        PasskeyRegisterBeginView.as_view(),
+        name="passkey_register_begin",
+    ),
+    path(
+        "passkeys/register/complete/",
+        PasskeyRegisterCompleteView.as_view(),
+        name="passkey_register_complete",
+    ),
+    path(
+        "passkeys/<int:pk>/delete/",
+        PasskeyDeleteView.as_view(),
+        name="passkey_delete",
+    ),
+    path(
+        "passkeys/<int:pk>/rename/",
+        PasskeyRenameView.as_view(),
+        name="passkey_rename",
+    ),
     path("activate/", create_password, name="activate_password"),
     path("oauth", oauth, name="oauth"),
     # 2FA
