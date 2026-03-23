@@ -71,13 +71,26 @@ def _load_challenge(request) -> bytes:
 # ---------------------------------------------------------------------------
 
 
+MAX_PASSKEYS_PER_USER = 10
+
+
 @method_decorator(login_required, name="dispatch")
+@method_decorator(
+    ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
 class PasskeyRegisterBeginView(View):
     def post(self, request):
         user = request.user
+        existing_passkeys = list(user.passkeys.all())
+        if len(existing_passkeys) >= MAX_PASSKEYS_PER_USER:
+            return JsonResponse(
+                {"error": f"Maximum of {MAX_PASSKEYS_PER_USER} passkeys allowed"},
+                status=400,
+            )
         existing = [
             PublicKeyCredentialDescriptor(id=base64url_to_bytes(pk.credential_id))
-            for pk in user.passkeys.all()
+            for pk in existing_passkeys
         ]
         options = generate_registration_options(
             rp_id=_get_rp_id(request),
@@ -96,6 +109,10 @@ class PasskeyRegisterBeginView(View):
 
 
 @method_decorator(login_required, name="dispatch")
+@method_decorator(
+    ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
 class PasskeyRegisterCompleteView(View):
     def post(self, request):
         try:
