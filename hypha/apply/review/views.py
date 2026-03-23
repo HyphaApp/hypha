@@ -20,7 +20,11 @@ from wagtail.blocks import RichTextBlock
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.funds.models import ApplicationSubmission, AssignedReviewers
 from hypha.apply.funds.workflows import INITIAL_STATE
-from hypha.apply.review.blocks import RecommendationBlock, RecommendationCommentsBlock
+from hypha.apply.review.blocks import (
+    RecommendationBlock,
+    RecommendationCommentsBlock,
+    VisibilityBlock,
+)
 from hypha.apply.review.forms import ReviewModelForm, ReviewOpinionForm
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.todo.options import REVIEW_DRAFT
@@ -408,7 +412,12 @@ class ReviewListView(ListView):
     def should_display(self, field):
         return not isinstance(
             field.block,
-            (RecommendationBlock, RecommendationCommentsBlock, RichTextBlock),
+            (
+                RecommendationBlock,
+                RecommendationCommentsBlock,
+                RichTextBlock,
+                VisibilityBlock,
+            ),
         )
 
     def get_context_data(self, **kwargs):
@@ -420,6 +429,7 @@ class ReviewListView(ListView):
         review_data["score"] = {"question": "Overall Score", "answers": []}
         review_data["recommendation"] = {"question": "Recommendation", "answers": []}
         review_data["revision"] = {"question": "Revision", "answers": []}
+        review_data["visibility"] = {"question": "Visibility", "answers": []}
         review_data["comments"] = {"question": "Comments", "answers": []}
 
         responses = self.object_list.count()
@@ -459,6 +469,7 @@ class ReviewListView(ListView):
             else:
                 revision = '<a href="{}">Compare</a>'.format(review.get_compare_url())
             review_data["revision"]["answers"].append(revision)
+            review_data["visibility"]["answers"].append(review.get_visibility_display())
 
             for field_id in review.fields:
                 field = review.field(field_id)
