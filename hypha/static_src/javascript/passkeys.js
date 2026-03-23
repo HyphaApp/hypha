@@ -74,9 +74,10 @@ window.hypha.passkeys = (function () {
 
   /**
    * Register a new passkey for the currently authenticated user.
-   * Called from the account page "Add passkey" button.
+   * Called from the account page "Add passkey" form (onsubmit).
+   * @param {HTMLFormElement} formEl  The <form> element containing a [name=name] input.
    */
-  async function register(triggerEl) {
+  async function register(formEl) {
     const beginUrl = document.getElementById(
       "passkey-register-begin-url"
     )?.value;
@@ -85,19 +86,21 @@ window.hypha.passkeys = (function () {
     )?.value;
     if (!beginUrl || !completeUrl) return;
 
-    const name = prompt("Name this passkey (e.g. 'MacBook Touch ID'):", "");
-    if (name === null) return; // user cancelled
-
+    const nameInput = formEl?.querySelector("[name=name]");
     const errorEl = document.getElementById("passkey-error");
+    const submitBtn = formEl?.querySelector("[type=submit]");
 
     try {
-      if (triggerEl) triggerEl.disabled = true;
+      if (submitBtn) submitBtn.disabled = true;
+      if (errorEl) errorEl.hidden = true;
 
       // Step 1: fetch registration options from server
       const beginResp = await jsonPost(beginUrl, {});
       if (!beginResp.ok) {
         const err = await beginResp.json();
-        throw new Error(err.error || "Server error");
+        throw new Error(
+          err.error || formEl?.dataset.errorServer || "Server error"
+        );
       }
       const options = await beginResp.json();
 
@@ -109,11 +112,13 @@ window.hypha.passkeys = (function () {
       // Step 3: send the signed response to the server
       const completeResp = await jsonPost(completeUrl, {
         ...credential.toJSON(),
-        name: name.trim(),
+        name: nameInput?.value.trim() || "",
       });
       if (!completeResp.ok) {
         const err = await completeResp.json();
-        throw new Error(err.error || "Registration failed");
+        throw new Error(
+          err.error || formEl?.dataset.errorRegister || "Registration failed"
+        );
       }
 
       // Reload to show the new passkey in the list
@@ -125,7 +130,7 @@ window.hypha.passkeys = (function () {
         errorEl.hidden = false;
       }
     } finally {
-      if (triggerEl) triggerEl.disabled = false;
+      if (submitBtn) submitBtn.disabled = false;
     }
   }
 
@@ -139,11 +144,15 @@ window.hypha.passkeys = (function () {
     )?.value;
     if (!beginUrl || !completeUrl) return;
 
+    const nextUrl = document.getElementById("passkey-next-url")?.value || "";
     const errorEl = document.getElementById("passkey-auth-error");
 
     try {
       const beginResp = await jsonPost(beginUrl, {});
-      if (!beginResp.ok) throw new Error("Failed to begin authentication");
+      if (!beginResp.ok)
+        throw new Error(
+          errorEl?.dataset.errorBegin || "Failed to begin authentication"
+        );
       const authOptions = await beginResp.json();
 
       // Triggers native OS passkey selection UI
@@ -151,10 +160,15 @@ window.hypha.passkeys = (function () {
         publicKey: PublicKeyCredential.parseRequestOptionsFromJSON(authOptions),
       });
 
-      const completeResp = await jsonPost(completeUrl, credential.toJSON());
+      const completeResp = await jsonPost(completeUrl, {
+        ...credential.toJSON(),
+        next: nextUrl,
+      });
       if (!completeResp.ok) {
         const err = await completeResp.json();
-        throw new Error(err.error || "Authentication failed");
+        throw new Error(
+          err.error || errorEl?.dataset.errorAuth || "Authentication failed"
+        );
       }
       const data = await completeResp.json();
       window.location.href = data.redirect_url || "/";
