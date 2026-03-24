@@ -4,7 +4,7 @@
         <ul class="flex flex-col gap-2">
             {% for passkey in passkeys %}
                 <li class="flex gap-2 items-center p-2 rounded border bg-base-100">
-                    {% heroicon_micro "key" class="shrink-0 size-4 text-fg-muted" aria_hidden=true %}
+                    {% heroicon_micro "key" class="size-4 text-fg-muted" aria_hidden=true %}
                     <form
                         x-data="{ dirty: false }"
                         hx-post="{% url 'users:passkey_rename' passkey.pk %}"
@@ -27,7 +27,7 @@
                             {% heroicon_micro "check" class="size-4" aria_hidden=true %}
                         </button>
                     </form>
-                    <span class="text-xs text-fg-muted shrink-0" title="{{ passkey.created_at|date:'Y-m-d' }}">
+                    <span class="text-xs text-fg-muted" title="{{ passkey.created_at|date:'Y-m-d' }}">
                         {% if passkey.last_used_at %}
                             {% blocktrans with when=passkey.last_used_at|timesince %}Used {{ when }} ago{% endblocktrans %}
                         {% else %}
