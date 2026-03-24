@@ -30,7 +30,8 @@ DEFAULT_PER_PAGE = 20
 # DEFAULT_RATE_LIMIT is used by login, password, 2FA, etc
 DEFAULT_RATE_LIMIT = env.str("DEFAULT_RATE_LIMIT", "5/m")
 
-# IF Hypha should enforce 2FA for all users.
+# If Hypha should enforce 2FA for all users.
+# Users that login with passkeys are excluded since that is even more secure.
 ENFORCE_TWO_FACTOR = env.bool("ENFORCE_TWO_FACTOR", False)
 
 # WebAuthn / Passkey settings.
