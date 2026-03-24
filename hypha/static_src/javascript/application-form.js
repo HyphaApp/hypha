@@ -47,17 +47,23 @@
   }
 
   // Block multiple form submits.
+  let clickedButton = null;
+  submitButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      clickedButton = button;
+    });
+  });
+
   form.addEventListener("submit", function () {
     // Use setTimeout with 0 delay to ensure form submission begins
     // before the buttons are disabled, allowing their values to be included
     setTimeout(function () {
       submitButtons.forEach(function (button) {
         button.setAttribute("disabled", "disabled");
-        if (button.textContent) {
-          button.dataset.originalText = button.textContent;
-          button.textContent = button.textContent.trim() + "…";
-        }
       });
+      if (clickedButton && clickedButton.textContent) {
+        clickedButton.textContent = clickedButton.textContent.trim() + "…";
+      }
     }, 0);
   });
 
