@@ -55,7 +55,7 @@
         button.setAttribute("disabled", "disabled");
         if (button.textContent) {
           button.dataset.originalText = button.textContent;
-          button.textContent = "Submitting...";
+          button.textContent = button.textContent.trim() + "…";
         }
       });
     }, 0);
