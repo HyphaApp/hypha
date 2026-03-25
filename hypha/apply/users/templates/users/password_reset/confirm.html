@@ -4,45 +4,49 @@
 {% block body_class %}bg-base-100{% endblock %}
 
 {% block content %}
+    <div class="flex flex-col justify-center items-center min-h-[60vh]">
+        <section class="w-full max-w-2xl card shadow-xs bg-base-100 md:card-lg">
+            <div class="card-body">
+                <h1 class="mb-4 font-semibold text-h0">{% trans "Reset password" %}</h1>
+                {% if validlink %}
+                    <p class="text-sm whitespace-normal label">
+                        {% trans "Please enter your new password twice so we can verify you typed it in correctly." %}
+                    </p>
 
-    <div class="mt-12 w-full max-w-xl">
-        {% if validlink %}
+                    <form class="form" method="post" novalidate>
+                        {% csrf_token %}
+                        {% if redirect_url %}
+                            <input type="hidden" name="next" value="{{ redirect_url }}" />
+                        {% endif %}
 
-            <h2 class="text-2xl">{% trans "Reset password" %}</h2>
-            <p>{% trans "Please enter your new password twice so we can verify you typed it in correctly." %}</p>
+                        {% if form.non_field_errors %}
+                            <ul class="errorlist">
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
 
-            <form class="form" method="post" novalidate>
-                {% csrf_token %}
-                {% if redirect_url %}
-                    <input type="hidden" name="next" value="{{ redirect_url }}" />
-                {% endif %}
+                        {% if form.errors %}
+                            <ul class="errorlist">
+                                {% blocktrans trimmed count counter=form.errors.items|length %}
+                                    <li>Please correct the error below.</li>
+                                {% plural %}
+                                    <li>Please correct the errors below.</li>
+                                {% endblocktrans %}
+                            </ul>
+                        {% endif %}
 
-                {% if form.non_field_errors %}
-                    <ul class="errorlist">
-                        {% for error in form.non_field_errors %}
-                            <li>{{ error }}</li>
+                        {% for field in form %}
+                            {% include "forms/includes/field.html" %}
                         {% endfor %}
-                    </ul>
+
+                        <button class="mt-4 btn btn-primary btn-wide" type="submit">{% trans 'Reset' %}</button>
+                    </form>
+                {% else %}
+                    <p class="whitespace-normal label">{% trans "The password reset link was invalid, possibly because it has already been used. Please request a new password reset." %}</p>
                 {% endif %}
-
-                {% if form.errors %}
-                    <ul class="errorlist">
-                        {% blocktrans trimmed count counter=form.errors.items|length %}
-                            <li>Please correct the error below.</li>
-                        {% plural %}
-                            <li>Please correct the errors below.</li>
-                        {% endblocktrans %}
-                    </ul>
-                {% endif %}
-
-                {% for field in form %}
-                    {% include "forms/includes/field.html" %}
-                {% endfor %}
-
-                <button class="btn btn-primary btn-wide" type="submit">{% trans 'Reset' %}</button>
-            </form>
-        {% else %}
-            <p>{% trans "The password reset link was invalid, possibly because it has already been used. Please request a new password reset." %}</p>
-        {% endif %}
+            </div>
+        </section>
     </div>
 {% endblock %}

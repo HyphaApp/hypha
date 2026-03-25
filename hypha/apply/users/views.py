@@ -408,6 +408,7 @@ class PasswordResetView(DjPasswordResetView):
 
     def get_extra_email_context(self):
         return {
+            "timeout_minutes": settings.PASSWORD_RESET_TIMEOUT // 60,
             "redirect_url": get_redirect_url(self.request, self.redirect_field_name),
             "site": Site.find_for_request(self.request),
             "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
@@ -632,7 +633,7 @@ class PasswordLessLoginSignupView(FormView):
 
             return TemplateResponse(
                 self.request,
-                "users/partials/passwordless_login_signup_sent.html",
+                "users/passwordless_login_signup_sent.html",
                 self.get_context_data(),
             )
         else:

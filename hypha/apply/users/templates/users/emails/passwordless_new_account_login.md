@@ -5,7 +5,7 @@
 
 {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ signup_path }}
 
-{% blocktrans %}This link will valid for {{ timeout_minutes }} minutes and can be used only once.{% endblocktrans %}
+{% blocktrans %}This link will be valid for {{ timeout_minutes }} minutes and can be used only once.{% endblocktrans %}
 
 {% blocktrans %}If you did not request this email, please ignore it.{% endblocktrans %}
 

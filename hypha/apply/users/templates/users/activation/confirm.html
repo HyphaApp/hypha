@@ -8,17 +8,17 @@
     <div class="flex flex-col justify-center items-center min-h-[60vh]">
         <section class="w-full max-w-2xl card shadow-xs bg-base-100 md:card-lg">
             <div class="items-center card-body">
-                <span class="flex justify-center items-center p-4 mb-4 rounded-full bg-primary/10">
-                    {% heroicon_outline "key" class="w-14 h-14 text-primary" %}
+                <span class="flex justify-center items-center mb-4 rounded-full bg-primary/10">
+                    {% heroicon_outline "key" aria_hidden="true" size=64 %}
                 </span>
 
-                <h2 class="mb-4 font-semibold text-h0">
+                <h1 class="mb-4 font-semibold text-h0">
                     {% if is_signup or is_activation %}
                         {% trans "Complete your registration" %}
                     {% else %}
                         {% trans "Complete your login" %}
                     {% endif %}
-                </h2>
+                </h1>
 
                 <div class="mb-6 prose">
                     {% if is_signup or is_activation %}
