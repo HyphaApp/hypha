@@ -57,8 +57,10 @@ def view_comments(role, user, submission) -> bool:
         return True
 
     project = getattr(submission, "project", None)
-    if project and can_access_project(user, project):
-        return True
+    if project:
+        can_access, _ = can_access_project(user, project)
+        if can_access:
+            return True
 
     return False
 
