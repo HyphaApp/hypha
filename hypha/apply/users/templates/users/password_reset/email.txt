@@ -7,7 +7,7 @@
 
 {{ protocol }}://{{ domain }}{% url 'users:password_reset_confirm' uidb64=uid token=token %}{% if redirect_url %}?next={{ redirect_url }}{% endif%}
 
-{% blocktrans %}This link can be used only once and will lead you to a page where you can set your password. It will remain active for {{ timeout_minutes }} minutes, so please set your password as soon as possible.{% endblocktrans %}
+{% blocktrans %}This link will lead you to a page where you can set your password. It will remain active for {{ timeout_minutes }} minutes, so please set your password as soon as possible.{% endblocktrans %}
 
 {% blocktrans %}Kind Regards,
 The {{ ORG_SHORT_NAME }} Team{% endblocktrans %}
