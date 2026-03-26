@@ -26,6 +26,55 @@ jobs:
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
 
+  django-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      DATABASE_URL: postgres://hypha:hypha@localhost/hypha?sslmode=disable
+      DJANGO_SETTINGS_MODULE: hypha.settings.test
+      SEND_MESSAGES: false
+      PYTHONDONTWRITEBYTECODE: 1
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: hypha
+          POSTGRES_PASSWORD: hypha
+          POSTGRES_DB: hypha
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Install python dependencies
+        run: |
+          uv venv
+          uv sync --frozen
+
+      - name: Create static_compiled dir
+        run: mkdir hypha/static_compiled
+
+      - name: Check Django migrations
+        run: |
+          uv run python manage.py makemigrations --dry-run --verbosity=3
+          uv run python manage.py makemigrations --check
+
+      - name: Run django collectstatic
+        run: uv run python manage.py collectstatic --noinput --no-post-process --verbosity=1
+
+      - name: Check Django setup
+        run: uv run python manage.py check
+
   test-be:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -67,24 +116,7 @@ jobs:
           uv sync --frozen --group translate
 
       - name: Create static_compiled dir
-        run: |
-          mkdir hypha/static_compiled
-
-      - name: Check Django migrations
-        if: matrix.group == 1
-        run: |
-          uv run python manage.py makemigrations --dry-run --verbosity=3
-          uv run python manage.py makemigrations --check
-
-      - name: Run django collectstatic
-        if: matrix.group == 2
-        run: |
-          uv run python manage.py collectstatic --noinput --no-post-process --verbosity=1
-
-      - name: Check Django Setup
-        if: matrix.group == 3
-        run: |
-          uv run python manage.py check
+        run: mkdir hypha/static_compiled
 
       - name: Run pytest
         run: |
