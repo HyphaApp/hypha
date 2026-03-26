@@ -51,7 +51,9 @@ py-test: .cache/py-packages  ## Run Python tests with pytest, including coverage
 
 	@echo "Removing test files generated during test"
 	@find media/ -iname 'test_*.pdf' -delete
+	@find media/ -iname 'test_*.png' -delete
 	@find media/ -iname '*.dat' -delete
+	@find media/ -name '.DS_Store' -delete
 	@find media/ -type d -empty -delete
 	@rm -rf media/temp_uploads/*
 
