@@ -32,7 +32,8 @@ class LocalizedFloatField(forms.FloatField):
 
     def to_python(self, value):
         if value not in self.empty_values:
-            value = str(value).strip()
+            # Remove all spaces.
+            value = str(value).strip().replace(" ", "")
             has_dot = "." in value
             has_comma = "," in value
 
