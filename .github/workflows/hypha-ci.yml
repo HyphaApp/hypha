@@ -88,4 +88,4 @@ jobs:
 
       - name: Run pytest
         run: |
-          uv run pytest --splits 3 --group ${{ matrix.group }}
+          uv run pytest --splits 3 --group ${{ matrix.group }} --durations-path=.test_durations
