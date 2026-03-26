@@ -450,7 +450,9 @@ class TestApplicationSubmission(TestCase):
 
     def test_file_gets_uploaded(self):
         filename = "test_image.png"
-        submission = self.make_submission(form_data__image__filename=filename)
+        submission = self.make_submission(
+            with_files=True, form_data__image__filename=filename
+        )
         path = os.path.join(settings.MEDIA_ROOT, "submission", str(submission.id))
 
         # Check we created the top level folder
@@ -464,7 +466,7 @@ class TestApplicationSubmission(TestCase):
         self.assertIn(filename, found_files)
 
     def test_correct_file_path_generated(self):
-        submission = ApplicationSubmissionFactory()
+        submission = ApplicationSubmissionFactory(with_files=True)
 
         def check_generated_file_path(file_to_test, file_id):
             file_path_generated = file_to_test.generate_filename()
@@ -583,7 +585,7 @@ class TestSubmissionRenderMethods(TestCase):
         self.assertIsNone(submission.value)
 
     def test_file_private_url_included(self):
-        submission = ApplicationSubmissionFactory()
+        submission = ApplicationSubmissionFactory(with_files=True)
         answers = submission.output_answers()
 
         def file_url_in_answers(file_to_test, file_id):

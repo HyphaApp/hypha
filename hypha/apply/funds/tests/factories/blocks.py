@@ -6,6 +6,7 @@ import factory
 from hypha.apply.funds import blocks
 from hypha.apply.stream_forms.testing.factories import (
     BLOCK_FACTORY_DEFINITION,
+    NON_FILE_BLOCK_FACTORY_DEFINITION,
     FormFieldBlockFactory,
     ParagraphBlockFactory,
     StreamFieldUUIDFactory,
@@ -14,6 +15,7 @@ from hypha.apply.utils.testing.factories import RichTextFieldBlockFactory
 
 __all__ = [
     "CustomFormFieldsFactory",
+    "NonFileCustomFormFieldsFactory",
     "TitleBlockFactory",
     "EmailBlockFactory",
     "FullNameBlockFactory",
@@ -124,16 +126,22 @@ class AddressFieldBlockFactory(FormFieldBlockFactory):
         return address
 
 
+_CUSTOM_FORM_FIELDS = {
+    "duration": factory.SubFactory(DurationBlockFactory),
+    "title": factory.SubFactory(TitleBlockFactory),
+    "value": factory.SubFactory(ValueFieldBlockFactory),
+    "email": factory.SubFactory(EmailBlockFactory),
+    "address": factory.SubFactory(AddressFieldBlockFactory),
+    "full_name": factory.SubFactory(FullNameBlockFactory),
+    "text_markup": factory.SubFactory(ParagraphBlockFactory),
+    "rich_text": factory.SubFactory(RichTextFieldBlockFactory),
+}
+
 CustomFormFieldsFactory = StreamFieldUUIDFactory(
-    {
-        **BLOCK_FACTORY_DEFINITION,
-        "duration": factory.SubFactory(DurationBlockFactory),
-        "title": factory.SubFactory(TitleBlockFactory),
-        "value": factory.SubFactory(ValueFieldBlockFactory),
-        "email": factory.SubFactory(EmailBlockFactory),
-        "address": factory.SubFactory(AddressFieldBlockFactory),
-        "full_name": factory.SubFactory(FullNameBlockFactory),
-        "text_markup": factory.SubFactory(ParagraphBlockFactory),
-        "rich_text": factory.SubFactory(RichTextFieldBlockFactory),
-    }
+    {**BLOCK_FACTORY_DEFINITION, **_CUSTOM_FORM_FIELDS}
+)
+
+# No file/image blocks — faster for tests that don't need file uploads
+NonFileCustomFormFieldsFactory = StreamFieldUUIDFactory(
+    {**NON_FILE_BLOCK_FACTORY_DEFINITION, **_CUSTOM_FORM_FIELDS}
 )
