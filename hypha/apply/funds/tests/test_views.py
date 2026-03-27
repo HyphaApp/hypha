@@ -1739,7 +1739,7 @@ class TestStaffSubmissionFileView(BaseSubmissionFileViewTestCase):
     user_factory = StaffFactory
 
     def test_staff_can_access(self):
-        submission = ApplicationSubmissionFactory()
+        submission = ApplicationSubmissionFactory(with_files=True)
         response = self.get_page(submission)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.redirect_chain, [])
@@ -1749,13 +1749,13 @@ class TestUserSubmissionFileView(BaseSubmissionFileViewTestCase):
     user_factory = ApplicantFactory
 
     def test_owner_can_access(self):
-        submission = ApplicationSubmissionFactory(user=self.user)
+        submission = ApplicationSubmissionFactory(user=self.user, with_files=True)
         response = self.get_page(submission)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.redirect_chain, [])
 
     def test_user_can_not_access(self):
-        submission = ApplicationSubmissionFactory()
+        submission = ApplicationSubmissionFactory(with_files=True)
         response = self.get_page(submission)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.redirect_chain, [])
@@ -1765,7 +1765,7 @@ class TestAnonSubmissionFileView(BaseSubmissionFileViewTestCase):
     user_factory = AnonymousUser
 
     def test_anonymous_can_not_access(self):
-        submission = ApplicationSubmissionFactory()
+        submission = ApplicationSubmissionFactory(with_files=True)
         response = self.get_page(submission)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.redirect_chain), 1)

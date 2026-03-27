@@ -244,6 +244,10 @@ class ApplicationFormDataFactory(FormDataFactory):
     field_factory = blocks.CustomFormFieldsFactory
 
 
+class NonFileApplicationFormDataFactory(FormDataFactory):
+    field_factory = blocks.NonFileCustomFormFieldsFactory
+
+
 class ApplicationSubmissionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ApplicationSubmission
@@ -253,10 +257,17 @@ class ApplicationSubmissionFactory(factory.django.DjangoModelFactory):
         workflow_stages = 1
         rejected = factory.Trait(status="rejected")
         with_external_review = False
+        with_files = factory.Trait(
+            form_fields=blocks.CustomFormFieldsFactory,
+            form_data=factory.SubFactory(
+                ApplicationFormDataFactory,
+                form_fields=factory.SelfAttribute("..form_fields"),
+            ),
+        )
 
-    form_fields = blocks.CustomFormFieldsFactory
+    form_fields = blocks.NonFileCustomFormFieldsFactory
     form_data = factory.SubFactory(
-        ApplicationFormDataFactory,
+        NonFileApplicationFormDataFactory,
         form_fields=factory.SelfAttribute("..form_fields"),
     )
     page = factory.SelfAttribute(".round.fund")
@@ -359,7 +370,7 @@ class ApplicationRevisionFactory(factory.django.DjangoModelFactory):
         "hypha.apply.funds.tests.factories.ApplicationSubmissionFactory"
     )
     form_data = factory.SubFactory(
-        ApplicationFormDataFactory,
+        NonFileApplicationFormDataFactory,
         form_fields=factory.SelfAttribute("..submission.form_fields"),
         for_factory=ApplicationSubmissionFactory,
         clean=True,

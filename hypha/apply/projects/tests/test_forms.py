@@ -342,7 +342,7 @@ class TestEditInvoiceForm(TestCase):
 class TestSelectDocumentForm(TestCase):
     def test_copying_files(self):
         category = DocumentCategoryFactory()
-        project = ProjectFactory()
+        project = ProjectFactory(submission__with_files=True)
 
         self.assertEqual(project.packet_files.count(), 0)
 
