@@ -1,8 +1,7 @@
 {% load i18n %}
 {% load querystrings heroicons %}
 
-<div class='flex flex-col'>
-
+<div class="flex flex-col">
     {% if open_rounds or closed_rounds %}
 
         {% if selected_rounds %}
@@ -10,96 +9,74 @@
                 href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "round" %}"
                 hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "round" %}"
                 hx-push-url="true"
-                class="flex px-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200{% if s.selected %}bg-base-200{% endif %}">
+                class="flex items-center py-2 px-3 border-b text-base-content/80 hover:bg-base-200 focus:bg-base-200">
                 {% trans "All Rounds" %}
             </a>
         {% endif %}
 
-        <div
-            role="tablist"
+        <ul class="overflow-auto max-h-80 divide-y" data-filter-list>
+
             {% if open_rounds %}
-                x-data="{tab: 'open_rounds'}"
-            {% else %}
-                x-data="{tab: 'closed_rounds'}"
+                {# Section heading — hidden during search because data-filter-item-text is empty #}
+                <li class="py-1 px-3 text-xs font-semibold tracking-wide uppercase text-base-content/50 bg-base-200" aria-hidden="true">
+                    <span data-filter-item-text></span>
+                    {% trans "Open" %}
+                </li>
+                {% for f in open_rounds %}
+                    <li>
+                        <a
+                            data-filter-item-text
+                            {% if f.selected %}
+                                href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" round=f.id %}"
+                                hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" round=f.id %}"
+                            {% else %}
+                                href="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" round=f.id %}"
+                                hx-get="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" round=f.id %}"
+                            {% endif %}
+                            hx-push-url="true"
+                            class="flex {% if f.selected %}ps-2 font-medium bg-base-200{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200">
+                            {% if f.selected %}
+                                {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                            {% endif %}
+                            {{ f.title }}
+                        </a>
+                    </li>
+                {% endfor %}
             {% endif %}
-        >
-            <nav class="flex px-3 pt-2" style="box-shadow: inset 0 -1px 0 #e5e7eb">
 
-                {% if open_rounds %}
-                    <span @click="tab = 'open_rounds'"
-                          role="tab"
-                          :class="{ 'border-x border-t border-b-transparent': tab === 'open_rounds' }"
-                          class="inline-block py-2 px-4 text-center rounded-t-lg border-b cursor-pointer bg-base-100 round hover:text-base-content">{% trans "Open" %}</span>
-                {% endif %}
+            {% if closed_rounds %}
+                {# Section heading — hidden during search because data-filter-item-text is empty #}
+                <li class="py-1 px-3 text-xs font-semibold tracking-wide uppercase text-base-content/50 bg-base-200" aria-hidden="true">
+                    <span data-filter-item-text></span>
+                    {% trans "Closed" %}
+                </li>
+                {% for f in closed_rounds %}
+                    <li>
+                        <a
+                            data-filter-item-text
+                            {% if f.selected %}
+                                href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" round=f.id %}"
+                                hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" round=f.id %}"
+                            {% else %}
+                                href="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" round=f.id %}"
+                                hx-get="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" round=f.id %}"
+                            {% endif %}
+                            hx-push-url="true"
+                            class="flex {% if f.selected %}ps-2 font-medium bg-base-200{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200">
+                            {% if f.selected %}
+                                {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                            {% endif %}
+                            {{ f.title }}
+                        </a>
+                    </li>
+                {% endfor %}
+            {% endif %}
 
-                {% if closed_rounds %}
-                    <span @click="tab = 'closed_rounds'"
-                          role="tab"
-                          :class="{ 'border-x border-t border-b-transparent': tab === 'closed_rounds' }"
-                          class="inline-block py-2 px-4 text-center rounded-t-lg border-b cursor-pointer bg-base-100 hover:text-base-content">{% trans "Closed" %}</span>
-                {% endif %}
-            </nav>
+        </ul>
 
-            <div data-filter-list>
-                {% if closed_rounds %}
-                    <div class="overflow-auto max-h-80 divide-y tab-closed-rounds"
-                         x-show="tab === 'closed_rounds'"
-                         :aria-hidden="tab === 'closed_rounds' ? 'false' : 'true'"
-                         role="tabpanel"
-                    >
-                        {% for f in closed_rounds %}
-                            <a data-filter-item-text
-                               {% if f.selected %}
-                                   href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" round=f.id %}"
-                                   hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" round=f.id %}"
-                               {% else %}
-                                   href="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" round=f.id %}"
-                                   hx-get="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" round=f.id %}"
-                               {% endif %}
-
-                               hx-push-url="true"
-                               class="flex {% if f.selected %}ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200{% if f.selected %}bg-base-200{% endif %}">
-                                {% if f.selected %}
-                                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
-                                {% endif %}
-                                {{ f.title }}
-                            </a>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
-                {% if open_rounds %}
-                    <div class="overflow-auto max-h-80 divide-y tab-open-rounds"
-                         x-show="tab === 'open_rounds'"
-                         :aria-hidden="tab === 'open_rounds' ? 'false' : 'true'"
-                         role="tabpanel"
-                    >
-                        {% for f in open_rounds %}
-                            <a
-                                data-filter-item-text
-                                {% if f.selected %}
-                                    href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" round=f.id %}"
-                                    hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" round=f.id %}"
-                                {% else %}
-                                    href="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" round=f.id %}"
-                                    hx-get="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" round=f.id %}"
-                                {% endif %}
-                                hx-push-url="true"
-                                class="flex {% if f.selected %}ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200{% if f.selected %}bg-base-200{% endif %}">
-                                {% if f.selected %}
-                                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
-                                {% endif %}
-
-                                {{ f.title }}
-                            </a>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
     {% else %}
         <div class="block py-2 px-3 text-base-content/80">
             {% trans "No rounds available" %}
         </div>
     {% endif %}
-</div>
 </div>
