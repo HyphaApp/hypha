@@ -400,6 +400,7 @@ class RoundsTable(tables.Table):
     class Meta:
         fields = ("title", "fund", "lead", "start_date", "end_date", "deterrmined")
         attrs = {"class": "table"}
+        template_name = "funds/tables/table.html"
 
     def render_lead(self, value):
         return format_html("<span>{}</span>", value)
