@@ -89,7 +89,7 @@ class AddressWidget(NestedMultiWidget):
     }
 
     class Media:
-        js = ("jquery.addressfield.min.js",)
+        js = ("addressfield.js",)
 
     def __init__(self, *args, **kwargs):
         attrs = kwargs.get("attrs", {})
