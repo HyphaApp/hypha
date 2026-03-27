@@ -455,7 +455,12 @@ class OpenRoundFilter(MultipleChoiceFilter):
         super().__init__(
             self,
             *args,
-            choices=[("open", "Open"), ("closed", "Closed"), ("new", "Not Started")],
+            choices=[
+                ("open", _("Open")),
+                ("closed", _("Closed")),
+                ("new", _("Not Started")),
+                ("unpublished", _("Unpublished")),
+            ],
             **kwargs,
         )
 
@@ -468,6 +473,8 @@ class OpenRoundFilter(MultipleChoiceFilter):
             return qs.closed()
         if value == "new":
             return qs.new()
+        if value == "unpublished":
+            return qs.not_live()
 
         return qs.open()
 
@@ -476,7 +483,7 @@ class RoundsFilter(filters.FilterSet):
     fund = ModelMultipleChoiceFilter(queryset=get_used_funds, label=_("Funds"))
     lead = ModelMultipleChoiceFilter(queryset=get_round_leads, label=_("Leads"))
     active = ActiveRoundFilter(label=_("Active"))
-    round_state = OpenRoundFilter(label=_("Open"))
+    round_state = OpenRoundFilter(label=_("State"))
 
 
 class ReviewerLeaderboardFilterForm(forms.ModelForm):
