@@ -221,11 +221,17 @@ else:
 # NOTE: Ensure the packages in `requirements/translate.txt` have been installed!
 APPLICATION_TRANSLATIONS_ENABLED = env.bool("APPLICATION_TRANSLATIONS_ENABLED", False)
 
-# Number of seconds that password reset and account activation links are valid (default 259200, 3 days).
-PASSWORD_RESET_TIMEOUT = env.int("PASSWORD_RESET_TIMEOUT", 259200)
+# Number of seconds that password reset are valid (default 900, 15 minutes).
+PASSWORD_RESET_TIMEOUT = env.int("PASSWORD_RESET_TIMEOUT", 900)
+
+# Number of seconds that account activation links are valid (default 900, 15 minutes).
+PASSWORD_ACTIVATION_TIMEOUT = env.int("PASSWORD_ACTIVATION_TIMEOUT", 900)
 
 # Timeout for passwordless login links (default 900, 15 minutes).
-PASSWORDLESS_LOGIN_TIMEOUT = env.int("PASSWORDLESS_LOGIN_TIMEOUT", 900)  # 15 minutes
+PASSWORDLESS_LOGIN_TIMEOUT = env.int("PASSWORDLESS_LOGIN_TIMEOUT", 900)
+
+# Timeout for passwordless signup links (default 900, 15 minutes).
+PASSWORDLESS_SIGNUP_TIMEOUT = env.int("PASSWORDLESS_SIGNUP_TIMEOUT", 900)
 
 # Enable users to create accounts without submitting an application.
 ENABLE_PUBLIC_SIGNUP = env.bool("ENABLE_PUBLIC_SIGNUP", True)
@@ -235,10 +241,7 @@ ENABLE_PUBLIC_SIGNUP = env.bool("ENABLE_PUBLIC_SIGNUP", True)
 # @deprecated: This setting is deprecated and will be removed in a future release.
 FORCE_LOGIN_FOR_APPLICATION = env.bool("FORCE_LOGIN_FOR_APPLICATION", True)
 
-# Timeout for passwordless signup links (default 900, 15 minutes).
-PASSWORDLESS_SIGNUP_TIMEOUT = env.int("PASSWORDLESS_SIGNUP_TIMEOUT", 900)  # 15 minutes
-
-# Seconds to enter password on password page while email change/2FA change (default 120).
+# Seconds to enter password on password page while email change/2FA change (default 120, 2 minutes).
 PASSWORD_PAGE_TIMEOUT = env.int("PASSWORD_PAGE_TIMEOUT", 120)
 
 #  Template engines and options to be used with Django.

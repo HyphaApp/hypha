@@ -5,7 +5,7 @@
 
 {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ activation_path }}
 
-{% blocktrans %}This link will only remain active for {{ timeout_days }} days and will lead you to profile page after verification.{% endblocktrans %}
+{% blocktrans %}This link will only remain active for {{ timeout_minutes }} minutes and will lead you to profile page after verification.{% endblocktrans %}
 
 {% blocktrans %}Kind Regards,
 The {{ ORG_SHORT_NAME }} Team{% endblocktrans %}

@@ -1,30 +1,35 @@
 {% extends "base-apply.html" %}
-{% load i18n %}
+{% load i18n heroicons %}
 
 {% block title %}{% trans "Reset password" %}{% endblock %}
+{% block body_class %}bg-base-200{% endblock %}
 
 {% block content %}
+    <div class="flex flex-col justify-center items-center min-h-[60vh]">
+        <section class="w-full max-w-2xl card shadow-xs bg-base-100 md:card-lg">
+            <div class="card-body">
+                <h1 class="mb-4 font-semibold text-h0">{% trans "Forgot your password?" %}</h1>
 
-    <div class="my-12 w-full max-w-xl">
-        <form class="form" method="post">
+                <p class="text-sm whitespace-normal label">
+                    {% trans "Please enter your user account's email address and we will send you a password reset link." %}
+                </p>
 
-            {% csrf_token %}
-            <h2 class="text-2xl">{% trans "Forgot password?" %}</h2>
-            <p class="text-sm whitespace-normal label">
-                {% trans "Please enter your user account's email address and we will send you a password reset link." %}
-            </p>
+                <form class="form" method="post">
+                    {% csrf_token %}
 
-            {% if redirect_url %}
-                <input type="hidden" name="next" value="{{ redirect_url }}">
-            {% endif %}
+                    {% if redirect_url %}
+                        <input type="hidden" name="next" value="{{ redirect_url }}">
+                    {% endif %}
 
-            {% for field in form %}
-                {% include "forms/includes/field.html" %}
-            {% endfor %}
+                    {% for field in form %}
+                        {% include "forms/includes/field.html" %}
+                    {% endfor %}
 
-            <button class="mt-4 w-full sm:w-auto btn btn-primary" type="submit">
-                {% trans "Send reset email" %}
-            </button>
-        </form>
+                    <button class="mt-4 w-full sm:w-auto btn btn-primary" type="submit">
+                        {% trans "Send reset email" %}
+                    </button>
+                </form>
+            </div>
+        </section>
     </div>
 {% endblock %}

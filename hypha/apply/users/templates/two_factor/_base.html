@@ -28,6 +28,9 @@
     {{ block.super }}
     {# Focus the 2FA field. #}
     <script>
-        document.querySelector("#id_generator-token").focus();
+        const generatorToken = document.querySelector("#id_generator-token");
+        if (generatorToken) {
+            generatorToken.focus();
+        }
     </script>
 {% endblock %}

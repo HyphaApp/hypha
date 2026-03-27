@@ -2,8 +2,8 @@
 {% extends "two_factor/_base.html" %}
 {% load i18n %}
 
-{% block content %}
-    <h1>{% block title %}{% trans "Permission Denied" %}: {{ reason }}{% endblock %}</h1>
+{% block content_inner %}
+    <h2 class="mb-2 text-h2">{% block title %}{% trans "Permission Denied" %}: {{ reason }}{% endblock %}</h2>
 
     <div class="mb-4 prose">
         <p>
