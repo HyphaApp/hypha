@@ -99,6 +99,13 @@ class BaseSubmissionEditView(UpdateView):
         context = self.get_context_data()
         return render(request, "funds/application_preview.html", context)
 
+    def get_object(self, queryset=None):
+        # Cache the object to avoid repeated DB queries + JSON deserialization
+        # (get_object is called in dispatch, subclass dispatch, and UpdateView.get/post)
+        if not hasattr(self, "_object_cache"):
+            self._object_cache = super().get_object(queryset)
+        return self._object_cache
+
     def dispatch(self, request, *args, **kwargs):
         permission, _ = has_permission(
             "submission_edit",
@@ -237,10 +244,9 @@ class BaseSubmissionEditView(UpdateView):
         instance = kwargs.pop("instance").from_draft()
         initial = instance.raw_data
         for field_id in instance.file_field_ids:
+            original_value = initial.get(field_id)
             initial.pop(field_id + "-uploads", False)
-            initial[field_id] = self.get_placeholder_file(
-                instance.raw_data.get(field_id)
-            )
+            initial[field_id] = self.get_placeholder_file(original_value)
         kwargs["initial"] = initial
         return kwargs
 
