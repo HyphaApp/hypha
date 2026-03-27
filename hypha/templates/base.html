@@ -58,9 +58,9 @@
         <!-- alpine.js end -->
 
         <!-- Modules for supporting <relative-time>, <filter-input> and <calendar-date> elements -->
-        <script type="module" src="{% static 'js/esm/github-relative-time-element-4-4-8.js' %}"></script>
+        <script type="module" src="{% static 'js/esm/github-relative-time-element-5-0-0.js' %}"></script>
         <script type="module" src="{% static 'js/esm/github-filter-input-element-0-1-1.js' %}"></script>
-        <script type="module" src="{% static 'js/esm/cally-0-8-0.js' %}"></script>
+        <script type="module" src="{% static 'js/esm/cally-0-9-2.js' %}"></script>
         <script defer src="{% static 'js/behaviours/prose-cleanup.js' %}"></script>
 
         {% include "includes/head_end.html" %}
@@ -131,7 +131,7 @@
 
         <!-- choices select -->
         <script type="module">
-            import Choices from "{% static 'js/esm/choices.js-11-1-0.js' %}";
+            import Choices from "{% static 'js/esm/choices.js-11-2-1.js' %}";
 
             htmx.onLoad(function() {
                 const selectElements = document.querySelectorAll("[data-js-choices]");

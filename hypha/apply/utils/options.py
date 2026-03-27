@@ -11,6 +11,7 @@ MCE_ATTRIBUTES = {
     "browser_spellcheck": True,
     "default_link_target": "_blank",
     "invalid_elements": "iframe,object,embed",
+    "license_key": "gpl",
 }
 MCE_ATTRIBUTES_SHORT = {**MCE_ATTRIBUTES, **{"height": 180}}
 
