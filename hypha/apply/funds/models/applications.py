@@ -220,6 +220,11 @@ class ApplicationBase(EmailForm, WorkflowStreamForm, AsJsonMixin):  # type: igno
 
 
 class RoundBaseManager(PageQuerySet):
+    def new(self):
+        rounds = self.live().public().specific()
+        rounds = rounds.filter(start_date__gt=date.today())
+        return rounds
+
     def open(self):
         rounds = self.live().public().specific()
         rounds = rounds.filter(
