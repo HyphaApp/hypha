@@ -45,7 +45,7 @@
                         <li>
                             <label
                                 lang="{{ language.code }}"
-                                class="text-base-content {% if language.code == LANGUAGE_CODE %}menu-active{% endif %}"
+                                class="{% if language.code == LANGUAGE_CODE %}menu-active{% else %}text-base-content{% endif %}"
                                 for="{{ language.code }}"
                                 x-on:click="$nextTick(() => { $refs.langForm.submit() })"
                             ><span class="capitalize">{{ language.name_local }}</span> ({{ language.code }})</label>
