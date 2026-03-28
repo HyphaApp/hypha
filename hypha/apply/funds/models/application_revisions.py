@@ -51,7 +51,7 @@ class ApplicationRevision(BaseStreamForm, AccessFormData, models.Model):
         return reverse(
             "funds:submissions:revisions:compare",
             kwargs={
-                "submission_pk": self.submission.id,
+                "submission_pk": self.submission_id,
                 "to": self.id,
                 "from": previous_revision.id,
             },

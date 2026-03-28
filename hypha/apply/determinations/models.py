@@ -135,7 +135,7 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
     def get_absolute_url(self):
         return reverse(
             "apply:submissions:determinations:detail",
-            args=(self.submission.id, self.id),
+            args=(self.submission_id, self.id),
         )
 
     @property

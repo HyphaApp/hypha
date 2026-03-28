@@ -1995,7 +1995,7 @@ class ProjectDetailDownloadView(ProjectBySubmissionIdMixin, SingleObjectMixin, V
         context["submission"] = self.object.submission
         context["submission_link"] = self.request.build_absolute_uri(
             reverse(
-                "apply:submissions:detail", kwargs={"pk": self.object.submission.id}
+                "apply:submissions:detail", kwargs={"pk": self.object.submission_id}
             )
         )
         context["supporting_documents"] = self.get_supporting_documents(self.object)
@@ -2022,7 +2022,7 @@ class ProjectDetailDownloadView(ProjectBySubmissionIdMixin, SingleObjectMixin, V
             documents_dict[packet_file.title] = self.request.build_absolute_uri(
                 reverse(
                     "apply:projects:document",
-                    kwargs={"pk": project.submission.id, "file_pk": packet_file.id},
+                    kwargs={"pk": project.submission_id, "file_pk": packet_file.id},
                 )
             )
         return documents_dict

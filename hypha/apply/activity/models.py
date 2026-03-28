@@ -236,7 +236,7 @@ class Activity(models.Model):
     def get_absolute_url(self):
         # coverup for both submission and project as source.
         submission_id = (
-            self.source.submission.id
+            self.source.submission_id
             if hasattr(self.source, "submission")
             else self.source.id
         )
