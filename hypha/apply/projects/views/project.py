@@ -1627,6 +1627,11 @@ class UpdatePAFApproversView(View):
 
 
 class BaseProjectDetailView(ReportingMixin, ProjectBySubmissionIdMixin, DetailView):
+    def get_object(self, queryset=None):
+        if not hasattr(self, "_object_cache"):
+            self._object_cache = super().get_object()
+        return self._object_cache
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["statuses"] = get_project_status_choices()

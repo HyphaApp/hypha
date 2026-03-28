@@ -176,6 +176,7 @@ class ProjectQuerySet(models.QuerySet):
                 "submission__page",
                 "lead",
             )
+            .defer("form_data", "form_fields")
         )
 
     def for_reporting_table(self):

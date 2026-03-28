@@ -585,6 +585,9 @@ class InvoiceListView(SingleTableMixin, FilterView, DelegateableListView):
     table_class = AdminInvoiceListTable
     template_name = "application_projects/invoice_list.html"
 
+    def get_queryset(self):
+        return super().get_queryset().select_related("project", "project__user")
+
     def get_table_class(self):
         if self.request.user.is_finance:
             return FinanceInvoiceTable
