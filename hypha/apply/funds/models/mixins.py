@@ -1,5 +1,6 @@
 import json
 import uuid
+from functools import cached_property
 
 from django.core.files import File
 from django.utils.safestring import mark_safe
@@ -244,7 +245,7 @@ class AccessFormData:
             elif isinstance(field.block, FormFieldBlock):
                 yield field_id
 
-    @property
+    @cached_property
     def raw_fields(self):
         # Field ids to field class mapping - similar to raw_data
         return {field.id: field for field in self.form_fields}
@@ -258,7 +259,7 @@ class AccessFormData:
             fields[field_name] = response
         return fields
 
-    @property
+    @cached_property
     def named_blocks(self):
         return {
             field.block.name: field.id

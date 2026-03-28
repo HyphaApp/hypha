@@ -247,6 +247,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 "previous__lead",
             )
             .prefetch_related("screening_statuses")
+            .defer("search_data", "search_document")
         )
 
 
