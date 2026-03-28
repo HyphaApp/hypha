@@ -406,3 +406,32 @@ class ConfirmAccessToken(models.Model):
     class Meta:
         ordering = ("modified",)
         verbose_name_plural = "Confirm Access Tokens"
+
+
+class Passkey(models.Model):
+    """Stores a WebAuthn passkey credential for a user.
+
+    credential_id and public_key are stored as base64url-encoded strings,
+    matching the convention used by django-two-factor-auth's WebAuthn plugin.
+    """
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="passkeys",
+    )
+    name = models.CharField(max_length=255, blank=True)
+    # base64url-encoded credential id (unique per authenticator)
+    credential_id = models.CharField(max_length=2048, unique=True)
+    # base64url-encoded public key
+    public_key = models.CharField(max_length=1024)
+    sign_count = models.PositiveBigIntegerField(default=0)
+    transports = models.JSONField(default=list, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_used_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.name or f"Passkey {self.pk}"

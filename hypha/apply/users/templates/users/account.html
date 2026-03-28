@@ -1,5 +1,5 @@
 {% extends 'base-apply.html' %}
-{% load i18n users_tags wagtailcore_tags heroicons %}
+{% load i18n users_tags wagtailcore_tags heroicons static %}
 
 {% block title %}{% trans "Account" %}{% endblock %}
 
@@ -86,12 +86,29 @@
             </h3>
             <p class="card-actions">
                 {% if default_device %}
-                    <a class="btn btn-primary" href="{% url 'users:backup_tokens' %}">{% trans "Backup codes" %}</a>
-                    <a class="btn btn-warning" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a>
+                    <a class="btn btn-secondary btn-outline" href="{% url 'users:backup_tokens' %}">{% trans "Backup codes" %}</a>
+                    <a class="btn btn-warning btn-outline" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a>
                 {% else %}
-                    <a class="btn btn-primary" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a>
+                    <a class="btn btn-secondary btn-outline" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a>
                 {% endif %}
             </p>
+
+            <h3 class="mt-6 mb-2 text-sm font-semibold">{% trans "Passkeys" %}</h3>
+            <p class="mb-2 text-sm text-fg-muted">
+                {% trans "With passkeys you can use your fingerprint, face, or screen lock to login securely without a password." %}
+            </p>
+
+            {# Hidden inputs supply the API URLs to passkeys.js #}
+            <input type="hidden" id="passkey-register-begin-url" value="{% url 'users:passkey_register_begin' %}">
+            <input type="hidden" id="passkey-register-complete-url" value="{% url 'users:passkey_register_complete' %}">
+
+            <div
+                hx-get="{% url 'users:passkey_list' %}"
+                hx-trigger="load"
+                hx-swap="innerHTML"
+            >
+                <div class="w-full h-8 rounded animate-pulse bg-base-300"></div>
+            </div>
 
             {# Remove the comment block tags below when such need arises. e.g. adding new providers #}
             {% comment %}
@@ -107,4 +124,8 @@
             {% endcomment %}
         </div>
     </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/passkeys.js' %}"></script>
 {% endblock %}
