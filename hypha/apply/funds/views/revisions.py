@@ -59,9 +59,14 @@ class RevisionListView(ListView):
             An [`ApplicationRevision`][hypha.apply.funds.models.ApplicationRevision] QuerySet
         """
         self.submission = get_object_or_404(
-            ApplicationSubmission, id=self.kwargs["submission_pk"]
+            ApplicationSubmission.objects.defer("form_data"),
+            id=self.kwargs["submission_pk"],
         )
-        self.queryset = get_revisions(submission=self.submission)
+        self.queryset = (
+            get_revisions(submission=self.submission)
+            .select_related("author", "submission")
+            .defer("form_data", "submission__form_data")
+        )
 
         return super().get_queryset()
 
