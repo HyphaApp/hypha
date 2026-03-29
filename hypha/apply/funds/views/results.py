@@ -4,9 +4,10 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django_filters.views import FilterView
 
+from hypha.apply.funds.models.submissions import ApplicationSubmissionSkeleton
 from hypha.apply.users.decorators import staff_required
 
-from ..tables import SubmissionFilterAndSearch
+from ..tables import SubmissionFilterAndSearch, SubmissionSkeletonFilter
 
 User = get_user_model()
 
@@ -34,28 +35,40 @@ class SubmissionResultView(FilterView):
         return self.filterset_class._meta.model.objects.current().exclude_draft()
 
     def get_context_data(self, **kwargs):
-        search_term = self.request.GET.get("query")
+        count_values = 0
+        total_value = 0
+        averages_sum = 0
+        submission_count = 0
 
-        if self.object_list.exists():
-            submission_count = self.object_list.count()
-            submission_values = self.object_list.value()
-            count_values = submission_values.get("value__count")
+        qs_list = [self.object_list]
+
+        # If a filter comes up that is not applicable to skeleton applications, remove them the results (ie. "lead")
+        non_skeleton_fields = set(SubmissionFilterAndSearch.declared_filters) - set(
+            SubmissionSkeletonFilter.declared_filters
+        )
+        if not set(self.request.GET) & set(non_skeleton_fields):
+            skeleton_qs = SubmissionSkeletonFilter(
+                self.request.GET, queryset=ApplicationSubmissionSkeleton.objects.all()
+            ).qs
+            qs_list.append(skeleton_qs)
+
+        populated_qs_list = [qs for qs in qs_list if qs.exists()]
+
+        for qs in populated_qs_list:
+            submission_count += qs.count()
+            submission_values = qs.value()
+            count_values += submission_values.get("value__count")
             if total := submission_values.get("value__sum"):
-                total_value = total
-            else:
-                total_value = 0
+                total_value += total
             if average := submission_values.get("value__avg"):
-                average_value = round(average)
-            else:
-                average_value = 0
+                averages_sum += round(average)
+
+        if qs_list_len := len(populated_qs_list):
+            average_value = averages_sum / qs_list_len
         else:
-            count_values = 0
-            total_value = 0
             average_value = 0
-            submission_count = 0
 
         return super().get_context_data(
-            search_term=search_term,
             filter_action=self.filter_action,
             count_values=count_values,
             total_value=total_value,

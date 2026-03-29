@@ -4,7 +4,7 @@
     class="px-4 pt-5 pb-4 sm:p-6"
     action="{{ request.path }}"
     method="post"
-    x-data="{userConfirmationInput: ''}"
+    x-data="{userConfirmationInput: '', delConfirmText: `{% trans 'delete' %}`, anonConfirmText: `{% trans 'anonymize' %}`, mode: 'delete'}"
 >
     {% csrf_token %}
 
@@ -21,7 +21,7 @@
             </div>
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">
-                    Type <em>delete</em> below to confirm
+                    Type <pre class="badge badge-soft badge-neutral" x-text="mode == 'delete' ? delConfirmText : anonConfirmText"></pre> below to confirm
                 </legend>
                 <input
                     type="text"
@@ -37,9 +37,9 @@
     <div class="mt-5 sm:flex-row-reverse sm:mt-4 card-actions">
         <button
             type="submit"
-            x-bind:disabled="userConfirmationInput !== 'delete'"
+            x-bind:disabled="mode == 'delete' ? userConfirmationInput !== delConfirmText : userConfirmationInput !== anonConfirmText"
             class="w-full sm:w-auto btn btn-error"
-        >{% trans "Delete" %}</button>
+        >{% trans "Confirm" %}</button>
         <button
             type="button"
             class="w-full sm:w-auto btn btn-secondary btn-outline btn-soft"

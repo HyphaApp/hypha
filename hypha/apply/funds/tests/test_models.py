@@ -12,7 +12,13 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from hypha.apply.funds.blocks import EmailBlock, FullNameBlock
-from hypha.apply.funds.models import ApplicationSubmission, AssignedReviewers, Reminder
+from hypha.apply.funds.models import (
+    ApplicationSubmission,
+    ApplicationSubmissionSkeleton,
+    AssignedReviewers,
+    Reminder,
+)
+from hypha.apply.funds.tests.factories.models import ScreeningStatusFactory
 from hypha.apply.funds.workflows.constants import DRAFT_STATE
 from hypha.apply.funds.workflows.registry import Request
 from hypha.apply.review.options import AGREE, MAYBE, NO
@@ -542,6 +548,164 @@ class TestApplicationSubmission(TestCase):
 
         submission = InvitedToProposalFactory()
         self.assertTrue(submission.in_final_stage)
+
+
+class TestApplicationSubmissionSkeleton(TestCase):
+    def test_create_from_submission_no_user(self):
+        screening_outcome = ScreeningStatusFactory()
+        screening_outcome.yes = True
+        screening_outcome.default = True
+        screening_outcome.save()
+
+        submission = ApplicationSubmissionFactory()
+        submission.screening_statuses.add(screening_outcome)
+        submission.save()
+
+        skeleton = ApplicationSubmissionSkeleton.from_submission(submission)
+        submission_values_dict = {
+            "value": submission.form_data["value"],
+            "page": submission.page.id,
+            "status": submission.status,
+            "round": submission.round.id,
+            "submit_time": submission.submit_time,
+            "screening_status": submission.get_current_screening_status(),
+        }
+        skeleton_values_dict = {
+            "value": skeleton.value,
+            "page": skeleton.page.id,
+            "status": skeleton.status,
+            "round": skeleton.round.id,
+            "submit_time": skeleton.submit_time,
+            "screening_status": skeleton.screening_status,
+        }
+        self.assertDictEqual(submission_values_dict, skeleton_values_dict)
+        self.assertIsNone(skeleton.user)
+
+    def test_create_from_submission_with_user(self):
+        screening_outcome = ScreeningStatusFactory()
+        screening_outcome.yes = True
+        screening_outcome.default = True
+        screening_outcome.save()
+
+        submission = ApplicationSubmissionFactory()
+        submission.screening_statuses.add(screening_outcome)
+        submission.save()
+
+        skeleton = ApplicationSubmissionSkeleton.from_submission(
+            submission, save_user=True
+        )
+        submission_values_dict = {
+            "value": submission.form_data["value"],
+            "page": submission.page.id,
+            "status": submission.status,
+            "round": submission.round.id,
+            "submit_time": submission.submit_time,
+            "screening_status": submission.get_current_screening_status(),
+            "user": submission.user,
+        }
+        skeleton_values_dict = {
+            "value": skeleton.value,
+            "page": skeleton.page.id,
+            "status": skeleton.status,
+            "round": skeleton.round.id,
+            "submit_time": skeleton.submit_time,
+            "screening_status": skeleton.screening_status,
+            "user": skeleton.user,
+        }
+        self.assertDictEqual(submission_values_dict, skeleton_values_dict)
+
+    def test_create_from_dict_no_user(self):
+        screening_outcome = ScreeningStatusFactory()
+        screening_outcome.yes = True
+        screening_outcome.default = True
+        screening_outcome.save()
+
+        submission = ApplicationSubmissionFactory()
+        submission.screening_statuses.add(screening_outcome)
+        submission.save()
+
+        submission_dict = dict(
+            ApplicationSubmission.objects.filter(id=submission.id)
+            .values(
+                "form_data",
+                "page_id",
+                "round_id",
+                "status",
+                "submit_time",
+                "screening_statuses",
+                "user_id",
+            )
+            .first()
+        )
+
+        skeleton = ApplicationSubmissionSkeleton.from_dict(
+            submission_dict, save_user=False
+        )
+        submission_values_dict = {
+            "value": submission.form_data["value"],
+            "page": submission.page.id,
+            "status": submission.status,
+            "round": submission.round.id,
+            "submit_time": submission.submit_time,
+            "screening_status": submission.get_current_screening_status(),
+        }
+        skeleton_values_dict = {
+            "value": skeleton.value,
+            "page": skeleton.page.id,
+            "status": skeleton.status,
+            "round": skeleton.round.id,
+            "submit_time": skeleton.submit_time,
+            "screening_status": skeleton.screening_status,
+        }
+        self.assertDictEqual(submission_values_dict, skeleton_values_dict)
+        self.assertIsNone(skeleton.user)
+
+    def test_create_from_dict_with_user(self):
+        screening_outcome = ScreeningStatusFactory()
+        screening_outcome.yes = True
+        screening_outcome.default = True
+        screening_outcome.save()
+
+        submission = ApplicationSubmissionFactory()
+        submission.screening_statuses.add(screening_outcome)
+        submission.save()
+
+        submission_dict = dict(
+            ApplicationSubmission.objects.filter(id=submission.id)
+            .values(
+                "form_data",
+                "page_id",
+                "round_id",
+                "status",
+                "submit_time",
+                "screening_statuses",
+                "user_id",
+            )
+            .first()
+        )
+
+        skeleton = ApplicationSubmissionSkeleton.from_dict(
+            submission_dict, save_user=True
+        )
+        submission_values_dict = {
+            "value": submission.form_data["value"],
+            "page": submission.page.id,
+            "status": submission.status,
+            "round": submission.round.id,
+            "submit_time": submission.submit_time,
+            "screening_status": submission.get_current_screening_status(),
+            "user": submission.user,
+        }
+        skeleton_values_dict = {
+            "value": skeleton.value,
+            "page": skeleton.page.id,
+            "status": skeleton.status,
+            "round": skeleton.round.id,
+            "submit_time": skeleton.submit_time,
+            "screening_status": skeleton.screening_status,
+            "user": skeleton.user,
+        }
+        self.assertDictEqual(submission_values_dict, skeleton_values_dict)
 
 
 class TestSubmissionRenderMethods(TestCase):
