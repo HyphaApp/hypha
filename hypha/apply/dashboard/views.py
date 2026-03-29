@@ -137,9 +137,13 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
         }
 
     def active_invoices(self):
-        invoices = Invoice.objects.filter(
-            project__lead=self.request.user,
-        ).in_progress()
+        invoices = (
+            Invoice.objects.filter(
+                project__lead=self.request.user,
+            )
+            .in_progress()
+            .select_related("project")
+        )
 
         return {
             "count": invoices.count(),
@@ -223,7 +227,7 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         }
 
     def active_invoices(self):
-        invoices = Invoice.objects.for_finance_1()
+        invoices = Invoice.objects.for_finance_1().select_related("project")
 
         return {
             "count": invoices.count(),
@@ -231,12 +235,12 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         }
 
     def invoices_for_approval(self):
-        invoices = Invoice.objects.approved_by_staff()
+        invoices = Invoice.objects.approved_by_staff().select_related("project")
 
         return {"count": invoices.count(), "table": InvoiceDashboardTable(invoices)}
 
     def invoices_to_convert(self):
-        invoices = Invoice.objects.waiting_to_convert()
+        invoices = Invoice.objects.waiting_to_convert().select_related("project")
         return {
             "count": invoices.count(),
             "table": InvoiceDashboardTable(invoices),
