@@ -361,13 +361,13 @@ class CommunityDashboardView(MySubmissionContextMixin, TemplateView):
         submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         # Submissions in community review phase
-        my_community_review, my_community_review = self.my_community_review(
+        my_community_review_qs, my_community_review_table = self.my_community_review(
             self.request.user, submissions
         )
         context.update(
             {
-                "my_community_review": my_community_review,
-                "my_community_review_count": my_community_review.count(),
+                "my_community_review": my_community_review_table,
+                "my_community_review_count": my_community_review_qs.count(),
                 "my_reviewed": get_preview_context(
                     submissions.reviewed_by(self.request.user).order_by("-submit_time")
                 ),
