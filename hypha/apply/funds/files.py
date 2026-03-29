@@ -30,12 +30,12 @@ class PrivateStreamFieldFile(StreamFieldFile):
         if isinstance(self.instance, ApplicationRevision) or isinstance(
             self.instance, Project
         ):
-            entity_id = self.instance.submission.pk
+            entity_id = self.instance.submission_id
         elif isinstance(self.instance, Report) or isinstance(self.instance, ProjectSOW):
-            entity_id = self.instance.project.submission.pk
+            entity_id = self.instance.project.submission_id
         elif isinstance(self.instance, ReportVersion):
             # Reports are project documents.
-            entity_id = self.instance.report.project.submission.pk
+            entity_id = self.instance.report.project.submission_id
         return entity_id
 
     def generate_filename(self):
