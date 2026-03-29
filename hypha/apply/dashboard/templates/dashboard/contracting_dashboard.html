@@ -41,7 +41,7 @@
         </section>
 
 
-        {% if projects_in_contracting.count %}
+        {% if PROJECTS_ENABLED and projects_in_contracting.count %}
             {% include "dashboard/includes/projects_in_contracting.html" with projects_in_contracting=projects_in_contracting %}
         {% endif %}
     </div>

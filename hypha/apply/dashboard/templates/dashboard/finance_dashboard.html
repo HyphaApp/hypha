@@ -92,7 +92,7 @@
         <section id="paf_for_review">
             <h2 class="section-header">{% trans "PAFs for review" %}</h2>
             <div class="overflow-x-auto border rounded-box">
-                {% if not paf_for_review.count %}
+                {% if PROJECTS_ENABLED and paf_for_review.count %}
                     {% render_table paf_for_review.table %}
                 {% else %}
                     <p class="p-4 text-sm text-fg-muted">
