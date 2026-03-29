@@ -82,7 +82,7 @@ class PAFReviewMixin:
             get_paf_for_review(
                 user=self.request.user,
                 is_paf_approval_sequential=project_settings.paf_approval_sequential,
-            )
+            ).select_related("project__submission__page", "paf_reviewer_role", "user")
         )
         paf_table = PAFForReviewDashboardTable(
             paf_approvals, prefix="paf-review-", order_by="-date_requested"
