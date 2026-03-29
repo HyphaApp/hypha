@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.utils.formats import get_format
 from django.utils.translation import gettext_lazy as _
 from wagtail import blocks
 
@@ -15,6 +16,67 @@ from hypha.apply.utils.blocks import (
     SingleIncludeBlock,
 )
 from hypha.apply.utils.templatetags.apply_tags import format_number_as_currency
+
+
+class LocalizedFloatField(forms.FloatField):
+    """
+    FloatField that accepts locale-formatted numbers without relying on the
+    active locale. Assumes at most two decimal places (no cents sub-divisions),
+    which makes the separator role unambiguous:
+
+    - Both . and , present: whichever comes last is the decimal separator.
+    - Single separator with exactly 3 digits after it: thousands separator.
+    - Single separator with 1 or 2 digits after it: decimal separator.
+    - Multiple identical separators: all are thousands separators.
+    """
+
+    def to_python(self, value):
+        if value not in self.empty_values:
+            # Remove all spaces.
+            value = str(value).strip().replace(" ", "")
+            has_dot = "." in value
+            has_comma = "," in value
+
+            if has_dot and has_comma:
+                # Both present — whichever appears last is the decimal.
+                if value.rfind(".") > value.rfind(","):
+                    value = value.replace(",", "")  # e.g. "1,000.50" (comma-thousands)
+                else:
+                    value = value.replace(".", "").replace(
+                        ",", "."
+                    )  # e.g. "1.000,50" (dot-thousands)
+            elif has_comma:
+                parts = value.split(",")
+                if len(parts) > 2 or len(parts[1]) == 3:
+                    value = value.replace(
+                        ",", ""
+                    )  # e.g. "10,000" or "1,000,000" (comma-thousands)
+                else:
+                    value = value.replace(
+                        ",", "."
+                    )  # e.g. "10000,00" or "1,5" (comma-decimal)
+            elif has_dot:
+                parts = value.split(".")
+                if len(parts) > 2 or len(parts[1]) == 3:
+                    value = value.replace(
+                        ".", ""
+                    )  # e.g. "10.000" or "1.000.000" (dot-thousands)
+                # else: already a valid decimal, e.g. "10.5" or "10.00" (dot-decimal)
+
+        result = super().to_python(value)
+        if result is not None and result == int(result):
+            return int(result)
+        return result
+
+    def prepare_value(self, value):
+        # Format a stored numeric value using the active locale's decimal
+        # separator so the widget displays e.g. "10000,5" in comma-decimal
+        # locales rather than the Python default "10000.5". String values
+        # (mid-form re-display after a validation error) are returned unchanged.
+        if isinstance(value, float):
+            decimal_sep = get_format("DECIMAL_SEPARATOR")
+            return str(value).replace(".", decimal_sep)
+        return value
 
 
 class ApplicationSingleIncludeFieldBlock(SingleIncludeBlock):
@@ -51,12 +113,21 @@ class TitleBlock(ApplicationMustIncludeFieldBlock):
 class ValueBlock(ApplicationSingleIncludeFieldBlock):
     name = "value"
     description = "The value of the project"
-    widget = forms.NumberInput(attrs={"min": 0})
-    field_class = forms.FloatField
+    # TextInput + inputmode="decimal" lets us handle locale-specific separators
+    # server-side. <input type="number"> formats/validates using the *browser*
+    # locale which differs from Django's active locale and behaves inconsistently
+    # across browsers, causing e.g. German "10.000" to be stored as 10.
+    widget = forms.TextInput(attrs={"inputmode": "decimal"})
+    field_class = LocalizedFloatField
 
     class Meta:
         label = _("Requested amount")
         icon = "decimal"
+
+    def get_field_kwargs(self, struct_value):
+        kwargs = super().get_field_kwargs(struct_value)
+        kwargs["min_value"] = 0
+        return kwargs
 
     def prepare_data(self, value, data, serialize):
         if not data:
