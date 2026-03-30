@@ -247,12 +247,22 @@ class BaseSubmissionEditView(UpdateView):
     def get_placeholder_file(self, initial_file):
         if not isinstance(initial_file, list):
             return PlaceholderUploadedFile(
-                initial_file.filename, size=initial_file.size, file_id=initial_file.name
+                initial_file.filename,
+                size=self._safe_file_size(initial_file),
+                file_id=initial_file.name,
             )
         return [
-            PlaceholderUploadedFile(f.filename, size=f.size, file_id=f.name)
+            PlaceholderUploadedFile(
+                f.filename, size=self._safe_file_size(f), file_id=f.name
+            )
             for f in initial_file
         ]
+
+    def _safe_file_size(self, stream_file):
+        try:
+            return stream_file.storage.size(stream_file.name)
+        except Exception:
+            return 0
 
     def save_draft_and_refresh_page(self, form) -> HttpResponseRedirect:
         self.object.create_revision(draft=True, by=self.request.user)
