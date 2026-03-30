@@ -1,21 +1,39 @@
 {% load i18n heroicons apply_tags %}
 
-<a class="flex justify-between items-center py-2 px-3 mb-2 max-w-2xl font-medium rounded-sm border transition-colors not-prose bg-base-200 hover:bg-base-300"
-   href="{{ file.url }}"
-   target="_blank"
-   rel="noopener noreferrer"
-   title="View file - {{ file.filename }}"
->
-    <span class="text-sm truncate">
-        {% heroicon_mini "document-text" class="inline align-text-bottom" aria_hidden=true %}
-        {{ file.filename|truncatechars_middle:45 }}
-        <span class="text-xs text-fg-muted">
-            <span class="sr-only">{% trans "uploaded" %}</span>
-            <span aria-hidden>•</span>
-            <relative-time datetime={{ file.modification_time|date:"c" }}>{{ file.modification_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
+{% if file.exists %}
+    <a class="flex justify-between items-center py-2 px-3 mb-2 max-w-2xl font-medium rounded-sm border transition-colors not-prose bg-base-200 hover:bg-base-300"
+       href="{{ file.url }}"
+       target="_blank"
+       rel="noopener noreferrer"
+       title="View file - {{ file.filename }}"
+    >
+        <span class="text-sm truncate">
+            {% heroicon_mini "document-text" class="inline align-text-bottom" aria_hidden=true %}
+            {{ file.filename|truncatechars_middle:45 }}
+            <span class="text-xs text-fg-muted">
+                <span class="sr-only">{% trans "uploaded" %}</span>
+                <span aria-hidden>•</span>
+                <relative-time datetime={{ file.modification_time|date:"c" }}>{{ file.modification_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
+            </span>
         </span>
-    </span>
-    <span>
-        {% heroicon_mini "arrow-down" class="w-5 h-5" stoke_width=2 aria_hidden=true %}
-    </span>
-</a>
+        <span>
+            {% heroicon_mini "arrow-down" class="w-5 h-5" stoke_width=2 aria_hidden=true %}
+        </span>
+    </a>
+{% else %}
+    <div class="flex justify-between items-center py-2 px-3 mb-2 max-w-2xl font-medium rounded-sm border opacity-60 not-prose bg-base-200"
+         title="{% trans "File not found" %} - {{ file.filename }}"
+    >
+        <span class="text-sm truncate">
+            {% heroicon_mini "document-text" class="inline align-text-bottom" aria_hidden=true %}
+            {{ file.filename|truncatechars_middle:45 }}
+            <span class="text-xs text-error">
+                <span aria-hidden>•</span>
+                {% trans "Missing file" %}
+            </span>
+        </span>
+        <span>
+            {% heroicon_mini "exclamation-circle" class="w-5 h-5 text-error" aria_hidden=true %}
+        </span>
+    </div>
+{% endif %}
