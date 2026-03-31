@@ -330,7 +330,7 @@ def list_coapplicant_invites(request, pk):
 
     # check if pending invites have expired, update status
     for invite in co_applicant_invites.filter(status=CoApplicantInviteStatus.PENDING):
-        if (
+        if invite.invited_at and (
             int((timezone.now() - invite.invited_at).total_seconds())
             > CoApplicantInviteTokenGenerator().TIMEOUT
         ):

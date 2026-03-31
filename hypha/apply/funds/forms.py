@@ -5,7 +5,6 @@ from operator import methodcaller
 
 import nh3
 from django import forms
-from django.db.models import Q
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.signal_handlers import disable_reference_index_auto_update
@@ -30,7 +29,7 @@ from .widgets import MetaTermWidget, MultiCheckboxesWidget
 class ApplicationSubmissionModelForm(forms.ModelForm):
     """
     Application Submission model's save method performs several operations
-    which are not required in forms which update fields like status, partners etc.
+    which are not required in forms which update fields (ie. status).
     It also has a side effect of creating a new file uploads every time with long filenames (#1572).
     """
 
@@ -329,45 +328,6 @@ def make_role_reviewer_fields():
         )
 
     return role_fields
-
-
-class UpdatePartnersForm(ApplicationSubmissionModelForm):
-    partner_reviewers = forms.ModelMultipleChoiceField(
-        queryset=User.objects.partners(),
-        label=_("Partners"),
-        required=False,
-    )
-    partner_reviewers.widget.attrs.update(
-        {"data-placeholder": _("Select..."), "data-js-choices": ""}
-    )
-
-    class Meta:
-        model = ApplicationSubmission
-        fields: list = []
-
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("user")
-        super().__init__(*args, **kwargs)
-        partners = self.instance.partners.all()
-        self.submitted_partners = User.objects.partners().filter(
-            id__in=self.instance.reviews.values("author")
-        )
-
-        partner_field = self.fields["partner_reviewers"]
-
-        # If applicant is also a partner, they should not be allowed to be a partner on their own application
-        partner_field.queryset = partner_field.queryset.exclude(
-            Q(id__in=self.submitted_partners) | Q(id=self.instance.user.id)
-        )
-        partner_field.initial = partners
-
-    def save(self, *args, **kwargs):
-        instance = super().save(*args, **kwargs)
-
-        instance.partners.set(
-            self.cleaned_data["partner_reviewers"] | self.submitted_partners
-        )
-        return instance
 
 
 class GroupedModelChoiceIterator(forms.models.ModelChoiceIterator):

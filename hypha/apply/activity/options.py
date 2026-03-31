@@ -21,8 +21,6 @@ class MESSAGES(TextChoices):
     INVITED_TO_PROPOSAL = "INVITED_TO_PROPOSAL", _("invited to proposal")
     REVIEWERS_UPDATED = "REVIEWERS_UPDATED", _("updated reviewers")
     BATCH_REVIEWERS_UPDATED = "BATCH_REVIEWERS_UPDATED", _("batch updated reviewers")
-    PARTNERS_UPDATED = "PARTNERS_UPDATED", _("updated partners")
-    PARTNERS_UPDATED_PARTNER = "PARTNERS_UPDATED_PARTNER", _("partners updated partner")
     READY_FOR_REVIEW = "READY_FOR_REVIEW", _("marked ready for review")
     BATCH_READY_FOR_REVIEW = (
         "BATCH_READY_FOR_REVIEW",

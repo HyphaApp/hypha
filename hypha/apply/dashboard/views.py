@@ -302,36 +302,6 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
         }
 
 
-class PartnerDashboardView(MySubmissionContextMixin, TemplateView):
-    template_name = "dashboard/partner_dashboard.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
-
-        # Submissions in which user added as partner
-        partner_submissions, partner_submissions_table = self.partner_submissions(
-            self.request.user, submissions
-        )
-
-        context.update(
-            {
-                "partner_submissions": partner_submissions_table,
-                "partner_submissions_count": partner_submissions.count(),
-            }
-        )
-
-        return context
-
-    def partner_submissions(self, user, submissions):
-        partner_submissions = submissions.partner_for(user).order_by("-submit_time")
-        partner_submissions_table = SubmissionsTable(
-            partner_submissions, prefix="my-partnered-"
-        )
-
-        return partner_submissions, partner_submissions_table
-
-
 class ContractingDashboardView(MyFlaggedMixin, TemplateView):
     template_name = "dashboard/contracting_dashboard.html"
 
@@ -511,7 +481,6 @@ class ApplicantDashboardView(TemplateView):
 class DashboardView(ViewDispatcher):
     admin_view = AdminDashboardView
     reviewer_view = ReviewerDashboardView
-    partner_view = PartnerDashboardView
     community_view = CommunityDashboardView
     applicant_view = ApplicantDashboardView
     finance_view = FinanceDashboardView

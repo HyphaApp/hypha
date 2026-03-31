@@ -34,7 +34,6 @@ from hypha.apply.review.tests.factories import ReviewFactory
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     CommunityReviewerFactory,
-    PartnerFactory,
     ReviewerFactory,
     StaffFactory,
     SuperUserFactory,
@@ -1815,13 +1814,6 @@ class TestReviewerLeaderboard(TestCase):
 
     def test_community_reviewer_cannot_access_reviewer_leaderboard(self):
         self.client.force_login(CommunityReviewerFactory())
-        response = self.client.get(
-            "/apply/submissions/reviews/", follow=True, secure=True
-        )
-        self.assertEqual(response.status_code, 403)
-
-    def test_partner_cannot_access_reviewer_leaderboard(self):
-        self.client.force_login(PartnerFactory())
         response = self.client.get(
             "/apply/submissions/reviews/", follow=True, secure=True
         )

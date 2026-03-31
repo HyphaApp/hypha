@@ -82,12 +82,6 @@
 
         <button
             class="btn btn-outline grow"
-            hx-get="{% url 'funds:submissions:partners_update' pk=object.pk %}"
-            hx-target="#htmx-modal"
-        >{% trans "Partners" %}</button>
-
-        <button
-            class="btn btn-outline grow"
             hx-get="{% url 'funds:submissions:lead_update' pk=object.pk %}"
             hx-target="#htmx-modal"
         >{% trans "Lead" %}</button>

@@ -38,7 +38,6 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.INVITED_TO_PROPOSAL: _("Invited to submit a proposal"),
         MESSAGES.REVIEWERS_UPDATED: "reviewers_updated",
         MESSAGES.BATCH_REVIEWERS_UPDATED: "batch_reviewers_updated",
-        MESSAGES.PARTNERS_UPDATED: "partners_updated",
         MESSAGES.NEW_REVIEW: _("Submitted a review"),
         MESSAGES.OPENED_SEALED: _("Opened the submission while still sealed"),
         MESSAGES.SCREENING: "handle_screening_statuses",
@@ -89,7 +88,6 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.REVIEW_OPINION,
             MESSAGES.DELETE_REVIEW_OPINION,
             MESSAGES.BATCH_REVIEWERS_UPDATED,
-            MESSAGES.PARTNERS_UPDATED,
             MESSAGES.APPROVE_PROJECT,
             MESSAGES.REQUEST_PROJECT_CHANGE,
             MESSAGES.SEND_FOR_APPROVAL,
@@ -286,18 +284,6 @@ class ActivityAdapter(AdapterBase):
             return self.handle_transition(
                 old_phase=old_phase, source=submission, **kwargs
             )
-
-    def partners_updated(self, added, removed, **kwargs):
-        message = [_("Partners updated.")]
-        if added:
-            message.append(_("Added:"))
-            message.append(", ".join([str(user) for user in added]) + ".")
-
-        if removed:
-            message.append(_("Removed:"))
-            message.append(", ".join([str(user) for user in removed]) + ".")
-
-        return " ".join(message)
 
     def handle_report_frequency(self, config, **kwargs):
         new_schedule = config.get_frequency_display()

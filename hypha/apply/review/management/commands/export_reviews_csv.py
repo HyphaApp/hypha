@@ -31,8 +31,6 @@ class Command(BaseCommand):
                     reviewer_type = "Staff"
                 elif review.author.reviewer.is_reviewer:
                     reviewer_type = "Reviewer"
-                elif review.author.reviewer.is_partner:
-                    reviewer_type = "Partner"
                 elif review.author.reviewer.is_community_reviewer:
                     reviewer_type = "Community"
 

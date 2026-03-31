@@ -9,7 +9,6 @@ from wagtail.fields import StreamField
 from hypha.apply.funds.models.mixins import AccessFormData
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.roles import (
-    PARTNER_GROUP_NAME,
     REVIEWER_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
@@ -103,9 +102,6 @@ class ReviewQuerySet(models.QuerySet):
 
     def by_reviewers(self):
         return self.submitted()._by_group(REVIEWER_GROUP_NAME)
-
-    def by_partners(self):
-        return self.submitted()._by_group(PARTNER_GROUP_NAME)
 
     def by_user(self, user):
         return self.submitted().filter(author__reviewer=user).order_by("-created_at")

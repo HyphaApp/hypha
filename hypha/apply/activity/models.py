@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Case, Q, QuerySet, Value, When
+from django.db.models import Case, Q, Value, When
 from django.db.models.functions import Concat
 from django.urls import reverse
 from django.utils import timezone
@@ -32,18 +32,14 @@ ACTIVITY_TYPES = {
 APPLICANT = _("applicant")
 TEAM = _("team")
 REVIEWER = _("reviewers")
-PARTNER = _("partners")
 ALL = _("all")
-APPLICANT_PARTNERS = f"{APPLICANT} {PARTNER}"
 
 # Visibility choice strings
 VISIBILITY = {
     APPLICANT: _("Applicants"),
     TEAM: _("Staff only"),
     REVIEWER: _("Reviewers"),
-    PARTNER: _("Partners"),
     ALL: _("All"),
-    APPLICANT_PARTNERS: _("Applicants & Partners"),
 }
 
 
@@ -67,16 +63,12 @@ class BaseActivityQuerySet(models.QuerySet):
 
         user_qs = Q(user=user)
 
-        # There are scenarios where users will have activities in which they
-        # wouldn't have visibility just using Activity.visibility_for. Thus,
-        # the queryset should include activity in which they author via
-        # `user_qs` (ie. A comment made only to staff from a partner).
         if user.is_applicant:
-            # Handle the edge case where a partner or reviewer is also an
+            # Handle the edge case where a xreviewer is also an
             # applicant. Ensures that any applications/projects the user
             # authored will have comment visibility of applicant while others
             # will get the appropriate role.
-            if user.is_partner or user.is_reviewer:
+            if user.is_reviewer:
                 ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
                 Project = apps.get_model("application_projects", "Project")
 
@@ -253,7 +245,7 @@ class Activity(models.Model):
     @property
     def privileged(self):
         # Not visible to applicant
-        return self.visibility not in [APPLICANT, PARTNER, APPLICANT_PARTNERS, ALL]
+        return self.visibility not in [APPLICANT, ALL]
 
     @property
     def private(self):
@@ -270,11 +262,7 @@ class Activity(models.Model):
         """Gets activity visibility for a specified user
 
         Takes an optional boolean that is used to determine the visibility of
-        an application comment. This was mainly implemented to allow partners
-        also holding the role of applicant to have a proper visibility.
-
-        ie. Prevent someone with the role of partner & applicant looking at
-        comments on their own application and seeing partner visibility
+        an application comment.
 
         Args:
             user:
@@ -285,72 +273,33 @@ class Activity(models.Model):
         Returns:
             A list of visibility strings
         """
-        if user.is_apply_staff:
-            return [TEAM, APPLICANT, REVIEWER, APPLICANT_PARTNERS, PARTNER, ALL]
+        if user.is_apply_staff or user.is_finance or user.is_contracting:
+            return [TEAM, APPLICANT, REVIEWER, ALL]
         if user.is_reviewer and not is_submission_author:
             return [REVIEWER, ALL]
-        if user.is_finance or user.is_contracting:
-            # for project part
-            return [TEAM, APPLICANT, REVIEWER, PARTNER, ALL]
-        if user.is_partner and not is_submission_author:
-            return [PARTNER, ALL, APPLICANT_PARTNERS]
         if user.is_applicant:
-            return [APPLICANT, ALL, APPLICANT_PARTNERS]
+            return [APPLICANT, ALL]
 
         return [ALL]
 
     @classmethod
-    def visibility_choices_for(
-        cls, user, submission_partner_list: Optional[QuerySet] = None
-    ) -> List[Tuple[str, str]]:
+    def visibility_choices_for(cls, user) -> List[Tuple[str, str]]:
         """Gets activity visibility choices for the specified user
 
-        Uses the given user (and partner query set if provided) to give
-        the specified user activity visibility choices.
-
         Args:
-            user:
-                The [`User`][hypha.apply.users.models.User] being given
-                visibility choices
-            submission_has_partner:
-                An optional QuerySet of partners
-                ([`Users`][hypha.apply.users.models.User])
+            user: The [`User`][hypha.apply.users.models.User] being given visibility choices
+
         Returns:
             A list of tuples in the format of:
             [(<visibility string>, <visibility display string>), ...]
         """
-        has_partner = submission_partner_list and len(submission_partner_list) > 0
 
         if user.is_apply_staff:
-            if not has_partner:
-                choices = [
-                    (TEAM, VISIBILITY[TEAM]),
-                    (APPLICANT, VISIBILITY[APPLICANT]),
-                    (REVIEWER, VISIBILITY[REVIEWER]),
-                    (ALL, VISIBILITY[ALL]),
-                ]
-            else:
-                choices = [
-                    (TEAM, VISIBILITY[TEAM]),
-                    (APPLICANT, VISIBILITY[APPLICANT]),
-                    (PARTNER, VISIBILITY[PARTNER]),
-                    (APPLICANT_PARTNERS, VISIBILITY[APPLICANT_PARTNERS]),
-                    (REVIEWER, VISIBILITY[REVIEWER]),
-                    (ALL, VISIBILITY[ALL]),
-                ]
-            return choices
-
-        if user.is_partner and has_partner and submission_partner_list.contains(user):
             return [
-                (APPLICANT_PARTNERS, VISIBILITY[APPLICANT_PARTNERS]),
-                (PARTNER, VISIBILITY[PARTNER]),
                 (TEAM, VISIBILITY[TEAM]),
-            ]
-
-        if user.is_applicant and has_partner:
-            return [
-                (APPLICANT_PARTNERS, VISIBILITY[PARTNER]),
-                (APPLICANT, VISIBILITY[TEAM]),
+                (APPLICANT, VISIBILITY[APPLICANT]),
+                (REVIEWER, VISIBILITY[REVIEWER]),
+                (ALL, VISIBILITY[ALL]),
             ]
 
         if user.is_applicant:

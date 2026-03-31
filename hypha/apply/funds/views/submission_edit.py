@@ -52,7 +52,6 @@ from .. import services
 from ..forms import (
     ProgressSubmissionForm,
     UpdateMetaTermsForm,
-    UpdatePartnersForm,
     UpdateReviewersForm,
     UpdateSubmissionLeadForm,
 )
@@ -318,25 +317,10 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
         return super().dispatch(request, *args, **kwargs)
 
 
-@method_decorator(login_required, name="dispatch")
-class PartnerSubmissionEditView(ApplicantSubmissionEditView):
-    def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
-        # If the requesting user submitted the application, return the Applicant view.
-        # Partners may sometimes be applicants as well.
-        partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
-        if not partner_has_access and submission.user != request.user:
-            raise PermissionDenied
-        return super(ApplicantSubmissionEditView, self).dispatch(
-            request, *args, **kwargs
-        )
-
-
 class SubmissionEditView(ViewDispatcher):
     admin_view = AdminSubmissionEditView
     applicant_view = ApplicantSubmissionEditView
     reviewer_view = ApplicantSubmissionEditView
-    partner_view = PartnerSubmissionEditView
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -637,89 +621,6 @@ class UpdateReviewersView(View):
             self.request,
             "funds/includes/update_reviewer_form.html",
             context={"form": form, "value": _("Update"), "object": self.submission},
-        )
-
-
-@method_decorator(staff_required, name="dispatch")
-class UpdatePartnersView(View):
-    model = ApplicationSubmission
-    form_class = UpdatePartnersForm
-    context_name = "partner_form"
-    template = "funds/modals/update_partner_form.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
-        permission, reason = has_permission(
-            "submission_action",
-            request.user,
-            object=self.submission,
-            raise_exception=False,
-        )
-        if not permission:
-            messages.warning(self.request, reason)
-            return HttpResponseRedirect(self.submission.get_absolute_url())
-        return super(UpdatePartnersView, self).dispatch(request, *args, **kwargs)
-
-    def get(self, *args, **kwargs):
-        partner_form = UpdatePartnersForm(
-            user=self.request.user, instance=self.submission
-        )
-        return render(
-            self.request,
-            self.template,
-            context={
-                "form": partner_form,
-                "value": _("Update"),
-                "object": self.submission,
-            },
-        )
-
-    def post(self, *args, **kwargs):
-        form = UpdatePartnersForm(
-            self.request.POST, user=self.request.user, instance=self.submission
-        )
-        old_partners = set(self.submission.partners.all())
-        if form.is_valid():
-            form.save()
-            new_partners = set(form.instance.partners.all())
-
-            added = new_partners - old_partners
-            removed = old_partners - new_partners
-            messenger(
-                MESSAGES.PARTNERS_UPDATED,
-                request=self.request,
-                user=self.request.user,
-                source=self.submission,
-                added=added,
-                removed=removed,
-            )
-
-            messenger(
-                MESSAGES.PARTNERS_UPDATED_PARTNER,
-                request=self.request,
-                user=self.request.user,
-                source=self.submission,
-                added=added,
-                removed=removed,
-            )
-
-            return HttpResponse(
-                status=204,
-                headers={
-                    "HX-Trigger": json.dumps(
-                        {
-                            "partnerUpdated": None,
-                            "showMessage": _("Partners updated successfully."),
-                        }
-                    ),
-                },
-            )
-
-        return render(
-            self.request,
-            self.template,
-            context={"form": form, "value": _("Update"), "object": self.submission},
-            status=400,
         )
 
 

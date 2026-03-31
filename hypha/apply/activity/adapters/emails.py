@@ -9,7 +9,6 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
 from hypha.apply.activity import tasks
-from hypha.apply.activity.models import ALL, APPLICANT_PARTNERS, PARTNER
 from hypha.apply.funds.models.co_applicants import (
     CoApplicantProjectPermission,
     CoApplicantRole,
@@ -65,8 +64,6 @@ class EmailAdapter(AdapterBase):
         MESSAGES.READY_FOR_REVIEW: "handle_ready_for_review",
         MESSAGES.REVIEWERS_UPDATED: "handle_ready_for_review",
         MESSAGES.BATCH_REVIEWERS_UPDATED: "handle_batch_ready_for_review",
-        MESSAGES.PARTNERS_UPDATED: "partners_updated_applicant",
-        MESSAGES.PARTNERS_UPDATED_PARTNER: "partners_updated_partner",
         MESSAGES.UPLOAD_CONTRACT: "messages/email/contract_uploaded.html",
         MESSAGES.SUBMIT_CONTRACT_DOCUMENTS: "messages/email/submit_contract_documents.html",
         MESSAGES.CREATED_PROJECT: "messages/email/project_created.html",
@@ -328,10 +325,6 @@ class EmailAdapter(AdapterBase):
             related = kwargs.get("related", None)
             return [related.invited_user_email]
 
-        if message_type == MESSAGES.PARTNERS_UPDATED_PARTNER:
-            partners = kwargs["added"]
-            return [partner.email for partner in partners]
-
         if message_type == MESSAGES.APPROVE_PAF:
             from hypha.apply.projects.models.project import ProjectSettings
 
@@ -488,12 +481,6 @@ class EmailAdapter(AdapterBase):
                 ).values_list("user__email", flat=True)
                 recipients: List[str] = [source.user.email, *co_applicants]
 
-                if partners := list(source.partners.values_list("email", flat=True)):
-                    if comment.visibility == PARTNER:
-                        recipients = partners
-                    elif comment.visibility in [APPLICANT_PARTNERS, ALL]:
-                        recipients += partners
-
             # Comment handling for Projects
             elif isinstance(source, Project):
                 # co_applciants with Comment permission
@@ -556,23 +543,6 @@ class EmailAdapter(AdapterBase):
             if source.phase.permissions.can_review(reviewer)
             and not reviewer.is_apply_staff
         ]
-
-    def partners_updated_applicant(self, added, removed, **kwargs):
-        if added:
-            return self.render_message(
-                "messages/email/partners_update_applicant.html", added=added, **kwargs
-            )
-
-    def partners_updated_partner(self, added, removed, **kwargs):
-        if added:
-            recipient = kwargs["recipient"]
-            # Pass the user object to render_message rather than the email string
-            recipient_obj = User.objects.get(email__exact=recipient)
-            kwargs["recipient"] = recipient_obj
-
-            return self.render_message(
-                "messages/email/partners_update_partner.html", **kwargs
-            )
 
     def render_message(self, template, **kwargs):
         with language(settings.LANGUAGE_CODE):

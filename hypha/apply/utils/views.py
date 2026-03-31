@@ -20,7 +20,6 @@ from wagtail.models import Page
 class ViewDispatcher(View):
     admin_view: View = None
     reviewer_view: View = None
-    partner_view: View = None
     community_view: View = None
     applicant_view: View = None
     finance_view: View = None
@@ -31,9 +30,6 @@ class ViewDispatcher(View):
 
     def reviewer_check(self, request):
         return request.user.is_reviewer
-
-    def partner_check(self, request):
-        return request.user.is_partner
 
     def community_check(self, request):
         return request.user.is_community_reviewer
@@ -54,8 +50,6 @@ class ViewDispatcher(View):
             view = self.admin_view
         elif self.reviewer_check(request):
             view = self.reviewer_view
-        elif self.partner_check(request):
-            view = self.partner_view
         elif self.community_check(request):
             view = self.community_view
         elif settings.PROJECTS_ENABLED and self.finance_check(request):

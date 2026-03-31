@@ -20,7 +20,6 @@ from hypha.apply.todo.options import SUBMISSION_DRAFT
 from hypha.apply.todo.views import add_task_to_user
 from hypha.apply.users.roles import (
     COMMUNITY_REVIEWER_GROUP_NAME,
-    PARTNER_GROUP_NAME,
     REVIEWER_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
@@ -34,7 +33,6 @@ REVIEW_GROUPS = [
 ]
 LIMIT_TO_STAFF = {"groups__name": STAFF_GROUP_NAME, "is_active": True}
 LIMIT_TO_REVIEWERS = {"groups__name": REVIEWER_GROUP_NAME, "is_active": True}
-LIMIT_TO_PARTNERS = {"groups__name": PARTNER_GROUP_NAME, "is_active": True}
 LIMIT_TO_COMMUNITY_REVIEWERS = {
     "groups__name": COMMUNITY_REVIEWER_GROUP_NAME,
     "is_active": True,

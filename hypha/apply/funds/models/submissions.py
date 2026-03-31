@@ -73,7 +73,6 @@ from ..workflows.constants import (
 from .mixins import AccessFormData
 from .reviewer_role import ReviewerRole
 from .utils import (
-    LIMIT_TO_PARTNERS,
     LIMIT_TO_STAFF,
     WorkflowHelpers,
 )
@@ -176,9 +175,6 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
     def flagged_staff(self):
         return self.filter(flags__type=Flag.STAFF)
-
-    def partner_for(self, user):
-        return self.filter(partners=user)
 
     def awaiting_determination_for(self, user):
         return self.filter(status__in=DETERMINATION_RESPONSE_PHASES).filter(lead=user)
@@ -461,12 +457,6 @@ class ApplicationSubmission(
         related_name="submissions_reviewer",
         blank=True,
         through="AssignedReviewers",
-    )
-    partners = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        related_name="submissions_partner",
-        limit_choices_to=LIMIT_TO_PARTNERS,
-        blank=True,
     )
     meta_terms = models.ManyToManyField(
         MetaTerm,
