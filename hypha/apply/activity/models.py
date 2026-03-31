@@ -206,9 +206,12 @@ class Activity(models.Model):
     source_object_id = models.PositiveIntegerField(blank=True, null=True, db_index=True)
     source = GenericForeignKey("source_content_type", "source_object_id")
 
-    message = models.TextField()
+    message = models.TextField(gettext_lazy("message"))
     visibility = models.CharField(
-        choices=list(VISIBILITY.items()), default=APPLICANT, max_length=30
+        gettext_lazy("visibility"),
+        choices=list(VISIBILITY.items()),
+        default=APPLICANT,
+        max_length=30,
     )
 
     # Fields for handling versioning of the comment activity models

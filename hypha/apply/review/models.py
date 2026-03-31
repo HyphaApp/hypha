@@ -166,16 +166,16 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     form_data = models.JSONField(default=dict, encoder=DjangoJSONEncoder)
 
     recommendation = models.IntegerField(
-        verbose_name=_("Recommendation"), choices=RECOMMENDATION_CHOICES, default=0
+        verbose_name=_("recommendation"), choices=RECOMMENDATION_CHOICES, default=0
     )
     score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
-    is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
+    is_draft = models.BooleanField(default=False, verbose_name=_("draft"))
     created_at = models.DateTimeField(
-        verbose_name=_("Creation time"), auto_now_add=True
+        verbose_name=_("creation time"), auto_now_add=True
     )
-    updated_at = models.DateTimeField(verbose_name=_("Update time"), auto_now=True)
+    updated_at = models.DateTimeField(verbose_name=_("update time"), auto_now=True)
     visibility = models.CharField(
-        verbose_name=_("Visibility"),
+        verbose_name=_("visibility"),
         choices=VISIBILITY.items(),
         default=PRIVATE,
         max_length=10,

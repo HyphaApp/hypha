@@ -58,7 +58,7 @@ class WorkflowHelpers(models.Model):
         choices=WORKFLOW_CHOICES.items(),
         max_length=100,
         default="single",
-        verbose_name=_("Workflow"),
+        verbose_name=_("workflow"),
     )
 
     @property

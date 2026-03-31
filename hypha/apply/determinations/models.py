@@ -108,22 +108,22 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
     )
 
     outcome = models.IntegerField(
-        verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=1
+        verbose_name=_("determination"), choices=DETERMINATION_CHOICES, default=1
     )
-    message = models.TextField(verbose_name=_("Determination message"), blank=True)
+    message = models.TextField(verbose_name=_("determination message"), blank=True)
 
     # Stores old determination forms data
     data = models.JSONField(blank=True, null=True)
 
     # Stores data submitted via streamfield determination forms
     form_data = models.JSONField(default=dict, encoder=DjangoJSONEncoder)
-    is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
+    is_draft = models.BooleanField(default=False, verbose_name=_("draft"))
     created_at = models.DateTimeField(
-        verbose_name=_("Creation time"), auto_now_add=True
+        verbose_name=_("creation time"), auto_now_add=True
     )
-    updated_at = models.DateTimeField(verbose_name=_("Update time"), auto_now=True)
+    updated_at = models.DateTimeField(verbose_name=_("update time"), auto_now=True)
     send_notice = models.BooleanField(
-        default=True, verbose_name=_("Send message to applicant")
+        default=True, verbose_name=_("send message to applicant")
     )
 
     objects = DeterminationQuerySet.as_manager()
