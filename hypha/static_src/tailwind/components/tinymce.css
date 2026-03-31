@@ -10,7 +10,7 @@
   }
 
   .tox-tbtn {
-    @apply text-base-content! fill-base-content!;
+    @apply bg-base-100! text-base-content! fill-base-content!;
 
     svg {
       @apply text-base-content! fill-base-content!;
