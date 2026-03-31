@@ -194,10 +194,10 @@ defaultlocale = override(language=settings.LANGUAGE_CODE)
 class User(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
     full_name = models.CharField(
-        verbose_name=_("Full name"), max_length=255, blank=True
+        verbose_name=_("full name"), max_length=255, blank=True
     )
     slack = models.CharField(
-        verbose_name=_("Slack name"),
+        verbose_name=_("slack name"),
         blank=True,
         help_text=_('This is the name we should "@mention" when sending notifications'),
         max_length=50,
@@ -332,11 +332,11 @@ class AuthSettings(BaseGenericSetting):
     class Meta:
         verbose_name = _("Auth Settings")
 
-    consent_show = models.BooleanField(_("Show consent checkbox?"), default=False)
-    consent_text = models.CharField(max_length=255, blank=True)
-    consent_help = RichTextField(blank=True)
+    consent_show = models.BooleanField(_("show consent checkbox?"), default=False)
+    consent_text = models.CharField(_("consent text"), max_length=255, blank=True)
+    consent_help = RichTextField(_("consent help"), blank=True)
     extra_text = RichTextField(
-        _("Login extra text"),
+        _("login extra text"),
         blank=True,
         help_text=_("Displayed along side login form"),
     )

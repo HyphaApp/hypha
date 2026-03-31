@@ -435,7 +435,7 @@ class ApplicationSubmission(
     public_id = models.CharField(
         max_length=255, null=True, blank=True, unique=True, db_index=True
     )
-    summary = models.TextField(default="", null=True, blank=True)
+    summary = models.TextField(_("summary"), default="", null=True, blank=True)
     page = models.ForeignKey("wagtailcore.Page", on_delete=models.PROTECT)
     round = models.ForeignKey(
         "wagtailcore.Page",
@@ -483,6 +483,7 @@ class ApplicationSubmission(
 
     # Workflow inherited from WorkflowHelpers
     status = models.CharField(
+        _("status"),
         max_length=100,
         choices=get_all_possible_states(),
         default=INITIAL_STATE,

@@ -244,28 +244,31 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         related_name="owned_projects",
     )
 
-    title = models.TextField()
+    title = models.TextField(_("title"))
     value = models.DecimalField(
+        _("value"),
         default=0,
         max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(limit_value=0)],
     )
     proposed_start = models.DateField(
-        _("Proposed start date"), null=True, default=date.today
+        _("proposed start date"), null=True, default=date.today
     )
-    proposed_end = models.DateField(_("Proposed end date"), null=True)
+    proposed_end = models.DateField(_("proposed end date"), null=True)
 
-    status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=DRAFT)
+    status = models.TextField(
+        _("status"), choices=PROJECT_STATUS_CHOICES, default=DRAFT
+    )
 
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
     form_fields = StreamField(ProjectFormCustomFormFieldsBlock(), null=True)
 
     # tracks read/write state of the Project
-    is_locked = models.BooleanField(default=False)
+    is_locked = models.BooleanField(_("locked"), default=False)
 
     submitted_contract_documents = models.BooleanField(
-        _("Submit Contracting Documents"), default=False
+        _("submit contracting documents"), default=False
     )
 
     activities = GenericRelation(
@@ -610,10 +613,10 @@ class ProjectReminderFrequency(Orderable, ClusterableModel):
 @register_setting
 class ProjectSettings(BaseSiteSetting, ClusterableModel):
     contracting_gp_email = models.TextField(
-        _("Contracting Group Email"), null=True, blank=True
+        _("contracting group email"), null=True, blank=True
     )
-    finance_gp_email = models.TextField(_("Finance Group Email"), null=True, blank=True)
-    staff_gp_email = models.TextField(_("Staff Group Email"), null=True, blank=True)
+    finance_gp_email = models.TextField(_("finance group email"), null=True, blank=True)
+    staff_gp_email = models.TextField(_("staff group email"), null=True, blank=True)
     paf_approval_sequential = models.BooleanField(
         default=True, help_text=_("Uncheck it to approve project parallelly")
     )
@@ -705,11 +708,13 @@ class Contract(models.Model):
         "Project", on_delete=models.CASCADE, related_name="contracts"
     )
 
-    file = models.FileField(upload_to=contract_path, storage=PrivateStorage())
+    file = models.FileField(
+        _("file"), upload_to=contract_path, storage=PrivateStorage()
+    )
 
-    signed_and_approved = models.BooleanField(_("Signed and approved"), default=False)
+    signed_and_approved = models.BooleanField(_("signed and approved"), default=False)
 
-    signed_by_applicant = models.BooleanField(_("Counter Signed?"), default=False)
+    signed_by_applicant = models.BooleanField(_("counter signed?"), default=False)
     uploaded_by_contractor_at = models.DateTimeField(null=True)
     uploaded_by_applicant_at = models.DateTimeField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -752,8 +757,10 @@ class PacketFile(models.Model):
         "Project", on_delete=models.CASCADE, related_name="packet_files"
     )
 
-    title = models.TextField()
-    document = models.FileField(upload_to=document_path, storage=PrivateStorage())
+    title = models.TextField(_("title"))
+    document = models.FileField(
+        _("document"), upload_to=document_path, storage=PrivateStorage()
+    )
     created_at = models.DateField(auto_now_add=True, null=True)
 
     def __str__(self):
@@ -782,9 +789,9 @@ class ContractPacketFile(models.Model):
         "Project", on_delete=models.CASCADE, related_name="contract_packet_files"
     )
 
-    title = models.TextField()
+    title = models.TextField(_("title"))
     document = models.FileField(
-        upload_to=contract_document_path, storage=PrivateStorage()
+        _("document"), upload_to=contract_document_path, storage=PrivateStorage()
     )
     created_at = models.DateField(auto_now_add=True, null=True)
 
@@ -803,10 +810,13 @@ def delete_contractpacketfile_file(sender, instance, **kwargs):
 
 
 class DocumentCategory(models.Model):
-    name = models.CharField(max_length=254)
-    recommended_minimum = models.PositiveIntegerField(null=True, blank=True)
-    required = models.BooleanField(default=False)
+    name = models.CharField(_("name"), max_length=254)
+    recommended_minimum = models.PositiveIntegerField(
+        _("recommended minimum"), null=True, blank=True
+    )
+    required = models.BooleanField(_("required"), default=False)
     template = models.FileField(
+        _("template"),
         upload_to=document_template_path,
         storage=PrivateStorage(),
         blank=True,
@@ -829,18 +839,21 @@ class DocumentCategory(models.Model):
 
 
 class ContractDocumentCategory(models.Model):
-    name = models.CharField(max_length=254)
-    recommended_minimum = models.PositiveIntegerField(null=True, blank=True)
+    name = models.CharField(_("name"), max_length=254)
+    recommended_minimum = models.PositiveIntegerField(
+        _("recommended minimum"), null=True, blank=True
+    )
     document_access_view = models.ManyToManyField(
         Group,
         limit_choices_to={"name__in": ROLES_ORG_FACULTY},
-        verbose_name=_("Allow document access for groups"),
+        verbose_name=_("allow document access for groups"),
         help_text=_("Only selected group's users can access the document"),
         related_name="contract_document_category",
         blank=True,
     )
-    required = models.BooleanField(default=True)
+    required = models.BooleanField(_("required"), default=True)
     template = models.FileField(
+        _("template"),
         upload_to=contract_document_template_path,
         storage=PrivateStorage(),
         blank=True,

@@ -130,7 +130,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm, AsJsonMixin):  # type: igno
         related_name="+",
     )
 
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(_("description"), null=True, blank=True)
 
     # higher the weight means top priority, 100th will be on top.
     weight = models.PositiveIntegerField(
@@ -138,7 +138,10 @@ class ApplicationBase(EmailForm, WorkflowStreamForm, AsJsonMixin):  # type: igno
     )
 
     guide_link = models.URLField(
-        blank=True, max_length=255, help_text=_("Link to the apply guide.")
+        _("guide link"),
+        blank=True,
+        max_length=255,
+        help_text=_("Link to the apply guide."),
     )
 
     slack_channel = models.CharField(
@@ -158,11 +161,15 @@ class ApplicationBase(EmailForm, WorkflowStreamForm, AsJsonMixin):  # type: igno
     )
 
     list_on_front_page = models.BooleanField(
-        default=True, help_text=_("Should the fund be listed on the front page.")
+        _("list on front page"),
+        default=True,
+        help_text=_("Should the fund be listed on the front page."),
     )
 
     show_deadline = models.BooleanField(
-        default=True, help_text=_("Should the deadline date be visible for users.")
+        _("show deadline"),
+        default=True,
+        help_text=_("Should the deadline date be visible for users."),
     )
 
     objects = PageManager.from_queryset(ApplicationBaseManager)()
@@ -273,8 +280,11 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         limit_choices_to=LIMIT_TO_REVIEWERS,
         blank=True,
     )
-    start_date = models.DateField(null=True, blank=True, default=date.today)
+    start_date = models.DateField(
+        _("start date"), null=True, blank=True, default=date.today
+    )
     end_date = models.DateField(
+        _("end date"),
         blank=True,
         null=True,
         default=date.today,
@@ -282,7 +292,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             "When no end date is provided the round will remain open indefinitely."
         ),
     )
-    sealed = models.BooleanField(default=False)
+    sealed = models.BooleanField(_("sealed"), default=False)
 
     def get_url(self, request: Optional[WSGIRequest] = None) -> Optional[str]:
         """Generates the live url, primarily used in the wagtail admin for the "view live" button.
@@ -466,16 +476,16 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                     _("Overlaps with the following rounds:<br> {}"),
                     format_html_join(
                         sep=mark_safe("<br>"),
-                        format_string='<a href="{url}">{title}</a>: {start_date} - {end_date}',
-                        args_generator=[
-                            {
-                                "url": admin_url(round),
-                                "title": round.title,
-                                "start_date": round.start_date,
-                                "end_date": round.end_date,
-                            }
+                        format_string='<a href="{}">{}</a>: {} - {}',
+                        args_generator=(
+                            (
+                                admin_url(round),
+                                round.title,
+                                round.start_date,
+                                round.end_date,
+                            )
                             for round in conflicting_rounds
-                        ],
+                        ),
                     ),
                 )
                 error = {
@@ -640,7 +650,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm, AsJsonMixin)
         related_name="+",
     )
 
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(_("description"), null=True, blank=True)
 
     # higher the weight means top priority, 100th will be on top.
     weight = models.PositiveIntegerField(
@@ -648,7 +658,10 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm, AsJsonMixin)
     )
 
     guide_link = models.URLField(
-        blank=True, max_length=255, help_text=_("Link to the apply guide.")
+        _("guide link"),
+        blank=True,
+        max_length=255,
+        help_text=_("Link to the apply guide."),
     )
 
     slack_channel = models.CharField(
@@ -665,7 +678,9 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm, AsJsonMixin)
     )
 
     list_on_front_page = models.BooleanField(
-        default=True, help_text=_("Should the lab be listed on the front page.")
+        _("list on front page"),
+        default=True,
+        help_text=_("Should the lab be listed on the front page."),
     )
 
     parent_page_types = ["apply_home.ApplyHomePage"]

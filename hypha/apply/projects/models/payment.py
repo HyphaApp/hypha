@@ -106,32 +106,35 @@ class Invoice(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="invoices"
     )
     paid_value = models.DecimalField(
+        _("paid value"),
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(decimal.Decimal("0.01"))],
         null=True,
     )
-    document = models.FileField(upload_to=invoice_path, storage=PrivateStorage())
+    document = models.FileField(
+        _("document"), upload_to=invoice_path, storage=PrivateStorage()
+    )
     message_for_pm = models.TextField(
         blank=True,
-        verbose_name=_("Comment"),
+        verbose_name=_("comment"),
         help_text=_("This will be displayed as a comment in the comments tab"),
     )
-    comment = models.TextField(blank=True)
+    comment = models.TextField(_("comment"), blank=True)
     invoice_number = models.CharField(
-        max_length=50, null=True, verbose_name=_("Invoice number")
+        max_length=50, null=True, verbose_name=_("invoice number")
     )
     invoice_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(decimal.Decimal("0.01"))],
         null=True,
-        verbose_name=_("Invoice amount"),
+        verbose_name=_("invoice amount"),
     )
-    invoice_date = models.DateField(null=True, verbose_name=_("Invoice date"))
-    paid_date = models.DateField(null=True, verbose_name=_("Paid date"))
+    invoice_date = models.DateField(null=True, verbose_name=_("invoice date"))
+    paid_date = models.DateField(null=True, verbose_name=_("paid date"))
     status = models.CharField(
-        default=SUBMITTED, choices=INVOICE_STATUS_CHOICES, max_length=30
+        _("status"), default=SUBMITTED, choices=INVOICE_STATUS_CHOICES, max_length=30
     )
     status_field = State(default=SUBMITTED, states=INVOICE_STATUS_CHOICES)
     requested_at = models.DateTimeField(auto_now_add=True)
@@ -283,7 +286,7 @@ class SupportingDocument(models.Model):
     wagtail_reference_index_ignore = True
 
     document = models.FileField(
-        upload_to="supporting_documents", storage=PrivateStorage()
+        _("document"), upload_to="supporting_documents", storage=PrivateStorage()
     )
     invoice = models.ForeignKey(
         Invoice,

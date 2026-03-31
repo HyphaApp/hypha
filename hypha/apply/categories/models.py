@@ -64,7 +64,7 @@ class MetaTerm(index.Indexed, MP_Node):
     )
     is_archived = models.BooleanField(
         default=False,
-        verbose_name=_("Archived"),
+        verbose_name=_("archived"),
         help_text=_("Archived terms can be viewed but not set on content."),
     )
     filter_on_dashboard = models.BooleanField(

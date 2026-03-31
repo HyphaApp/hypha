@@ -185,7 +185,7 @@ class ApplicationBaseExternalReviewForm(AbstractRelatedReviewForm):
 
     class Meta:
         verbose_name = _("application base external review form")
-        verbose_name_plural = _("application base external review form")
+        verbose_name_plural = _("application base external review forms")
 
 
 class RoundBaseReviewForm(AbstractRelatedReviewForm):
@@ -200,7 +200,7 @@ class RoundBaseExternalReviewForm(AbstractRelatedReviewForm):
     round = ParentalKey("RoundBase", related_name="external_review_forms")
 
     class Meta:
-        verbose_name = _("round base externa review form")
+        verbose_name = _("round base external review form")
         verbose_name_plural = _("round base external review forms")
 
 
