@@ -64,7 +64,7 @@ class BaseActivityQuerySet(models.QuerySet):
         user_qs = Q(user=user)
 
         if user.is_applicant:
-            # Handle the edge case where a xreviewer is also an
+            # Handle the edge case where a reviewer is also an
             # applicant. Ensures that any applications/projects the user
             # authored will have comment visibility of applicant while others
             # will get the appropriate role.

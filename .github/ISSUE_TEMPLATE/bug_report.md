@@ -48,7 +48,6 @@ A clear and concise description of what you expected to happen.
 - Staff
 - Applicants
 - Reviewers
-- Partners
 - Developers
 - General public
 
