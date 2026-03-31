@@ -31,6 +31,5 @@ class Flag(models.Model):
         verbose_name = pgettext_lazy("computing", "flag")
         verbose_name_plural = pgettext_lazy("computing", "flags")
 
-
     def __str__(self):
         return f"{self.FLAG_TYPES.get(self.type, self.type)} flag by {self.user} on {self.target}"

@@ -630,9 +630,9 @@ django-modelcluster==6.4.1 \
     --hash=sha256:ccc190cd9e22c24900ea2410bff64d444d48f43f0f4aedeed0f6cd94e2536698 \
     --hash=sha256:e736fcee925f83b63218dbf9c869ab50618b0f5e98869a5aa497f7a5331aa263
     # via wagtail
-django-nh3==0.3.1 \
-    --hash=sha256:5682981d5aeff0577ada7414a57e7a0fd1f59a2ca682c5408d0b197aec8d5d80 \
-    --hash=sha256:858444153cc3073a741951fdf7b108785d2a267fc98dc1401b6e7206fc13e524
+django-nh3==0.2.1 \
+    --hash=sha256:0f99cb6ea099d76a9e401cdc09ec10e001204562230bd5a3b0e6f27bccd69178 \
+    --hash=sha256:de453061c16c12fa5ebfcc6d0691d35ca1802cc477632ed504a2f21ac878a4a8
     # via hypha
 django-otp==1.7.0 \
     --hash=sha256:406d2d7f797dc313569270e06d6c360c7d986c9f653eab80b190d663ed5f1133 \

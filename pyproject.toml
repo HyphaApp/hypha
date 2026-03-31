@@ -23,7 +23,7 @@ dependencies = [
     "django-heroku~=0.3.1",
     "django-hijack~=3.7.6",
     "django-htmx~=1.27.0",
-    "django-nh3==0.3.1",
+    "django-nh3~=0.2.1",
     "django-pagedown~=2.2.1",
     "django-ratelimit~=4.1.0",
     "django-role-permissions~=3.2.0",
