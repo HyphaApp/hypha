@@ -18,7 +18,7 @@ from hypha.apply.projects.models.project import (
 from hypha.apply.review.models import Review
 from hypha.apply.users.models import User
 
-from ..models import ALL, APPLICANT_PARTNERS, REVIEWER, TEAM
+from ..models import ALL, REVIEWER, TEAM
 
 register = template.Library()
 
@@ -109,12 +109,7 @@ def visibility_options(activity, user) -> str:
     Returns:
         A JSON string of visibility options
     """
-    if hasattr(activity.source, "partners"):
-        submission_partner_list = activity.source.partners.all()
-    else:
-        submission_partner_list = activity.source.submission.partners.all()
-
-    choices = activity.visibility_choices_for(user, submission_partner_list)
+    choices = activity.visibility_choices_for(user)
     return json.dumps(choices)
 
 
@@ -136,9 +131,6 @@ def visibility_display(visibility: str, user) -> str:
         team_string = f"{settings.ORG_SHORT_NAME} {TEAM}"
     else:
         team_string = TEAM
-
-    if visibility == APPLICANT_PARTNERS:
-        visibility = " + ".join(visibility.split())
 
     if visibility == TEAM:
         return team_string

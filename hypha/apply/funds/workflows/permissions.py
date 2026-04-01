@@ -10,10 +10,6 @@ def reviewer_can(user):
     return user.is_reviewer
 
 
-def partner_can(user):
-    return user.is_partner
-
-
 def community_can(user):
     return user.is_community_reviewer
 
@@ -40,7 +36,7 @@ def make_permissions(edit=None, review=None, view=None):
     return {
         "edit": edit or [],
         "review": review or [],
-        "view": view or [staff_can, applicant_can, reviewer_can, partner_can],
+        "view": view or [staff_can, applicant_can, reviewer_can],
     }
 
 
@@ -56,7 +52,5 @@ reviewer_review_permissions = make_permissions(
 community_review_permissions = make_permissions(
     edit=[staff_can], review=[staff_can, reviewer_can, community_can]
 )
-applicant_edit_permissions = make_permissions(
-    edit=[applicant_can, partner_can], review=[staff_can]
-)
+applicant_edit_permissions = make_permissions(edit=[applicant_can], review=[staff_can])
 staff_edit_permissions = make_permissions(edit=[staff_can])

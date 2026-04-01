@@ -143,34 +143,6 @@ class ReviewerSubmissionDetailView(ActivityContextMixin, DetailView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class PartnerSubmissionDetailView(ActivityContextMixin, DetailView):
-    model = ApplicationSubmission
-
-    def get_object(self):
-        return super().get_object().from_draft()
-
-    def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
-        permission, _ = has_permission(
-            "submission_view", request.user, object=submission, raise_exception=True
-        )
-        # If the requesting user submitted the application, return the Applicant view.
-        # Partners may sometimes be applicants as well.
-        # or if requesting user is a co-applicant to application, return the Applicant view.
-        if (
-            submission.user == request.user
-            or submission.co_applicants.filter(user=request.user).exists()
-        ):
-            return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
-        # Only allow partners in the submission they are added as partners
-        partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
-        if not partner_has_access:
-            raise PermissionDenied
-        if submission.status == DRAFT_STATE:
-            raise Http404
-        return super().dispatch(request, *args, **kwargs)
-
-
 class CommunitySubmissionDetailView(ActivityContextMixin, DetailView):
     template_name_suffix = "_community_detail"
     model = ApplicationSubmission
@@ -219,7 +191,6 @@ class ApplicantSubmissionDetailView(ActivityContextMixin, DetailView):
 class SubmissionDetailView(ViewDispatcher):
     admin_view = AdminSubmissionDetailView
     reviewer_view = ReviewerSubmissionDetailView
-    partner_view = PartnerSubmissionDetailView
     community_view = CommunitySubmissionDetailView
     applicant_view = ApplicantSubmissionDetailView
 

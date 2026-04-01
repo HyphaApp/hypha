@@ -219,7 +219,7 @@ Staff e-mail domain. Used for OAUTH2 whitelist default value and staff account c
 
 ----
 
-Should staff identities be obscured from Applicants & Partners (ie. comments will be ORG_LONG_NAME rather than "John Doe").
+Should staff identities be obscured from Applicants (ie. comments will be ORG_LONG_NAME rather than "John Doe").
 
    HIDE_STAFF_IDENTITY = env.bool('HIDE_STAFF_IDENTITY', False)
 

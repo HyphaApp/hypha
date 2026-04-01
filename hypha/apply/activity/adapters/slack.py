@@ -45,9 +45,6 @@ class SlackAdapter(AdapterBase):
         ),
         MESSAGES.REVIEWERS_UPDATED: "reviewers_updated",
         MESSAGES.BATCH_REVIEWERS_UPDATED: "handle_batch_reviewers",
-        MESSAGES.PARTNERS_UPDATED: _(
-            "{user} has updated the partners on <{link}|{source.title_text_display}>"
-        ),
         MESSAGES.TRANSITION: _(
             "{user} has updated the status of <{link}|{source.title_text_display}>: {old_phase.display_name} → {source.phase.display_name}"
         ),

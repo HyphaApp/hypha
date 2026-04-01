@@ -20,7 +20,6 @@ from .roles import (
     COMMUNITY_REVIEWER_GROUP_NAME,
     CONTRACTING_GROUP_NAME,
     FINANCE_GROUP_NAME,
-    PARTNER_GROUP_NAME,
     REVIEWER_GROUP_NAME,
     STAFF_GROUP_NAME,
     TEAMADMIN_GROUP_NAME,
@@ -45,9 +44,6 @@ class UserQuerySet(models.QuerySet):
 
     def reviewers(self):
         return self.filter(groups__name=REVIEWER_GROUP_NAME, is_active=True)
-
-    def partners(self):
-        return self.filter(groups__name=PARTNER_GROUP_NAME, is_active=True)
 
     def community_reviewers(self):
         return self.filter(groups__name=COMMUNITY_REVIEWER_GROUP_NAME, is_active=True)
@@ -270,11 +266,6 @@ class User(AbstractUser):
 
     @cached_property
     @defaultlocale
-    def is_partner(self):
-        return PARTNER_GROUP_NAME in self.roles
-
-    @cached_property
-    @defaultlocale
     def is_community_reviewer(self):
         return COMMUNITY_REVIEWER_GROUP_NAME in self.roles
 
@@ -302,7 +293,6 @@ class User(AbstractUser):
         return (
             self.is_apply_staff
             or self.is_reviewer
-            or self.is_partner
             or self.is_community_reviewer
             or self.is_finance
             or self.is_contracting

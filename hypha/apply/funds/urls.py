@@ -60,7 +60,6 @@ from .views.submission_edit import (
     SubmissionEditView,
     UpdateLeadView,
     UpdateMetaTermsView,
-    UpdatePartnersView,
     UpdateReviewersView,
     htmx_archive_unarchive_submission,
 )
@@ -262,11 +261,6 @@ submission_urls = (
                         "reviewers/update/",
                         UpdateReviewersView.as_view(),
                         name="reviewers_update",
-                    ),
-                    path(
-                        "partners/update/",
-                        UpdatePartnersView.as_view(),
-                        name="partners_update",
                     ),
                     path(
                         "metaterms/update/",

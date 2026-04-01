@@ -17,7 +17,6 @@ from hypha.apply.projects.tests.factories import InvoiceFactory, ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
-    PartnerFactory,
     ReviewerFactory,
     StaffFactory,
     UserFactory,
@@ -30,8 +29,6 @@ from ..messaging import MessengerBackend
 from ..models import (
     ALL,
     APPLICANT,
-    APPLICANT_PARTNERS,
-    PARTNER,
     TEAM,
     Activity,
     Event,
@@ -576,52 +573,9 @@ class TestEmailAdapter(AdapterMixin, TestCase):
             ANY, ANY, ANY, [project.user.email], logs=ANY
         )
 
-    def test_email_partner_for_submission_comments(self):
-        partners = PartnerFactory.create_batch(2)
-        submission = ApplicationSubmissionFactory()
-        submission.partners.set(partners)
-        comment = CommentFactory(
-            user=submission.user, source=submission, visibility=PARTNER
-        )
-
-        self.adapter_process(
-            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
-        )
-
-        partner_emails = [partner.email for partner in partners]
-
-        calls = [call(ANY, ANY, ANY, [email], logs=ANY) for email in partner_emails]
-
-        self.mock_send_email.assert_has_calls(calls, any_order=True)
-
-    def test_email_applicant_partners_for_submission_comments(self):
-        staff_commenter = StaffFactory()
-        partners = PartnerFactory.create_batch(2)
-        submission = ApplicationSubmissionFactory()
-        submission.partners.set(partners)
-        comment = CommentFactory(
-            user=staff_commenter, source=submission, visibility=APPLICANT_PARTNERS
-        )
-
-        self.adapter_process(
-            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
-        )
-
-        applicant_partner_emails = [partner.email for partner in partners] + [
-            submission.user.email
-        ]
-
-        calls = [
-            call(ANY, ANY, ANY, [email], logs=ANY) for email in applicant_partner_emails
-        ]
-
-        self.mock_send_email.assert_has_calls(calls, any_order=True)
-
     def test_email_applicant_for_submission_comments(self):
         staff_commenter = StaffFactory()
-        partners = PartnerFactory.create_batch(2)
         submission = ApplicationSubmissionFactory()
-        submission.partners.set(partners)
         comment = CommentFactory(
             user=staff_commenter, source=submission, visibility=APPLICANT
         )

@@ -30,11 +30,7 @@ def comments_view(request, pk):
 
     form = None
     if user_can_view_post_comment_form(user=request.user, submission=submission):
-        form = CommentForm(
-            user=request.user,
-            submission_partner_list=submission.partners.all(),
-            data=request.POST or None,
-        )
+        form = CommentForm(user=request.user, data=request.POST or None)
         if request.method == "POST":
             form.instance.user = request.user
             form.instance.source = submission

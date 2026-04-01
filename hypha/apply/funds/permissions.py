@@ -217,9 +217,6 @@ def is_user_has_access_to_view_submission(user, submission):
     ):
         return True, ""
 
-    if user.is_partner and submission.partners.filter(pk=user.pk).exists():
-        return True, ""
-
     if user.is_community_reviewer and submission.community_review:
         return True, ""
 
