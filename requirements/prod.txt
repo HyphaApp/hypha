@@ -79,18 +79,19 @@ billiard==4.2.4 \
     --hash=sha256:525b42bdec68d2b983347ac312f892db930858495db601b5836ac24e6477cde5 \
     --hash=sha256:55f542c371209e03cd5862299b74e52e4fbcba8250ba611ad94276b369b6a85f
     # via celery
-boto3==1.42.76 \
-    --hash=sha256:63c6779c814847016b89ae1b72ed968f8a63d80e589ba337511aa6fc1b59585e
+boto3==1.42.80 \
+    --hash=sha256:293cbdeaec7eda2a0b08e6a9c2bf1a51c54453863137d45a6431058a9280fdda \
+    --hash=sha256:797cec65f8a36dde38d2397119a114ab0d807cf92c43fb44b72b0522558acc0a
     # via hypha
-botocore==1.42.76 \
-    --hash=sha256:151e714ae3c32f68ea0b4dc60751401e03f84a87c6cf864ea0ee64aa10eb4607 \
-    --hash=sha256:c553fa0ae29e36a5c407f74da78b78404b81b74b15fb62bf640a3cd9385f0874
+botocore==1.42.80 \
+    --hash=sha256:7291632b2ede71b7c69e6e366480bb6e2a5d2fae8f7d2d2eb49215e32b7c7a12 \
+    --hash=sha256:fe32af53dc87f5f4d61879bc231e2ca2cc0719b19b8f6d268e82a34f713a8a09
     # via
     #   boto3
     #   s3transfer
-celery==5.6.2 \
-    --hash=sha256:3ffafacbe056951b629c7abcf9064c4a2366de0bdfc9fdba421b97ebb68619a5 \
-    --hash=sha256:4a8921c3fcf2ad76317d3b29020772103581ed2454c4c042cc55dcc43585009b
+celery==5.6.3 \
+    --hash=sha256:0808f42f80909c4d5833202360ffafb2a4f83f4d8e23e1285d926610e9a7afa6 \
+    --hash=sha256:177006bd2054b882e9f01be59abd8529e88879ef50d7918a7050c5a9f4e12912
     # via hypha
 certifi==2026.2.25 \
     --hash=sha256:027692e4402ad994f1c42e52a4997a9763c646b73e4096e4d5d6db8af1d6f0fa \
@@ -501,9 +502,9 @@ django-storages==1.14.6 \
     --hash=sha256:11b7b6200e1cb5ffcd9962bd3673a39c7d6a6109e8096f0e03d46fab3d3aabd9 \
     --hash=sha256:7a25ce8f4214f69ac9c7ce87e2603887f7ae99326c316bc8d2d75375e09341c9
     # via hypha
-django-stubs-ext==6.0.1 \
-    --hash=sha256:17415759b9a3f4b4da7998ac3b08c7dc5137f9a019490b918aece1a8a4c2ade4 \
-    --hash=sha256:633b280f89c0cbb7e3ce2f2f842e0acc43d8091378e75f84921d6be675d052dc
+django-stubs-ext==6.0.2 \
+    --hash=sha256:70b7b7ae837e7a6036e2facb64435550bf7cf8143c1a6e802864d4824ce6058c \
+    --hash=sha256:b35bdec1995bf49765cc39fa89aa7c23f120a23d0cb0152ab7fb4e48ff7d667b
     # via django-tasks
 django-tables2==2.8.0 \
     --hash=sha256:0dea3401bb99a0164ba09e20d59a7d90856fdc05e5ae2da9a14d0fa14d99257c \
@@ -806,9 +807,9 @@ packaging==26.0 \
     # via
     #   gunicorn
     #   kombu
-phonenumbers==9.0.26 \
-    --hash=sha256:9e582c827f0f5503cddeebef80099475a52ffa761551d8384099c7ec71298cbf \
-    --hash=sha256:ff473da5712965b6c7f7a31cbff8255864df694eb48243771133ecb761e807c1
+phonenumbers==9.0.27 \
+    --hash=sha256:a7ba9f362e2fe8e2d6756e415cf44f4c8f0c33b40ba07b27a8450909021d7e37 \
+    --hash=sha256:f99f533cfb052546d181f6dbd981bfbdd6a1527784585482173ff95ae6d1602e
     # via hypha
 pillow==12.1.1 \
     --hash=sha256:02f84dfad02693676692746df05b89cf25597560db2857363a208e393429f5e9 \
@@ -1071,9 +1072,9 @@ pyhanko==0.34.1 \
     --hash=sha256:5f46bb0230ca8e36069737eec602d7da779bfd61588281b91acd7002a5549a07 \
     --hash=sha256:a4c288552f61607e031aa93f22f834759a3f5201107f80c2d5d266161ad11216
     # via xhtml2pdf
-pyhanko-certvalidator==0.30.1 \
-    --hash=sha256:a37e7b11a4afc85594916abdf64b16c42e8b61cd3fa73a53652d16ac8958df18 \
-    --hash=sha256:f9912295f2d6bd99fdf68e1740b5163a27b135c8dd41d992a630066393ba0a3b
+pyhanko-certvalidator==0.30.2 \
+    --hash=sha256:bccf6d6780448b0734529b32eb4c049db37c625909b7d6ee22875282efc77768 \
+    --hash=sha256:c9259f6cce93b8e0a01fd1d2ae0932192832b3adf71bc0fcbb7dec540c49f8c4
     # via
     #   pyhanko
     #   xhtml2pdf
@@ -1258,9 +1259,9 @@ reportlab==4.4.10 \
     #   hypha
     #   svglib
     #   xhtml2pdf
-requests==2.33.0 \
-    --hash=sha256:3324635456fa185245e24865e810cecec7b4caf933d7eb133dcde67d48cee69b \
-    --hash=sha256:c7ebc5e8b0f21837386ad0e1c8fe8b829fa5f544d8df3b2253bff14ef29d7652
+requests==2.33.1 \
+    --hash=sha256:18817f8c57c6263968bc123d237e3b8b08ac046f5456bd1e307ee8f4250d3517 \
+    --hash=sha256:4e6d1ef462f3626a1f0a0a9c42dd93c63bad33f9f1c1937509b8c5c8718ab56a
     # via
     #   django-anymail
     #   django-slack
