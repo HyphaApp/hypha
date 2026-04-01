@@ -152,16 +152,16 @@ gitpython==3.1.46 \
     --hash=sha256:400124c7d0ef4ea03f7310ac2fbf7151e09ff97f2a3288d64a440c584a29c37f \
     --hash=sha256:79812ed143d9d25b6d176a10bb511de0f9c67b1fa641d82097b0ab90398a2058
     # via mkdocs-git-revision-date-localized-plugin
-griffe==2.0.1 \
-    --hash=sha256:7ebbefa657cb20c035552176425f3a9acef1a3a73619a469fa4088a2fbf2a4c1 \
-    --hash=sha256:87e2483145669334d4b595b459a7bd58ab92037c20c63c9d882ead0c0f7ca5b6
-griffecli==2.0.1 \
-    --hash=sha256:5c89012c292365c20538740cf491443625b3083449516964f4d3de3ca8c36090 \
-    --hash=sha256:a44f1482dfbeea72bd6686a4e7c99e0d30b0d2abd675b81e9ac1d97734ca7cf6
+griffe==2.0.2 \
+    --hash=sha256:2b31816460aee1996af26050a1fc6927a2e5936486856707f55508e4c9b5960b \
+    --hash=sha256:c5d56326d159f274492e9bf93a9895cec101155d944caa66d0fc4e0c13751b92
+griffecli==2.0.2 \
+    --hash=sha256:0d44d39e59afa81e288a3e1c3bf352cc4fa537483326ac06b8bb6a51fd8303a0 \
+    --hash=sha256:40a1ad4181fc39685d025e119ae2c5b669acdc1f19b705fb9bf971f4e6f6dffb
     # via griffe
-griffelib==2.0.1 \
-    --hash=sha256:59f39eabb4c777483a3823e39e8f9e03e69df271a7e49aee64e91a8cfa91bdf5 \
-    --hash=sha256:b769eed581c0e857d362fc8fcd8e57ecd2330c124b6104ac8b4c1c86d76970aa
+griffelib==2.0.2 \
+    --hash=sha256:3cf20b3bc470e83763ffbf236e0076b1211bac1bc67de13daf494640f2de707e \
+    --hash=sha256:925c857658fb1ba40c0772c37acbc2ab650bd794d9c1b9726922e36ea4117ea1
     # via
     #   griffe
     #   griffecli
@@ -366,13 +366,13 @@ properdocs==1.6.7 \
     --hash=sha256:6fa0cfa2e01bf338f684892c8a506cf70ea88ae7f3479c933b6fa20168101cbd \
     --hash=sha256:adc7b16e562890af0e098a7e5b02e3a81c20894a87d6a28d345c9300de73c26e
     # via mkdocs-gen-files
-pygments==2.19.2 \
-    --hash=sha256:636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887 \
-    --hash=sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b
+pygments==2.20.0 \
+    --hash=sha256:6757cd03768053ff99f3039c1a36d6c0aa0b263438fcab17520b30a303a82b5f \
+    --hash=sha256:81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176
     # via mkdocs-material
-pymdown-extensions==10.21 \
-    --hash=sha256:39f4a020f40773f6b2ff31d2cd2546c2c04d0a6498c31d9c688d2be07e1767d5 \
-    --hash=sha256:91b879f9f864d49794c2d9534372b10150e6141096c3908a455e45ca72ad9d3f
+pymdown-extensions==10.21.2 \
+    --hash=sha256:5c0fd2a2bea14eb39af8ff284f1066d898ab2187d81b889b75d46d4348c01638 \
+    --hash=sha256:c3f55a5b8a1d0edf6699e35dcbea71d978d34ff3fa79f3d807b8a5b3fa90fbdc
     # via
     #   mkdocs-material
     #   mkdocstrings
@@ -453,9 +453,9 @@ pyyaml-env-tag==1.1 \
     # via
     #   mkdocs
     #   properdocs
-requests==2.33.0 \
-    --hash=sha256:3324635456fa185245e24865e810cecec7b4caf933d7eb133dcde67d48cee69b \
-    --hash=sha256:c7ebc5e8b0f21837386ad0e1c8fe8b829fa5f544d8df3b2253bff14ef29d7652
+requests==2.33.1 \
+    --hash=sha256:18817f8c57c6263968bc123d237e3b8b08ac046f5456bd1e307ee8f4250d3517 \
+    --hash=sha256:4e6d1ef462f3626a1f0a0a9c42dd93c63bad33f9f1c1937509b8c5c8718ab56a
     # via
     #   mkdocs-macros-plugin
     #   mkdocs-material
