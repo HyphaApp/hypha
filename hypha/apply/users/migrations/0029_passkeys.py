@@ -7,7 +7,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("users", "0027_remove_drupal_id_field"),
+        ("users", "0028_remove_partner_group"),
     ]
 
     operations = [
