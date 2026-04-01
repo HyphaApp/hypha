@@ -37,6 +37,7 @@ from django.views.generic.edit import FormView
 from django_htmx.http import HttpResponseClientRedirect
 from django_otp import devices_for_user
 from django_ratelimit.decorators import ratelimit
+from formtools.wizard.forms import ManagementForm as WizardManagementForm
 from hijack.views import AcquireUserView
 from social_django.utils import psa
 from social_django.views import complete
@@ -673,10 +674,15 @@ class PasswordlessLoginView(LoginView):
         return render(request, "users/activation/invalid.html")
 
     def post(self, request, uidb64, token, *args, **kwargs):
-        # If storage already has an authenticated user we are in the MFA step
-        # (user confirmed the link, now submitting their OTP). Delegate to the
-        # parent WizardView which handles the OTP form.
-        if self.storage.authenticated_user:
+        # If the wizard management form is present in POST data, we are in the
+        # MFA step (user confirmed the link and is now submitting their OTP).
+        # Delegate to the parent WizardView which handles the OTP form.
+        # We check for the management form rather than just self.storage.authenticated_user
+        # because stale session data could have authenticated_user set from a previous
+        # incomplete MFA flow, causing a SuspiciousOperation crash when the user
+        # submits a fresh confirmation POST (which has no management form).
+        management_form = WizardManagementForm(request.POST, prefix=self.prefix)
+        if management_form.is_valid() and self.storage.authenticated_user:
             return super().post(request, *args, **kwargs)
 
         # Initial confirmation POST — validate token and log the user in.
