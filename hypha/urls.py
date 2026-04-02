@@ -18,6 +18,7 @@ from hypha.apply.utils.views import custom_wagtail_page_delete
 from hypha.home.views import home
 
 from .api import urls as api_urls
+from .health import health
 
 urlpatterns = [
     path("", home, name="home"),
@@ -46,6 +47,7 @@ urlpatterns = [
     path("", include(tf_urls, "two_factor")),
     path("", include((user_urls, "users"))),
     path("tinymce/", include("tinymce.urls")),
+    path("health/", health, name="health"),
 ]
 
 if settings.LANGUAGE_SWITCHER:
