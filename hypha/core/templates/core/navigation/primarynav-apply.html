@@ -1,7 +1,7 @@
 {% load i18n apply_tags heroicons %}
 
 <nav
-    aria-label="Primary"
+    aria-label="{% trans 'Primary' %}"
     x-show="showDesktopMenu || isDesktop"
     x-transition:enter="transition ease-out duration-250"
     x-transition:enter-start="transform opacity-0 translate-x-full"

@@ -8,20 +8,20 @@ class ScreeningStatus(models.Model):
     title = models.CharField(max_length=128)
     yes = models.BooleanField(
         default=False,
-        verbose_name=_("Yes/No"),
+        verbose_name=_("yes/no"),
         help_text=_("Tick mark for Yes otherwise No."),
     )
     default = models.BooleanField(
         default=False,
-        verbose_name=_("Default Yes/No"),
+        verbose_name=_("default yes/no"),
         help_text=_("Only one Yes and No screening decision can be set as default."),
     )
 
     base_form_class = ScreeningStatusAdminForm
 
     class Meta:
-        verbose_name = "Screening Decision"
-        verbose_name_plural = "screening decisions"
+        verbose_name = _("Screening Decision")
+        verbose_name_plural = _("screening decisions")
 
     def __str__(self):
         return self.title

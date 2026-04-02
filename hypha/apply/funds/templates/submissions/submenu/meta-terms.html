@@ -17,11 +17,11 @@
                 {% if meta_term.selected %}
                     href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" meta_terms=meta_term.id %}"
                     hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" meta_terms=meta_term.id %}"
-                    title="Remove {{ meta_term.title }} from current filters"
+                    title="{% blocktrans with term=meta_term.title %}Remove {{ term }} from current filters{% endblocktrans %}"
                 {% else %}
                     href="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" meta_terms=meta_term.id %}"
                     hx-get="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" meta_terms=meta_term.id %}"
-                    title="Add {{ meta_term.title }} to current filters"
+                    title="{% blocktrans with term=meta_term.title %}Add {{ term }} to current filters{% endblocktrans %}"
                 {% endif %}
                 hx-push-url="true"
                 class="flex {% if meta_term.selected %}ps-2 font-medium bg-base-200{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200">

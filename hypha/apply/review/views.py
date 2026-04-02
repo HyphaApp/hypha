@@ -425,12 +425,12 @@ class ReviewListView(ListView):
 
         # Add the header rows
         review_data["title"] = {"question": "", "answers": []}
-        review_data["opinions"] = {"question": "Opinions", "answers": []}
-        review_data["score"] = {"question": "Overall Score", "answers": []}
-        review_data["recommendation"] = {"question": "Recommendation", "answers": []}
-        review_data["revision"] = {"question": "Revision", "answers": []}
-        review_data["visibility"] = {"question": "Visibility", "answers": []}
-        review_data["comments"] = {"question": "Comments", "answers": []}
+        review_data["opinions"] = {"question": _("Opinions"), "answers": []}
+        review_data["score"] = {"question": _("Overall Score"), "answers": []}
+        review_data["recommendation"] = {"question": _("Recommendation"), "answers": []}
+        review_data["revision"] = {"question": _("Revision"), "answers": []}
+        review_data["visibility"] = {"question": _("Visibility"), "answers": []}
+        review_data["comments"] = {"question": _("Comments"), "answers": []}
 
         responses = self.object_list.count()
         ordered_reviewers = (
@@ -465,9 +465,11 @@ class ReviewListView(ListView):
                 review.get_comments_display(include_question=False)
             )
             if review.for_latest:
-                revision = "Current"
+                revision = _("Current")
             else:
-                revision = '<a href="{}">Compare</a>'.format(review.get_compare_url())
+                revision = '<a href="{}">{}</a>'.format(
+                    review.get_compare_url(), _("Compare")
+                )
             review_data["revision"]["answers"].append(revision)
             review_data["visibility"]["answers"].append(review.get_visibility_display())
 

@@ -9,13 +9,16 @@
                 <h2 class="card-title">{% trans "Accept invitation" %}</h2>
 
                 <div class="prose prose-sm">
-                    <p>{% blocktranslate with title=invite.submission.title %}
+                    <p>{% blocktranslate with title=invite.submission.title trimmed %}
                         You have been invited to join the application "{{ title }}" as a co-applicant.
                     {% endblocktranslate %}</p>
 
                     {% if not request.user.is_authenticated %}
                         <p>
-                            {% blocktrans with email=invite.invited_user_email %}If you accept this invitation, an account will be created using the email <strong>{{ email }}</strong> and you will be redirected to{% endblocktrans %}
+                            {% blocktrans with email=invite.invited_user_email trimmed %}
+                                If you accept this invitation, an account will be created using
+                                the email <strong>{{ email }}</strong> and you will be redirected to
+                            {% endblocktrans %}
                             {% if two_factor_required %}{% trans "two-factor authentication and then to" %} {% endif %} {% trans "the application. If you wish to update your name/email, you can do it by visiting 'My Account' section." %}
                         </p>
                     {% endif %}

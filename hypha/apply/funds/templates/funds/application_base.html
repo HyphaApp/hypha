@@ -35,7 +35,9 @@
             {# the page has no open rounds and we arent on a round page #}
             {% verbose_name page as name %}
             <h4>
-                {% blocktrans %}Sorry, this {{ name }} is not currently accepting applications.{% endblocktrans %}
+                {% blocktrans trimmed %}
+                    Sorry, this {{ name }} is not currently accepting applications.
+                {% endblocktrans %}
                 <a href="{% url 'home' %}">
                     {% trans "See other funds" %} {% heroicon_mini "arrow-right" class="inline mb-0.5 align-text-bottom" %}
                 </a>
