@@ -21,9 +21,9 @@ from ..permissions import (
     can_invite_co_applicants,
     can_take_submission_actions,
     can_view_archived_submissions,
+    can_view_submission,
     get_archive_alter_groups,
     get_archive_view_groups,
-    is_user_has_access_to_view_submission,
 )
 
 
@@ -195,38 +195,38 @@ class TestIsUserHasAccessToViewSubmission(TestCase):
         from django.contrib.auth.models import AnonymousUser
 
         submission = ApplicationSubmissionFactory()
-        result, _ = is_user_has_access_to_view_submission(AnonymousUser(), submission)
+        result, _ = can_view_submission(AnonymousUser(), submission)
         self.assertFalse(result)
 
     def test_staff_can_view(self):
         staff = StaffFactory()
         submission = ApplicationSubmissionFactory()
-        result, _ = is_user_has_access_to_view_submission(staff, submission)
+        result, _ = can_view_submission(staff, submission)
         self.assertTrue(result)
 
     def test_submission_owner_can_view(self):
         applicant = ApplicantFactory()
         submission = ApplicationSubmissionFactory(user=applicant)
-        result, _ = is_user_has_access_to_view_submission(applicant, submission)
+        result, _ = can_view_submission(applicant, submission)
         self.assertTrue(result)
 
     def test_reviewer_can_view(self):
         reviewer = ReviewerFactory()
         submission = ApplicationSubmissionFactory()
-        result, _ = is_user_has_access_to_view_submission(reviewer, submission)
+        result, _ = can_view_submission(reviewer, submission)
         self.assertTrue(result)
 
     def test_unrelated_user_cannot_view(self):
         user = UserFactory()
         submission = ApplicationSubmissionFactory()
-        result, _ = is_user_has_access_to_view_submission(user, submission)
+        result, _ = can_view_submission(user, submission)
         self.assertFalse(result)
 
     @override_settings(SUBMISSIONS_ARCHIVED_VIEW_ACCESS_STAFF=False)
     def test_staff_cannot_view_archived_when_setting_disabled(self):
         staff = StaffFactory()
         submission = ApplicationSubmissionFactory(is_archive=True)
-        result, _ = is_user_has_access_to_view_submission(staff, submission)
+        result, _ = can_view_submission(staff, submission)
         self.assertFalse(result)
 
 
