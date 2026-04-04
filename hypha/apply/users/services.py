@@ -103,6 +103,7 @@ class PasswordlessAuthService:
             "username": user.get_username(),
             "login_path": login_path,
             "timeout_minutes": timeout_minutes,
+            "site": self.site,
         }
 
         subject = f"Log in to {user.get_username()} at {settings.ORG_LONG_NAME}"
@@ -124,6 +125,7 @@ class PasswordlessAuthService:
         context = {
             "signup_path": signup_path,
             "timeout_minutes": timeout_minutes,
+            "site": self.site,
         }
 
         subject = f"Welcome to {settings.ORG_LONG_NAME}"
