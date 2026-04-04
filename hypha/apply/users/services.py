@@ -92,14 +92,6 @@ class PasswordlessAuthService:
 
         return None
 
-    def send_email_no_account_found(self, to):
-        subject = f"Log in attempt at {settings.ORG_LONG_NAME}"
-        # Force subject to a single line to avoid header-injection issues.
-        subject = "".join(subject.splitlines())
-
-        email = MarkdownMail("users/emails/passwordless_login_no_account_found.md")
-        email.send(to=to, subject=subject, from_email=settings.DEFAULT_FROM_EMAIL)
-
     def send_login_email(self, user):
         login_path = self._get_login_path(user)
         timeout_minutes = self.login_token_generator_class().TIMEOUT // 60
@@ -162,9 +154,8 @@ class PasswordlessAuthService:
             self.send_login_email(user)
             return
 
-        # No account found
+        # No account found and no public signup, do nothing.
         if not settings.ENABLE_PUBLIC_SIGNUP:
-            self.send_email_no_account_found(email)
             return
 
         # Self registration is enabled
@@ -175,5 +166,3 @@ class PasswordlessAuthService:
             },
         )
         self.send_new_account_login_email(signup_obj)
-
-        return True
