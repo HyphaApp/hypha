@@ -1,0 +1,20 @@
+{% load i18n heroicons %}
+<button
+    type="button"
+    id="btn-passkey-login"
+    class="btn btn-secondary btn-outline"
+    data-passkey-ui
+    hidden
+    onclick="hypha.passkeys.authenticate()"
+>
+    {% heroicon_micro "key" class="inline size-4" aria_hidden=true %}
+    {% trans "Sign in with passkey" %}
+</button>
+<p id="passkey-auth-error"
+   class="mt-2 text-sm text-error"
+   data-error-begin="{% trans "Failed to begin authentication" %}"
+   data-error-auth="{% trans "Authentication failed" %}"
+   hidden></p>
+<input type="hidden" id="passkey-auth-begin-url" value="{% url 'users:passkey_auth_begin' %}">
+<input type="hidden" id="passkey-auth-complete-url" value="{% url 'users:passkey_auth_complete' %}">
+<input type="hidden" id="passkey-next-url" value="{{ redirect_url|default:'' }}">
