@@ -102,7 +102,7 @@ jobs:
 
     strategy:
       matrix:
-        group: [1, 2, 3]
+        group: [1, 2, 3, 4]
 
     steps:
       - uses: actions/checkout@v6
@@ -120,4 +120,4 @@ jobs:
 
       - name: Run pytest
         run: |
-          uv run pytest --splits 3 --group ${{ matrix.group }} --durations-path=.test_durations
+          uv run pytest --splits 4 --group ${{ matrix.group }} --durations-path=.test_durations
