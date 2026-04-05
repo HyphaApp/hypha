@@ -203,7 +203,7 @@ class CoApplicantInviteAcceptView(View):
 
     def get_success_url(self):
         return reverse_lazy(
-            "apply:submissions:detail", args=(self.invite.submission.pk,)
+            "apply:submissions:detail", args=(self.invite.submission_id,)
         )
 
 

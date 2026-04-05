@@ -53,6 +53,11 @@ class AdminSubmissionDetailView(ActivityContextMixin, DetailView):
     template_name_suffix = "_admin_detail"
     model = ApplicationSubmission
 
+    def get_object(self, queryset=None):
+        if not hasattr(self, "_object_cache"):
+            self._object_cache = super().get_object(queryset)
+        return self._object_cache
+
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
         if submission.status == DRAFT_STATE and not submission.can_view_draft(
@@ -114,6 +119,11 @@ class ReviewerSubmissionDetailView(ActivityContextMixin, DetailView):
     template_name_suffix = "_reviewer_detail"
     model = ApplicationSubmission
 
+    def get_object(self, queryset=None):
+        if not hasattr(self, "_object_cache"):
+            self._object_cache = super().get_object(queryset)
+        return self._object_cache
+
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
         # If the requesting user submitted the application, return the Applicant view.
@@ -147,6 +157,11 @@ class CommunitySubmissionDetailView(ActivityContextMixin, DetailView):
     template_name_suffix = "_community_detail"
     model = ApplicationSubmission
 
+    def get_object(self, queryset=None):
+        if not hasattr(self, "_object_cache"):
+            self._object_cache = super().get_object(queryset)
+        return self._object_cache
+
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
         permission, _ = has_permission(
@@ -172,7 +187,9 @@ class ApplicantSubmissionDetailView(ActivityContextMixin, DetailView):
     model = ApplicationSubmission
 
     def get_object(self):
-        return super().get_object().from_draft()
+        if not hasattr(self, "_object_cache"):
+            self._object_cache = super().get_object().from_draft()
+        return self._object_cache
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()

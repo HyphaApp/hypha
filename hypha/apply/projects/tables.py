@@ -28,7 +28,7 @@ class BaseInvoiceTable(tables.Table):
     invoice_number = tables.LinkColumn(
         "funds:projects:invoice-detail",
         verbose_name=_("Invoice #"),
-        args=[tables.utils.A("project__submission__pk"), tables.utils.A("pk")],
+        args=[tables.utils.A("project__submission_id"), tables.utils.A("pk")],
         attrs={
             "td": {
                 "class": "js-title",  # using title as class because of batch-actions.js
@@ -50,7 +50,7 @@ class BaseInvoiceTable(tables.Table):
     class Meta:
         row_attrs = {
             "onclick": lambda record: (
-                f"window.location.href='{reverse('funds:projects:invoice-detail', args=[record.project.submission.pk, record.pk])}'"
+                f"window.location.href='{reverse('funds:projects:invoice-detail', args=[record.project.submission_id, record.pk])}'"
             ),
             "class": "table-row-link",
             "role": "button",

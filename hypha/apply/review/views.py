@@ -116,7 +116,7 @@ class ReviewEditView(UserPassesTestMixin, BaseStreamForm, UpdateView):
 
     def get_success_url(self):
         review = self.get_object()
-        return reverse_lazy("funds:submissions:detail", args=(review.submission.id,))
+        return reverse_lazy("funds:submissions:detail", args=(review.submission_id,))
 
 
 @method_decorator(login_required, name="dispatch")
@@ -306,7 +306,7 @@ class ReviewDisplay(UserPassesTestMixin, DetailView):
         if review.is_draft:
             return HttpResponseRedirect(
                 reverse_lazy(
-                    "apply:submissions:reviews:form", args=(review.submission.id,)
+                    "apply:submissions:reviews:form", args=(review.submission_id,)
                 )
             )
 
@@ -375,7 +375,7 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
         if opinion.opinion == DISAGREE:
             return HttpResponseRedirect(
                 reverse_lazy(
-                    "apply:submissions:reviews:form", args=(self.review.submission.pk,)
+                    "apply:submissions:reviews:form", args=(self.review.submission_id,)
                 )
             )
         else:
@@ -513,7 +513,7 @@ class ReviewDeleteView(UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         review = self.get_object()
-        return reverse_lazy("funds:submissions:detail", args=(review.submission.id,))
+        return reverse_lazy("funds:submissions:detail", args=(review.submission_id,))
 
 
 @method_decorator(login_required, name="dispatch")
@@ -540,4 +540,4 @@ class ReviewOpinionDeleteView(DeleteView):
 
     def get_success_url(self):
         review = self.review_opinion.review
-        return reverse_lazy("funds:submissions:detail", args=(review.submission.id,))
+        return reverse_lazy("funds:submissions:detail", args=(review.submission_id,))
