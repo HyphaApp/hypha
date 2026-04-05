@@ -1,9 +1,18 @@
 """Tests for funds/permissions.py."""
 
 from django.test import TestCase, override_settings
+from rolepermissions.checkers import has_object_permission
 
+from hypha.apply.funds.models.co_applicants import (
+    CoApplicant,
+    CoApplicantInvite,
+    CoApplicantInviteStatus,
+    CoApplicantRole,
+)
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.funds.workflows import DRAFT_STATE
 from hypha.apply.users.tests.factories import (
+    AdminFactory,
     ApplicantFactory,
     ReviewerFactory,
     StaffFactory,
@@ -20,10 +29,12 @@ from ..permissions import (
     can_export_submissions,
     can_invite_co_applicants,
     can_take_submission_actions,
+    can_update_co_applicant,
     can_view_archived_submissions,
     can_view_submission,
     get_archive_alter_groups,
     get_archive_view_groups,
+    user_can_view_post_comment_form,
 )
 
 
@@ -286,3 +297,175 @@ class TestGetArchiveGroups(TestCase):
         from hypha.apply.users.roles import STAFF_GROUP_NAME
 
         self.assertIn(STAFF_GROUP_NAME, groups)
+
+
+# ---------------------------------------------------------------------------
+# Data isolation — cross-user submission access
+# ---------------------------------------------------------------------------
+
+
+class TestCrossUserSubmissionAccess(TestCase):
+    """Verify users cannot access each other's submissions via can_view_submission."""
+
+    def test_unrelated_applicant_cannot_view_another_applicants_submission(self):
+        owner = ApplicantFactory()
+        intruder = ApplicantFactory()
+        submission = ApplicationSubmissionFactory(user=owner)
+        result, _ = can_view_submission(intruder, submission)
+        self.assertFalse(result)
+
+    def test_co_applicant_of_one_submission_cannot_view_a_different_submission(self):
+        owner = ApplicantFactory()
+        co_user = ApplicantFactory()
+        submission_a = ApplicationSubmissionFactory(user=owner)
+        submission_b = ApplicationSubmissionFactory()
+
+        invite = CoApplicantInvite.objects.create(
+            submission=submission_a,
+            invited_user_email=co_user.email,
+            status=CoApplicantInviteStatus.ACCEPTED,
+            role=CoApplicantRole.EDIT,
+        )
+        CoApplicant.objects.create(
+            submission=submission_a,
+            user=co_user,
+            invite=invite,
+            role=CoApplicantRole.EDIT,
+        )
+
+        result_a, _ = can_view_submission(co_user, submission_a)
+        self.assertTrue(result_a)
+
+        result_b, _ = can_view_submission(co_user, submission_b)
+        self.assertFalse(result_b)
+
+
+# ---------------------------------------------------------------------------
+# delete_submission
+# ---------------------------------------------------------------------------
+
+
+class TestDeleteSubmission(TestCase):
+    def _can_delete(self, user, submission):
+        return has_object_permission("delete_submission", user, obj=submission)
+
+    def test_owner_can_delete_own_draft(self):
+        applicant = ApplicantFactory()
+        submission = ApplicationSubmissionFactory(user=applicant, status=DRAFT_STATE)
+        self.assertTrue(self._can_delete(applicant, submission))
+
+    def test_owner_cannot_delete_own_non_draft_submission(self):
+        applicant = ApplicantFactory()
+        submission = ApplicationSubmissionFactory(
+            user=applicant, status="internal_review"
+        )
+        self.assertFalse(self._can_delete(applicant, submission))
+
+    def test_applicant_cannot_delete_another_users_draft(self):
+        owner = ApplicantFactory()
+        intruder = ApplicantFactory()
+        submission = ApplicationSubmissionFactory(user=owner, status=DRAFT_STATE)
+        self.assertFalse(self._can_delete(intruder, submission))
+
+    def test_superuser_can_delete_any_submission(self):
+        admin = AdminFactory()
+        submission = ApplicationSubmissionFactory(status="internal_review")
+        self.assertTrue(self._can_delete(admin, submission))
+
+
+# ---------------------------------------------------------------------------
+# can_update_co_applicant — VIEW vs EDIT role distinction
+# ---------------------------------------------------------------------------
+
+
+class TestCanUpdateCoApplicant(TestCase):
+    def _make_invite(self, submission, invited_by=None, role=CoApplicantRole.VIEW):
+        co_user = ApplicantFactory()
+        invite = CoApplicantInvite.objects.create(
+            submission=submission,
+            invited_user_email=co_user.email,
+            invited_by=invited_by,
+            status=CoApplicantInviteStatus.ACCEPTED,
+            role=role,
+        )
+        return invite
+
+    def setUp(self):
+        self.inviter = ApplicantFactory()
+        self.submission = ApplicationSubmissionFactory(user=self.inviter)
+
+    def test_inviter_can_update_their_co_applicant(self):
+        invite = self._make_invite(self.submission, invited_by=self.inviter)
+        result, _ = can_update_co_applicant(self.inviter, invite)
+        self.assertTrue(result)
+
+    def test_submission_owner_can_update_co_applicant(self):
+        invite = self._make_invite(self.submission)
+        result, _ = can_update_co_applicant(self.inviter, invite)
+        self.assertTrue(result)
+
+    def test_staff_can_update_any_co_applicant(self):
+        invite = self._make_invite(self.submission)
+        result, _ = can_update_co_applicant(StaffFactory(), invite)
+        self.assertTrue(result)
+
+    def test_unrelated_applicant_cannot_update_co_applicant(self):
+        invite = self._make_invite(self.submission)
+        result, _ = can_update_co_applicant(ApplicantFactory(), invite)
+        self.assertFalse(result)
+
+    def test_archived_submission_blocks_update(self):
+        archived_submission = ApplicationSubmissionFactory(
+            user=self.inviter, is_archive=True
+        )
+        invite = self._make_invite(archived_submission, invited_by=self.inviter)
+        result, _ = can_update_co_applicant(self.inviter, invite)
+        self.assertFalse(result)
+
+
+# ---------------------------------------------------------------------------
+# user_can_view_post_comment_form — co-applicant VIEW vs EDIT/COMMENT role
+# ---------------------------------------------------------------------------
+
+
+class TestUserCanViewPostCommentForm(TestCase):
+    def _make_co_applicant(self, submission, role):
+        co_user = ApplicantFactory()
+        invite = CoApplicantInvite.objects.create(
+            submission=submission,
+            invited_user_email=co_user.email,
+            status=CoApplicantInviteStatus.ACCEPTED,
+            role=role,
+        )
+        CoApplicant.objects.create(
+            submission=submission,
+            user=co_user,
+            invite=invite,
+            role=role,
+        )
+        return co_user
+
+    def setUp(self):
+        self.submission = ApplicationSubmissionFactory()
+
+    def test_view_role_co_applicant_cannot_post_comment(self):
+        co_user = self._make_co_applicant(self.submission, CoApplicantRole.VIEW)
+        self.assertFalse(user_can_view_post_comment_form(co_user, self.submission))
+
+    def test_edit_role_co_applicant_can_post_comment(self):
+        co_user = self._make_co_applicant(self.submission, CoApplicantRole.EDIT)
+        self.assertTrue(user_can_view_post_comment_form(co_user, self.submission))
+
+    def test_comment_role_co_applicant_can_post_comment(self):
+        co_user = self._make_co_applicant(self.submission, CoApplicantRole.COMMENT)
+        self.assertTrue(user_can_view_post_comment_form(co_user, self.submission))
+
+    def test_non_co_applicant_can_post_comment(self):
+        self.assertTrue(
+            user_can_view_post_comment_form(ApplicantFactory(), self.submission)
+        )
+
+    def test_staff_can_post_comment(self):
+        self.assertTrue(
+            user_can_view_post_comment_form(StaffFactory(), self.submission)
+        )
