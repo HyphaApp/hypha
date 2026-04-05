@@ -11,6 +11,7 @@ from hypha.apply.stream_forms.testing.factories import (
 )
 from hypha.apply.users.roles import APPROVER_GROUP_NAME, STAFF_GROUP_NAME
 from hypha.apply.users.tests.factories import GroupFactory, StaffFactory, UserFactory
+from hypha.home.factories import ApplySiteFactory
 
 from ..models.payment import Invoice, SupportingDocument
 from ..models.project import (
@@ -24,6 +25,7 @@ from ..models.project import (
     Project,
     ProjectForm,
     ProjectReportForm,
+    ProjectSettings,
     ProjectSOWForm,
 )
 
@@ -129,8 +131,17 @@ class ProjectFactory(factory.django.DjangoModelFactory):
         )
 
 
+class ProjectSettingsFactory(factory.django.DjangoModelFactory):
+    site = factory.LazyFunction(lambda: ApplySiteFactory())
+
+    class Meta:
+        model = ProjectSettings
+        django_get_or_create = ("site",)
+
+
 class PAFReviewerRoleFactory(factory.django.DjangoModelFactory):
     label = factory.Faker("name")
+    page = factory.SubFactory(ProjectSettingsFactory)
 
     class Meta:
         model = PAFReviewersRole

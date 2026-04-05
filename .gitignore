@@ -97,6 +97,7 @@ coverage.xml
 *.cover
 .hypothesis/
 __coverage__/
+coverage.json
 
 # macOS
 .DS_Store
