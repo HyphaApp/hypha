@@ -752,6 +752,49 @@ class TestReminderModel(TestCase):
         )
 
 
+class TestAsJsonMixin(TestCase):
+    def setUp(self):
+        self.fund = FundTypeFactory(parent=None, description="A test fund description.")
+
+    def test_as_json_returns_expected_keys(self):
+        result = self.fund.as_json
+        self.assertIn("title", result)
+        self.assertIn("description", result)
+        self.assertIn("image", result)
+        self.assertIn("weight", result)
+        self.assertIn("next_deadline", result)
+        self.assertIn("url", result)
+
+    def test_as_json_weight_is_int(self):
+        result = self.fund.as_json
+        self.assertIsInstance(result["weight"], int)
+
+    def test_as_json_no_deadline_without_open_round(self):
+        result = self.fund.as_json
+        self.assertEqual(result["next_deadline"], "")
+
+    def test_as_json_deadline_hidden_when_show_deadline_false(self):
+        self.fund.show_deadline = False
+        self.fund.save()
+        # Invalidate cached_property
+        if "as_json" in self.fund.__dict__:
+            del self.fund.__dict__["as_json"]
+        result = self.fund.as_json
+        self.assertEqual(result["next_deadline"], "")
+
+    def test_as_json_deadline_shown_when_open_round_exists(self):
+        open_round = TodayRoundFactory(parent=self.fund)
+        # Invalidate cached_property
+        if "as_json" in self.fund.__dict__:
+            del self.fund.__dict__["as_json"]
+        result = self.fund.as_json
+        self.assertEqual(result["next_deadline"], open_round.end_date.isoformat())
+
+    def test_as_json_image_empty_string_when_no_image(self):
+        result = self.fund.as_json
+        self.assertEqual(result["image"], "")
+
+
 class TestAssignedReviewersQuerySet(TestCase):
     def test_reviewed(self):
         staff1 = StaffFactory()
