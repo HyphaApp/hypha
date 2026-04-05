@@ -1,5 +1,9 @@
+import logging
+
 from django.db import OperationalError, connection
 from django.http import HttpResponse, HttpResponseServerError
+
+logger = logging.getLogger(__name__)
 
 
 def health(request):
@@ -11,7 +15,6 @@ def health(request):
     try:
         connection.ensure_connection()
     except OperationalError as e:
-        return HttpResponseServerError(
-            f"db unavailable: {e}", content_type="text/plain"
-        )
+        logger.exception("Health check failed: %s", e)
+        return HttpResponseServerError("failed", content_type="text/plain")
     return HttpResponse("ok", content_type="text/plain")
