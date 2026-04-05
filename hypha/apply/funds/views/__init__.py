@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 from django_filters.views import FilterView
@@ -56,6 +57,12 @@ class SubmissionPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         path_to_file = generate_private_file_path(
             self.submission.pk, field_id, file_name
         )
+        try:
+            exists = self.storage.exists(path_to_file)
+        except Exception as e:
+            raise Http404 from e
+        if not exists:
+            raise Http404
         return self.storage.open(path_to_file)
 
     def test_func(self):
