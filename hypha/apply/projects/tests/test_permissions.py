@@ -27,6 +27,7 @@ from hypha.apply.funds.models.co_applicants import (
 )
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
+    ApproverFactory,
     ContractingFactory,
     FinanceFactory,
     StaffFactory,
@@ -563,7 +564,7 @@ class TestCanUpdatePafApprovers(TestCase):
         self.assertFalse(ok)
 
     def test_sequential_reviewer_with_assigned_user_can_update(self):
-        approver = StaffFactory()
+        approver = ApproverFactory()
         approval = PAFApprovalsFactory(  # noqa: F841
             project=self.project, user=approver, approved=False
         )
@@ -576,7 +577,7 @@ class TestCanUpdatePafApprovers(TestCase):
         self.assertTrue(ok)
 
     def test_parallel_reviewer_can_update_any_unapproved(self):
-        approver = StaffFactory()
+        approver = ApproverFactory()
         PAFApprovalsFactory(project=self.project, user=approver, approved=False)
         request = make_request(approver)
         with patch(
@@ -670,7 +671,7 @@ class TestCanUpdatePafStatus(TestCase):
         self.assertFalse(ok)
 
     def test_sequential_reviewer_in_next_role_can_update(self):
-        approver = StaffFactory()
+        approver = ApproverFactory()
         PAFApprovalsFactory(project=self.project, user=approver, approved=False)
         request = make_request(approver)
         with patch(
@@ -681,7 +682,7 @@ class TestCanUpdatePafStatus(TestCase):
         self.assertTrue(ok)
 
     def test_parallel_reviewer_can_update(self):
-        approver = StaffFactory()
+        approver = ApproverFactory()
         PAFApprovalsFactory(project=self.project, user=approver, approved=False)
         request = make_request(approver)
         with patch(
@@ -722,7 +723,7 @@ class TestCanUpdateAssignedPafApprovers(TestCase):
         self.assertFalse(ok)
 
     def test_sequential_reviewer_in_next_role_can_update(self):
-        approver = StaffFactory()
+        approver = ApproverFactory()
         PAFApprovalsFactory(project=self.project, user=approver, approved=False)
         request = make_request(approver)
         with patch(
@@ -735,7 +736,7 @@ class TestCanUpdateAssignedPafApprovers(TestCase):
         self.assertTrue(ok)
 
     def test_parallel_reviewer_can_update_any_unapproved(self):
-        approver = StaffFactory()
+        approver = ApproverFactory()
         PAFApprovalsFactory(project=self.project, user=approver, approved=False)
         request = make_request(approver)
         with patch(
