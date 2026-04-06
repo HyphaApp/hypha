@@ -8,9 +8,8 @@ from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, resolve_url
 from django.utils import timezone
-from django.utils.decorators import method_decorator
 from django.utils.http import url_has_allowed_host_and_scheme
-from django.views import View
+from django.views.decorators.http import require_GET, require_POST
 from django_ratelimit.decorators import ratelimit
 from webauthn import (
     generate_authentication_options,
@@ -76,96 +75,88 @@ def _load_challenge(request, key: str) -> bytes:
 MAX_PASSKEYS_PER_USER = 10
 
 
-@method_decorator(login_required, name="dispatch")
-@method_decorator(
-    ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
-    name="dispatch",
-)
-class PasskeyRegisterBeginView(View):
-    def post(self, request):
-        user = request.user
-        existing_passkeys = list(user.passkeys.all())
-        if len(existing_passkeys) >= MAX_PASSKEYS_PER_USER:
-            return JsonResponse(
-                {"error": f"Maximum of {MAX_PASSKEYS_PER_USER} passkeys allowed"},
-                status=400,
-            )
-        existing = [
-            PublicKeyCredentialDescriptor(
-                id=base64url_to_bytes(pk.credential_id),
-                transports=[AuthenticatorTransport(t) for t in pk.transports] or None,
-            )
-            for pk in existing_passkeys
-        ]
-        options = generate_registration_options(
-            rp_id=_get_rp_id(request),
-            rp_name=_get_rp_name(),
-            user_id=str(user.pk).encode(),
-            user_name=user.email,
-            user_display_name=user.get_full_name() or user.email,
-            authenticator_selection=AuthenticatorSelectionCriteria(
-                resident_key=ResidentKeyRequirement.REQUIRED,
-                user_verification=UserVerificationRequirement.REQUIRED,
-            ),
-            exclude_credentials=existing,
+@login_required
+@require_POST
+@ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
+def passkey_register_begin(request):
+    user = request.user
+    existing_passkeys = list(user.passkeys.all())
+    if len(existing_passkeys) >= MAX_PASSKEYS_PER_USER:
+        return JsonResponse(
+            {"error": f"Maximum of {MAX_PASSKEYS_PER_USER} passkeys allowed"},
+            status=400,
         )
-        _store_challenge(request, options.challenge, SESSION_CHALLENGE_KEY_REGISTER)
-        return JsonResponse(json.loads(options_to_json(options)))
+    existing = [
+        PublicKeyCredentialDescriptor(
+            id=base64url_to_bytes(pk.credential_id),
+            transports=[AuthenticatorTransport(t) for t in pk.transports] or None,
+        )
+        for pk in existing_passkeys
+    ]
+    options = generate_registration_options(
+        rp_id=_get_rp_id(request),
+        rp_name=_get_rp_name(),
+        user_id=str(user.pk).encode(),
+        user_name=user.email,
+        user_display_name=user.get_full_name() or user.email,
+        authenticator_selection=AuthenticatorSelectionCriteria(
+            resident_key=ResidentKeyRequirement.REQUIRED,
+            user_verification=UserVerificationRequirement.REQUIRED,
+        ),
+        exclude_credentials=existing,
+    )
+    _store_challenge(request, options.challenge, SESSION_CHALLENGE_KEY_REGISTER)
+    return JsonResponse(json.loads(options_to_json(options)))
 
 
-@method_decorator(login_required, name="dispatch")
-@method_decorator(
-    ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
-    name="dispatch",
-)
-class PasskeyRegisterCompleteView(View):
-    def post(self, request):
-        try:
-            data = json.loads(request.body)
-        except (json.JSONDecodeError, ValueError):
-            return JsonResponse({"error": "Invalid JSON"}, status=400)
+@login_required
+@require_POST
+@ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
+def passkey_register_complete(request):
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
 
-        try:
-            challenge = _load_challenge(request, SESSION_CHALLENGE_KEY_REGISTER)
-        except PermissionDenied:
-            return JsonResponse({"error": "No active WebAuthn challenge"}, status=400)
+    try:
+        challenge = _load_challenge(request, SESSION_CHALLENGE_KEY_REGISTER)
+    except PermissionDenied:
+        return JsonResponse({"error": "No active WebAuthn challenge"}, status=400)
 
-        try:
-            credential = RegistrationCredential(
-                id=data["id"],
-                raw_id=base64url_to_bytes(data["rawId"]),
-                response=AuthenticatorAttestationResponse(
-                    client_data_json=base64url_to_bytes(
-                        data["response"]["clientDataJSON"]
-                    ),
-                    attestation_object=base64url_to_bytes(
-                        data["response"]["attestationObject"]
-                    ),
-                    transports=data["response"].get("transports", []),
+    try:
+        credential = RegistrationCredential(
+            id=data["id"],
+            raw_id=base64url_to_bytes(data["rawId"]),
+            response=AuthenticatorAttestationResponse(
+                client_data_json=base64url_to_bytes(data["response"]["clientDataJSON"]),
+                attestation_object=base64url_to_bytes(
+                    data["response"]["attestationObject"]
                 ),
-            )
-            verification = verify_registration_response(
-                credential=credential,
-                expected_challenge=challenge,
-                expected_rp_id=_get_rp_id(request),
-                expected_origin=_get_origin(request),
-                require_user_verification=True,
-            )
-        except Exception:
-            return JsonResponse({"error": "Verification failed"}, status=400)
+                transports=data["response"].get("transports", []),
+            ),
+        )
+        verification = verify_registration_response(
+            credential=credential,
+            expected_challenge=challenge,
+            expected_rp_id=_get_rp_id(request),
+            expected_origin=_get_origin(request),
+            require_user_verification=True,
+        )
+    except Exception:
+        return JsonResponse({"error": "Verification failed"}, status=400)
 
-        name = (data.get("name") or "").strip() or timezone.now().strftime(
-            "Passkey %Y-%m-%d"
-        )
-        Passkey.objects.create(
-            user=request.user,
-            name=name,
-            credential_id=bytes_to_base64url(verification.credential_id),
-            public_key=bytes_to_base64url(verification.credential_public_key),
-            sign_count=verification.sign_count,
-            transports=data["response"].get("transports", []),
-        )
-        return JsonResponse({"status": "ok"})
+    name = (data.get("name") or "").strip() or timezone.now().strftime(
+        "Passkey %Y-%m-%d"
+    )
+    Passkey.objects.create(
+        user=request.user,
+        name=name,
+        credential_id=bytes_to_base64url(verification.credential_id),
+        public_key=bytes_to_base64url(verification.credential_public_key),
+        sign_count=verification.sign_count,
+        transports=data["response"].get("transports", []),
+    )
+    return JsonResponse({"status": "ok"})
 
 
 # ---------------------------------------------------------------------------
@@ -173,95 +164,85 @@ class PasskeyRegisterCompleteView(View):
 # ---------------------------------------------------------------------------
 
 
-@method_decorator(
-    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
-    name="dispatch",
-)
-class PasskeyAuthBeginView(View):
-    def post(self, request):
-        options = generate_authentication_options(
-            rp_id=_get_rp_id(request),
-            user_verification=UserVerificationRequirement.REQUIRED,
+@require_POST
+@ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
+def passkey_auth_begin(request):
+    options = generate_authentication_options(
+        rp_id=_get_rp_id(request),
+        user_verification=UserVerificationRequirement.REQUIRED,
+    )
+    _store_challenge(request, options.challenge, SESSION_CHALLENGE_KEY_AUTH)
+    return JsonResponse(json.loads(options_to_json(options)))
+
+
+@require_POST
+@ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
+def passkey_auth_complete(request):
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    try:
+        challenge = _load_challenge(request, SESSION_CHALLENGE_KEY_AUTH)
+    except PermissionDenied:
+        return JsonResponse({"error": "No active WebAuthn challenge"}, status=400)
+
+    try:
+        credential_id_b64 = bytes_to_base64url(base64url_to_bytes(data["rawId"]))
+    except Exception:
+        return JsonResponse({"error": "Invalid credential"}, status=400)
+
+    try:
+        passkey = Passkey.objects.select_related("user").get(
+            credential_id=credential_id_b64
         )
-        _store_challenge(request, options.challenge, SESSION_CHALLENGE_KEY_AUTH)
-        return JsonResponse(json.loads(options_to_json(options)))
+    except Passkey.DoesNotExist:
+        return JsonResponse({"error": "Unknown credential"}, status=400)
 
-
-@method_decorator(
-    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
-    name="dispatch",
-)
-class PasskeyAuthCompleteView(View):
-    def post(self, request):
-        try:
-            data = json.loads(request.body)
-        except (json.JSONDecodeError, ValueError):
-            return JsonResponse({"error": "Invalid JSON"}, status=400)
-
-        try:
-            challenge = _load_challenge(request, SESSION_CHALLENGE_KEY_AUTH)
-        except PermissionDenied:
-            return JsonResponse({"error": "No active WebAuthn challenge"}, status=400)
-
-        try:
-            credential_id_b64 = bytes_to_base64url(base64url_to_bytes(data["rawId"]))
-        except Exception:
-            return JsonResponse({"error": "Invalid credential"}, status=400)
-
-        try:
-            passkey = Passkey.objects.select_related("user").get(
-                credential_id=credential_id_b64
-            )
-        except Passkey.DoesNotExist:
-            return JsonResponse({"error": "Unknown credential"}, status=400)
-
-        try:
-            user_handle = data["response"].get("userHandle")
-            credential = AuthenticationCredential(
-                id=data["id"],
-                raw_id=base64url_to_bytes(data["rawId"]),
-                response=AuthenticatorAssertionResponse(
-                    client_data_json=base64url_to_bytes(
-                        data["response"]["clientDataJSON"]
-                    ),
-                    authenticator_data=base64url_to_bytes(
-                        data["response"]["authenticatorData"]
-                    ),
-                    signature=base64url_to_bytes(data["response"]["signature"]),
-                    user_handle=base64url_to_bytes(user_handle)
-                    if user_handle
-                    else None,
+    try:
+        user_handle = data["response"].get("userHandle")
+        credential = AuthenticationCredential(
+            id=data["id"],
+            raw_id=base64url_to_bytes(data["rawId"]),
+            response=AuthenticatorAssertionResponse(
+                client_data_json=base64url_to_bytes(data["response"]["clientDataJSON"]),
+                authenticator_data=base64url_to_bytes(
+                    data["response"]["authenticatorData"]
                 ),
-            )
-            verification = verify_authentication_response(
-                credential=credential,
-                expected_challenge=challenge,
-                expected_rp_id=_get_rp_id(request),
-                expected_origin=_get_origin(request),
-                credential_public_key=base64url_to_bytes(passkey.public_key),
-                credential_current_sign_count=passkey.sign_count,
-                require_user_verification=True,
-            )
-        except Exception:
-            return JsonResponse({"error": "Verification failed"}, status=400)
+                signature=base64url_to_bytes(data["response"]["signature"]),
+                user_handle=base64url_to_bytes(user_handle) if user_handle else None,
+            ),
+        )
+        verification = verify_authentication_response(
+            credential=credential,
+            expected_challenge=challenge,
+            expected_rp_id=_get_rp_id(request),
+            expected_origin=_get_origin(request),
+            credential_public_key=base64url_to_bytes(passkey.public_key),
+            credential_current_sign_count=passkey.sign_count,
+            require_user_verification=True,
+        )
+    except Exception:
+        return JsonResponse({"error": "Verification failed"}, status=400)
 
-        passkey.sign_count = verification.new_sign_count
-        passkey.last_used_at = timezone.now()
-        passkey.save(update_fields=["sign_count", "last_used_at"])
+    passkey.sign_count = verification.new_sign_count
+    passkey.last_used_at = timezone.now()
+    passkey.save(update_fields=["sign_count", "last_used_at"])
 
-        user = passkey.user
-        user.backend = settings.CUSTOM_AUTH_BACKEND
-        login(request, user)
-        request.session["passkey_authenticated"] = True
+    user = passkey.user
+    user.backend = settings.CUSTOM_AUTH_BACKEND
+    login(request, user)
+    request.session["passkey_authenticated"] = True
 
-        next_url = data.get("next") or resolve_url(settings.LOGIN_REDIRECT_URL)
-        if not url_has_allowed_host_and_scheme(
-            next_url,
-            allowed_hosts={request.get_host()},
-            require_https=request.is_secure(),
-        ):
-            next_url = resolve_url(settings.LOGIN_REDIRECT_URL)
-        return JsonResponse({"status": "ok", "redirect_url": next_url})
+    next_url = data.get("next") or resolve_url(settings.LOGIN_REDIRECT_URL)
+    if not url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        next_url = resolve_url(settings.LOGIN_REDIRECT_URL)
+    return JsonResponse({"status": "ok", "redirect_url": next_url})
 
 
 # ---------------------------------------------------------------------------
@@ -269,31 +250,29 @@ class PasskeyAuthCompleteView(View):
 # ---------------------------------------------------------------------------
 
 
-@method_decorator(login_required, name="dispatch")
-class PasskeyListView(View):
-    template_name = "users/partials/list.html"
-
-    def get(self, request):
-        passkeys = request.user.passkeys.all()
-        return render(request, self.template_name, {"passkeys": passkeys})
+@login_required
+@require_GET
+def passkey_list(request):
+    passkeys = request.user.passkeys.all()
+    return render(request, "users/partials/list.html", {"passkeys": passkeys})
 
 
-@method_decorator(login_required, name="dispatch")
-class PasskeyDeleteView(View):
-    def post(self, request, pk):
-        passkey = get_object_or_404(Passkey, pk=pk, user=request.user)
-        passkey.delete()
-        passkeys = request.user.passkeys.all()
-        return render(request, "users/partials/list.html", {"passkeys": passkeys})
+@login_required
+@require_POST
+def passkey_delete(request, pk):
+    passkey = get_object_or_404(Passkey, pk=pk, user=request.user)
+    passkey.delete()
+    passkeys = request.user.passkeys.all()
+    return render(request, "users/partials/list.html", {"passkeys": passkeys})
 
 
-@method_decorator(login_required, name="dispatch")
-class PasskeyRenameView(View):
-    def post(self, request, pk):
-        passkey = get_object_or_404(Passkey, pk=pk, user=request.user)
-        name = request.POST.get("name", "").strip()
-        if name:
-            passkey.name = name
-            passkey.save(update_fields=["name"])
-        passkeys = request.user.passkeys.all()
-        return render(request, "users/partials/list.html", {"passkeys": passkeys})
+@login_required
+@require_POST
+def passkey_rename(request, pk):
+    passkey = get_object_or_404(Passkey, pk=pk, user=request.user)
+    name = request.POST.get("name", "").strip()
+    if name:
+        passkey.name = name
+        passkey.save(update_fields=["name"])
+    passkeys = request.user.passkeys.all()
+    return render(request, "users/partials/list.html", {"passkeys": passkeys})
