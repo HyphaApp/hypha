@@ -24,6 +24,13 @@ window.hypha.passkeys = (function () {
     return cookie ? cookie.split("=")[1] : "";
   }
 
+  function getRememberMe() {
+    const el =
+      document.getElementById("id_auth-remember_me") ||
+      document.getElementById("id_remember_me");
+    return el ? el.checked : false;
+  }
+
   function jsonPost(url, body) {
     return fetch(url, {
       method: "POST",
@@ -158,6 +165,7 @@ window.hypha.passkeys = (function () {
       const completeResp = await jsonPost(completeUrl, {
         ...credential.toJSON(),
         next: nextUrl,
+        remember_me: getRememberMe(),
       });
       if (!completeResp.ok) {
         const err = await completeResp.json();
@@ -210,6 +218,7 @@ window.hypha.passkeys = (function () {
       const completeResp = await jsonPost(completeUrl, {
         ...credential.toJSON(),
         next: nextUrl,
+        remember_me: getRememberMe(),
       });
       if (!completeResp.ok) return;
       const data = await completeResp.json();
