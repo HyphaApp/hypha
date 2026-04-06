@@ -235,6 +235,9 @@ def passkey_auth_complete(request):
     login(request, user)
     request.session["passkey_authenticated"] = True
 
+    if data.get("remember_me"):
+        request.session.set_expiry(settings.SESSION_COOKIE_AGE_LONG)
+
     next_url = data.get("next") or resolve_url(settings.LOGIN_REDIRECT_URL)
     if not url_has_allowed_host_and_scheme(
         next_url,
