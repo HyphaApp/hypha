@@ -29,8 +29,8 @@
       display: block;
       position: fixed;
       z-index: 1031;
-      inset-block-start: 15px;
-      inset-inline-end: 15px;
+      inset-block-start: calc(var(--spacing) * 6);
+      inset-inline-end: var(--spacing);
     }
 
     .spinner-icon {
@@ -38,6 +38,7 @@
       height: 18px;
       box-sizing: border-box;
 
+      background-color: oklch(from var(--color-primary) l c h / 0.1);
       border: solid 2px transparent;
       border-top-color: var(--color-primary);
       border-inline-start-color: var(--color-primary);
