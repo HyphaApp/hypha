@@ -1,7 +1,7 @@
 # Adds the ability to have hooks injected into templates, via the `hooks_tags.hook` template tag.
 #
 # Originally from https://github.com/nitely/django-hooks but after culling everything except
-# the template hook.  See /docs/templatehook.rst for more information
+# the template hook.  See docs/references/template-hooks.md for more information
 #
 # The reason this was forked, rather than used as a module, is that the last commit from the
 # other project was made in 2015, and can no longer be imported into a modern django project.
@@ -9,17 +9,13 @@
 # so were removed.
 
 
-class TemplateHook(object):
+class TemplateHook:
     """
     A hook for templates. This can be used directly or\
     through the :py:class:`Hook` dispatcher
-
-    :param list providing_args: A list of the arguments\
-    this hook can pass along in a :py:func:`.__call__`
     """
 
-    def __init__(self, providing_args=None):
-        self.providing_args = providing_args or []
+    def __init__(self):
         self._registry = []
 
     def __call__(self, *args, **kwargs):
@@ -38,7 +34,8 @@ class TemplateHook(object):
 
         :param callable func: A function reference used as a callback
         """
-        assert callable(func), "Callback func must be a callable"
+        if not callable(func):
+            raise TypeError("Callback func must be a callable")
 
         self._registry.append(func)
 
@@ -58,10 +55,10 @@ class TemplateHook(object):
         """
         Remove all callbacks
         """
-        del self._registry[:]
+        self._registry.clear()
 
 
-class Hook(object):
+class Hook:
     """
     Dynamic dispatcher (proxy) for :py:class:`TemplateHook`
     """
