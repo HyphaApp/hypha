@@ -14,7 +14,7 @@ def migrate_partners_to_coapplicants(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("users", "0027_remove_drupal_id_field"),
-        ("funds", "0133_remove_applicationsubmission_partners"),
+        ("funds", "0134_change_partner_assigned_reviewers_role"),
     ]
 
     operations = [migrations.RunPython(migrate_partners_to_coapplicants)]
