@@ -31,6 +31,7 @@ asn1crypto==1.5.1 \
     #   oscrypto
     #   pyhanko
     #   pyhanko-certvalidator
+    #   webauthn
 async-timeout==5.0.1 ; python_full_version < '3.11.3' \
     --hash=sha256:39e3809566ff85354557ec2398b55e096c8364bacac9405a7a1fa429e77fe76c \
     --hash=sha256:d9321a7a3d5a6a5e187e824d2fa0793ce379a202935782d555d6e9d2735677d3
@@ -89,6 +90,45 @@ botocore==1.42.84 \
     # via
     #   boto3
     #   s3transfer
+cbor2==5.9.0 \
+    --hash=sha256:0322296b9d52f55880e300ba8ba09ecf644303b99b51138bbb1c0fb644fa7c3e \
+    --hash=sha256:0485d3372fc832c5e16d4eb45fa1a20fc53e806e6c29a1d2b0d3e176cedd52b9 \
+    --hash=sha256:08388ea54195738602b4c4999966bcaef6f0b17d293c9658658409d9fff96f57 \
+    --hash=sha256:1d02b65f070fd726bdc310d927228975bb655d155bf059b6eb7cacefb3dca86f \
+    --hash=sha256:1f223dffb1bcdd2764665f04c1152943d9daa4bc124a576cd8dee1cad4264313 \
+    --hash=sha256:23606d31ba1368bd1b6602e3020ee88fe9523ca80e8630faf6b2fc904fd84560 \
+    --hash=sha256:2372d357d403e7912f104ff085950ffc82a5854d6d717f1ca1ce16a40a0ef5a7 \
+    --hash=sha256:25bec7beb2089465382b1be72e78667fe9090598800826559c3e3008cf0db743 \
+    --hash=sha256:27695cbd70c90b8de5c4a284642c2836449b14e2c2e07e3ffe0744cb7669a01b \
+    --hash=sha256:2a54fbb32cb828c214f7f333a707e4aec61182e7efdc06ea5d9596d3ecee624a \
+    --hash=sha256:3095dc49e75572841a9534cbfdabc2a17487ea4ee33341436abc4a7ac7245a3a \
+    --hash=sha256:34a6cb15e6ab6a8eae94ad2041731cd3ef786af43a8df99f847969af5b902ee7 \
+    --hash=sha256:380e534482b843e43442b87d8777a7bf9bed20cb7526f89b780c3400f617304b \
+    --hash=sha256:420d2490c7836c81151b4bd591c35cffc55391e33e7e333c50fda391bcea7d31 \
+    --hash=sha256:422817286c1d0ce947fb2f7eca9212b39bddd7231e8b452e2d2cc52f15332dba \
+    --hash=sha256:4753a6d1bc71054d9179557bc65740860f185095ccb401d46637fff028a5b3ec \
+    --hash=sha256:4aa07b392cc3d76fb31c08a46a226b58c320d1c172ff3073e864409ced7bc50f \
+    --hash=sha256:4cd43d8fc374b31643b2830910f28177a606a7bc84975a62675dd3f2e320fc7b \
+    --hash=sha256:5326336f633cc89dfe543c78829c16c3a6449c2c03277d1ddba99086c3323363 \
+    --hash=sha256:55bea0dd9a7d354e35f4e5fe58ceab393e76962713749dc3a0a64a0e5d19545e \
+    --hash=sha256:5e702b02d42a5ace45425b595ffe70fe35aebaf9a3cdfdc2c758b6189c744422 \
+    --hash=sha256:7221483fad0c63afa4244624d552abf89d7dfdbc5f5edfc56fc1ff2b4b818975 \
+    --hash=sha256:7d1ddc4541e7367ac58c2470cc0df847f7137167fe4f5729e2d3cc0b993d7da4 \
+    --hash=sha256:837754ece9052b3f607047e1741e5f852a538aa2b0ee3db11c82a8fa11804aa4 \
+    --hash=sha256:85c7a46279ac8f226e1059275221e6b3d0e370d2bb6bd0500f9780781615bcea \
+    --hash=sha256:86baf870d4c0bfc6f79de3801f3860a84ab76d9c8b0abb7f081f2c14c38d79d3 \
+    --hash=sha256:971d425b3a23b75953d8853d5f9911bdeefa09d759ee3b5e6b07b5ff3cbd9073 \
+    --hash=sha256:9a4907e0c3035bb8836116854ed8e56d8aef23909d601fa59706320897ec2551 \
+    --hash=sha256:a9d6e4e0f988b0e766509a8071975a8ee99f930e14a524620bf38083106158d2 \
+    --hash=sha256:ac684fe195c39821fca70d18afbf748f728aefbfbf88456018d299e559b8cae0 \
+    --hash=sha256:ae6c706ac1d85a0b3cb3395308fd0c4d55e3202b4760773675957e93cdff45fc \
+    --hash=sha256:cc5efec69055c3c470997935d95762be7e4bfd1248d88fb1a33bb7e0f45712e9 \
+    --hash=sha256:d1a21c006760f95acd9509cc5a7d15d6fc82e58f721f94fa9039b4e77189a6e5 \
+    --hash=sha256:dcf0f695873e5c94bd072d6af8698e72b8fb7f7a18f37e0bced1041b7111a6cf \
+    --hash=sha256:f7c9751a9611601ab326d8f5837f01379195bbf06175fb4effeb552140e7c9e8 \
+    --hash=sha256:fb7afe77f8d269e42d7c4b515c6fd14f1ccc0625379fb6829b269f493d16eddd \
+    --hash=sha256:fbb06f34aa645b4deca66643bba3d400d20c15312d1fe88d429be60c1ab50f27
+    # via webauthn
 celery==5.6.3 \
     --hash=sha256:0808f42f80909c4d5833202360ffafb2a4f83f4d8e23e1285d926610e9a7afa6 \
     --hash=sha256:177006bd2054b882e9f01be59abd8529e88879ef50d7918a7050c5a9f4e12912
@@ -359,6 +399,8 @@ cryptography==46.0.6 \
     #   pyhanko
     #   pyhanko-certvalidator
     #   pyjwt
+    #   pyopenssl
+    #   webauthn
 cssselect2==0.9.0 \
     --hash=sha256:6a99e5f91f9a016a304dd929b0966ca464bcfda15177b6fb4a118fc0fb5d9563 \
     --hash=sha256:759aa22c216326356f65e62e791d66160a0f9c91d1424e8d8adc5e74dddfc6fb
@@ -1082,6 +1124,10 @@ pyjwt==2.12.1 \
     --hash=sha256:28ca37c070cad8ba8cd9790cd940535d40274d22f80ab87f3ac6a713e6e8454c \
     --hash=sha256:c74a7a2adf861c04d002db713dd85f84beb242228e671280bf709d765b03672b
     # via social-auth-core
+pyopenssl==26.0.0 \
+    --hash=sha256:df94d28498848b98cc1c0ffb8ef1e71e40210d3b0a8064c9d29571ed2904bf81 \
+    --hash=sha256:f293934e52936f2e3413b89c6ce36df66a0b34ae1ea3a053b8c5020ff2f513fc
+    # via webauthn
 pypdf==6.9.2 \
     --hash=sha256:662cf29bcb419a36a1365232449624ab40b7c2d0cfc28e54f42eeecd1fd7e844 \
     --hash=sha256:7f850faf2b0d4ab936582c05da32c52214c2b089d61a316627b5bfb5b0dab46c
@@ -1398,6 +1444,7 @@ typing-extensions==4.15.0 \
     #   mistune
     #   psycopg
     #   pyjwt
+    #   pyopenssl
     #   pypdf
     #   python-docx
 tzdata==2026.1 \
@@ -1449,6 +1496,10 @@ wcwidth==0.6.0 \
     --hash=sha256:1a3a1e510b553315f8e146c54764f4fb6264ffad731b3d78088cdb1478ffbdad \
     --hash=sha256:cdc4e4262d6ef9a1a57e018384cbeb1208d8abbc64176027e2c2455c81313159
     # via prompt-toolkit
+webauthn==2.2.0 \
+    --hash=sha256:70e4f318d293125e3a8609838be0561119f4f8846bc430d524f8da4052ee18cc \
+    --hash=sha256:e8e2daace85dde8f6fb436c1bca9aa72d5931dac8829ecc1562cc4e7cc169f6c
+    # via hypha
 webencodings==0.5.1 \
     --hash=sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78 \
     --hash=sha256:b36a1c245f2d304965eb4e0a82848379241dc04b865afcc4aab16748587e1923
