@@ -8,7 +8,6 @@ from django.contrib.auth import get_user_model
 from django.db.models import F, Q
 from django.urls import reverse
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_tables2.utils import A
@@ -143,52 +142,6 @@ class LabeledCheckboxColumn(tables.CheckBoxColumn):
     def render(self, value, record, bound_column):
         checkbox = super().render(value=value, record=record, bound_column=bound_column)
         return self.wrap_with_label(checkbox, value)
-
-
-class BaseAdminSubmissionsTable(SubmissionsTable):
-    lead = tables.Column(order_by=("lead__full_name",))
-    reviews_stats = tables.TemplateColumn(
-        template_name="funds/tables/column_reviews.html",
-        verbose_name=mark_safe(
-            'Reviews<div>Comp. <span class="counts-separator">/</span> Assgn.</div>'
-        ),
-        orderable=False,
-    )
-    screening_status = tables.Column(
-        verbose_name=_("Screening"), accessor="screening_statuses"
-    )
-    organization_name = tables.Column()
-
-    class Meta(SubmissionsTable.Meta):
-        fields = (
-            "title",
-            "phase",
-            "stage",
-            "fund",
-            "round",
-            "lead",
-            "submit_time",
-            "last_update",
-            "screening_status",
-            "reviews_stats",
-            "organization_name",
-        )
-        sequence = fields + ("comments",)
-
-    def render_lead(self, value):
-        return format_html("<span>{}</span>", value)
-
-    def render_screening_status(self, value):
-        try:
-            status = value.get()
-            classname = "status-yes" if status.yes else "status-no text-red-500"
-            return format_html(
-                f"<span class='font-medium text-xs {classname}'>{'👍' if status.yes else '👎'} {status.title}</span>"
-            )
-        except ScreeningStatus.DoesNotExist:
-            return format_html(
-                "<span class='text-xs text-fg-muted'>{}</span>", "Awaiting"
-            )
 
 
 def get_used_rounds(request):

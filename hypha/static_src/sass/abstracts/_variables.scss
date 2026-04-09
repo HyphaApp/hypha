@@ -1,11 +1,5 @@
 // stylelint-disable scss/dollar-variable-pattern
 
-// This module is deprecated and will be removed in a future release.
-$color--mid-grey: var(--color-base-300);
-
-// Font sizes
-$base-font-size: 16px;
-
 // Breakpoints
 $breakpoints: (
   "sm" "(min-width: 640px)",
