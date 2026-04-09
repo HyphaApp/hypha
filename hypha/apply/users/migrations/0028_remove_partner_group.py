@@ -4,6 +4,23 @@ from django.db import migrations
 from django.contrib.auth.models import Group
 
 
+# An edge case that won't apply to most staystems
+def assigned_review_migrate_from_partners(apps, schema_editor):
+    PARTNER_GROUP_NAME = "Partner"
+    REVIEWER_GROUP_NAME = "Reviewer"
+
+    AssignedReviewers = apps.get_model("funds", "AssignedReviewers")
+
+    reviewer_id = Group.objects.get(name=REVIEWER_GROUP_NAME).id
+
+    if id_qs := Group.objects.filter(name=PARTNER_GROUP_NAME).values_list(
+        "id", flat=True
+    ):
+        AssignedReviewers.objects.filter(type_id=id_qs.first()).update(
+            type_id=reviewer_id
+        )
+
+
 def migrate_partners_to_coapplicants(apps, schema_editor):
     PARTNER_GROUP_NAME = "Partner"
 
@@ -14,7 +31,7 @@ def migrate_partners_to_coapplicants(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("users", "0027_remove_drupal_id_field"),
-        ("funds", "0134_change_partner_assigned_reviewers_role"),
+        ("funds", "0133_remove_applicationsubmission_partners"),
     ]
 
     operations = [migrations.RunPython(migrate_partners_to_coapplicants)]
