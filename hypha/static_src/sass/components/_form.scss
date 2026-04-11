@@ -1,6 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
-@use "sass:math";
 
 .form {
   $root: &;
