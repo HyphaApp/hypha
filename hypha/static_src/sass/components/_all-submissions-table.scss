@@ -1,5 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 // stylelint-disable selector-class-pattern
 .all-submissions-table {
@@ -92,20 +91,6 @@
       &.organization_name {
         @include mixins.media-query(lg) {
           padding-inline-start: 15px;
-        }
-      }
-
-      > span.mobile-label {
-        display: inline-block;
-        width: 90px;
-
-        &.phase,
-        &.title {
-          display: none;
-        }
-
-        @include mixins.media-query(lg) {
-          display: none;
         }
       }
     }

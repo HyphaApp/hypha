@@ -1,5 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
 
 .sidebar {
   display: flex;
@@ -12,7 +11,7 @@
 
   &__inner {
     padding: 20px;
-    border: 1px solid variables.$color--mid-grey;
+    border: 1px solid var(--color-base-300);
 
     &--actions {
       @include mixins.media-query(md) {
@@ -34,7 +33,7 @@
 
   &__paf-approvals {
     &--pending {
-      color: variables.$color--mid-grey;
+      color: var(--color-base-300);
     }
 
     &--approved {
