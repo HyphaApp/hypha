@@ -20,18 +20,17 @@
 
 {% block content %}
     <div class="overflow-x-auto my-4">
-        {% comment %} <table class="reviews-list"> {% endcomment %}
         <table class="table table-pin-rows table-pin-cols">
             {% for answers in review_data.values %}
-                <tr class="reviews-list__tr">
-                    <th class="reviews-list__th">{{ answers.question }}</th>
+                <tr>
+                    <th class="w-40 bg-base-200">{{ answers.question }}</th>
                     {% for answer in answers.answers %}
                         {% if forloop.parentloop.first %}
-                            <th class="reviews-list__th reviews-list__th--author">{{ answer|safe }}</th>
+                            <th class="bg-base-200">{{ answer|safe }}</th>
                         {% elif answers.question == "Opinions"%}
-                            <td class="reviews-list__td">{{ answer }}</td>
+                            <td class="min-w-60">{{ answer }}</td>
                         {% else %}
-                            <td class="reviews-list__td">{{ answer|nh3 }}</td>
+                            <td class="min-w-60">{{ answer|nh3 }}</td>
                         {% endif %}
                     {% endfor %}
                 </tr>
