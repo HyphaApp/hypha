@@ -55,40 +55,34 @@
             </section>
         {% endif %}
 
-        {% if my_submissions %}
+        {% if my_submissions_exists %}
             <section>
-                <h2 class="section-header">
-                    {% trans "Your active submissions" %}
-                </h2>
-                {% for submission in my_submissions %}
-                    <div class="wrapper wrapper--status-bar-outer">
-                        <div class="wrapper wrapper--status-bar-inner">
-                            <div>
-                                <h5 class="m-0 heading"><a class="underline" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h5>
-                                <h6 class="m-0 heading"><span>{% trans "Submitted" %}:</span> {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}</h6>
+                <h2 class="section-header">{% trans "My submissions" %}</h2>
+                <div class="overflow-hidden border border-base-200 rounded-box shadow-xs">
+                    <div
+                        hx-get="{% url 'dashboard:applicant_submissions' %}"
+                        hx-trigger="load"
+                        id="submissions_list"
+                        class="list"
+                    >
+                        {% for dummy_item in per_section_items %}
+                            <div class="animate-pulse list-row min-h-40">
+                                <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-base-300 "></div>
                             </div>
-                            {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
-                        </div>
-                        {% if request.user|has_edit_perm:submission %}
-                            <a class="btn btn-primary" href="{% url 'funds:submissions:edit' submission.id %}">
-                                {% if submission.status == 'draft_proposal' %}
-                                    {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
-                                {% else %}
-                                    {% trans "Edit" %}
-                                {% endif %}
-                            </a>
-                        {% endif %}
+                        {% endfor %}
                     </div>
-                {% endfor %}
+                </div>
             </section>
         {% endif %}
 
-        {% if my_inactive_submissions.data %}
-            <section>
+        {% if historical_submissions.count %}
+            <section id="submission-history">
                 <h2 class="section-header">
                     {% trans "Submission history" %}
                 </h2>
-                {% render_table my_inactive_submissions %}
+                <div class="overflow-x-auto border border-base-200 rounded-box shadow-xs">
+                    {% render_table historical_submissions.table %}
+                </div>
             </section>
         {% endif %}
     </div>

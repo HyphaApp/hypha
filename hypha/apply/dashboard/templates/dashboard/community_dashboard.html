@@ -57,57 +57,35 @@
             </section>
         {% endif %}
 
-        <section>
-            <h2 class="section-header">
-                {% trans "Your active submissions" %}
-            </h2>
-            {% for submission in my_submissions %}
-                <div class="wrapper wrapper--status-bar-outer">
-                    <div class="wrapper wrapper--status-bar-inner">
-                        <div class="flex flex-col gap-2 max-w-sm sm:max-w-lg md:flex-row md:justify-between md:w-full md:max-w-none lg:flex-col lg:justify-start lg:w-auto lg:max-w-sm">
-                            <div>
-                                <h3 class="text-base font-bold">
-                                    <a class="{% if not submission.is_active %} text-slate-500 {% endif %} hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
-                                        {{ submission.title }}
-                                        <span class="text-fg-muted">#{{ submission.application_id }}</span>
-                                    </a>
-                                </h3>
-                                <p class="text-sm heading text-fg-muted">
-                                    {% trans "Submitted" %}: {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}
-                                </p>
+        {% if my_submissions_exists %}
+            <section>
+                <h2 class="section-header">{% trans "My submissions" %}</h2>
+                <div class="overflow-hidden border border-base-200 rounded-box shadow-xs">
+                    <div
+                        hx-get="{% url 'dashboard:applicant_submissions' %}"
+                        hx-trigger="load"
+                        id="submissions_list"
+                        class="list"
+                    >
+                        {% for dummy_item in per_section_items %}
+                            <div class="animate-pulse list-row min-h-40">
+                                <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-base-300 "></div>
                             </div>
-                            {% if request.user|has_edit_perm:submission %}
-                                <div>
-                                    <a class="btn btn-primary" href="{% url 'funds:submissions:edit' submission.id %}">
-                                        {% if submission.status == 'draft_proposal' %}
-                                            {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
-                                        {% else %}
-                                            <span class="whitespace-nowrap">
-                                                {% heroicon_mini "pencil-square" size=18 class="inline align-text-bottom me-1" aria_hidden=true %}
-                                                {% trans "Edit" %}
-                                            </span>
-                                        {% endif %}
-                                    </a>
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
+                        {% endfor %}
                     </div>
                 </div>
-            {% empty %}
-                {% trans "No active submissions" %}
-            {% endfor %}
-        </section>
+            </section>
+        {% endif %}
 
-        {% if my_inactive_submissions.data %}
-            <section>
+        {% if historical_submissions.count %}
+            <section id="submission-history">
                 <h2 class="section-header">
                     {% trans "Submission history" %}
                 </h2>
-                {% render_table my_inactive_submissions %}
+                <div class="overflow-x-auto border border-base-200 rounded-box shadow-xs">
+                    {% render_table historical_submissions.table %}
+                </div>
             </section>
         {% endif %}
     </div>
-
 {% endblock %}
