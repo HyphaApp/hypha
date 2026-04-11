@@ -3,8 +3,6 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 
-from hypha.apply.utils.image import generate_image_url
-
 
 class ReviewerRole(models.Model):
     name = models.CharField(max_length=128)
@@ -28,7 +26,7 @@ class ReviewerRole(models.Model):
     ]
 
     def icon_url(self, filter_spec):
-        return generate_image_url(self.icon, filter_spec)
+        return self.icon.get_rendition(filter_spec).url
 
     wagtail_reference_index_ignore = True
 
