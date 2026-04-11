@@ -446,8 +446,10 @@ class ReviewListView(ListView):
                 review.get_absolute_url(), review.author
             )
             if review.author.role and review.author.role.icon:
-                author += generate_image_tag(review.author.role.icon, "12x12")
-            author = f"<div>{author}</div>"
+                author += generate_image_tag(
+                    review.author.role.icon, "max-12x12", html_class="ms-2"
+                )
+            author = f'<div class="flex items-center">{author}</div>'
 
             review_data["title"]["answers"].append(author)
             opinions_template = get_template(
