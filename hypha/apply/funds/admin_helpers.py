@@ -89,6 +89,8 @@ class RoundStateListFilter(admin.SimpleListFilter):
         return (
             ("open", _("Open")),
             ("closed", _("Closed")),
+            ("new", _("Not started")),
+            ("unpublished", _("Unpublished")),
         )
 
     def queryset(self, request, queryset):
@@ -97,6 +99,10 @@ class RoundStateListFilter(admin.SimpleListFilter):
             return queryset.open()
         elif value == "closed":
             return queryset.closed()
+        elif value == "new":
+            return queryset.new()
+        elif value == "unpublished":
+            return queryset.not_live()
         return queryset
 
 
