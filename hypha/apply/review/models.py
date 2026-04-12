@@ -199,7 +199,7 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
         return reverse(
             "apply:submissions:reviews:review",
             args=(
-                self.submission.pk,
+                self.submission_id,
                 self.id,
             ),
         )

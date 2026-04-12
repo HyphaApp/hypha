@@ -197,7 +197,7 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
         submissions = self.get_submissions()
         response = super().form_valid(form)
         determinations = {
-            determination.submission.id: determination
+            determination.submission_id: determination
             for determination in form.instances
         }
         sources = submissions.filter(id__in=list(determinations))

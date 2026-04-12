@@ -176,6 +176,7 @@ class ProjectQuerySet(models.QuerySet):
                 "submission__page",
                 "lead",
             )
+            .defer("form_data", "form_fields")
         )
 
     def for_reporting_table(self):
@@ -453,7 +454,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return False
 
     def get_absolute_url(self):
-        return reverse("funds:submissions:project", args=[self.submission.id])
+        return reverse("funds:submissions:project", args=[self.submission_id])
 
     @property
     def can_make_approval(self):
@@ -700,7 +701,7 @@ class Contract(models.Model):
 
     def get_absolute_url(self):
         return reverse(
-            "apply:projects:contract", args=[self.project.submission.id, self.pk]
+            "apply:projects:contract", args=[self.project.submission_id, self.pk]
         )
 
 

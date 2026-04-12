@@ -1627,6 +1627,11 @@ class UpdatePAFApproversView(View):
 
 
 class BaseProjectDetailView(ReportingMixin, ProjectBySubmissionIdMixin, DetailView):
+    def get_object(self, queryset=None):
+        if not hasattr(self, "_object_cache"):
+            self._object_cache = super().get_object()
+        return self._object_cache
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["statuses"] = get_project_status_choices()
@@ -1995,7 +2000,7 @@ class ProjectDetailDownloadView(ProjectBySubmissionIdMixin, SingleObjectMixin, V
         context["submission"] = self.object.submission
         context["submission_link"] = self.request.build_absolute_uri(
             reverse(
-                "apply:submissions:detail", kwargs={"pk": self.object.submission.id}
+                "apply:submissions:detail", kwargs={"pk": self.object.submission_id}
             )
         )
         context["supporting_documents"] = self.get_supporting_documents(self.object)
@@ -2022,7 +2027,7 @@ class ProjectDetailDownloadView(ProjectBySubmissionIdMixin, SingleObjectMixin, V
             documents_dict[packet_file.title] = self.request.build_absolute_uri(
                 reverse(
                     "apply:projects:document",
-                    kwargs={"pk": project.submission.id, "file_pk": packet_file.id},
+                    kwargs={"pk": project.submission_id, "file_pk": packet_file.id},
                 )
             )
         return documents_dict

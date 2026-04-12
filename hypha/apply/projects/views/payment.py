@@ -372,7 +372,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         if "delete" in form.data:
             return redirect(
                 "apply:projects:invoice-delete",
-                pk=self.object.project.submission.id,
+                pk=self.object.project.submission_id,
                 invoice_pk=self.object.id,
             )
         if form.is_valid():
@@ -584,6 +584,9 @@ class InvoiceListView(SingleTableMixin, FilterView, DelegateableListView):
     model = Invoice
     table_class = AdminInvoiceListTable
     template_name = "application_projects/invoice_list.html"
+
+    def get_queryset(self):
+        return super().get_queryset().select_related("project", "project__user")
 
     def get_table_class(self):
         if self.request.user.is_finance:
