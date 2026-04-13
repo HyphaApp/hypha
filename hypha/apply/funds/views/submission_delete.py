@@ -7,7 +7,6 @@ from rolepermissions.checkers import has_object_permission
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Event
-from hypha.apply.funds.forms import DeleteSubmissionForm
 
 from ..models import ApplicationSubmission, ApplicationSubmissionSkeleton
 from ..workflows.constants import DRAFT_STATE
@@ -63,7 +62,6 @@ class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """
 
     model = ApplicationSubmission
-    form_class = DeleteSubmissionForm
 
     def test_func(self):
         return has_object_permission(
@@ -78,17 +76,14 @@ class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def form_valid(self, form):
         submission = self.get_object()
 
-        message = MESSAGES.DELETE_SUBMISSION
-
-        success_popup_message = _("Submission deleted.")
-
-        if (
-            form.cleaned_data.get("anon_or_delete") == "ANONYMIZE"
-            and submission.status != DRAFT_STATE
-        ):
-            ApplicationSubmissionSkeleton.from_submission(submission)
-            message = MESSAGES.ANONYMIZE_SUBMISSION
-            success_popup_message = _("Submission anonymized.")
+        # Notify unless author delete own draft.
+        if submission.status != DRAFT_STATE and submission.user != self.request.user:
+            messenger(
+                MESSAGES.DELETE_SUBMISSION,
+                user=self.request.user,
+                request=self.request,
+                source=submission,
+            )
 
         # Delete NEW_SUBMISSION & COMMENT events for this particular submission, if any.
         # Otherwise, the submission deletion will fail.
@@ -98,18 +93,4 @@ class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         ).delete()
 
         # delete submission and redirect to success url
-        response = super().form_valid(form)
-
-        # Handle messaging last to ensure everything is successful
-        # Notify unless author delete own draft.
-        if submission.status != DRAFT_STATE and submission.user != self.request.user:
-            messenger(
-                message,
-                user=self.request.user,
-                request=self.request,
-                source=submission,
-            )
-
-        messages.success(self.request, success_popup_message)
-
-        return response
+        return super().form_valid(form)
