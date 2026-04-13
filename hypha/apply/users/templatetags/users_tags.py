@@ -76,15 +76,11 @@ def get_user_submission_count(
     """
     ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
     if isinstance(user, User):
-        return ApplicationSubmission.objects.filter(user=user).count()
+        users = [user]
     elif isinstance(user, abc.Iterable):
-        if all(isinstance(x, User) for x in user):
-            return ApplicationSubmission.objects.filter(user__in=user).count()
-        elif (items_extract := [x.get("item") for x in user]) and all(
-            isinstance(x, User) for x in items_extract
-        ):
-            return ApplicationSubmission.objects.filter(user__in=items_extract).count()
-
-    raise TypeError(
-        "User instance or iterable of users not provided to get_user_submission_count!"
-    )
+        users = [x["item"] if isinstance(x, dict) else x for x in user]
+    else:
+        raise TypeError(
+            "User instance or iterable of users not provided to get_user_submission_count!"
+        )
+    return ApplicationSubmission.objects.filter(user__in=users).count()
