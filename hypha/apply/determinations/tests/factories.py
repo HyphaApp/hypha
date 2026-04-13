@@ -17,6 +17,11 @@ from ..views import get_form_for_stage
 
 
 class DeterminationDataFactory(factory.DictFactory):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
+
     @classmethod
     def _build(cls, model_class, *args, **kwargs):
         submission = kwargs.pop("submission")

@@ -16,7 +16,194 @@ from .utils import determination_actions
 User = get_user_model()
 
 
+class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
+    pass
+
+
+class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
+    draft_button_name = "save draft"
+
+    class Meta:
+        model = Determination
+        fields = ["outcome", "message", "submission", "author", "send_notice"]
+
+        widgets = {
+            "outcome": forms.HiddenInput(),
+            "message": forms.HiddenInput(),
+            "submission": forms.HiddenInput(),
+            "author": forms.HiddenInput(),
+            "send_notice": forms.HiddenInput(),
+        }
+
+        error_messages = {
+            NON_FIELD_ERRORS: {
+                "unique_together": "You have already created a determination for this submission",
+            }
+        }
+
+    def __init__(
+        self,
+        *args,
+        submission,
+        action,
+        user=None,
+        edit=False,
+        initial=None,
+        instance=None,
+        site=None,
+        **kwargs,
+    ):
+        if initial is None:
+            initial = {}
+        initial.update(submission=submission.id)
+        initial.update(author=user.id)
+        if instance:
+            for key, value in instance.form_data.items():
+                if key not in self._meta.fields:
+                    initial[key] = value
+        super().__init__(*args, initial=initial, instance=instance, **kwargs)
+
+        for field in self._meta.widgets:
+            # Need to disable the model form fields as these fields would be
+            # rendered via streamfield form.
+            self.fields[field].disabled = True
+
+        if self.draft_button_name in self.data:
+            # A determination must be set for saving a draft,
+            # this forces outcome to be validated.
+            unreq_fields = [name for name in self.fields if name != "outcome"]
+            for name in unreq_fields:
+                self.fields[name].required = False
+
+        if edit:
+            self.fields.pop("outcome")
+            self.draft_button_name = None
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data["form_data"] = {
+            key: value
+            for key, value in cleaned_data.items()
+            if key not in self._meta.fields
+        }
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        self.instance.send_notice = (
+            self.cleaned_data[self.instance.send_notice_field.id]
+            if self.instance.send_notice_field
+            else True
+        )
+        self.instance.message = self.cleaned_data[self.instance.message_field.id]
+        try:
+            self.instance.outcome = int(
+                self.cleaned_data[self.instance.determination_field.id]
+            )
+        except KeyError:
+            # Need to catch KeyError as outcome field would not exist in case of edit.
+            pass
+        self.instance.is_draft = self.draft_button_name in self.data
+        self.instance.form_data = self.cleaned_data["form_data"]
+        return super().save(commit)
+
+
+class FormMixedMetaClass(type(StreamBaseForm), type(forms.Form)):
+    pass
+
+
+class BatchDeterminationForm(StreamBaseForm, forms.Form, metaclass=FormMixedMetaClass):
+    submissions = forms.ModelMultipleChoiceField(
+        queryset=ApplicationSubmission.objects.all(),
+        widget=forms.ModelMultipleChoiceField.hidden_widget,
+    )
+    author = forms.ModelChoiceField(
+        # Permissions should be handled by the view rather than the QuerySet here.
+        queryset=User.objects.active(),
+        widget=forms.ModelChoiceField.hidden_widget,
+        required=True,
+    )
+    outcome = forms.ChoiceField(
+        choices=DETERMINATION_CHOICES,
+        label=_("Determination"),
+        help_text="Do you recommend requesting a proposal based on this concept note?",
+        widget=forms.HiddenInput(),
+    )
+
+    def __init__(
+        self,
+        *args,
+        user,
+        submissions,
+        action,
+        initial=None,
+        edit=False,
+        site=None,
+        **kwargs,
+    ):
+        if initial is None:
+            initial = {}
+        initial.update(submissions=submissions.values_list("id", flat=True))
+        try:
+            initial.update(outcome=TRANSITION_DETERMINATION[action])
+        except KeyError:
+            pass
+        initial.update(author=user.id)
+        super().__init__(*args, initial=initial, **kwargs)
+        self.fields["submissions"].disabled = True
+        self.fields["author"].disabled = True
+        self.fields["outcome"].disabled = True
+
+    def data_fields(self):
+        return [
+            field
+            for field in self.fields
+            if field not in ["submissions", "outcome", "author", "send_notice"]
+        ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data["form_data"] = {
+            key: value
+            for key, value in cleaned_data.items()
+            if key in self.data_fields()
+        }
+        return cleaned_data
+
+    def clean_outcome(self):
+        # Enforce outcome as an int
+        return int(self.cleaned_data["outcome"])
+
+    def _post_clean(self):
+        submissions = self.cleaned_data["submissions"].undetermined()
+        data = {
+            # If one of these keys is not set, we should get a validation error on the page rather than `KeyError`.
+            field: self.cleaned_data.get(field)
+            for field in ["author", "form_data", "outcome"]
+        }
+
+        self.instances = [
+            Determination(
+                submission=submission,
+                **data,
+            )
+            for submission in submissions
+        ]
+
+        return super()._post_clean()
+
+    def save(self):
+        determinations = Determination.objects.bulk_create(self.instances)
+        self.instances = determinations
+        return determinations
+
+
 class BaseDeterminationForm:
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
+
     def __init__(self, *args, user, initial, action, edit=False, **kwargs):
         if "site" in kwargs:
             site = kwargs.pop("site")
@@ -79,6 +266,11 @@ class BaseDeterminationForm:
 
 
 class BaseNormalDeterminationForm(BaseDeterminationForm, forms.ModelForm):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
+
     draft_button_name = "save_draft"
 
     class Meta:
@@ -127,6 +319,11 @@ class BaseNormalDeterminationForm(BaseDeterminationForm, forms.ModelForm):
 
 
 class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
+
     submissions = forms.ModelMultipleChoiceField(
         queryset=ApplicationSubmission.objects.all(),
         widget=forms.ModelMultipleChoiceField.hidden_widget,
@@ -496,185 +693,3 @@ class BatchProposalDeterminationForm(
         self.fields["outcome"].widget = forms.HiddenInput()
 
         self.fields = self.apply_form_settings("proposal", self.fields)
-
-
-class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
-    pass
-
-
-class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
-    draft_button_name = "save draft"
-
-    class Meta:
-        model = Determination
-        fields = ["outcome", "message", "submission", "author", "send_notice"]
-
-        widgets = {
-            "outcome": forms.HiddenInput(),
-            "message": forms.HiddenInput(),
-            "submission": forms.HiddenInput(),
-            "author": forms.HiddenInput(),
-            "send_notice": forms.HiddenInput(),
-        }
-
-        error_messages = {
-            NON_FIELD_ERRORS: {
-                "unique_together": "You have already created a determination for this submission",
-            }
-        }
-
-    def __init__(
-        self,
-        *args,
-        submission,
-        action,
-        user=None,
-        edit=False,
-        initial=None,
-        instance=None,
-        site=None,
-        **kwargs,
-    ):
-        if initial is None:
-            initial = {}
-        initial.update(submission=submission.id)
-        initial.update(author=user.id)
-        if instance:
-            for key, value in instance.form_data.items():
-                if key not in self._meta.fields:
-                    initial[key] = value
-        super().__init__(*args, initial=initial, instance=instance, **kwargs)
-
-        for field in self._meta.widgets:
-            # Need to disable the model form fields as these fields would be
-            # rendered via streamfield form.
-            self.fields[field].disabled = True
-
-        if self.draft_button_name in self.data:
-            # A determination must be set for saving a draft,
-            # this forces outcome to be validated.
-            unreq_fields = [name for name in self.fields if name != "outcome"]
-            for name in unreq_fields:
-                self.fields[name].required = False
-
-        if edit:
-            self.fields.pop("outcome")
-            self.draft_button_name = None
-
-    def clean(self):
-        cleaned_data = super().clean()
-        cleaned_data["form_data"] = {
-            key: value
-            for key, value in cleaned_data.items()
-            if key not in self._meta.fields
-        }
-
-        return cleaned_data
-
-    def save(self, commit=True):
-        self.instance.send_notice = (
-            self.cleaned_data[self.instance.send_notice_field.id]
-            if self.instance.send_notice_field
-            else True
-        )
-        self.instance.message = self.cleaned_data[self.instance.message_field.id]
-        try:
-            self.instance.outcome = int(
-                self.cleaned_data[self.instance.determination_field.id]
-            )
-        except KeyError:
-            # Need to catch KeyError as outcome field would not exist in case of edit.
-            pass
-        self.instance.is_draft = self.draft_button_name in self.data
-        self.instance.form_data = self.cleaned_data["form_data"]
-        return super().save(commit)
-
-
-class FormMixedMetaClass(type(StreamBaseForm), type(forms.Form)):
-    pass
-
-
-class BatchDeterminationForm(StreamBaseForm, forms.Form, metaclass=FormMixedMetaClass):
-    submissions = forms.ModelMultipleChoiceField(
-        queryset=ApplicationSubmission.objects.all(),
-        widget=forms.ModelMultipleChoiceField.hidden_widget,
-    )
-    author = forms.ModelChoiceField(
-        # Permissions should be handled by the view rather than the QuerySet here.
-        queryset=User.objects.active(),
-        widget=forms.ModelChoiceField.hidden_widget,
-        required=True,
-    )
-    outcome = forms.ChoiceField(
-        choices=DETERMINATION_CHOICES,
-        label=_("Determination"),
-        help_text="Do you recommend requesting a proposal based on this concept note?",
-        widget=forms.HiddenInput(),
-    )
-
-    def __init__(
-        self,
-        *args,
-        user,
-        submissions,
-        action,
-        initial=None,
-        edit=False,
-        site=None,
-        **kwargs,
-    ):
-        if initial is None:
-            initial = {}
-        initial.update(submissions=submissions.values_list("id", flat=True))
-        try:
-            initial.update(outcome=TRANSITION_DETERMINATION[action])
-        except KeyError:
-            pass
-        initial.update(author=user.id)
-        super().__init__(*args, initial=initial, **kwargs)
-        self.fields["submissions"].disabled = True
-        self.fields["author"].disabled = True
-        self.fields["outcome"].disabled = True
-
-    def data_fields(self):
-        return [
-            field
-            for field in self.fields
-            if field not in ["submissions", "outcome", "author", "send_notice"]
-        ]
-
-    def clean(self):
-        cleaned_data = super().clean()
-        cleaned_data["form_data"] = {
-            key: value
-            for key, value in cleaned_data.items()
-            if key in self.data_fields()
-        }
-        return cleaned_data
-
-    def clean_outcome(self):
-        # Enforce outcome as an int
-        return int(self.cleaned_data["outcome"])
-
-    def _post_clean(self):
-        submissions = self.cleaned_data["submissions"].undetermined()
-        data = {
-            # If one of these keys is not set, we should get a validation error on the page rather than `KeyError`.
-            field: self.cleaned_data.get(field)
-            for field in ["author", "form_data", "outcome"]
-        }
-
-        self.instances = [
-            Determination(
-                submission=submission,
-                **data,
-            )
-            for submission in submissions
-        ]
-
-        return super()._post_clean()
-
-    def save(self):
-        determinations = Determination.objects.bulk_create(self.instances)
-        self.instances = determinations
-        return determinations
