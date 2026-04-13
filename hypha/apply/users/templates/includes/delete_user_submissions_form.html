@@ -8,11 +8,11 @@ will rely on wagtail's default behavior and not display the form, only the submi
     {% if SUBMISSION_SKELETONING_ENABLED and submission_count %}
         <div style="padding-bottom: 1rem;">
             <div style="display: flex; align-content: center; padding-bottom: 0.25rem;">
-                <input type="radio" id="anon" name="handle_subs" value="anon" required checked>
-                <label for="anon">Anonymize all user submissions</label>
+                <input type="radio" id="anonymize" name="handle_submissions" value="anonymize" required checked>
+                <label for="anonymize">Anonymize all user submissions</label>
             </div>
             <div style="display: flex; align-content: center;">
-                <input type="radio" id="delete" name="handle_subs" value="delete">
+                <input type="radio" id="delete" name="handle_submissions" value="delete">
                 <label for="delete">Delete all user submissions</label>
             </div>
         </div>

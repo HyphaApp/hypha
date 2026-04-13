@@ -44,7 +44,7 @@ def anonymize_delete_user_submissions(request, user):
     if (
         settings.SUBMISSION_SKELETONING_ENABLED
         and request.method == "POST"
-        and request.POST.get("handle_subs") == "anon"
+        and request.POST.get("handle_submissions") == "anonymize"
     ):
         ApplicationSubmissionSkeleton = apps.get_model(
             "funds", "ApplicationSubmissionSkeleton"
@@ -74,7 +74,7 @@ def bulk_anonymize_delete_user_submissions(
         settings.SUBMISSION_SKELETONING_ENABLED
         and action_type == "delete"
         and request.method == "POST"
-        and request.POST.get("handle_subs") == "anon"
+        and request.POST.get("handle_submissions") == "anonymize"
         and all(isinstance(x, User) for x in objects)
     ):
         ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
