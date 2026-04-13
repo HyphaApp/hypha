@@ -170,6 +170,11 @@ class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
 
 
 class BaseConceptDeterminationForm(forms.Form):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
+
     titles = {
         1: "Feedback",
     }
@@ -241,6 +246,11 @@ class BaseConceptDeterminationForm(forms.Form):
 
 
 class BaseProposalDeterminationForm(forms.Form):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
+
     titles = {
         1: "A. Determination",
         2: "B. General thoughts",
@@ -330,6 +340,11 @@ class BaseProposalDeterminationForm(forms.Form):
 class ConceptDeterminationForm(
     BaseConceptDeterminationForm, BaseNormalDeterminationForm
 ):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
+
     def __init__(
         self, *args, submission, user, edit=False, initial=None, instance=None, **kwargs
     ):
@@ -400,6 +415,11 @@ class ConceptDeterminationForm(
 class ProposalDeterminationForm(
     BaseProposalDeterminationForm, BaseNormalDeterminationForm
 ):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
+
     def __init__(
         self, *args, submission, user, edit=False, initial=None, instance=None, **kwargs
     ):
@@ -441,6 +461,11 @@ class ProposalDeterminationForm(
 class BatchConceptDeterminationForm(
     BaseConceptDeterminationForm, BaseBatchDeterminationForm
 ):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
+
     def __init__(self, *args, submissions, initial=None, **kwargs):
         if initial is None:
             initial = {}
@@ -456,6 +481,11 @@ class BatchConceptDeterminationForm(
 class BatchProposalDeterminationForm(
     BaseProposalDeterminationForm, BaseBatchDeterminationForm
 ):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
+
     def __init__(self, *args, submissions, initial=None, **kwargs):
         if initial is None:
             initial = {}

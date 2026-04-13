@@ -33,9 +33,7 @@ class SystemSettings(BaseGenericSetting):
     home_no_applications_msg = RichTextField(
         _("No open applications message"),
         help_text=_("The message to be displayed when there are no open applications."),
-        default=_(
-            "<h4>There are currently no open applications, check back later!</h4>"
-        ),
+        default="<h4>There are currently no open applications, check back later!</h4>",
     )
 
     site_logo_default = models.ForeignKey(
@@ -74,9 +72,7 @@ class SystemSettings(BaseGenericSetting):
 
     footer_content = models.TextField(
         _("Footer content"),
-        default=_(
-            '<p>Configure this text in Wagtail admin -> Settings -> System settings.</p>\n<br>\n<a href="#" onclick="openConsentPrompt()">Cookie Settings</a>'
-        ),
+        default='<p>Configure this text in Wagtail admin -> Settings -> System settings.</p>\n<br>\n<a href="#" onclick="openConsentPrompt()">Cookie Settings</a>',
         help_text=_("This will be added to the footer, html tags is allowed."),
         blank=True,
     )
@@ -84,23 +80,21 @@ class SystemSettings(BaseGenericSetting):
     title_404 = models.CharField(
         _("Title"),
         max_length=255,
-        default=_("Page not found"),
+        default="Page not found",
     )
     body_404 = RichTextField(
         _("Text"),
-        default=_(
-            "<p>You may be trying to find a page that doesn&rsquo;t exist or has been moved.</p>"
-        ),
+        default="<p>You may be trying to find a page that doesn&rsquo;t exist or has been moved.</p>",
     )
 
     title_403 = models.CharField(
         _("Title"),
         max_length=255,
-        default=_("Permission Denied"),
+        default="Permission Denied",
     )
     body_403 = RichTextField(
         _("Text"),
-        default=_("<p>You might not have access to the requested resource.</p>"),
+        default="<p>You might not have access to the requested resource.</p>",
     )
 
     panels = [

@@ -618,7 +618,7 @@ class TestCanAssignPafApprovers(TestCase):
         self.assertFalse(ok)
 
     def test_sequential_empty_slot_allows_assignment(self):
-        approver = StaffFactory()
+        approver = ApproverFactory()
         # Create approval with NO user (empty slot)
         approval = PAFApprovalsFactory(project=self.project, user=None, approved=False)
         approval.user = None
@@ -632,7 +632,7 @@ class TestCanAssignPafApprovers(TestCase):
         self.assertTrue(ok)
 
     def test_parallel_empty_slot_allows_assignment(self):
-        approver = StaffFactory()
+        approver = ApproverFactory()
         approval = PAFApprovalsFactory(project=self.project, user=None, approved=False)
         approval.user = None
         approval.save()
