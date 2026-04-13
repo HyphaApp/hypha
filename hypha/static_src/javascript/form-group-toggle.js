@@ -1,48 +1,84 @@
-/* eslint-disable no-loop-func */
-(function ($) {
-  var i;
-  for (i = 2; i < 20; i++) {
-    var $field_group = $(".field-group-" + i);
-    if ($field_group.length) {
-      var classes = "field-group-wrapper field-group-wrapper-" + i;
-      $field_group.each(function () {
-        if ($(this).data("hidden") && classes.indexOf("js-hidden") === -1) {
-          classes += " js-hidden";
-        }
-      });
-      $field_group.wrapAll('<div class="' + classes + '" />');
+(function () {
+  "use strict";
+
+  /**
+   * Wrap all elements matching a selector into a single wrapper div.
+   * Similar to jQuery's wrapAll.
+   */
+  function wrapAll(elements, wrapperClass) {
+    if (!elements.length) return null;
+    const wrapper = document.createElement("div");
+    wrapper.className = wrapperClass;
+    elements[0].parentNode.insertBefore(wrapper, elements[0]);
+    elements.forEach(function (el) {
+      wrapper.appendChild(el);
+    });
+    return wrapper;
+  }
+
+  /**
+   * Add or remove `required` on form inputs within a group element.
+   * Uses `data-required="True"` on each fieldset to know which fields
+   * should be required when the group is visible.
+   */
+  function setGroupRequired(wrapper, visible) {
+    if (visible) {
+      wrapper
+        .querySelectorAll("[data-required='True']")
+        .forEach(function (fieldset) {
+          fieldset
+            .querySelectorAll("input:not([type='hidden']), select, textarea")
+            .forEach(function (el) {
+              el.setAttribute("required", "");
+            });
+        });
     } else {
-      break;
+      wrapper
+        .querySelectorAll("input:not([type='hidden']), select, textarea")
+        .forEach(function (el) {
+          el.removeAttribute("required");
+        });
     }
   }
 
-  $('.form-fields-grouper input[type="radio"]').on("change", function () {
-    var radio_input_value = $(this).val();
-    var fields_grouper_div = this.closest(".form-fields-grouper");
-    var fields_grouper_for = $(fields_grouper_div).data("grouper-for");
-    var group_toggle_on_value = $(fields_grouper_div).data("toggle-on");
-    var group_toggle_off_value = $(fields_grouper_div).data("toggle-off");
+  // --- Build group wrappers for numeric group_number-based groups ---
+  for (var i = 2; i < 20; i++) {
+    var groupEls = Array.from(document.querySelectorAll(".field-group-" + i));
+    if (!groupEls.length) break;
 
-    if (radio_input_value === group_toggle_on_value) {
-      $(".field-group-wrapper-" + fields_grouper_for)
-        .removeClass("js-hidden")
-        .addClass("highlighted");
-      $(".field-group-" + fields_grouper_for).each(function () {
-        if ($(this).data("required") === "True") {
-          $(this).children(".form__item").children().attr("required", true);
-          $(this)
-            .children("label")
-            .append('<span class="form__required">*</span>');
+    var isHidden = groupEls.some(function (el) {
+      return el.dataset.hidden === "true";
+    });
+
+    var classes = "field-group-wrapper field-group-wrapper-" + i;
+    if (isHidden) classes += " js-hidden";
+
+    wrapAll(groupEls, classes);
+  }
+
+  // --- Listen for changes on toggle radio buttons ---
+  document.querySelectorAll(".form-fields-grouper").forEach(function (grouper) {
+    var grouperFor = grouper.dataset.grouperFor;
+    var toggleOn = grouper.dataset.toggleOn;
+    var toggleOff = grouper.dataset.toggleOff;
+
+    grouper.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+      radio.addEventListener("change", function () {
+        var wrapper = document.querySelector(
+          ".field-group-wrapper-" + grouperFor
+        );
+        if (!wrapper) return;
+
+        if (this.value === toggleOn) {
+          wrapper.classList.remove("js-hidden");
+          wrapper.classList.add("highlighted");
+          setGroupRequired(wrapper, true);
+        } else if (this.value === toggleOff) {
+          wrapper.classList.remove("highlighted");
+          wrapper.classList.add("js-hidden");
+          setGroupRequired(wrapper, false);
         }
       });
-    } else if (radio_input_value === group_toggle_off_value) {
-      $(".field-group-wrapper-" + fields_grouper_for)
-        .removeClass("highlighted")
-        .addClass("js-hidden");
-      $(".field-group-" + fields_grouper_for).each(function () {
-        $(this).children(".form__item").children().attr("required", false);
-        $(this).children("label").children(".form__required").remove();
-      });
-    }
+    });
   });
-})(jQuery);
+})();

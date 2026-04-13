@@ -178,10 +178,6 @@
             <template x-init="$nextTick(() => {$dispatch('notice', {type: '{{ message.tags }}', text: '{{ message }}'})})"></template>
         {% endfor %}
 
-        <!-- We still need jQuery for a few custom scripts, will be removed soon -->
-        <!-- Please do not add new features that require jQuery! -->
-        <script src="{% static 'js/vendor/jquery.min.js' %}"></script>
-
         <!-- Needed for most forms so load it here once. -->
         <script src="{% static 'file_form/file_form.min.js' %}"></script>
         <script src="{% static 'js/file-uploads.js' %}"></script>

@@ -1,8 +1,10 @@
-(function ($) {
+(function () {
+  "use strict";
+
   /**
-   * Strip html tags from text.
-   * @param {string} html - The html
-   * @returns {string} The text without html tags.
+   * Strip HTML tags from a string and return plain text.
+   * @param {string} html
+   * @returns {string}
    */
   function strip(html) {
     var doc = new DOMParser().parseFromString(html, "text/html");
@@ -10,107 +12,126 @@
   }
 
   /**
-   * Get all questions on the page/form.
-   * @returns {string} The questions and user input.
+   * Collect all questions and user input from the form as a Markdown string.
+   * @returns {string}
    */
-  function get_questions() {
-    var questions_text = [];
-    var i = 1;
-    questions_text.push("# " + $("h1:first").html());
-    $(".application-form")
-      .find(".form__group, .rich-text, h2, h3")
-      .each(function () {
-        var question_text = "";
-        var label_text = $(this).find(".form__question").html();
-        if (label_text) {
-          // Get the label, i.e. question.
-          label_text = strip(label_text);
-          label_text = label_text.replace(/(\r\n|\n|\r)/gm, "");
-          label_text = label_text.replace(/[ ]+/g, " ");
-          question_text = "### " + label_text;
+  function getQuestions() {
+    var lines = [];
+    var sectionIndex = 1;
 
-          var help_text = $(this).find(".form__help").html();
-          var word_limit = $(this).attr("data-word-limit");
-          var $input_list = $(this).find(".form__item > ul > li");
-          var input_text = $(this).find("input").val();
-          var rich_text = $(this).find(".tinymce4-editor").val();
+    var h1 = document.querySelector("h1");
+    if (h1) lines.push("# " + h1.innerHTML);
 
-          // Get help text.
-          if (help_text) {
-            question_text = question_text + "\n\n" + strip(help_text);
+    var form = document.querySelector(".application-form");
+    if (!form) return lines.join("\n\n");
+
+    form
+      .querySelectorAll(".form__group, .rich-text, h2, h3")
+      .forEach(function (el) {
+        var questionText = "";
+        var labelEl = el.querySelector(".form__question");
+
+        if (labelEl) {
+          // Form field: build label + help + answer
+          var labelText = strip(labelEl.innerHTML)
+            .replace(/(\r\n|\n|\r)/gm, "")
+            .replace(/[ ]+/g, " ");
+          questionText = "### " + labelText;
+
+          var helpEl = el.querySelector(".form__help");
+          if (helpEl) {
+            questionText += "\n\n" + strip(helpEl.innerHTML);
           }
 
-          if (word_limit) {
-            question_text =
-              question_text +
-              "\n\nLimit this field to " +
-              word_limit +
-              " words.";
+          var wordLimit = el.dataset.wordLimit;
+          if (wordLimit) {
+            questionText += "\n\nLimit this field to " + wordLimit + " words.";
           }
 
-          // Get the user input if any.
-          if ($input_list.length !== 0) {
-            var input_list = [];
-            var input_item = "";
-            $input_list.each(function () {
-              input_item = strip($(this).html());
-              if ($(this).find("input").is(":checked")) {
-                input_item = input_item + " (selected)";
-              }
-              input_list.push(input_item);
+          var listItems = el.querySelectorAll(".form__item > ul > li");
+          var inputEl = el.querySelector("input");
+          var richTextEl = el.querySelector(".tinymce4-editor");
+
+          if (listItems.length) {
+            var itemTexts = Array.from(listItems).map(function (li) {
+              var text = strip(li.innerHTML);
+              if (li.querySelector("input:checked")) text += " (selected)";
+              return text;
             });
-            question_text = question_text + "\n\n" + input_list.join("\n");
-          } else if (input_text) {
-            question_text = question_text + "\n\n" + strip(input_text);
-          } else if (rich_text) {
-            question_text = question_text + "\n\n" + strip(rich_text);
+            questionText += "\n\n" + itemTexts.join("\n");
+          } else if (inputEl && inputEl.value) {
+            questionText += "\n\n" + strip(inputEl.value);
+          } else if (richTextEl && richTextEl.value) {
+            questionText += "\n\n" + strip(richTextEl.value);
           }
         } else {
-          // Get the sub headers and help text.
-          question_text = strip($(this).html());
-          if ($(this).find("h2, h3")) {
-            question_text = "## " + i + ". " + question_text;
-            i++;
+          // Heading or markup block
+          questionText = strip(el.innerHTML);
+          if (el.tagName === "H2" || el.tagName === "H3") {
+            questionText = "## " + sectionIndex + ". " + questionText;
+            sectionIndex++;
           }
         }
-        questions_text.push(question_text);
+
+        lines.push(questionText);
       });
-    return questions_text.join("\n\n");
+
+    return lines.join("\n\n");
   }
 
-  // Allow users to copy all questions to the clipboard.
-  if (
-    document.queryCommandSupported &&
-    document.queryCommandSupported("copy")
-  ) {
-    var $button = $("<button/>")
-      .text("Copy questions to clipboard")
-      .addClass("btn sm:btn-sm w-full sm:w-auto js-clipboard-button")
-      .attr(
-        "title",
-        "Copies all the questions and user input to the clipboard in plain text."
-      );
-    var $application_form = $(".application-form");
-    $button
-      .clone()
-      .css({ display: "block", "margin-left": "auto" })
-      .insertBefore($application_form);
-    $button.insertAfter($application_form.find("button").last());
+  var applicationForm = document.querySelector(".application-form");
+  if (!applicationForm) return;
 
-    $(".js-clipboard-button").on("click", function (e) {
+  // Create the copy button
+  var button = document.createElement("button");
+  button.textContent = "Copy questions to clipboard";
+  button.className = "btn sm:btn-sm w-full sm:w-auto js-clipboard-button";
+  button.title =
+    "Copies all the questions and user input to the clipboard in plain text.";
+  button.type = "button";
+
+  // Insert a copy above the form (styled to sit at the right)
+  var topButton = button.cloneNode(true);
+  topButton.style.display = "block";
+  topButton.style.marginLeft = "auto";
+  applicationForm.parentNode.insertBefore(topButton, applicationForm);
+
+  // Insert a copy after the last button inside the form
+  var lastButton = applicationForm.querySelector("button:last-of-type");
+  if (lastButton) {
+    lastButton.insertAdjacentElement("afterend", button);
+  } else {
+    applicationForm.appendChild(button);
+  }
+
+  // Attach click handler to all copy buttons
+  document.querySelectorAll(".js-clipboard-button").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
       e.preventDefault();
-      $application_form.addClass("animate-flash");
-      var questions = get_questions();
-      var $textarea = $("<textarea>")
-        .html(questions)
-        .addClass("visually-hidden");
-      $textarea.appendTo("body");
-      $textarea.select();
-      document.execCommand("copy");
-      $textarea.remove();
-      setTimeout(function () {
-        $application_form.removeClass("animate-flash");
-      }, 1200);
+      var text = getQuestions();
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          flashForm();
+        });
+      } else {
+        // Fallback for older browsers
+        var textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.className = "visually-hidden";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        flashForm();
+      }
     });
+  });
+
+  function flashForm() {
+    applicationForm.classList.add("animate-flash");
+    setTimeout(function () {
+      applicationForm.classList.remove("animate-flash");
+    }, 1200);
   }
-})(jQuery);
+})();
