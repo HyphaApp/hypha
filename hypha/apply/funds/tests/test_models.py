@@ -701,6 +701,22 @@ class TestAnonymizedSubmission(TestCase):
         }
         self.assertDictEqual(submission_values_dict, anonymized_values_dict)
 
+    def test_create_from_dict_all_none_returns_none(self):
+        result = AnonymizedSubmission.from_dict(
+            {
+                "form_data": None,
+                "page_id": None,
+                "round_id": None,
+                "status": None,
+                "submit_time": None,
+                "user_id": None,
+                "screening_statuses": None,
+            },
+            save_user=False,
+        )
+        self.assertIsNone(result)
+        self.assertEqual(AnonymizedSubmission.objects.count(), 0)
+
 
 class TestSubmissionRenderMethods(TestCase):
     def test_named_blocks_not_included_in_answers(self):
