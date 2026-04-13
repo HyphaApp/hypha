@@ -54,7 +54,7 @@ class SubmissionsTable(tables.Table):
         orderable=True,
         attrs={
             "td": {
-                "class": "js-title max-w-sm",
+                "class": "max-w-sm",
             },
             "a": {
                 "data-tippy-content": lambda record: render_title(record),
@@ -524,9 +524,6 @@ class ReviewerLeaderboardDetailTable(tables.Table):
         orderable=True,
         verbose_name=_("Submission"),
         attrs={
-            "td": {
-                "class": "js-title",
-            },
             "a": {
                 "data-tippy-content": lambda record: render_title(record),
                 "data-tippy-placement": "top",
