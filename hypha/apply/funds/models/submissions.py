@@ -1078,12 +1078,12 @@ class ApplicationSubmission(
             )
 
 
-class ApplicationSubmissionSkeletonQueryset(models.QuerySet):
+class AnonymizedSubmissionQueryset(models.QuerySet):
     def value(self):
         return self.aggregate(Count("value"), Avg("value"), Sum("value"))
 
 
-class ApplicationSubmissionSkeleton(models.Model):
+class AnonymizedSubmission(models.Model):
     """The class to be used for stripping PII from an application and making it minimal"""
 
     user = models.ForeignKey(
@@ -1104,7 +1104,7 @@ class ApplicationSubmissionSkeleton(models.Model):
     round = models.ForeignKey(
         "wagtailcore.Page",
         on_delete=models.PROTECT,
-        related_name="skeleton_submissions",
+        related_name="anonymized_submissions",
         null=True,
     )
 
@@ -1114,19 +1114,19 @@ class ApplicationSubmissionSkeleton(models.Model):
 
     screening_status = models.ForeignKey(
         "funds.ScreeningStatus",
-        related_name="skeleton_submissions",
+        related_name="anonymized_submissions",
         null=True,
         blank=True,
         on_delete=models.PROTECT,
     )
 
-    objects = ApplicationSubmissionSkeletonQueryset.as_manager()
+    objects = AnonymizedSubmissionQueryset.as_manager()
 
     @classmethod
     def from_dict(
         cls, dict_submission: Dict[str, Any], save_user: bool = False
     ) -> Self | None:
-        """Creates an ApplicationSubmissionSkeleton from a given dictionary
+        """Creates an AnonymizedSubmission from a given dictionary
 
         Attempts to pull values from keys of `form_data`, `page_id`, `round_id`, `status`, `submit_time` and optionally (save_user=True) `user_id`.
 
@@ -1134,12 +1134,12 @@ class ApplicationSubmissionSkeleton(models.Model):
         ie. if `dict_submission.get("page_id") = None`, `dict_submission.get("applicationsubmission__page_id")` will be tried
 
         Args:
-            dict_submission: The dictionary containing the expected keys to create a ApplicationSubmissionSkeleton from
-            save_user: bool to save the provided user ID in `dict_submission` to the ApplicationSubmissionSkeleton
+            dict_submission: The dictionary containing the expected keys to create an AnonymizedSubmission from
+            save_user: bool to save the provided user ID in `dict_submission` to the AnonymizedSubmission
 
-        Returns: Populated ApplicationSubmissionSkeleton if successful, None if not
+        Returns: Populated AnonymizedSubmission if successful, None if not
         """
-        # If all values of the application dictionary are none, don't create a new skeleton app
+        # If all values of the application dictionary are none, don't create a new anonymized submission
         if all(x is None for x in dict_submission.values()):
             return None
 
@@ -1155,7 +1155,7 @@ class ApplicationSubmissionSkeleton(models.Model):
         ):
             value = form_data.get("value")
 
-        skeleton = ApplicationSubmissionSkeleton.objects.create(
+        anonymized = AnonymizedSubmission.objects.create(
             user_id=user,
             page_id=dict_submission.get("page_id")
             or dict_submission.get("applicationsubmission__page_id"),
@@ -1169,28 +1169,28 @@ class ApplicationSubmissionSkeleton(models.Model):
             or dict_submission.get("applicationsubmission__screening_statuses"),
         )
 
-        return skeleton
+        return anonymized
 
     @classmethod
     def from_submission(
         cls, submission: ApplicationSubmission, save_user: bool = False
     ) -> Self:
-        """Creates an ApplicationSubmissionSkeleton from a given ApplicationSubmission object
+        """Creates an AnonymizedSubmission from a given ApplicationSubmission object
 
-        Note that this will NOT delete the provided ApplicationSubmission, just creates a ApplicationSubmissionSkeleton.
+        Note that this will NOT delete the provided ApplicationSubmission, just creates an AnonymizedSubmission.
 
         Args:
-            submission: The ApplicationSubmission to create a ApplicationSubmissionSkeleton from
-            save_user: bool to save the user associated on the ApplicationSubmission to the ApplicationSubmissionSkeleton
+            submission: The ApplicationSubmission to create an AnonymizedSubmission from
+            save_user: bool to save the user associated on the ApplicationSubmission to the AnonymizedSubmission
 
-        Returns: Populated ApplicationSubmissionSkeleton
+        Returns: Populated AnonymizedSubmission
         """
 
         user = None
         if save_user:
             user = submission.user
 
-        skeleton = ApplicationSubmissionSkeleton.objects.create(
+        anonymized = AnonymizedSubmission.objects.create(
             user=user,
             page=submission.page,
             round=submission.round,
@@ -1202,6 +1202,6 @@ class ApplicationSubmissionSkeleton(models.Model):
 
         # TODO: Handle categories here
 
-        skeleton.save()
+        anonymized.save()
 
-        return skeleton
+        return anonymized

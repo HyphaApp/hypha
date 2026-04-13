@@ -51,7 +51,7 @@ FILE_ALLOWED_EXTENSIONS = [
 FILE_ACCEPT_ATTR_VALUE = ", ".join(["." + ext for ext in FILE_ALLOWED_EXTENSIONS])
 
 # Make it possible for staff to anonymise users and applications.
-SUBMISSION_SKELETONING_ENABLED = env.bool("SUBMISSION_SKELETONING_ENABLED", False)
+SUBMISSION_ANONYMIZATION_ENABLED = env.bool("SUBMISSION_ANONYMIZATION_ENABLED", False)
 
 # Give staff lead permissions.
 # Only effects setting external reviewers for now.

@@ -61,23 +61,21 @@ class UserQuerySet(models.QuerySet):
     def contracting(self):
         return self.filter(groups__name=CONTRACTING_GROUP_NAME, is_active=True)
 
-    def delete(self, create_skeleton_submissions: bool = False):
+    def delete(self, anonymize_submissions: bool = False):
         """Handling the deletion of users
 
         Deletes the user and deletes/anonymizes their submissions depending on the provided argument
 
-        NOTE: if global setting `SUBMISSION_SKELETONING_ENABLED` is not enabled no submissions will be anonymized
+        NOTE: if global setting `SUBMISSION_ANONYMIZATION_ENABLED` is not enabled no submissions will be anonymized
 
         Args:
-            create_skeleton_submissions: whether or not to anonymize all the user's submissions that aren't drafts.
+            anonymize_submissions: whether or not to anonymize all the user's submissions that aren't drafts.
 
         """
-        submissions_to_skeleton = []
-        if create_skeleton_submissions and settings.SUBMISSION_SKELETONING_ENABLED:
-            ApplicationSubmissionSkeleton = apps.get_model(
-                "funds", "ApplicationSubmissionSkeleton"
-            )
-            submissions_to_skeleton = list(
+        submissions_to_anonymize = []
+        if anonymize_submissions and settings.SUBMISSION_ANONYMIZATION_ENABLED:
+            AnonymizedSubmission = apps.get_model("funds", "AnonymizedSubmission")
+            submissions_to_anonymize = list(
                 self.values(
                     "applicationsubmission__form_data",
                     "applicationsubmission__page_id",
@@ -90,9 +88,9 @@ class UserQuerySet(models.QuerySet):
 
         delete_return = super().delete()
 
-        # Ensure account deletes successfully before skeletoning applications
-        for submission_dict in submissions_to_skeleton:
-            ApplicationSubmissionSkeleton.from_dict(submission_dict)
+        # Ensure account deletes successfully before anonymizing applications
+        for submission_dict in submissions_to_anonymize:
+            AnonymizedSubmission.from_dict(submission_dict)
 
         return delete_return
 
@@ -353,24 +351,22 @@ class User(AbstractUser):
         return reverse("wagtailusers_users:edit", args=[self.id])
 
     def delete(
-        self, create_skeleton_submissions: bool = False, using=None, keep_parents=False
+        self, anonymize_submissions: bool = False, using=None, keep_parents=False
     ):
         """Handling the deletion of a user
 
         Deletes the user and deletes/anonymizes their submissions depending on the provided argument
 
-        NOTE: if global setting `SUBMISSION_SKELETONING_ENABLED` is not enabled no submissions will be anonymized
+        NOTE: if global setting `SUBMISSION_ANONYMIZATION_ENABLED` is not enabled no submissions will be anonymized
 
         Args:
-            create_skeleton_submissions: whether or not to anonymize all the user's submissions that aren't drafts.
+            anonymize_submissions: whether or not to anonymize all the user's submissions that aren't drafts.
 
         """
-        submissions_to_skeleton = []
-        if create_skeleton_submissions and settings.SUBMISSION_SKELETONING_ENABLED:
-            ApplicationSubmissionSkeleton = apps.get_model(
-                "funds", "ApplicationSubmissionSkeleton"
-            )
-            submissions_to_skeleton = list(
+        submissions_to_anonymize = []
+        if anonymize_submissions and settings.SUBMISSION_ANONYMIZATION_ENABLED:
+            AnonymizedSubmission = apps.get_model("funds", "AnonymizedSubmission")
+            submissions_to_anonymize = list(
                 self.applicationsubmission_set.values(
                     "form_data",
                     "page_id",
@@ -383,8 +379,8 @@ class User(AbstractUser):
 
         delete_return = super().delete(using, keep_parents)
 
-        for submission_dict in submissions_to_skeleton:
-            ApplicationSubmissionSkeleton.from_dict(submission_dict)
+        for submission_dict in submissions_to_anonymize:
+            AnonymizedSubmission.from_dict(submission_dict)
 
         return delete_return
 

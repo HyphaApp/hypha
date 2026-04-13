@@ -1,7 +1,7 @@
 from django.test import override_settings
 from django.urls import reverse
 
-from hypha.apply.funds.models.submissions import ApplicationSubmissionSkeleton
+from hypha.apply.funds.models.submissions import AnonymizedSubmission
 from hypha.apply.funds.tests.factories.models import ApplicationSubmissionFactory
 from hypha.apply.funds.workflows import DRAFT_STATE
 from hypha.apply.users.tests.factories import AdminFactory, ApplicantFactory
@@ -39,8 +39,8 @@ def test_submission_delete_by_admin(db, client):
     assert res.status_code == 404
 
 
-@override_settings(SUBMISSION_SKELETONING_ENABLED=True)
-def test_submission_delete_by_admin_skeleton_enabled(db, client):
+@override_settings(SUBMISSION_ANONYMIZATION_ENABLED=True)
+def test_submission_delete_by_admin_anonymization_enabled(db, client):
     # Check admin can delete submission
     user = AdminFactory()
     submission = ApplicationSubmissionFactory()
@@ -60,12 +60,12 @@ def test_submission_delete_by_admin_skeleton_enabled(db, client):
     res = client.get(delete_url)
     assert res.status_code == 404
 
-    # Ensure no skeleton submission was created
-    assert ApplicationSubmissionSkeleton.objects.all().count() == 0
+    # Ensure no anonymized submission was created
+    assert AnonymizedSubmission.objects.all().count() == 0
 
 
-@override_settings(SUBMISSION_SKELETONING_ENABLED=True)
-def test_submission_skeleton_by_admin_skeleton_enabled(db, client):
+@override_settings(SUBMISSION_ANONYMIZATION_ENABLED=True)
+def test_submission_anonymize_by_admin_anonymization_enabled(db, client):
     user = AdminFactory()
     submission = ApplicationSubmissionFactory()
 
@@ -76,7 +76,7 @@ def test_submission_skeleton_by_admin_skeleton_enabled(db, client):
     assert "<form" in res.content.decode()
     assert f'action="{delete_url}"' in res.content.decode()
 
-    # Add the skeleton option to the delete form
+    # Add the anonymize option to the delete form
     res = client.post(
         delete_url, data={"delete": "delete", "anon_or_delete": "ANONYMIZE"}
     )
@@ -87,11 +87,11 @@ def test_submission_skeleton_by_admin_skeleton_enabled(db, client):
     res = client.get(delete_url)
     assert res.status_code == 404
 
-    # Ensure a new skeleton submission was created
-    assert ApplicationSubmissionSkeleton.objects.all().count() == 1
+    # Ensure a new anonymized submission was created
+    assert AnonymizedSubmission.objects.all().count() == 1
 
-    last_skeleton = ApplicationSubmissionSkeleton.objects.last()
-    assert last_skeleton.value == submission.form_data["value"]
+    last_anonymized = AnonymizedSubmission.objects.last()
+    assert last_anonymized.value == submission.form_data["value"]
 
 
 def test_submission_delete_by_applicant(db, client):

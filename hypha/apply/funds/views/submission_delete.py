@@ -8,12 +8,12 @@ from rolepermissions.checkers import has_object_permission
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Event
 
-from ..models import ApplicationSubmission, ApplicationSubmissionSkeleton
+from ..models import AnonymizedSubmission, ApplicationSubmission
 from ..workflows.constants import DRAFT_STATE
 
 
 class SubmissionAnonymizeView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    """View for anonymizing (skeletoning) a submission via confirmation modal."""
+    """View for anonymizing a submission via confirmation modal."""
 
     model = ApplicationSubmission
     template_name = "funds/applicationsubmission_confirm_anonymize.html"
@@ -29,7 +29,7 @@ class SubmissionAnonymizeView(LoginRequiredMixin, UserPassesTestMixin, DeleteVie
     def form_valid(self, form):
         submission = self.get_object()
 
-        ApplicationSubmissionSkeleton.from_submission(submission)
+        AnonymizedSubmission.from_submission(submission)
 
         Event.objects.filter(
             type__in=[MESSAGES.NEW_SUBMISSION, MESSAGES.COMMENT],

@@ -42,15 +42,13 @@ def notify_after_edit_user(request, user):
 @hooks.register("before_delete_user")
 def anonymize_delete_user_submissions(request, user):
     if (
-        settings.SUBMISSION_SKELETONING_ENABLED
+        settings.SUBMISSION_ANONYMIZATION_ENABLED
         and request.method == "POST"
         and request.POST.get("handle_submissions") == "anonymize"
     ):
-        ApplicationSubmissionSkeleton = apps.get_model(
-            "funds", "ApplicationSubmissionSkeleton"
-        )
+        AnonymizedSubmission = apps.get_model("funds", "AnonymizedSubmission")
 
-        submissions_to_skeleton = list(
+        submissions_to_anonymize = list(
             user.applicationsubmission_set.exclude_draft().values(
                 "form_data",
                 "page_id",
@@ -61,8 +59,8 @@ def anonymize_delete_user_submissions(request, user):
             )
         )
 
-        for submission_dict in submissions_to_skeleton:
-            ApplicationSubmissionSkeleton.from_dict(submission_dict)
+        for submission_dict in submissions_to_anonymize:
+            AnonymizedSubmission.from_dict(submission_dict)
 
 
 @hooks.register("before_bulk_action")
@@ -71,7 +69,7 @@ def bulk_anonymize_delete_user_submissions(
 ):
     # Handling for bulk deletion of users when anonymization is selected
     if (
-        settings.SUBMISSION_SKELETONING_ENABLED
+        settings.SUBMISSION_ANONYMIZATION_ENABLED
         and action_type == "delete"
         and request.method == "POST"
         and request.POST.get("handle_submissions") == "anonymize"
@@ -79,11 +77,9 @@ def bulk_anonymize_delete_user_submissions(
     ):
         ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
 
-        ApplicationSubmissionSkeleton = apps.get_model(
-            "funds", "ApplicationSubmissionSkeleton"
-        )
+        AnonymizedSubmission = apps.get_model("funds", "AnonymizedSubmission")
 
-        submissions_to_skeleton = list(
+        submissions_to_anonymize = list(
             ApplicationSubmission.objects.filter(user__in=objects)
             .exclude_draft()
             .values(
@@ -96,8 +92,8 @@ def bulk_anonymize_delete_user_submissions(
             )
         )
 
-        for submission_dict in submissions_to_skeleton:
-            ApplicationSubmissionSkeleton.from_dict(submission_dict)
+        for submission_dict in submissions_to_anonymize:
+            AnonymizedSubmission.from_dict(submission_dict)
 
 
 # Handle setting of `is_staff` after updating a user

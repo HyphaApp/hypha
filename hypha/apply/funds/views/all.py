@@ -342,7 +342,7 @@ def submissions_all(
         "can_access_drafts": can_access_drafts,
         "can_bulk_archive": permissions.can_bulk_archive_submissions(request.user),
         "can_bulk_delete": permissions.can_bulk_delete_submissions(request.user),
-        "can_bulk_skeleton": permissions.can_bulk_delete_submissions(request.user),
+        "can_bulk_anonymize": permissions.can_bulk_delete_submissions(request.user),
         "can_export_submissions": permissions.can_export_submissions(request.user),
         "enable_selection": permissions.can_bulk_update_submissions(request.user),
     } | screening_decision_context(selected_screening_statuses)
@@ -387,8 +387,8 @@ def bulk_delete_submissions(request):
 
 @login_required
 @require_http_methods(["POST"])
-def bulk_skeleton_submissions(request):
-    if settings.SUBMISSION_SKELETONING_ENABLED:
+def bulk_anonymize_submissions(request):
+    if settings.SUBMISSION_ANONYMIZATION_ENABLED:
         if not permissions.can_bulk_delete_submissions(request.user):
             return HttpResponseForbidden()
 
@@ -397,7 +397,7 @@ def bulk_skeleton_submissions(request):
             id__in=submission_ids
         ).values("id", "form_data", "page_id", "round_id", "status", "submit_time")
 
-        services.bulk_covert_to_skeleton_submissions(
+        services.bulk_anonymize_submissions(
             submissions=submissions,
             user=request.user,
             request=request,

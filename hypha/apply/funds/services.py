@@ -91,23 +91,21 @@ def bulk_delete_submissions(
     return submissions
 
 
-def bulk_covert_to_skeleton_submissions(
+def bulk_anonymize_submissions(
     submissions: QuerySet, user, request: HttpRequest
 ) -> QuerySet:
-    """Converts submissions to skeleton submissions, deletes draft submissions and generates action log.
+    """Anonymizes submissions, deletes draft submissions and generates action log.
 
     Args:
-        submissions: queryset of submissions to convert to skeleton applications
+        submissions: queryset of submissions to anonymize
         user: user who is anonymizing the submissions
         request: django request object
 
     Returns:
-        QuerySet of submissions that have been archived
+        QuerySet of submissions that have been anonymized
     """
     ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
-    ApplicationSubmissionSkeleton = apps.get_model(
-        "funds", "ApplicationSubmissionSkeleton"
-    )
+    AnonymizedSubmission = apps.get_model("funds", "AnonymizedSubmission")
 
     # delete NEW_SUBMISSION events for all submissions
     submission_dict_list = submissions.values(
@@ -127,11 +125,11 @@ def bulk_covert_to_skeleton_submissions(
         type=MESSAGES.NEW_SUBMISSION, object_id__in=submission_ids
     ).delete()
 
-    skeletons = []
+    anonymized = []
     for submission_dict in submission_dict_list:
         if submission_dict["status"] != DRAFT_STATE:
-            skeletons.append(
-                ApplicationSubmissionSkeleton.from_dict(submission_dict, save_user=True)
+            anonymized.append(
+                AnonymizedSubmission.from_dict(submission_dict, save_user=True)
             )
 
     # delete submissions
@@ -148,13 +146,13 @@ def bulk_covert_to_skeleton_submissions(
     )
 
     messenger(
-        MESSAGES.BATCH_SKELETON_SUBMISSION,
+        MESSAGES.BATCH_ANONYMIZE_SUBMISSION,
         request=request,
         user=user,
         sources=submissions,
     )
 
-    return skeletons
+    return anonymized
 
 
 def bulk_update_lead(

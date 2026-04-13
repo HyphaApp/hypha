@@ -3,7 +3,7 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 
 from hypha.apply.funds.models.submissions import ApplicationSubmission
-from hypha.apply.funds.services import bulk_covert_to_skeleton_submissions
+from hypha.apply.funds.services import bulk_anonymize_submissions
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.users.tests.factories import StaffFactory
 
@@ -18,9 +18,9 @@ class BulkActions(TestCase):
         request._messages = FallbackStorage(request)
         return request
 
-    def test_bulk_skeleton_submissions(self):
+    def test_bulk_anonymize_submissions(self):
         self.maxDiff = None
-        request = self.dummy_request("/apply/submissions/all/bulk_skeleton/")
+        request = self.dummy_request("/apply/submissions/all/bulk_anonymize/")
         user = StaffFactory()
         submissions = ApplicationSubmissionFactory.create_batch(4)
         submission_values = [
@@ -39,5 +39,5 @@ class BulkActions(TestCase):
             id__in=[submission["id"] for submission in submission_values]
         )
 
-        skeletons = bulk_covert_to_skeleton_submissions(submission_qs, user, request)
-        self.assertEqual(len(submission_values), len(skeletons))
+        anonymized = bulk_anonymize_submissions(submission_qs, user, request)
+        self.assertEqual(len(submission_values), len(anonymized))

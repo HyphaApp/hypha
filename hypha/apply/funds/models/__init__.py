@@ -14,14 +14,14 @@ from .forms import ApplicationForm
 from .reminders import Reminder
 from .reviewer_role import ReviewerRole, ReviewerSettings
 from .screening import ScreeningStatus
-from .submissions import ApplicationSubmission, ApplicationSubmissionSkeleton
+from .submissions import AnonymizedSubmission, ApplicationSubmission
 
 __all__ = [
     "ApplicationForm",
     "ApplicationRevision",
     "ApplicationSettings",
     "ApplicationSubmission",
-    "ApplicationSubmissionSkeleton",
+    "AnonymizedSubmission",
     "AssignedReviewers",
     "Reminder",
     "ReviewerRole",

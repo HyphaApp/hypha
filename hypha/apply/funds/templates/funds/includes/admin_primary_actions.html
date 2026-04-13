@@ -152,7 +152,7 @@
 
             {% can "delete_submission" object as can_delete_submission %}
             {% if can_delete_submission %}
-                {% if SUBMISSION_SKELETONING_ENABLED %}
+                {% if SUBMISSION_ANONYMIZATION_ENABLED %}
                     <a
                         class="w-full btn btn-outline btn-error"
                         href="{% url 'funds:submissions:anonymize' object.id %}"

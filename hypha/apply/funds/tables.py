@@ -15,7 +15,7 @@ from wagtail.models import Page
 
 from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import MetaTerm, Option
-from hypha.apply.funds.models.submissions import ApplicationSubmissionSkeleton
+from hypha.apply.funds.models.submissions import AnonymizedSubmission
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.review.models import Review
 from hypha.core.tables import RelativeTimeColumn
@@ -147,7 +147,7 @@ class LabeledCheckboxColumn(tables.CheckBoxColumn):
 
 def get_used_rounds(request):
     return Round.objects.filter(
-        Q(Q(submissions__isnull=False) | Q(skeleton_submissions__isnull=False))
+        Q(Q(submissions__isnull=False) | Q(anonymized_submissions__isnull=False))
     ).distinct()
 
 
@@ -156,7 +156,7 @@ def get_used_funds(request):
     return Page.objects.filter(
         Q(
             Q(applicationsubmission__isnull=False)
-            | Q(applicationsubmissionskeleton__isnull=False)
+            | Q(anonymizedsubmission__isnull=False)
         )
     ).distinct()
 
@@ -171,8 +171,8 @@ def get_screening_statuses(request):
         .values("screening_statuses__id")
         .distinct("screening_statuses__id")
     )
-    skele_filter = Q(skeleton_submissions__isnull=False)
-    return ScreeningStatus.objects.filter(sub_filter | skele_filter)
+    anonymized_filter = Q(anonymized_submissions__isnull=False)
+    return ScreeningStatus.objects.filter(sub_filter | anonymized_filter)
 
 
 def get_meta_terms(request):
@@ -318,7 +318,7 @@ class SubmissionFilterAndSearch(SubmissionFilter):
         return queryset
 
 
-class SubmissionSkeletonFilter(filters.FilterSet):
+class AnonymizedSubmissionFilter(filters.FilterSet):
     fund = ModelMultipleChoiceFilter(
         field_name="page", queryset=get_used_funds, label=_("Funds")
     )
@@ -328,7 +328,7 @@ class SubmissionSkeletonFilter(filters.FilterSet):
     )
 
     class Meta:
-        model = ApplicationSubmissionSkeleton
+        model = AnonymizedSubmission
         fields = ("fund", "round")
 
     def __init__(self, *args, exclude=None, limit_statuses=None, **kwargs):

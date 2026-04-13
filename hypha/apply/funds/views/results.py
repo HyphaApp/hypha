@@ -4,10 +4,10 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django_filters.views import FilterView
 
-from hypha.apply.funds.models.submissions import ApplicationSubmissionSkeleton
+from hypha.apply.funds.models.submissions import AnonymizedSubmission
 from hypha.apply.users.decorators import staff_required
 
-from ..tables import SubmissionFilterAndSearch, SubmissionSkeletonFilter
+from ..tables import AnonymizedSubmissionFilter, SubmissionFilterAndSearch
 
 User = get_user_model()
 
@@ -42,15 +42,15 @@ class SubmissionResultView(FilterView):
 
         qs_list = [self.object_list]
 
-        # If a filter comes up that is not applicable to skeleton applications, remove them the results (ie. "lead")
-        non_skeleton_fields = set(SubmissionFilterAndSearch.declared_filters) - set(
-            SubmissionSkeletonFilter.declared_filters
+        # If a filter comes up that is not applicable to anonymized applications, remove them the results (ie. "lead")
+        anonymize_only_fields = set(SubmissionFilterAndSearch.declared_filters) - set(
+            AnonymizedSubmissionFilter.declared_filters
         )
-        if not set(self.request.GET) & set(non_skeleton_fields):
-            skeleton_qs = SubmissionSkeletonFilter(
-                self.request.GET, queryset=ApplicationSubmissionSkeleton.objects.all()
+        if not set(self.request.GET) & set(anonymize_only_fields):
+            anonymized_qs = AnonymizedSubmissionFilter(
+                self.request.GET, queryset=AnonymizedSubmission.objects.all()
             ).qs
-            qs_list.append(skeleton_qs)
+            qs_list.append(anonymized_qs)
 
         populated_qs_list = [qs for qs in qs_list if qs.exists()]
 
