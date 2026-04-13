@@ -17,7 +17,7 @@
             </div>
         {% endif %}
         {% url 'wagtailusers_users:delete' user.pk as post_url %}
-        {% include "includes/delete_user_submission_form.html" with post_url=post_url %}
+        {% include "includes/delete_user_submissions_form.html" with post_url=post_url %}
     {% endwith %}
 {% endblock %}
 
