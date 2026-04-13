@@ -154,7 +154,7 @@
             {% if can_delete_submission %}
                 {% if SUBMISSION_SKELETONING_ENABLED %}
                     <a
-                        class="w-full btn btn-outline btn-warning"
+                        class="w-full btn btn-outline btn-error"
                         href="{% url 'funds:submissions:anonymize' object.id %}"
                         hx-get="{% url 'funds:submissions:anonymize' object.id %}"
                         hx-target="#htmx-modal"

@@ -1079,10 +1079,6 @@ class ApplicationSubmission(
 
 
 class ApplicationSubmissionSkeletonQueryset(models.QuerySet):
-    def current_accepted(self):
-        # Applications which have the current stage active (have not been progressed)
-        return self.filter(status__in=PHASES_MAPPING["accepted"]["statuses"]).current()
-
     def value(self):
         return self.aggregate(Count("value"), Avg("value"), Sum("value"))
 

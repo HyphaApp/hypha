@@ -338,10 +338,6 @@ class SubmissionSkeletonFilter(filters.FilterSet):
         super().__init__(*args, **kwargs)
 
         self.filters["status"] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
-        # self.filters["category_options"].extra["choices"] = [
-        #     (option.id, option.value)
-        #     for option in Option.objects.filter(category__filter_on_dashboard=True)
-        # ]
         self.filters = {
             field: filter
             for field, filter in self.filters.items()
