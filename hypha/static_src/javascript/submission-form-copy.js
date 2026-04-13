@@ -45,20 +45,18 @@
 
           const wordLimit = el.dataset.wordLimit;
           if (wordLimit) {
-            questionText += "\n\nLimit this field to " + wordLimit + " words.";
+            questionText += "\n\n" + i18n.wordLimit.replace("%s", wordLimit);
           }
 
           const listItems = el.querySelectorAll(".form__list > li");
           const inputEl = el.querySelector("input");
           const richTextEl = el.querySelector(".tinymce4-editor");
 
-          console.log(listItems);
-
           if (listItems.length) {
             const itemTexts = Array.from(listItems).map(function (li) {
               let text = strip(li.innerHTML);
-              console.log(text);
-              if (li.querySelector("input:checked")) text += " (selected)";
+              if (li.querySelector("input:checked"))
+                text += " " + i18n.selected;
               return text;
             });
             questionText += "\n\n" + itemTexts.join("\n");
@@ -102,12 +100,18 @@
   const applicationForm = document.querySelector(".application-form");
   if (!applicationForm) return;
 
+  const i18n = {
+    btnLabel: applicationForm.dataset.copyBtnLabel,
+    btnTitle: applicationForm.dataset.copyBtnTitle,
+    wordLimit: applicationForm.dataset.copyWordLimit,
+    selected: applicationForm.dataset.copySelected,
+  };
+
   // Create the copy button
   const button = document.createElement("button");
-  button.textContent = "Copy questions to clipboard";
+  button.textContent = i18n.btnLabel;
   button.className = "btn btn-secondary btn-outline w-full sm:btn-sm sm:w-auto";
-  button.title =
-    "Copies all the questions and user input to the clipboard in plain text.";
+  button.title = i18n.btnTitle;
   button.type = "button";
   button.addEventListener("click", handleCopy);
 
