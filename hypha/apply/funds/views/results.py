@@ -45,12 +45,15 @@ class SubmissionResultView(FilterView):
         count_values = 0
         total_value = 0
         submission_count = 0
+        anonymized_excluded_count = 0
 
         qs_list = [self.object_list]
 
         # If a filter is active that has no equivalent on AnonymizedSubmission (e.g. "lead"),
         # anonymized submissions cannot be filtered consistently so exclude them.
-        if not set(self.request.GET) & _ANONYMIZE_ONLY_FIELDS:
+        if set(self.request.GET) & _ANONYMIZE_ONLY_FIELDS:
+            anonymized_excluded_count = AnonymizedSubmission.objects.count()
+        else:
             anonymized_qs = AnonymizedSubmissionFilter(
                 self.request.GET, queryset=AnonymizedSubmission.objects.all()
             ).qs
@@ -72,5 +75,6 @@ class SubmissionResultView(FilterView):
             total_value=total_value,
             average_value=average_value,
             submission_count=submission_count,
+            anonymized_excluded_count=anonymized_excluded_count,
             **kwargs,
         )
