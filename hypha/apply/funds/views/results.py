@@ -11,6 +11,13 @@ from ..tables import AnonymizedSubmissionFilter, SubmissionFilterAndSearch
 
 User = get_user_model()
 
+# Fields present in SubmissionFilterAndSearch but not in AnonymizedSubmissionFilter.
+# If any of these appear in the request, anonymized submissions cannot be filtered
+# consistently, so they are excluded from the results.
+_ANONYMIZE_ONLY_FIELDS = frozenset(
+    SubmissionFilterAndSearch.declared_filters
+) - frozenset(AnonymizedSubmissionFilter.declared_filters)
+
 
 @method_decorator(cache_page(60), name="dispatch")
 @method_decorator(staff_required, name="dispatch")
@@ -37,36 +44,27 @@ class SubmissionResultView(FilterView):
     def get_context_data(self, **kwargs):
         count_values = 0
         total_value = 0
-        averages_sum = 0
         submission_count = 0
 
         qs_list = [self.object_list]
 
-        # If a filter comes up that is not applicable to anonymized applications, remove them the results (ie. "lead")
-        anonymize_only_fields = set(SubmissionFilterAndSearch.declared_filters) - set(
-            AnonymizedSubmissionFilter.declared_filters
-        )
-        if not set(self.request.GET) & set(anonymize_only_fields):
+        # If a filter is active that has no equivalent on AnonymizedSubmission (e.g. "lead"),
+        # anonymized submissions cannot be filtered consistently so exclude them.
+        if not set(self.request.GET) & _ANONYMIZE_ONLY_FIELDS:
             anonymized_qs = AnonymizedSubmissionFilter(
                 self.request.GET, queryset=AnonymizedSubmission.objects.all()
             ).qs
             qs_list.append(anonymized_qs)
 
-        populated_qs_list = [qs for qs in qs_list if qs.exists()]
-
-        for qs in populated_qs_list:
-            submission_count += qs.count()
+        for qs in qs_list:
             submission_values = qs.value()
-            count_values += submission_values.get("value__count")
+            vc = submission_values.get("value__count") or 0
+            count_values += vc
             if total := submission_values.get("value__sum"):
                 total_value += total
-            if average := submission_values.get("value__avg"):
-                averages_sum += round(average)
+            submission_count += qs.count()
 
-        if qs_list_len := len(populated_qs_list):
-            average_value = averages_sum / qs_list_len
-        else:
-            average_value = 0
+        average_value = round(total_value / count_values) if count_values else 0
 
         return super().get_context_data(
             filter_action=self.filter_action,
