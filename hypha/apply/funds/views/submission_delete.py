@@ -13,6 +13,45 @@ from ..models import ApplicationSubmission, ApplicationSubmissionSkeleton
 from ..workflows.constants import DRAFT_STATE
 
 
+class SubmissionAnonymizeView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """View for anonymizing (skeletoning) a submission via confirmation modal."""
+
+    model = ApplicationSubmission
+    template_name = "funds/applicationsubmission_confirm_anonymize.html"
+
+    def test_func(self):
+        return has_object_permission(
+            "delete_submission", self.request.user, obj=self.get_object()
+        )
+
+    def get_success_url(self):
+        return reverse_lazy("funds:submissions:list")
+
+    def form_valid(self, form):
+        submission = self.get_object()
+
+        ApplicationSubmissionSkeleton.from_submission(submission)
+
+        Event.objects.filter(
+            type__in=[MESSAGES.NEW_SUBMISSION, MESSAGES.COMMENT],
+            object_id=submission.id,
+        ).delete()
+
+        response = super().form_valid(form)
+
+        if submission.status != DRAFT_STATE:
+            messenger(
+                MESSAGES.ANONYMIZE_SUBMISSION,
+                user=self.request.user,
+                request=self.request,
+                source=submission,
+            )
+
+        messages.success(self.request, _("Submission anonymized."))
+
+        return response
+
+
 class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """
     View for deleting submissions with confirmation modal.

@@ -4,7 +4,7 @@
     class="px-4 pt-5 pb-4 sm:p-6"
     action="{{ request.path }}"
     method="post"
-    x-data="{userConfirmationInput: '', delConfirmText: `{% trans 'delete' %}`, anonConfirmText: `{% trans 'anonymize' %}`, mode: 'delete'}"
+    x-data="{userConfirmationInput: '', delConfirmText: `{% trans 'delete' %}`, anonConfirmText: `{% trans 'anonymize' %}`, mode: '{{ initial_mode|default:'delete' }}'}"
 >
     {% csrf_token %}
 

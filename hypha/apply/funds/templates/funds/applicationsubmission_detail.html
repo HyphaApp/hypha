@@ -118,20 +118,6 @@
                                     {% trans "Edit" %}
                                 </a>
                             {% endif %}
-
-                            {% can "delete_submission" object as can_delete_submission %}
-                            {% if can_delete_submission %}
-                                <a
-                                    class="btn btn-soft btn-error btn-sm btn-square"
-                                    href="{% url 'funds:submissions:delete' object.id %}"
-                                    hx-get="{% url 'funds:submissions:delete' object.id %}"
-                                    hx-target="#htmx-modal"
-                                    aria-label="{% trans 'Delete Submission' %}"
-                                >
-                                    {% heroicon_micro "trash" class="size-4" aria_hidden=true %}
-                                    <span class="sr-only">{% trans "Delete" %}</span>
-                                </a>
-                            {% endif %}
                         </div>
                     </header>
 

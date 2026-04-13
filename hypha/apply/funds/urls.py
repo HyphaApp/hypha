@@ -49,7 +49,7 @@ from .views.results import SubmissionResultView
 from .views.reviewer_leaderboard import ReviewerLeaderboard, ReviewerLeaderboardDetail
 from .views.revisions import RevisionCompareView, RevisionListView
 from .views.staff_assignments import StaffAssignments
-from .views.submission_delete import SubmissionDeleteView
+from .views.submission_delete import SubmissionAnonymizeView, SubmissionDeleteView
 from .views.submission_detail import (
     SubmissionDetailPDFView,
     SubmissionDetailView,
@@ -290,6 +290,11 @@ submission_urls = (
                         "download/", SubmissionDetailPDFView.as_view(), name="download"
                     ),
                     path("delete/", SubmissionDeleteView.as_view(), name="delete"),
+                    path(
+                        "anonymize/",
+                        SubmissionAnonymizeView.as_view(),
+                        name="anonymize",
+                    ),
                     path(
                         "documents/<uuid:field_id>/<str:file_name>",
                         SubmissionPrivateMediaView.as_view(),

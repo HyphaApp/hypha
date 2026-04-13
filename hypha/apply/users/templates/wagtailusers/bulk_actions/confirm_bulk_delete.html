@@ -13,8 +13,8 @@
         </ul>
         {% with submission_count=items|get_user_submission_count %}
             {% if submission_count %}
-                <div class="deletion-warning">
-                    {% icon name="warning" classname="" title="warning icon" %}
+                <div class="w-mb-4">
+                    {% icon name="warning" classname="messages-icon" %}
                     <span>
                         {% if SUBMISSION_SKELETONING_ENABLED %}
                             <strong>{% blocktrans %}This will result in {{submission_count}} associated submissions being deleted or anonymized!{% endblocktrans %}</strong>
@@ -35,7 +35,3 @@
         {% include 'wagtailadmin/bulk_actions/confirmation/go_back.html' %}
     {% endif %}
 {% endblock form_section %}
-
-{% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/wagtail_user_confirm_delete.css' %}">
-{% endblock %}
