@@ -7,8 +7,9 @@
    * @returns {string}
    */
   function strip(html) {
-    var doc = new DOMParser().parseFromString(html, "text/html");
-    return doc.body.textContent.trim() || "";
+    const el = document.createElement("div");
+    el.innerHTML = html;
+    return el.textContent.trim();
   }
 
   /**
@@ -16,45 +17,47 @@
    * @returns {string}
    */
   function getQuestions() {
-    var lines = [];
-    var sectionIndex = 1;
+    const lines = [];
+    let sectionIndex = 1;
 
-    var h1 = document.querySelector("h1");
-    if (h1) lines.push("# " + h1.innerHTML);
+    const h1 = document.querySelector("h1");
+    if (h1) lines.push("# " + h1.textContent.trim());
 
-    var form = document.querySelector(".application-form");
-    if (!form) return lines.join("\n\n");
+    if (!applicationForm) return lines.join("\n\n");
 
-    form
-      .querySelectorAll(".form__group, .rich-text, h2, h3")
+    applicationForm
+      .querySelectorAll(".form__group, h2, h3")
       .forEach(function (el) {
-        var questionText = "";
-        var labelEl = el.querySelector(".form__question");
+        let questionText = "";
+        const labelEl = el.querySelector(".form__question");
 
         if (labelEl) {
           // Form field: build label + help + answer
-          var labelText = strip(labelEl.innerHTML)
-            .replace(/(\r\n|\n|\r)/gm, "")
-            .replace(/[ ]+/g, " ");
+          const labelText = strip(labelEl.innerHTML)
+            .replace(/[\r\n]+/g, " ")
+            .replace(/ {2,}/g, " ");
           questionText = "### " + labelText;
 
-          var helpEl = el.querySelector(".form__help");
+          const helpEl = el.querySelector(".form__help");
           if (helpEl) {
             questionText += "\n\n" + strip(helpEl.innerHTML);
           }
 
-          var wordLimit = el.dataset.wordLimit;
+          const wordLimit = el.dataset.wordLimit;
           if (wordLimit) {
             questionText += "\n\nLimit this field to " + wordLimit + " words.";
           }
 
-          var listItems = el.querySelectorAll(".form__item > ul > li");
-          var inputEl = el.querySelector("input");
-          var richTextEl = el.querySelector(".tinymce4-editor");
+          const listItems = el.querySelectorAll(".form__list > li");
+          const inputEl = el.querySelector("input");
+          const richTextEl = el.querySelector(".tinymce4-editor");
+
+          console.log(listItems);
 
           if (listItems.length) {
-            var itemTexts = Array.from(listItems).map(function (li) {
-              var text = strip(li.innerHTML);
+            const itemTexts = Array.from(listItems).map(function (li) {
+              let text = strip(li.innerHTML);
+              console.log(text);
               if (li.querySelector("input:checked")) text += " (selected)";
               return text;
             });
@@ -79,59 +82,49 @@
     return lines.join("\n\n");
   }
 
-  var applicationForm = document.querySelector(".application-form");
-  if (!applicationForm) return;
+  function handleCopy() {
+    const text = getQuestions();
 
-  // Create the copy button
-  var button = document.createElement("button");
-  button.textContent = "Copy questions to clipboard";
-  button.className = "btn sm:btn-sm w-full sm:w-auto js-clipboard-button";
-  button.title =
-    "Copies all the questions and user input to the clipboard in plain text.";
-  button.type = "button";
-
-  // Insert a copy above the form (styled to sit at the right)
-  var topButton = button.cloneNode(true);
-  topButton.style.display = "block";
-  topButton.style.marginLeft = "auto";
-  applicationForm.parentNode.insertBefore(topButton, applicationForm);
-
-  // Insert a copy after the last button inside the form
-  var lastButton = applicationForm.querySelector("button:last-of-type");
-  if (lastButton) {
-    lastButton.insertAdjacentElement("afterend", button);
-  } else {
-    applicationForm.appendChild(button);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(flashForm);
+    } else {
+      console.warn("Clipboard API not available.");
+    }
   }
-
-  // Attach click handler to all copy buttons
-  document.querySelectorAll(".js-clipboard-button").forEach(function (btn) {
-    btn.addEventListener("click", function (e) {
-      e.preventDefault();
-      var text = getQuestions();
-
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(function () {
-          flashForm();
-        });
-      } else {
-        // Fallback for older browsers
-        var textarea = document.createElement("textarea");
-        textarea.value = text;
-        textarea.className = "visually-hidden";
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textarea);
-        flashForm();
-      }
-    });
-  });
 
   function flashForm() {
     applicationForm.classList.add("animate-flash");
     setTimeout(function () {
       applicationForm.classList.remove("animate-flash");
     }, 1200);
+  }
+
+  const applicationForm = document.querySelector(".application-form");
+  if (!applicationForm) return;
+
+  // Create the copy button
+  const button = document.createElement("button");
+  button.textContent = "Copy questions to clipboard";
+  button.className = "btn btn-secondary btn-outline w-full sm:btn-sm sm:w-auto";
+  button.title =
+    "Copies all the questions and user input to the clipboard in plain text.";
+  button.type = "button";
+  button.addEventListener("click", handleCopy);
+
+  // Insert a copy above the form (aligned to the right)
+  const topButton = button.cloneNode(true);
+  topButton.classList.add("block", "ms-auto");
+  topButton.addEventListener("click", handleCopy);
+  applicationForm.parentNode.insertBefore(topButton, applicationForm);
+
+  // Insert a copy after the last button inside the form
+  const allButtons = applicationForm.querySelectorAll("button");
+  const lastButton = allButtons.length
+    ? allButtons[allButtons.length - 1]
+    : null;
+  if (lastButton) {
+    lastButton.insertAdjacentElement("afterend", button);
+  } else {
+    applicationForm.appendChild(button);
   }
 })();
