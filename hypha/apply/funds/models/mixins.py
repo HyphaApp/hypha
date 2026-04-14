@@ -320,7 +320,10 @@ class AccessFormData:
             )
             for i, answer in enumerate(filter(None, answers))
         ]
-        return "".join(render_data).replace("</section>", "") + "</section>"
+        joined = "".join(render_data).replace("</section>", "")
+        if include_question and render_data:
+            return joined + "</section>"
+        return joined
 
     def render_answer(self, field_id, include_question=False):
         try:
