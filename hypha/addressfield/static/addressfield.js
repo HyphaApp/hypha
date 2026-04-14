@@ -1,6 +1,6 @@
 /*
  * Address field (vanilla JS)
- * https://github.com/tableau-mkt/jquery.addressfield
+ * original: https://github.com/tableau-mkt/jquery.addressfield
  *
  * Licensed under the MIT license.
  */

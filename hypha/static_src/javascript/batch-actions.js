@@ -4,11 +4,7 @@
   const checkboxes = document.querySelectorAll(".js-batch-select");
   const allCheckboxInputs = document.querySelectorAll(".js-batch-select-all");
   const batchButtons = document.querySelectorAll("[data-js-batch-actions]");
-  const batchTitlesList = document.querySelectorAll(".js-batch-titles");
-  const batchTitleCount = document.querySelectorAll(".js-batch-title-count");
   const hiddenIDlists = document.querySelectorAll(".js-submissions-id");
-  const hiddenInvoiceIDlists = document.querySelectorAll(".js-invoices-id");
-  const closedClass = "is-closed";
 
   window.addEventListener("load", function () {
     updateActionBarVisibility();
@@ -66,14 +62,6 @@
    * @returns {Array} selectedIDs
    */
   function prepareBatchListing() {
-    batchTitlesList.forEach(function (el) {
-      el.innerHTML = "";
-      el.classList.add(closedClass);
-    });
-    batchTitleCount.forEach(function (el) {
-      el.innerHTML = "";
-    });
-
     const selectedIDs = Array.from(checkboxes)
       .filter(function (cb) {
         return cb.checked;
@@ -82,13 +70,7 @@
         return cb.closest("tr").dataset.recordId;
       });
 
-    batchTitleCount.forEach(function (el) {
-      el.textContent = selectedIDs.length + " submissions selected";
-    });
     hiddenIDlists.forEach(function (el) {
-      el.value = selectedIDs.join(",");
-    });
-    hiddenInvoiceIDlists.forEach(function (el) {
       el.value = selectedIDs.join(",");
     });
 
