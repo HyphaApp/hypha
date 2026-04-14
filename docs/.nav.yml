@@ -1,0 +1,4 @@
+nav:
+  - Home: index.md
+  - "*"
+  - Issues: https://github.com/HyphaApp/hypha/issues
