@@ -39,7 +39,10 @@ htmx.onLoad(function () {
     input.addEventListener("invalid", function (event) {
       event.preventDefault(); // Prevent default browser behavior
 
-      let errorMessage = "This field is required.";
+      const fileUploadEl = input.closest("[data-js-file-upload]");
+      const errorMessage = fileUploadEl
+        ? fileUploadEl.dataset.requiredText
+        : "This field is required.";
       // Find the closest dff-uploader wrapper and display an error
       let container = input.closest(".form__item");
 

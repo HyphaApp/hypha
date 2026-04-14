@@ -8,13 +8,17 @@
             data-toggle-on="{{ field.field.choices.0.0 }}"
             data-toggle-off="{{ field.field.choices.1.0 }}"
         {% endif %}
-        {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget' %}data-js-file-upload{% endif %}
+        {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget' %}data-js-file-upload data-required-text="{% trans 'This field is required.' %}"{% endif %}
         {% if field.field.group_number > 1 %}
             data-hidden="{% if not show_all_group_fields and not field.field.visible %}true{% else %}false{% endif %}"
             data-required="{{ field.field.required_when_visible }}"
         {% endif %}
         {% if field.field.word_limit %}
             data-word-limit="{{ field.field.word_limit }}"
+            data-word-count-characters="{% trans 'characters' %}"
+            data-word-count-out-of="{% trans 'out of' %}"
+            data-word-count-close="{% trans '(Close to the limit)' %}"
+            data-word-count-over="{% trans '(Over the limit)' %}"
         {% endif %}
         {# fmt:off #}
         {% if widget_type == 'text_input' and field.field.max_length %}
