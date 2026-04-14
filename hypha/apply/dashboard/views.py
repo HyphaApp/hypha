@@ -69,6 +69,22 @@ class PAFReviewMixin:
         }
 
 
+class HistoricalSubmissionMixin:
+    def historical_submission_data(self):
+        historical_submissions = list(
+            ApplicationSubmission.objects.filter(
+                user=self.request.user,
+            )
+            .inactive()
+            .current()
+            .for_table(self.request.user)
+        )
+        return {
+            "count": len(historical_submissions),
+            "table": SubmissionsTable(data=historical_submissions),
+        }
+
+
 class AdminDashboardView(PAFReviewMixin, MyFlaggedMixin, TemplateView):
     template_name = "dashboard/staff_dashboard.html"
     paf_reviewer_role = "is_apply_staff"
@@ -208,7 +224,7 @@ class FinanceDashboardView(PAFReviewMixin, MyFlaggedMixin, TemplateView):
         }
 
 
-class ReviewerDashboardView(MyFlaggedMixin, TemplateView):
+class ReviewerDashboardView(HistoricalSubmissionMixin, MyFlaggedMixin, TemplateView):
     template_name = "dashboard/reviewer_dashboard.html"
 
     def get(self, request, *args, **kwargs):
@@ -268,21 +284,6 @@ class ReviewerDashboardView(MyFlaggedMixin, TemplateView):
             "count": count,
             "display_more": count > limit,
             "submissions": submissions[:limit],
-        }
-
-    def historical_submission_data(self):
-        historical_submissions = (
-            ApplicationSubmission.objects.filter(
-                user=self.request.user,
-            )
-            .inactive()
-            .current()
-            .for_table(self.request.user)
-        )
-        return {
-            "count": historical_submissions.count(),
-            "submissions": historical_submissions,
-            "table": SubmissionsTable(data=historical_submissions),
         }
 
 
@@ -347,7 +348,7 @@ class ContractingDashboardView(PAFReviewMixin, MyFlaggedMixin, TemplateView):
         }
 
 
-class CommunityDashboardView(TemplateView):
+class CommunityDashboardView(HistoricalSubmissionMixin, TemplateView):
     template_name = "dashboard/community_dashboard.html"
 
     def get_context_data(self, **kwargs):
@@ -384,23 +385,8 @@ class CommunityDashboardView(TemplateView):
 
         return my_community_review, my_community_review_table
 
-    def historical_submission_data(self):
-        historical_submissions = (
-            ApplicationSubmission.objects.filter(
-                user=self.request.user,
-            )
-            .inactive()
-            .current()
-            .for_table(self.request.user)
-        )
-        return {
-            "count": historical_submissions.count(),
-            "submissions": historical_submissions,
-            "table": SubmissionsTable(data=historical_submissions),
-        }
 
-
-class ApplicantDashboardView(TemplateView):
+class ApplicantDashboardView(HistoricalSubmissionMixin, TemplateView):
     template_name = "dashboard/applicant_dashboard.html"
 
     def get_context_data(self, **kwargs):
@@ -445,20 +431,6 @@ class ApplicantDashboardView(TemplateView):
             "table": ProjectsDashboardTable(
                 data=historical_projects, prefix="past-project-"
             ),
-        }
-
-    def historical_submission_data(self):
-        historical_submissions = list(
-            ApplicationSubmission.objects.filter(
-                user=self.request.user,
-            )
-            .inactive()
-            .current()
-            .for_table(self.request.user)
-        )
-        return {
-            "count": len(historical_submissions),
-            "table": SubmissionsTable(data=historical_submissions),
         }
 
 
