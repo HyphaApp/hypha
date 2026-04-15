@@ -20,13 +20,13 @@
 
 {% block content %}
     <div class="overflow-x-auto my-4">
-        <table class="table table-pin-rows table-pin-cols">
+        <table class="table table-pin-cols">
             {% for answers in review_data.values %}
                 <tr>
                     <th class="w-40 bg-base-200">{{ answers.question }}</th>
                     {% for answer in answers.answers %}
                         {% if forloop.parentloop.first %}
-                            <th class="bg-base-200">{{ answer|safe }}</th>
+                            <th class="static bg-base-200">{{ answer|safe }}</th>
                         {% elif answers.question == "Opinions"%}
                             <td class="min-w-60">{{ answer }}</td>
                         {% else %}
