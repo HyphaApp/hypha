@@ -16,12 +16,8 @@ window.hypha = window.hypha || {};
 window.hypha.passkeys = (function () {
   let _conditionalAbortController = null;
   function getCsrfToken() {
-    const el = document.querySelector("[name=csrfmiddlewaretoken]");
-    if (el) return el.value;
-    const cookie = document.cookie
-      .split(";")
-      .find((c) => c.trim().startsWith("csrftoken="));
-    return cookie ? cookie.split("=")[1] : "";
+    const headers = JSON.parse(document.body.dataset.hxHeaders || "{}");
+    return headers["X-CSRFToken"] || "";
   }
 
   function getRememberMe() {
