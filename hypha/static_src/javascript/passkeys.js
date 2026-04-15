@@ -74,12 +74,8 @@ window.hypha.passkeys = (function () {
    * @param {HTMLFormElement} formEl  The <form> element containing a [name=name] input.
    */
   async function register(formEl) {
-    const beginUrl = document.getElementById(
-      "passkey-register-begin-url"
-    )?.value;
-    const completeUrl = document.getElementById(
-      "passkey-register-complete-url"
-    )?.value;
+    const beginUrl = formEl?.dataset.beginUrl;
+    const completeUrl = formEl?.dataset.completeUrl;
     if (!beginUrl || !completeUrl) return;
 
     const nameInput = formEl?.querySelector("[name=name]");
@@ -121,7 +117,16 @@ window.hypha.passkeys = (function () {
       window.location.reload();
     } catch (err) {
       // NotAllowedError means the user dismissed the native OS dialog — not an error.
-      if (err.name !== "NotAllowedError" && errorEl) {
+      if (err.name === "NotAllowedError") {
+        // user cancelled — do nothing
+      } else if (err.name === "InvalidStateError") {
+        if (errorEl) {
+          errorEl.textContent =
+            formEl?.dataset.errorDuplicate ||
+            "This authenticator already has a passkey registered. Try a different authenticator or device.";
+          errorEl.hidden = false;
+        }
+      } else if (errorEl) {
         errorEl.textContent = err.message;
         errorEl.hidden = false;
       }
@@ -140,13 +145,12 @@ window.hypha.passkeys = (function () {
       _conditionalAbortController = null;
     }
 
-    const beginUrl = document.getElementById("passkey-auth-begin-url")?.value;
-    const completeUrl = document.getElementById(
-      "passkey-auth-complete-url"
-    )?.value;
+    const btn = document.getElementById("btn-passkey-login");
+    const beginUrl = btn?.dataset.beginUrl;
+    const completeUrl = btn?.dataset.completeUrl;
     if (!beginUrl || !completeUrl) return;
 
-    const nextUrl = document.getElementById("passkey-next-url")?.value || "";
+    const nextUrl = btn?.dataset.nextUrl || "";
     const errorEl = document.getElementById("passkey-auth-error");
 
     try {
@@ -174,7 +178,14 @@ window.hypha.passkeys = (function () {
         );
       }
       const data = await completeResp.json();
-      window.location.href = data.redirect_url || "/";
+      const redirectUrl = new URL(
+        data.redirect_url || "/",
+        window.location.origin
+      );
+      window.location.href =
+        redirectUrl.origin === window.location.origin
+          ? redirectUrl.pathname + redirectUrl.search + redirectUrl.hash
+          : "/";
     } catch (err) {
       // NotAllowedError / AbortError = user dismissed the native UI.
       if (err.name !== "NotAllowedError" && err.name !== "AbortError") {
@@ -191,10 +202,9 @@ window.hypha.passkeys = (function () {
    * The email input needs autocomplete="username webauthn" for this to work.
    */
   async function _startConditionalMediation() {
-    const beginUrl = document.getElementById("passkey-auth-begin-url")?.value;
-    const completeUrl = document.getElementById(
-      "passkey-auth-complete-url"
-    )?.value;
+    const btn = document.getElementById("btn-passkey-login");
+    const beginUrl = btn?.dataset.beginUrl;
+    const completeUrl = btn?.dataset.completeUrl;
     if (!beginUrl || !completeUrl) return;
 
     _conditionalAbortController = new AbortController();
@@ -214,7 +224,7 @@ window.hypha.passkeys = (function () {
 
       if (!credential) return;
 
-      const nextUrl = document.getElementById("passkey-next-url")?.value || "";
+      const nextUrl = btn?.dataset.nextUrl || "";
       const completeResp = await jsonPost(completeUrl, {
         ...credential.toJSON(),
         next: nextUrl,
@@ -222,7 +232,14 @@ window.hypha.passkeys = (function () {
       });
       if (!completeResp.ok) return;
       const data = await completeResp.json();
-      window.location.href = data.redirect_url || "/";
+      const redirectUrl = new URL(
+        data.redirect_url || "/",
+        window.location.origin
+      );
+      window.location.href =
+        redirectUrl.origin === window.location.origin
+          ? redirectUrl.pathname + redirectUrl.search + redirectUrl.hash
+          : "/";
     } catch (_err) {
       // Expected: aborted when user submits the password form normally.
     }

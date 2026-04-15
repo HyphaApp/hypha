@@ -4,6 +4,9 @@
     id="btn-passkey-login"
     class="btn btn-secondary btn-outline"
     data-passkey-ui
+    data-begin-url="{% url 'users:passkey_auth_begin' %}"
+    data-complete-url="{% url 'users:passkey_auth_complete' %}"
+    data-next-url="{{ redirect_url|default:'' }}"
     hidden
     onclick="hypha.passkeys.authenticate()"
 >
@@ -15,6 +18,3 @@
    data-error-begin="{% trans "Failed to begin authentication" %}"
    data-error-auth="{% trans "Authentication failed" %}"
    hidden></p>
-<input type="hidden" id="passkey-auth-begin-url" value="{% url 'users:passkey_auth_begin' %}">
-<input type="hidden" id="passkey-auth-complete-url" value="{% url 'users:passkey_auth_complete' %}">
-<input type="hidden" id="passkey-next-url" value="{{ redirect_url|default:'' }}">

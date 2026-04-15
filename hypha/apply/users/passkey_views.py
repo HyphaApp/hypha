@@ -24,7 +24,6 @@ from webauthn.helpers.structs import (
     AuthenticatorAssertionResponse,
     AuthenticatorAttestationResponse,
     AuthenticatorSelectionCriteria,
-    AuthenticatorTransport,
     PublicKeyCredentialDescriptor,
     RegistrationCredential,
     ResidentKeyRequirement,
@@ -89,7 +88,6 @@ def passkey_register_begin(request):
     existing = [
         PublicKeyCredentialDescriptor(
             id=base64url_to_bytes(pk.credential_id),
-            transports=[AuthenticatorTransport(t) for t in pk.transports] or None,
         )
         for pk in existing_passkeys
     ]

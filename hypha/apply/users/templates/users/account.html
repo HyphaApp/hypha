@@ -98,10 +98,6 @@
                 {% trans "With passkeys you can use your fingerprint, face, or screen lock to login securely without a password." %}
             </p>
 
-            {# Hidden inputs supply the API URLs to passkeys.js #}
-            <input type="hidden" id="passkey-register-begin-url" value="{% url 'users:passkey_register_begin' %}">
-            <input type="hidden" id="passkey-register-complete-url" value="{% url 'users:passkey_register_complete' %}">
-
             <div
                 hx-get="{% url 'users:passkey_list' %}"
                 hx-trigger="load"

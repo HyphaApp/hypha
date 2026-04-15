@@ -53,8 +53,11 @@
 
     <form
         class="flex gap-2 mt-3"
+        data-begin-url="{% url 'users:passkey_register_begin' %}"
+        data-complete-url="{% url 'users:passkey_register_complete' %}"
         data-error-server="{% trans "Server error" %}"
         data-error-register="{% trans "Registration failed" %}"
+        data-error-duplicate="{% trans "This authenticator already has a passkey registered. Try a different authenticator or device." %}"
         onsubmit="hypha.passkeys.register(this); return false;"
     >
         <input
