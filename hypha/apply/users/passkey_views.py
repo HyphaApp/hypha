@@ -161,14 +161,20 @@ def passkey_register_complete(request):
     name = (data.get("name") or "").strip()[:128] or timezone.now().strftime(
         "Passkey %Y-%m-%d"
     )
-    Passkey.objects.create(
-        user=request.user,
-        name=name,
-        credential_id=bytes_to_base64url(verification.credential_id),
-        public_key=bytes_to_base64url(verification.credential_public_key),
-        sign_count=verification.sign_count,
-        transports=data["response"].get("transports", []),
-    )
+    try:
+        Passkey.objects.create(
+            user=request.user,
+            name=name,
+            credential_id=bytes_to_base64url(verification.credential_id),
+            public_key=bytes_to_base64url(verification.credential_public_key),
+            sign_count=verification.sign_count,
+            transports=data["response"].get("transports", []),
+        )
+    except Exception:
+        logger.warning(
+            "Failed to save passkey for user %s", request.user.pk, exc_info=True
+        )
+        return JsonResponse({"error": _("Could not save passkey")}, status=500)
     logger.info("Passkey registered for user %s (name=%r)", request.user.pk, name)
     return JsonResponse({"status": "ok"})
 
@@ -204,6 +210,10 @@ def passkey_auth_complete(request):
 
     try:
         credential_id_b64 = bytes_to_base64url(base64url_to_bytes(data["rawId"]))
+        raw_user_handle = data["response"].get("userHandle")
+        user_handle_bytes = (
+            base64url_to_bytes(raw_user_handle) if raw_user_handle else None
+        )
     except Exception:
         return JsonResponse({"error": _("Invalid credential")}, status=400)
 
@@ -215,12 +225,10 @@ def passkey_auth_complete(request):
                 .get(credential_id=credential_id_b64)
             )
 
-            user_handle = data["response"].get("userHandle")
-            if user_handle:
-                if base64url_to_bytes(user_handle) != str(passkey.user.pk).encode():
-                    return JsonResponse(
-                        {"error": _("User handle mismatch")}, status=400
-                    )
+            if user_handle_bytes is not None:
+                if user_handle_bytes != str(passkey.user.pk).encode():
+                    raise InvalidAuthenticationResponse("User handle mismatch")
+
             credential = AuthenticationCredential(
                 id=data["id"],
                 raw_id=base64url_to_bytes(data["rawId"]),
@@ -232,9 +240,7 @@ def passkey_auth_complete(request):
                         data["response"]["authenticatorData"]
                     ),
                     signature=base64url_to_bytes(data["response"]["signature"]),
-                    user_handle=base64url_to_bytes(user_handle)
-                    if user_handle
-                    else None,
+                    user_handle=user_handle_bytes,
                 ),
             )
             verification = verify_authentication_response(
