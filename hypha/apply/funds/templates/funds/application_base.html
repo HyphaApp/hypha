@@ -51,7 +51,12 @@
                     {% trans "Application guide" %}
                 </a>
             {% endif %}
-            <form class="form application-form" action="/test500/" method="POST" enctype="multipart/form-data">
+            <form class="form application-form" action="/test500/" method="post" enctype="multipart/form-data"
+                  data-copy-btn-label="{% trans 'Copy questions to clipboard' %}"
+                  data-copy-btn-title="{% trans 'Copies all the questions and user input to the clipboard in plain text.' %}"
+                  data-copy-word-limit="{% trans 'Limit this field to %s words.' %}"
+                  data-copy-selected="{% trans '(selected)' %}"
+            >
                 {% csrf_token %}
                 {% for field in form %}
                     {% if field.field %}
