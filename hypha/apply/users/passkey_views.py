@@ -22,6 +22,7 @@ from webauthn import (
     verify_registration_response,
 )
 from webauthn.helpers import base64url_to_bytes, bytes_to_base64url
+from webauthn.helpers.exceptions import InvalidAuthenticationResponse
 from webauthn.helpers.structs import (
     AuthenticationCredential,
     AuthenticatorAssertionResponse,
@@ -253,6 +254,21 @@ def passkey_auth_complete(request):
             user = passkey.user
     except Passkey.DoesNotExist:
         return JsonResponse({"error": _("Unknown credential")}, status=400)
+    except InvalidAuthenticationResponse as exc:
+        if "sign count" in str(exc).lower():
+            logger.error(
+                "Passkey sign count regression — possible cloned authenticator"
+                " (credential=%s): %s",
+                credential_id_b64,
+                exc,
+            )
+        else:
+            logger.warning(
+                "Passkey authentication verification failed for credential %s: %s",
+                credential_id_b64,
+                exc,
+            )
+        return JsonResponse({"error": _("Verification failed")}, status=400)
     except Exception:
         logger.warning(
             "Passkey authentication verification failed for credential %s",
