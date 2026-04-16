@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, resolve_url
 from django.utils import timezone
@@ -206,38 +207,52 @@ def passkey_auth_complete(request):
         return JsonResponse({"error": _("Invalid credential")}, status=400)
 
     try:
-        passkey = Passkey.objects.select_related("user").get(
-            credential_id=credential_id_b64
-        )
+        with transaction.atomic():
+            passkey = (
+                Passkey.objects.select_related("user")
+                .select_for_update()
+                .get(credential_id=credential_id_b64)
+            )
+
+            user_handle = data["response"].get("userHandle")
+            if user_handle:
+                if base64url_to_bytes(user_handle) != str(passkey.user.pk).encode():
+                    return JsonResponse(
+                        {"error": _("User handle mismatch")}, status=400
+                    )
+            credential = AuthenticationCredential(
+                id=data["id"],
+                raw_id=base64url_to_bytes(data["rawId"]),
+                response=AuthenticatorAssertionResponse(
+                    client_data_json=base64url_to_bytes(
+                        data["response"]["clientDataJSON"]
+                    ),
+                    authenticator_data=base64url_to_bytes(
+                        data["response"]["authenticatorData"]
+                    ),
+                    signature=base64url_to_bytes(data["response"]["signature"]),
+                    user_handle=base64url_to_bytes(user_handle)
+                    if user_handle
+                    else None,
+                ),
+            )
+            verification = verify_authentication_response(
+                credential=credential,
+                expected_challenge=challenge,
+                expected_rp_id=_get_rp_id(request),
+                expected_origin=_get_origin(request),
+                credential_public_key=base64url_to_bytes(passkey.public_key),
+                credential_current_sign_count=passkey.sign_count,
+                require_user_verification=True,
+            )
+
+            passkey.sign_count = verification.new_sign_count
+            passkey.last_used_at = timezone.now()
+            passkey.save(update_fields=["sign_count", "last_used_at"])
+
+            user = passkey.user
     except Passkey.DoesNotExist:
         return JsonResponse({"error": _("Unknown credential")}, status=400)
-
-    try:
-        user_handle = data["response"].get("userHandle")
-        if user_handle:
-            if base64url_to_bytes(user_handle) != str(passkey.user.pk).encode():
-                return JsonResponse({"error": _("User handle mismatch")}, status=400)
-        credential = AuthenticationCredential(
-            id=data["id"],
-            raw_id=base64url_to_bytes(data["rawId"]),
-            response=AuthenticatorAssertionResponse(
-                client_data_json=base64url_to_bytes(data["response"]["clientDataJSON"]),
-                authenticator_data=base64url_to_bytes(
-                    data["response"]["authenticatorData"]
-                ),
-                signature=base64url_to_bytes(data["response"]["signature"]),
-                user_handle=base64url_to_bytes(user_handle) if user_handle else None,
-            ),
-        )
-        verification = verify_authentication_response(
-            credential=credential,
-            expected_challenge=challenge,
-            expected_rp_id=_get_rp_id(request),
-            expected_origin=_get_origin(request),
-            credential_public_key=base64url_to_bytes(passkey.public_key),
-            credential_current_sign_count=passkey.sign_count,
-            require_user_verification=True,
-        )
     except Exception:
         logger.warning(
             "Passkey authentication verification failed for credential %s",
@@ -245,12 +260,6 @@ def passkey_auth_complete(request):
             exc_info=True,
         )
         return JsonResponse({"error": _("Verification failed")}, status=400)
-
-    passkey.sign_count = verification.new_sign_count
-    passkey.last_used_at = timezone.now()
-    passkey.save(update_fields=["sign_count", "last_used_at"])
-
-    user = passkey.user
     user.backend = settings.CUSTOM_AUTH_BACKEND
     login(request, user)
     request.session["passkey_authenticated"] = True
