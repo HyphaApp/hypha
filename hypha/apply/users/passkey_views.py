@@ -143,7 +143,7 @@ def passkey_register_complete(request):
     except Exception:
         return JsonResponse({"error": "Verification failed"}, status=400)
 
-    name = (data.get("name") or "").strip() or timezone.now().strftime(
+    name = (data.get("name") or "").strip()[:128] or timezone.now().strftime(
         "Passkey %Y-%m-%d"
     )
     Passkey.objects.create(
@@ -200,6 +200,9 @@ def passkey_auth_complete(request):
 
     try:
         user_handle = data["response"].get("userHandle")
+        if user_handle:
+            if base64url_to_bytes(user_handle) != str(passkey.user.pk).encode():
+                return JsonResponse({"error": "User handle mismatch"}, status=400)
         credential = AuthenticationCredential(
             id=data["id"],
             raw_id=base64url_to_bytes(data["rawId"]),
@@ -271,7 +274,7 @@ def passkey_delete(request, pk):
 @require_POST
 def passkey_rename(request, pk):
     passkey = get_object_or_404(Passkey, pk=pk, user=request.user)
-    name = request.POST.get("name", "").strip()
+    name = request.POST.get("name", "").strip()[:128]
     if name:
         passkey.name = name
         passkey.save(update_fields=["name"])
