@@ -36,7 +36,7 @@ ENFORCE_TWO_FACTOR = env.bool("ENFORCE_TWO_FACTOR", False)
 
 # WebAuthn / Passkey settings.
 # WEBAUTHN_RP_ID: the relying party domain, e.g. "example.com" (no port, no scheme).
-#   Defaults to the request host if not set.
+#   Defaults to the request host if not set. OBS! Do not use default in production!
 # WEBAUTHN_ORIGIN: the full origin, e.g. "https://example.com".
 #   Defaults to the request origin if not set.
 # WEBAUTHN_RP_NAME: display name shown in the browser passkey UI.
