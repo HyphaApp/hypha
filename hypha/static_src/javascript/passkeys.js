@@ -16,7 +16,8 @@ window.hypha = window.hypha || {};
 window.hypha.passkeys = (function () {
   let _conditionalAbortController = null;
   function getCsrfToken() {
-    const headers = JSON.parse(document.body.dataset.hxHeaders || "{}");
+    const hxheaders = document.body.getAttribute("hx-headers") || "{}";
+    const headers = JSON.parse(hxheaders);
     return headers["X-CSRFToken"] || "";
   }
 
