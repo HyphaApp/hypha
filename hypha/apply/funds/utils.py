@@ -16,7 +16,6 @@ from django.utils.translation import gettext as _
 # from django.contrib.sites.models import Site
 from hypha.apply.funds.models.submissions import ApplicationSubmission
 from hypha.apply.users.tokens import CoApplicantInviteTokenGenerator
-from hypha.apply.utils.image import generate_image_tag
 
 from .models.screening import ScreeningStatus
 
@@ -24,8 +23,8 @@ from .models.screening import ScreeningStatus
 def render_icon(image):
     if not image:
         return ""
-    filter_spec = "fill-20x20"
-    return generate_image_tag(image, filter_spec, html_class="size-4")
+    rendition = image.get_rendition("fill-20x20")
+    return f'<img alt="{rendition.alt}" class="size-4" src="{rendition.url}">'
 
 
 def get_or_create_default_screening_statuses(

@@ -30,7 +30,6 @@ from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.todo.options import REVIEW_DRAFT
 from hypha.apply.todo.views import add_task_to_user, remove_tasks_for_user
 from hypha.apply.users.decorators import staff_required
-from hypha.apply.utils.image import generate_image_tag
 from hypha.apply.utils.views import CreateOrUpdateView
 
 from .models import Review, ReviewOpinion
@@ -446,8 +445,11 @@ class ReviewListView(ListView):
                 review.get_absolute_url(), review.author
             )
             if review.author.role and review.author.role.icon:
-                author += generate_image_tag(review.author.role.icon, "12x12")
-            author = f"<div>{author}</div>"
+                rendition = review.author.role.icon.get_rendition("max-12x12")
+                author += (
+                    f'<img alt="{rendition.alt}" class="ms-2" src="{rendition.url}">'
+                )
+            author = f'<div class="flex items-center">{author}</div>'
 
             review_data["title"]["answers"].append(author)
             opinions_template = get_template(

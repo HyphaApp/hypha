@@ -6,7 +6,7 @@
 >
     <div class="grid grid-cols-6 col-span-2 w-full">
         {% if not reviewer.review or reviewer.review.is_draft %}
-            <div class="col-span-4 reviews-sidebar__name">
+            <div class="flex col-span-4 items-center">
                 <span>
                     {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == reviewer.reviewer %}
                         {% trans "Reviewer" %}
@@ -14,7 +14,7 @@
                         {{ reviewer }}
                     {% endif %}
                 </span>
-                {% if reviewer.role and reviewer.role.icon %}{% image reviewer.role.icon max-12x12 %}{% endif %}
+                {% if reviewer.role and reviewer.role.icon %}{% image reviewer.role.icon max-12x12 class="ms-2" %}{% endif %}
             </div>
             <div class="col-span-1">-</div>
             <div class="col-span-1">-</div>

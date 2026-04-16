@@ -1,6 +1,4 @@
 @use "../abstracts/mixins";
-@use "../abstracts/variables";
-@use "sass:math";
 
 .form {
   $root: &;
@@ -35,10 +33,6 @@
     color: var(--color-fg-muted);
     font-size: 0.875rem;
     line-height: 1.25rem;
-
-    .profile & {
-      margin-block-start: 0;
-    }
   }
 
   &__item {
