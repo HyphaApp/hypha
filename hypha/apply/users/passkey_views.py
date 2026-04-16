@@ -1,5 +1,6 @@
 import base64
 import json
+import logging
 
 from django.conf import settings
 from django.contrib.auth import login
@@ -31,6 +32,8 @@ from webauthn.helpers.structs import (
 )
 
 from .models import Passkey
+
+logger = logging.getLogger(__name__)
 
 SESSION_CHALLENGE_KEY_REGISTER = "webauthn_challenge_register"
 SESSION_CHALLENGE_KEY_AUTH = "webauthn_challenge_auth"
@@ -141,6 +144,11 @@ def passkey_register_complete(request):
             require_user_verification=True,
         )
     except Exception:
+        logger.warning(
+            "Passkey registration verification failed for user %s",
+            request.user.pk,
+            exc_info=True,
+        )
         return JsonResponse({"error": "Verification failed"}, status=400)
 
     name = (data.get("name") or "").strip()[:128] or timezone.now().strftime(
@@ -154,6 +162,7 @@ def passkey_register_complete(request):
         sign_count=verification.sign_count,
         transports=data["response"].get("transports", []),
     )
+    logger.info("Passkey registered for user %s (name=%r)", request.user.pk, name)
     return JsonResponse({"status": "ok"})
 
 
@@ -225,6 +234,11 @@ def passkey_auth_complete(request):
             require_user_verification=True,
         )
     except Exception:
+        logger.warning(
+            "Passkey authentication verification failed for credential %s",
+            credential_id_b64,
+            exc_info=True,
+        )
         return JsonResponse({"error": "Verification failed"}, status=400)
 
     passkey.sign_count = verification.new_sign_count
@@ -265,6 +279,12 @@ def passkey_list(request):
 @require_POST
 def passkey_delete(request, pk):
     passkey = get_object_or_404(Passkey, pk=pk, user=request.user)
+    logger.info(
+        "Passkey deleted by user %s (passkey=%s, name=%r)",
+        request.user.pk,
+        pk,
+        passkey.name,
+    )
     passkey.delete()
     passkeys = request.user.passkeys.all()
     return render(request, "users/partials/list.html", {"passkeys": passkeys})
