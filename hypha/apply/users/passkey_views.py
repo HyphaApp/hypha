@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, resolve_url
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_GET, require_POST
 from django_ratelimit.decorators import ratelimit
 from webauthn import (
@@ -85,7 +86,11 @@ def passkey_register_begin(request):
     existing_passkeys = list(user.passkeys.all())
     if len(existing_passkeys) >= MAX_PASSKEYS_PER_USER:
         return JsonResponse(
-            {"error": f"Maximum of {MAX_PASSKEYS_PER_USER} passkeys allowed"},
+            {
+                "error": _("Maximum of {max} passkeys allowed").format(
+                    max=MAX_PASSKEYS_PER_USER
+                )
+            },
             status=400,
         )
     existing = [
@@ -117,12 +122,12 @@ def passkey_register_complete(request):
     try:
         data = json.loads(request.body)
     except (json.JSONDecodeError, ValueError):
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
+        return JsonResponse({"error": _("Invalid JSON")}, status=400)
 
     try:
         challenge = _load_challenge(request, SESSION_CHALLENGE_KEY_REGISTER)
     except PermissionDenied:
-        return JsonResponse({"error": "No active WebAuthn challenge"}, status=400)
+        return JsonResponse({"error": _("No active WebAuthn challenge")}, status=400)
 
     try:
         credential = RegistrationCredential(
@@ -149,7 +154,7 @@ def passkey_register_complete(request):
             request.user.pk,
             exc_info=True,
         )
-        return JsonResponse({"error": "Verification failed"}, status=400)
+        return JsonResponse({"error": _("Verification failed")}, status=400)
 
     name = (data.get("name") or "").strip()[:128] or timezone.now().strftime(
         "Passkey %Y-%m-%d"
@@ -188,30 +193,30 @@ def passkey_auth_complete(request):
     try:
         data = json.loads(request.body)
     except (json.JSONDecodeError, ValueError):
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
+        return JsonResponse({"error": _("Invalid JSON")}, status=400)
 
     try:
         challenge = _load_challenge(request, SESSION_CHALLENGE_KEY_AUTH)
     except PermissionDenied:
-        return JsonResponse({"error": "No active WebAuthn challenge"}, status=400)
+        return JsonResponse({"error": _("No active WebAuthn challenge")}, status=400)
 
     try:
         credential_id_b64 = bytes_to_base64url(base64url_to_bytes(data["rawId"]))
     except Exception:
-        return JsonResponse({"error": "Invalid credential"}, status=400)
+        return JsonResponse({"error": _("Invalid credential")}, status=400)
 
     try:
         passkey = Passkey.objects.select_related("user").get(
             credential_id=credential_id_b64
         )
     except Passkey.DoesNotExist:
-        return JsonResponse({"error": "Unknown credential"}, status=400)
+        return JsonResponse({"error": _("Unknown credential")}, status=400)
 
     try:
         user_handle = data["response"].get("userHandle")
         if user_handle:
             if base64url_to_bytes(user_handle) != str(passkey.user.pk).encode():
-                return JsonResponse({"error": "User handle mismatch"}, status=400)
+                return JsonResponse({"error": _("User handle mismatch")}, status=400)
         credential = AuthenticationCredential(
             id=data["id"],
             raw_id=base64url_to_bytes(data["rawId"]),
@@ -239,7 +244,7 @@ def passkey_auth_complete(request):
             credential_id_b64,
             exc_info=True,
         )
-        return JsonResponse({"error": "Verification failed"}, status=400)
+        return JsonResponse({"error": _("Verification failed")}, status=400)
 
     passkey.sign_count = verification.new_sign_count
     passkey.last_used_at = timezone.now()
