@@ -12,8 +12,7 @@ from django.db.models.functions import Concat
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import get_valid_filename
-from django.utils.translation import gettext as _
-from django.utils.translation import gettext_lazy
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.utils.storage import PrivateStorage
 
@@ -177,8 +176,8 @@ class ActivityAttachment(models.Model):
     )
 
     class Meta:
-        verbose_name = gettext_lazy("activity attachment")
-        verbose_name_plural = gettext_lazy("activity attachments")
+        verbose_name = _("activity attachment")
+        verbose_name_plural = _("activity attachments")
 
     @property
     def filename(self):
@@ -206,9 +205,9 @@ class Activity(models.Model):
     source_object_id = models.PositiveIntegerField(blank=True, null=True, db_index=True)
     source = GenericForeignKey("source_content_type", "source_object_id")
 
-    message = models.TextField(gettext_lazy("message"))
+    message = models.TextField(_("message"))
     visibility = models.CharField(
-        gettext_lazy("visibility"),
+        _("visibility"),
         choices=list(VISIBILITY.items()),
         default=APPLICANT,
         max_length=30,
@@ -240,8 +239,8 @@ class Activity(models.Model):
     class Meta:
         ordering = ["-timestamp"]
         base_manager_name = "objects"
-        verbose_name = gettext_lazy("activity")
-        verbose_name_plural = gettext_lazy("activities")
+        verbose_name = _("activity")
+        verbose_name_plural = _("activities")
 
     def get_absolute_url(self):
         # coverup for both submission and project as source.
@@ -341,8 +340,8 @@ class Event(models.Model):
     source = GenericForeignKey("content_type", "object_id")
 
     class Meta:
-        verbose_name = gettext_lazy("event")
-        verbose_name_plural = gettext_lazy("events")
+        verbose_name = _("event")
+        verbose_name_plural = _("events")
 
     def __str__(self):
         if self.source and hasattr(self.source, "title"):
@@ -380,8 +379,8 @@ class Message(models.Model):
     objects = MessagesQueryset.as_manager()
 
     class Meta:
-        verbose_name = gettext_lazy("message")
-        verbose_name_plural = gettext_lazy("messages")
+        verbose_name = _("message")
+        verbose_name_plural = _("messages")
 
     def __str__(self):
         return f"[{self.type}][{self.status}] {self.content}"

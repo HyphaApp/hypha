@@ -2,6 +2,7 @@ import json
 
 from django import forms
 from django.utils.formats import get_format
+from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext_lazy
 from wagtail import blocks
@@ -228,13 +229,13 @@ class DurationBlock(ApplicationSingleIncludeFieldBlock):
         (MONTHS, _("Months")),
     )
     DURATION_DAY_OPTIONS = {
-        i: ngettext_lazy("{} day", "{} days", i).format(i) for i in range(1, 8)
+        i: format_lazy(ngettext_lazy("{} day", "{} days", i), i) for i in range(1, 8)
     }
     DURATION_WEEK_OPTIONS = {
-        i: ngettext_lazy("{} week", "{} weeks", i).format(i) for i in range(1, 13)
+        i: format_lazy(ngettext_lazy("{} week", "{} weeks", i), i) for i in range(1, 13)
     }
     DURATION_MONTH_OPTIONS = {
-        i: ngettext_lazy("{} month", "{} months", i).format(i)
+        i: format_lazy(ngettext_lazy("{} month", "{} months", i), i)
         for i in [*range(1, 13), 18, 24, 36]
     }
     field_class = forms.ChoiceField

@@ -20,7 +20,7 @@ class ScreeningStatus(models.Model):
     base_form_class = ScreeningStatusAdminForm
 
     class Meta:
-        verbose_name = _("Screening Decision")
+        verbose_name = _("Screening decision")
         verbose_name_plural = _("screening decisions")
 
     def __str__(self):

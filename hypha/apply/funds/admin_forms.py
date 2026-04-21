@@ -24,13 +24,16 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
         if number_of_stages == 1:
             self.validate_stages_equal_forms(workflow, application_forms)
         self.validate_stages_equal_forms(
-            workflow, review_forms, form_type="Review form"
+            workflow, review_forms, form_type=_("Review form")
         )
         self.validate_stages_equal_forms(
-            workflow, external_review_forms, form_type="External Review form"
+            workflow,
+            external_review_forms,
+            form_type=_("External review form"),
+            optional=True,
         )
         self.validate_stages_equal_forms(
-            workflow, determination_forms, form_type="Determination form"
+            workflow, determination_forms, form_type=_("Determination form")
         )
 
         if settings.PROJECTS_ENABLED:
@@ -68,7 +71,9 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
                     error_list,
                 )
 
-    def validate_stages_equal_forms(self, workflow, forms, form_type=None):
+    def validate_stages_equal_forms(
+        self, workflow, forms, form_type=None, optional=False
+    ):
         if form_type is None:
             form_type = _("form")
 
@@ -81,7 +86,7 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
             plural_stage = "s" if number_of_stages > 1 else ""
 
             # External Review Form is optional and should be single if provided
-            if form_type == _("External Review form"):
+            if optional:
                 if number_of_forms > 1:
                     self.add_error(
                         None,

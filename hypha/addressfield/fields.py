@@ -3,7 +3,7 @@ from os import path
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from .widgets import AddressWidget
 
@@ -60,7 +60,9 @@ class AddressField(forms.CharField):
         if missing_fields:
             missing_field_name = [fields[field]["label"] for field in missing_fields]
             raise ValidationError(
-                _("Please provide data for: {}").format(", ".join(missing_field_name))
+                _("Please provide data for: {fields}").format(
+                    fields=", ".join(missing_field_name)
+                )
             )
 
         return super().clean(value, **kwargs)
