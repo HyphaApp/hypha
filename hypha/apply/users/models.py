@@ -488,7 +488,7 @@ class Passkey(models.Model):
     # base64url-encoded credential id (unique per authenticator)
     credential_id = models.CharField(max_length=2048, unique=True)
     # base64url-encoded public key
-    public_key = models.CharField(max_length=1024)
+    public_key = models.CharField(max_length=2048)
     sign_count = models.PositiveBigIntegerField(default=0)
     transports = models.JSONField(default=list, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

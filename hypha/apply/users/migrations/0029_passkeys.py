@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ),
                 ("name", models.CharField(blank=True, max_length=255)),
                 ("credential_id", models.CharField(max_length=2048, unique=True)),
-                ("public_key", models.CharField(max_length=1024)),
+                ("public_key", models.CharField(max_length=2048)),
                 ("sign_count", models.PositiveBigIntegerField(default=0)),
                 ("transports", models.JSONField(blank=True, default=list)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
