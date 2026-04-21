@@ -36,9 +36,8 @@
 
 
 {% block content %}
-    <div class="my-4">
-
-        {% block notifications %}
+    <div class="my-4 mx-auto layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-end md:[--layout-sidebar-width:20.5rem]">
+        <div class="layout-main">
             {% show_closing_banner object as show_banner %}
             {% if show_banner %}
                 <div class="mb-4 alert alert-warning">
@@ -46,11 +45,9 @@
                     {% blocktrans with status=project_status %} This project is in {{ status }} state. {% endblocktrans %}
                 </div>
             {% endif %}
-        {% endblock %}
 
-        <div class="wrapper wrapper--sidebar">
             <article class="grow @container flex flex-col gap-8">
-                <section>
+                <header>
                     <h2 class="pb-2 mb-2 font-semibold border-b text-h3">
                         {% trans "Project Information" %}
                     </h2>
@@ -62,7 +59,7 @@
                     >
                         {% include "application_projects/partials/project_information.html" %}
                     </dl>
-                </section>
+                </header>
 
                 {% project_can_have_invoices object as can_have_invoices %}
                 {% user_can_view_invoices object user as can_view_invoices %}
@@ -87,110 +84,107 @@
                     {% include "application_projects/includes/project_documents.html" %}
                 {% endif %}
             </article>
-
-            {% block sidebar %}
-                <aside class="sidebar">
-                    {% user_next_step_on_project object user request=request as next_step %}
-                    {% if next_step %}
-                        <div class="card [--card-fs:1rem] bg-warning text-warning-content shadow-xs">
-                            <div class="card-body">
-                                <h2 class="card-title">
-                                    {% heroicon_solid "sparkles" class="align-text-top" aria_hidden=true %}
-                                    <span>{{ next_step.heading }}</span>
-                                </h2>
-
-                                <p>{{ next_step.text }}</p>
-
-                                {% user_next_step_instructions object user as instructions %}
-                                {% if instructions %}
-                                    <div class="sidebar__inner--actions--instructions">
-                                        {% for instruction in instructions %}
-                                            <p>{{forloop.counter}}. {{ instruction }}</p>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {% if object.paf_approvals.exists and not user.is_applicant %}
-                        <div class="card card-border shadow-xs">
-                            <div class="card-body">
-                                <h2 class="card-title">
-                                    {% trans "Project form approvals" %}
-                                </h2>
-
-                                <div>
-                                    {% for paf_approval in object.paf_approvals.all %}
-
-                                        {% if not paf_approval.approved %}
-                                            {% project_rejected_by_user object paf_approval.user as rejected %}
-                                            {% if rejected %}
-                                                <div class="flex gap-2">
-                                                    {% heroicon_outline "exclamation-circle" class="inline stroke-red-500" aria_hidden=true %}
-
-                                                    <p class="m-0 sidebar__paf-approvals--approved">
-                                                        {% trans "Request changes or more information by " %}{{ paf_approval.user }}.
-
-                                                        {% get_comment_for_requested_approval paf_approval as rejected_comment %}
-                                                        {% if rejected_comment %}
-                                                            <a href="{{ rejected_comment.get_absolute_url }}" class="font-bold">
-                                                                {% trans "View comment" %}
-                                                            </a>
-                                                        {% endif %}
-                                                    </p>
-
-                                                </div>
-                                            {% else %}
-                                                <p class="flex gap-2 items-center m-0 mb-2 text-error">
-                                                    <span>
-                                                        {% heroicon_micro "clock" class="inline-block align-middle size-4" aria_hidden=true %}
-                                                    </span>
-                                                    <span>
-                                                        {% trans "Pending approval from " %}
-                                                        {% if paf_approval.user %}
-                                                            {{ paf_approval.user }}
-                                                        {% else %}
-                                                            {{ paf_approval.paf_reviewer_role.label }} ({% trans "nobody assigned yet" %})
-                                                        {% endif %}
-                                                    </span>
-                                                </p>
-                                            {% endif %}
-                                        {% else %}
-                                            <p class="flex gap-2 items-center m-0 mb-2">
-                                                {% heroicon_micro "check-circle" class="inline align-middle fill-green-500" aria_hidden=true %}
-                                                <span>{{ paf_approval.user }} {% trans "approved" %}
-                                                    {% if paf_approval.approved_at %}
-                                                        <relative-time datetime="{{ paf_approval.approved_at|date:"c" }}" class="text-fg-muted">
-                                                            {{ paf_approval.approved_at|date }}
-                                                        </relative-time>
-                                                    {% endif %}
-                                                </span>
-                                            </p>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {% if request.user.is_apply_staff %}
-                        {% block admin_assignments %}{% endblock %}
-                    {% endif %}
-
-                    {% display_coapplicant_section user object as coapplicant_section %}
-                    {% if coapplicant_section %}
-                        {% block co_applicant %}
-                            <div
-                                hx-trigger="revealed, coApplicantUpdated from:body"
-                                hx-get="{% url 'funds:submissions:partial_coapplicant_invites' object.submission.id %}"
-                            ></div>
-                        {% endblock %}
-                    {% endif %}
-                </aside>
-            {% endblock sidebar %}
         </div>
 
+        <aside class="flex flex-col gap-4 layout-sidebar">
+            {% user_next_step_on_project object user request=request as next_step %}
+            {% if next_step %}
+                <div class="card [--card-fs:1rem] bg-warning text-warning-content shadow-xs">
+                    <div class="card-body">
+                        <h2 class="card-title">
+                            {% heroicon_solid "sparkles" class="align-text-top" aria_hidden=true %}
+                            <span>{{ next_step.heading }}</span>
+                        </h2>
+
+                        <p>{{ next_step.text }}</p>
+
+                        {% user_next_step_instructions object user as instructions %}
+                        {% if instructions %}
+                            <div class="sidebar__inner--actions--instructions">
+                                {% for instruction in instructions %}
+                                    <p>{{forloop.counter}}. {{ instruction }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if object.paf_approvals.exists and not user.is_applicant %}
+                <div class="card card-border shadow-xs">
+                    <div class="card-body">
+                        <h2 class="card-title">
+                            {% trans "Project form approvals" %}
+                        </h2>
+
+                        <div>
+                            {% for paf_approval in object.paf_approvals.all %}
+
+                                {% if not paf_approval.approved %}
+                                    {% project_rejected_by_user object paf_approval.user as rejected %}
+                                    {% if rejected %}
+                                        <div class="flex gap-2">
+                                            {% heroicon_outline "exclamation-circle" class="inline stroke-red-500" aria_hidden=true %}
+
+                                            <p class="m-0 sidebar__paf-approvals--approved">
+                                                {% trans "Request changes or more information by " %}{{ paf_approval.user }}.
+
+                                                {% get_comment_for_requested_approval paf_approval as rejected_comment %}
+                                                {% if rejected_comment %}
+                                                    <a href="{{ rejected_comment.get_absolute_url }}" class="font-bold">
+                                                        {% trans "View comment" %}
+                                                    </a>
+                                                {% endif %}
+                                            </p>
+
+                                        </div>
+                                    {% else %}
+                                        <p class="flex gap-2 items-center m-0 mb-2 text-error">
+                                            <span>
+                                                {% heroicon_micro "clock" class="inline-block align-middle size-4" aria_hidden=true %}
+                                            </span>
+                                            <span>
+                                                {% trans "Pending approval from " %}
+                                                {% if paf_approval.user %}
+                                                    {{ paf_approval.user }}
+                                                {% else %}
+                                                    {{ paf_approval.paf_reviewer_role.label }} ({% trans "nobody assigned yet" %})
+                                                {% endif %}
+                                            </span>
+                                        </p>
+                                    {% endif %}
+                                {% else %}
+                                    <p class="flex gap-2 items-center m-0 mb-2">
+                                        {% heroicon_micro "check-circle" class="inline align-middle fill-green-500" aria_hidden=true %}
+                                        <span>{{ paf_approval.user }} {% trans "approved" %}
+                                            {% if paf_approval.approved_at %}
+                                                <relative-time datetime="{{ paf_approval.approved_at|date:"c" }}" class="text-fg-muted">
+                                                    {{ paf_approval.approved_at|date }}
+                                                </relative-time>
+                                            {% endif %}
+                                        </span>
+                                    </p>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if request.user.is_apply_staff %}
+                {% block admin_assignments %}{% endblock %}
+            {% endif %}
+
+            {% display_coapplicant_section user object as coapplicant_section %}
+            {% if coapplicant_section %}
+                {% block co_applicant %}
+                    <div
+                        hx-trigger="revealed, coApplicantUpdated from:body"
+                        hx-get="{% url 'funds:submissions:partial_coapplicant_invites' object.submission.id %}"
+                    ></div>
+                {% endblock %}
+            {% endif %}
+        </aside>
     </div>
 {% endblock content %}
 
