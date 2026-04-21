@@ -16,7 +16,6 @@ from django.db.models import (
 from django.db.models.functions import Coalesce
 from django.http import HttpRequest
 from django.utils.translation import gettext as _
-from django.utils.translation import ngettext
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity, Event
@@ -43,9 +42,7 @@ def bulk_archive_submissions(
 
     messages.success(
         request,
-        ngettext(
-            "{} submission archived.", "{} submissions archived.", len(submissions)
-        ).format(len(submissions)),
+        _("{count} submissions archived.").format(count=len(submissions)),
     )
 
     messenger(
@@ -78,9 +75,7 @@ def bulk_delete_submissions(
 
     messages.success(
         request,
-        ngettext(
-            "{} submission deleted.", "{} submissions deleted.", len(submissions)
-        ).format(len(submissions)),
+        _("{count} submissions deleted.").format(count=len(submissions)),
     )
 
     messenger(

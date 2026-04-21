@@ -161,7 +161,7 @@ class ReviewOpinionForm(forms.ModelForm):
         valid_opinions = [opinion for opinion in opinions if opinion is not None]
         if len(valid_opinions) > 1:
             self.add_error(
-                None, gettext("Cant submit both an agreement and disagreement")
+                None, gettext("Can't submit both an agreement and disagreement")
             )
         cleaned_data = {"opinion": valid_opinions[0]}
         return cleaned_data
