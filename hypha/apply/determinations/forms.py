@@ -37,7 +37,9 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
 
         error_messages = {
             NON_FIELD_ERRORS: {
-                "unique_together": "You have already created a determination for this submission",
+                "unique_together": _(
+                    "You have already created a determination for this submission"
+                ),
             }
         }
 
@@ -126,7 +128,9 @@ class BatchDeterminationForm(StreamBaseForm, forms.Form, metaclass=FormMixedMeta
     outcome = forms.ChoiceField(
         choices=DETERMINATION_CHOICES,
         label=_("Determination"),
-        help_text="Do you recommend requesting a proposal based on this concept note?",
+        help_text=_(
+            "Do you recommend requesting a proposal based on this concept note?"
+        ),
         widget=forms.HiddenInput(),
     )
 
