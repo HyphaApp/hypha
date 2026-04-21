@@ -160,7 +160,7 @@
             {% endif %}
             {% if s.comment_count %}
                 <a class="flex items-center transition-colors text-inherit group hover:text-primary"
-                   title="{% trans "View communications" %}"
+                   title="{% trans 'View communications' %}"
                    href="{% url "funds:submissions:comments" s.id %}"
                 >
                     {% heroicon_outline "chat-bubble-left" aria_hidden="true" size=16 class="inline-block stroke-2 me-1 group-hover:stroke-primary" %}

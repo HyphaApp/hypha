@@ -50,7 +50,7 @@
                                 href="{% url 'apply:projects:supporting_doc_upload' object.submission.id document_category.id %}"
                                 hx-get="{% url 'apply:projects:supporting_doc_upload' object.submission.id document_category.id %}"
                                 hx-target="#htmx-modal"
-                                aria-label="{% trans "Upload Supporting Documents" %}"
+                                aria-label="{% trans 'Upload Supporting Documents' %}"
                             >
                                 {% heroicon_micro "arrow-up-tray" class="size-4" aria_hidden="true" %}
                                 {% trans "Upload" %}

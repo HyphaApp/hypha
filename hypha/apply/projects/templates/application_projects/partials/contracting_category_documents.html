@@ -54,7 +54,7 @@
                             href="{% url 'apply:projects:contract_doc_upload' object.submission.id document_category.id %}"
                             hx-get="{% url 'apply:projects:contract_doc_upload' object.submission.id document_category.id %}"
                             hx-target="#htmx-modal"
-                            aria-label="{% trans "Upload Contracting Documents" %}"
+                            aria-label="{% trans 'Upload Contracting Documents' %}"
                         >
                             {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                             {% trans "Upload" %}

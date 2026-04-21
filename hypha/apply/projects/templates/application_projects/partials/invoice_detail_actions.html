@@ -32,7 +32,7 @@
     {% if user.is_apply_staff or user.is_applicant %}
         <a
             {% if not user_can_edit_request %}
-                data-tippy-content="{% trans "Only editable when 'Submitted' or you have been requested to make changes" %}"
+                data-tippy-content="{% trans 'Only editable when submitted or you have been requested to make changes' %}"
                 disabled
             {% endif %}
             class="btn btn-secondary btn-outline btn-block"

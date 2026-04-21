@@ -65,8 +65,8 @@
     const choices = JSON.parse('{{ json_choices|safe }}')
 
     {# Define translations for the button text #}
-    const CLEAR_TEXT = "{% trans "Clear" %}"
-    const TRANSLATE_TEXT = "{% trans "Translate" %}"
+    const CLEAR_TEXT = "{% trans 'Clear' %}"
+    const TRANSLATE_TEXT = "{% trans 'Translate' %}"
 
     function getToChoices(from_lang) {
         const selected = choices.find((choice) => choice.value === from_lang)
