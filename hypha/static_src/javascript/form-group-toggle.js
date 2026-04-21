@@ -31,12 +31,23 @@
             .forEach(function (el) {
               el.setAttribute("required", "");
             });
+          const labelSpan = fieldset.querySelector(".form__question span");
+          if (labelSpan && !labelSpan.querySelector("sup")) {
+            const sup = document.createElement("sup");
+            sup.textContent = "*";
+            labelSpan.appendChild(sup);
+          }
         });
     } else {
       wrapper
         .querySelectorAll("input:not([type='hidden']), select, textarea")
         .forEach(function (el) {
           el.removeAttribute("required");
+        });
+      wrapper
+        .querySelectorAll(".form__question span sup")
+        .forEach(function (sup) {
+          sup.remove();
         });
     }
   }
