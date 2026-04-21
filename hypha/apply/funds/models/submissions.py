@@ -319,7 +319,7 @@ class AddTransitions(models.base.ModelBase):
 
                     transition_state = wrap_method(transition_m)
                     # Provide a neat name for graph viz display
-                    transition_state.__name__ = slugify(action["display"])
+                    transition_state.__name__ = str(slugify(action["display"]))
 
                     conditions = [
                         attrs[condition] for condition in action.get("conditions", [])

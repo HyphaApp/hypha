@@ -26,13 +26,10 @@ ACTIVITY_TYPES = {
     ACTION: _("Action"),
 }
 
-# Visibility strings. Used to determine visibility states but are also
-# sometimes shown to users.
-# (ie. hypha.apply.activity.templatetags.activity_tags.py)
-APPLICANT = _("applicant")
-TEAM = _("team")
-REVIEWER = _("reviewers")
-ALL = _("all")
+APPLICANT = "applicant"
+TEAM = "team"
+REVIEWER = "reviewers"
+ALL = "all"
 
 # Visibility choice strings
 VISIBILITY = {
