@@ -4,7 +4,7 @@
 {% block title %}{% trans "Log in" %}{% endblock %}
 
 {% block content %}
-    <div class="my-5 max-w-2xl">
+    <div class="my-5 max-w-3xl">
         <div class="px-4 pt-4">
             {% if wizard.steps.current == 'token' %}
                 {% if device.method == 'call' %}
@@ -90,11 +90,11 @@
                     <div class="my-8 max-w-xs divider text-fg-muted">{% translate "OR" %}</div>
 
                     <section class="flex-wrap card-actions">
+                        {% include "users/includes/passwordless_login_button.html" %}
+                        {% include "users/includes/passkey_login_button.html" %}
                         {% if GOOGLE_OAUTH2 %}
                             {% include "users/includes/org_login_button.html" %}
                         {% endif %}
-                        {% include "users/includes/passwordless_login_button.html" %}
-                        {% include "users/includes/passkey_login_button.html" %}
                     </section>
 
                 {% else %}
