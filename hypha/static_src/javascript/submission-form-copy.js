@@ -1,116 +1,134 @@
-(function ($) {
+(function () {
+  "use strict";
+
   /**
-   * Strip html tags from text.
-   * @param {string} html - The html
-   * @returns {string} The text without html tags.
+   * Strip HTML tags from a string and return plain text.
+   * @param {string} html
+   * @returns {string}
    */
   function strip(html) {
-    var doc = new DOMParser().parseFromString(html, "text/html");
-    return doc.body.textContent.trim() || "";
+    const el = document.createElement("div");
+    el.innerHTML = html;
+    return el.textContent.trim();
   }
 
   /**
-   * Get all questions on the page/form.
-   * @returns {string} The questions and user input.
+   * Collect all questions and user input from the form as a Markdown string.
+   * @returns {string}
    */
-  function get_questions() {
-    var questions_text = [];
-    var i = 1;
-    questions_text.push("# " + $("h1:first").html());
-    $(".application-form")
-      .find(".form__group, .rich-text, h2, h3")
-      .each(function () {
-        var question_text = "";
-        var label_text = $(this).find(".form__question").html();
-        if (label_text) {
-          // Get the label, i.e. question.
-          label_text = strip(label_text);
-          label_text = label_text.replace(/(\r\n|\n|\r)/gm, "");
-          label_text = label_text.replace(/[ ]+/g, " ");
-          question_text = "### " + label_text;
+  function getQuestions() {
+    const lines = [];
+    let sectionIndex = 1;
 
-          var help_text = $(this).find(".form__help").html();
-          var word_limit = $(this).attr("data-word-limit");
-          var $input_list = $(this).find(".form__item > ul > li");
-          var input_text = $(this).find("input").val();
-          var rich_text = $(this).find(".tinymce4-editor").val();
+    const h1 = document.querySelector("h1");
+    if (h1) lines.push("# " + h1.textContent.trim());
 
-          // Get help text.
-          if (help_text) {
-            question_text = question_text + "\n\n" + strip(help_text);
+    if (!applicationForm) return lines.join("\n\n");
+
+    applicationForm
+      .querySelectorAll(".form__group, h2, h3")
+      .forEach(function (el) {
+        let questionText = "";
+        const labelEl = el.querySelector(".form__question");
+
+        if (labelEl) {
+          // Form field: build label + help + answer
+          const labelText = strip(labelEl.innerHTML)
+            .replace(/[\r\n]+/g, " ")
+            .replace(/ {2,}/g, " ");
+          questionText = "### " + labelText;
+
+          const helpEl = el.querySelector(".form__help");
+          if (helpEl) {
+            questionText += "\n\n" + strip(helpEl.innerHTML);
           }
 
-          if (word_limit) {
-            question_text =
-              question_text +
-              "\n\nLimit this field to " +
-              word_limit +
-              " words.";
+          const wordLimit = el.dataset.wordLimit;
+          if (wordLimit) {
+            questionText += "\n\n" + i18n.wordLimit.replace("%s", wordLimit);
           }
 
-          // Get the user input if any.
-          if ($input_list.length !== 0) {
-            var input_list = [];
-            var input_item = "";
-            $input_list.each(function () {
-              input_item = strip($(this).html());
-              if ($(this).find("input").is(":checked")) {
-                input_item = input_item + " (selected)";
-              }
-              input_list.push(input_item);
+          const listItems = el.querySelectorAll(".form__list > li");
+          const inputEl = el.querySelector("input");
+          const richTextEl = el.querySelector(".tinymce4-editor");
+
+          if (listItems.length) {
+            const itemTexts = Array.from(listItems).map(function (li) {
+              let text = strip(li.innerHTML);
+              if (li.querySelector("input:checked"))
+                text += " " + i18n.selected;
+              return text;
             });
-            question_text = question_text + "\n\n" + input_list.join("\n");
-          } else if (input_text) {
-            question_text = question_text + "\n\n" + strip(input_text);
-          } else if (rich_text) {
-            question_text = question_text + "\n\n" + strip(rich_text);
+            questionText += "\n\n" + itemTexts.join("\n");
+          } else if (inputEl && inputEl.value) {
+            questionText += "\n\n" + strip(inputEl.value);
+          } else if (richTextEl && richTextEl.value) {
+            questionText += "\n\n" + strip(richTextEl.value);
           }
         } else {
-          // Get the sub headers and help text.
-          question_text = strip($(this).html());
-          if ($(this).find("h2, h3")) {
-            question_text = "## " + i + ". " + question_text;
-            i++;
+          // Heading or markup block
+          questionText = strip(el.innerHTML);
+          if (el.tagName === "H2" || el.tagName === "H3") {
+            questionText = "## " + sectionIndex + ". " + questionText;
+            sectionIndex++;
           }
         }
-        questions_text.push(question_text);
+
+        lines.push(questionText);
       });
-    return questions_text.join("\n\n");
+
+    return lines.join("\n\n");
   }
 
-  // Allow users to copy all questions to the clipboard.
-  if (
-    document.queryCommandSupported &&
-    document.queryCommandSupported("copy")
-  ) {
-    var $button = $("<button/>")
-      .text("Copy questions to clipboard")
-      .addClass("btn sm:btn-sm w-full sm:w-auto js-clipboard-button")
-      .attr(
-        "title",
-        "Copies all the questions and user input to the clipboard in plain text."
-      );
-    var $application_form = $(".application-form");
-    $button
-      .clone()
-      .css({ display: "block", "margin-left": "auto" })
-      .insertBefore($application_form);
-    $button.insertAfter($application_form.find("button").last());
+  function handleCopy() {
+    const text = getQuestions();
 
-    $(".js-clipboard-button").on("click", function (e) {
-      e.preventDefault();
-      $application_form.addClass("animate-flash");
-      var questions = get_questions();
-      var $textarea = $("<textarea>")
-        .html(questions)
-        .addClass("visually-hidden");
-      $textarea.appendTo("body");
-      $textarea.select();
-      document.execCommand("copy");
-      $textarea.remove();
-      setTimeout(function () {
-        $application_form.removeClass("animate-flash");
-      }, 1200);
-    });
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(flashForm);
+    } else {
+      console.warn("Clipboard API not available.");
+    }
   }
-})(jQuery);
+
+  function flashForm() {
+    applicationForm.classList.add("animate-flash");
+    setTimeout(function () {
+      applicationForm.classList.remove("animate-flash");
+    }, 1200);
+  }
+
+  const applicationForm = document.querySelector(".application-form");
+  if (!applicationForm) return;
+
+  const i18n = {
+    btnLabel: applicationForm.dataset.copyBtnLabel,
+    btnTitle: applicationForm.dataset.copyBtnTitle,
+    wordLimit: applicationForm.dataset.copyWordLimit,
+    selected: applicationForm.dataset.copySelected,
+  };
+
+  // Create the copy button
+  const button = document.createElement("button");
+  button.textContent = i18n.btnLabel;
+  button.className = "btn btn-secondary btn-outline w-full sm:btn-sm sm:w-auto";
+  button.title = i18n.btnTitle;
+  button.type = "button";
+  button.addEventListener("click", handleCopy);
+
+  // Insert a copy above the form (aligned to the right)
+  const topButton = button.cloneNode(true);
+  topButton.classList.add("block", "ms-auto");
+  topButton.addEventListener("click", handleCopy);
+  applicationForm.parentNode.insertBefore(topButton, applicationForm);
+
+  // Insert a copy after the last button inside the form
+  const allButtons = applicationForm.querySelectorAll("button");
+  const lastButton = allButtons.length
+    ? allButtons[allButtons.length - 1]
+    : null;
+  if (lastButton) {
+    lastButton.insertAdjacentElement("afterend", button);
+  } else {
+    applicationForm.appendChild(button);
+  }
+})();

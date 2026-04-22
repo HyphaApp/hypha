@@ -56,7 +56,7 @@
                 </span>
             </label>
         {% elif widget_type == 'checkbox_select_multiple' or widget_type == 'radio_select' %}
-            <legend class="fieldset-legend form__question--{{ field_type }} widget-{{ widget_type }}"
+            <legend class="fieldset-legend form__question form__question--{{ field_type }} widget-{{ widget_type }}"
                     {% if field.field.required %}required{% endif %}
             >
                 <span>{{ field.label }} {% if field.field.required %}<sup>*</sup>{% endif %}</span>
@@ -67,7 +67,7 @@
                 <div>
                     <label class="max-w-none prose" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}*{% endif %}</label>
                     {% if field.help_text %}
-                        <div class="text-xs prose h-help-text">{{ field.help_text }}</div>
+                        <div class="text-xs form__help prose h-help-text">{{ field.help_text }}</div>
                     {% endif %}
                 </div>
             </div>
@@ -83,7 +83,7 @@
             {% endif %}
         {% endif %}
         {% if field.help_text and widget_type != 'checkbox_input' %}
-            <div class="mb-1 -mt-1 text-xs prose" aria-live="polite" aria-atomic="true">
+            <div class="mb-1 -mt-1 text-xs form__help prose" aria-live="polite" aria-atomic="true">
                 {{ field.help_text }}
             </div>
         {% endif %}

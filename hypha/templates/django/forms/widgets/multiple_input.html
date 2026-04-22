@@ -1,5 +1,5 @@
 {% spaceless %}{% with id=widget.attrs.id %}
-  <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 {% if widget.attrs.class %} {{ widget.attrs.class }} {% endif %}"{% if id %} id="{{ id }}"{% endif %}>
+  <ul class="form__list grid grid-cols-1 sm:grid-cols-2 gap-2 {% if widget.attrs.class %} {{ widget.attrs.class }} {% endif %}"{% if id %} id="{{ id }}"{% endif %}>
     {% for group, options, index in widget.optgroups %}
       {% if group %}
         <li>{{ group }}<ul{% if id %} id="{{ id }}_{{ index }}"{% endif %}>

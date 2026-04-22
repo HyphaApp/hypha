@@ -99,6 +99,6 @@
     "formatter": {
       "trailingCommas": "es5"
     },
-    "globals": ["define", "htmx", "jQuery", "Alpine"]
+    "globals": ["define", "htmx", "Alpine"]
   }
 }

@@ -30,9 +30,6 @@ class BaseInvoiceTable(tables.Table):
         verbose_name=_("Invoice #"),
         args=[tables.utils.A("project__submission_id"), tables.utils.A("pk")],
         attrs={
-            "td": {
-                "class": "js-title",  # using title as class because of batch-actions.js
-            },
             "a": {
                 "class": "link link-hover text-h4 font-semibold break-words line-clamp-2 max-w-md",
             },
