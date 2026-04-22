@@ -319,7 +319,7 @@ class AddTransitions(models.base.ModelBase):
 
                     transition_state = wrap_method(transition_m)
                     # Provide a neat name for graph viz display
-                    transition_state.__name__ = slugify(action["display"])
+                    transition_state.__name__ = str(slugify(action["display"]))
 
                     conditions = [
                         attrs[condition] for condition in action.get("conditions", [])
@@ -436,7 +436,7 @@ class ApplicationSubmission(
     public_id = models.CharField(
         max_length=255, null=True, blank=True, unique=True, db_index=True
     )
-    summary = models.TextField(default="", null=True, blank=True)
+    summary = models.TextField(_("summary"), default="", null=True, blank=True)
     page = models.ForeignKey("wagtailcore.Page", on_delete=models.PROTECT)
     round = models.ForeignKey(
         "wagtailcore.Page",
@@ -484,6 +484,7 @@ class ApplicationSubmission(
 
     # Workflow inherited from WorkflowHelpers
     status = models.CharField(
+        _("status"),
         max_length=100,
         choices=get_all_possible_states(),
         default=INITIAL_STATE,
@@ -527,6 +528,8 @@ class ApplicationSubmission(
         indexes = [
             GinIndex(fields=["search_document"]),
         ]
+        verbose_name = _("application submission")
+        verbose_name_plural = _("application submissions")
 
     @property
     def is_draft(self):

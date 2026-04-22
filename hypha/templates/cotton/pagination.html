@@ -2,7 +2,7 @@
 <c-vars page target use_htmx class btn_class="btn btn-sm" />
 
 <div class="flex justify-around items-center {{ class }}">
-    <div aria-label="Pagination" class="join">
+    <div aria-label="{% trans 'Pagination' %}" class="join">
         {% if page.has_previous %}
             <a  href="{% if use_htmx %}#{% else %}{% modify_query page=1 %}{% endif %}"
                {% if use_htmx and url and target %}hx-get="{% modify_query page=1 %}" hx-target="{{ target }}"{% endif %}

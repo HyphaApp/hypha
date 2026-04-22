@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -481,9 +482,10 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
             PAYMENT_FAILED,
         ] and self.invoice.document.file.name.endswith(".pdf"):
             if activities := Activity.actions.filter(
+                Q(message__contains=APPROVED_BY_STAFF)
+                | Q(message__contains=APPROVED_BY_FINANCE),
                 related_content_type__model="invoice",
                 related_object_id=self.invoice.id,
-                message__icontains="Approved by",
             ).visible_to(self.request.user):
                 approval_pdf_page = html_to_pdf(
                     render_to_string(

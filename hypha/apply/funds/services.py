@@ -41,7 +41,8 @@ def bulk_archive_submissions(
     submissions.update(is_archive=True)
 
     messages.success(
-        request, _("{number} submissions archived.").format(number=len(submissions))
+        request,
+        _("{count} submissions archived.").format(count=len(submissions)),
     )
 
     messenger(
@@ -73,7 +74,8 @@ def bulk_delete_submissions(
     ).delete()
 
     messages.success(
-        request, _("{number} submissions deleted.").format(number=len(submissions))
+        request,
+        _("{count} submissions deleted.").format(count=len(submissions)),
     )
 
     messenger(

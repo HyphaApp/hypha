@@ -5,7 +5,7 @@
        href="{{ file.url }}"
        target="_blank"
        rel="noopener noreferrer"
-       title="View file - {{ file.filename }}"
+       title="{% blocktrans with filename=file.filename %}View file - {{ filename }}{% endblocktrans %}"
     >
         <span class="text-sm truncate">
             {% heroicon_mini "document-text" class="inline align-text-bottom" aria_hidden=true %}
@@ -22,7 +22,7 @@
     </a>
 {% else %}
     <div class="flex justify-between items-center py-2 px-3 mb-2 max-w-2xl font-medium rounded-sm border opacity-60 not-prose bg-base-200"
-         title="{% trans "File not found" %} - {{ file.filename }}"
+         title="{% trans 'File not found' %} - {{ file.filename }}"
     >
         <span class="text-sm truncate">
             {% heroicon_mini "document-text" class="inline align-text-bottom" aria_hidden=true %}

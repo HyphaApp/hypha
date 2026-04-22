@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from django.utils.translation import gettext as _
 from wagtail.models import Site
 
 from hypha.core.mail import MarkdownMail
@@ -106,7 +107,9 @@ class PasswordlessAuthService:
             "site": self.site,
         }
 
-        subject = f"Log in to {user.get_username()} at {settings.ORG_LONG_NAME}"
+        subject = _("Log in to {user} at {ORG_LONG_NAME}").format(
+            user=user.get_username(), ORG_LONG_NAME=settings.ORG_LONG_NAME
+        )
         # Force subject to a single line to avoid header-injection issues.
         subject = "".join(subject.splitlines())
 
@@ -128,7 +131,9 @@ class PasswordlessAuthService:
             "site": self.site,
         }
 
-        subject = f"Welcome to {settings.ORG_LONG_NAME}"
+        subject = _("Welcome to {ORG_LONG_NAME}").format(
+            ORG_LONG_NAME=settings.ORG_LONG_NAME
+        )
         # Force subject to a single line to avoid header-injection issues.
         subject = "".join(subject.splitlines())
 

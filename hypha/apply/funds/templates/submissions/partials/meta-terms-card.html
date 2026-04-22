@@ -9,10 +9,10 @@
             hx-get="{% url 'funds:submissions:metaterms_update' pk=submission.pk %}"
             hx-target="#htmx-modal"
             {% if meta_terms %}
-                aria-label="{% trans "Update tags" %}"
-                title="{% trans "Update tags" %}"
+                aria-label="{% trans 'Update tags' %}"
+                title="{% trans 'Update tags' %}"
             {% else %}
-                aria-label="{% trans "Add tags" %}"
+                aria-label="{% trans 'Add tags' %}"
             {% endif %}
         >
             {% if meta_terms %}

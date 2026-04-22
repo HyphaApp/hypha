@@ -86,6 +86,10 @@ class ReviewForm(ReviewFormFieldsMixin, models.Model):
         FieldPanel("form_fields"),
     ]
 
+    class Meta:
+        verbose_name = _("review form")
+        verbose_name_plural = _("review forms")
+
     def __str__(self):
         return self.name
 
@@ -162,16 +166,16 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     form_data = models.JSONField(default=dict, encoder=DjangoJSONEncoder)
 
     recommendation = models.IntegerField(
-        verbose_name=_("Recommendation"), choices=RECOMMENDATION_CHOICES, default=0
+        verbose_name=_("recommendation"), choices=RECOMMENDATION_CHOICES, default=0
     )
     score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
-    is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
+    is_draft = models.BooleanField(default=False, verbose_name=_("draft"))
     created_at = models.DateTimeField(
-        verbose_name=_("Creation time"), auto_now_add=True
+        verbose_name=_("creation time"), auto_now_add=True
     )
-    updated_at = models.DateTimeField(verbose_name=_("Update time"), auto_now=True)
+    updated_at = models.DateTimeField(verbose_name=_("update time"), auto_now=True)
     visibility = models.CharField(
-        verbose_name=_("Visibility"),
+        verbose_name=_("visibility"),
         choices=VISIBILITY.items(),
         default=PRIVATE,
         max_length=10,
@@ -181,6 +185,8 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
 
     class Meta:
         unique_together = ("author", "submission")
+        verbose_name = _("review")
+        verbose_name_plural = _("reviews")
 
     @property
     def outcome(self):
@@ -240,6 +246,8 @@ class ReviewOpinion(models.Model):
 
     class Meta:
         unique_together = ("author", "review")
+        verbose_name = _("review opinion")
+        verbose_name_plural = _("review opinions")
 
     def __str__(self):
         return f"Review Opinion for {self.review}"

@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_encode
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as _
 
 
 def get_user_by_email(email):
@@ -127,7 +127,7 @@ def send_confirmation_email(user, token, updated_email=None, site=None):
     if site:
         context.update(site=site)
 
-    subject = "Confirmation email for {unverified_email} at {ORG_LONG_NAME}".format(
+    subject = _("Confirmation email for {unverified_email} at {ORG_LONG_NAME}").format(
         **context
     )
     # Force subject to a single line to avoid header-injection issues.

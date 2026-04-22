@@ -50,6 +50,10 @@ from .utils import (
 
 
 def get_form_for_stages(submissions):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
     forms = [get_form_for_stage(submission, batch=True) for submission in submissions]
     if len(set(forms)) != 1:
         raise ValueError("Submissions expect different forms - please contact admin")
@@ -58,6 +62,10 @@ def get_form_for_stages(submissions):
 
 
 def get_form_for_stage(submission, batch=False, edit=False):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
     if batch:
         forms = [BatchConceptDeterminationForm, BatchProposalDeterminationForm]
     else:

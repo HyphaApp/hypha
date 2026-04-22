@@ -43,14 +43,16 @@ delete_user_perm = "{0}.delete_{1}".format(
 
 class UserFilterSet(WagtailFilterSet):
     STATUS_CHOICES = (
-        ("inactive", "INACTIVE"),
-        ("active", "ACTIVE"),
+        ("inactive", gettext_lazy("INACTIVE")),
+        ("active", gettext_lazy("ACTIVE")),
     )
     roles = django_filters.ModelChoiceFilter(
-        queryset=Group.objects.all(), label="Roles", method="filter_by_roles"
+        queryset=Group.objects.all(),
+        label=gettext_lazy("Roles"),
+        method="filter_by_roles",
     )
     status = django_filters.ChoiceFilter(
-        choices=STATUS_CHOICES, label="Status", method="filter_by_status"
+        choices=STATUS_CHOICES, label=gettext_lazy("Status"), method="filter_by_status"
     )
 
     class Meta:

@@ -59,4 +59,9 @@ class DeterminationMessageSettingsAdmin(SettingModelAdmin):
 
 
 class DeterminationFormSettingsAdmin(SettingModelAdmin):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
+
     model = DeterminationFormSettings

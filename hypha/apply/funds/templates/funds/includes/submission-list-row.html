@@ -30,7 +30,7 @@
                 {% heroicon_mini "hand-thumb-down" aria_hidden="true" size=21 class="inline -mt-1 align-text-bottom fill-red-400 stroke-1.5" data_tippy_placement='right' data_tippy_content=s.get_current_screening_status data_tippy_delay=200 %}
             {% endif %}
         {% else %}
-            {% heroicon_outline "question-mark-circle" aria_hidden="true" size=21 class="inline -mt-1 align-text-bottom stroke-slate-300 stroke-1.5" data_tippy_placement='right' data_tippy_content="Awaiting Screening" data_tippy_delay=200 %}
+            {% heroicon_outline "question-mark-circle" aria_hidden="true" size=21 class="inline -mt-1 align-text-bottom stroke-slate-300 stroke-1.5" data_tippy_placement='right' data_tippy_content=_("Awaiting Screening") data_tippy_delay=200 %}
         {% endif %}
     </span>
 
@@ -133,11 +133,11 @@
             {% comment %} Lead {% endcomment %}
             <span class="inline-block relative py-1 w-32 text-xs font-medium">
                 <div
-                    data-tippy-content="Assigned to {{ s.lead }}"
+                    data-tippy-content="{% blocktrans with lead=s.lead %}Assigned to {{ lead }}{% endblocktrans %}"
                     data-tippy-placement="left"
                     class="flex gap-1"
                 >
-                    {% comment %} <span class="block mb-1 text-xs text-fg-muted">Lead: </span> {% endcomment %}
+                    {% comment %} <span class="block mb-1 text-xs text-fg-muted">{% trans "Lead:" %}</span> {% endcomment %}
                     {% heroicon_micro "user-circle" aria_hidden="true" size=16 class="fill-fg-muted min-w-[16px]" %}
                     <a
                         hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" leads=s.lead.id %}"

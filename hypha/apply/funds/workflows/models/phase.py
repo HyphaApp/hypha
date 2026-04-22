@@ -26,15 +26,15 @@ class Phase:
         if transitions is None:
             transitions = {}
         self.name = name
-        self.display_name = display
+        self.display_name = str(display)
         self.display_slug = slugify(display)
         if public and future:
             raise ValueError("Cant provide both a future and a public name")
 
-        self.public_name = public or self.display_name
-        self.future_name_staff = future or self.display_name
+        self.public_name = str(public) if public else self.display_name
+        self.future_name_staff = str(future) if future else self.display_name
         self.bg_color = PHASE_BG_COLORS.get(self.display_name, "bg-gray-200")
-        self.future_name_public = future or self.public_name
+        self.future_name_public = str(future) if future else self.public_name
         self.stage = stage
         self.permissions = Permissions(permissions)
         self.step = step

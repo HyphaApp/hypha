@@ -12,7 +12,7 @@ from django.db.models.functions import Concat
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import get_valid_filename
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.utils.storage import PrivateStorage
 
@@ -26,13 +26,10 @@ ACTIVITY_TYPES = {
     ACTION: _("Action"),
 }
 
-# Visibility strings. Used to determine visibility states but are also
-# sometimes shown to users.
-# (ie. hypha.apply.activity.templatetags.activity_tags.py)
-APPLICANT = _("applicant")
-TEAM = _("team")
-REVIEWER = _("reviewers")
-ALL = _("all")
+APPLICANT = "applicant"
+TEAM = "team"
+REVIEWER = "reviewers"
+ALL = "all"
 
 # Visibility choice strings
 VISIBILITY = {
@@ -175,6 +172,10 @@ class ActivityAttachment(models.Model):
         upload_to=get_attachment_upload_path, storage=PrivateStorage()
     )
 
+    class Meta:
+        verbose_name = _("activity attachment")
+        verbose_name_plural = _("activity attachments")
+
     @property
     def filename(self):
         return os.path.basename(self.file.name)
@@ -201,9 +202,12 @@ class Activity(models.Model):
     source_object_id = models.PositiveIntegerField(blank=True, null=True, db_index=True)
     source = GenericForeignKey("source_content_type", "source_object_id")
 
-    message = models.TextField()
+    message = models.TextField(_("message"))
     visibility = models.CharField(
-        choices=list(VISIBILITY.items()), default=APPLICANT, max_length=30
+        _("visibility"),
+        choices=list(VISIBILITY.items()),
+        default=APPLICANT,
+        max_length=30,
     )
 
     # Fields for handling versioning of the comment activity models
@@ -232,6 +236,8 @@ class Activity(models.Model):
     class Meta:
         ordering = ["-timestamp"]
         base_manager_name = "objects"
+        verbose_name = _("activity")
+        verbose_name_plural = _("activities")
 
     def get_absolute_url(self):
         # coverup for both submission and project as source.
@@ -330,6 +336,10 @@ class Event(models.Model):
     object_id = models.PositiveIntegerField(blank=True, null=True)
     source = GenericForeignKey("content_type", "object_id")
 
+    class Meta:
+        verbose_name = _("event")
+        verbose_name_plural = _("events")
+
     def __str__(self):
         if self.source and hasattr(self.source, "title"):
             return f"{self.by} {self.get_type_display()} - {self.source.title}"
@@ -364,6 +374,10 @@ class Message(models.Model):
     )  # Stores the id of the object from an external system
     sent_in_email_digest = models.BooleanField(default=False)
     objects = MessagesQueryset.as_manager()
+
+    class Meta:
+        verbose_name = _("message")
+        verbose_name_plural = _("messages")
 
     def __str__(self):
         return f"[{self.type}][{self.status}] {self.content}"

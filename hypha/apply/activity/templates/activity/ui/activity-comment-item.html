@@ -25,7 +25,7 @@
                                     {% for role in activity.user.get_role_names  %}
                                         <span
                                             class="inline-block py-0.5 px-2 text-sm font-semibold rounded-xl border border-gray-300 text-fg-muted"
-                                            data-tippy-content="This user is a {{ role }}"
+                                            data-tippy-content="{% blocktrans %}This user is a {{ role }}{% endblocktrans %}"
                                         >
                                             {{ role }}
                                         </span>
@@ -34,7 +34,7 @@
                             {% endif %}
 
                             <a href="#communications--{{activity.id}}" class="hover:underline">
-                                <span class="text-fg-muted">commented</span>
+                                <span class="text-fg-muted">{% trans "commented" %}</span>
                                 <relative-time
                                     class="text-fg-muted"
                                     datetime="{{ activity.timestamp|date:"c" }}"
@@ -58,7 +58,7 @@
 
                             {% with activity.visibility|visibility_display:request.user as visibility_text  %}
                                 <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs uppercase rounded-xl border border-gray-300 text-fg-muted"
-                                      data-tippy-content="This is visible to {{ visibility_text }}">
+                                      data-tippy-content="{% blocktrans %}This is visible to {{ visibility_text }}{% endblocktrans %}">
                                     {% heroicon_outline "eye" size=14 class="inline" aria_hidden=true %}
                                     {{ visibility_text }}
                                 </span>
@@ -69,7 +69,7 @@
                             <a
                                 hx-get="{% url 'activity:edit-comment' activity.id %}"
                                 hx-target="#text-comment-{{activity.id}}"
-                                title="{% trans "Edit comment" %}"
+                                title="{% trans 'Edit comment' %}"
                                 class="btn btn-sm btn-square btn-ghost"
                             >
                                 {% heroicon_micro "pencil-square" aria_hidden=true %}
@@ -81,8 +81,8 @@
                             <a
                                 hx-delete="{% url 'activity:delete-comment' activity.id %}"
                                 hx-target="#communications-wrapper--{{activity.id}}"
-                                hx-confirm="{% trans "Are you sure you want to delete this comment? This action cannot be undone." %}"
-                                title="{% trans "Delete comment" %}"
+                                hx-confirm="{% trans 'Are you sure you want to delete this comment? This action cannot be undone.' %}"
+                                title="{% trans 'Delete comment' %}"
                                 class="btn btn-error btn-sm btn-square btn-ghost"
                             >
                                 {% heroicon_micro "trash" class="opacity-80 size-4" aria_hidden=true %}

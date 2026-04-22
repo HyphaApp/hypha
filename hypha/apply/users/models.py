@@ -194,10 +194,10 @@ defaultlocale = override(language=settings.LANGUAGE_CODE)
 class User(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
     full_name = models.CharField(
-        verbose_name=_("Full name"), max_length=255, blank=True
+        verbose_name=_("full name"), max_length=255, blank=True
     )
     slack = models.CharField(
-        verbose_name=_("Slack name"),
+        verbose_name=_("slack name"),
         blank=True,
         help_text=_('This is the name we should "@mention" when sending notifications'),
         max_length=50,
@@ -318,6 +318,8 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ("full_name", "email")
+        verbose_name = _("user")
+        verbose_name_plural = _("users")
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self.full_name} ({self.email})>"
@@ -328,13 +330,13 @@ class AuthSettings(BaseGenericSetting):
     wagtail_reference_index_ignore = True
 
     class Meta:
-        verbose_name = "Auth Settings"
+        verbose_name = _("Auth Settings")
 
-    consent_show = models.BooleanField(_("Show consent checkbox?"), default=False)
-    consent_text = models.CharField(max_length=255, blank=True)
-    consent_help = RichTextField(blank=True)
+    consent_show = models.BooleanField(_("show consent checkbox?"), default=False)
+    consent_text = models.CharField(_("consent text"), max_length=255, blank=True)
+    consent_help = RichTextField(_("consent help"), blank=True)
     extra_text = RichTextField(
-        _("Login extra text"),
+        _("login extra text"),
         blank=True,
         help_text=_("Displayed along side login form"),
     )
@@ -377,7 +379,8 @@ class PendingSignup(models.Model):
 
     class Meta:
         ordering = ("created",)
-        verbose_name_plural = "Pending signups"
+        verbose_name = _("Pending signup")
+        verbose_name_plural = _("Pending signups")
 
 
 class ConfirmAccessToken(models.Model):
@@ -395,4 +398,5 @@ class ConfirmAccessToken(models.Model):
 
     class Meta:
         ordering = ("modified",)
-        verbose_name_plural = "Confirm Access Tokens"
+        verbose_name = _("Confirm Access Token")
+        verbose_name_plural = _("Confirm Access Tokens")

@@ -24,13 +24,16 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
         if number_of_stages == 1:
             self.validate_stages_equal_forms(workflow, application_forms)
         self.validate_stages_equal_forms(
-            workflow, review_forms, form_type="Review form"
+            workflow, review_forms, form_type=_("Review form")
         )
         self.validate_stages_equal_forms(
-            workflow, external_review_forms, form_type="External Review form"
+            workflow,
+            external_review_forms,
+            form_type=_("External review form"),
+            optional=True,
         )
         self.validate_stages_equal_forms(
-            workflow, determination_forms, form_type="Determination form"
+            workflow, determination_forms, form_type=_("Determination form")
         )
 
         if settings.PROJECTS_ENABLED:
@@ -55,10 +58,12 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
             for stage in range(1, number_of_stages + 1):
                 is_form_present = True if stages_counter.get(stage, 0) > 0 else False
                 if not is_form_present:
-                    error_list.append(f"Please provide form for Stage {stage}.")
+                    error_list.append(
+                        _("Please provide form for Stage {stage}.").format(stage=stage)
+                    )
 
                 if stage == 1 and stages_counter.get(stage, 0) > 1:
-                    error_list.append("Only 1 form can be selected for 1st Stage.")
+                    error_list.append(_("Only 1 form can be selected for 1st Stage."))
 
             if error_list:
                 self.add_error(
@@ -66,7 +71,12 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
                     error_list,
                 )
 
-    def validate_stages_equal_forms(self, workflow, forms, form_type="form"):
+    def validate_stages_equal_forms(
+        self, workflow, forms, form_type=None, optional=False
+    ):
+        if form_type is None:
+            form_type = _("form")
+
         if forms.is_valid():
             valid_forms = [form for form in forms if not form.cleaned_data["DELETE"]]
             number_of_forms = len(valid_forms)
@@ -76,7 +86,7 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
             plural_stage = "s" if number_of_stages > 1 else ""
 
             # External Review Form is optional and should be single if provided
-            if form_type == "External Review form":
+            if optional:
                 if number_of_forms > 1:
                     self.add_error(
                         None,
@@ -98,7 +108,7 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
                 for form in valid_forms[number_of_stages:]:
                     form.add_error(
                         "form",
-                        "Exceeds required number of forms for stage, please remove.",
+                        _("Exceeds required number of forms for stage, please remove."),
                     )
 
     def validate_paf_form(self, forms):
@@ -114,7 +124,7 @@ class RoundBasePageAdminForm(WagtailAdminPageForm):
 
         start_date = cleaned_data["start_date"]
         if not start_date:
-            self.add_error("start_date", "Please select start date.")
+            self.add_error("start_date", _("Please select start date."))
 
         return cleaned_data
 

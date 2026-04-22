@@ -389,7 +389,7 @@ class ActiveRoundFilter(MultipleChoiceFilter):
         super().__init__(
             self,
             *args,
-            choices=[("active", "Active"), ("inactive", "Inactive")],
+            choices=[("active", _("Active")), ("inactive", _("Inactive"))],
             **kwargs,
         )
 

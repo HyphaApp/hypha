@@ -54,7 +54,7 @@
                             href="{% url 'apply:projects:contract_doc_upload' object.submission.id document_category.id %}"
                             hx-get="{% url 'apply:projects:contract_doc_upload' object.submission.id document_category.id %}"
                             hx-target="#htmx-modal"
-                            aria-label="{% trans "Upload Contracting Documents" %}"
+                            aria-label="{% trans 'Upload Contracting Documents' %}"
                         >
                             {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                             {% trans "Upload" %}
@@ -76,7 +76,7 @@
                                         class="btn btn-outline btn-error btn-sm"
                                         hx-delete="{% url "apply:projects:remove_contracting_document" object.submission.pk latest_file.pk %}"
                                         hx-swap="none"
-                                        hx-confirm="Are you sure you want to remove this document?"
+                                        hx-confirm="{% trans 'Are you sure you want to remove this document?' %}"
                                     >
                                         {% csrf_token %}
                                         {% heroicon_micro "trash" aria_hidden=true class="opacity-80 size-4" %}

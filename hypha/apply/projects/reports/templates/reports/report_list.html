@@ -9,7 +9,7 @@
     <c-hero>
         <c-hero.header
             title="{% trans 'Submitted Reports' %} ({{ table.rows|length }})"
-            subtitle="{% trans 'View and filter all Submitted Reports' %} • <a href='{% url 'apply:projects:reports:all' %}' class='link link-hover'>View all reports</a>"
+            subtitle="{% trans 'View and filter all Submitted Reports' %} • <a href='{% url 'apply:projects:reports:all' %}' class='link link-hover'>{% trans 'View all reports' %}</a>"
         />
     </c-hero>
 {% endblock %}

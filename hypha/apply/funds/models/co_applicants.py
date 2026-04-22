@@ -30,7 +30,7 @@ class CoApplicantInvite(models.Model):
         on_delete=models.CASCADE,
         related_name="co_applicant_invites",
     )
-    invited_user_email = models.EmailField()
+    invited_user_email = models.EmailField(_("invited user email"))
     invited_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -39,12 +39,13 @@ class CoApplicantInvite(models.Model):
         related_name="co_applicant_invites",
     )
     status = models.CharField(
+        _("status"),
         max_length=20,
         choices=CoApplicantInviteStatus.choices,
         default=CoApplicantInviteStatus.PENDING,
     )
     role = models.CharField(
-        choices=CoApplicantRole.choices, default=CoApplicantRole.VIEW
+        _("role"), choices=CoApplicantRole.choices, default=CoApplicantRole.VIEW
     )
     project_permission = models.JSONField(blank=True, null=True, default=list)
     responded_on = models.DateTimeField(blank=True, null=True)
@@ -53,6 +54,8 @@ class CoApplicantInvite(models.Model):
 
     class Meta:
         unique_together = ("submission", "invited_user_email")
+        verbose_name = _("co-applicant invite")
+        verbose_name_plural = _("co-applicant invites")
 
     def __str__(self):
         return f"{self.invited_user_email} invited to {self.submission})"
@@ -71,13 +74,15 @@ class CoApplicant(models.Model):
         CoApplicantInvite, on_delete=models.CASCADE, related_name="co_applicant"
     )
     role = models.CharField(
-        choices=CoApplicantRole.choices, default=CoApplicantRole.VIEW
+        _("role"), choices=CoApplicantRole.choices, default=CoApplicantRole.VIEW
     )
     project_permission = models.JSONField(blank=True, null=True, default=list)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     class Meta:
         unique_together = ("submission", "user")
+        verbose_name = _("co-applicant")
+        verbose_name_plural = _("co-applicants")
 
     def __str__(self):
         return self.user.get_display_name()

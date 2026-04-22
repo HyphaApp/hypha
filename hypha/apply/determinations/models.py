@@ -88,6 +88,10 @@ class DeterminationForm(DeterminationFormFieldsMixin, models.Model):
         FieldPanel("form_fields"),
     ]
 
+    class Meta:
+        verbose_name = _("determination form")
+        verbose_name_plural = _("determination forms")
+
     def __str__(self):
         return self.name
 
@@ -104,25 +108,29 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
     )
 
     outcome = models.IntegerField(
-        verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=1
+        verbose_name=_("determination"), choices=DETERMINATION_CHOICES, default=1
     )
-    message = models.TextField(verbose_name=_("Determination message"), blank=True)
+    message = models.TextField(verbose_name=_("determination message"), blank=True)
 
     # Stores old determination forms data
     data = models.JSONField(blank=True, null=True)
 
     # Stores data submitted via streamfield determination forms
     form_data = models.JSONField(default=dict, encoder=DjangoJSONEncoder)
-    is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
+    is_draft = models.BooleanField(default=False, verbose_name=_("draft"))
     created_at = models.DateTimeField(
-        verbose_name=_("Creation time"), auto_now_add=True
+        verbose_name=_("creation time"), auto_now_add=True
     )
-    updated_at = models.DateTimeField(verbose_name=_("Update time"), auto_now=True)
+    updated_at = models.DateTimeField(verbose_name=_("update time"), auto_now=True)
     send_notice = models.BooleanField(
-        default=True, verbose_name=_("Send message to applicant")
+        default=True, verbose_name=_("send message to applicant")
     )
 
     objects = DeterminationQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = _("determination")
+        verbose_name_plural = _("determinations")
 
     @property
     def stripped_message(self):
@@ -196,19 +204,19 @@ class DeterminationMessageSettings(BaseSiteSetting):
     wagtail_reference_index_ignore = True
 
     class Meta:
-        verbose_name = "determination messages"
+        verbose_name = _("determination messages")
 
-    request_accepted = RichTextField("Approved", blank=True)
-    request_rejected = RichTextField("Dismissed", blank=True)
-    request_more_info = RichTextField("Needs more info", blank=True)
+    request_accepted = RichTextField(_("Approved"), blank=True)
+    request_rejected = RichTextField(_("Dismissed"), blank=True)
+    request_more_info = RichTextField(_("Needs more info"), blank=True)
 
-    concept_accepted = RichTextField("Approved", blank=True)
-    concept_rejected = RichTextField("Dismissed", blank=True)
-    concept_more_info = RichTextField("Needs more info", blank=True)
+    concept_accepted = RichTextField(_("Approved"), blank=True)
+    concept_rejected = RichTextField(_("Dismissed"), blank=True)
+    concept_more_info = RichTextField(_("Needs more info"), blank=True)
 
-    proposal_accepted = RichTextField("Approved", blank=True)
-    proposal_rejected = RichTextField("Dismissed", blank=True)
-    proposal_more_info = RichTextField("Needs more info", blank=True)
+    proposal_accepted = RichTextField(_("Approved"), blank=True)
+    proposal_rejected = RichTextField(_("Dismissed"), blank=True)
+    proposal_more_info = RichTextField(_("Needs more info"), blank=True)
 
     def get_for_stage(self, stage_name):
         message_templates = {}
@@ -253,6 +261,11 @@ class DeterminationMessageSettings(BaseSiteSetting):
 
 @register_setting
 class DeterminationFormSettings(BaseSiteSetting):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
+
     class Meta:
         verbose_name = "determination form settings"
 

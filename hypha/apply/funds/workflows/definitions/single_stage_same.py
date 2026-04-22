@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from ..constants import DRAFT_STATE, INITIAL_STATE, UserPermissions
 from ..models.stage import RequestSame

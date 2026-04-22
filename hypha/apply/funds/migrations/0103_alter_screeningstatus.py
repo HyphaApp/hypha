@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
         migrations.AlterModelOptions(
             name="screeningstatus",
             options={
-                "verbose_name": "Screening Decision",
+                "verbose_name": "Screening decision",
                 "verbose_name_plural": "screening decisions",
             },
         ),

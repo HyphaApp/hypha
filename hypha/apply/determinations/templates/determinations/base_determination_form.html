@@ -50,7 +50,7 @@
                         {{ hidden }}
                     {% endfor %}
                     {% for field in form.visible_fields %}
-                    {# to be replaced with better logic when/if we use stream form #}
+                    {# TODO: Remove form.titles block when no one are using the old hardcoded determinations forms anymore. #}
                         {% ifchanged field.field.group %}
                             {% for key, value in form.titles.items %}
                                 {% if key == field.field.group %}

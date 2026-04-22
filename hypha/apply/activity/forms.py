@@ -30,11 +30,13 @@ class CommentForm(FileFormMixin, forms.ModelForm):
             "assign_to",
         )
         labels = {
-            "visibility": "Visible to",
-            "message": "Message",
+            "visibility": _("Visible to"),
+            "message": _("Message"),
         }
         help_texts = {
-            "visibility": "Select a relevant user role. Staff can view every comment."
+            "visibility": _(
+                "Select a relevant user role. Staff can view every comment."
+            )
         }
         widgets = {
             "visibility": forms.RadioSelect(),
