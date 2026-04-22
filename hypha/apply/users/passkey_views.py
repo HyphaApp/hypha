@@ -308,7 +308,7 @@ def passkey_auth_complete(request):
 @require_GET
 def passkey_list(request):
     passkeys = request.user.passkeys.all()
-    return render(request, "users/partials/list.html", {"passkeys": passkeys})
+    return render(request, "users/partials/passkey-list.html", {"passkeys": passkeys})
 
 
 @login_required
@@ -323,7 +323,7 @@ def passkey_delete(request, pk):
     )
     passkey.delete()
     passkeys = request.user.passkeys.all()
-    return render(request, "users/partials/list.html", {"passkeys": passkeys})
+    return render(request, "users/partials/passkey-list.html", {"passkeys": passkeys})
 
 
 @login_required
@@ -335,4 +335,4 @@ def passkey_rename(request, pk):
         passkey.name = name
         passkey.save(update_fields=["name"])
     passkeys = request.user.passkeys.all()
-    return render(request, "users/partials/list.html", {"passkeys": passkeys})
+    return render(request, "users/partials/passkey-list.html", {"passkeys": passkeys})

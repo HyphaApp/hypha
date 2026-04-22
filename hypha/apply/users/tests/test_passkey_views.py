@@ -534,7 +534,7 @@ class TestPasskeyDelete(TestCase):
         passkey = make_passkey(self.user)
         url = reverse("users:passkey_delete", args=[passkey.pk])
         response = self.client.post(url)
-        self.assertTemplateUsed(response, "users/partials/list.html")
+        self.assertTemplateUsed(response, "users/partials/passkey-list.html")
 
 
 # ---------------------------------------------------------------------------
@@ -597,7 +597,7 @@ class TestPasskeyRename(TestCase):
         passkey = make_passkey(self.user)
         url = reverse("users:passkey_rename", args=[passkey.pk])
         response = self.client.post(url, {"name": "Updated"})
-        self.assertTemplateUsed(response, "users/partials/list.html")
+        self.assertTemplateUsed(response, "users/partials/passkey-list.html")
 
 
 # ---------------------------------------------------------------------------
