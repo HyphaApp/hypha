@@ -58,8 +58,8 @@ class SystemSettings(BaseGenericSetting):
         default="",
         blank=True,
         help_text=_(
-            'Link for the site logo, e.g. "https://www.example.org/". If not set, defaults to page with slug set to "home".'
-        ),
+            'Link for the site logo, e.g. "{example_url}". If not set, defaults to page with slug set to "home".'
+        ).format(example_url="https://www.example.org/"),
     )
 
     nav_content = models.TextField(
