@@ -23,7 +23,7 @@
                             data-tippy-content="{% trans 'Click to edit name' %}"
                             required
                         />
-                        <button type="submit" class="transition-all duration-500 border-primary text-primary btn btn-ghost btn-xs" :class="pkcurrent == pkinput && 'border-transparent text-success'" title="{% trans 'Save name' %}">
+                        <button type="submit" class="transition-all duration-500 btn btn-ghost btn-xs" :class="pkcurrent == pkinput ? 'text-success cursor-default border-transparent shadow-none hover:bg-transparent' : 'border-primary text-primary'" title="{% trans 'Save name' %}">
                             {% heroicon_micro "check" class="size-4" aria_hidden=true %}
                         </button>
                     </form>
