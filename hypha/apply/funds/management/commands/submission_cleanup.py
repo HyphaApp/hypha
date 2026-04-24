@@ -5,7 +5,10 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
 
-from hypha.apply.funds.models.submissions import ApplicationSubmission
+from hypha.apply.funds.models.submissions import (
+    AnonymizedSubmission,
+    ApplicationSubmission,
+)
 from hypha.apply.funds.workflows import DRAFT_STATE
 
 
@@ -55,8 +58,8 @@ class Command(BaseCommand):
 
         parser.add_argument(
             "--delete",
-            action="store_false",
-            dest="interactive",
+            action="store_true",
+            dest="delete",
             help="Delete submissions instead of anonymizing them. NOTE: Drafts will always be deleted, not anonymized",
         )
 
@@ -105,6 +108,7 @@ class Command(BaseCommand):
                 )
 
         if sub_time_threshold := options["submissions"]:
+            action = "delete" if options["delete"] else "anonymize"
             older_than_date = timezone.now() - timedelta(days=sub_time_threshold)
 
             old_subs = (
@@ -116,18 +120,37 @@ class Command(BaseCommand):
             if sub_count := old_subs.count():
                 if interactive:
                     confirm = input(
-                        f"This action will permanently anonymize {sub_count} submission{'s' if sub_count != 1 else ''}.\nAre you sure you want to do this?\n\nType 'yes' to continue, or 'no' to cancel: "
+                        f"This action will permanently {action} {sub_count} submission{'s' if sub_count != 1 else ''}.\nAre you sure you want to do this?\n\nType 'yes' to continue, or 'no' to cancel: "
                     )
                 else:
                     confirm = "yes"
 
                 if confirm == "yes":
+                    if action == "anonymize":
+                        sub_dict_list = old_subs.values(
+                            "id",
+                            "form_data",
+                            "page_id",
+                            "round_id",
+                            "status",
+                            "submit_time",
+                            "user_id",
+                        )
+                        anon_subs = []
+                        for sub_dict in sub_dict_list:
+                            anon_subs.append(
+                                AnonymizedSubmission.from_dict(sub_dict, save_user=True)
+                            )
+                        old_subs = ApplicationSubmission.objects.filter(
+                            id__in=[sub_dict["id"] for sub_dict in sub_dict_list]
+                        )
+                        sub_count = len(anon_subs)
                     old_subs.delete()
                     self.stdout.write(
-                        f"{sub_count} submission{'s' if sub_count != 1 else ''} anonymized."
+                        f"{sub_count} submission{'s' if sub_count != 1 else ''} {action}d."
                     )
                 else:
-                    self.stdout.write("Submission deletion cancelled.")
+                    self.stdout.write("Submission cleanup cancelled.")
             else:
                 self.stdout.write(
                     f"No submissions older than {sub_time_threshold} day{'s' if sub_time_threshold > 1 else ''} exist. Skipping!"

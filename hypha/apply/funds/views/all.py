@@ -393,9 +393,7 @@ def bulk_anonymize_submissions(request):
             return HttpResponseForbidden()
 
         submission_ids = request.POST.getlist("selectedSubmissionIds")
-        submissions = ApplicationSubmission.objects.filter(
-            id__in=submission_ids
-        ).values("id", "form_data", "page_id", "round_id", "status", "submit_time")
+        submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
 
         services.bulk_anonymize_submissions(
             submissions=submissions,
