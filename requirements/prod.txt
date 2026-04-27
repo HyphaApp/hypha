@@ -384,7 +384,6 @@ django==5.2.13 \
     #   django-anymail
     #   django-basic-auth-ip-whitelist
     #   django-cotton
-    #   django-extensions
     #   django-filter
     #   django-formtools
     #   django-heroku
@@ -429,10 +428,6 @@ django-cotton==2.6.2 \
 django-countries==8.2.0 \
     --hash=sha256:2b2617bec7c15dc735bdec38ae89f0058e38fddfffdb19a7f6b75ef1e3d5380f \
     --hash=sha256:6df3883180599052c7dfa9a8be0601792441cfb248935dc229ad1ac92e9e39e3
-    # via hypha
-django-extensions==4.1 \
-    --hash=sha256:0699a7af28f2523bf8db309a80278519362cd4b6e1fd0a8cd4bf063e1e023336 \
-    --hash=sha256:7b70a4d28e9b840f44694e3f7feb54f55d495f8b3fa6c5c0e5e12bcb2aa3cdeb
     # via hypha
 django-file-form==4.0.0 \
     --hash=sha256:09b835bd256849b51982320763b975565c6f0dfdcf11f4e8b4366695e3dd2cec
@@ -746,10 +741,6 @@ mistune==3.2.0 \
     --hash=sha256:708487c8a8cdd99c9d90eb3ed4c3ed961246ff78ac82f03418f5183ab70e398a \
     --hash=sha256:febdc629a3c78616b94393c6580551e0e34cc289987ec6c35ed3f4be42d0eee1
     # via hypha
-more-itertools==10.8.0 \
-    --hash=sha256:52d4362373dcf7c52546bc4af9a86ee7c4579df9a8dc268be0a2f949d376cc9b \
-    --hash=sha256:f638ddf8a1a0d134181275fb5d58b086ead7c6a72429ad725c67503f13ba30bd
-    # via hypha
 nh3==0.3.4 \
     --hash=sha256:07999b998bf89692738f15c0eac76a416382932f855709e0b7488b595c30ec89 \
     --hash=sha256:0961a27dc2057c38d0364cb05880e1997ae1c80220cbc847db63213720b8f304 \
@@ -801,10 +792,6 @@ packaging==26.1 \
     # via
     #   gunicorn
     #   kombu
-phonenumbers==9.0.28 \
-    --hash=sha256:ee8caabab4fd554efb6119e7b95cb69da40e0f04050611730eed839d93f39920 \
-    --hash=sha256:f1d810aaa43fbf3a5cb1ee54733218f8333a2a92c85c4d579a810403d6260a8c
-    # via hypha
 pillow==12.2.0 \
     --hash=sha256:00a2865911330191c0b818c59103b58a5e697cae67042366970a6b6f1b20b7f9 \
     --hash=sha256:01afa7cf67f74f09523699b4e88c73fb55c13346d212a59a2db1f86b0a63e8c5 \
@@ -1250,7 +1237,6 @@ reportlab==4.4.10 \
     --hash=sha256:5abc815746ae2bc44e7ff25db96814f921349ca814c992c7eac3c26029bf7c24 \
     --hash=sha256:5cbbb34ac3546039d0086deb2938cdec06b12da3cdb836e813258eb33cd28487
     # via
-    #   hypha
     #   svglib
     #   xhtml2pdf
 requests==2.33.1 \
@@ -1418,7 +1404,6 @@ urllib3==2.6.3 \
     # via
     #   botocore
     #   django-anymail
-    #   hypha
     #   requests
     #   scout-apm
     #   sentry-sdk
@@ -1527,8 +1512,4 @@ wrapt==1.17.3 \
 xhtml2pdf==0.2.17 \
     --hash=sha256:09ddbc31aa0e38a16f2f3cb73be89af5f7c968c17a564afdd685d280e39c526d \
     --hash=sha256:61a7ecac829fed518f7dbcb916e9d56bea6e521e02e54644b3d0ca33f0658315
-    # via hypha
-xmltodict==1.0.4 \
-    --hash=sha256:6d94c9f834dd9e44514162799d344d815a3a4faec913717a9ecbfa5be1bb8e61 \
-    --hash=sha256:a4a00d300b0e1c59fc2bfccb53d7b2e88c32f200df138a0dd2229f842497026a
     # via hypha

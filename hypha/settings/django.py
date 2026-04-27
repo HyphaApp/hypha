@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     "anymail",
     "modelcluster",
     "taggit",
-    "django_extensions",
     "tinymce",
     "django_tables2",
     "django_filters",
