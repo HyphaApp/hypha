@@ -1,11 +1,21 @@
 from django.core.files import File
 from django.test import TestCase
-from more_itertools import collapse
 
 from hypha.apply.stream_forms.files import StreamFieldFile
 
 from ..files import flatten, get_files
 from .factories import ProjectFactory
+
+
+def _find_files(iterable, base_type):
+    for item in iterable:
+        if isinstance(item, base_type):
+            yield item
+        elif not isinstance(item, (str, bytes)):
+            try:
+                yield from _find_files(item, base_type)
+            except TypeError:
+                pass
 
 
 class TestFlatten(TestCase):
@@ -34,9 +44,9 @@ class TestGetFiles(TestCase):
 
         self.assertTrue(all(issubclass(f.__class__, File) for f in files))
 
-        fields = project.submission.form_data.values()
-        fields = collapse(fields, base_type=StreamFieldFile)
-        fields = [f for f in fields if isinstance(f, StreamFieldFile)]
+        fields = list(
+            _find_files(project.submission.form_data.values(), StreamFieldFile)
+        )
 
         self.assertEqual(len(files), len(fields))
 

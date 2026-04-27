@@ -597,7 +597,6 @@ django-dynamic-fixture==4.0.1 \
 django-extensions==4.1 \
     --hash=sha256:0699a7af28f2523bf8db309a80278519362cd4b6e1fd0a8cd4bf063e1e023336 \
     --hash=sha256:7b70a4d28e9b840f44694e3f7feb54f55d495f8b3fa6c5c0e5e12bcb2aa3cdeb
-    # via hypha
 django-file-form==4.0.0 \
     --hash=sha256:09b835bd256849b51982320763b975565c6f0dfdcf11f4e8b4366695e3dd2cec
     # via hypha
@@ -1235,10 +1234,6 @@ mkdocstrings-python==2.0.3 \
 model-bakery==1.23.4 \
     --hash=sha256:0cd8e958e229734bd41feffdcb513a0f079c79c9ddb2e0aad11ed2c23f6d43d5 \
     --hash=sha256:65bfa0405d3ea60aca8c21e7e184c6617d6c8d32d0493cc75232a4476f471514
-more-itertools==10.8.0 \
-    --hash=sha256:52d4362373dcf7c52546bc4af9a86ee7c4579df9a8dc268be0a2f949d376cc9b \
-    --hash=sha256:f638ddf8a1a0d134181275fb5d58b086ead7c6a72429ad725c67503f13ba30bd
-    # via hypha
 mypy==1.20.2 \
     --hash=sha256:0c64e5973df366b747646fc98da921f9d6eba9716d57d1db94a83c026a08e0fb \
     --hash=sha256:0deb80d062b2479f2c87ae568f89845afc71d11bc41b04179e58165fd9f31e98 \
@@ -1364,10 +1359,6 @@ pathspec==1.0.4 \
     #   mkdocs-macros-plugin
     #   mypy
     #   properdocs
-phonenumbers==9.0.28 \
-    --hash=sha256:ee8caabab4fd554efb6119e7b95cb69da40e0f04050611730eed839d93f39920 \
-    --hash=sha256:f1d810aaa43fbf3a5cb1ee54733218f8333a2a92c85c4d579a810403d6260a8c
-    # via hypha
 pillow==12.2.0 \
     --hash=sha256:00a2865911330191c0b818c59103b58a5e697cae67042366970a6b6f1b20b7f9 \
     --hash=sha256:01afa7cf67f74f09523699b4e88c73fb55c13346d212a59a2db1f86b0a63e8c5 \
@@ -2000,7 +1991,6 @@ reportlab==4.4.10 \
     --hash=sha256:5abc815746ae2bc44e7ff25db96814f921349ca814c992c7eac3c26029bf7c24 \
     --hash=sha256:5cbbb34ac3546039d0086deb2938cdec06b12da3cdb836e813258eb33cd28487
     # via
-    #   hypha
     #   svglib
     #   xhtml2pdf
 requests==2.33.1 \
@@ -2365,7 +2355,6 @@ urllib3==2.6.3 \
     # via
     #   botocore
     #   django-anymail
-    #   hypha
     #   requests
     #   responses
     #   scout-apm
@@ -2519,8 +2508,4 @@ wrapt==1.17.3 \
 xhtml2pdf==0.2.17 \
     --hash=sha256:09ddbc31aa0e38a16f2f3cb73be89af5f7c968c17a564afdd685d280e39c526d \
     --hash=sha256:61a7ecac829fed518f7dbcb916e9d56bea6e521e02e54644b3d0ca33f0658315
-    # via hypha
-xmltodict==1.0.4 \
-    --hash=sha256:6d94c9f834dd9e44514162799d344d815a3a4faec913717a9ecbfa5be1bb8e61 \
-    --hash=sha256:a4a00d300b0e1c59fc2bfccb53d7b2e88c32f200df138a0dd2229f842497026a
     # via hypha
