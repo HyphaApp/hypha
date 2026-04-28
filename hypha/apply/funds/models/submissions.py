@@ -7,7 +7,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser, AnonymousUser, Group
 from django.contrib.contenttypes.fields import GenericRelation
-from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.exceptions import PermissionDenied
@@ -36,7 +35,8 @@ from wagtail.contrib.forms.models import AbstractFormSubmission
 from wagtail.fields import StreamField
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.categories.models import MetaTerm
+from hypha.apply.categories.blocks import CategoryQuestionBlock
+from hypha.apply.categories.models import MetaTerm, Option
 from hypha.apply.determinations.models import Determination
 from hypha.apply.flags.models import Flag
 from hypha.apply.funds.services import (
@@ -1098,7 +1098,7 @@ class AnonymizedSubmission(models.Model):
         default=INITIAL_STATE,
     )
 
-    category = ArrayField(models.CharField(), null=True)
+    selected_category_options = models.ManyToManyField(Option)
 
     page = models.ForeignKey("wagtailcore.Page", on_delete=models.PROTECT)
     round = models.ForeignKey(
@@ -1128,7 +1128,7 @@ class AnonymizedSubmission(models.Model):
     ) -> Self | None:
         """Creates an AnonymizedSubmission from a given dictionary
 
-        Attempts to pull values from keys of `form_data`, `page_id`, `round_id`, `status`, `submit_time` and optionally (save_user=True) `user_id`.
+        Attempts to pull values from keys of `form_data`, `page_id`, `round_id`, `status`, `submit_time`, `form_fields` (for categories) and optionally (save_user=True) `user_id`.
 
         For convenience, it if values of previous keys are none will also try prepending `applicationsubmission__`.
         ie. if `dict_submission.get("page_id") = None`, `dict_submission.get("applicationsubmission__page_id")` will be tried
@@ -1143,31 +1143,44 @@ class AnonymizedSubmission(models.Model):
         if all(x is None for x in dict_submission.values()):
             return None
 
-        user = None
-        if save_user:
-            user = dict_submission.get("user_id") or dict_submission.get(
-                "applicationsubmission__user_id"
+        # For convenience function to try both keys
+        def get_from_sub_dict(key):
+            return dict_submission.get(key) or dict_submission.get(
+                f"applicationsubmission__{key}"
             )
 
+        user = None
+        if save_user:
+            user = get_from_sub_dict("user_id")
+
         value = None
-        if form_data := dict_submission.get("form_data") or dict_submission.get(
-            "applicationsubmission__form_data"
-        ):
+        category_option_ids = []
+        if form_data := get_from_sub_dict("form_data"):
+            # Handling getting the value field
             value = form_data.get("value")
+
+            # Handle getting the category options field
+            if form_fields := get_from_sub_dict("form_fields"):
+                for field in form_fields:
+                    if isinstance(field.block, CategoryQuestionBlock):
+                        category_options = form_data.get(field.id)
+                        if category_options and isinstance(category_options, str):
+                            category_option_ids.append(category_options)
+                        elif category_options:
+                            category_option_ids += category_options
 
         anonymized = AnonymizedSubmission.objects.create(
             user_id=user,
-            page_id=dict_submission.get("page_id")
-            or dict_submission.get("applicationsubmission__page_id"),
-            round_id=dict_submission.get("round_id")
-            or dict_submission.get("applicationsubmission__round_id"),
+            page_id=get_from_sub_dict("page_id"),
+            round_id=get_from_sub_dict("round_id"),
             value=value,
-            status=dict_submission.get("status")
-            or dict_submission.get("applicationsubmission__status"),
-            submit_time=dict_submission.get("submit_time"),
-            screening_status_id=dict_submission.get("screening_statuses")
-            or dict_submission.get("applicationsubmission__screening_statuses"),
+            status=get_from_sub_dict("status"),
+            submit_time=get_from_sub_dict("submit_time"),
+            screening_status_id=get_from_sub_dict("screening_statuses"),
         )
+
+        anonymized.selected_category_options.set(category_option_ids)
+        anonymized.save()
 
         return anonymized
 
@@ -1194,13 +1207,20 @@ class AnonymizedSubmission(models.Model):
             user=user,
             page=submission.page,
             round=submission.round,
-            value=submission.form_data.get("value", None),
+            value=submission.form_data.get("value"),
             status=submission.status,
             submit_time=submission.submit_time,
             screening_status=submission.get_current_screening_status(),
         )
 
-        # TODO: Handle categories here
+        # Get the category options and add them to the anonymized submission
+        for field in submission.form_fields:
+            if isinstance(field.block, CategoryQuestionBlock) and (
+                category_option_ids := submission.form_data.get(field.id)
+            ):
+                anonymized.selected_category_options.add(
+                    *Option.objects.filter(id__in=category_option_ids)
+                )
 
         anonymized.save()
 

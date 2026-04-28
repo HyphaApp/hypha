@@ -327,6 +327,10 @@ class AnonymizedSubmissionFilter(filters.FilterSet):
         queryset=get_screening_statuses, label=_("Screening"), null_label=_("No Status")
     )
 
+    category_options = MultipleChoiceFilter(
+        choices=[], label=_("Category"), method="filter_category_options"
+    )
+
     class Meta:
         model = AnonymizedSubmission
         fields = ("fund", "round")
@@ -343,6 +347,21 @@ class AnonymizedSubmissionFilter(filters.FilterSet):
             for field, filter in self.filters.items()
             if field not in exclude
         }
+
+    def filter_category_options(self, queryset, name, value):
+        """
+        Filter submissions based on the category options selected.
+
+        In order to do that we need to first get all the category fields used in the submission.
+
+        And then use those category fields to filter submissions with their form_data.
+        """
+        query = Q()
+        if value:
+            if isinstance(value, str):
+                value = [value]
+            query |= Q(selected_category_options__in=value)
+        return queryset.filter(query)
 
 
 class SubmissionDashboardFilter(filters.FilterSet):

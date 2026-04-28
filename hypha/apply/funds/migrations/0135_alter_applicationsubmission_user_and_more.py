@@ -8,6 +8,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
+        ("categories", "0008_alter_category_options_alter_option_options_and_more"),
         ("funds", "0134_alter_applicationbase_options_and_more"),
         ("wagtailcore", "0094_alter_page_locale"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
@@ -132,10 +133,8 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "category",
-                    django.contrib.postgres.fields.ArrayField(
-                        base_field=models.CharField(), null=True, size=None
-                    ),
+                    "selected_category_options",
+                    models.ManyToManyField(to="categories.option"),
                 ),
                 ("submit_time", models.DateTimeField(verbose_name="submit time")),
                 (
