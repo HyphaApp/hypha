@@ -418,6 +418,24 @@ def can_view_contract_category_documents(user, project, **kwargs):
     return False, _("Forbidden Error")
 
 
+def can_skip_pafapproval_process(user, project, **kwargs):
+    if not user.is_authenticated:
+        return False, _("Login Required")
+
+    if project.status != DRAFT:
+        return False, _("Project is not in Draft state")
+
+    if not (user.is_apply_staff or user.is_apply_staff_admin):
+        return False, _("Only Staff can skip the PAF approval process")
+
+    if no_pafreviewer_role():
+        return True, _(
+            "Staff can skip PAF approval when no reviewer roles are configured"
+        )
+
+    return False, _("PAF reviewer roles are configured, cannot skip approval process")
+
+
 def can_edit_paf(user, project):
     if no_pafreviewer_role() and project.status != COMPLETE:
         return True, _(
@@ -482,5 +500,6 @@ permissions_map = {
     "submit_contract_documents": can_submit_contract_documents,
     "project_access": can_access_project,
     "paf_edit": can_edit_paf,
+    "skip_pafapproval_process": can_skip_pafapproval_process,
     "view_contract_documents": can_view_contract_category_documents,
 }

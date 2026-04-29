@@ -818,13 +818,14 @@ class UploadContractView(ProjectBySubmissionIdMixin, View):
         )
 
 
+@method_decorator(login_required, name="dispatch")
 class SkipPAFApprovalProcessView(UpdateView):
     model = Project
     form_class = SkipPAFApprovalProcessForm
 
     def dispatch(self, request, *args, **kwargs):
         self.object = get_object_or_404(Project, id=kwargs.get("pk"))
-        # permissions
+        has_permission("skip_pafapproval_process", request.user, object=self.object)
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -884,11 +885,10 @@ class SubmitContractDocumentsView(View):
         ).exists():
             raise PermissionDenied
         contract = self.project.contracts.order_by("-created_at").first()
-        permission, _ = has_permission(
+        has_permission(
             "submit_contract_documents",
             request.user,
             object=self.project,
-            raise_exception=True,
             contract=contract,
         )
         return super().dispatch(request, *args, **kwargs)
