@@ -134,7 +134,9 @@ class AttachmentView(PrivateMediaView):
     def dispatch(self, *args, **kwargs):
         file_pk = kwargs.get("file_pk")
         self.instance = get_object_or_404(ActivityAttachment, uuid=file_pk)
-
+        activity = self.instance.activity
+        if activity.visibility not in Activity.visibility_for(self.request.user):
+            raise PermissionDenied
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):

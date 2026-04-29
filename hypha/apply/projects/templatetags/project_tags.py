@@ -28,9 +28,10 @@ def project_show_reports_section(project):
 
 @register.simple_tag
 def user_can_skip_pafapproval_process(project, user):
-    if project.status == DRAFT and (user.is_apply_staff or user.is_apply_staff_admin):
-        return no_pafreviewer_role()
-    return False
+    permission, _ = has_permission(
+        "skip_pafapproval_process", user, object=project, raise_exception=False
+    )
+    return permission
 
 
 @register.simple_tag
