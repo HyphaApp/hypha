@@ -675,11 +675,10 @@ class UploadContractView(ProjectBySubmissionIdMixin, View):
 
     def dispatch(self, request, *args, **kwargs):
         self.project = self.get_object()
-        permission, _ = has_permission(
-            "contract_upload", request.user, object=self.project
+        has_permission(
+            "contract_upload", request.user, object=self.project, raise_exception=True
         )
-        if permission:
-            return super().dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         form = self.get_form()
@@ -825,7 +824,12 @@ class SkipPAFApprovalProcessView(UpdateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.object = get_object_or_404(Project, id=kwargs.get("pk"))
-        has_permission("skip_pafapproval_process", request.user, object=self.object)
+        has_permission(
+            "skip_pafapproval_process",
+            request.user,
+            object=self.object,
+            raise_exception=True,
+        )
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -889,6 +893,7 @@ class SubmitContractDocumentsView(View):
             "submit_contract_documents",
             request.user,
             object=self.project,
+            raise_exception=True,
             contract=contract,
         )
         return super().dispatch(request, *args, **kwargs)
@@ -1024,7 +1029,7 @@ class ChangePAFStatusView(View):
 
     def dispatch(self, request, *args, **kwargs):
         self.object = get_object_or_404(Project, submission__pk=self.kwargs["pk"])
-        permission, _ = has_permission(
+        has_permission(
             "paf_status_update",
             self.request.user,
             object=self.object,
@@ -1274,7 +1279,7 @@ class ChangeProjectstatusView(View):
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
-        permission, _ = has_permission(
+        has_permission(
             "project_status_update", request.user, self.project, raise_exception=True
         )
         return super().dispatch(request, *args, **kwargs)
@@ -1339,7 +1344,7 @@ class UpdateAssignApproversView(View):
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
-        permission, _ = has_permission(
+        has_permission(
             "update_paf_assigned_approvers",
             request.user,
             self.project,
@@ -1447,7 +1452,7 @@ class UpdatePAFApproversView(View):
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
-        permission, _ = has_permission(
+        has_permission(
             "paf_approvers_update",
             request.user,
             self.project,
@@ -1659,7 +1664,7 @@ class AdminProjectDetailView(
 
     def dispatch(self, *args, **kwargs):
         project = self.get_object()
-        permission, _ = has_permission(
+        has_permission(
             "project_access", self.request.user, object=project, raise_exception=True
         )
         return super().dispatch(*args, **kwargs)
@@ -1688,7 +1693,7 @@ class ApplicantProjectDetailView(
 
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()
-        permission, _ = has_permission(
+        has_permission(
             "project_access", request.user, object=project, raise_exception=True
         )
         return super().dispatch(request, *args, **kwargs)
@@ -1770,7 +1775,7 @@ class CategoryTemplatePrivateMediaView(ProjectBySubmissionIdMixin, PrivateMediaV
     def dispatch(self, *args, **kwargs):
         self.project = self.get_object()
         self.category_type = kwargs["type"]
-        permission, _ = has_permission(
+        has_permission(
             "project_access",
             self.request.user,
             object=self.project,
@@ -1834,7 +1839,7 @@ class ContractDocumentPrivateMediaView(ProjectBySubmissionIdMixin, PrivateMediaV
     def dispatch(self, *args, **kwargs):
         self.project = self.get_object()
         self.document = ContractPacketFile.objects.get(pk=kwargs["file_pk"])
-        permission, _ = has_permission(
+        has_permission(
             "view_contract_documents",
             self.request.user,
             object=self.project,
@@ -2033,6 +2038,7 @@ class ProjectDetailDownloadView(ProjectBySubmissionIdMixin, SingleObjectMixin, V
         return documents_dict
 
 
+@method_decorator(staff_or_finance_or_contracting_required, name="dispatch")
 class ProjectFormsEditView(BaseStreamForm, ProjectBySubmissionIdMixin, UpdateView):
     model = Project
 
@@ -2042,11 +2048,7 @@ class ProjectFormsEditView(BaseStreamForm, ProjectBySubmissionIdMixin, UpdateVie
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        permission, msg = has_permission(
-            "paf_edit", self.request.user, self.object, raise_exception=True
-        )
-        if not permission:
-            messages.info(self.request, msg)
+        has_permission("paf_edit", self.request.user, self.object, raise_exception=True)
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

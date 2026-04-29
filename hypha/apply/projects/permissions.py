@@ -437,6 +437,9 @@ def can_skip_pafapproval_process(user, project, **kwargs):
 
 
 def can_edit_paf(user, project):
+    if not user.is_authenticated:
+        return False, _("Login Required")
+
     if no_pafreviewer_role() and project.status != COMPLETE:
         return True, _(
             "Project form is editable for active projects if no reviewer roles"
