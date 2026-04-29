@@ -3,7 +3,7 @@ from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -31,6 +31,7 @@ from hypha.apply.funds.services import annotate_review_recommendation_and_count
 from hypha.apply.review.options import REVIEWER
 from hypha.apply.todo.options import DOWNLOAD_SUBMISSIONS_EXPORT
 from hypha.apply.todo.views import remove_tasks_of_related_obj_for_specific_code
+from hypha.apply.users.decorators import is_apply_staff
 from hypha.apply.users.roles import REVIEWER_GROUP_NAME
 
 from .. import services
@@ -244,6 +245,9 @@ def partial_reviews_card(request: HttpRequest, pk: str) -> HttpResponse:
         HttpResponse
     """
     submission = get_object_or_404(ApplicationSubmission, pk=pk)
+    has_permission(
+        "submission_view", request.user, object=submission, raise_exception=True
+    )
 
     assigned_reviewers = submission.assigned.review_order()
 
@@ -298,6 +302,7 @@ def partial_meta_terms_card(request, pk):
 
 
 @login_required
+@user_passes_test(is_apply_staff)
 @require_http_methods(["GET", "POST"])
 def sub_menu_update_status(request: HttpRequest) -> HttpResponse:
     submission_ids = request.GET.getlist("selectedSubmissionIds")
@@ -330,6 +335,7 @@ def sub_menu_update_status(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
+@user_passes_test(is_apply_staff)
 @require_http_methods(["GET", "POST"])
 def sub_menu_bulk_update_lead(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
@@ -337,7 +343,7 @@ def sub_menu_bulk_update_lead(request: HttpRequest) -> HttpResponse:
         lead = request.POST.get("lead")
 
         submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
-        lead = User.objects.get(id=lead)
+        lead = get_object_or_404(User.objects.staff(), id=lead)
 
         services.bulk_update_lead(
             submissions=submissions, user=request.user, request=request, lead=lead
@@ -368,6 +374,7 @@ def sub_menu_bulk_update_lead(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
+@user_passes_test(is_apply_staff)
 @require_http_methods(["GET", "POST"])
 def sub_menu_bulk_update_reviewers(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
