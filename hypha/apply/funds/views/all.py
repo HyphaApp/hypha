@@ -13,7 +13,6 @@ from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseForbidden,
-    HttpResponseNotAllowed,
 )
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -403,7 +402,7 @@ def bulk_anonymize_submissions(request):
 
         return HttpResponseClientRefresh()
 
-    return HttpResponseNotAllowed()
+    return HttpResponseForbidden()
 
 
 @login_required

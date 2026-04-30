@@ -36,8 +36,6 @@ class SubmissionAnonymizeView(LoginRequiredMixin, UserPassesTestMixin, DeleteVie
             object_id=submission.id,
         ).delete()
 
-        response = super().form_valid(form)
-
         if submission.status != DRAFT_STATE:
             messenger(
                 MESSAGES.ANONYMIZE_SUBMISSION,
@@ -48,7 +46,7 @@ class SubmissionAnonymizeView(LoginRequiredMixin, UserPassesTestMixin, DeleteVie
 
         messages.success(self.request, _("Submission anonymized."))
 
-        return response
+        return super().form_valid(form)
 
 
 class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):

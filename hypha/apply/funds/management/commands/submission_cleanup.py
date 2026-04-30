@@ -79,6 +79,7 @@ class Command(BaseCommand):
             self.stdout.write(
                 "Please use either --drafts [days] OR --submissions [days]"
             )
+            return
 
         if drafts_time_threshold := options["drafts"]:
             older_than_date = timezone.now() - timedelta(days=drafts_time_threshold)
@@ -130,6 +131,7 @@ class Command(BaseCommand):
                         sub_dict_list = old_subs.values(
                             "id",
                             "form_data",
+                            "form_fields",
                             "page_id",
                             "round_id",
                             "status",

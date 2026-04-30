@@ -21,7 +21,8 @@
             </div>
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">
-                    Type <pre class="badge badge-soft badge-neutral" x-text="mode == 'delete' ? delConfirmText : anonConfirmText"></pre> below to confirm
+                    <span x-show="mode == 'delete'">{% blocktrans %}Type <pre class="badge badge-soft badge-neutral">delete</pre> below to confirm{% endblocktrans %}</span>
+                    <span x-show="mode == 'anonymize'">{% blocktrans %}Type <pre class="badge badge-soft badge-neutral">anonymize</pre> below to confirm{% endblocktrans %}</span>
                 </legend>
                 <input
                     type="text"

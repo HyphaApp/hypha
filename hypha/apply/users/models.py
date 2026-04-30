@@ -78,6 +78,7 @@ class UserQuerySet(models.QuerySet):
             submissions_to_anonymize = list(
                 self.values(
                     "applicationsubmission__form_data",
+                    "applicationsubmission__form_fields",
                     "applicationsubmission__page_id",
                     "applicationsubmission__round_id",
                     "applicationsubmission__status",
@@ -369,6 +370,7 @@ class User(AbstractUser):
             submissions_to_anonymize = list(
                 self.applicationsubmission_set.values(
                     "form_data",
+                    "form_fields",
                     "page_id",
                     "round_id",
                     "status",

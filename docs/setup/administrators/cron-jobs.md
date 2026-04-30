@@ -28,5 +28,5 @@ python3 manage.py submission_cleanup --drafts [days] --submissions [days] --noin
 Example: to delete all drafts that haven't been modified in a year without a confirmation prompt:
 
 ```shell
-python3 manage.py submission_cleanup --drafts [days] 365 --noinput
+python3 manage.py submission_cleanup --drafts 365 --noinput
 ```

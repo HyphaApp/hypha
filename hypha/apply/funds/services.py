@@ -132,6 +132,13 @@ def bulk_anonymize_submissions(
                 AnonymizedSubmission.from_dict(submission_dict, save_user=True)
             )
 
+    messenger(
+        MESSAGES.BATCH_ANONYMIZE_SUBMISSION,
+        request=request,
+        user=user,
+        sources=submissions,
+    )
+
     # delete submissions
     submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
     submissions.delete()
@@ -143,13 +150,6 @@ def bulk_anonymize_submissions(
             "{sub_number} submissions anonymized",
             len(submission_ids),
         ).format(sub_number=len(submission_ids)),
-    )
-
-    messenger(
-        MESSAGES.BATCH_ANONYMIZE_SUBMISSION,
-        request=request,
-        user=user,
-        sources=submissions,
     )
 
     return anonymized

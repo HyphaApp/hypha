@@ -69,6 +69,9 @@ class SlackAdapter(AdapterBase):
         ),
         MESSAGES.BATCH_READY_FOR_REVIEW: "batch_notify_reviewers",
         MESSAGES.DELETE_SUBMISSION: _("{user} has deleted {source.title_text_display}"),
+        MESSAGES.ANONYMIZE_SUBMISSION: _(
+            "{user} has anonymized {source.title_text_display}"
+        ),
         MESSAGES.DELETE_REVIEW: _(
             "{user} has deleted {review.author} review for <{link}|{source.title_text_display}>"
         ),
@@ -121,6 +124,7 @@ class SlackAdapter(AdapterBase):
             "{user} has submitted a report for <{link}|{source.title}>"
         ),
         MESSAGES.BATCH_DELETE_SUBMISSION: "handle_batch_delete_submission",
+        MESSAGES.BATCH_ANONYMIZE_SUBMISSION: "handle_batch_anonymize_submission",
         MESSAGES.STAFF_ACCOUNT_CREATED: _(
             "{user} has created a new account for <{link}|{source}>"
         ),
@@ -330,6 +334,15 @@ class SlackAdapter(AdapterBase):
             [submission.title_text_display for submission in submissions]
         )
         return _("{user} has deleted submissions: {title}").format(
+            user=user, title=submissions_text
+        )
+
+    def handle_batch_anonymize_submission(self, sources, links, user, **kwargs):
+        submissions = sources
+        submissions_text = ", ".join(
+            [submission.title_text_display for submission in submissions]
+        )
+        return _("{user} has anonymized submissions: {title}").format(
             user=user, title=submissions_text
         )
 
