@@ -55,6 +55,7 @@ dependencies = [
     "svgwrite~=1.4.3",
     "wagtail-modeladmin~=2.2.0",
     "wagtail~=7.0.5",
+    "webauthn~=2.2.0",
     "whitenoise~=6.11.0",
     "xhtml2pdf~=0.2.17",
 ]
