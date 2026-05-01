@@ -9,13 +9,9 @@ from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db import models
-from django.http import (
-    HttpRequest,
-    HttpResponse,
-    HttpResponseForbidden,
-)
-from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
+from django.shortcuts import redirect, render
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect, HttpResponseClientRefresh
@@ -349,6 +345,20 @@ def submissions_all(
 
 
 @login_required
+@require_http_methods(["GET"])
+def bulk_archive_submissions_confirm(request):
+    if not permissions.can_bulk_archive_submissions(request.user):
+        return HttpResponseForbidden()
+
+    submission_ids = request.GET.getlist("selectedSubmissionIds")
+    return render(
+        request,
+        "submissions/bulk_archive_confirm.html",
+        {"submission_ids": submission_ids},
+    )
+
+
+@login_required
 @require_http_methods(["POST"])
 def bulk_archive_submissions(request):
     if not permissions.can_bulk_archive_submissions(request.user):
@@ -363,7 +373,23 @@ def bulk_archive_submissions(request):
         request=request,
     )
 
-    return HttpResponseClientRefresh()
+    if request.htmx:
+        return HttpResponseClientRefresh()
+    return redirect(reverse("apply:submissions:list"))
+
+
+@login_required
+@require_http_methods(["GET"])
+def bulk_delete_submissions_confirm(request):
+    if not permissions.can_bulk_delete_submissions(request.user):
+        return HttpResponseForbidden()
+
+    submission_ids = request.GET.getlist("selectedSubmissionIds")
+    return render(
+        request,
+        "submissions/bulk_delete_confirm.html",
+        {"submission_ids": submission_ids},
+    )
 
 
 @login_required
@@ -381,7 +407,9 @@ def bulk_delete_submissions(request):
         request=request,
     )
 
-    return HttpResponseClientRefresh()
+    if request.htmx:
+        return HttpResponseClientRefresh()
+    return redirect(reverse("apply:submissions:list"))
 
 
 @login_required
