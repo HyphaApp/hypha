@@ -1,0 +1,16 @@
+{% load i18n %}
+
+<c-modal.confirm
+    title="{% trans 'Delete applications' %}"
+    action="{% url 'apply:submissions:bulk-delete' %}"
+>
+    <p class="text-sm text-fg-muted">
+        {% blocktranslate trimmed with count=submission_ids|length %}
+            Are you sure you want to permanently delete {{ count }} submission(s)?
+            All data will be permanently removed. This action cannot be undone.
+        {% endblocktranslate %}
+    </p>
+    {% for id in submission_ids %}
+        <input type="hidden" name="selectedSubmissionIds" value="{{ id }}">
+    {% endfor %}
+</c-modal.confirm>
