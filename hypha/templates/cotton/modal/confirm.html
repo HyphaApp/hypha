@@ -2,7 +2,7 @@
 
 <form
     class="px-4 pt-5 pb-4 sm:p-6"
-    action="{{ request.path }}"
+    action="{% if action %}{{ action }}{% else %}{{ request.path }}{% endif %}"
     method="post"
     x-data="{userConfirmationInput: '', delConfirmText: `{% trans 'delete' %}`, anonConfirmText: `{% trans 'anonymize' %}`, mode: '{{ initial_mode|default:'delete' }}'}"
 >
