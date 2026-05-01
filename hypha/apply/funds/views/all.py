@@ -11,7 +11,7 @@ from django.core.paginator import Paginator
 from django.db import models
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect, render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect, HttpResponseClientRefresh
@@ -491,7 +491,7 @@ def bulk_update_submissions_status(request: HttpRequest) -> HttpResponse:
             return HttpResponseClientRefresh()
         action = outcome_from_actions(transitions)
         return HttpResponseClientRedirect(
-            reverse_lazy("apply:submissions:determinations:batch")
+            reverse("apply:submissions:determinations:batch")
             + "?action="
             + action
             + "&submissions="
