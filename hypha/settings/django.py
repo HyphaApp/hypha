@@ -16,7 +16,7 @@ INSTALLED_APPS = [
     "hypha.apply.dashboard",
     "hypha.apply.flags",
     "hypha.home",
-    "hypha.apply.users",
+    "hypha.apply.users.apps.UsersConfig",
     "hypha.apply.review",
     "hypha.apply.determinations",
     "hypha.apply.stream_forms",
