@@ -413,24 +413,41 @@ def bulk_delete_submissions(request):
 
 
 @login_required
+@require_http_methods(["GET"])
+def bulk_anonymize_submissions_confirm(request):
+    if not settings.SUBMISSION_ANONYMIZATION_ENABLED:
+        return HttpResponseForbidden()
+    if not permissions.can_bulk_delete_submissions(request.user):
+        return HttpResponseForbidden()
+
+    submission_ids = request.GET.getlist("selectedSubmissionIds")
+    return render(
+        request,
+        "submissions/bulk_anonymize_confirm.html",
+        {"submission_ids": submission_ids},
+    )
+
+
+@login_required
 @require_http_methods(["POST"])
 def bulk_anonymize_submissions(request):
-    if settings.SUBMISSION_ANONYMIZATION_ENABLED:
-        if not permissions.can_bulk_delete_submissions(request.user):
-            return HttpResponseForbidden()
+    if not settings.SUBMISSION_ANONYMIZATION_ENABLED:
+        return HttpResponseForbidden()
+    if not permissions.can_bulk_delete_submissions(request.user):
+        return HttpResponseForbidden()
 
-        submission_ids = request.POST.getlist("selectedSubmissionIds")
-        submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
+    submission_ids = request.POST.getlist("selectedSubmissionIds")
+    submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
 
-        services.bulk_anonymize_submissions(
-            submissions=submissions,
-            user=request.user,
-            request=request,
-        )
+    services.bulk_anonymize_submissions(
+        submissions=submissions,
+        user=request.user,
+        request=request,
+    )
 
+    if request.htmx:
         return HttpResponseClientRefresh()
-
-    return HttpResponseForbidden()
+    return redirect(reverse("apply:submissions:list"))
 
 
 @login_required

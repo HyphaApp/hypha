@@ -11,6 +11,7 @@ from .views import (
 )
 from .views.all import (
     bulk_anonymize_submissions,
+    bulk_anonymize_submissions_confirm,
     bulk_archive_submissions,
     bulk_archive_submissions_confirm,
     bulk_delete_submissions,
@@ -111,6 +112,11 @@ submission_urls = (
             name="bulk-delete-confirm",
         ),
         path("all/bulk_delete/", bulk_delete_submissions, name="bulk-delete"),
+        path(
+            "all/bulk_anonymize_confirm/",
+            bulk_anonymize_submissions_confirm,
+            name="bulk-anonymize-confirm",
+        ),
         path("all/bulk_anonymize/", bulk_anonymize_submissions, name="bulk-anonymize"),
         path(
             "all/bulk_update_status/",
