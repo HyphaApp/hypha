@@ -504,9 +504,10 @@
                     </button>
                     {% if SUBMISSION_ANONYMIZATION_ENABLED %}
                         <button
-                            hx-post="{% url 'apply:submissions:bulk-anonymize' %}"
+                            hx-get="{% url 'apply:submissions:bulk-anonymize-confirm' %}"
                             hx-include="[name='selectedSubmissionIds']"
-                            hx-confirm="{% trans 'Are you sure you want to anonymize the selected submissions? All draft submission will be deleted. This action cannot be undone.' %}"
+                            hx-target="#htmx-modal"
+                            hx-swap="innerHTML"
                             class="btn btn-sm"
                         >
                             {% heroicon_outline "user-minus" aria_hidden="true" size=14 class="stroke-base-content/80" %}
