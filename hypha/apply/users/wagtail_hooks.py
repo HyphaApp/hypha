@@ -51,7 +51,8 @@ def anonymize_delete_user_submissions(request, user):
         submissions_to_anonymize = list(
             user.applicationsubmission_set.exclude_draft().values(
                 "form_data",
-                "form_fieldspage_id",
+                "form_fields",
+                "page_id",
                 "round_id",
                 "status",
                 "submit_time",

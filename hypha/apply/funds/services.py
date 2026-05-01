@@ -111,6 +111,7 @@ def bulk_anonymize_submissions(
     submission_dict_list = submissions.values(
         "id",
         "form_data",
+        "form_fields",
         "page_id",
         "round_id",
         "status",
