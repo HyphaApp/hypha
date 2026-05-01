@@ -10,6 +10,7 @@ from .views import (
     submission_success,
 )
 from .views.all import (
+    bulk_anonymize_submissions,
     bulk_archive_submissions,
     bulk_delete_submissions,
     bulk_update_submissions_status,
@@ -48,7 +49,7 @@ from .views.results import SubmissionResultView
 from .views.reviewer_leaderboard import ReviewerLeaderboard, ReviewerLeaderboardDetail
 from .views.revisions import RevisionCompareView, RevisionListView
 from .views.staff_assignments import StaffAssignments
-from .views.submission_delete import SubmissionDeleteView
+from .views.submission_delete import SubmissionAnonymizeView, SubmissionDeleteView
 from .views.submission_detail import (
     SubmissionDetailPDFView,
     SubmissionDetailView,
@@ -98,6 +99,7 @@ submission_urls = (
         path("all/", submissions_all, name="list"),
         path("all/bulk_archive/", bulk_archive_submissions, name="bulk-archive"),
         path("all/bulk_delete/", bulk_delete_submissions, name="bulk-delete"),
+        path("all/bulk_anonymize/", bulk_anonymize_submissions, name="bulk-anonymize"),
         path(
             "all/bulk_update_status/",
             bulk_update_submissions_status,
@@ -288,6 +290,11 @@ submission_urls = (
                         "download/", SubmissionDetailPDFView.as_view(), name="download"
                     ),
                     path("delete/", SubmissionDeleteView.as_view(), name="delete"),
+                    path(
+                        "anonymize/",
+                        SubmissionAnonymizeView.as_view(),
+                        name="anonymize",
+                    ),
                     path(
                         "documents/<uuid:field_id>/<str:file_name>",
                         SubmissionPrivateMediaView.as_view(),

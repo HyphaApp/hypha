@@ -15,6 +15,7 @@ from wagtail.models import Page
 
 from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import MetaTerm, Option
+from hypha.apply.funds.models.submissions import AnonymizedSubmission
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.review.models import Review
 from hypha.core.tables import RelativeTimeColumn
@@ -145,12 +146,19 @@ class LabeledCheckboxColumn(tables.CheckBoxColumn):
 
 
 def get_used_rounds(request):
-    return Round.objects.filter(submissions__isnull=False).distinct()
+    return Round.objects.filter(
+        Q(Q(submissions__isnull=False) | Q(anonymized_submissions__isnull=False))
+    ).distinct()
 
 
 def get_used_funds(request):
     # Use page to pick up on both Labs and Funds
-    return Page.objects.filter(applicationsubmission__isnull=False).distinct()
+    return Page.objects.filter(
+        Q(
+            Q(applicationsubmission__isnull=False)
+            | Q(anonymizedsubmission__isnull=False)
+        )
+    ).distinct()
 
 
 def get_round_leads(request):
@@ -158,11 +166,13 @@ def get_round_leads(request):
 
 
 def get_screening_statuses(request):
-    return ScreeningStatus.objects.filter(
+    sub_filter = Q(
         id__in=ApplicationSubmission.objects.all()
         .values("screening_statuses__id")
         .distinct("screening_statuses__id")
     )
+    anonymized_filter = Q(anonymized_submissions__isnull=False)
+    return ScreeningStatus.objects.filter(sub_filter | anonymized_filter)
 
 
 def get_meta_terms(request):
@@ -306,6 +316,52 @@ class SubmissionFilterAndSearch(SubmissionFilter):
             # if value is 0 or None
             queryset = queryset.exclude(is_archive=True)
         return queryset
+
+
+class AnonymizedSubmissionFilter(filters.FilterSet):
+    fund = ModelMultipleChoiceFilter(
+        field_name="page", queryset=get_used_funds, label=_("Funds")
+    )
+    round = ModelMultipleChoiceFilter(queryset=get_used_rounds, label=_("Rounds"))
+    screening_statuses = ModelMultipleChoiceFilter(
+        queryset=get_screening_statuses, label=_("Screening"), null_label=_("No Status")
+    )
+
+    category_options = MultipleChoiceFilter(
+        choices=[], label=_("Category"), method="filter_category_options"
+    )
+
+    class Meta:
+        model = AnonymizedSubmission
+        fields = ("fund", "round")
+
+    def __init__(self, *args, exclude=None, limit_statuses=None, **kwargs):
+        if exclude is None:
+            exclude = []
+
+        super().__init__(*args, **kwargs)
+
+        self.filters["status"] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
+        self.filters = {
+            field: filter
+            for field, filter in self.filters.items()
+            if field not in exclude
+        }
+
+    def filter_category_options(self, queryset, name, value):
+        """
+        Filter submissions based on the category options selected.
+
+        In order to do that we need to first get all the category fields used in the submission.
+
+        And then use those category fields to filter submissions with their form_data.
+        """
+        query = Q()
+        if value:
+            if isinstance(value, str):
+                value = [value]
+            query |= Q(selected_category_options__in=value)
+        return queryset.filter(query)
 
 
 class SubmissionDashboardFilter(filters.FilterSet):

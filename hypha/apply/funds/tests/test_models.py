@@ -12,7 +12,13 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from hypha.apply.funds.blocks import EmailBlock, FullNameBlock
-from hypha.apply.funds.models import ApplicationSubmission, AssignedReviewers, Reminder
+from hypha.apply.funds.models import (
+    AnonymizedSubmission,
+    ApplicationSubmission,
+    AssignedReviewers,
+    Reminder,
+)
+from hypha.apply.funds.tests.factories.models import ScreeningStatusFactory
 from hypha.apply.funds.workflows.constants import DRAFT_STATE
 from hypha.apply.funds.workflows.registry import Request
 from hypha.apply.review.options import AGREE, MAYBE, NO
@@ -542,6 +548,174 @@ class TestApplicationSubmission(TestCase):
 
         submission = InvitedToProposalFactory()
         self.assertTrue(submission.in_final_stage)
+
+
+class TestAnonymizedSubmission(TestCase):
+    def test_create_from_submission_no_user(self):
+        screening_outcome = ScreeningStatusFactory()
+        screening_outcome.yes = True
+        screening_outcome.default = True
+        screening_outcome.save()
+
+        submission = ApplicationSubmissionFactory()
+        submission.screening_statuses.add(screening_outcome)
+        submission.save()
+
+        anonymized = AnonymizedSubmission.from_submission(submission)
+        submission_values_dict = {
+            "value": submission.form_data["value"],
+            "page": submission.page.id,
+            "status": submission.status,
+            "round": submission.round.id,
+            "submit_time": submission.submit_time,
+            "screening_status": submission.get_current_screening_status(),
+        }
+        anonymized_values_dict = {
+            "value": anonymized.value,
+            "page": anonymized.page.id,
+            "status": anonymized.status,
+            "round": anonymized.round.id,
+            "submit_time": anonymized.submit_time,
+            "screening_status": anonymized.screening_status,
+        }
+        self.assertDictEqual(submission_values_dict, anonymized_values_dict)
+        self.assertIsNone(anonymized.user)
+
+    def test_create_from_submission_with_user(self):
+        screening_outcome = ScreeningStatusFactory()
+        screening_outcome.yes = True
+        screening_outcome.default = True
+        screening_outcome.save()
+
+        submission = ApplicationSubmissionFactory()
+        submission.screening_statuses.add(screening_outcome)
+        submission.save()
+
+        anonymized = AnonymizedSubmission.from_submission(submission, save_user=True)
+        submission_values_dict = {
+            "value": submission.form_data["value"],
+            "page": submission.page.id,
+            "status": submission.status,
+            "round": submission.round.id,
+            "submit_time": submission.submit_time,
+            "screening_status": submission.get_current_screening_status(),
+            "user": submission.user,
+        }
+        anonymized_values_dict = {
+            "value": anonymized.value,
+            "page": anonymized.page.id,
+            "status": anonymized.status,
+            "round": anonymized.round.id,
+            "submit_time": anonymized.submit_time,
+            "screening_status": anonymized.screening_status,
+            "user": anonymized.user,
+        }
+        self.assertDictEqual(submission_values_dict, anonymized_values_dict)
+
+    def test_create_from_dict_no_user(self):
+        screening_outcome = ScreeningStatusFactory()
+        screening_outcome.yes = True
+        screening_outcome.default = True
+        screening_outcome.save()
+
+        submission = ApplicationSubmissionFactory()
+        submission.screening_statuses.add(screening_outcome)
+        submission.save()
+
+        submission_dict = dict(
+            ApplicationSubmission.objects.filter(id=submission.id)
+            .values(
+                "form_data",
+                "page_id",
+                "round_id",
+                "status",
+                "submit_time",
+                "screening_statuses",
+                "user_id",
+            )
+            .first()
+        )
+
+        anonymized = AnonymizedSubmission.from_dict(submission_dict, save_user=False)
+        submission_values_dict = {
+            "value": submission.form_data["value"],
+            "page": submission.page.id,
+            "status": submission.status,
+            "round": submission.round.id,
+            "submit_time": submission.submit_time,
+            "screening_status": submission.get_current_screening_status(),
+        }
+        anonymized_values_dict = {
+            "value": anonymized.value,
+            "page": anonymized.page.id,
+            "status": anonymized.status,
+            "round": anonymized.round.id,
+            "submit_time": anonymized.submit_time,
+            "screening_status": anonymized.screening_status,
+        }
+        self.assertDictEqual(submission_values_dict, anonymized_values_dict)
+        self.assertIsNone(anonymized.user)
+
+    def test_create_from_dict_with_user(self):
+        screening_outcome = ScreeningStatusFactory()
+        screening_outcome.yes = True
+        screening_outcome.default = True
+        screening_outcome.save()
+
+        submission = ApplicationSubmissionFactory()
+        submission.screening_statuses.add(screening_outcome)
+        submission.save()
+
+        submission_dict = dict(
+            ApplicationSubmission.objects.filter(id=submission.id)
+            .values(
+                "form_data",
+                "page_id",
+                "round_id",
+                "status",
+                "submit_time",
+                "screening_statuses",
+                "user_id",
+            )
+            .first()
+        )
+
+        anonymized = AnonymizedSubmission.from_dict(submission_dict, save_user=True)
+        submission_values_dict = {
+            "value": submission.form_data["value"],
+            "page": submission.page.id,
+            "status": submission.status,
+            "round": submission.round.id,
+            "submit_time": submission.submit_time,
+            "screening_status": submission.get_current_screening_status(),
+            "user": submission.user,
+        }
+        anonymized_values_dict = {
+            "value": anonymized.value,
+            "page": anonymized.page.id,
+            "status": anonymized.status,
+            "round": anonymized.round.id,
+            "submit_time": anonymized.submit_time,
+            "screening_status": anonymized.screening_status,
+            "user": anonymized.user,
+        }
+        self.assertDictEqual(submission_values_dict, anonymized_values_dict)
+
+    def test_create_from_dict_all_none_returns_none(self):
+        result = AnonymizedSubmission.from_dict(
+            {
+                "form_data": None,
+                "page_id": None,
+                "round_id": None,
+                "status": None,
+                "submit_time": None,
+                "user_id": None,
+                "screening_statuses": None,
+            },
+            save_user=False,
+        )
+        self.assertIsNone(result)
+        self.assertEqual(AnonymizedSubmission.objects.count(), 0)
 
 
 class TestSubmissionRenderMethods(TestCase):

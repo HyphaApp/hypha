@@ -299,6 +299,12 @@ See [here](machine-translations.md) for more information on setting up machine t
 
 ----
 
+Should submission anonymization be enabled. Allows for both manual anonymization and utilization of cleanup commands to anonymize by time thresholds.
+
+    SUBMISSION_ANONYMIZATION_ENABLED = env.bool("SUBMISSION_ANONYMIZATION_ENABLED", False)
+
+----
+
 ## Slack settings
 
     SLACK_TOKEN = env.str('SLACK_TOKEN', None)

@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load heroicons primaryactions_tags translate_tags %}
+{% load can from permission_tags %}
 
 <h2 class="mb-2 card-title">{% trans "Actions to take" %}</h2>
 
@@ -147,6 +148,30 @@
                     {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="size-4" %}
                     {% trans "Archive" %}
                 </button>
+            {% endif %}
+
+            {% can "delete_submission" object as can_delete_submission %}
+            {% if can_delete_submission %}
+                {% if SUBMISSION_ANONYMIZATION_ENABLED %}
+                    <a
+                        class="w-full btn btn-outline btn-error"
+                        href="{% url 'funds:submissions:anonymize' object.id %}"
+                        hx-get="{% url 'funds:submissions:anonymize' object.id %}"
+                        hx-target="#htmx-modal"
+                    >
+                        {% heroicon_micro "eye-slash" aria_hidden=true size=16 stroke_width=2 class="size-4" %}
+                        {% trans "Anonymize" %}
+                    </a>
+                {% endif %}
+                <a
+                    class="w-full btn btn-outline btn-error"
+                    href="{% url 'funds:submissions:delete' object.id %}"
+                    hx-get="{% url 'funds:submissions:delete' object.id %}"
+                    hx-target="#htmx-modal"
+                >
+                    {% heroicon_micro "trash" aria_hidden=true size=16 stroke_width=2 class="size-4" %}
+                    {% trans "Delete" %}
+                </a>
             {% endif %}
         </div>
     </details>

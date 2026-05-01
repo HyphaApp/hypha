@@ -9,7 +9,11 @@ from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db import models
-from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseForbidden,
+)
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
@@ -337,6 +341,7 @@ def submissions_all(
         "can_access_drafts": can_access_drafts,
         "can_bulk_archive": permissions.can_bulk_archive_submissions(request.user),
         "can_bulk_delete": permissions.can_bulk_delete_submissions(request.user),
+        "can_bulk_anonymize": permissions.can_bulk_delete_submissions(request.user),
         "can_export_submissions": permissions.can_export_submissions(request.user),
         "enable_selection": permissions.can_bulk_update_submissions(request.user),
     } | screening_decision_context(selected_screening_statuses)
@@ -377,6 +382,27 @@ def bulk_delete_submissions(request):
     )
 
     return HttpResponseClientRefresh()
+
+
+@login_required
+@require_http_methods(["POST"])
+def bulk_anonymize_submissions(request):
+    if settings.SUBMISSION_ANONYMIZATION_ENABLED:
+        if not permissions.can_bulk_delete_submissions(request.user):
+            return HttpResponseForbidden()
+
+        submission_ids = request.POST.getlist("selectedSubmissionIds")
+        submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
+
+        services.bulk_anonymize_submissions(
+            submissions=submissions,
+            user=request.user,
+            request=request,
+        )
+
+        return HttpResponseClientRefresh()
+
+    return HttpResponseForbidden()
 
 
 @login_required

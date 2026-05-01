@@ -16,11 +16,13 @@ from django.db.models import (
 from django.db.models.functions import Coalesce
 from django.http import HttpRequest
 from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity, Event
 from hypha.apply.funds.models.assigned_reviewers import AssignedReviewers
 from hypha.apply.funds.workflows import INITIAL_STATE
+from hypha.apply.funds.workflows.constants import DRAFT_STATE
 from hypha.apply.review.options import DISAGREE, MAYBE
 
 
@@ -60,8 +62,8 @@ def bulk_delete_submissions(
     """Permanently deletes submissions and generate action log.
 
     Args:
-        submissions: queryset of submissions to archive
-        user: user who is archiving the submissions
+        submissions: queryset of submissions to delete
+        user: user who is deleting the submissions
         request: django request object
 
     Returns:
@@ -87,6 +89,71 @@ def bulk_delete_submissions(
     # delete submissions
     submissions.delete()
     return submissions
+
+
+def bulk_anonymize_submissions(
+    submissions: QuerySet, user, request: HttpRequest
+) -> QuerySet:
+    """Anonymizes submissions, deletes draft submissions and generates action log.
+
+    Args:
+        submissions: queryset of submissions to anonymize
+        user: user who is anonymizing the submissions
+        request: django request object
+
+    Returns:
+        QuerySet of submissions that have been anonymized
+    """
+    ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
+    AnonymizedSubmission = apps.get_model("funds", "AnonymizedSubmission")
+
+    # delete NEW_SUBMISSION events for all submissions
+    submission_dict_list = submissions.values(
+        "id",
+        "form_data",
+        "form_fields",
+        "page_id",
+        "round_id",
+        "status",
+        "submit_time",
+        "user_id",
+        "screening_statuses",
+    )
+
+    submission_ids = [x["id"] for x in submission_dict_list]
+
+    Event.objects.filter(
+        type=MESSAGES.NEW_SUBMISSION, object_id__in=submission_ids
+    ).delete()
+
+    anonymized = []
+    for submission_dict in submission_dict_list:
+        if submission_dict["status"] != DRAFT_STATE:
+            anonymized.append(
+                AnonymizedSubmission.from_dict(submission_dict, save_user=True)
+            )
+
+    messenger(
+        MESSAGES.BATCH_ANONYMIZE_SUBMISSION,
+        request=request,
+        user=user,
+        sources=submissions,
+    )
+
+    # delete submissions
+    submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
+    submissions.delete()
+
+    messages.success(
+        request,
+        ngettext(
+            "{sub_number} submission anonymized",
+            "{sub_number} submissions anonymized",
+            len(submission_ids),
+        ).format(sub_number=len(submission_ids)),
+    )
+
+    return anonymized
 
 
 def bulk_update_lead(

@@ -48,6 +48,11 @@
                     </p>
                 {% endwith %}
             {% endif %}
+            {% if anonymized_excluded_count %}
+                <p class="mt-1 text-xs text-fg-muted" aria-live="polite">
+                    {% blocktrans with count=anonymized_excluded_count %}{{ count }} anonymized submission(s) are excluded because the active filter does not apply to anonymized data.{% endblocktrans %}
+                </p>
+            {% endif %}
         </section>
     </div>
 {% endblock %}

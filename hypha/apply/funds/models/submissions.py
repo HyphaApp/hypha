@@ -1,6 +1,6 @@
 import operator
 from functools import partialmethod, reduce
-from typing import Optional, Self
+from typing import Any, Dict, Optional, Self
 
 from django.apps import apps
 from django.conf import settings
@@ -35,7 +35,8 @@ from wagtail.contrib.forms.models import AbstractFormSubmission
 from wagtail.fields import StreamField
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.categories.models import MetaTerm
+from hypha.apply.categories.blocks import CategoryQuestionBlock
+from hypha.apply.categories.models import MetaTerm, Option
 from hypha.apply.determinations.models import Determination
 from hypha.apply.flags.models import Flag
 from hypha.apply.funds.services import (
@@ -477,7 +478,7 @@ class ApplicationSubmission(
         related_query_name="submission",
     )
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True
     )
     search_data = models.TextField()
     search_document = SearchVectorField(null=True)
@@ -1075,3 +1076,152 @@ class ApplicationSubmission(
                 user=by,
                 source=instance,
             )
+
+
+class AnonymizedSubmissionQueryset(models.QuerySet):
+    def value(self):
+        return self.aggregate(Count("value"), Avg("value"), Sum("value"))
+
+
+class AnonymizedSubmission(models.Model):
+    """The class to be used for stripping PII from an application and making it minimal"""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True
+    )
+
+    value = models.FloatField(null=True)
+
+    status = models.CharField(
+        max_length=100,
+        choices=get_all_possible_states(),
+        default=INITIAL_STATE,
+    )
+
+    selected_category_options = models.ManyToManyField(Option)
+
+    page = models.ForeignKey("wagtailcore.Page", on_delete=models.PROTECT)
+    round = models.ForeignKey(
+        "wagtailcore.Page",
+        on_delete=models.PROTECT,
+        related_name="anonymized_submissions",
+        null=True,
+    )
+
+    submit_time = models.DateTimeField(
+        verbose_name=_("submit time"), auto_now_add=False
+    )
+
+    screening_status = models.ForeignKey(
+        "funds.ScreeningStatus",
+        related_name="anonymized_submissions",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
+    objects = AnonymizedSubmissionQueryset.as_manager()
+
+    @classmethod
+    def from_dict(
+        cls, dict_submission: Dict[str, Any], save_user: bool = False
+    ) -> Self | None:
+        """Creates an AnonymizedSubmission from a given dictionary
+
+        Attempts to pull values from keys of `form_data`, `page_id`, `round_id`, `status`, `submit_time`, `form_fields` (for categories) and optionally (save_user=True) `user_id`.
+
+        For convenience, it if values of previous keys are none will also try prepending `applicationsubmission__`.
+        ie. if `dict_submission.get("page_id") = None`, `dict_submission.get("applicationsubmission__page_id")` will be tried
+
+        Args:
+            dict_submission: The dictionary containing the expected keys to create an AnonymizedSubmission from
+            save_user: bool to save the provided user ID in `dict_submission` to the AnonymizedSubmission
+
+        Returns: Populated AnonymizedSubmission if successful, None if not
+        """
+        # If all values of the application dictionary are none, don't create a new anonymized submission
+        if all(x is None for x in dict_submission.values()):
+            return None
+
+        # For convenience function to try both keys
+        def get_from_sub_dict(key):
+            return dict_submission.get(key) or dict_submission.get(
+                f"applicationsubmission__{key}"
+            )
+
+        user = None
+        if save_user:
+            user = get_from_sub_dict("user_id")
+
+        value = None
+        category_option_ids = []
+        if form_data := get_from_sub_dict("form_data"):
+            # Handling getting the value field
+            value = form_data.get("value")
+
+            # Handle getting the category options field
+            if form_fields := get_from_sub_dict("form_fields"):
+                for field in form_fields:
+                    if isinstance(field.block, CategoryQuestionBlock):
+                        category_options = form_data.get(field.id)
+                        if category_options and isinstance(category_options, str):
+                            category_option_ids.append(category_options)
+                        elif category_options:
+                            category_option_ids += category_options
+
+        anonymized = AnonymizedSubmission.objects.create(
+            user_id=user,
+            page_id=get_from_sub_dict("page_id"),
+            round_id=get_from_sub_dict("round_id"),
+            value=value,
+            status=get_from_sub_dict("status"),
+            submit_time=get_from_sub_dict("submit_time"),
+            screening_status_id=get_from_sub_dict("screening_statuses"),
+        )
+
+        anonymized.selected_category_options.set(category_option_ids)
+        anonymized.save()
+
+        return anonymized
+
+    @classmethod
+    def from_submission(
+        cls, submission: ApplicationSubmission, save_user: bool = False
+    ) -> Self:
+        """Creates an AnonymizedSubmission from a given ApplicationSubmission object
+
+        Note that this will NOT delete the provided ApplicationSubmission, just creates an AnonymizedSubmission.
+
+        Args:
+            submission: The ApplicationSubmission to create an AnonymizedSubmission from
+            save_user: bool to save the user associated on the ApplicationSubmission to the AnonymizedSubmission
+
+        Returns: Populated AnonymizedSubmission
+        """
+
+        user = None
+        if save_user:
+            user = submission.user
+
+        anonymized = AnonymizedSubmission.objects.create(
+            user=user,
+            page=submission.page,
+            round=submission.round,
+            value=submission.form_data.get("value"),
+            status=submission.status,
+            submit_time=submission.submit_time,
+            screening_status=submission.get_current_screening_status(),
+        )
+
+        # Get the category options and add them to the anonymized submission
+        for field in submission.form_fields:
+            if isinstance(field.block, CategoryQuestionBlock) and (
+                category_option_ids := submission.form_data.get(field.id)
+            ):
+                anonymized.selected_category_options.add(
+                    *Option.objects.filter(id__in=category_option_ids)
+                )
+
+        anonymized.save()
+
+        return anonymized

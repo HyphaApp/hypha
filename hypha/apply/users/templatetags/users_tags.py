@@ -1,8 +1,13 @@
+from collections import abc
+from typing import Dict, Iterable, Literal
+
 from django import template
+from django.apps import apps
 from django.utils.safestring import SafeString
 from django_otp import devices_for_user
 
 from hypha.apply.users.identicon import get_identicon
+from hypha.apply.users.models import User
 
 from ..utils import can_use_oauth_check
 
@@ -47,6 +52,35 @@ def tokens_text(token_set):
     return tokens_string
 
 
-@register.simple_tag()
+@register.simple_tag
 def user_image(identifier: str, size=20):
     return SafeString(get_identicon(identifier, size=size))
+
+
+@register.filter
+def get_user_submission_count(
+    user: User | Iterable[User | Dict[Literal["item"], User]],
+) -> int:
+    """Get the number of submissions associated to either one user or a list of users
+
+    Also handles Wagtail's user deletion view where a list of dicts containing {"item": <User Object>} gets passed
+
+    Args:
+        user: A user object OR an iterable containing either User objects/dictionaries of {"item": <User Object>}
+
+    Returns:
+        Count of all submissions associated to the user(s)
+
+    Raises:
+        TypeError: when none of the previously specified types are provided in `user`
+    """
+    ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
+    if isinstance(user, User):
+        users = [user]
+    elif isinstance(user, abc.Iterable):
+        users = [x["item"] if isinstance(x, dict) else x for x in user]
+    else:
+        raise TypeError(
+            "User instance or iterable of users not provided to get_user_submission_count!"
+        )
+    return ApplicationSubmission.objects.filter(user__in=users).count()
