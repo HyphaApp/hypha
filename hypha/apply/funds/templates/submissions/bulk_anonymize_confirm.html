@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<c-modal.confirm
+    title="{% trans 'Anonymize applications' %}"
+    action="{% url 'apply:submissions:bulk-anonymize' %}"
+    initial_mode="anonymize"
+>
+    <p class="text-sm text-fg-muted">
+        {% blocktranslate trimmed with count=submission_ids|length %}
+            Are you sure you want to anonymize {{ count }} submission(s)?
+            Personal data will be removed and applications will only be accessible
+            via statistics in the Results view. All draft submissions will be deleted.
+            This action cannot be undone.
+        {% endblocktranslate %}
+    </p>
+    {% for id in submission_ids %}
+        <input type="hidden" name="selectedSubmissionIds" value="{{ id }}">
+    {% endfor %}
+</c-modal.confirm>

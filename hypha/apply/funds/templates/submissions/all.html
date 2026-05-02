@@ -480,9 +480,10 @@
 
                 {% if can_bulk_archive %}
                     <button
-                        hx-post="{% url 'apply:submissions:bulk-archive' %}"
+                        hx-get="{% url 'apply:submissions:bulk-archive-confirm' %}"
                         hx-include="[name='selectedSubmissionIds']"
-                        hx-confirm="{% trans 'Are you sure you want to archive the selected submissions?' %}"
+                        hx-target="#htmx-modal"
+                        hx-swap="innerHTML"
                         class="btn btn-sm"
                     >
                         {% heroicon_outline "lock-closed" aria_hidden="true" size=14 class="stroke-base-content/80" %}
@@ -492,9 +493,10 @@
 
                 {% if can_bulk_delete %}
                     <button
-                        hx-post="{% url 'apply:submissions:bulk-delete' %}"
+                        hx-get="{% url 'apply:submissions:bulk-delete-confirm' %}"
                         hx-include="[name='selectedSubmissionIds']"
-                        hx-confirm="{% trans 'Are you sure you want to delete the selected submissions? This action cannot be undone.' %}"
+                        hx-target="#htmx-modal"
+                        hx-swap="innerHTML"
                         class="btn btn-sm"
                     >
                         {% heroicon_outline "trash" aria_hidden="true" size=14 class="stroke-base-content/80" %}
@@ -502,9 +504,10 @@
                     </button>
                     {% if SUBMISSION_ANONYMIZATION_ENABLED %}
                         <button
-                            hx-post="{% url 'apply:submissions:bulk-anonymize' %}"
+                            hx-get="{% url 'apply:submissions:bulk-anonymize-confirm' %}"
                             hx-include="[name='selectedSubmissionIds']"
-                            hx-confirm="{% trans 'Are you sure you want to anonymize the selected submissions? All draft submission will be deleted. This action cannot be undone.' %}"
+                            hx-target="#htmx-modal"
+                            hx-swap="innerHTML"
                             class="btn btn-sm"
                         >
                             {% heroicon_outline "user-minus" aria_hidden="true" size=14 class="stroke-base-content/80" %}
