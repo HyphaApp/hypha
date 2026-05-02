@@ -113,13 +113,11 @@ if LOCAL_FILE_LOGGING:
     }
 
 
-# Add development apps like Debug Toolbar and Django Extensions.
+# Add development apps like Debug Toolbar.
 # https://django-debug-toolbar.readthedocs.io/en/latest/
-# https://django-extensions.readthedocs.io/en/latest/
 if DEBUG:
     INSTALLED_APPS = [
         *INSTALLED_APPS,
-        "django_extensions",
         "debug_toolbar",
     ]
     MIDDLEWARE = [

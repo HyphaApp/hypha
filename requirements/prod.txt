@@ -384,6 +384,7 @@ django==5.2.13 \
     #   django-anymail
     #   django-basic-auth-ip-whitelist
     #   django-cotton
+    #   django-extensions
     #   django-filter
     #   django-formtools
     #   django-heroku
@@ -428,6 +429,10 @@ django-cotton==2.6.2 \
 django-countries==8.2.0 \
     --hash=sha256:2b2617bec7c15dc735bdec38ae89f0058e38fddfffdb19a7f6b75ef1e3d5380f \
     --hash=sha256:6df3883180599052c7dfa9a8be0601792441cfb248935dc229ad1ac92e9e39e3
+    # via hypha
+django-extensions==4.1 \
+    --hash=sha256:0699a7af28f2523bf8db309a80278519362cd4b6e1fd0a8cd4bf063e1e023336 \
+    --hash=sha256:7b70a4d28e9b840f44694e3f7feb54f55d495f8b3fa6c5c0e5e12bcb2aa3cdeb
     # via hypha
 django-file-form==4.0.0 \
     --hash=sha256:09b835bd256849b51982320763b975565c6f0dfdcf11f4e8b4366695e3dd2cec
