@@ -41,8 +41,7 @@ def generate_submission_csv(
         export_manager = SubmissionExportManager.objects.create(
             user=request_user, total_export=len(qs_ids)
         )
-        csv_string = export_submissions_to_csv(qs, base_uri)
-        export_manager.export_data = "".join(csv_string.readlines())
+        export_manager.export_data = export_submissions_to_csv(qs, base_uri)
         export_manager.set_completed_and_save()
 
         user_task = DOWNLOAD_SUBMISSIONS_EXPORT

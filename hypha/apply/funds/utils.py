@@ -143,8 +143,7 @@ def export_submissions_to_csv(
     writer.writeheader()
     for data in data_list:
         writer.writerow(data)
-    csv_stream.seek(0)
-    return csv_stream
+    return csv_stream.getvalue()
 
 
 def get_copied_form_name(original_form_name: str) -> str:
