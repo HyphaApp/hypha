@@ -519,9 +519,7 @@ distlib==0.4.0 \
 dj-database-url==3.1.2 \
     --hash=sha256:544e015fee3efa5127a1eb1cca465f4ace578265b3671fe61d0ed7dbafb5ec8a \
     --hash=sha256:63c20e4bbaa51690dfd4c8d189521f6bf6bc9da9fcdb23d95d2ee8ee87f9ec62
-    # via
-    #   django-heroku
-    #   hypha
+    # via hypha
 django==5.2.14 \
     --hash=sha256:58a63ba841662e5c686b57ba1fec52ddd68c0b93bd96ac3029d55728f00bf8a2 \
     --hash=sha256:6f712143bd3064310d1f50fac859c3e9a274bdcfc9595339853be7779297fc76
@@ -536,7 +534,6 @@ django==5.2.14 \
     #   django-extensions
     #   django-filter
     #   django-formtools
-    #   django-heroku
     #   django-hijack
     #   django-htmx
     #   django-modelcluster
@@ -613,10 +610,6 @@ django-formtools==2.5.1 \
     # via
     #   django-two-factor-auth
     #   hypha
-django-heroku==0.3.1 \
-    --hash=sha256:2bc690aab89eedbe01311752320a9a12e7548e3b0ed102681acc5736a41a4762 \
-    --hash=sha256:6af4bc3ae4a9b55eaad6dbe5164918982d2762661aebc9f83d9fa49f6009514e
-    # via hypha
 django-hijack==3.7.8 \
     --hash=sha256:8967e4f4e528e0cc06b4f0829fbc1a55a493cc3ce8c0d088d51d9a40404a32de \
     --hash=sha256:f28afb2be24430e348b8887c2f04337b1b77b66a44e4a6cd3a40902926d9e5fb
@@ -1620,14 +1613,6 @@ psycopg-binary==3.3.4 ; implementation_name != 'pypy' \
     --hash=sha256:fa1cbc10768a796c96d3243656016bf4e337c81c71097270bb7b0ad6210d9765 \
     --hash=sha256:fbd1d4ed566895ad2d3bf4ddfd8bae90026930ddf29df3b9d91d32c8c47866a7
     # via psycopg
-psycopg2==2.9.12 \
-    --hash=sha256:1dedb1c7a1d8552c4a6044c6b1c41a52e6a8e2d144af83eccac758076b1b7c15 \
-    --hash=sha256:2532c0cdc6ad18c9c35cd935cc3159712e14f05276a6d29a6435c52d24b840c1 \
-    --hash=sha256:3d23e684927d37b95cee9a943f6927b04ae2fdcd056fd0e2a30929ee89fee5a9 \
-    --hash=sha256:83d48e66e18c301d832e93c984a7bcbc0f4ac3bb79e2137e3bc335978c756dc0 \
-    --hash=sha256:a73d5513bfe929c56555006c7a9cc7ae6e4276aa99dd2b1e2544eb8bb54f8b23 \
-    --hash=sha256:d5fbe092315fb007c03544704e6d1e678a6c0378139d01cea433dc59edf041b4
-    # via django-heroku
 pwned-passwords-django==5.2.0 \
     --hash=sha256:a8666fb427479796ee9940e92df834a188ca7246905e4b9dc7be6248415ff5df \
     --hash=sha256:dfa7c4fc8879396b8304759260c5fb8b6055c07ed9241010e5bc319f195d5197
@@ -2464,9 +2449,7 @@ werkzeug==3.1.8 \
 whitenoise==6.11.0 \
     --hash=sha256:0f5bfce6061ae6611cd9396a8231e088722e4fc67bc13a111be74c738d99375f \
     --hash=sha256:b2aeb45950597236f53b5342b3121c5de69c8da0109362aee506ce88e022d258
-    # via
-    #   django-heroku
-    #   hypha
+    # via hypha
 willow==1.12.0 \
     --hash=sha256:d3541690b6726a4f6f4654f80507d81bacfa0c686ab065eb5c90159f1b9cee38 \
     --hash=sha256:db29c8d2f19b9d91f4ce22881521055aa2f6070131d64b4098cb86a98e851a70

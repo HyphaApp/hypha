@@ -22,6 +22,4 @@ if env.str("MAILGUN_API_KEY", None):
 # Heroku configuration.
 # Set ON_HEROKU to true in Config Vars or via cli 'heroku config:set ON_HEROKU=true'.
 if env.bool("ON_HEROKU", False):
-    import django_heroku
-
-    django_heroku.settings(locals())
+    ALLOWED_HOSTS = ["*"]

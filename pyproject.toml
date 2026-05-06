@@ -20,7 +20,6 @@ dependencies = [
     "django-file-form~=4.0.0",
     "django-filter==25.2",
     "django-formtools~=2.5.1",
-    "django-heroku~=0.3.1",
     "django-hijack~=3.7.6",
     "django-htmx~=1.27.0",
     "django-nh3~=0.2.1",
