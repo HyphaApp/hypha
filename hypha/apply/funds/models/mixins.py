@@ -226,11 +226,9 @@ class AccessFormData:
 
     @property
     def question_text_field_ids(self):
-        file_fields = list(self.file_field_ids)
+        file_fields = set(self.file_field_ids)
         for field_id, field in self.fields.items():
-            if field_id in file_fields:
-                pass
-            elif isinstance(field.block, FormFieldBlock):
+            if field_id not in file_fields and isinstance(field.block, FormFieldBlock):
                 yield field_id
 
     @property
