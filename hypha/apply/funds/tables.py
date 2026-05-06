@@ -166,13 +166,19 @@ def get_round_leads(request):
 
 
 def get_screening_statuses(request):
+    cache_attr = "_cache_screening_statuses"
+    if request is not None and hasattr(request, cache_attr):
+        return getattr(request, cache_attr)
     sub_filter = Q(
         id__in=ApplicationSubmission.objects.all()
         .values("screening_statuses__id")
         .distinct("screening_statuses__id")
     )
     anonymized_filter = Q(anonymized_submissions__isnull=False)
-    return ScreeningStatus.objects.filter(sub_filter | anonymized_filter)
+    qs = ScreeningStatus.objects.filter(sub_filter | anonymized_filter)
+    if request is not None:
+        setattr(request, cache_attr, qs)
+    return qs
 
 
 def get_meta_terms(request):
