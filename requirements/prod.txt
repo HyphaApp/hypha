@@ -1014,13 +1014,13 @@ pycparser==3.0 ; implementation_name != 'PyPy' and platform_python_implementatio
     --hash=sha256:600f49d217304a5902ac3c37e1281c9fe94e4d0489de643a9504c5cdfdfc6b29 \
     --hash=sha256:b727414169a36b7d524c1c3e31839a521725078d7b2ff038656844266160a992
     # via cffi
-pyhanko==0.35.0 \
-    --hash=sha256:d44fb5e376f805e4f2883ed534af979ce2c0d5e67eef53afad9f7d89fe163e38 \
-    --hash=sha256:dd2c38dc541cb3580b1c4a455649413e0ddc274e9fec3b77bd2b958f22fac9cd
+pyhanko==0.35.1 \
+    --hash=sha256:57c085f29d7f87334be2a5fbd38a1ca3c987f40f51aea38bde628497d6d9ef2e \
+    --hash=sha256:a6319f6f3753bee92ec0e9b91f638d37c58f8e49d494ef2c2a1f5bcf614707a6
     # via xhtml2pdf
-pyhanko-certvalidator==0.31.0 \
-    --hash=sha256:1c283497904c436a14779ceddb46bb8ef3650bd97e89ce853af02969a84fae3b \
-    --hash=sha256:fca32e801bb7a9c190abb9388871f22dd0ee7f0acd317d22e8701477f46613fa
+pyhanko-certvalidator==0.31.1 \
+    --hash=sha256:0aabe25b536ed555f3b18e5eb2c62ff46adeff9d15e27f0c9d5d81952d956f45 \
+    --hash=sha256:b7abc5672878994a050cf70a19b8247891aa30c9e6507eea77a6b10c7dbc1e50
     # via
     #   pyhanko
     #   xhtml2pdf
@@ -1028,9 +1028,9 @@ pyjwt==2.12.1 \
     --hash=sha256:28ca37c070cad8ba8cd9790cd940535d40274d22f80ab87f3ac6a713e6e8454c \
     --hash=sha256:c74a7a2adf861c04d002db713dd85f84beb242228e671280bf709d765b03672b
     # via social-auth-core
-pypdf==6.10.2 \
-    --hash=sha256:7d09ce108eff6bf67465d461b6ef352dcb8d84f7a91befc02f904455c6eea11d \
-    --hash=sha256:aa53be9826655b51c96741e5d7983ca224d898ac0a77896e64636810517624aa
+pypdf==6.11.0 \
+    --hash=sha256:062b51c81b0910e6d2755e99e1c5547a0a23b7d0a32322af66240d8edcfabe87 \
+    --hash=sha256:769394d5756d5b304c9b6bef88b54b1816b328e7e6fc9254e625529a15ed4ab8
     # via xhtml2pdf
 python-bidi==0.6.9 \
     --hash=sha256:001c1769893fd859216b0dc39dd4679c7260bf292c3637b727a928402a254322 \
@@ -1341,9 +1341,9 @@ uritools==6.1.0 \
     --hash=sha256:be97e452528e7a42ef0a4df68364ddd77833e982c5bac5cdcfee15c81f65e96b \
     --hash=sha256:f1b699052459711f1dd03721ca79341dc345054e6286f47313f8bce777782415
     # via pyhanko-certvalidator
-urllib3==2.6.3 \
-    --hash=sha256:1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed \
-    --hash=sha256:bf272323e553dfb2e87d9bfd225ca7b0f467b919d7bbd355436d3fd37cb0acd4
+urllib3==2.7.0 \
+    --hash=sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c \
+    --hash=sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897
     # via
     #   botocore
     #   django-anymail
