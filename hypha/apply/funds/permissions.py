@@ -286,6 +286,8 @@ def user_can_view_post_comment_form(user, submission):
     if co_applicant and co_applicant.role == CoApplicantRole.VIEW:
         return False
     return True
+
+
 def can_change_submission_author(user, submission):
     if not user.is_authenticated:
         return False, "Login Required"
