@@ -697,6 +697,7 @@ class UpdateAuthorView(View):
             status=400,
         )
 
+
 class UpdateMetaTermsView(View):
     template = "funds/modals/update_meta_terms_form.html"
 
