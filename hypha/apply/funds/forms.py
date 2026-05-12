@@ -336,7 +336,6 @@ class UpdateAuthorForm(ApplicationSubmissionModelForm):
         label=_("Applicants"),
         required=False,
     )
-    author.widget.attrs.update({"data-placeholder": "Select..."})
 
     class Meta:
         model = ApplicationSubmission
@@ -352,11 +351,13 @@ class UpdateAuthorForm(ApplicationSubmissionModelForm):
         # Removed current author from queryset
         author_field.queryset = author_field.queryset.exclude(id=current_author.id)
         author_field.initial = current_author
+        author_field.widget.attrs.update({"data-js-choices": ""})
 
     def save(self, *args, **kwargs):
         self.instance.user = self.cleaned_data["author"]
         self.instance.save()
         return self.instance
+
 
 class GroupedModelChoiceIterator(forms.models.ModelChoiceIterator):
     def __init__(self, field, groupby):

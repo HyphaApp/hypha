@@ -93,7 +93,7 @@
                                 <relative-time datetime={{ object.submit_time|date:"c" }} class="font-semibold">
                                     {{ object.submit_time|date:"SHORT_DATETIME_FORMAT" }}
                                 </relative-time>
-                                {% trans "by" %} <strong class="max-w-md font-semibold">{% display_submission_author %}</strong>
+                                {% trans "by" %} <strong class="max-w-md font-semibold">{% get_author_display "submitted" %}</strong>
                             </div>
 
                             <div class="self-center line-clamp-2">
@@ -103,7 +103,7 @@
                                 </relative-time>
                                 {% trans "by" %}
                                 <strong class="max-w-md font-semibold">
-                                    {% display_submission_author True %}
+                                    {% get_author_display "updated" %}
                                 </strong>
                             </div>
                         </div>
