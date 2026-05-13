@@ -102,6 +102,10 @@ class CustomUserAdminFormBase:
             attrs={"value": "Not used - see full_name"}
         )
 
+        for field_name in ("password1", "password2"):
+            if field_name in self.fields:
+                self.fields[field_name].widget.attrs["data_plain"] = True
+
 
 class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
     """
