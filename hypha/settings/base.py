@@ -617,10 +617,6 @@ SECURE_REFERRER_POLICY = env.str(
     "SECURE_REFERRER_POLICY", "strict-origin-when-cross-origin"
 )
 
-if env.bool("COOKIE_SECURE", False):
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    ELEVATE_COOKIE_SECURE = True
 
 # Django Elevate settings
 # https://django-elevate.readthedocs.io/en/latest/config/index.html
