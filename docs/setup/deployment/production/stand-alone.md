@@ -236,7 +236,6 @@ Here is a list of settings that can be set as environment variables or in a `hyp
 
 ```text
 CACHE_CONTROL_MAX_AGE:                         14400
-COOKIE_SECURE:                                 true
 DJANGO_SETTINGS_MODULE:                        hypha.settings.production
 EMAIL_HOST:                                    example.org
 ORG_EMAIL:                                     hello@example.org
