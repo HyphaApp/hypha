@@ -50,6 +50,9 @@ User = get_user_model()
 @login_required
 def partial_submission_lead(request, pk):
     submission = get_object_or_404(ApplicationSubmission, pk=pk)
+    has_permission(
+        "submission_view", request.user, object=submission, raise_exception=True
+    )
     return render(
         request, "submissions/partials/submission-lead.html", {"submission": submission}
     )
@@ -296,6 +299,9 @@ def partial_reviews_decisions(request: HttpRequest) -> HttpResponse:
 @login_required
 def partial_meta_terms_card(request, pk):
     submission = get_object_or_404(ApplicationSubmission, pk=pk)
+    has_permission(
+        "submission_view", request.user, object=submission, raise_exception=True
+    )
     meta_terms = submission.meta_terms.all()
     ctx = {"meta_terms": meta_terms, "submission": submission}
     return render(request, "submissions/partials/meta-terms-card.html", ctx)
