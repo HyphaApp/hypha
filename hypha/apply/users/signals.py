@@ -13,10 +13,14 @@ def send_login_notification(sender, request, user, **kwargs):
     if not settings.SEND_MESSAGES or not user.email:
         return
 
+    subject = _("Successful login to %(org)s") % {"org": settings.ORG_LONG_NAME}
+    if settings.EMAIL_SUBJECT_PREFIX:
+        subject = str(settings.EMAIL_SUBJECT_PREFIX) + str(subject)
+
     email = MarkdownMail("users/emails/login_notification.md")
     email.send(
         to=user.email,
-        subject=_("Successful login to %(org)s") % {"org": settings.ORG_LONG_NAME},
+        subject=subject,
         from_email=settings.DEFAULT_FROM_EMAIL,
         context={
             "user": user,
