@@ -283,14 +283,6 @@ On Heroku, set to true if deploying to Heroku.
 
 ----
 
-Secure cookies
-
-Set this to enable Djangos settings for secure cookies.
-
-    COOKIE_SECURE = env.bool('COOKIE_SECURE', False)
-
-----
-
 Machine translation settings for applications
 
 See [here](machine-translations.md) for more information on setting up machine translations

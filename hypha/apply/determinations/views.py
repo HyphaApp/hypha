@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DetailView, UpdateView
 from wagtail.models import Site
@@ -261,10 +262,14 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
         return response
 
     def get_success_url(self):
-        try:
-            return self.request.GET["next"]
-        except KeyError:
-            return reverse_lazy("apply:submissions:list")
+        next_url = self.request.GET.get("next")
+        if next_url and url_has_allowed_host_and_scheme(
+            next_url,
+            allowed_hosts={self.request.get_host()},
+            require_https=self.request.is_secure(),
+        ):
+            return next_url
+        return reverse_lazy("apply:submissions:list")
 
 
 @method_decorator(staff_required, name="dispatch")

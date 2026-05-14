@@ -9,6 +9,11 @@ try:
 except ImportError:
     pass
 
+# Security settings
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+ELEVATE_COOKIE_SECURE = True
+
 # Mailgun configuration.
 if env.str("MAILGUN_API_KEY", None):
     EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
