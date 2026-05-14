@@ -1,3 +1,5 @@
+from typing import Literal
+
 from django import template
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
@@ -51,30 +53,48 @@ def show_applicant_identity(submission: ApplicationSubmission, user: User) -> bo
 
 
 @register.simple_tag(takes_context=True)
-def display_submission_author(context: dict, revision_author: bool = False) -> str:
+def get_author_display(context: dict, type: Literal["submitted", "updated"]) -> str:
     """Creates a formatted author string based on the submission and viewer role.
 
     Args:
-        context: dict of template context
-        revision_author: if True, gets revision author. False (default) gets submission author
+        context:
+            dict of template context
+        type:
+            A string literal of either "submitted" (retrieves author of first revision),
+            or "updated" (retrieves author of live revision)
 
     Returns:
-        A string with the formatted author depending on the user role (ie. a
-        comment from staff viewed by an applicant will return the org name).
+        A string with the formatted author depending on the user role (ie. an edit from
+        staff viewed by an applicant will return the org name).
     """
     submission: ApplicationSubmission = context["object"]
     request = context["request"]
 
-    author = submission.user if not revision_author else submission.live_revision.author
-    if (
-        not revision_author or author == submission.user
-    ) and not show_applicant_identity(submission, request.user):
+    # Should the user's name be displayed
+    hide_pii = request.user != submission.user and not show_applicant_identity(
+        submission, request.user
+    )
+
+    author = None
+    # Edgecase handling of not having an existing revision happens for both submitted & updated
+    if type == "submitted":
+        first_revision = submission.revisions.order_by("timestamp").first()
+        if first_revision and (first_author := first_revision.author):
+            author = first_author
+    elif type == "updated":
+        live_revision = submission.live_revision
+        if live_revision and (live_author := live_revision.author):
+            author = live_author
+
+    if author is None or hide_pii:
         return _("Applicant")
-    elif (
+
+    # If staff was to edit an application (likely an edge case)
+    if (
         settings.HIDE_STAFF_IDENTITY
         and author.is_org_faculty
         and not request.user.is_org_faculty
     ):
-        return settings.ORG_LONG_NAME  # Likely an edge case but covering bases
+        return settings.ORG_LONG_NAME
 
     return str(author)

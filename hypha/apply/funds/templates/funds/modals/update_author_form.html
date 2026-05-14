@@ -1,0 +1,11 @@
+{% load i18n %}
+<c-modal.header>{% trans "Update Author" %}</c-modal.header>
+
+<div class="p-4">
+    <dl class="mb-4">
+        <dt class="font-semibold">{% trans "Current Author" %}</dt>
+        <dd class="truncate">{{ object.user }} &lt;{{object.user.email}}&gt;</dd>
+    </dl>
+
+    {% include 'includes/dialog_form_base.html' with form=form value=value %}
+</div>
