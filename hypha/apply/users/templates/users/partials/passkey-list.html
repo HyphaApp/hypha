@@ -1,0 +1,79 @@
+{% load i18n heroicons %}
+<div id="passkey-list">
+    {% if passkeys %}
+        <ul class="flex flex-col gap-2">
+            {% for passkey in passkeys %}
+                <li class="flex gap-2 items-center p-2 rounded border bg-base-100">
+                    {% heroicon_micro "key" class="size-4 text-fg-muted" aria_hidden=true %}
+                    <form
+                        x-data="{ pkcurrent: '{{ passkey.name|escapejs }}', pkinput: '{{ passkey.name|escapejs }}' }"
+                        hx-post="{% url 'users:passkey_rename' passkey.pk %}"
+                        hx-target="#passkey-list"
+                        hx-swap="outerHTML"
+                        class="flex flex-1 gap-2 items-center"
+                    >
+                        {% csrf_token %}
+                        <input
+                            type="text"
+                            name="name"
+                            x-model="pkinput"
+                            maxlength="128"
+                            class="flex-1 input input-xs input-ghost"
+                            aria-label="{% trans 'Passkey name' %}"
+                            data-tippy-content="{% trans 'Click to edit name' %}"
+                            required
+                        />
+                        <button type="submit" class="transition-all duration-500 btn btn-ghost btn-xs" :class="pkcurrent == pkinput ? 'text-success cursor-default border-transparent shadow-none hover:bg-transparent' : 'border-primary text-primary'" title="{% trans 'Save name' %}">
+                            {% heroicon_micro "check" class="size-4" aria_hidden=true %}
+                        </button>
+                    </form>
+                    <span class="text-xs text-fg-muted" title="{{ passkey.created_at|date:'Y-m-d' }}">
+                        {% if passkey.last_used_at %}
+                            {% blocktrans with when=passkey.last_used_at|timesince %}Used {{ when }} ago{% endblocktrans %}
+                        {% else %}
+                            {% trans "Never used" %}
+                        {% endif %}
+                    </span>
+                    <form
+                        hx-post="{% url 'users:passkey_delete' passkey.pk %}"
+                        hx-target="#passkey-list"
+                        hx-swap="outerHTML"
+                        hx-confirm="{% trans 'Delete this passkey?' %}"
+                    >
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-ghost btn-xs text-error" title="{% trans 'Delete passkey' %}">
+                            {% heroicon_micro "trash" class="size-3" aria_hidden=true %}
+                        </button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-sm text-fg-muted">{% trans "No passkeys registered." %}</p>
+    {% endif %}
+
+    <form
+        class="flex gap-2 mt-3"
+        data-begin-url="{% url 'users:passkey_register_begin' %}"
+        data-complete-url="{% url 'users:passkey_register_complete' %}"
+        data-error-server="{% trans "Server error" %}"
+        data-error-register="{% trans "Registration failed" %}"
+        data-error-duplicate="{% trans "This authenticator already has a passkey registered. Try a different authenticator or device." %}"
+        onsubmit="hypha.passkeys.register(this); return false;"
+    >
+        <input
+            type="text"
+            name="name"
+            maxlength="128"
+            class="flex-1 input input-sm"
+            placeholder="{% trans "e.g. MacBook Touch ID" %}"
+            aria-label="{% trans "Passkey name" %}"
+            required
+        />
+        <button type="submit" class="btn btn-sm btn-secondary btn-outline">
+            {% heroicon_micro "plus" class="size-3" aria_hidden=true %}
+            {% trans "Add passkey" %}
+        </button>
+    </form>
+    <p id="passkey-error" class="mt-2 text-sm text-error" hidden></p>
+</div>
