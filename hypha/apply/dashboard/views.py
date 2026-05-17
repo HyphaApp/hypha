@@ -53,35 +53,31 @@ class PAFReviewMixin:
         if not getattr(self.request.user, self.paf_reviewer_role, False):
             return {"count": None, "table": None}
         project_settings = ProjectSettings.for_request(self.request)
-        paf_approvals = list(
-            get_paf_for_review(
-                user=self.request.user,
-                is_paf_approval_sequential=project_settings.paf_approval_sequential,
-            ).select_related("project__submission__page", "paf_reviewer_role", "user")
-        )
+        paf_approvals = get_paf_for_review(
+            user=self.request.user,
+            is_paf_approval_sequential=project_settings.paf_approval_sequential,
+        ).select_related("project__submission__page", "paf_reviewer_role", "user")
         paf_table = PAFForReviewDashboardTable(
             paf_approvals, prefix="paf-review-", order_by="-date_requested"
         )
         RequestConfig(self.request, paginate=False).configure(paf_table)
         return {
-            "count": len(paf_approvals),
+            "count": paf_approvals.count(),
             "table": paf_table,
         }
 
 
 class HistoricalSubmissionMixin:
     def historical_submission_data(self):
-        historical_submissions = list(
-            ApplicationSubmission.objects.filter(
-                user=self.request.user,
-            )
+        qs = (
+            ApplicationSubmission.objects.filter(user=self.request.user)
             .inactive()
             .current()
             .for_table(self.request.user)
         )
         return {
-            "count": len(historical_submissions),
-            "table": SubmissionsTable(data=historical_submissions),
+            "count": qs.count(),
+            "table": SubmissionsTable(data=qs),
         }
 
 
@@ -120,12 +116,12 @@ class AdminDashboardView(PAFReviewMixin, MyFlaggedMixin, TemplateView):
         }
 
     def awaiting_reviews(self, submissions):
+        limit = 5
         submissions = submissions.in_review_for(self.request.user).order_by(
             "-submit_time"
         )
         count = submissions.count()
 
-        limit = 5
         return {
             "count": count,
             "display_more": count > limit,
@@ -133,34 +129,31 @@ class AdminDashboardView(PAFReviewMixin, MyFlaggedMixin, TemplateView):
         }
 
     def active_invoices(self):
-        invoices = list(
+        qs = (
             Invoice.objects.filter(
                 project__lead=self.request.user,
             )
             .in_progress()
             .select_related("project")
         )
-
         return {
-            "count": len(invoices),
-            "table": InvoiceDashboardTable(invoices),
+            "count": qs.count(),
+            "table": InvoiceDashboardTable(qs),
         }
 
     def projects(self):
+        limit = 10
         projects = Project.objects.filter(lead=self.request.user).for_table()
-
         filterset = ProjectListFilter(
             data=self.request.GET or None, request=self.request, queryset=projects
         )
-
-        limit = 10
-        projects_count = projects.count()
+        count = projects.count()
 
         return {
-            "count": projects_count,
+            "count": count,
             "filterset": filterset,
             "table": ProjectsDashboardTable(data=projects[:limit], prefix="project-"),
-            "display_more": projects_count > limit,
+            "display_more": count > limit,
             "url": reverse("apply:projects:all"),
         }
 
@@ -206,21 +199,21 @@ class FinanceDashboardView(PAFReviewMixin, MyFlaggedMixin, TemplateView):
         }
 
     def active_invoices(self):
-        invoices = list(Invoice.objects.for_finance_1().select_related("project"))
+        qs = Invoice.objects.for_finance_1().select_related("project")
         return {
-            "count": len(invoices),
-            "table": InvoiceDashboardTable(invoices),
+            "count": qs.count(),
+            "table": InvoiceDashboardTable(qs),
         }
 
     def invoices_for_approval(self):
-        invoices = list(Invoice.objects.approved_by_staff().select_related("project"))
-        return {"count": len(invoices), "table": InvoiceDashboardTable(invoices)}
+        qs = Invoice.objects.approved_by_staff().select_related("project")
+        return {"count": qs.count(), "table": InvoiceDashboardTable(qs)}
 
     def invoices_to_convert(self):
-        invoices = list(Invoice.objects.waiting_to_convert().select_related("project"))
+        qs = Invoice.objects.waiting_to_convert().select_related("project")
         return {
-            "count": len(invoices),
-            "table": InvoiceDashboardTable(invoices),
+            "count": qs.count(),
+            "table": InvoiceDashboardTable(qs),
         }
 
 
@@ -274,12 +267,12 @@ class ReviewerDashboardView(HistoricalSubmissionMixin, MyFlaggedMixin, TemplateV
         return context
 
     def awaiting_reviews(self, submissions):
+        limit = 5
         submissions = submissions.in_review_for(self.request.user).order_by(
             "-submit_time"
         )
         count = submissions.count()
 
-        limit = 5
         return {
             "count": count,
             "display_more": count > limit,
@@ -324,22 +317,24 @@ class ContractingDashboardView(PAFReviewMixin, MyFlaggedMixin, TemplateView):
                 },
             }
         projects_in_contracting = Project.objects.in_contracting()
-        waiting_for_contract = list(
-            projects_in_contracting.filter(contracts__isnull=True).for_table()
-        )
-        waiting_for_contract_approval = list(
-            projects_in_contracting.filter(contracts__isnull=False).for_table()
-        )
+        waiting_for_contract = projects_in_contracting.filter(
+            contracts__isnull=True
+        ).for_table()
+        waiting_for_contract_approval = projects_in_contracting.filter(
+            contracts__isnull=False
+        ).for_table()
+        wfc_count = waiting_for_contract.count()
+        wfca_count = waiting_for_contract_approval.count()
         return {
-            "count": len(waiting_for_contract) + len(waiting_for_contract_approval),
+            "count": wfc_count + wfca_count,
             "waiting_for_contract": {
-                "count": len(waiting_for_contract),
+                "count": wfc_count,
                 "table": ProjectsDashboardTable(
                     data=waiting_for_contract, prefix="project-waiting-contract-"
                 ),
             },
             "waiting_for_contract_approval": {
-                "count": len(waiting_for_contract_approval),
+                "count": wfca_count,
                 "table": ProjectsDashboardTable(
                     data=waiting_for_contract_approval,
                     prefix="project-waiting-approval-",
@@ -415,22 +410,18 @@ class ApplicantDashboardView(HistoricalSubmissionMixin, TemplateView):
         }
 
     def active_invoices(self):
-        active_invoices = list(
+        qs = (
             Invoice.objects.filter(project__user=self.request.user)
             .exclude(status__in=[PAID, DECLINED])
             .order_by("-requested_at")
         )
-        return {"count": len(active_invoices), "data": active_invoices}
+        return {"count": qs.count(), "data": qs}
 
     def historical_project_data(self):
-        historical_projects = list(
-            Project.objects.filter(user=self.request.user).complete().for_table()
-        )
+        qs = Project.objects.filter(user=self.request.user).complete().for_table()
         return {
-            "count": len(historical_projects),
-            "table": ProjectsDashboardTable(
-                data=historical_projects, prefix="past-project-"
-            ),
+            "count": qs.count(),
+            "table": ProjectsDashboardTable(data=qs, prefix="past-project-"),
         }
 
 
