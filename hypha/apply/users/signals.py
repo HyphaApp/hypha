@@ -7,11 +7,22 @@ from wagtail.models import Site
 
 from hypha.core.mail import MarkdownMail
 
+HIJACK_VIEW_NAMES = {
+    "hijack-become",
+    "users:hijack",
+    "hijack:acquire",
+    "hijack:release",
+}
+
 
 @receiver(user_logged_in)
 def send_login_notification(sender, request, user, **kwargs):
     if not settings.SEND_MESSAGES or not user.email:
         return
+
+    if request and getattr(request, "resolver_match", None):
+        if request.resolver_match.view_name in HIJACK_VIEW_NAMES:
+            return
 
     subject = _("Successful login to %(org)s") % {"org": settings.ORG_LONG_NAME}
     if settings.EMAIL_SUBJECT_PREFIX:
