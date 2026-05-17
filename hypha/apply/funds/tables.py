@@ -274,35 +274,33 @@ class SubmissionFilter(filters.FilterSet):
 
     def filter_category_options(self, queryset, name, value):
         """
-        Filter submissions based on the category options selected.
+        Filter submissions whose answer to any category-question field includes
+        one of the selected options.
 
-        In order to do that we need to first get all the category fields used in the submission.
-
-        And then use those category fields to filter submissions with their form_data.
+        Only the form schemas (form_fields) are pulled into Python — to discover
+        which field IDs are CategoryQuestionBlocks. The form_data lookup itself
+        runs in the database via JSONB containment.
         """
+        if not value:
+            return queryset
+
         query = Q()
-        submission_data = queryset.values("form_fields", "form_data").distinct()
-        for submission in submission_data:
-            for field in submission["form_fields"]:
+        seen_field_ids = set()
+        for form_fields in queryset.values_list("form_fields", flat=True).distinct():
+            for field in form_fields:
+                if field.id in seen_field_ids:
+                    continue
                 if isinstance(field.block, CategoryQuestionBlock):
-                    try:
-                        category_options = category_ids = submission["form_data"][
-                            field.id
-                        ]
-                    except KeyError:
-                        include_in_filter = False
-                    else:
-                        if isinstance(category_options, str):
-                            category_options = [category_options]
-                        include_in_filter = set(category_options) & set(value)
-                    # Check if filter options has any value in category options
-                    # If yes then those submissions should be filtered in the list
-                    if include_in_filter:
-                        kwargs = {
-                            "{0}__{1}".format("form_data", field.id): category_ids
-                        }
-                        query |= Q(**kwargs)
-        return queryset.filter(query)
+                    seen_field_ids.add(field.id)
+                    for option_id in value:
+                        # Single-select stores the option id as a scalar string.
+                        query |= Q(form_data__contains={field.id: option_id})
+                        # Multi-select stores option ids as a JSON array.
+                        query |= Q(form_data__contains={field.id: [option_id]})
+
+        if not seen_field_ids:
+            return queryset.none()
+        return queryset.filter(query).distinct()
 
 
 class SubmissionFilterAndSearch(SubmissionFilter):
