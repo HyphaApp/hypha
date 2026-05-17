@@ -132,11 +132,11 @@ extra:
     node:
       version:
     nvm:
-      version: 0.39.5
+      version: 0.40.4
       packages:
-        debian: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
-        fedora: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
-        macos: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
+        debian: https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh
+        fedora: https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh
+        macos: https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh
     postgres:
       version: 17
       packages:
