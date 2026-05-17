@@ -126,7 +126,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         slack_messages = (
             Message.objects.filter(type=SlackAdapter.adapter_type)
-            .select_related("event")
+            .select_related("event", "event__source")
             .order_by("-event__when")
             .filter(sent_in_email_digest=False)
             .filter(
