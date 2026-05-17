@@ -23,7 +23,6 @@ from hypha.apply.determinations.utils import (
     has_final_determination,
     outcome_from_actions,
 )
-from hypha.apply.funds.models.screening import ScreeningStatus
 from hypha.apply.funds.tasks import generate_submission_csv
 from hypha.apply.funds.views.partials import submission_export_download
 from hypha.apply.funds.workflows import (
@@ -47,13 +46,14 @@ from ..models import (
 )
 from ..tables import (
     SubmissionFilter,
+    get_screening_statuses,
 )
 from ..utils import check_submissions_same_determination_form, get_export_polling_time
 
 User = get_user_model()
 
 
-def screening_decision_context(selected_screening_statuses: list) -> dict:
+def screening_decision_context(request, selected_screening_statuses: list) -> dict:
     screening_options = [
         {
             "slug": "null",
@@ -66,11 +66,7 @@ def screening_decision_context(selected_screening_statuses: list) -> dict:
             "title": item.title,
             "selected": str(item.id) in selected_screening_statuses,
         }
-        for item in ScreeningStatus.objects.filter(
-            id__in=ApplicationSubmission.objects.all()
-            .values("screening_statuses__id")
-            .distinct("screening_statuses__id")
-        )
+        for item in get_screening_statuses(request)
     ]
 
     selected_screening_statuses_objects = filter(
@@ -129,9 +125,9 @@ def submissions_all(
     start = time.time()
 
     if can_view_archives and show_archived:
-        qs = ApplicationSubmission.objects.include_archive().for_table(request.user)
+        qs = ApplicationSubmission.objects.include_archive()
     else:
-        qs = ApplicationSubmission.objects.current().for_table(request.user)
+        qs = ApplicationSubmission.objects.current()
 
     # Reviewers also have access to this view but should only see a subset of submissions.
     if request.user.is_reviewer:
@@ -244,8 +240,7 @@ def submissions_all(
         ]
     )
 
-    qs = filters.qs
-    qs = qs.prefetch_related("meta_terms")
+    qs = filters.qs.for_table(request.user).prefetch_related("meta_terms")
 
     sort_options_raw = {
         "submitted-desc": ("-submit_time", _("Newest")),
@@ -340,7 +335,7 @@ def submissions_all(
         "can_bulk_anonymize": permissions.can_bulk_delete_submissions(request.user),
         "can_export_submissions": permissions.can_export_submissions(request.user),
         "enable_selection": permissions.can_bulk_update_submissions(request.user),
-    } | screening_decision_context(selected_screening_statuses)
+    } | screening_decision_context(request, selected_screening_statuses)
     return render(request, template_name, ctx)
 
 
