@@ -1,7 +1,7 @@
 import json
 
 from django import forms
-from django.core.files.base import ContentFile
+from django.core.files import File
 from django.db import transaction
 from django.db.models.fields.files import FieldFile
 from django.forms.widgets import RadioSelect
@@ -194,9 +194,7 @@ class SelectDocumentForm(forms.ModelForm):
         file_url = self.cleaned_data["document"]
         for file in self.files:
             if file.url == file_url:
-                new_file = ContentFile(file.read())
-                new_file.name = file.filename
-                return new_file
+                return File(file.open("rb"), name=file.filename)
         raise forms.ValidationError(_("File not found on submission"))
 
     @transaction.atomic()
