@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock
+
 from django.contrib.auth.signals import user_logged_in
 from django.core import mail
 from django.test import RequestFactory, TestCase, override_settings
@@ -51,3 +53,28 @@ class TestSendLoginNotification(TestCase):
     def test_email_body_contains_login_time(self):
         self._fire_signal()
         self.assertTrue(any("Login time" in part for part in [mail.outbox[0].body]))
+
+    def _fire_signal_with_view_name(self, view_name):
+        request = self.factory.get("/")
+        request.resolver_match = MagicMock(view_name=view_name)
+        self._fire_signal(request=request)
+
+    def test_no_email_on_hijack_acquire(self):
+        self._fire_signal_with_view_name("hijack:acquire")
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_no_email_on_hijack_release(self):
+        self._fire_signal_with_view_name("hijack:release")
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_no_email_on_hijack_become(self):
+        self._fire_signal_with_view_name("hijack-become")
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_no_email_on_users_hijack_view(self):
+        self._fire_signal_with_view_name("users:hijack")
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_email_sent_for_non_hijack_view(self):
+        self._fire_signal_with_view_name("account_login")
+        self.assertEqual(len(mail.outbox), 1)
