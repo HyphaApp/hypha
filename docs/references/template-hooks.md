@@ -33,7 +33,7 @@ Creating a hook listener in a `third_party_app`:
 
     # Example 1
     def css_resources(context, *args, **kwargs):
-        return mark_safe(u'<link rel="stylesheet" href="%s/app_hook/styles.css">' % settings.STATIC_URL)
+        return mark_safe('<link rel="stylesheet" href="%s/app_hook/styles.css">' % settings.STATIC_URL)
 
 
     # Example 2
@@ -52,7 +52,8 @@ Creating a hook listener in a `third_party_app`:
         # If you are doing this a lot, make sure to keep your templates in memory (google: django.template.loaders.cached.Loader)
         return render_to_string(
             template_name='templates/app_hook/head_resources.html',
-            context_instance=context
+            context=dict(context),
+            request=context.get('request'),
         )
 
 
@@ -61,8 +62,8 @@ Creating a hook listener in a `third_party_app`:
         articles = Article.objects.all()
         return render_to_string(
             template_name='templates/app_hook/my_articles.html',
-            dictionary={'articles': articles, },
-            context_instance=context
+            context={'articles': articles},
+            request=context.get('request'),
         )
 
 Registering a hook listener in a `third_party_app`:
@@ -78,7 +79,7 @@ Registering a hook listener in a `third_party_app`:
         verbose_name = 'My App'
 
         def ready(self):
-            from hooks.templatehook import hook
+            from hypha.core.templatehook import hook
             from third_party_app.template_hooks import css_resources
 
             hook.register("within_head", css_resources)

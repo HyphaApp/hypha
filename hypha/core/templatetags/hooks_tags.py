@@ -36,7 +36,7 @@ def template_hook_collect(module, hook_name, *args, **kwargs):
     Example::
 
         import myhooks
-        from hooks.templatetags import template_hook_collect
+        from hypha.core.templatetags.hooks_tags import template_hook_collect
 
         @register.simple_tag(takes_context=True)
         def hook(context, name, *args, **kwargs):

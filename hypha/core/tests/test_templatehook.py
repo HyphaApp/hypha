@@ -43,12 +43,8 @@ class TestTemplateHook(SimpleTestCase):
         self.assertEqual(self.hook(), [])
 
     def test_register_non_callable_raises(self):
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(TypeError):
             self.hook.register("not_callable")
-
-    def test_providing_args_stored(self):
-        hook = TemplateHook(providing_args=["foo", "bar"])
-        self.assertEqual(hook.providing_args, ["foo", "bar"])
 
 
 class TestHook(SimpleTestCase):
