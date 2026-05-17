@@ -110,7 +110,7 @@ NodeJS versions have potential to change. To allow for ease of upgrading, it is 
 The following commands will install nvm and proceed to setup Node based off of the content of `.nvmrc`.
 
 ```shell
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 ```
 
 See [Installing and Updating Node Version Manager](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating)
