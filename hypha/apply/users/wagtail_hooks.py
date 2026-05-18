@@ -27,7 +27,7 @@ def notify_after_create_user(request, user):
 def notify_after_edit_user(request, user):
     roles = list(user.groups.values_list("name", flat=True))
     if user.is_superuser:
-        roles.append(SUPERADMIN)
+        roles.append(str(SUPERADMIN))
     if roles:
         roles = ", ".join(roles)
         messenger(
