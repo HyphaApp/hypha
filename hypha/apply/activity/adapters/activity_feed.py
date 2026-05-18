@@ -75,6 +75,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.UNARCHIVE_SUBMISSION: _("un-archived this submission"),
         MESSAGES.DELETE_INVOICE: _("deleted an invoice"),
         MESSAGES.REMOVE_TASK: "handle_task_removal",
+        MESSAGES.UPDATE_AUTHOR: _("updated author from {old_author} to {source.user}"),
     }
 
     def recipients(self, message_type, **kwargs):
@@ -100,6 +101,7 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.UNARCHIVE_SUBMISSION,
             MESSAGES.BATCH_ARCHIVE_SUBMISSION,
             MESSAGES.REMOVE_TASK,
+            MESSAGES.UPDATE_AUTHOR,
         ]:
             return {"visibility": TEAM}
 

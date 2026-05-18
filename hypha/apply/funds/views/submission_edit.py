@@ -680,7 +680,7 @@ class UpdateAuthorView(View):
             form.save()
 
             messenger(
-                MESSAGES.UPDATED_AUTHOR,
+                MESSAGES.UPDATE_AUTHOR,
                 request=self.request,
                 user=self.request.user,
                 source=self.submission,

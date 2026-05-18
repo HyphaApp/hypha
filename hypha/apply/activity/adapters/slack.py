@@ -138,7 +138,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UNARCHIVE_SUBMISSION: _(
             "{user} has unarchived the submission: {source.title_text_display}"
         ),
-        MESSAGES.UPDATED_AUTHOR: _(
+        MESSAGES.UPDATE_AUTHOR: _(
             "{user} has updated author from {old_author} to {source.user} for submission <{link}|{source}>"
         ),
     }

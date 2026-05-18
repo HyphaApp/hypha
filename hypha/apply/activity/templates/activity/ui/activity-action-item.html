@@ -20,6 +20,8 @@
                             {% heroicon_micro "lock-open" class="inline" aria_hidden=true size=14 %}
                         {% elif 'archived' in activity_text.lower %}
                             {% heroicon_micro "lock-closed" class="inline" aria_hidden=true size=14 %}
+                        {% elif 'lead' in activity_text.lower or 'author' in activity_text.lower %}
+                            {% heroicon_micro "users" class="inline" aria_hidden=true size=14 %}
                         {% else %}
                             {% heroicon_micro "eye" class="inline" aria_hidden=true size=15 %}
                         {% endif %}
