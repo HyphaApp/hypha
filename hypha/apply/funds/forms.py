@@ -334,7 +334,7 @@ class UpdateAuthorForm(ApplicationSubmissionModelForm):
     author = forms.ModelChoiceField(
         queryset=User.objects.applicants(),
         label=_("Applicants"),
-        required=False,
+        required=True,
     )
 
     class Meta:
@@ -344,14 +344,10 @@ class UpdateAuthorForm(ApplicationSubmissionModelForm):
     def __init__(self, *args, **kwargs):
         kwargs.pop("user")
         super().__init__(*args, **kwargs)
-        current_author = self.instance.user
-
-        author_field = self.fields["author"]
-
-        # Removed current author from queryset
-        author_field.queryset = author_field.queryset.exclude(id=current_author.id)
-        author_field.initial = current_author
-        author_field.widget.attrs.update({"data-js-choices": ""})
+        self.fields["author"].queryset = User.objects.applicants().exclude(
+            id=self.instance.user.id
+        )
+        self.fields["author"].widget.attrs.update({"data-js-choices": ""})
 
     def save(self, *args, **kwargs):
         self.instance.user = self.cleaned_data["author"]

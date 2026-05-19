@@ -678,7 +678,6 @@ class UpdateAuthorView(View):
         old_author = self.submission.user
         if form.is_valid():
             form.save()
-
             messenger(
                 MESSAGES.UPDATE_AUTHOR,
                 request=self.request,

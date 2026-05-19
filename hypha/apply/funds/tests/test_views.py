@@ -708,6 +708,24 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         assert_view_translate_displayed(self.submission)
 
 
+class TestAuthorUpdateView(BaseSubmissionViewTestCase):
+    user_factory = StaffFactory
+
+    def test_staff_can_update_author(self):
+        submission = ApplicationSubmissionFactory()
+        new_author = ApplicantFactory()
+
+        data = {
+            "author_form": "",
+            "author": new_author.id,
+        }
+        response = self.post_page(submission, data, view_name="change_author")
+        self.assertEqual(response.status_code, 200)
+
+        submission.refresh_from_db()
+        self.assertEqual(submission.user, new_author)
+
+
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     user_factory = StaffFactory
 
