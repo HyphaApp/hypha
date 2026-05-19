@@ -744,6 +744,7 @@ onnxruntime==1.24.3 ; python_full_version < '3.11' \
     # via minisbd
 onnxruntime==1.26.0 ; python_full_version >= '3.11' \
     --hash=sha256:01498e80ba8988428d08c2d51b1338f89e3de2a93e6ffe555f79c68f26a5c06b \
+    --hash=sha256:05b028781b322ad74b57ce5b50aa5280bb1fe96ceec334628ade681e0b24c1ac \
     --hash=sha256:11a8df4dcfe9ad5ff0bd71a7571dbed019fabc7594676c89fe8b86ea029c246f \
     --hash=sha256:31d71a53490e46910877d0902b5ad99c69a5955e5c7ea6c82863519410e1ba7c \
     --hash=sha256:33a791f31432a3af1a96db5e54818b37aba5e5eefc2e6af5794c10a9118a9993 \
