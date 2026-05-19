@@ -1,13 +1,14 @@
 import base64
 import json
 import logging
+from functools import wraps
 
 from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render, resolve_url
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -41,6 +42,23 @@ logger = logging.getLogger(__name__)
 
 SESSION_CHALLENGE_KEY_REGISTER = "webauthn_challenge_register"
 SESSION_CHALLENGE_KEY_AUTH = "webauthn_challenge_auth"
+
+
+def passkeys_enabled() -> bool:
+    """Passkeys require WEBAUTHN_RP_ID in production. In DEBUG (local/dev)
+    we fall back to the request host so the feature can be exercised locally.
+    """
+    return bool(getattr(settings, "WEBAUTHN_RP_ID", None)) or settings.DEBUG
+
+
+def passkeys_required(view_func):
+    @wraps(view_func)
+    def _wrapped(request, *args, **kwargs):
+        if not passkeys_enabled():
+            raise Http404
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped
 
 
 def _get_rp_id(request):
@@ -90,6 +108,7 @@ def _clean_transports(raw) -> list[str]:
 MAX_PASSKEYS_PER_USER = 10
 
 
+@passkeys_required
 @login_required
 @require_POST
 @ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
@@ -127,6 +146,7 @@ def passkey_register_begin(request):
     return JsonResponse(json.loads(options_to_json(options)))
 
 
+@passkeys_required
 @login_required
 @require_POST
 @ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
@@ -195,6 +215,7 @@ def passkey_register_complete(request):
 # ---------------------------------------------------------------------------
 
 
+@passkeys_required
 @require_POST
 @ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
 def passkey_auth_begin(request):
@@ -206,6 +227,7 @@ def passkey_auth_begin(request):
     return JsonResponse(json.loads(options_to_json(options)))
 
 
+@passkeys_required
 @require_POST
 @ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
 def passkey_auth_complete(request):
@@ -315,6 +337,7 @@ def passkey_auth_complete(request):
 # ---------------------------------------------------------------------------
 
 
+@passkeys_required
 @login_required
 @require_GET
 def passkey_list(request):
@@ -322,6 +345,7 @@ def passkey_list(request):
     return render(request, "users/partials/passkey-list.html", {"passkeys": passkeys})
 
 
+@passkeys_required
 @login_required
 @require_POST
 def passkey_delete(request, pk):
@@ -337,6 +361,7 @@ def passkey_delete(request, pk):
     return render(request, "users/partials/passkey-list.html", {"passkeys": passkeys})
 
 
+@passkeys_required
 @login_required
 @require_POST
 def passkey_rename(request, pk):

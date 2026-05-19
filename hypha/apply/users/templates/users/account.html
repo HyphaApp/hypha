@@ -93,18 +93,20 @@
                 {% endif %}
             </p>
 
-            <h3 class="mt-6 mb-2 text-sm font-semibold">{% trans "Passkeys" %}</h3>
-            <p class="mb-2 text-sm text-fg-muted">
-                {% trans "With passkeys you can use your fingerprint, face, or screen lock to login securely without a password." %}
-            </p>
+            {% if PASSKEYS_ENABLED %}
+                <h3 class="mt-6 mb-2 text-sm font-semibold">{% trans "Passkeys" %}</h3>
+                <p class="mb-2 text-sm text-fg-muted">
+                    {% trans "With passkeys you can use your fingerprint, face, or screen lock to login securely without a password." %}
+                </p>
 
-            <div
-                hx-get="{% url 'users:passkey_list' %}"
-                hx-trigger="load"
-                hx-swap="innerHTML"
-            >
-                <div class="w-full h-8 rounded animate-pulse bg-base-300"></div>
-            </div>
+                <div
+                    hx-get="{% url 'users:passkey_list' %}"
+                    hx-trigger="load"
+                    hx-swap="innerHTML"
+                >
+                    <div class="w-full h-8 rounded animate-pulse bg-base-300"></div>
+                </div>
+            {% endif %}
 
             {# Remove the comment block tags below when such need arises. e.g. adding new providers #}
             {% comment %}
@@ -123,5 +125,7 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/passkeys.js' %}"></script>
+    {% if PASSKEYS_ENABLED %}
+        <script src="{% static 'js/passkeys.js' %}"></script>
+    {% endif %}
 {% endblock %}

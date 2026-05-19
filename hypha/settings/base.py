@@ -35,15 +35,18 @@ DEFAULT_RATE_LIMIT = env.str("DEFAULT_RATE_LIMIT", "5/m")
 ENFORCE_TWO_FACTOR = env.bool("ENFORCE_TWO_FACTOR", False)
 
 # WebAuthn / Passkey settings.
+# Passkeys are disabled in production unless WEBAUTHN_RP_ID is set. In local
+# development (DEBUG=True) they fall back to the request host so the feature
+# can be tried without extra configuration.
+#
 # WEBAUTHN_RP_ID: the relying party domain, e.g. "example.com" (no port, no scheme).
-#   Defaults to the request host if not set. OBS! Do not use default in production!
 # WEBAUTHN_ORIGIN: the full origin, e.g. "https://example.com".
 #   Defaults to the request origin if not set.
 # WEBAUTHN_RP_NAME: display name shown in the browser passkey UI.
 #   Defaults to ORG_LONG_NAME.
 WEBAUTHN_RP_ID = env.str("WEBAUTHN_RP_ID", None)
-WEBAUTHN_RP_NAME = env.str("WEBAUTHN_RP_NAME", None)
 WEBAUTHN_ORIGIN = env.str("WEBAUTHN_ORIGIN", None)
+WEBAUTHN_RP_NAME = env.str("WEBAUTHN_RP_NAME", None)
 
 # Set the allowed file extension for all uploads fields.
 FILE_ALLOWED_EXTENSIONS = [

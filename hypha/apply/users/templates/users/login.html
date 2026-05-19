@@ -91,7 +91,9 @@
 
                     <section class="flex-wrap card-actions">
                         {% include "users/includes/passwordless_login_button.html" %}
-                        {% include "users/includes/passkey_login_button.html" %}
+                        {% if PASSKEYS_ENABLED %}
+                            {% include "users/includes/passkey_login_button.html" %}
+                        {% endif %}
                         {% if GOOGLE_OAUTH2 %}
                             {% include "users/includes/org_login_button.html" %}
                         {% endif %}
@@ -143,12 +145,14 @@
 
 {% block extra_js %}
     {{ block.super }}
-    <script src="{% static 'js/passkeys.js' %}"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            hypha.passkeys.initUI();
-        });
-    </script>
+    {% if PASSKEYS_ENABLED %}
+        <script src="{% static 'js/passkeys.js' %}"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                hypha.passkeys.initUI();
+            });
+        </script>
+    {% endif %}
     {# Fix copy of dynamic fields label #}
     <script>
         var labelOtpToken = document.querySelector("label[for=id_token-otp_token]");

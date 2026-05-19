@@ -35,6 +35,9 @@ ELEVATE_COOKIE_SALT = SECRET_KEY
 
 ENFORCE_TWO_FACTOR = False
 
+# Enable passkeys in tests so feature views are exercisable without DEBUG.
+WEBAUTHN_RP_ID = "testserver"
+
 SECURE_SSL_REDIRECT = False
 
 # No async celery workers

@@ -661,3 +661,83 @@ class TestPasskeyMiddlewareBypass(TestCase):
 
         response = self.client.get(settings.LOGIN_REDIRECT_URL, follow=True)
         self.assertContains(response, "Permission Denied")
+
+
+# ---------------------------------------------------------------------------
+# Production gate — passkeys disabled unless WEBAUTHN_RP_ID is set
+# ---------------------------------------------------------------------------
+
+
+@override_settings(DEBUG=False, WEBAUTHN_RP_ID=None, RATELIMIT_ENABLE=False)
+class TestPasskeysDisabledInProduction(TestCase):
+    """Without WEBAUTHN_RP_ID and DEBUG=False, all passkey views must 404."""
+
+    def setUp(self):
+        self.user = UserFactory()
+
+    def test_auth_begin_returns_404(self):
+        response = self.client.post(AUTH_BEGIN_URL)
+        self.assertEqual(response.status_code, 404)
+
+    def test_auth_complete_returns_404(self):
+        response = self.client.post(
+            AUTH_COMPLETE_URL,
+            data=json.dumps({}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_register_begin_returns_404(self):
+        self.client.force_login(self.user)
+        response = self.client.post(REGISTER_BEGIN_URL)
+        self.assertEqual(response.status_code, 404)
+
+    def test_register_complete_returns_404(self):
+        self.client.force_login(self.user)
+        response = self.client.post(
+            REGISTER_COMPLETE_URL,
+            data=json.dumps({}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_passkey_list_returns_404(self):
+        self.client.force_login(self.user)
+        response = self.client.get(PASSKEY_LIST_URL)
+        self.assertEqual(response.status_code, 404)
+
+    def test_passkey_delete_returns_404(self):
+        passkey = make_passkey(self.user)
+        self.client.force_login(self.user)
+        response = self.client.post(reverse("users:passkey_delete", args=[passkey.pk]))
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(Passkey.objects.filter(pk=passkey.pk).exists())
+
+    def test_passkey_rename_returns_404(self):
+        passkey = make_passkey(self.user, name="Original")
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse("users:passkey_rename", args=[passkey.pk]),
+            {"name": "New Name"},
+        )
+        self.assertEqual(response.status_code, 404)
+        passkey.refresh_from_db()
+        self.assertEqual(passkey.name, "Original")
+
+
+@override_settings(DEBUG=True, WEBAUTHN_RP_ID=None, RATELIMIT_ENABLE=False)
+class TestPasskeysEnabledInDev(TestCase):
+    """DEBUG=True falls back to the request host even without WEBAUTHN_RP_ID."""
+
+    def test_auth_begin_works_in_debug_without_rp_id(self):
+        response = self.client.post(AUTH_BEGIN_URL)
+        self.assertEqual(response.status_code, 200)
+
+
+@override_settings(DEBUG=False, WEBAUTHN_RP_ID="example.com", RATELIMIT_ENABLE=False)
+class TestPasskeysEnabledWhenRpIdSet(TestCase):
+    """DEBUG=False with WEBAUTHN_RP_ID set enables passkeys in production."""
+
+    def test_auth_begin_works_in_production_with_rp_id(self):
+        response = self.client.post(AUTH_BEGIN_URL)
+        self.assertEqual(response.status_code, 200)
