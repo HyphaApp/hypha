@@ -511,7 +511,6 @@ def htmx_archive_unarchive_submission(request, pk):
 class UpdateLeadView(View):
     model = ApplicationSubmission
     form_class = UpdateSubmissionLeadForm
-    context_name = "lead_form"
     template = "funds/modals/update_lead_form.html"
 
     def dispatch(self, request, *args, **kwargs):
@@ -643,7 +642,6 @@ class UpdateReviewersView(View):
 class UpdateAuthorView(View):
     model = ApplicationSubmission
     form_class = UpdateAuthorForm
-    context_name = "author_form"
     template = "funds/modals/update_author_form.html"
 
     def dispatch(self, request, *args, **kwargs):
