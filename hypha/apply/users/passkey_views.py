@@ -28,6 +28,7 @@ from webauthn.helpers.structs import (
     AuthenticatorAssertionResponse,
     AuthenticatorAttestationResponse,
     AuthenticatorSelectionCriteria,
+    AuthenticatorTransport,
     PublicKeyCredentialDescriptor,
     RegistrationCredential,
     ResidentKeyRequirement,
@@ -70,6 +71,15 @@ def _load_challenge(request, key: str) -> bytes:
     if not encoded:
         raise PermissionDenied("No active WebAuthn challenge.")
     return base64.b64decode(encoded)
+
+
+_VALID_TRANSPORTS = {t.value for t in AuthenticatorTransport}
+
+
+def _clean_transports(raw) -> list[str]:
+    if not isinstance(raw, list):
+        return []
+    return [t for t in raw if isinstance(t, str) and t in _VALID_TRANSPORTS]
 
 
 # ---------------------------------------------------------------------------
@@ -131,6 +141,7 @@ def passkey_register_complete(request):
     except PermissionDenied:
         return JsonResponse({"error": _("No active WebAuthn challenge")}, status=400)
 
+    transports = _clean_transports(data.get("response", {}).get("transports"))
     try:
         credential = RegistrationCredential(
             id=data["id"],
@@ -140,7 +151,7 @@ def passkey_register_complete(request):
                 attestation_object=base64url_to_bytes(
                     data["response"]["attestationObject"]
                 ),
-                transports=data["response"].get("transports", []),
+                transports=transports,
             ),
         )
         verification = verify_registration_response(
@@ -168,7 +179,7 @@ def passkey_register_complete(request):
             credential_id=bytes_to_base64url(verification.credential_id),
             public_key=bytes_to_base64url(verification.credential_public_key),
             sign_count=verification.sign_count,
-            transports=data["response"].get("transports", []),
+            transports=transports,
         )
     except Exception:
         logger.warning(

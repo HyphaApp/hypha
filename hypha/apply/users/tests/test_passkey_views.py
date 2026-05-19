@@ -207,6 +207,42 @@ class TestPasskeyRegisterComplete(TestCase):
         self.assertTrue(passkey.name.startswith("Passkey "))
 
     @patch("hypha.apply.users.passkey_views.verify_registration_response")
+    def test_unknown_transports_are_filtered_out(self, mock_verify):
+        mock_verify.return_value = MagicMock(
+            credential_id=b"cred",
+            credential_public_key=b"pubkey",
+            sign_count=0,
+        )
+        self._set_challenge()
+        payload = self._payload()
+        payload["response"]["transports"] = ["internal", "junk-value", "usb", 123]
+        response = self.client.post(
+            REGISTER_COMPLETE_URL,
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.user.passkeys.first().transports, ["internal", "usb"])
+
+    @patch("hypha.apply.users.passkey_views.verify_registration_response")
+    def test_non_list_transports_is_stored_as_empty_list(self, mock_verify):
+        mock_verify.return_value = MagicMock(
+            credential_id=b"cred",
+            credential_public_key=b"pubkey",
+            sign_count=0,
+        )
+        self._set_challenge()
+        payload = self._payload()
+        payload["response"]["transports"] = "internal"  # not a list
+        response = self.client.post(
+            REGISTER_COMPLETE_URL,
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.user.passkeys.first().transports, [])
+
+    @patch("hypha.apply.users.passkey_views.verify_registration_response")
     def test_verification_failure_returns_400_and_saves_nothing(self, mock_verify):
         mock_verify.side_effect = Exception("crypto error")
         self._set_challenge()
