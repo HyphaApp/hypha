@@ -330,6 +330,31 @@ def make_role_reviewer_fields():
     return role_fields
 
 
+class UpdateAuthorForm(ApplicationSubmissionModelForm):
+    author = forms.ModelChoiceField(
+        queryset=User.objects.applicants(),
+        label=_("Applicants"),
+        required=True,
+    )
+
+    class Meta:
+        model = ApplicationSubmission
+        fields: list = []
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+        self.fields["author"].queryset = User.objects.applicants().exclude(
+            id=self.instance.user.id
+        )
+        self.fields["author"].widget.attrs.update({"data-js-choices": ""})
+
+    def save(self, *args, **kwargs):
+        self.instance.user = self.cleaned_data["author"]
+        self.instance.save()
+        return self.instance
+
+
 class GroupedModelChoiceIterator(forms.models.ModelChoiceIterator):
     def __init__(self, field, groupby):
         self.groupby = groupby

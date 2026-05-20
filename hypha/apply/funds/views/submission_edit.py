@@ -51,6 +51,7 @@ from hypha.apply.utils.views import (
 from .. import services
 from ..forms import (
     ProgressSubmissionForm,
+    UpdateAuthorForm,
     UpdateMetaTermsForm,
     UpdateReviewersForm,
     UpdateSubmissionLeadForm,
@@ -510,7 +511,6 @@ def htmx_archive_unarchive_submission(request, pk):
 class UpdateLeadView(View):
     model = ApplicationSubmission
     form_class = UpdateSubmissionLeadForm
-    context_name = "lead_form"
     template = "funds/modals/update_lead_form.html"
 
     def dispatch(self, request, *args, **kwargs):
@@ -639,6 +639,62 @@ class UpdateReviewersView(View):
 
 
 @method_decorator(staff_required, name="dispatch")
+class UpdateAuthorView(View):
+    model = ApplicationSubmission
+    form_class = UpdateAuthorForm
+    template = "funds/modals/update_author_form.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
+        permission, reason = has_permission(
+            "change_author",
+            request.user,
+            object=self.submission,
+            raise_exception=False,
+        )
+        if not permission:
+            messages.warning(self.request, reason)
+            return HttpResponseRedirect(self.submission.get_absolute_url())
+        return super(UpdateAuthorView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        author_form = self.form_class(user=self.request.user, instance=self.submission)
+        return render(
+            self.request,
+            self.template,
+            context={
+                "form": author_form,
+                "value": _("Update"),
+                "object": self.submission,
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = self.form_class(
+            self.request.POST, user=self.request.user, instance=self.submission
+        )
+        old_author = self.submission.user
+        if form.is_valid():
+            form.save()
+            messenger(
+                MESSAGES.UPDATE_AUTHOR,
+                request=self.request,
+                user=self.request.user,
+                source=self.submission,
+                related=old_author,
+            )
+
+            messages.success(self.request, "Author updated successfully")
+            return HttpResponseClientRefresh()
+
+        return render(
+            self.request,
+            self.template,
+            context={"form": form, "value": _("Update"), "object": self.submission},
+            status=400,
+        )
+
+
 class UpdateMetaTermsView(View):
     template = "funds/modals/update_meta_terms_form.html"
 
