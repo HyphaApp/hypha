@@ -48,11 +48,11 @@
         {% if object|show_applicant_identity:request.user %}
             <div class="fieldset">
                 <dt class="font-semibold">{% trans "Legal Name" %}</dt>
-                <dd class="flex gap-2 items-center">
+                <dd class="flex gap-1 items-center">
                     {{ object.get_full_name_display }}
                     {% if request.user.is_apply_staff %}
-                        <a class="link" href="{% url 'wagtailusers_users:edit' object.user_id %}">
-                            {% trans "Edit" %}
+                        <a class="link" title="{% trans 'Edit user account' %}" href="{% url 'wagtailusers_users:edit' object.user_id %}" target="_blank">
+                            {% heroicon_mini "arrow-top-right-on-square" class="inline align-text-bottom size-4" aria_hidden=true %}
                         </a>
                     {% endif %}
                 </dd>
