@@ -115,36 +115,36 @@ def export_submissions_to_csv(
 ):
     csv_stream = StringIO()
     header_row = [gettext_lazy("Application #"), gettext_lazy("URL")]
+    header_set = set(header_row)
     index = 2
     data_list = []
 
     for submission in submissions_list:
-        values = {}
-        values[_("Application #")] = submission.id
-        values[_("URL")] = f"{base_uri}{submission.get_absolute_url().lstrip('/')}"
+        values = {
+            _("Application #"): submission.id,
+            _("URL"): f"{base_uri}{submission.get_absolute_url().lstrip('/')}",
+        }
+        named = submission.named_blocks
         for field_id in submission.question_text_field_ids:
             question_field = submission.serialize(field_id)
             field_name = question_field["question"]
             field_value = question_field["answer"]
             if field_id == "address" and isinstance(field_value, dict):
-                address = []
-                for key, value in field_value.items():
-                    address.append(f"{key}: {value}")
-                field_value = "\n".join(address)
-            if field_name not in header_row:
-                if field_id not in submission.named_blocks:
+                field_value = "\n".join(f"{k}: {v}" for k, v in field_value.items())
+            if field_name not in header_set:
+                header_set.add(field_name)
+                if field_id not in named:
                     header_row.append(field_name)
                 else:
                     header_row.insert(index, field_name)
-                    index = index + 1
+                    index += 1
             values[field_name] = strip_tags(field_value)
         data_list.append(values)
     writer = csv.DictWriter(csv_stream, fieldnames=header_row, restval="")
     writer.writeheader()
     for data in data_list:
         writer.writerow(data)
-    csv_stream.seek(0)
-    return csv_stream
+    return csv_stream.getvalue()
 
 
 def get_copied_form_name(original_form_name: str) -> str:

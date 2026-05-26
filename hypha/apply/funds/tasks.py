@@ -31,7 +31,9 @@ def generate_submission_csv(
         request_user_id: The ID of the user issuing the export request
     """
     try:
-        qs = ApplicationSubmission.objects.filter(id__in=qs_ids)
+        qs = ApplicationSubmission.objects.filter(id__in=qs_ids).only(
+            "id", "form_data", "form_fields"
+        )
         request_user = User.objects.get(pk=request_user_id)
 
         # If the user already has an existing export, delete it to begin the new one
@@ -41,8 +43,7 @@ def generate_submission_csv(
         export_manager = SubmissionExportManager.objects.create(
             user=request_user, total_export=len(qs_ids)
         )
-        csv_string = export_submissions_to_csv(qs, base_uri)
-        export_manager.export_data = "".join(csv_string.readlines())
+        export_manager.export_data = export_submissions_to_csv(qs.iterator(), base_uri)
         export_manager.set_completed_and_save()
 
         user_task = DOWNLOAD_SUBMISSIONS_EXPORT

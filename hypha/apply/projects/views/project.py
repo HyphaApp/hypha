@@ -11,7 +11,7 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
 from django.db.models import Q
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import get_template
 from django.urls import reverse
@@ -1915,10 +1915,11 @@ class ProjectSOWDownloadView(ProjectBySubmissionIdMixin, SingleObjectMixin, View
         new_parser = HtmlToDocx()
         new_parser.add_html_to_document(html, document)
         document.save(buf)
+        buf.seek(0)
 
-        response = HttpResponse(buf.getvalue(), content_type="application/docx")
-        response["Content-Disposition"] = f"attachment; filename={filename}"
-        return response
+        return FileResponse(
+            buf, as_attachment=True, filename=filename, content_type="application/docx"
+        )
 
     def get_slugified_file_name(self, export_type):
         return f"{datetime.date.today().strftime('%Y%m%d')}-{slugify(self.object.title)}.{export_type}"
@@ -1983,10 +1984,11 @@ class ProjectDetailDownloadView(ProjectBySubmissionIdMixin, SingleObjectMixin, V
         new_parser = HtmlToDocx()
         new_parser.add_html_to_document(html, document)
         document.save(buf)
+        buf.seek(0)
 
-        response = HttpResponse(buf.getvalue(), content_type="application/docx")
-        response["Content-Disposition"] = f"attachment; filename={filename}"
-        return response
+        return FileResponse(
+            buf, as_attachment=True, filename=filename, content_type="application/docx"
+        )
 
     def get_slugified_file_name(self, export_type):
         return f"{datetime.date.today().strftime('%Y%m%d')}-{slugify(self.object.title)}.{export_type}"
