@@ -45,8 +45,11 @@ def send_login_notification(sender, request, user, **kwargs):
         from_email=settings.DEFAULT_FROM_EMAIL,
         context={
             "user": user,
-            "login_time": formats.date_format(
-                timezone.localtime(timezone=user_tz), "SHORT_DATETIME_FORMAT"
+            "login_time": "{} ({})".format(
+                formats.date_format(
+                    timezone.localtime(timezone=user_tz), "SHORT_DATETIME_FORMAT"
+                ),
+                tz_name or timezone.get_current_timezone_name(),
             ),
             "site": Site.find_for_request(request) if request else None,
             "ORG_EMAIL": settings.ORG_EMAIL,
