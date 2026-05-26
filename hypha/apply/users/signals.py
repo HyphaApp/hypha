@@ -7,6 +7,8 @@ from wagtail.models import Site
 
 from hypha.core.mail import MarkdownMail
 
+from .utils import get_zoneinfo
+
 HIJACK_VIEW_NAMES = {
     "hijack-become",
     "users:hijack",
@@ -20,9 +22,17 @@ def send_login_notification(sender, request, user, **kwargs):
     if not settings.SEND_MESSAGES or not user.email:
         return
 
+    if getattr(user, "backend", "").startswith("social_core."):
+        return
+
     if request and getattr(request, "resolver_match", None):
         if request.resolver_match.view_name in HIJACK_VIEW_NAMES:
             return
+
+    tz_name = (
+        getattr(request, "session", {}).get("user_timezone", "") if request else ""
+    )
+    user_tz = get_zoneinfo(tz_name)
 
     subject = _("Successful login to %(org)s") % {"org": settings.ORG_LONG_NAME}
     if settings.EMAIL_SUBJECT_PREFIX:
@@ -35,7 +45,9 @@ def send_login_notification(sender, request, user, **kwargs):
         from_email=settings.DEFAULT_FROM_EMAIL,
         context={
             "user": user,
-            "login_time": formats.date_format(timezone.now(), "SHORT_DATETIME_FORMAT"),
+            "login_time": formats.date_format(
+                timezone.localtime(timezone=user_tz), "SHORT_DATETIME_FORMAT"
+            ),
             "site": Site.find_for_request(request) if request else None,
             "ORG_EMAIL": settings.ORG_EMAIL,
         },

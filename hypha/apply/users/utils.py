@@ -1,4 +1,5 @@
 import string
+import zoneinfo
 
 import nh3
 from django.conf import settings
@@ -194,6 +195,16 @@ def update_is_staff(request, user):
     elif user.is_staff and not user.is_apply_staff_admin:
         user.is_staff = False
         user.save()
+
+
+def get_zoneinfo(tz_name):
+    """Return a ZoneInfo for tz_name, or None if invalid/empty."""
+    if not tz_name:
+        return None
+    try:
+        return zoneinfo.ZoneInfo(tz_name)
+    except (zoneinfo.ZoneInfoNotFoundError, KeyError):
+        return None
 
 
 def strip_html_and_nerf_urls(value: str):
