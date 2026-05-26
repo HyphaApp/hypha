@@ -19,7 +19,11 @@ TWO_FACTOR_EXEMPTED_PATH_PREFIXES = [
     "/logout/",
     "/account/",
     "/apply/submissions/success/",
+    "/upload/upload/",
 ]
+
+if settings.DEBUG:
+    TWO_FACTOR_EXEMPTED_PATH_PREFIXES.append("/__debug__/")
 
 
 def get_page_path(wagtail_page):
