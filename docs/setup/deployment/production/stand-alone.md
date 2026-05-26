@@ -185,6 +185,11 @@ SERVER_EMAIL:                                  app@example.org
 SEND_MESSAGES:                                 true
 ```
 
+**Passkeys:**
+
+To activate passkeys in production you must set at least `WEBAUTHN_RP_ID` to the relying party domain, e.g. "example.com" (no port, no scheme).
+
+
 **Turn on Hypha features that are off by default:**
 
 ```text

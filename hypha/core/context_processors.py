@@ -1,5 +1,6 @@
 from django.conf import settings
 
+from hypha.apply.users.passkey_views import passkeys_enabled
 from hypha.home.models import ApplyHomePage
 
 
@@ -15,6 +16,7 @@ def global_vars(request):
         "HIDE_IDENTITY_FROM_REVIEWERS": settings.HIDE_IDENTITY_FROM_REVIEWERS,
         "GOOGLE_OAUTH2": settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY,
         "ENABLE_PUBLIC_SIGNUP": settings.ENABLE_PUBLIC_SIGNUP,
+        "PASSKEYS_ENABLED": passkeys_enabled(),
         "SENTRY_TRACES_SAMPLE_RATE": settings.SENTRY_TRACES_SAMPLE_RATE,
         "SENTRY_ENVIRONMENT": settings.SENTRY_ENVIRONMENT,
         "SENTRY_DENY_URLS": settings.SENTRY_DENY_URLS,

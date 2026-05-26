@@ -36,6 +36,8 @@ class CustomAuthenticationForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
         self.user_settings = AuthSettings.load(request_or_site=self.request)
         self.extra_text = self.user_settings.extra_text
+        # Enable passkey autofill (conditional mediation) on the username field
+        self.fields["username"].widget.attrs["autocomplete"] = "username webauthn"
         if self.user_settings.consent_show:
             self.fields["consent"] = forms.BooleanField(
                 label=self.user_settings.consent_text,
@@ -55,7 +57,9 @@ class PasswordlessAuthForm(forms.Form):
         label=_("Email address"),
         required=True,
         max_length=254,
-        widget=forms.EmailInput(attrs={"autofocus": True, "autocomplete": "email"}),
+        widget=forms.EmailInput(
+            attrs={"autofocus": True, "autocomplete": "username webauthn"}
+        ),
     )
 
     if settings.SESSION_COOKIE_AGE <= settings.SESSION_COOKIE_AGE_LONG:
