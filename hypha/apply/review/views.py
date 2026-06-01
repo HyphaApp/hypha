@@ -37,8 +37,10 @@ from .options import DISAGREE
 
 
 def get_fields_for_stage(submission, user=None):
-    forms = submission.get_from_parent("review_forms").all()
-    external_review_forms = submission.get_from_parent("external_review_forms").all()
+    forms = submission.get_from_parent("review_forms").order_by("sort_order")
+    external_review_forms = submission.get_from_parent(
+        "external_review_forms"
+    ).order_by("sort_order")
 
     # Use ExternalReviewForm if submission's stage has external review and external review form is attached to fund.
     # ExternalReviewForm is only for non-staff reviewers(external reviewers)
