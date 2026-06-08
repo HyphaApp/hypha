@@ -2,7 +2,7 @@
 name = "hypha"
 description = "A open source submission management platform to receive and manage applications for funding."
 readme = "README.md"
-version = "6.4.0"
+version = "6.5.0"
 requires-python = ">=3.10"
 license = "BSD-3-Clause"
 
@@ -32,7 +32,7 @@ dependencies = [
     "django-tinymce~=5.0.0",
     "django-two-factor-auth~=1.18.1",
     "django-viewflow~=2.2.15",
-    "django~=5.2.11",
+    "django~=5.2.15",
     "djp~=0.3.1",
     "environs~=14.5.0",
     "gunicorn~=23.0.0",
