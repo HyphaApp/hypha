@@ -202,6 +202,15 @@
                 });
             </script>
         {% endif %}
+        {% if not request.session.user_timezone %}
+            <script>
+                fetch("{% url 'users:set_timezone' %}", {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': '{{ csrf_token }}'},
+                    body: 'user_timezone=' + encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone)
+                });
+            </script>
+        {% endif %}
         {% include "includes/body_end.html" %}
     </body>
 </html>

@@ -37,6 +37,7 @@ from .views import (
     oauth,
     send_confirm_access_email_view,
     set_password_view,
+    set_timezone_view,
 )
 
 app_name = "users"
@@ -159,6 +160,7 @@ account_urls = [
     ),
     path("activate/", create_password, name="activate_password"),
     path("oauth", oauth, name="oauth"),
+    path("set-timezone/", set_timezone_view, name="set_timezone"),
     # 2FA
     path("two_factor/setup/", TWOFASetupView.as_view(), name="setup"),
     path(

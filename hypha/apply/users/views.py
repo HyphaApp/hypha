@@ -31,6 +31,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.http import require_POST
 from django.views.generic import UpdateView
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
@@ -70,6 +71,7 @@ from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGene
 from .utils import (
     generate_numeric_token,
     get_redirect_url,
+    get_zoneinfo,
     send_activation_email,
     send_confirmation_email,
 )
@@ -868,6 +870,15 @@ def set_password_view(request):
             email_subject_template="users/emails/set_password_subject.txt",
         )
         return HttpResponse(_("✓ Check your email for password set link."))
+
+
+@require_POST
+def set_timezone_view(request: HttpRequest) -> HttpResponse:
+    """Store the browser timezone in the session for use in login notifications."""
+    tz_name = request.POST.get("user_timezone", "")
+    if get_zoneinfo(tz_name):
+        request.session["user_timezone"] = tz_name
+    return HttpResponse(status=204)
 
 
 @never_cache
