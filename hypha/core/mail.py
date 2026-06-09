@@ -52,12 +52,13 @@ class MarkdownMail(object):
         if template_name is not None:
             self.template_name = template_name
 
-    def _render_template(self, context: Dict) -> str:
+    def _render_template(self, context: Dict) -> str | None:
         try:
             context.update(global_vars(None))
             return loader.render_to_string(self.template_name, context)
         except TemplateDoesNotExist as e:
             logger.warning("Template '{0}' does not exists.".format(e))
+            return None
 
     def make_email_object(self, to: str | List[str], context, **kwargs):
         if not isinstance(to, (list, tuple)):
@@ -66,7 +67,7 @@ class MarkdownMail(object):
         lang = context.get("lang", None) or settings.LANGUAGE_CODE
 
         with language(lang):
-            rendered_template = self._render_template(context)
+            rendered_template = self._render_template(context) or ""
             body_txt = remove_extra_empty_lines(rendered_template)
             body_html = markdown_to_html(rendered_template)
 

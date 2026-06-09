@@ -256,11 +256,11 @@ class DeleteInvoiceView(DeleteView):
 
 
 class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
-    form_views = []
+    form_views: list = []
 
 
 class InvoiceApplicantView(InvoiceAccessMixin, DelegateableView, DetailView):
-    form_views = []
+    form_views: list = []
 
 
 class InvoiceView(ViewDispatcher):

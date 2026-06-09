@@ -33,7 +33,9 @@ try:
     from django.utils.http import url_has_allowed_host_and_scheme
 except ImportError:
     # Remove once Django 2.2 is EOL
-    from django.utils.http import is_safe_url as url_has_allowed_host_and_scheme
+    from django.utils.http import (
+        is_safe_url as url_has_allowed_host_and_scheme,  # type: ignore[no-redef]
+    )
 
 
 class ElevateView(View):

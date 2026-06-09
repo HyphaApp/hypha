@@ -31,5 +31,5 @@ def get_project_default_status() -> Tuple[str, str]:
             for status in PROJECT_STATUS_CHOICES
             if status[0] == settings.PROJECTS_DEFAULT_STATUS
         ),
-        PROJECT_STATUS_CHOICES[0],
+        PROJECT_STATUS_CHOICES[0],  # type: ignore[arg-type]
     )

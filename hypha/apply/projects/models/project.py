@@ -844,7 +844,7 @@ class ContractDocumentCategory(models.Model):
     recommended_minimum = models.PositiveIntegerField(
         _("recommended minimum"), null=True, blank=True
     )
-    document_access_view = models.ManyToManyField(
+    document_access_view = models.ManyToManyField(  # type: ignore[var-annotated]
         Group,
         limit_choices_to={"name__in": ROLES_ORG_FACULTY},
         verbose_name=_("allow document access for groups"),

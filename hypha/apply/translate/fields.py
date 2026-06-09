@@ -20,7 +20,7 @@ class LanguageChoiceField(forms.ChoiceField):
 
         self.role = role
 
-        super().__init__(choices=choices, **kwargs)
+        super().__init__(choices=choices, **kwargs)  # type: ignore[arg-type]
         self.widget.attrs.update({"data-placeholder": f"{role.capitalize()}..."})
 
     def validate(self, value: Any) -> None:

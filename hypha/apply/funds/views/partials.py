@@ -508,7 +508,7 @@ def submission_export_status(request: HttpRequest) -> HttpResponse:
             # If there's an existing/active export, show it's status
             status = export_manager.status
             if status == STATUS_GENERATING:
-                ctx["poll_time"] = get_export_polling_time(export_manager.total_export)
+                ctx["poll_time"] = get_export_polling_time(export_manager.total_export)  # type: ignore[arg-type]
     else:
         ctx["not_async"] = True
 
@@ -519,9 +519,10 @@ def submission_export_status(request: HttpRequest) -> HttpResponse:
         all_url = urlparse(request.headers.get("Hx-Current-Url"))
         url_list = list(all_url)
         url_list[4] = urlencode(
-            {**parse_qs(all_url.query), "format": "csv"}, doseq=True
+            {**parse_qs(all_url.query), "format": "csv"},  # type: ignore[arg-type]
+            doseq=True,
         )
-        ctx["start_export_url"] = urlunparse(url_list)
+        ctx["start_export_url"] = urlunparse(url_list)  # type: ignore[arg-type]
 
     ctx["generating"] = status == STATUS_GENERATING
     ctx["failed"] = status == STATUS_ERROR

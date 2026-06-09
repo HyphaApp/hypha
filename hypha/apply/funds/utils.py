@@ -143,7 +143,7 @@ def export_submissions_to_csv(
     writer = csv.DictWriter(csv_stream, fieldnames=header_row, restval="")
     writer.writeheader()
     for data in data_list:
-        writer.writerow(data)
+        writer.writerow(data)  # type: ignore[arg-type]
     return csv_stream.getvalue()
 
 

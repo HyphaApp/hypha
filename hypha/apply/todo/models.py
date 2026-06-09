@@ -14,7 +14,7 @@ class Task(models.Model):
     user = models.ForeignKey(
         User, blank=True, null=True, on_delete=models.CASCADE, related_name="task"
     )
-    user_group = models.ManyToManyField(
+    user_group = models.ManyToManyField(  # type: ignore[var-annotated]
         Group,
         related_name="task",
         blank=True,

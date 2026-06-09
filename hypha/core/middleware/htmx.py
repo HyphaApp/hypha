@@ -56,7 +56,7 @@ class HtmxMessageMiddleware(MiddlewareMixin):
             hx_trigger = {hx_trigger: True}
 
         # Add the messages array in the HX-Trigger object
-        hx_trigger["messages"] = messages
+        hx_trigger["messages"] = messages  # type: ignore[index, call-overload]
 
         # Add or update the HX-Trigger
         response.headers["HX-Trigger"] = json.dumps(hx_trigger)

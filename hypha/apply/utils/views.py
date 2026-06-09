@@ -18,12 +18,12 @@ from wagtail.models import Page
 
 @method_decorator(login_required, name="dispatch")
 class ViewDispatcher(View):
-    admin_view: View = None
-    reviewer_view: View = None
-    community_view: View = None
-    applicant_view: View = None
-    finance_view: View = None
-    contracting_view: View = None
+    admin_view: View | None = None
+    reviewer_view: View | None = None
+    community_view: View | None = None
+    applicant_view: View | None = None
+    finance_view: View | None = None
+    contracting_view: View | None = None
 
     def admin_check(self, request):
         return request.user.is_apply_staff
