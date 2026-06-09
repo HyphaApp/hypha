@@ -2,7 +2,7 @@
 
 <h1
     class="mb-2 text-h1"
-    hx-get='{% url "apply:projects:project_title" object.submission.id %}'
+    hx-get='{% url "apply:projects:project_title" object.pk %}'
     hx-trigger="load, titleUpdated from:body"
 >
     <span class="inline-block rounded-md animate-pulse bg-base-300"></span>
@@ -28,7 +28,7 @@
     {% if not HIDE_STAFF_IDENTITY or request.user.is_org_faculty %}
         <span
             class="separator-dot"
-            hx-get="{% url 'apply:projects:project_lead' object.submission.id %}"
+            hx-get="{% url 'apply:projects:project_lead' object.pk %}"
             hx-trigger="load, leadUpdated from:body"
         >
             <span class="inline-block w-24 bg-gray-600 rounded-md animate-pulse"></span>

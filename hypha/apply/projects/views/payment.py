@@ -83,7 +83,7 @@ class InvoiceAccessMixin(UserPassesTestMixin):
     model = Invoice
 
     def get_object(self):
-        project = get_object_or_404(Project, submission__pk=self.kwargs["pk"])
+        project = get_object_or_404(Project, pk=self.kwargs["pk"])
         return get_object_or_404(project.invoices.all(), pk=self.kwargs["invoice_pk"])
 
     def test_func(self):
@@ -224,7 +224,7 @@ class DeleteInvoiceView(DeleteView):
     template_name = "application_projects/modals/invoice_confirm_delete.html"
 
     def get_object(self):
-        project = get_object_or_404(Project, submission__pk=self.kwargs["pk"])
+        project = get_object_or_404(Project, pk=self.kwargs["pk"])
         return get_object_or_404(project.invoices.all(), pk=self.kwargs["invoice_pk"])
 
     def dispatch(self, request, *args, **kwargs):
@@ -275,7 +275,7 @@ class CreateInvoiceView(SuccessMessageMixin, CreateView):
     success_message = _("Invoice added")
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, submission__id=kwargs["pk"])
+        self.project = get_object_or_404(Project, pk=kwargs["pk"])
         permission = has_object_permission("add_invoice", request.user, self.project)
         if not permission:
             return redirect(self.project)
@@ -463,7 +463,7 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
 
     def dispatch(self, *args, **kwargs):
         invoice_pk = self.kwargs["invoice_pk"]
-        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
+        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
         self.invoice = get_object_or_404(self.project.invoices.all(), pk=invoice_pk)
 
         return super().dispatch(*args, **kwargs)

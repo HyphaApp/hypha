@@ -49,8 +49,8 @@
             #{{ s.application_id }}
             submitted <relative-time datetime="{{ s.submit_time|date:"c" }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
             • {{ s.stage }}
-            {% if s.project %}
-                • <a href="{% url "funds:submissions:project" s.id %}" class="link link-muted text-inherit">{% trans "Project" %}</a>
+            {% if s.projects.exists %}
+                • <a href="{% url "funds:submissions:projects" s.id %}" class="link link-muted text-inherit">{% trans "Project" %}</a>
             {% endif %}
         </div>
     </td>

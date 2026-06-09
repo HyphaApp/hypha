@@ -1,7 +1,10 @@
 from django.urls import include, path
 from django.views.generic import RedirectView
 
-from hypha.apply.projects.views.project import ProjectSOWEditView
+from hypha.apply.projects.views.project import (
+    ProjectSOWEditView,
+    project_detail_redirect,
+)
 
 from .reports.views import ReportDateAddView, ReportFrequencyUpdate
 from .views import (
@@ -67,7 +70,7 @@ urlpatterns = [
             [
                 path(
                     "",
-                    RedirectView.as_view(pattern_name="funds:submissions:project"),
+                    project_detail_redirect,
                     name="detail",
                 ),
                 path("partial/lead/", partial_project_lead, name="project_lead"),

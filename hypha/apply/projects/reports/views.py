@@ -390,7 +390,7 @@ class ReportFrequencyUpdate(View):
         Returns:
             HttpResponse: The response from the parent class's dispatch method.
         """
-        self.project = get_object_or_404(Project, submission__id=kwargs.get("pk"))
+        self.project = get_object_or_404(Project, pk=kwargs.get("pk"))
         if not has_object_permission(
             "update_report_config", self.request.user, self.project
         ):

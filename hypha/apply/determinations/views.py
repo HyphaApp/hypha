@@ -459,7 +459,11 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                 proposal_form=proposal_form,
             )
 
-            if self.submission.accepted_for_funding and settings.PROJECTS_AUTO_CREATE:
+            if (
+                self.submission.accepted_for_funding
+                and settings.PROJECTS_AUTO_CREATE
+                and not self.submission.projects.exists()
+            ):
                 Project.create_from_submission(self.submission)
                 messages.success(
                     self.request, _("A project was automatically created.")

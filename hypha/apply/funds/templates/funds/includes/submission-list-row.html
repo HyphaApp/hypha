@@ -120,8 +120,8 @@
                     {% endif %}
                 {% endif %}
 
-                {% if s.project %}
-                    • <a href="{% url "funds:submissions:project" s.id %}" class="link link-muted text-inherit">{% trans "Project" %}</a>
+                {% if s.projects.exists %}
+                    • <a href="{% url "funds:submissions:projects" s.id %}" class="link link-muted text-inherit">{% trans "Project" %}</a>
                 {% endif %}
             </p>
         </div>

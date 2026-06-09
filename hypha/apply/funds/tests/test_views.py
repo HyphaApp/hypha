@@ -317,15 +317,13 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
 
     def test_can_create_project(self):
         # check submission doesn't already have a Project
-        with self.assertRaisesMessage(
-            Project.DoesNotExist, "ApplicationSubmission has no project."
-        ):
-            self.submission.project  # noqa: B018
+        self.assertFalse(self.submission.projects.exists())
 
         self.post_page(
             self.submission,
             {
                 "project_create_form": "",
+                "title": "Bucket one",
                 "project_lead": self.user.id,
                 "project_initial_status": CONTRACTING,
                 "project_end": timezone.now().date(),
@@ -337,9 +335,10 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         project = Project.objects.order_by("-pk").first()
         submission = ApplicationSubmission.objects.get(pk=self.submission.pk)
 
-        self.assertTrue(hasattr(submission, "project"))
-        self.assertEqual(submission.project.id, project.id)
-        self.assertEqual(submission.project.status, CONTRACTING)
+        self.assertTrue(submission.projects.exists())
+        self.assertEqual(submission.projects.first().id, project.id)
+        self.assertEqual(submission.projects.first().status, CONTRACTING)
+        self.assertEqual(project.title, "Bucket one")
 
     def test_can_see_add_determination_primary_action(self):
         def assert_add_determination_displayed(submission, button_text):

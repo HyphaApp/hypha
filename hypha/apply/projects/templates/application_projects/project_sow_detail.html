@@ -38,7 +38,7 @@
                             {% if can_edit_pfs %}
                                 <a
                                     class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
-                                    href="{% url 'apply:projects:edit_sow' pk=object.submission.pk %}"
+                                    href="{% url 'apply:projects:edit_sow' pk=object.pk %}"
                                 >
                                     {% heroicon_mini "pencil-square" class="opacity-80 size-4" %}
                                     {% trans "Edit" %}
@@ -49,11 +49,11 @@
                                 <div tabindex="0" role="button" class="w-full btn btn-outline">{% trans 'Export' %}</div>
                                 <ul tabindex="0" class="p-2 w-52 shadow-sm dropdown-content menu bg-base-100 rounded-box z-1">
                                     <li>
-                                        <a href="{% url 'apply:projects:download-sow' pk=object.submission.id export_type='pdf' %}">
+                                        <a href="{% url 'apply:projects:download-sow' pk=object.pk export_type='pdf' %}">
                                             {% trans 'Download as PDF' %}</a>
                                     </li>
                                     <li>
-                                        <a href="{% url 'apply:projects:download-sow' pk=object.submission.id export_type='docx' %}">
+                                        <a href="{% url 'apply:projects:download-sow' pk=object.pk export_type='docx' %}">
                                             {% trans 'Download as DOCX' %}</a>
                                     </li>
                                 </ul>

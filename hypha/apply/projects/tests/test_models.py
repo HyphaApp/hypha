@@ -35,6 +35,22 @@ class TestProjectModel(TestCase):
         self.assertEqual(project.title, submission.title)
         self.assertEqual(project.user, submission.user)
 
+    def test_create_from_submission_with_title(self):
+        submission = ApplicationSubmissionFactory()
+        project = Project.create_from_submission(submission, title="Hardware")
+        self.assertEqual(project.title, "Hardware")
+
+    def test_submission_can_have_multiple_projects(self):
+        submission = ApplicationSubmissionFactory()
+        first = Project.create_from_submission(submission, title="Hardware")
+        second = Project.create_from_submission(submission, title="Travel")
+
+        self.assertNotEqual(first.pk, second.pk)
+        self.assertEqual(
+            list(submission.projects.order_by("pk")),
+            [first, second],
+        )
+
 
 class TestInvoiceModel(TestCase):
     def test_invoice_status_user_choices(self):

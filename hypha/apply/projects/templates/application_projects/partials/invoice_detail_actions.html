@@ -37,7 +37,7 @@
             {% endif %}
             class="btn btn-secondary btn-outline btn-block"
             href={% if user_can_edit_request %}
-                 "{% url "apply:projects:invoice-edit" pk=object.project.submission.pk invoice_pk=object.pk %}"
+                 "{% url "apply:projects:invoice-edit" pk=object.project.pk invoice_pk=object.pk %}"
             {% else %}
                  "#"
             {% endif %}
@@ -52,7 +52,7 @@
     {% if user_can_delete_request %}
         <a
             class="btn btn-error btn-outline btn-block"
-            hx-get="{% url 'apply:projects:invoice-delete' pk=object.project.submission.pk invoice_pk=object.pk %}"
+            hx-get="{% url 'apply:projects:invoice-delete' pk=object.project.pk invoice_pk=object.pk %}"
             hx-target="#htmx-modal"
         >
             {% heroicon_micro "trash" aria_hidden=true class="opacity-80 size-4" %}

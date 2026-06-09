@@ -472,7 +472,7 @@ class InviteCoApplicantForm(forms.ModelForm):
 
         if submission:
             self.fields["submission"].initial = submission.id
-            if not hasattr(submission, "project"):
+            if not submission.projects.exists():
                 self.fields.pop("project_permission", None)
 
     class Meta:
@@ -497,7 +497,7 @@ class EditCoApplicantForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         instance = kwargs.get("instance", None)
-        if not hasattr(instance.submission, "project"):
+        if not instance.submission.projects.exists():
             self.fields.pop("project_permission", None)
 
     class Meta:
