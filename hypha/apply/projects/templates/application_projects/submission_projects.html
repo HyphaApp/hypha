@@ -1,0 +1,46 @@
+{% extends "base-apply.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Projects" %} | {{ submission.title }}{% endblock %}
+
+{% block hero %}
+    <c-hero padding="pt-4">
+        {% include "funds/includes/application_header.html" with object=submission %}
+
+        <div role="tablist" class="font-medium tabs tabs-lg tabs-lift text-base-content print-hidden">
+            <a
+                class="tab [--color-base-content:var(--color-neutral-content)]"
+                href="{% url 'funds:submissions:detail' pk=submission.id %}"
+            >
+                {% trans "Application" %}
+            </a>
+            <a class="tab tab-active" href="{% url 'funds:submissions:projects' pk=submission.id %}">
+                {% blocktrans count counter=projects|length %}Project{% plural %}Projects ({{ counter }}){% endblocktrans %}
+            </a>
+            <a
+                class="tab [--color-base-content:var(--color-neutral-content)]"
+                href="{% url 'funds:submissions:comments' pk=submission.id %}"
+            >
+                {% trans "Comments" %}
+            </a>
+        </div>
+    </c-hero>
+{% endblock %}
+
+{% block content %}
+    <div class="my-4 mx-auto wrapper wrapper--large">
+        <ul class="flex flex-col gap-3">
+            {% for project in projects %}
+                <li>
+                    <a href="{{ project.get_absolute_url }}" class="block p-4 card card-border bg-base-100 hover:bg-base-200">
+                        <span class="flex flex-wrap gap-2 justify-between items-baseline">
+                            <span class="font-semibold">{{ project.title }}</span>
+                            <span class="badge badge-soft">{{ project.status_display }}</span>
+                        </span>
+                        <span class="text-sm text-base-content/70">{{ project.value }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

@@ -23,8 +23,8 @@
             {% if can_submit_contract %}
                 <a class="btn btn-primary btn-sm {% if required_remaining_contract_document_categories or not contract.signed_by_applicant %} btn-disabled{% endif %}"
                    id="submit_contract_document"
-                   hx-get="{% url 'apply:projects:contract_documents_submit' object.submission.id %}"
-                   href="{% url 'apply:projects:contract_documents_submit' object.submission.id %}"
+                   hx-get="{% url 'apply:projects:contract_documents_submit' object.pk %}"
+                   href="{% url 'apply:projects:contract_documents_submit' object.pk %}"
                    hx-target="#htmx-modal"
                 >
                     {% trans "Submit documents" %}
@@ -34,8 +34,8 @@
             {% user_can_approve_contract request.user object as can_approve_contract %}
             {% if contract_to_approve and can_approve_contract %}
                 <a class="btn btn-primary btn-sm"
-                   hx-get="{% url 'apply:projects:contract_approve' object.submission.id %}"
-                   href="{% url 'apply:projects:contract_approve' object.submission.id %}"
+                   hx-get="{% url 'apply:projects:contract_approve' object.pk %}"
+                   href="{% url 'apply:projects:contract_approve' object.pk %}"
                    hx-target="#htmx-modal"
                 >
                     {% trans "Approve" %}
@@ -127,8 +127,8 @@
                         {% if can_upload_contract and can_initiate_contract  %}
                             <a
                                 class="btn btn-sm {% if not contract %}btn-primary{% endif %}"
-                                hx-get="{% url 'apply:projects:contract_upload' object.submission.id %}"
-                                href="{% url 'apply:projects:contract_upload' object.submission.id %}"
+                                hx-get="{% url 'apply:projects:contract_upload' object.pk %}"
+                                href="{% url 'apply:projects:contract_upload' object.pk %}"
                                 hx-target="#htmx-modal"
                             >
                                 {% heroicon_micro "arrow-up-tray" size=18 class="opacity-80" aria_hidden="true" %}
@@ -161,8 +161,8 @@
                         {% if can_upload_contract and user.is_applicant %}
                             <a
                                 class="btn btn-sm {% if not contract.signed_by_applicant %}btn-primary{% endif %}"
-                                hx-get="{% url 'apply:projects:contract_upload' object.submission.id %}"
-                                href="{% url 'apply:projects:contract_upload' object.submission.id %}"
+                                hx-get="{% url 'apply:projects:contract_upload' object.pk %}"
+                                href="{% url 'apply:projects:contract_upload' object.pk %}"
                                 hx-target="#htmx-modal"
                             >
                                 {% heroicon_mini "arrow-up-tray" size=18 class="opacity-80" aria_hidden="true" %}
@@ -182,7 +182,7 @@
             <li
                 class="list-row"
                 hx-trigger="load, contractingDocumentUpload from:body, contractingDocumentRemove from:body"
-                hx-get="{% url 'apply:projects:contract_documents' object.submission.id %}"
+                hx-get="{% url 'apply:projects:contract_documents' object.pk %}"
                 hx-target="this"
             >
                 <h3 class="flex gap-2 items-center font-medium text-h4 list-col-grow">

@@ -28,7 +28,7 @@
 
             <div class="list">
 
-                {% if object.project %}
+                {% if object.projects.exists %}
                     <p class="mb-2 text-sm text-fg-muted">
                         {% trans "Project permissions are enabled and can be updated for each co-applicant." %}
                     </p>

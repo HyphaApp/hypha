@@ -8,11 +8,7 @@
 
 {% block hero %}
     <c-hero padding="pt-4">
-        {% if object.project %}
-            {% include "application_projects/includes/project_header.html" with object=object.project %}
-        {% else %}
-            {% include "funds/includes/application_header.html" %}
-        {% endif %}
+        {% include "funds/includes/application_header.html" %}
 
         <div role="tablist" class="font-medium tabs tabs-lg tabs-lift text-base-content print-hidden">
             <a
@@ -22,16 +18,13 @@
                 {% trans "Application" %}
             </a>
 
-            {% if PROJECTS_ENABLED and object.project %}
-                {% user_can_access_project object.project user as can_access_project %}
-                {% if can_access_project %}
-                    <a
-                        class="tab [--color-base-content:var(--color-neutral-content)]"
-                        href="{% url 'funds:submissions:project' pk=object.id %}"
-                    >
-                        {% trans "Project" %}
-                    </a>
-                {% endif %}
+            {% if PROJECTS_ENABLED and object.projects.exists %}
+                <a
+                    class="tab [--color-base-content:var(--color-neutral-content)]"
+                    href="{% url 'funds:submissions:projects' pk=object.id %}"
+                >
+                    {% blocktrans count counter=object.projects.count %}Project{% plural %}Projects ({{ counter }}){% endblocktrans %}
+                </a>
             {% endif %}
 
             <a

@@ -22,6 +22,7 @@ from ..forms.payment import (
 )
 from ..forms.project import (
     ChangePAFStatusForm,
+    ProjectCreateForm,
     StaffUploadContractForm,
     UploadContractForm,
 )
@@ -43,6 +44,33 @@ from .factories import (
     ProjectFactory,
     SupportingDocumentFactory,
 )
+
+
+class TestProjectCreateForm(TestCase):
+    def test_allows_submission_that_already_has_a_project(self):
+        from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+
+        from ..forms.utils import get_project_default_status
+
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+        ProjectFactory(submission=submission)
+
+        form = ProjectCreateForm(
+            instance=submission,
+            data={
+                "submission": submission.id,
+                "title": "Second bucket",
+                "project_lead": staff.id,
+                "project_initial_status": get_project_default_status()[0],
+                "project_end": datetime.date.today(),
+            },
+        )
+
+        self.assertTrue(form.is_valid(), form.errors)
+        project = form.save()
+        self.assertEqual(project.title, "Second bucket")
+        self.assertEqual(submission.projects.count(), 2)
 
 
 class TestChangeInvoiceStatusFormForm(TestCase):

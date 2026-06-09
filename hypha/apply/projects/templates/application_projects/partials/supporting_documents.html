@@ -22,7 +22,7 @@
                             {% if document_category.template %}
                                 &middot;
                                 <a class="link"
-                                   href="{% url 'apply:projects:category_template' pk=object.submission.pk type='project_document' category_pk=document_category.pk %}"
+                                   href="{% url 'apply:projects:category_template' pk=object.pk type='project_document' category_pk=document_category.pk %}"
                                    target="_blank"
                                 >
                                     {% trans "View template" %}
@@ -47,8 +47,8 @@
                         {% if document_category in remaining_document_categories and can_upload_documents %}
                             <a
                                 class="btn btn-sm btn-primary"
-                                href="{% url 'apply:projects:supporting_doc_upload' object.submission.id document_category.id %}"
-                                hx-get="{% url 'apply:projects:supporting_doc_upload' object.submission.id document_category.id %}"
+                                href="{% url 'apply:projects:supporting_doc_upload' object.pk document_category.id %}"
+                                hx-get="{% url 'apply:projects:supporting_doc_upload' object.pk document_category.id %}"
                                 hx-target="#htmx-modal"
                                 aria-label="{% trans 'Upload Supporting Documents' %}"
                             >
@@ -60,7 +60,7 @@
                             {% if latest_file %}
                                 <a
                                     class="btn btn-sm btn-secondary btn-outline"
-                                    href="{% url 'apply:projects:document' pk=object.submission.pk file_pk=latest_file.pk %}"
+                                    href="{% url 'apply:projects:document' pk=object.pk file_pk=latest_file.pk %}"
                                     target="_blank"
                                 >
                                     {% heroicon_outline "document" size=14 class="opacity-80 size-4" aria_hidden=true stroke_width=2 %}
@@ -71,7 +71,7 @@
                                 {% if can_remove_supporting_doc %}
                                     <button
                                         class="btn btn-square btn-sm btn-error btn-soft"
-                                        hx-delete="{% url "apply:projects:remove_supporting_document" object.submission.pk latest_file.pk %}"
+                                        hx-delete="{% url "apply:projects:remove_supporting_document" object.pk latest_file.pk %}"
                                         hx-swap="none"
                                         hx-confirm="{% trans 'Are you sure you want to remove this document?' %}"
                                     >

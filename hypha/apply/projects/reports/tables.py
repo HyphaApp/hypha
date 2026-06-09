@@ -13,7 +13,7 @@ from .models import Report
 class ReportingTable(tables.Table):
     title = tables.LinkColumn(
         "funds:submissions:project",
-        args=[tables.utils.A("submission_id")],
+        args=[tables.utils.A("submission_id"), tables.utils.A("pk")],
         attrs={
             "a": {
                 "class": "link link-hover font-semibold break-words transition-colors line-clamp-2 max-w-md"

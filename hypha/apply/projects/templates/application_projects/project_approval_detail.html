@@ -130,8 +130,8 @@
                             {% user_can_update_paf_status object user request=request as can_update_paf_status %}
                             {% if can_update_paf_status %}
                                 <a class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
-                                   href="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
-                                   hx-get="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
+                                   href="{% url 'apply:projects:update_pafstatus' object.pk %}"
+                                   hx-get="{% url 'apply:projects:update_pafstatus' object.pk %}"
                                    hx-target="#htmx-modal"
                                 >
                                     {% trans "Update Status" %}
@@ -141,7 +141,7 @@
                             {% user_can_edit_pfs object user as can_edit_pfs %}
                             {% if can_edit_pfs %}
                                 <a class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
-                                   href="{% url 'apply:projects:edit_pf' pk=object.submission.pk %}"
+                                   href="{% url 'apply:projects:edit_pf' pk=object.pk %}"
                                 >{% trans "Edit" %}</a>
                             {% endif %}
 
@@ -149,8 +149,8 @@
                             {% if can_update_paf_approvers %}
                                 {% if user != project.lead %}
                                     <a class="btn btn-secondary btn-block btn-outline"
-                                       href="{% url 'apply:projects:assign_pafapprovers' pk=object.submission.id %}"
-                                       hx-get="{% url 'apply:projects:assign_pafapprovers' pk=object.submission.id %}"
+                                       href="{% url 'apply:projects:assign_pafapprovers' pk=object.pk %}"
+                                       hx-get="{% url 'apply:projects:assign_pafapprovers' pk=object.pk %}"
                                        hx-target="#htmx-modal"
                                     >
                                         {% trans "Change approver" %}
@@ -161,8 +161,8 @@
                             {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
                             {% if can_assign_paf_approvers %}
                                 <a class="btn btn-block btn-outline"
-                                   href="{% url 'apply:projects:assign_pafapprovers' pk=object.submission.id %}"
-                                   hx-get="{% url 'apply:projects:assign_pafapprovers' pk=object.submission.id %}"
+                                   href="{% url 'apply:projects:assign_pafapprovers' pk=object.pk %}"
+                                   hx-get="{% url 'apply:projects:assign_pafapprovers' pk=object.pk %}"
                                    hx-target="#htmx-modal"
                                 >
                                     {% trans "Assign approver" %}
@@ -174,11 +174,11 @@
                                 <div tabindex="0" role="button" class="w-full btn btn-outline">{% trans 'Download' %}</div>
                                 <ul tabindex="0" class="p-2 w-52 shadow-sm dropdown-content menu bg-base-100 rounded-box z-1">
                                     <li>
-                                        <a href="{% url 'apply:projects:download' pk=object.submission.pk export_type='pdf' %}">
+                                        <a href="{% url 'apply:projects:download' pk=object.pk export_type='pdf' %}">
                                             {% trans 'Download as PDF' %}</a>
                                     </li>
                                     <li>
-                                        <a href="{% url 'apply:projects:download' pk=object.submission.pk export_type='docx' %}">
+                                        <a href="{% url 'apply:projects:download' pk=object.pk export_type='docx' %}">
                                             {% trans 'Download as DOCX' %}</a>
                                     </li>
                                 </ul>

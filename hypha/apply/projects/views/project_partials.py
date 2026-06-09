@@ -14,7 +14,7 @@ from ..models.project import ContractDocumentCategory, DocumentCategory, Project
 
 @login_required
 def partial_project_lead(request, pk):
-    project = get_object_or_404(Project, submission__pk=pk)
+    project = get_object_or_404(Project, pk=pk)
     return render(
         request, "application_projects/partials/project_lead.html", {"object": project}
     )
@@ -22,7 +22,7 @@ def partial_project_lead(request, pk):
 
 @login_required
 def partial_project_title(request, pk):
-    project = get_object_or_404(Project, submission__pk=pk)
+    project = get_object_or_404(Project, pk=pk)
     return render(
         request, "application_projects/partials/project_title.html", {"object": project}
     )
@@ -30,7 +30,7 @@ def partial_project_title(request, pk):
 
 @login_required
 def partial_project_information(request, pk):
-    project = get_object_or_404(Project, submission__pk=pk)
+    project = get_object_or_404(Project, pk=pk)
     return render(
         request,
         "application_projects/partials/project_information.html",
@@ -41,7 +41,7 @@ def partial_project_information(request, pk):
 @login_required
 @require_GET
 def partial_supporting_documents(request, pk):
-    project = get_object_or_404(Project, submission__pk=pk)
+    project = get_object_or_404(Project, pk=pk)
     ctx = {"object": project}
     ctx["all_document_categories"] = DocumentCategory.objects.all()
     ctx["remaining_document_categories"] = DocumentCategory.objects.filter(
@@ -55,7 +55,7 @@ def partial_supporting_documents(request, pk):
 @login_required
 @require_GET
 def partial_contracting_documents(request, pk):
-    project = get_object_or_404(Project, submission__pk=pk)
+    project = get_object_or_404(Project, pk=pk)
     ctx = {"object": project}
     ctx["all_contract_document_categories"] = ContractDocumentCategory.objects.all()
     ctx["remaining_contract_document_categories"] = (

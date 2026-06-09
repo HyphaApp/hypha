@@ -21,8 +21,8 @@
             {% user_can_send_for_approval object user as can_send_to_approve %}
             {% if can_send_to_approve %}
                 <a class="btn btn-primary btn-sm"
-                   href="{% url 'apply:projects:submit_project_for_approval' object.submission.id %}"
-                   hx-get="{% url 'apply:projects:submit_project_for_approval' object.submission.id %}"
+                   href="{% url 'apply:projects:submit_project_for_approval' object.pk %}"
+                   hx-get="{% url 'apply:projects:submit_project_for_approval' object.pk %}"
                    hx-target="#htmx-modal"
                 >
                     {% if object.paf_approvals.exists %}
@@ -39,8 +39,8 @@
                 {% if user == project.lead %}
                     <a
                         class="btn btn-sm btn-soft"
-                        href="{% url 'apply:projects:update_pafapprovers' object.submission.id %}"
-                        hx-get="{% url 'apply:projects:update_pafapprovers' object.submission.id %}"
+                        href="{% url 'apply:projects:update_pafapprovers' object.pk %}"
+                        hx-get="{% url 'apply:projects:update_pafapprovers' object.pk %}"
                         hx-target="#htmx-modal"
                     >
                         {% trans "Update approvers" %}
@@ -48,8 +48,8 @@
                 {% else %}
                     <a
                         class="btn btn-sm btn-soft"
-                        href="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
-                        hx-get="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
+                        href="{% url 'apply:projects:assign_pafapprovers' object.pk %}"
+                        hx-get="{% url 'apply:projects:assign_pafapprovers' object.pk %}"
                         hx-target="#htmx-modal"
                     >
                         {% trans "Change approver" %}
@@ -60,8 +60,8 @@
             {% if can_assign_paf_approvers %}
                 <a
                     class="btn btn-sm btn-soft"
-                    href="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
-                    hx-get="{% url 'apply:projects:assign_pafapprovers' object.submission.id %}"
+                    href="{% url 'apply:projects:assign_pafapprovers' object.pk %}"
+                    hx-get="{% url 'apply:projects:assign_pafapprovers' object.pk %}"
                     hx-target="#htmx-modal"
                 >
                     {% trans "Assign approver" %}
@@ -71,8 +71,8 @@
             {% user_can_update_paf_status object user request=request as can_update_paf_status %}
             {% if object.can_make_approval and can_update_paf_status %}
                 <a class="btn btn-primary btn-sm"
-                   href="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
-                   hx-get="{% url 'apply:projects:update_pafstatus' object.submission.id %}"
+                   href="{% url 'apply:projects:update_pafstatus' object.pk %}"
+                   hx-get="{% url 'apply:projects:update_pafstatus' object.pk %}"
                    hx-target="#htmx-modal"
                 >
                     {% trans "Update Status" %}
@@ -115,7 +115,7 @@
                 {% if object.user_has_updated_pf_details and not user.is_applicant %}
                     <a
                         class="btn btn-outline btn-secondary btn-sm"
-                        href="{% url 'apply:projects:approval' pk=project.submission.pk %}">
+                        href="{% url 'apply:projects:approval' pk=project.pk %}">
                         {% heroicon_micro "eye" class="inline opacity-80 size-4" aria_hidden=true %}
                         {% trans "View" %}
                     </a>
@@ -123,7 +123,7 @@
                 {% if can_edit_pfs %}
                     <a
                         class="btn btn-sm {% if not object.user_has_updated_pf_details %}btn-primary{% else %}btn-outline btn-secondary{% endif %}"
-                        href="{% url 'apply:projects:edit_pf' pk=object.submission.pk %}"
+                        href="{% url 'apply:projects:edit_pf' pk=object.pk %}"
                     >
                         {% if object.user_has_updated_pf_details %}
                             {% heroicon_micro "pencil-square" class="inline size-4" aria_hidden=true %}
@@ -153,7 +153,7 @@
                     {% if object.user_has_updated_sow_details %}
                         <a
                             class="btn btn-outline btn-secondary btn-sm"
-                            href="{% url 'apply:projects:sow' pk=project.submission.pk %}"
+                            href="{% url 'apply:projects:sow' pk=project.pk %}"
                         >
                             {% heroicon_micro "eye" class="inline opacity-80 size-4" aria_hidden=true %}
                             {% trans "View" %}
@@ -163,7 +163,7 @@
                     {% if can_edit_pfs %}
                         <a
                             class="btn btn-sm {% if not object.user_has_updated_sow_details %}btn-primary{% else %}btn-outline btn-secondary{% endif %}"
-                            href="{% url 'apply:projects:edit_sow' pk=object.submission.pk %}"
+                            href="{% url 'apply:projects:edit_sow' pk=object.pk %}"
                         >
                             {% if object.user_has_updated_sow_details %}
                                 {% heroicon_micro "pencil-square" class="inline size-4" aria_hidden=true %}
@@ -182,7 +182,7 @@
             <div
                 class="list-row"
                 hx-trigger="load, supportingDocumentUpload from:body, supportingDocumentRemove from:body"
-                hx-get="{% url "apply:projects:supporting_documents" object.submission.id %}"
+                hx-get="{% url "apply:projects:supporting_documents" object.pk %}"
                 hx-target="this"
             >
                 <h3 class="flex gap-2 items-center font-medium text-h4 list-col-grow">

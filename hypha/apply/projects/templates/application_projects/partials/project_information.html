@@ -23,8 +23,8 @@
         {% if request.user.is_apply_staff and show_start %}
             <a
                 class="btn btn-xs btn-ghost btn-square"
-                href="{% url 'apply:projects:project_dates_update' object.submission.id %}"
-                hx-get="{% url 'apply:projects:project_dates_update' object.submission.id %}"
+                href="{% url 'apply:projects:project_dates_update' object.pk %}"
+                hx-get="{% url 'apply:projects:project_dates_update' object.pk %}"
                 hx-target="#htmx-modal"
             >
                 {% heroicon_micro "pencil-square" aria_hidden=true size=20 %}
@@ -49,8 +49,8 @@
         {% if request.user.is_apply_staff %}
             <a
                 class="btn btn-xs btn-ghost btn-square"
-                href="{% url 'apply:projects:project_dates_update' object.submission.id %}"
-                hx-get="{% url 'apply:projects:project_dates_update' object.submission.id %}"
+                href="{% url 'apply:projects:project_dates_update' object.pk %}"
+                hx-get="{% url 'apply:projects:project_dates_update' object.pk %}"
                 hx-target="#htmx-modal"
             >
                 {% heroicon_micro "pencil-square" aria_hidden=true size=20 %}
