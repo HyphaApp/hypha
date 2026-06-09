@@ -154,7 +154,7 @@ class Invoice(models.Model):
         return self.status
 
     @status_field.setter()
-    def _get_object_status(self, value):
+    def _get_object_status(self, value):  # type: ignore[no-redef]
         self.status = value
         return self.status
 

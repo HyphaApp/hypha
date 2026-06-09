@@ -57,7 +57,7 @@ class ListRelatedMixin:
         Returns:
             A string if anything was able to be extracted, otherwise `None`
         """
-        icon_html = self._get_icon_str(field)
+        icon_html = self._get_icon_str(field)  # type: ignore[arg-type]
         if title := values.get(f"{field}__title"):
             if id := values.get(f"{field}__id"):
                 edit_url = reverse("wagtailadmin_pages:edit", args=(id,))

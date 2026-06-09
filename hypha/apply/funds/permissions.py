@@ -144,7 +144,7 @@ def get_archive_alter_groups() -> list:
     return archive_access_groups
 
 
-def can_alter_archived_submissions(user, submission=None) -> (bool, str):
+def can_alter_archived_submissions(user, submission=None) -> tuple[bool, str]:
     """
     Return a boolean based on if a user can alter archived submissions
     (submission is accepted for compatibility with permissions_map but not used)

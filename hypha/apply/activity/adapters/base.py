@@ -44,7 +44,7 @@ neat_related = {
 
 
 class AdapterBase:
-    messages = {}
+    messages: dict = {}
     always_send = False
 
     def message(self, message_type, **kwargs):

@@ -1660,7 +1660,7 @@ class AdminProjectDetailView(
 ):
     model = Project
     template_name_suffix = "_admin_detail"
-    form_views = []
+    form_views: list = []
 
     def dispatch(self, *args, **kwargs):
         project = self.get_object()
@@ -1689,7 +1689,7 @@ class ApplicantProjectDetailView(
 ):
     model = Project
     template_name_suffix = "_detail"
-    form_views = []
+    form_views: list = []
 
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()

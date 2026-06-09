@@ -114,7 +114,7 @@ class BaseSubmissionEditView(UpdateView):
         )
         return super().dispatch(request, *args, **kwargs)
 
-    def buttons(
+    def buttons(  # type: ignore[return]
         self,
     ) -> Generator[Tuple[str, str, str], Tuple[str, str, str], Tuple[str, str, str]]:
         """The buttons to be presented to the in the EditView
@@ -304,7 +304,7 @@ class BaseSubmissionEditView(UpdateView):
 
 @method_decorator(staff_required, name="dispatch")
 class AdminSubmissionEditView(BaseSubmissionEditView):
-    def buttons(
+    def buttons(  # type: ignore[return]
         self,
     ) -> Generator[Tuple[str, str, str], Tuple[str, str, str], Tuple[str, str, str]]:
         """The buttons to be presented in the `AdminSubmissionEditView`

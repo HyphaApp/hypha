@@ -32,7 +32,7 @@ def get_available_translations(
 
 
 def get_translation_params(
-    url: str = None, request: HttpRequest = None
+    url: str | None = None, request: HttpRequest | None = None
 ) -> Tuple[str, str] | None:
     r"""Attempts to extract the `fl` (from language) & `tl` (to language) params from the provided URL or request object
 

@@ -110,10 +110,10 @@ def submissions_all(
     can_view_archives = permissions.can_view_archived_submissions(request.user)
     can_access_drafts = permissions.can_access_drafts(request.user)
 
-    selected_fund_objects = (
+    selected_fund_objects: list = (
         Page.objects.filter(id__in=selected_funds) if selected_funds else []
     )
-    selected_round_objects = (
+    selected_round_objects: list = (
         Round.objects.filter(id__in=selected_rounds) if selected_rounds else []
     )
 
@@ -193,7 +193,7 @@ def submissions_all(
     if selected_applicants:
         qs = qs.filter(user__in=selected_applicants)
 
-    status_count_raw = {}
+    status_count_raw: dict = {}
     # year_counts_raw = {}
     # month_counts_raw = {}
 

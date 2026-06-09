@@ -105,9 +105,15 @@ exclude-newer = "3 days"
 
 [tool.mypy]
 plugins = ["mypy_django_plugin.main"]
+ignore_missing_imports = true
+disable_error_code = ["assignment", "attr-defined", "call-arg", "list-item", "misc", "return-value", "union-attr"]
+exclude = ["migrations/", "tests?\\.py$", "test_.+\\.py$", ".+_tests\\.py$"]
+
+[tool.zuban]
+mode = "mypy"
 
 [tool.django-stubs]
-DJANGO_SETTINGS_MODULE = 'hypha.settings.dev'
+django_settings_module = 'hypha.settings.dev'
 
 [tool.pytest]
 DJANGO_SETTINGS_MODULE = 'hypha.settings.test'

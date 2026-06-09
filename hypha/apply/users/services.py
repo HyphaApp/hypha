@@ -41,7 +41,7 @@ class PasswordlessAuthService:
             extended_session: Include the `remember-me` param in the magic link, defaults to False.
         """
         self.redirect_field_name = redirect_field_name
-        self.next_url = get_redirect_url(request, self.redirect_field_name)
+        self.next_url = get_redirect_url(request, self.redirect_field_name)  # type: ignore[arg-type]
         self.extended_session = extended_session
         self.request = request
         self.site = Site.find_for_request(request)

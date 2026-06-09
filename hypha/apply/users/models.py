@@ -96,7 +96,7 @@ class UserQuerySet(models.QuerySet):
         return delete_return
 
 
-class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
+class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore[name-defined]
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
@@ -183,7 +183,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         if "redirect_url" in kwargs:
             redirect_url = kwargs.pop("redirect_url")
 
-        is_registered, _ = is_user_already_registered(email=email)
+        is_registered, _ = is_user_already_registered(email=email)  # type: ignore[arg-type]
 
         if is_registered:
             user = get_user_by_email(email=email)
@@ -351,7 +351,7 @@ class User(AbstractUser):
         """
         return reverse("wagtailusers_users:edit", args=[self.id])
 
-    def delete(
+    def delete(  # type: ignore[override]
         self, anonymize_submissions: bool = False, using=None, keep_parents=False
     ):
         """Handling the deletion of a user

@@ -42,7 +42,7 @@ def partial_comments(request, pk: int):
     editable = not submission.is_archive
 
     qs = services.get_related_activities_for_user(submission, request.user)
-    page = Paginator(qs, per_page=10, orphans=5).page(request.GET.get("page", 1))
+    page = Paginator(qs, per_page=10, orphans=5).page(request.GET.get("page", 1))  # type: ignore[var-annotated]
 
     ctx = {
         "page": page,

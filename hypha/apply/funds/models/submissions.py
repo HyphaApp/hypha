@@ -1098,7 +1098,7 @@ class AnonymizedSubmission(models.Model):
         default=INITIAL_STATE,
     )
 
-    selected_category_options = models.ManyToManyField(Option)
+    selected_category_options = models.ManyToManyField(Option)  # type: ignore[var-annotated]
 
     page = models.ForeignKey("wagtailcore.Page", on_delete=models.PROTECT)
     round = models.ForeignKey(

@@ -14,6 +14,7 @@ from django.http import HttpResponseRedirect, QueryDict
 from django.shortcuts import resolve_url
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.module_loading import import_string
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
@@ -28,12 +29,6 @@ from .settings import (
     URL,
 )
 from .utils import grant_elevated_privileges
-
-try:
-    from django.utils.http import url_has_allowed_host_and_scheme
-except ImportError:
-    # Remove once Django 2.2 is EOL
-    from django.utils.http import is_safe_url as url_has_allowed_host_and_scheme
 
 
 class ElevateView(View):
@@ -108,11 +103,9 @@ def redirect_to_elevate(next_url, elevate_url=None):
         elevate_url = URL
 
     try:
-        # django 1.10 and greater can't resolve the string 'elevate.views.elevate' to a URL
-        # https://docs.djangoproject.com/en/1.10/releases/1.10/#removed-features-1-10
         elevate_url = import_string(elevate_url)
     except ImportError:
-        pass  # wasn't a dotted path
+        pass  # wasn't a dotted path, use as-is
 
     elevate_url_parts = list(urlparse(resolve_url(elevate_url)))
 

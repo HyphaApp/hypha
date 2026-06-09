@@ -29,7 +29,7 @@ def get_user_by_email(email):
     return user
 
 
-def is_user_already_registered(email: str) -> (bool, str):
+def is_user_already_registered(email: str) -> tuple[bool, str]:
     """
     Checks if a specified user is already registered.
     Returns a tuple containing a boolean value that indicates if the user exists

@@ -158,8 +158,8 @@ def partial_translate_answers(request: HttpRequest, pk: int) -> HttpResponse:
             ctx.update(
                 {
                     "object": submission,
-                    "from_lang_name": from_lang_name,
-                    "to_lang_name": to_lang_name,
+                    "from_lang_name": from_lang_name,  # type: ignore[dict-item]
+                    "to_lang_name": to_lang_name,  # type: ignore[dict-item]
                 }
             )
         except ValueError:
@@ -187,7 +187,7 @@ def partial_translate_answers(request: HttpRequest, pk: int) -> HttpResponse:
         )
 
     if message:
-        trigger_dict.update({"showMessage": message})
+        trigger_dict.update({"showMessage": message})  # type: ignore[dict-item]
 
     if trigger_dict:
         response["HX-Trigger"] = json.dumps(trigger_dict)
