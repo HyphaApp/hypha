@@ -363,6 +363,17 @@ class TestStaffProjectDetailView(BaseProjectDetailTestCase):
         response = self.get_page(project)
         self.assertEqual(response.status_code, 200)
 
+    def test_sibling_projects_listed_in_tab_dropdown(self):
+        submission = ApplicationSubmissionFactory()
+        project = ProjectFactory(submission=submission, title="Hardware bucket")
+        ProjectFactory(submission=submission, title="Travel bucket")
+
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 200)
+        # both sibling projects appear in the tab dropdown
+        self.assertContains(response, "Hardware bucket")
+        self.assertContains(response, "Travel bucket")
+
 
 class TestFinanceProjectDetailView(BaseProjectDetailTestCase):
     user_factory = FinanceFactory

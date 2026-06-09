@@ -43,6 +43,18 @@ def user_can_access_project(project, user):
 
 
 @register.simple_tag
+def accessible_projects(submission, user):
+    """Return the submission's projects the user is allowed to access."""
+    return [
+        project
+        for project in submission.projects.all()
+        if has_permission(
+            "project_access", user, object=project, raise_exception=False
+        )[0]
+    ]
+
+
+@register.simple_tag
 def user_can_view_project_documents(project, user):
     if project.submission.co_applicants.filter(user=user).exists():
         co_applicant = project.submission.co_applicants.filter(user=user).first()

@@ -17,12 +17,7 @@
                 {% trans "Application" %}
             </a>
 
-            <a
-                class="tab tab-active"
-                href="{{ object.get_absolute_url }}"
-            >
-                {% trans "Project" %}
-            </a>
+            {% include "funds/includes/projects_tab.html" with submission=object.submission user=user current_project=object active=True %}
 
             <a
                 class="tab [--color-base-content:var(--color-neutral-content)]"
