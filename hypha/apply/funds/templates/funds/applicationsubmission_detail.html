@@ -18,13 +18,8 @@
                 {% trans "Application" %}
             </a>
 
-            {% if PROJECTS_ENABLED and object.projects.exists %}
-                <a
-                    class="tab [--color-base-content:var(--color-neutral-content)]"
-                    href="{% url 'funds:submissions:projects' pk=object.id %}"
-                >
-                    {% blocktrans count counter=object.projects.count %}Project{% plural %}Projects ({{ counter }}){% endblocktrans %}
-                </a>
+            {% if PROJECTS_ENABLED %}
+                {% include "funds/includes/projects_tab.html" with submission=object user=user %}
             {% endif %}
 
             <a
