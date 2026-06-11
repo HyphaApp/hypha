@@ -184,7 +184,7 @@ class AssignedReviewers(models.Model):
         verbose_name_plural = _("assigned reviewers")
 
     def __hash__(self):
-        return hash(self.pk)
+        return hash((self.reviewer_id, self.role_id))
 
     def __str__(self):
         return f"{self.reviewer}"
