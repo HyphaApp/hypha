@@ -752,12 +752,23 @@ class Contract(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     approved_at = models.DateTimeField(null=True)
     updated_at = models.DateTimeField(null=True)
+    # Purposefully avoid currency libraries: support unofficial currencies.
+    currency = models.CharField(max_length=3, null=True, blank=True, default=None)
+    # Purposefully large decimal fields: support many currencies and inflation.
+    amount_requested = models.DecimalField(max_digits=38, decimal_places=19, null=True)
+    amount_approved = models.DecimalField(max_digits=38, decimal_places=19, null=True)
 
     objects = ContractQuerySet.as_manager()
 
     class Meta:
         verbose_name = _("contract")
         verbose_name_plural = _("contracts")
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(currency__isnull=True) | Q(currency__regex=r"^[A-Z]{3}$"),
+                name="contract_currency_code_format",
+            ),
+        ]
 
     def save(self, *args, **kwargs):
         self.updated_at = timezone.now()
