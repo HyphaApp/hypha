@@ -1849,9 +1849,9 @@ pyopenssl==26.2.0 \
     --hash=sha256:4f9d971bc5298b8bc1fab282803da04bf000c755d4ad9d99b52de2569ca19a70 \
     --hash=sha256:8c6fcecd1183a7fc897548dfe388b0cdb7f37e018200d8409cf33959dbe35387
     # via webauthn
-pypdf==6.13.0 \
-    --hash=sha256:558683ec9daf6b91c280c322c84c32f5cc216afd3eaa3a37de5ae88ae0c3b787 \
-    --hash=sha256:de1294ae49d6956edb4e5c41527fb9e8716ddd2b120f2185c68aab784d4ffe60
+pypdf==6.13.3 \
+    --hash=sha256:c6e3f86afb625791510b02ad5480e94b63970bb957df75d44657c282ecc52224 \
+    --hash=sha256:f3cb822769725f1bac658c406cfc9460399043f3750c2d3e4650e0a85eacabd7
     # via xhtml2pdf
 pytest==9.0.3 \
     --hash=sha256:2c5efc453d45394fdd706ade797c0a81091eccd1d6e4bccfcd476e2b8e0ab5d9 \
