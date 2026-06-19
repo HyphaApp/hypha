@@ -1,0 +1,23 @@
+{% load i18n %}
+<c-modal.header>{% trans "Edit report due date" %}</c-modal.header>
+
+<div class="p-4">
+    <form
+        method="post"
+        action="{% url 'apply:projects:reports:edit_due_date' pk=report.pk %}"
+        hx-post="{% url 'apply:projects:reports:edit_due_date' pk=report.pk %}"
+        hx-swap="innerHTML"
+        enctype="multipart/form-data"
+    >
+        {% csrf_token %}
+        {% for field in form %}
+            {% include "forms/includes/field.html" %}
+        {% endfor %}
+
+        <div class="mt-4 card-actions">
+            <button class="w-full sm:w-auto btn btn-primary" type="submit">
+                {% trans "Save" %}
+            </button>
+        </div>
+    </form>
+</div>

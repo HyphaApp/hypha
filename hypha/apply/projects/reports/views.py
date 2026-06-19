@@ -34,7 +34,12 @@ from hypha.apply.users.decorators import staff_or_finance_required, staff_requir
 from hypha.apply.utils.storage import PrivateMediaView
 
 from .filters import ReportingFilter, ReportListFilter
-from .forms import ReportAddDateForm, ReportEditForm, ReportFrequencyForm
+from .forms import (
+    ReportAddDateForm,
+    ReportEditDueDateForm,
+    ReportEditForm,
+    ReportFrequencyForm,
+)
 from .models import Report, ReportConfig, ReportPrivateFiles
 from .tables import ReportingTable, ReportListTable
 
@@ -555,6 +560,32 @@ class ReportAddView(View):
             self.template_name,
             {"form": form, "object": self.project},
         )
+
+
+@method_decorator(staff_required, name="dispatch")
+class ReportEditDueDateView(SingleObjectMixin, View):
+    """
+    View for editing the due date of a report.
+
+    Allows staff to change the end_date of an existing report.
+    """
+
+    model = Report
+    form_class = ReportEditDueDateForm
+    template_name = "reports/modals/edit_report_due_date.html"
+
+    def get(self, request, *args, **kwargs):
+        report = self.get_object()
+        form = self.form_class(instance=report)
+        return render(request, self.template_name, {"form": form, "report": report})
+
+    def post(self, request, *args, **kwargs):
+        report = self.get_object()
+        form = self.form_class(request.POST, instance=report)
+        if form.is_valid():
+            form.save()
+            return HttpResponseClientRefresh()
+        return render(request, self.template_name, {"form": form, "report": report})
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")

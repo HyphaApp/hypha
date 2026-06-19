@@ -116,6 +116,25 @@ class ReportAddDateForm(forms.Form):
         return end_date
 
 
+class ReportEditDueDateForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        fields = ["end_date"]
+        labels = {"end_date": _("Report due date")}
+        widgets = {"end_date": forms.DateInput(attrs={"type": "date"})}
+
+    def clean_end_date(self):
+        end_date = self.cleaned_data["end_date"]
+        if (
+            self.instance
+            and self.instance.project.reports.filter(end_date=end_date)
+            .exclude(pk=self.instance.pk)
+            .exists()
+        ):
+            raise forms.ValidationError(_("A report for this date already exists."))
+        return end_date
+
+
 class ReportFrequencyForm(forms.ModelForm):
     start = forms.DateField(label=_("Report on:"), required=False)
 

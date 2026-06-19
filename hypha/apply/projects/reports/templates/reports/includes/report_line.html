@@ -1,21 +1,25 @@
 {% load i18n heroicons %}
 <li class="list-row @container">
-    <p class="text-sm list-col-grow">
-
-        {% if current %}
-            {% trans "The" %} {% if report.can_submit %}{% trans "current" %}{% else %}{% trans "next" %}{% endif %} {% trans "reporting period is" %}
-        {% else %}
-            {% trans "A report is due for the period" %}
+    <p class="text-sm font-semibold">
+        <relative-time datetime="{{ report.end_date|date:'c' }}">{{ report.end_date }}</relative-time>
+        {% if request.user.is_apply_staff %}
+            <a
+                class="text-sm font-normal link ms-1"
+                href="{% url 'apply:projects:reports:edit_due_date' pk=report.pk %}"
+                hx-get="{% url 'apply:projects:reports:edit_due_date' pk=report.pk %}"
+                hx-target="#htmx-modal"
+            >{% trans "edit" %}</a>
         {% endif %}
-        <b class="font-semibold">{{ report.start_date }}</b> {% trans "to" %} <b class="font-semibold">{{ report.end_date }}</b>
+    </p>
+    <p class="text-sm">
+        {% if report.past_due %}<span class="font-semibold text-error">{% trans "Past due" %}</span>{% endif %}
         {% if report.is_very_late %}
-            {% heroicon_outline 'exclamation-circle' stroke_width=2 size=22 class="inline me-1 stroke-red-500" aria_hidden=true %}
+            {% heroicon_outline 'exclamation-circle' stroke_width=2 size=22 class="inline me-1 stroke-error" aria_hidden=true %}
         {% endif %}
-
     </p>
 
     {% if report.can_submit %}
-        <div class="list-col-wrap @sm:row-start-1 card-actions">
+        <div class="card-actions">
             <a
                 class="btn btn-primary btn-sm"
                 href="{% url "apply:projects:reports:edit" pk=report.pk %}"
