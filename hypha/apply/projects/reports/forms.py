@@ -108,9 +108,6 @@ class ReportAddDateForm(forms.Form):
 
     def clean_end_date(self):
         end_date = self.cleaned_data["end_date"]
-        today = timezone.now().date()
-        if end_date >= today:
-            raise forms.ValidationError(_("Report date must be in the past."))
         if self.project and self.project.reports.filter(end_date=end_date).exists():
             raise forms.ValidationError(_("A report for this date already exists."))
         return end_date

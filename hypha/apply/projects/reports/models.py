@@ -377,13 +377,23 @@ class ReportConfig(models.Model):
                         today,
                     )
 
-        report, _ = self.project.reports.update_or_create(
-            project=self.project,
-            current__isnull=True,
-            skipped=False,
-            end_date__gte=today,
-            defaults={"end_date": next_due_date},
-        )
+        try:
+            report, _ = self.project.reports.update_or_create(
+                project=self.project,
+                current__isnull=True,
+                skipped=False,
+                end_date__gte=today,
+                defaults={"end_date": next_due_date},
+            )
+        except Report.MultipleObjectsReturned:
+            # Multiple unsubmitted future reports exist (e.g. a due date was manually
+            # edited into the future). Find or create one for the calculated due date.
+            report, _ = self.project.reports.get_or_create(
+                project=self.project,
+                current__isnull=True,
+                skipped=False,
+                end_date=next_due_date,
+            )
         return report
 
     def current_report(self):
