@@ -96,6 +96,26 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
         return instance
 
 
+class ReportAddDateForm(forms.Form):
+    end_date = forms.DateField(
+        label=_("Report end date"),
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+
+    def __init__(self, *args, project=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.project = project
+
+    def clean_end_date(self):
+        end_date = self.cleaned_data["end_date"]
+        today = timezone.now().date()
+        if end_date >= today:
+            raise forms.ValidationError(_("Report date must be in the past."))
+        if self.project and self.project.reports.filter(end_date=end_date).exists():
+            raise forms.ValidationError(_("A report for this date already exists."))
+        return end_date
+
+
 class ReportFrequencyForm(forms.ModelForm):
     start = forms.DateField(label=_("Report on:"), required=False)
 

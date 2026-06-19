@@ -20,14 +20,14 @@
                 class="btn btn-primary btn-sm"
                 href="{% url "apply:projects:reports:edit" pk=report.pk %}"
             >
-                {% if report.draft %}{% trans "Continue Editing" %}{% else %}{% trans "Add Report" %}{% endif %}
+                {% if report.draft %}{% trans "Continue Editing" %}{% else %}{% trans "Create report" %}{% endif %}
             </a>
             {% if request.user.is_apply_staff and report.can_submit %}
                 <button
                     hx-post="{% url 'apply:projects:reports:skip' pk=report.id %}"
                     hx-confirm="{% blocktrans with start_date=report.start_date end_date=report.end_date %} You're skipping the report for {{ start_date }} - {{ end_date }}. This will result in a gap in reporting for the project. You can undo this at any time. {% endblocktrans %}"
                     value="{% trans 'Skip' %}"
-                    class="uppercase btn btn-sm"
+                    class="btn btn-sm"
                 >
                     {% trans 'Skip' %}
                 </button>

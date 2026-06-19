@@ -3,7 +3,7 @@ from django.views.generic import RedirectView
 
 from hypha.apply.projects.views.project import ProjectSOWEditView
 
-from .reports.views import ReportFrequencyUpdate
+from .reports.views import ReportAddView, ReportFrequencyUpdate
 from .views import (
     ApproveContractView,
     BatchUpdateInvoiceStatusView,
@@ -206,6 +206,11 @@ urlpatterns = [
                     "frequency/update/",
                     ReportFrequencyUpdate.as_view(),
                     name="report_frequency_update",
+                ),
+                path(
+                    "reports/add/",
+                    ReportAddView.as_view(),
+                    name="report_add",
                 ),
                 path("invoice/", CreateInvoiceView.as_view(), name="invoice"),
                 path(

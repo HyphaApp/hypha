@@ -34,7 +34,7 @@ from hypha.apply.users.decorators import staff_or_finance_required, staff_requir
 from hypha.apply.utils.storage import PrivateMediaView
 
 from .filters import ReportingFilter, ReportListFilter
-from .forms import ReportEditForm, ReportFrequencyForm
+from .forms import ReportAddDateForm, ReportEditForm, ReportFrequencyForm
 from .models import Report, ReportConfig, ReportPrivateFiles
 from .tables import ReportingTable, ReportListTable
 
@@ -511,6 +511,49 @@ class ReportFrequencyUpdate(View):
                 "object": self.object,
                 "report_data": report_data,
             },
+        )
+
+
+@method_decorator(staff_required, name="dispatch")
+class ReportAddView(View):
+    """
+    View for manually adding an ad-hoc report date for a project.
+
+    Allows staff to create a report for a specific past date outside the regular schedule.
+    """
+
+    form_class = ReportAddDateForm
+    template_name = "reports/modals/add_report.html"
+    permission_denied_message = _("You do not have permission to add reports.")
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, submission__id=kwargs.get("pk"))
+        if not has_object_permission(
+            "update_report_config", self.request.user, self.project
+        ):
+            raise PermissionDenied(self.permission_denied_message)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(project=self.project)
+        return render(
+            request,
+            self.template_name,
+            {"form": form, "object": self.project},
+        )
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, project=self.project)
+        if form.is_valid():
+            Report.objects.create(
+                project=self.project,
+                end_date=form.cleaned_data["end_date"],
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            request,
+            self.template_name,
+            {"form": form, "object": self.project},
         )
 
 

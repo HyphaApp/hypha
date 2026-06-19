@@ -1,0 +1,23 @@
+{% load i18n %}
+<c-modal.header>{% trans "Add report" %}</c-modal.header>
+
+<div class="p-4">
+    <form
+        method="post"
+        action="{% url 'apply:projects:report_add' pk=object.submission.id %}"
+        hx-post="{% url 'apply:projects:report_add' pk=object.submission.id %}"
+        hx-swap="innerHTML"
+        enctype="multipart/form-data"
+    >
+        {% csrf_token %}
+        {% for field in form %}
+            {% include "forms/includes/field.html" %}
+        {% endfor %}
+
+        <div class="mt-4 card-actions">
+            <button class="w-full sm:w-auto btn btn-primary" type="submit">
+                {% trans "Add report" %}
+            </button>
+        </div>
+    </form>
+</div>
