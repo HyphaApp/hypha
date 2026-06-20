@@ -541,6 +541,13 @@ class ReportDateAddView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        if not request.htmx:
+            return redirect(
+                reverse(
+                    "funds:submissions:project",
+                    kwargs={"pk": self.project.submission.id},
+                )
+            )
         form = self.form_class(project=self.project)
         return render(
             request,
@@ -580,6 +587,13 @@ class ReportEditDueDateView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        if not request.htmx:
+            return redirect(
+                reverse(
+                    "funds:submissions:project",
+                    kwargs={"pk": self.report.project.submission.id},
+                )
+            )
         form = self.form_class(instance=self.report)
         return render(
             request, self.template_name, {"form": form, "report": self.report}
@@ -609,6 +623,13 @@ class ReportDeleteView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        if not request.htmx:
+            return redirect(
+                reverse(
+                    "funds:submissions:project",
+                    kwargs={"pk": self.report.project.submission.id},
+                )
+            )
         return render(request, self.template_name, {"report": self.report})
 
     def post(self, request, *args, **kwargs):
