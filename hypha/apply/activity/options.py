@@ -59,6 +59,7 @@ class MESSAGES(TextChoices):
     SENT_TO_COMPLIANCE = "SENT_TO_COMPLIANCE", _("sent project to compliance")
     UPDATE_INVOICE = "UPDATE_INVOICE", _("updated invoice")
     SUBMIT_REPORT = "SUBMIT_REPORT", _("submitted report")
+    DELETE_REPORT = "DELETE_REPORT", _("deleted report")
     SKIPPED_REPORT = "SKIPPED_REPORT", _("skipped report")
     REPORT_FREQUENCY_CHANGED = "REPORT_FREQUENCY_CHANGED", _("changed report frequency")
     DISABLED_REPORTING = "DISABLED_REPORTING", _("disabled reporting")

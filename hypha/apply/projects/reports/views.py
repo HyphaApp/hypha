@@ -640,6 +640,13 @@ class ReportDeleteView(View):
             "funds:submissions:project",
             kwargs={"pk": self.report.project.submission.id},
         )
+        messenger(
+            MESSAGES.DELETE_REPORT,
+            request=request,
+            user=request.user,
+            source=self.report.project,
+            related=self.report,
+        )
         self.report.delete()
         return HttpResponseRedirect(project_url)
 
