@@ -564,28 +564,35 @@ class ReportAddView(View):
 
 @method_decorator(staff_required, name="dispatch")
 class ReportEditDueDateView(SingleObjectMixin, View):
-    """
-    View for editing the due date of a report.
-
-    Allows staff to change the end_date of an existing report.
-    """
-
     model = Report
     form_class = ReportEditDueDateForm
     template_name = "reports/modals/edit_report_due_date.html"
+    permission_denied_message = _(
+        "You do not have permission to edit report due dates."
+    )
+
+    def dispatch(self, request, *args, **kwargs):
+        self.report = get_object_or_404(Report, pk=kwargs.get("pk"))
+        if not has_object_permission(
+            "update_report_config", self.request.user, self.report.project
+        ):
+            raise PermissionDenied(self.permission_denied_message)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        report = self.get_object()
-        form = self.form_class(instance=report)
-        return render(request, self.template_name, {"form": form, "report": report})
+        form = self.form_class(instance=self.report)
+        return render(
+            request, self.template_name, {"form": form, "report": self.report}
+        )
 
     def post(self, request, *args, **kwargs):
-        report = self.get_object()
-        form = self.form_class(request.POST, instance=report)
+        form = self.form_class(request.POST, instance=self.report)
         if form.is_valid():
             form.save()
             return HttpResponseClientRefresh()
-        return render(request, self.template_name, {"form": form, "report": report})
+        return render(
+            request, self.template_name, {"form": form, "report": self.report}
+        )
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")
