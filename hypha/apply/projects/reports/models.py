@@ -377,23 +377,23 @@ class ReportConfig(models.Model):
                         today,
                     )
 
-        try:
-            report, _ = self.project.reports.update_or_create(
+        # If there is a report due, then we do not update the date, as the date can be updated
+        # via updating the specific report requirement.  If there is not one, and we should create
+        # it, then we do that.
+        due_reports = self.project.reports.filter(
+            project=self.project,
+            current__isnull=True,
+            skipped=False,
+            end_date__gte=today,
+        )
+
+        report = due_reports.order_by("end_date").first()
+        if report is None:
+            report = self.project.reports.create(
                 project=self.project,
-                current__isnull=True,
-                skipped=False,
-                end_date__gte=today,
-                defaults={"end_date": next_due_date},
-            )
-        except Report.MultipleObjectsReturned:
-            # Multiple unsubmitted future reports exist (e.g. a due date was manually
-            # edited into the future). Find or create one for the calculated due date.
-            report, _ = self.project.reports.get_or_create(
-                project=self.project,
-                current__isnull=True,
-                skipped=False,
                 end_date=next_due_date,
             )
+
         return report
 
     def current_report(self):
