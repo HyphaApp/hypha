@@ -344,7 +344,15 @@ class ReportConfig(models.Model):
             Q(end_date__lt=today) | Q(skipped=True) | Q(submitted__isnull=False)
         ).first()
 
-    def current_due_report(self):
+    def ensure_due_report(self):
+        """Create the next scheduled report row if none exists yet.
+
+        Computes what date the next report should be due based on the reporting
+        schedule, then finds or creates a pending report for that date. Safe to
+        call concurrently — uses SELECT FOR UPDATE to prevent duplicate creation.
+
+        Returns the pending report, or None if no report is required.
+        """
         if self.disable_reporting:
             return None
 
@@ -404,6 +412,29 @@ class ReportConfig(models.Model):
                 )
 
         return report
+
+    def current_due_report(self):
+        """Return the earliest pending future report without creating one.
+
+        Use ensure_due_report() when the scheduled report row must exist
+        (e.g. on page load or in the notification command).
+        """
+        if self.disable_reporting:
+            return None
+
+        if not self.project.proposed_start:
+            return None
+
+        today = timezone.now().date()
+        return (
+            self.project.reports.filter(
+                current__isnull=True,
+                skipped=False,
+                end_date__gte=today,
+            )
+            .order_by("end_date")
+            .first()
+        )
 
     def current_report(self):
         """This is different from current_due_report as it will return a completed report
