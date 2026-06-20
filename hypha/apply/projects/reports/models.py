@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from django.apps import apps
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import ordinal
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Case, ExpressionWrapper, F, OuterRef, Q, Subquery, When
 from django.db.models.functions import Cast
 from django.urls import reverse
@@ -385,22 +385,23 @@ class ReportConfig(models.Model):
                         today,
                     )
 
-        # If there is a report due, then we do not update the date, as the date can be updated
-        # via updating the specific report requirement.  If there is not one, and we should create
-        # it, then we do that.
-        due_reports = self.project.reports.filter(
-            project=self.project,
-            current__isnull=True,
-            skipped=False,
-            end_date__gte=today,
-        )
+        with transaction.atomic():
+            # Lock this ReportConfig row so concurrent calls wait rather than
+            # both finding no report and each creating one.
+            ReportConfig.objects.select_for_update().get(pk=self.pk)
 
-        report = due_reports.order_by("end_date").first()
-        if report is None:
-            report = self.project.reports.create(
-                project=self.project,
-                end_date=next_due_date,
+            due_reports = self.project.reports.filter(
+                current__isnull=True,
+                skipped=False,
+                end_date__gte=today,
             )
+
+            report = due_reports.order_by("end_date").first()
+            if report is None:
+                report = self.project.reports.create(
+                    project=self.project,
+                    end_date=next_due_date,
+                )
 
         return report
 
