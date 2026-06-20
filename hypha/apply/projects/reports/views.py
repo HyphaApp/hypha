@@ -16,6 +16,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views import View
@@ -612,8 +613,12 @@ class ReportDeleteView(View):
         return render(request, self.template_name, {"report": self.report})
 
     def post(self, request, *args, **kwargs):
+        project_url = reverse(
+            "funds:submissions:project",
+            kwargs={"pk": self.report.project.submission.id},
+        )
         self.report.delete()
-        return HttpResponseClientRefresh()
+        return HttpResponseRedirect(project_url)
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")
