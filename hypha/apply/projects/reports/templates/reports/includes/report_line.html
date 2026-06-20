@@ -8,6 +8,7 @@
                 href="{% url 'apply:projects:reports:edit_due_date' pk=report.pk %}"
                 hx-get="{% url 'apply:projects:reports:edit_due_date' pk=report.pk %}"
                 hx-target="#htmx-modal"
+                aria-label="{% trans "Edit this report date" %}"
             >{% trans "edit" %}</a>
         {% endif %}
     </p>
@@ -18,24 +19,36 @@
         {% endif %}
     </p>
 
-    {% if report.can_submit %}
-        <div class="card-actions">
+    <div class="card-actions">
+        {% if report.can_submit %}
             <a
                 class="btn btn-primary btn-sm"
                 href="{% url "apply:projects:reports:edit" pk=report.pk %}"
             >
                 {% if report.draft %}{% trans "Continue Editing" %}{% else %}{% trans "Create report" %}{% endif %}
             </a>
-            {% if request.user.is_apply_staff and report.can_submit %}
+            {% if request.user.is_apply_staff %}
                 <button
                     hx-post="{% url 'apply:projects:reports:skip' pk=report.id %}"
                     hx-confirm="{% blocktrans with start_date=report.start_date end_date=report.end_date %} You're skipping the report for {{ start_date }} - {{ end_date }}. This will result in a gap in reporting for the project. You can undo this at any time. {% endblocktrans %}"
                     value="{% trans 'Skip' %}"
                     class="btn btn-sm"
+                    aria-label="{% trans "Skip this report date" %}"
                 >
                     {% trans 'Skip' %}
                 </button>
             {% endif %}
-        </div>
-    {% endif %}
+        {% endif %}
+        {% if request.user.is_apply_staff %}
+            <a
+                class="hover:text-white btn btn-sm btn-ghost btn-error"
+                href="{% url 'apply:projects:reports:delete' pk=report.pk %}"
+                hx-get="{% url 'apply:projects:reports:delete' pk=report.pk %}"
+                hx-target="#htmx-modal"
+                aria-label="{% trans "Delete report requirement" %}"
+            >
+                {% heroicon_micro "trash" aria_hidden=true %}
+            </a>
+        {% endif %}
+    </div>
 </li>

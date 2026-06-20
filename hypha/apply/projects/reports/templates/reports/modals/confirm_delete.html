@@ -1,0 +1,28 @@
+{% load i18n heroicons %}
+<c-modal.header>{% trans "Delete report requirement" %}</c-modal.header>
+
+<div class="p-4">
+    <form
+        method="post"
+        action="{% url 'apply:projects:reports:delete' pk=report.pk %}"
+        hx-post="{% url 'apply:projects:reports:delete' pk=report.pk %}"
+        hx-swap="innerHTML"
+    >
+        {% csrf_token %}
+        <div class="flex gap-3 items-start">
+            {% heroicon_outline "exclamation-triangle" class="mt-0.5 text-error shrink-0" stroke_width=1.5 aria_hidden=true %}
+            <p class="text-sm">
+                {% if report.submitted or report.draft %}
+                    {% trans "Are you sure you want to delete this report? The entire report will be permanently removed. This action cannot be undone." %}
+                {% else %}
+                    {% trans "Are you sure you want to delete this report requirement?" %}
+                {% endif %}
+            </p>
+        </div>
+        <div class="justify-end mt-4 card-actions">
+            <button class="w-full sm:w-auto btn btn-error" type="submit">
+                {% trans "Delete" %}
+            </button>
+        </div>
+    </form>
+</div>

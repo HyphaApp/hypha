@@ -1,6 +1,7 @@
 from django.urls import include, path
 
 from .views import (
+    ReportDeleteView,
     ReportDetailView,
     ReportEditDueDateView,
     ReportingView,
@@ -26,6 +27,11 @@ urlpatterns = [
                     "edit-due-date/",
                     ReportEditDueDateView.as_view(),
                     name="edit_due_date",
+                ),
+                path(
+                    "delete/",
+                    ReportDeleteView.as_view(),
+                    name="delete",
                 ),
                 path(
                     "documents/<int:file_pk>/",

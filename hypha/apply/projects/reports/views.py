@@ -595,6 +595,27 @@ class ReportEditDueDateView(SingleObjectMixin, View):
         )
 
 
+@method_decorator(staff_required, name="dispatch")
+class ReportDeleteView(View):
+    template_name = "reports/modals/confirm_delete.html"
+    permission_denied_message = _("You do not have permission to delete reports.")
+
+    def dispatch(self, request, *args, **kwargs):
+        self.report = get_object_or_404(Report, pk=kwargs.get("pk"))
+        if not has_object_permission(
+            "update_report_config", self.request.user, self.report.project
+        ):
+            raise PermissionDenied(self.permission_denied_message)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {"report": self.report})
+
+    def post(self, request, *args, **kwargs):
+        self.report.delete()
+        return HttpResponseClientRefresh()
+
+
 @method_decorator(staff_or_finance_required, name="dispatch")
 class ReportListView(SingleTableMixin, FilterView):
     """
