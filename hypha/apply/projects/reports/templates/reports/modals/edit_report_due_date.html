@@ -7,7 +7,6 @@
         action="{% url 'apply:projects:reports:edit_due_date' pk=report.pk %}"
         hx-post="{% url 'apply:projects:reports:edit_due_date' pk=report.pk %}"
         hx-swap="innerHTML"
-        enctype="multipart/form-data"
     >
         {% csrf_token %}
         {% for field in form %}

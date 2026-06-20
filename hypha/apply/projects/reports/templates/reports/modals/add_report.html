@@ -7,7 +7,6 @@
         action="{% url 'apply:projects:report_add' pk=object.submission.id %}"
         hx-post="{% url 'apply:projects:report_add' pk=object.submission.id %}"
         hx-swap="innerHTML"
-        enctype="multipart/form-data"
     >
         {% csrf_token %}
         {% for field in form %}

@@ -123,7 +123,7 @@ class ReportEditDueDateForm(forms.ModelForm):
     def clean_end_date(self):
         end_date = self.cleaned_data["end_date"]
         if (
-            self.instance
+            self.instance.pk
             and self.instance.project.reports.filter(end_date=end_date)
             .exclude(pk=self.instance.pk)
             .exists()
