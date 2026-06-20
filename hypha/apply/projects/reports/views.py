@@ -520,7 +520,7 @@ class ReportFrequencyUpdate(View):
 
 
 @method_decorator(staff_required, name="dispatch")
-class ReportAddView(View):
+class ReportDateAddView(View):
     """
     View for manually adding an ad-hoc report date for a project.
 
