@@ -189,6 +189,175 @@ class TestReportConfig(TestCase):
         self.assertQuerySetEqual(config.past_due_reports(), [], transform=lambda x: x)
 
 
+class TestCurrentDueReport(TestCase):
+    """Tests for ReportConfig.current_due_report() — a pure read, never creates rows."""
+
+    @property
+    def today(self):
+        return timezone.now().date()
+
+    def test_returns_none_when_reporting_disabled(self):
+        config = ReportConfigFactory(disable_reporting=True)
+        assert config.current_due_report() is None
+
+    def test_returns_none_without_proposed_start(self):
+        config = ReportConfigFactory(
+            disable_reporting=False, project__proposed_start=None
+        )
+        assert config.current_due_report() is None
+
+    def test_returns_none_when_no_pending_reports_exist(self):
+        config = ReportConfigFactory(disable_reporting=False)
+        assert config.current_due_report() is None
+
+    def test_returns_pending_future_report(self):
+        config = ReportConfigFactory(disable_reporting=False)
+        report = ReportFactory(
+            project=config.project, end_date=self.today + relativedelta(days=1)
+        )
+        assert config.current_due_report() == report
+
+    def test_returns_earliest_when_multiple_pending(self):
+        config = ReportConfigFactory(disable_reporting=False)
+        ReportFactory(
+            project=config.project, end_date=self.today + relativedelta(days=7)
+        )
+        earlier = ReportFactory(
+            project=config.project, end_date=self.today + relativedelta(days=1)
+        )
+        assert config.current_due_report() == earlier
+
+    def test_does_not_create_reports(self):
+        config = ReportConfigFactory(disable_reporting=False)
+        config.current_due_report()
+        assert Report.objects.count() == 0
+
+    def test_excludes_submitted_reports(self):
+        config = ReportConfigFactory(disable_reporting=False)
+        ReportFactory(
+            project=config.project,
+            is_submitted=True,
+            end_date=self.today + relativedelta(days=1),
+        )
+        assert config.current_due_report() is None
+
+    def test_excludes_skipped_reports(self):
+        config = ReportConfigFactory(disable_reporting=False)
+        ReportFactory(
+            project=config.project,
+            skipped=True,
+            end_date=self.today + relativedelta(days=1),
+        )
+        assert config.current_due_report() is None
+
+
+class TestFutureDueReports(TestCase):
+    """Tests for ReportConfig.future_due_reports() — returns all pending future reports."""
+
+    @property
+    def today(self):
+        return timezone.now().date()
+
+    def test_returns_pending_future_report(self):
+        config = ReportConfigFactory()
+        report = ReportFactory(
+            project=config.project, end_date=self.today + relativedelta(days=1)
+        )
+        self.assertQuerySetEqual(
+            config.future_due_reports(), [report], transform=lambda x: x
+        )
+
+    def test_includes_report_due_today(self):
+        config = ReportConfigFactory()
+        report = ReportFactory(project=config.project, end_date=self.today)
+        self.assertQuerySetEqual(
+            config.future_due_reports(), [report], transform=lambda x: x
+        )
+
+    def test_excludes_past_due_reports(self):
+        config = ReportConfigFactory()
+        ReportFactory(
+            project=config.project, end_date=self.today - relativedelta(days=1)
+        )
+        self.assertQuerySetEqual(config.future_due_reports(), [], transform=lambda x: x)
+
+    def test_excludes_submitted_reports(self):
+        config = ReportConfigFactory()
+        ReportFactory(
+            project=config.project,
+            is_submitted=True,
+            end_date=self.today + relativedelta(days=1),
+        )
+        self.assertQuerySetEqual(config.future_due_reports(), [], transform=lambda x: x)
+
+    def test_excludes_skipped_reports(self):
+        config = ReportConfigFactory()
+        ReportFactory(
+            project=config.project,
+            skipped=True,
+            end_date=self.today + relativedelta(days=1),
+        )
+        self.assertQuerySetEqual(config.future_due_reports(), [], transform=lambda x: x)
+
+    def test_ordered_by_end_date_ascending(self):
+        config = ReportConfigFactory()
+        later = ReportFactory(
+            project=config.project, end_date=self.today + relativedelta(days=7)
+        )
+        earlier = ReportFactory(
+            project=config.project, end_date=self.today + relativedelta(days=1)
+        )
+        self.assertQuerySetEqual(
+            config.future_due_reports(), [earlier, later], transform=lambda x: x
+        )
+
+    def test_returns_empty_queryset_when_none(self):
+        config = ReportConfigFactory()
+        self.assertQuerySetEqual(config.future_due_reports(), [], transform=lambda x: x)
+
+    def test_scoped_to_project(self):
+        config = ReportConfigFactory()
+        ReportFactory(end_date=self.today + relativedelta(days=1))  # different project
+        self.assertQuerySetEqual(config.future_due_reports(), [], transform=lambda x: x)
+
+
+class TestEnsureDueReport(TestCase):
+    """Tests for ReportConfig.ensure_due_report() — finds or creates the next report row."""
+
+    @property
+    def today(self):
+        return timezone.now().date()
+
+    def test_returns_none_when_reporting_disabled(self):
+        config = ReportConfigFactory(disable_reporting=True)
+        assert config.ensure_due_report() is None
+
+    def test_returns_none_without_proposed_start(self):
+        config = ReportConfigFactory(
+            disable_reporting=False, project__proposed_start=None
+        )
+        assert config.ensure_due_report() is None
+
+    def test_returns_existing_pending_report(self):
+        config = ReportConfigFactory(disable_reporting=False)
+        existing = ReportFactory(
+            project=config.project, end_date=self.today + relativedelta(days=1)
+        )
+        assert config.ensure_due_report() == existing
+        assert Report.objects.filter(project=config.project).count() == 1
+
+    def test_is_idempotent(self):
+        config = ReportConfigFactory(disable_reporting=False)
+        config.ensure_due_report()
+        config.ensure_due_report()
+        assert Report.objects.filter(project=config.project).count() == 1
+
+    def test_returns_none_for_one_time_config_after_submission(self):
+        config = ReportConfigFactory(disable_reporting=False, does_not_repeat=True)
+        ReportFactory(project=config.project, is_submitted=True)
+        assert config.ensure_due_report() is None
+
+
 class TestReport(TestCase):
     """Tests for the Report model class."""
 
