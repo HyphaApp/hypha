@@ -14,7 +14,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -584,6 +584,9 @@ class ReportEditDueDateView(View):
             "update_report_config", self.request.user, self.report.project
         ):
             raise PermissionDenied(self.permission_denied_message)
+        # A submitted report's period is fixed; its due date can't be changed.
+        if self.report.current:
+            raise Http404(_("A submitted report's due date cannot be edited."))
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):

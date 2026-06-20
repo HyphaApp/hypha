@@ -772,6 +772,20 @@ class TestReportEditDueDateView(BaseViewTestCase):
         report_a.refresh_from_db()
         assert report_a.end_date == today
 
+    def test_submitted_report_cannot_be_edited(self):
+        today = timezone.now().date()
+        report = ReportFactory(
+            project__status=INVOICING_AND_REPORTING,
+            is_submitted=True,
+            end_date=today,
+        )
+        response = self.post_page(
+            report, {"end_date": (today + relativedelta(days=7)).isoformat()}
+        )
+        assert response.status_code == 404
+        report.refresh_from_db()
+        assert report.end_date == today
+
     def test_applicant_cannot_access(self):
         report = ReportFactory(project__status=INVOICING_AND_REPORTING)
         self.client.force_login(ApplicantFactory())
