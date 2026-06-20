@@ -176,6 +176,10 @@ SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list(
     "SUBMISSIONS_TABLE_EXCLUDED_FIELDS", ["organization_name"]
 )
 
+# Columns/filters to exclude from the project tables.
+# Possible values are: project_fund, project_lead, project_status, reporting
+PROJECTS_TABLE_EXCLUDED_FIELDS = env.list("PROJECTS_TABLE_EXCLUDED_FIELDS", [])
+
 # No of co-applicants can be added to a submission (default 10)
 SUBMISSIONS_COAPPLICANT_INVITES_LIMIT = env.int(
     "SUBMISSIONS_COAPPLICANT_INVITES_LIMIT", 10

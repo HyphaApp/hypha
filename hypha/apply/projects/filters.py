@@ -70,6 +70,18 @@ class ProjectListFilter(filters.FilterSet):
         fields = ["project_status", "project_lead", "project_fund"]
         model = Project
 
+    def __init__(self, *args, exclude=None, **kwargs):
+        if exclude is None:
+            exclude = []
+
+        super().__init__(*args, **kwargs)
+
+        self.filters = {
+            field: filter
+            for field, filter in self.filters.items()
+            if field not in exclude
+        }
+
     def filter_reporting(self, queryset, name, value):
         if value == "1":
             return queryset.filter(outstanding_reports__gt=0)

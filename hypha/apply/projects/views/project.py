@@ -2284,3 +2284,14 @@ class ProjectListView(SingleTableMixin, FilterView):
     queryset = Project.objects.for_table()
     table_class = ProjectsListTable
     template_name = "application_projects/project_list.html"
+
+    excluded_fields = settings.PROJECTS_TABLE_EXCLUDED_FIELDS
+
+    def get_filterset_kwargs(self, filterset_class, **kwargs):
+        new_kwargs = super().get_filterset_kwargs(filterset_class)
+        new_kwargs["exclude"] = self.excluded_fields
+        new_kwargs.update(kwargs)
+        return new_kwargs
+
+    def get_table_kwargs(self):
+        return {"exclude": self.excluded_fields}
