@@ -326,6 +326,14 @@ class ReportConfig(models.Model):
     def past_due_reports(self):
         return self.project.reports.to_do()
 
+    def future_due_reports(self):
+        today = timezone.now().date()
+        return self.project.reports.filter(
+            current__isnull=True,
+            skipped=False,
+            end_date__gte=today,
+        ).order_by("end_date")
+
     def last_report(self):
         today = timezone.now().date()
         # Get the most recent report that was either:

@@ -1,6 +1,6 @@
 {% load i18n heroicons %}
 <li class="list-row @container">
-    <p class="text-sm font-semibold">
+    <p class="text-sm{% if report.can_submit %} font-semibold{% endif %}">
         <relative-time datetime="{{ report.end_date|date:'c' }}">{{ report.end_date }}</relative-time>
         {% if request.user.is_apply_staff %}
             <a
