@@ -564,8 +564,7 @@ class ReportDateAddView(View):
 
 
 @method_decorator(staff_required, name="dispatch")
-class ReportEditDueDateView(SingleObjectMixin, View):
-    model = Report
+class ReportEditDueDateView(View):
     form_class = ReportEditDueDateForm
     template_name = "reports/modals/edit_report_due_date.html"
     permission_denied_message = _(
