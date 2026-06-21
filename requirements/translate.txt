@@ -1318,9 +1318,9 @@ srsly==2.5.3 \
     #   spacy
     #   thinc
     #   weasel
-stanza==1.10.1 \
-    --hash=sha256:d0ebc22c7e7a201077e0ed88d2450e654acadb4ea0d8584d5a5eb2ae1e65c060 \
-    --hash=sha256:f1b283021323ef9273fb1a751a194c0d568e373a2a11b933e2f4b600322406b2
+stanza==1.12.2 \
+    --hash=sha256:b49370eb545054923520189af78510e2d9fedca423b8fe86958edf6f47b7be97 \
+    --hash=sha256:ff59f7e4c09e18c1711e27aa7987607790139496cbd2906d2499b062d324c390
     # via argostranslate
 sympy==1.14.0 \
     --hash=sha256:d3d3fe8df1e5a0b42f0e7bdf50541697dbe7d23746e894990c030e2b05e72517 \
