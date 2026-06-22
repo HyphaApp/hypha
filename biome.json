@@ -13,7 +13,8 @@
       "**/javascript/esm/**",
       "**/javascript/vendor/**",
       "public/**",
-      "site.webmanifest"
+      "site.webmanifest",
+      "**/settings.local.json"
     ]
   },
   "formatter": {
