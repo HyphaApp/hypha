@@ -1,5 +1,5 @@
 {% load i18n %}
-<c-modal.header>{% trans "Manage Invoice Tags" %}</c-modal.header>
+<c-modal.header>{% trans "Update tags" %}</c-modal.header>
 
 <div class="p-4">
     <form
@@ -7,19 +7,7 @@
         hx-swap="innerHTML"
     >
         {% csrf_token %}
-        {% if form.tags.field.queryset.exists %}
-            <fieldset>
-                <legend class="mb-2 label">{% trans "Select tags to apply to this invoice" %}</legend>
-                {% for checkbox in form.tags %}
-                    <label class="gap-3 justify-start cursor-pointer label">
-                        {{ checkbox.tag }}
-                        <span class="label-text">{{ checkbox.choice_label }}</span>
-                    </label>
-                {% endfor %}
-            </fieldset>
-        {% else %}
-            <p class="text-base-content/70">{% trans "No invoice tags have been configured yet. Add tags in the Wagtail admin under Projects > Invoice Tags." %}</p>
-        {% endif %}
+        {% include "forms/includes/field.html" with field=form.tags %}
 
         <div class="mt-4 sm:flex-row-reverse card-actions">
             <button type="submit" class="w-full sm:w-auto btn btn-primary">
