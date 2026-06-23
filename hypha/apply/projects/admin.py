@@ -15,6 +15,7 @@ from .admin_views import (
 from .models import (
     ContractDocumentCategory,
     DocumentCategory,
+    InvoiceTerm,
     ProjectForm,
     ProjectReportForm,
     ProjectSettings,
@@ -95,12 +96,20 @@ class ProjectSettingsAdmin(SettingModelAdmin):
     model = ProjectSettings
 
 
+class InvoiceTermAdmin(ModelAdmin):
+    model = InvoiceTerm
+    menu_label = _("Invoice terms")
+    menu_icon = "tag"
+    list_display = ("name",)
+
+
 class ProjectAdminGroup(ModelAdminGroup):
     menu_label = _("Projects")
     menu_icon = str(AdminIcon.PROJECT)
     items = (
         ContractDocumentCategoryAdmin,
         DocumentCategoryAdmin,
+        InvoiceTermAdmin,
         ProjectFormAdmin,
         ProjectReportFormAdmin,
         ProjectSOWFormAdmin,

@@ -7,6 +7,7 @@ from .payment import (
     InvoiceListView,
     InvoicePrivateMedia,
     InvoiceView,
+    TagInvoiceView,
 )
 from .project import (
     AdminProjectDetailView,
@@ -98,4 +99,5 @@ __all__ = [
     "EditInvoiceView",
     "DeleteInvoiceView",
     "InvoicePrivateMedia",
+    "TagInvoiceView",
 ]

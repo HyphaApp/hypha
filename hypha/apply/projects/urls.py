@@ -31,6 +31,7 @@ from .views import (
     SendForApprovalView,
     SkipPAFApprovalProcessView,
     SubmitContractDocumentsView,
+    TagInvoiceView,
     UpdateAssignApproversView,
     UpdateLeadView,
     UpdatePAFApproversView,
@@ -246,6 +247,11 @@ urlpatterns = [
                                 "actions/",
                                 partial_get_invoice_detail_actions,
                                 name="partial-invoice-detail-actions",
+                            ),
+                            path(
+                                "terms/",
+                                TagInvoiceView.as_view(),
+                                name="invoice-terms",
                             ),
                             path(
                                 "documents/invoice/",

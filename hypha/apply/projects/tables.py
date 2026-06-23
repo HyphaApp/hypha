@@ -135,6 +135,7 @@ class FinanceInvoiceTable(BaseInvoiceTable):
 
 class AdminInvoiceListTable(BaseInvoiceTable):
     project = tables.Column(verbose_name=_("Project Name"))
+    terms = tables.Column(verbose_name=_("Terms"), orderable=False, empty_values=())
     selected = LabeledCheckboxColumn(
         accessor=A("pk"),
         attrs={
@@ -154,6 +155,7 @@ class AdminInvoiceListTable(BaseInvoiceTable):
             "status",
             "requested_at",
             "project",
+            "terms",
         ]
         model = Invoice
         orderable = True
@@ -167,6 +169,19 @@ class AdminInvoiceListTable(BaseInvoiceTable):
 
     def render_project(self, record):
         return get_project_title(record.project)
+
+    def render_terms(self, record):
+        terms = record.terms.all()
+        if not terms:
+            return mark_safe("<span class='text-base-content/40'>—</span>")
+        badges = "".join(
+            format_html(
+                "<span class='badge badge-soft badge-neutral whitespace-nowrap'>{}</span>",
+                term.name,
+            )
+            for term in terms
+        )
+        return mark_safe(f"<div class='flex flex-wrap gap-1'>{badges}</div>")
 
 
 class BaseProjectsTable(tables.Table):
