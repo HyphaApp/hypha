@@ -8,6 +8,7 @@ from django.forms.widgets import RadioSelect
 from django.utils.translation import gettext_lazy as _
 from django_file_form.forms import FileFormMixin
 
+from hypha.apply.funds.widgets import MultiCheckboxesWidget
 from hypha.apply.stream_forms.fields import MultiFileField, SingleFileField
 
 from ..models.payment import (
@@ -100,7 +101,7 @@ class InvoiceBaseForm(forms.ModelForm):
         ]
         model = Invoice
         widgets = {
-            "tags": forms.CheckboxSelectMultiple,
+            "tags": MultiCheckboxesWidget,
         }
 
     def __init__(self, user=None, *args, **kwargs):
@@ -239,7 +240,7 @@ class BatchUpdateInvoiceStatusForm(forms.Form):
 class InvoiceTagsForm(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(
         queryset=InvoiceTag.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
+        widget=MultiCheckboxesWidget,
         required=False,
         label=_("Tags"),
     )
