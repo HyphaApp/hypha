@@ -49,6 +49,11 @@
                     <p>
                         <b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}
                     </p>
+                    <p
+                        class="lg:col-span-2"
+                        hx-get="{% url 'apply:projects:partial-invoice-tags' pk=object.project.pk invoice_pk=object.pk %}"
+                        hx-trigger="load, invoicesUpdated from:body"
+                    ></p>
                 </div>
             </section>
 
