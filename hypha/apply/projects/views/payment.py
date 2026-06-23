@@ -629,7 +629,7 @@ class TagInvoiceView(InvoiceAccessMixin, View):
                     "HX-Trigger": json.dumps(
                         {
                             "invoicesUpdated": None,
-                            "showMessage": _("Invoice terms updated."),
+                            "showMessage": _("Invoice tags updated."),
                         }
                     )
                 },
