@@ -22,6 +22,7 @@ from ..models.payment import (
     RESUBMITTED,
     SUBMITTED,
     Invoice,
+    InvoiceTerm,
     SupportingDocument,
     invoice_status_user_choices,
 )
@@ -226,3 +227,16 @@ class BatchUpdateInvoiceStatusForm(forms.Form):
         value = self.cleaned_data["invoices"]
         invoice_ids = [int(invoice) for invoice in value.split(",")]
         return Invoice.objects.filter(id__in=invoice_ids)
+
+
+class InvoiceTermsForm(forms.ModelForm):
+    terms = forms.ModelMultipleChoiceField(
+        queryset=InvoiceTerm.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label=_("Terms"),
+    )
+
+    class Meta:
+        model = Invoice
+        fields = ["terms"]
