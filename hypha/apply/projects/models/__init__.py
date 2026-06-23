@@ -1,4 +1,4 @@
-from .payment import Invoice, InvoiceTerm, SupportingDocument
+from .payment import Invoice, InvoiceTag, SupportingDocument
 from .project import (
     Contract,
     ContractDocumentCategory,
@@ -28,6 +28,6 @@ __all__ = [
     "DocumentCategory",
     "ContractDocumentCategory",
     "Invoice",
-    "InvoiceTerm",
+    "InvoiceTag",
     "SupportingDocument",
 ]

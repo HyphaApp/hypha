@@ -22,7 +22,7 @@ from ..models.payment import (
     RESUBMITTED,
     SUBMITTED,
     Invoice,
-    InvoiceTerm,
+    InvoiceTag,
     SupportingDocument,
     invoice_status_user_choices,
 )
@@ -96,17 +96,17 @@ class InvoiceBaseForm(forms.ModelForm):
             "invoice_date",
             "document",
             "message_for_pm",
-            "terms",
+            "tags",
         ]
         model = Invoice
         widgets = {
-            "terms": forms.CheckboxSelectMultiple,
+            "tags": forms.CheckboxSelectMultiple,
         }
 
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.initial["message_for_pm"] = ""
-        self.fields["terms"].required = False
+        self.fields["tags"].required = False
 
 
 class CreateInvoiceForm(FileFormMixin, InvoiceBaseForm):
@@ -129,7 +129,7 @@ class CreateInvoiceForm(FileFormMixin, InvoiceBaseForm):
         "document",
         "supporting_documents",
         "message_for_pm",
-        "terms",
+        "tags",
     ]
 
     def save(self, commit=True):
@@ -156,7 +156,7 @@ class EditInvoiceForm(FileFormMixin, InvoiceBaseForm):
         "document",
         "supporting_documents",
         "message_for_pm",
-        "terms",
+        "tags",
     ]
 
     @transaction.atomic
@@ -236,14 +236,14 @@ class BatchUpdateInvoiceStatusForm(forms.Form):
         return Invoice.objects.filter(id__in=invoice_ids)
 
 
-class InvoiceTermsForm(forms.ModelForm):
-    terms = forms.ModelMultipleChoiceField(
-        queryset=InvoiceTerm.objects.all(),
+class InvoiceTagsForm(forms.ModelForm):
+    tags = forms.ModelMultipleChoiceField(
+        queryset=InvoiceTag.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=False,
-        label=_("Terms"),
+        label=_("Tags"),
     )
 
     class Meta:
         model = Invoice
-        fields = ["terms"]
+        fields = ["tags"]

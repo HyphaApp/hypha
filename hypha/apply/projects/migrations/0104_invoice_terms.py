@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="InvoiceTerm",
+            name="InvoiceTag",
             fields=[
                 (
                     "id",
@@ -24,19 +24,19 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=100, unique=True)),
             ],
             options={
-                "verbose_name": "invoice term",
-                "verbose_name_plural": "invoice terms",
+                "verbose_name": "invoice tag",
+                "verbose_name_plural": "invoice tags",
                 "ordering": ["name"],
             },
         ),
         migrations.AddField(
             model_name="invoice",
-            name="terms",
+            name="tags",
             field=models.ManyToManyField(
                 blank=True,
                 related_name="invoices",
-                to="application_projects.invoiceterm",
-                verbose_name="terms",
+                to="application_projects.invoicetag",
+                verbose_name="tags",
             ),
         ),
     ]

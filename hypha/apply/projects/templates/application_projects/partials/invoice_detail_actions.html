@@ -47,11 +47,11 @@
         </a>
     {% endif %}
 
-    <!-- Terms -->
+    <!-- Tags -->
     {% if user.is_apply_staff or user.is_finance %}
         <button
             class="btn btn-secondary btn-outline btn-block"
-            hx-get="{% url 'apply:projects:invoice-terms' pk=object.project.pk invoice_pk=object.pk %}"
+            hx-get="{% url 'apply:projects:invoice-tags' pk=object.project.pk invoice_pk=object.pk %}"
             hx-target="#htmx-modal"
         >
             {% heroicon_micro "tag" aria_hidden=true class="opacity-80 size-4" %}

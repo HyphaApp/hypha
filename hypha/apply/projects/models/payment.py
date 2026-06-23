@@ -13,12 +13,12 @@ from viewflow.fsm import State
 from hypha.apply.utils.storage import PrivateStorage
 
 
-class InvoiceTerm(models.Model):
+class InvoiceTag(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     class Meta:
-        verbose_name = _("invoice term")
-        verbose_name_plural = _("invoice terms")
+        verbose_name = _("invoice tag")
+        verbose_name_plural = _("invoice tags")
         ordering = ["name"]
 
     def __str__(self):
@@ -151,11 +151,11 @@ class Invoice(models.Model):
     )
     status_field = State(default=SUBMITTED, states=INVOICE_STATUS_CHOICES)
     requested_at = models.DateTimeField(auto_now_add=True)
-    terms = models.ManyToManyField(
-        InvoiceTerm,
+    tags = models.ManyToManyField(
+        InvoiceTag,
         blank=True,
         related_name="invoices",
-        verbose_name=_("terms"),
+        verbose_name=_("tags"),
     )
     objects = InvoiceQueryset.as_manager()
 
