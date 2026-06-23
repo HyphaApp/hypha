@@ -3,6 +3,7 @@ import decimal
 import babel.numbers
 from django import template
 from django.conf import settings
+from django.db.models.fields.files import FieldFile
 from django.template.defaultfilters import stringfilter
 
 from hypha.core.navigation import get_primary_navigation_items
@@ -69,3 +70,9 @@ def truncatechars_middle(value, arg):
 @register.simple_tag
 def primary_navigation_items(request):
     return get_primary_navigation_items(request)
+
+
+@register.simple_tag
+def does_file_exist(file: FieldFile) -> bool:
+    """Check whether a file in a FieldFile actually exists"""
+    return bool(file.name) and file.storage.exists(file.name)

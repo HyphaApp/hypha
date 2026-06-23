@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n humanize invoice_tools heroicons apply_tags project_tags %}
+{% load i18n humanize invoice_tools heroicons apply_tags %}
 
 {% block title %}{% trans "Invoice" %}: {{ object.invoice_number }} - {{ object.project.title }}{% endblock %}
 
@@ -68,7 +68,7 @@
                 {% does_file_exist object.document as invoice_file_exists %}
                 <div class="card-body">
                     <h2 class="card-title">{% trans "Invoice" %}</h2>
-                    <p>
+                    <p class="max-w-md">
                         <c-card-attachment
                             href="{% url 'apply:projects:invoice-document' pk=object.project.submission.id invoice_pk=object.pk %}"
                             :filename="object.filename"

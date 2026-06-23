@@ -2,7 +2,6 @@
 {% block data_display %}
     {% if data.name %}
         <div class="w-full">
-            {% comment %} {% include "stream_forms/includes/file_field.html" with file=data %} {% endcomment %}
             <c-card-attachment
                 href="{{ data.url }}"
                 :filename="data.filename"

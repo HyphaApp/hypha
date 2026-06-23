@@ -1,7 +1,6 @@
 from django import template
 from django.conf import settings
 from django.db.models import Count
-from django.db.models.fields.files import FieldFile
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -413,9 +412,3 @@ def show_start_date(project) -> bool:
         CLOSING,
         COMPLETE,
     ]
-
-
-@register.simple_tag
-def does_file_exist(file: FieldFile) -> bool:
-    """Check whether a file in a FieldFile actually exists"""
-    return bool(file.name) and file.storage.exists(file.name)
