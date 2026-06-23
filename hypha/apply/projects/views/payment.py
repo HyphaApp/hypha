@@ -61,7 +61,7 @@ from ..forms import (
     ChangeInvoiceStatusForm,
     CreateInvoiceForm,
     EditInvoiceForm,
-    InvoiceTermsForm,
+    InvoiceTagsForm,
 )
 from ..models.payment import (
     APPROVED_BY_FINANCE,
@@ -593,7 +593,7 @@ class InvoiceListView(SingleTableMixin, FilterView, DelegateableListView):
             super()
             .get_queryset()
             .select_related("project", "project__user")
-            .prefetch_related("terms")
+            .prefetch_related("tags")
         )
 
     def get_table_class(self):
@@ -604,7 +604,7 @@ class InvoiceListView(SingleTableMixin, FilterView, DelegateableListView):
 
 @method_decorator(staff_or_finance_required, name="dispatch")
 class TagInvoiceView(InvoiceAccessMixin, View):
-    form_class = InvoiceTermsForm
+    form_class = InvoiceTagsForm
     template_name = "application_projects/modals/invoice_tag.html"
 
     def dispatch(self, request, *args, **kwargs):

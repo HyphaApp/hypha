@@ -1,16 +1,16 @@
 {% load i18n %}
-<c-modal.header>{% trans "Manage Invoice Terms" %}</c-modal.header>
+<c-modal.header>{% trans "Manage Invoice Tags" %}</c-modal.header>
 
 <div class="p-4">
     <form
-        hx-post="{% url 'apply:projects:invoice-terms' pk=object.project.pk invoice_pk=object.pk %}"
+        hx-post="{% url 'apply:projects:invoice-tags' pk=object.project.pk invoice_pk=object.pk %}"
         hx-swap="innerHTML"
     >
         {% csrf_token %}
-        {% if form.terms.field.queryset.exists %}
+        {% if form.tags.field.queryset.exists %}
             <fieldset>
-                <legend class="mb-2 label">{% trans "Select terms to apply to this invoice" %}</legend>
-                {% for checkbox in form.terms %}
+                <legend class="mb-2 label">{% trans "Select tags to apply to this invoice" %}</legend>
+                {% for checkbox in form.tags %}
                     <label class="gap-3 justify-start cursor-pointer label">
                         {{ checkbox.tag }}
                         <span class="label-text">{{ checkbox.choice_label }}</span>
@@ -18,7 +18,7 @@
                 {% endfor %}
             </fieldset>
         {% else %}
-            <p class="text-base-content/70">{% trans "No invoice terms have been configured yet. Add terms in the Wagtail admin under Projects > Invoice terms." %}</p>
+            <p class="text-base-content/70">{% trans "No invoice tags have been configured yet. Add tags in the Wagtail admin under Projects > Invoice Tags." %}</p>
         {% endif %}
 
         <div class="mt-4 sm:flex-row-reverse card-actions">

@@ -251,7 +251,7 @@ urlpatterns = [
                             path(
                                 "terms/",
                                 TagInvoiceView.as_view(),
-                                name="invoice-terms",
+                                name="invoice-tags",
                             ),
                             path(
                                 "documents/invoice/",
