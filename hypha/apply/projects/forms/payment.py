@@ -96,12 +96,17 @@ class InvoiceBaseForm(forms.ModelForm):
             "invoice_date",
             "document",
             "message_for_pm",
+            "terms",
         ]
         model = Invoice
+        widgets = {
+            "terms": forms.CheckboxSelectMultiple,
+        }
 
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.initial["message_for_pm"] = ""
+        self.fields["terms"].required = False
 
 
 class CreateInvoiceForm(FileFormMixin, InvoiceBaseForm):
@@ -124,6 +129,7 @@ class CreateInvoiceForm(FileFormMixin, InvoiceBaseForm):
         "document",
         "supporting_documents",
         "message_for_pm",
+        "terms",
     ]
 
     def save(self, commit=True):
@@ -150,6 +156,7 @@ class EditInvoiceForm(FileFormMixin, InvoiceBaseForm):
         "document",
         "supporting_documents",
         "message_for_pm",
+        "terms",
     ]
 
     @transaction.atomic
