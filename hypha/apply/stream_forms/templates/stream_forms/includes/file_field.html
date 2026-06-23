@@ -5,7 +5,7 @@
        href="{{ file.url }}"
        target="_blank"
        rel="noopener noreferrer"
-       title="{% blocktrans with filename=file.filename %}View file - {{ filename }}{% endblocktrans %}"
+       title="{% blocktrans with filename=file.filename %}View file - file_field {{ filename }}{% endblocktrans %}"
     >
         <span class="text-sm truncate">
             {% heroicon_mini "document-text" class="inline align-text-bottom" aria_hidden=true %}

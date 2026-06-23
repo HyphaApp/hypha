@@ -2,7 +2,13 @@
 {% block data_display %}
     {% if data.name %}
         <div class="w-full">
-            {% include "stream_forms/includes/file_field.html" with file=data %}
+            {% comment %} {% include "stream_forms/includes/file_field.html" with file=data %} {% endcomment %}
+            <c-card-attachment
+                href="{{ data.url }}"
+                :filename="data.filename"
+                :exists="data.exists"
+                :modification_time="file.modification_time"
+            />
         </div>
     {% else %}
         {{ block.super }}

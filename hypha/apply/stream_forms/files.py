@@ -78,6 +78,8 @@ class StreamFieldFile(File):
 
     @property
     def size(self):
+        if not self.exists:
+            return 0
         if not self._committed:
             return self.file.size
         return self.storage.size(self.name)
