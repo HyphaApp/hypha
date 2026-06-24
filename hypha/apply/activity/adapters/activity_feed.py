@@ -65,6 +65,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.UPDATE_INVOICE_STATUS: "handle_update_invoice_status",
         MESSAGES.CREATE_INVOICE: _("Invoice added"),
         MESSAGES.SUBMIT_REPORT: _("Submitted a report"),
+        MESSAGES.DELETE_REPORT: _("deleted a report"),
         MESSAGES.SKIPPED_REPORT: "handle_skipped_report",
         MESSAGES.REPORT_FREQUENCY_CHANGED: "handle_report_frequency",
         MESSAGES.DISABLED_REPORTING: _("disabled reporting"),
@@ -112,6 +113,7 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.SUBMIT_CONTRACT_DOCUMENTS,
             MESSAGES.DELETE_INVOICE,
             MESSAGES.CREATE_INVOICE,
+            MESSAGES.DELETE_REPORT,
         ]:
             return {"visibility": APPLICANT}
 

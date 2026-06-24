@@ -123,6 +123,9 @@ class SlackAdapter(AdapterBase):
         MESSAGES.SUBMIT_REPORT: _(
             "{user} has submitted a report for <{link}|{source.title}>"
         ),
+        MESSAGES.DELETE_REPORT: _(
+            "{user} has deleted a report for <{link}|{source.title}>"
+        ),
         MESSAGES.BATCH_DELETE_SUBMISSION: "handle_batch_delete_submission",
         MESSAGES.BATCH_ANONYMIZE_SUBMISSION: "handle_batch_anonymize_submission",
         MESSAGES.STAFF_ACCOUNT_CREATED: _(

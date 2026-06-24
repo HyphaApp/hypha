@@ -14,8 +14,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views import View
@@ -34,7 +35,12 @@ from hypha.apply.users.decorators import staff_or_finance_required, staff_requir
 from hypha.apply.utils.storage import PrivateMediaView
 
 from .filters import ReportingFilter, ReportListFilter
-from .forms import ReportEditForm, ReportFrequencyForm
+from .forms import (
+    ReportAddDateForm,
+    ReportEditDueDateForm,
+    ReportEditForm,
+    ReportFrequencyForm,
+)
 from .models import Report, ReportConfig, ReportPrivateFiles
 from .tables import ReportingTable, ReportListTable
 
@@ -512,6 +518,137 @@ class ReportFrequencyUpdate(View):
                 "report_data": report_data,
             },
         )
+
+
+@method_decorator(staff_required, name="dispatch")
+class ReportDateAddView(View):
+    """
+    View for manually adding an ad-hoc report date for a project.
+
+    Allows staff to create a report for a specific past date outside the regular schedule.
+    """
+
+    form_class = ReportAddDateForm
+    template_name = "reports/modals/add_report.html"
+    permission_denied_message = _("You do not have permission to add reports.")
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, submission__id=kwargs.get("pk"))
+        if not has_object_permission(
+            "update_report_config", self.request.user, self.project
+        ):
+            raise PermissionDenied(self.permission_denied_message)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        if not request.htmx:
+            return redirect(
+                reverse(
+                    "funds:submissions:project",
+                    kwargs={"pk": self.project.submission.id},
+                )
+            )
+        form = self.form_class(project=self.project)
+        return render(
+            request,
+            self.template_name,
+            {"form": form, "object": self.project},
+        )
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, project=self.project)
+        if form.is_valid():
+            Report.objects.create(
+                project=self.project,
+                end_date=form.cleaned_data["end_date"],
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            request,
+            self.template_name,
+            {"form": form, "object": self.project},
+        )
+
+
+@method_decorator(staff_required, name="dispatch")
+class ReportEditDueDateView(View):
+    form_class = ReportEditDueDateForm
+    template_name = "reports/modals/edit_report_due_date.html"
+    permission_denied_message = _(
+        "You do not have permission to edit report due dates."
+    )
+
+    def dispatch(self, request, *args, **kwargs):
+        self.report = get_object_or_404(Report, pk=kwargs.get("pk"))
+        if not has_object_permission(
+            "update_report_config", self.request.user, self.report.project
+        ):
+            raise PermissionDenied(self.permission_denied_message)
+        # A submitted report's period is fixed; its due date can't be changed.
+        if self.report.current:
+            raise Http404(_("A submitted report's due date cannot be edited."))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        if not request.htmx:
+            return redirect(
+                reverse(
+                    "funds:submissions:project",
+                    kwargs={"pk": self.report.project.submission.id},
+                )
+            )
+        form = self.form_class(instance=self.report)
+        return render(
+            request, self.template_name, {"form": form, "report": self.report}
+        )
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, instance=self.report)
+        if form.is_valid():
+            form.save()
+            return HttpResponseClientRefresh()
+        return render(
+            request, self.template_name, {"form": form, "report": self.report}
+        )
+
+
+@method_decorator(staff_required, name="dispatch")
+class ReportDeleteView(View):
+    template_name = "reports/modals/confirm_delete.html"
+    permission_denied_message = _("You do not have permission to delete reports.")
+
+    def dispatch(self, request, *args, **kwargs):
+        self.report = get_object_or_404(Report, pk=kwargs.get("pk"))
+        if not has_object_permission(
+            "update_report_config", self.request.user, self.report.project
+        ):
+            raise PermissionDenied(self.permission_denied_message)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        if not request.htmx:
+            return redirect(
+                reverse(
+                    "funds:submissions:project",
+                    kwargs={"pk": self.report.project.submission.id},
+                )
+            )
+        return render(request, self.template_name, {"report": self.report})
+
+    def post(self, request, *args, **kwargs):
+        project_url = reverse(
+            "funds:submissions:project",
+            kwargs={"pk": self.report.project.submission.id},
+        )
+        messenger(
+            MESSAGES.DELETE_REPORT,
+            request=request,
+            user=request.user,
+            source=self.report.project,
+            related=self.report,
+        )
+        self.report.delete()
+        return HttpResponseRedirect(project_url)
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")

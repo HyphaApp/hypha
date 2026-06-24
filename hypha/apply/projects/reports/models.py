@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from django.apps import apps
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import ordinal
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Case, ExpressionWrapper, F, OuterRef, Q, Subquery, When
 from django.db.models.functions import Cast
 from django.urls import reverse
@@ -326,6 +326,14 @@ class ReportConfig(models.Model):
     def past_due_reports(self):
         return self.project.reports.to_do()
 
+    def future_due_reports(self):
+        today = timezone.now().date()
+        return self.project.reports.filter(
+            current__isnull=True,
+            skipped=False,
+            end_date__gte=today,
+        ).order_by("end_date")
+
     def last_report(self):
         today = timezone.now().date()
         # Get the most recent report that was either:
@@ -336,7 +344,15 @@ class ReportConfig(models.Model):
             Q(end_date__lt=today) | Q(skipped=True) | Q(submitted__isnull=False)
         ).first()
 
-    def current_due_report(self):
+    def ensure_due_report(self):
+        """Create the next scheduled report row if none exists yet.
+
+        Computes what date the next report should be due based on the reporting
+        schedule, then finds or creates a pending report for that date. Safe to
+        call concurrently — uses SELECT FOR UPDATE to prevent duplicate creation.
+
+        Returns the pending report, or None if no report is required.
+        """
         if self.disable_reporting:
             return None
 
@@ -377,14 +393,48 @@ class ReportConfig(models.Model):
                         today,
                     )
 
-        report, _ = self.project.reports.update_or_create(
-            project=self.project,
-            current__isnull=True,
-            skipped=False,
-            end_date__gte=today,
-            defaults={"end_date": next_due_date},
-        )
+        with transaction.atomic():
+            # Lock this ReportConfig row so concurrent calls wait rather than
+            # both finding no report and each creating one.
+            ReportConfig.objects.select_for_update().get(pk=self.pk)
+
+            due_reports = self.project.reports.filter(
+                current__isnull=True,
+                skipped=False,
+                end_date__gte=today,
+            )
+
+            report = due_reports.order_by("end_date").first()
+            if report is None:
+                report = self.project.reports.create(
+                    project=self.project,
+                    end_date=next_due_date,
+                )
+
         return report
+
+    def current_due_report(self):
+        """Return the earliest pending future report without creating one.
+
+        Use ensure_due_report() when the scheduled report row must exist
+        (e.g. on page load or in the notification command).
+        """
+        if self.disable_reporting:
+            return None
+
+        if not self.project.proposed_start:
+            return None
+
+        today = timezone.now().date()
+        return (
+            self.project.reports.filter(
+                current__isnull=True,
+                skipped=False,
+                end_date__gte=today,
+            )
+            .order_by("end_date")
+            .first()
+        )
 
     def current_report(self):
         """This is different from current_due_report as it will return a completed report

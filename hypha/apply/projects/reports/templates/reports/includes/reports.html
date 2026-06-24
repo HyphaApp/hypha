@@ -28,6 +28,15 @@
                         {% trans "Update" %}
                     {% endif %}
                 </a>
+                &middot;
+                <a
+                    class="link"
+                    href="{% url 'apply:projects:report_add' pk=object.submission.id %}"
+                    hx-get="{% url 'apply:projects:report_add' pk=object.submission.id %}"
+                    hx-target="#htmx-modal"
+                >
+                    {% trans "Add" %}
+                </a>
             {% endif %}
         </div>
     </header>
@@ -38,11 +47,9 @@
                 {% for report in object.report_config.past_due_reports %}
                     {% include "reports/includes/report_line.html" with report=report %}
                 {% endfor %}
-                {% with next_report=object.report_config.current_due_report %}
-                    {% if next_report %}
-                        {% include "reports/includes/report_line.html" with report=next_report current=True %}
-                    {% endif %}
-                {% endwith %}
+                {% for report in object.report_config.future_due_reports %}
+                    {% include "reports/includes/report_line.html" with report=report %}
+                {% endfor %}
             </ul>
         {% endif %}
 

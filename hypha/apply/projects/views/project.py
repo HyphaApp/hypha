@@ -1649,6 +1649,8 @@ class BaseProjectDetailView(ReportingMixin, ProjectBySubmissionIdMixin, DetailVi
         context["contracting_documents_configured"] = (
             True if ContractDocumentCategory.objects.count() else False
         )
+        if hasattr(self.object, "report_config"):
+            self.object.report_config.ensure_due_report()
         return context
 
 

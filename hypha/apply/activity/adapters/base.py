@@ -33,6 +33,7 @@ neat_related = {
     MESSAGES.DELETE_INVOICE: "invoice",
     MESSAGES.UPDATE_INVOICE: "invoice",
     MESSAGES.SUBMIT_REPORT: "report",
+    MESSAGES.DELETE_REPORT: "report",
     MESSAGES.SKIPPED_REPORT: "report",
     MESSAGES.REPORT_FREQUENCY_CHANGED: "config",
     MESSAGES.REPORT_NOTIFY: "report",

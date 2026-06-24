@@ -46,7 +46,7 @@ class Command(BaseCommand):
 
             due_date = today + relativedelta(days=delta)
             for project in Project.objects.in_progress():
-                next_report = project.report_config.current_due_report()
+                next_report = project.report_config.ensure_due_report()
                 if not next_report:
                     continue
 
