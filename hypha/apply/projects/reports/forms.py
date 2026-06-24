@@ -98,7 +98,7 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
 
 class ReportAddDateForm(forms.Form):
     end_date = forms.DateField(
-        label=_("Report end date"),
+        label=_("Report due date"),
         widget=forms.DateInput(attrs={"type": "date"}),
     )
 
