@@ -1,7 +1,7 @@
 {% extends "base-apply.html" %}
 
 {% load render_table from django_tables2 %}
-{% load i18n static %}
+{% load i18n static heroicons %}
 
 {% block title %}{% trans "Invoices" %}{% endblock %}
 
@@ -18,6 +18,20 @@
     <div class="my-4">
         {% if table %}
             {% trans "invoices" as search_placeholder %}
+            <div class="flex justify-end mb-2">
+                {% if can_export_invoices %}
+                    <a
+                        class="btn btn-square"
+                        hx-get="{% url 'apply:projects:invoice-export-status' %}"
+                        hx-swap="outerHTML"
+                        hx-target="this"
+                        hx-push-url="false"
+                        hx-trigger="load"
+                    >
+                        {% heroicon_mini "arrow-down-tray" %}
+                    </a>
+                {% endif %}
+            </div>
             {% include "funds/includes/table_filter_and_search.html" with search_term=search_term use_search=True invoice_batch_actions=True search_placeholder=search_placeholder %}
             {% render_table table %}
         {% else %}
