@@ -16,10 +16,12 @@
     {% if attachments %}
         <div class="flex flex-wrap gap-2 pb-2 mt-4 max-w-xl min-w-40">
             {% for attachment in attachments %}
+                {% does_file_exist attachment.file as attachment_exists %}
                 <c-card-attachment
                     :href="attachment.get_absolute_url"
                     :title="attachment.filename"
                     :filename="attachment.filename"
+                    :exists="attachment_exists"
                 />
             {% endfor %}
         </div>
