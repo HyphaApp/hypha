@@ -49,6 +49,19 @@
                 </label>
             </form>
         {% endif %}
+
+        {% if invoice_export %}
+            <a
+                class="btn btn-square"
+                hx-get="{% url 'apply:projects:invoice-export-status' %}"
+                hx-swap="outerHTML"
+                hx-target="this"
+                hx-push-url="false"
+                hx-trigger="load"
+            >
+                {% heroicon_mini "arrow-down-tray" %}
+            </a>
+        {% endif %}
     </div>
 {% endif %}
 
