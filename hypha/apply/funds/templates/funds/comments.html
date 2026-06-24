@@ -103,7 +103,7 @@
             class="comments"
             id="comment-feed"
             hx-get="{% url 'activity:partial-comments' object.id %}"
-            hx-trigger="load, intersect once"
+            hx-trigger="load"
         >
             <p>{% trans "Loading…" %}</p>
         </section>
