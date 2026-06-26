@@ -99,6 +99,8 @@ PROJECT_PUBLIC_STATUSES = [
     (COMPLETE, _("Complete")),
 ]
 
+CURRENCY_CODE_REGEX = r"^[A-Z]{3}$"
+
 
 class ProjectQuerySet(models.QuerySet):
     def active(self):

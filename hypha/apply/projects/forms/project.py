@@ -1,9 +1,14 @@
 from datetime import date
+from decimal import Decimal, InvalidOperation
 
 from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.validators import RegexValidator
 from django.db.models import Count, Q
+from django.forms import NumberInput
+from django.utils.formats import number_format
+from django.utils.html import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_file_form.forms import FileFormMixin
@@ -21,6 +26,7 @@ from hypha.apply.users.roles import STAFF_GROUP_NAME
 from ..models.project import (
     CLOSING,
     COMPLETE,
+    CURRENCY_CODE_REGEX,
     DRAFT,
     INVOICING_AND_REPORTING,
     PAF_STATUS_CHOICES,
@@ -36,6 +42,19 @@ from ..models.project import (
 
 User = get_user_model()
 
+TOP_CURRENCY_CODES = [
+    "USD",
+    "EUR",
+    "CNY",
+    "INR",
+    "JPY",
+    "RUB",
+    "IDR",
+    "BRL",
+    "MXN",
+    "NGN",
+]
+
 
 def filter_request_choices(choices):
     return [(k, v) for k, v in PROJECT_STATUS_CHOICES if k in choices]
@@ -50,6 +69,74 @@ def get_latest_project_paf_approval_via_roles(project, roles):
     for role in roles:
         paf_approvals = paf_approvals.filter(paf_reviewer_role__user_roles__id=role.id)
     return paf_approvals.first()
+
+
+class CurrencyDatalistWidget(forms.TextInput):
+    """Renders an <input> with a <datalist> for auto-suggestions + free typing."""
+
+    def __init__(self, choices=None, attrs=None):
+        super().__init__(attrs)
+        self.choices = choices or []
+
+    def render(self, name, value, attrs=None, renderer=None):
+        # Base input HTML
+        if self.choices:
+            attrs = dict(attrs or {})
+            attrs["list"] = f"{name}_datalist"
+        input_html = super().render(name, value, attrs, renderer)
+        if not self.choices:
+            return input_html
+
+        # Datalist options
+        options_html = "".join(f'<option value="{c}">' for c in self.choices)
+        datalist_html = f'<datalist id="{name}_datalist">{options_html}</datalist>'
+
+        return mark_safe(f"{input_html}{datalist_html}")
+
+
+class CurrencyCodeField(forms.CharField):
+    def __init__(self, *args, **kwargs):
+        kwargs["max_length"] = 3
+        kwargs["required"] = False
+        kwargs["empty_value"] = None
+        super().__init__(*args, **kwargs)
+
+        self.widget = CurrencyDatalistWidget(choices=TOP_CURRENCY_CODES)
+
+        self.validators.append(
+            RegexValidator(
+                regex=CURRENCY_CODE_REGEX,
+                message="Currency must be exactly 3 uppercase letters.",
+                code="invalid",
+            )
+        )
+
+
+class TrimmedDecimalInput(NumberInput):
+    """
+    Renders Decimal values with a minimum of 2 decimal places,
+    but preserves all fractional digits if >2 are present.
+    """
+
+    localize = True
+
+    def format_value(self, value):
+        if value is None:
+            return ""
+        try:
+            s = format(Decimal(str(value)), "f")
+        except (InvalidOperation, ValueError):
+            return ""
+        if "." in s:
+            int_part, frac_part = s.split(".")
+            # 1. Remove trailing zeros
+            frac_part = frac_part.rstrip("0")
+            # 2. Pad to minimum 2 decimal places
+            if len(frac_part) < 2:
+                frac_part = frac_part.ljust(2, "0")
+            formatted = f"{int_part}.{frac_part}"
+            return number_format(formatted)
+        return number_format(f"{s}.00")
 
 
 class ApproveContractForm(forms.Form):
@@ -396,21 +483,54 @@ class UploadContractForm(FileFormMixin, forms.ModelForm):
     signed_and_approved = forms.BooleanField(
         label=_("Signed and approved"), required=False
     )
+    currency = CurrencyCodeField(required=False)
+    amount_requested = forms.DecimalField(
+        localize=True, required=False, widget=TrimmedDecimalInput()
+    )
+    amount_approved = forms.DecimalField(
+        localize=True, required=False, widget=TrimmedDecimalInput()
+    )
 
     class Meta:
-        fields = ["file", "signed_and_approved"]
+        fields = [
+            "file",
+            "signed_and_approved",
+            "currency",
+            "amount_requested",
+            "amount_approved",
+        ]
         model = Contract
 
-    def save(self, commit=True):
-        self.instance.file = self.cleaned_data.get("file")
-        return super().save(commit=True)
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Applicants cannot self-approve; never render or accept this field.
+        # NOTE: `is_applicant` is a global group flag (see users/models.py);
+        # the project-relative ownership check lives in can_upload_contract.
+        if user is None or user.is_applicant:
+            self.fields.pop("signed_and_approved")
 
 
 class StaffUploadContractForm(FileFormMixin, forms.ModelForm):
     file = SingleFileField(label=_("Contract"), required=True)
+    signed_by_applicant = forms.BooleanField(
+        label=_("Signed by Applicant"), initial=True
+    )
+    currency = CurrencyCodeField(required=False)
+    amount_requested = forms.DecimalField(
+        localize=True, required=False, widget=TrimmedDecimalInput()
+    )
+    amount_approved = forms.DecimalField(
+        localize=True, required=False, widget=TrimmedDecimalInput()
+    )
 
     class Meta:
-        fields = ["file", "signed_by_applicant"]
+        fields = [
+            "file",
+            "signed_by_applicant",
+            "currency",
+            "amount_requested",
+            "amount_approved",
+        ]
         model = Contract
 
 
