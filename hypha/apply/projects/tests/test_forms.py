@@ -1,5 +1,6 @@
 import datetime
 import json
+from decimal import Decimal
 from io import BytesIO
 
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -428,3 +429,102 @@ class TestContractUploadForm(TestCase):
         )
         self.assertTrue(form.is_valid(), form.errors)
         self.assertIsNone(form.cleaned_data.get("signed_by_applicant"))
+
+    def test_can_set_amounts_to_wide_precision_with_no_currency(self):
+        form = UploadContractForm(
+            data={
+                "amount_approved": "43.0000000000043",
+                "amount_requested": "17.0000000000000000017",
+            },
+            files={"file": self.mock_file},
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(
+            form.cleaned_data.get("amount_approved"), Decimal("43.0000000000043")
+        )
+        self.assertEqual(
+            form.cleaned_data.get("amount_requested"), Decimal("17.0000000000000000017")
+        )
+
+    def test_can_set_amounts_to_smaller_than_two_decimal_places_and_see_exactly_two_decimals(
+        self,
+    ):
+        form = UploadContractForm(
+            data={"amount_approved": "23", "amount_requested": "31.3"},
+            files={"file": self.mock_file},
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+
+        # Render fields to HTML: triggers widget.render() which calls format_value()
+        html_approved = str(form["amount_approved"])
+        html_requested = str(form["amount_requested"])
+
+        self.assertIn('value="23.00"', html_approved)
+        self.assertIn('value="31.30"', html_requested)
+
+    def test_can_set_amounts_to_larger_than_two_decimal_places_and_see_that_precision(
+        self,
+    ):
+        form = UploadContractForm(
+            data={"amount_approved": "23.2323", "amount_requested": "31.313131"},
+            files={"file": self.mock_file},
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+
+        # Render fields to HTML: triggers widget.render() which calls format_value()
+        html_approved = str(form["amount_approved"])
+        html_requested = str(form["amount_requested"])
+
+        self.assertIn('value="23.2323"', html_approved)
+        self.assertIn('value="31.313131"', html_requested)
+
+    def test_can_set_currency_to_USD_with_no_amounts(self):
+        form = UploadContractForm(
+            data={"currency": "USD"}, files={"file": self.mock_file}
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data.get("currency"), "USD")
+
+    def test_cannot_set_currency_to_two_digits(self):
+        form = UploadContractForm(
+            data={"currency": "NA"}, files={"file": self.mock_file}
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("currency", form.errors.keys())
+
+    def test_zero_amount_with_full_scale_renders_as_zero_not_scientific_notation(self):
+        # NUMERIC(38,19) returns Decimal("0.0000000000000000000"), whose
+        # str() is "0E-19" -- the widget must not emit "0E-19.00".
+        form = UploadContractForm(
+            data={
+                "amount_approved": "0.0000000000000000000",
+                "amount_requested": "0.0000000000000000000",
+            },
+            files={"file": self.mock_file},
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data["amount_approved"], Decimal("0"))
+        self.assertEqual(form.cleaned_data["amount_requested"], Decimal("0"))
+
+        html_approved = str(form["amount_approved"])
+        html_requested = str(form["amount_requested"])
+        self.assertIn('value="0.00"', html_approved)
+        self.assertIn('value="0.00"', html_requested)
+        self.assertNotIn("E", html_approved)
+        self.assertNotIn("E", html_requested)
+
+    def test_blank_amount_renders_empty_not_dot_zero(self):
+        # Blank amount on a bound (error) re-render must show empty, NOT ".00".
+        # Otherwise a resubmit silently stores 0 -> NUMERIC(38,19) -> 0E-19.
+        form = UploadContractForm(
+            data={"amount_approved": "", "amount_requested": ""},
+            files={"file": self.mock_file},
+        )
+        # file is required but amount blank is valid -> form may be invalid only
+        # due to file; in any case the bound field must not emit ".00".
+        html_approved = str(form["amount_approved"])
+        html_requested = str(form["amount_requested"])
+        self.assertIn('value=""', html_approved)
+        self.assertIn('value=""', html_requested)
+        self.assertNotIn('value=".00"', html_approved)
+        self.assertNotIn('value=".00"', html_requested)
