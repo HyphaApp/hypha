@@ -16,7 +16,6 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views import View
@@ -533,7 +532,7 @@ class ReportDateAddView(View):
     permission_denied_message = _("You do not have permission to add reports.")
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, submission__id=kwargs.get("pk"))
+        self.project = get_object_or_404(Project, pk=kwargs.get("pk"))
         if not has_object_permission(
             "update_report_config", self.request.user, self.project
         ):
@@ -542,12 +541,7 @@ class ReportDateAddView(View):
 
     def get(self, request, *args, **kwargs):
         if not request.htmx:
-            return redirect(
-                reverse(
-                    "funds:submissions:project",
-                    kwargs={"pk": self.project.submission.id},
-                )
-            )
+            return redirect(self.project.get_absolute_url())
         form = self.form_class(project=self.project)
         return render(
             request,
@@ -591,12 +585,7 @@ class ReportEditDueDateView(View):
 
     def get(self, request, *args, **kwargs):
         if not request.htmx:
-            return redirect(
-                reverse(
-                    "funds:submissions:project",
-                    kwargs={"pk": self.report.project.submission.id},
-                )
-            )
+            return redirect(self.report.project.get_absolute_url())
         form = self.form_class(instance=self.report)
         return render(
             request, self.template_name, {"form": form, "report": self.report}
@@ -627,19 +616,11 @@ class ReportDeleteView(View):
 
     def get(self, request, *args, **kwargs):
         if not request.htmx:
-            return redirect(
-                reverse(
-                    "funds:submissions:project",
-                    kwargs={"pk": self.report.project.submission.id},
-                )
-            )
+            return redirect(self.report.project.get_absolute_url())
         return render(request, self.template_name, {"report": self.report})
 
     def post(self, request, *args, **kwargs):
-        project_url = reverse(
-            "funds:submissions:project",
-            kwargs={"pk": self.report.project.submission.id},
-        )
+        project_url = self.report.project.get_absolute_url()
         messenger(
             MESSAGES.DELETE_REPORT,
             request=request,

@@ -746,9 +746,7 @@ class Contract(models.Model):
         )
 
     def get_absolute_url(self):
-        return reverse(
-            "apply:projects:contract", args=[self.project.submission_id, self.pk]
-        )
+        return reverse("apply:projects:contract", args=[self.project.pk, self.pk])
 
 
 class PacketFile(models.Model):
