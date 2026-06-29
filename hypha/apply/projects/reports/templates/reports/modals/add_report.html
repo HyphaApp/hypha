@@ -4,8 +4,8 @@
 <div class="p-4">
     <form
         method="post"
-        action="{% url 'apply:projects:report_add' pk=object.submission.id %}"
-        hx-post="{% url 'apply:projects:report_add' pk=object.submission.id %}"
+        action="{% url 'apply:projects:report_add' pk=object.pk %}"
+        hx-post="{% url 'apply:projects:report_add' pk=object.pk %}"
         hx-swap="innerHTML"
     >
         {% csrf_token %}
