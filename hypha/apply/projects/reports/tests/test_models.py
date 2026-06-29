@@ -154,6 +154,41 @@ class TestReportConfig(TestCase):
         next_report = config.current_due_report()
         assert report != next_report
 
+    def test_frequency_display_without_pending_report_monthly(self):
+        """get_frequency_display must not crash when no pending report row exists.
+
+        current_due_report() returns None in that case; the display should fall
+        back to the schedule_start anchor date.
+        """
+        config = ReportConfigFactory(
+            disable_reporting=False,
+            frequency=ReportConfig.MONTH,
+            schedule_start=self.today.replace(day=15),
+        )
+        assert config.current_due_report() is None
+        assert config.get_frequency_display() == "Once a month on the 15th"
+
+    def test_frequency_display_without_pending_report_yearly(self):
+        config = ReportConfigFactory(
+            disable_reporting=False,
+            frequency=ReportConfig.YEAR,
+            schedule_start=self.today.replace(month=3, day=15),
+        )
+        assert config.current_due_report() is None
+        assert config.get_frequency_display() == "Once a year on March 15th"
+
+    def test_frequency_display_without_pending_report_weekly(self):
+        schedule_start = self.today.replace(day=15)
+        config = ReportConfigFactory(
+            disable_reporting=False,
+            frequency=ReportConfig.WEEK,
+            schedule_start=schedule_start,
+        )
+        assert config.current_due_report() is None
+        assert config.get_frequency_display() == "Once a week on {weekday}".format(
+            weekday=schedule_start.strftime("%A")
+        )
+
     def test_past_due(self):
         """Test that past_due_reports includes overdue reports."""
         report = ReportFactory(past_due=True)

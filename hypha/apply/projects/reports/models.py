@@ -280,13 +280,24 @@ class ReportConfig(models.Model):
             )
         next_report = self.current_due_report()
 
+        # current_due_report() only returns an existing pending report row and
+        # can be None (e.g. the project hasn't started yet, or the next report
+        # row hasn't been created). Fall back to the schedule anchor date, which
+        # is what a report's end_date derives from, so the displayed schedule is
+        # still correct.
+        reference_date = (
+            next_report.end_date
+            if next_report
+            else (self.schedule_start or self.project.proposed_start)
+        )
+
         if self.frequency == self.YEAR:
             if self.schedule_start and self.schedule_start.day == 31:
                 day_of_month = _("last day")
                 month = self.schedule_start.strftime("%B")
             else:
-                day_of_month = ordinal(next_report.end_date.day)
-                month = next_report.end_date.strftime("%B")
+                day_of_month = ordinal(reference_date.day)
+                month = reference_date.strftime("%B")
             if self.occurrence == 1:
                 return _("Once a year on {month} {day}").format(
                     day=day_of_month, month=month
@@ -299,14 +310,14 @@ class ReportConfig(models.Model):
             if self.schedule_start and self.schedule_start.day == 31:
                 day_of_month = _("last day")
             else:
-                day_of_month = ordinal(next_report.end_date.day)
+                day_of_month = ordinal(reference_date.day)
             if self.occurrence == 1:
                 return _("Once a month on the {day}").format(day=day_of_month)
             return _("Every {occurrence} months on the {day}").format(
                 occurrence=self.occurrence, day=day_of_month
             )
 
-        weekday = next_report.end_date.strftime("%A")
+        weekday = reference_date.strftime("%A")
 
         if self.occurrence == 1:
             return _("Once a week on {weekday}").format(weekday=weekday)
