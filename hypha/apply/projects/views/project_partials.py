@@ -157,3 +157,13 @@ def partial_get_invoice_detail_actions(request: HttpRequest, pk: int, invoice_pk
         "application_projects/partials/invoice_detail_actions.html",
         context={"object": invoice, "user": user},
     )
+
+
+@login_required
+def partial_get_invoice_tags(request: HttpRequest, pk: int, invoice_pk: int):
+    invoice = get_object_or_404(Invoice, pk=invoice_pk)
+    return render(
+        request,
+        "application_projects/partials/invoice_tags.html",
+        context={"object": invoice},
+    )

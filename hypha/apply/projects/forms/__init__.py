@@ -3,6 +3,7 @@ from .payment import (
     ChangeInvoiceStatusForm,
     CreateInvoiceForm,
     EditInvoiceForm,
+    InvoiceTagsForm,
     SelectDocumentForm,
 )
 from .project import (
@@ -50,4 +51,5 @@ __all__ = [
     "CreateInvoiceForm",
     "ChangeInvoiceStatusForm",
     "EditInvoiceForm",
+    "InvoiceTagsForm",
 ]

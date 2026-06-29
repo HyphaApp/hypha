@@ -142,6 +142,7 @@
                             shouldSort: false,
                             allowHTML: true,
                             removeItemButton: true,
+                            placeholderValue: selectElement.dataset.placeholder || "",
                         });
                         selectElement.hasChoicesInstance = true;
                     };
@@ -149,7 +150,7 @@
 
                 const choicesElements = document.querySelectorAll(".choices__input--cloned")
                 choicesElements.forEach((choiceElement) => {
-                    const inputPlaceholder = choiceElement.getAttribute("placeholder");
+                    const inputPlaceholder = choiceElement.getAttribute("placeholder") ?? "";
                     // Get the computed min-width of the input element otherwise it reset to 1
                     const minWidth = window.getComputedStyle(choiceElement).getPropertyValue("min-width");
                     choiceElement.addEventListener("focus", () => {

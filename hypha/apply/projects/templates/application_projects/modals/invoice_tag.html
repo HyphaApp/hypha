@@ -1,0 +1,21 @@
+{% load i18n %}
+<c-modal.header>{% trans "Update tags" %}</c-modal.header>
+
+<div class="p-4">
+    <form
+        hx-post="{% url 'apply:projects:invoice-tags' pk=object.project.pk invoice_pk=object.pk %}"
+        hx-swap="innerHTML"
+    >
+        {% csrf_token %}
+        {% include "forms/includes/field.html" with field=form.tags %}
+
+        <div class="mt-4 sm:flex-row-reverse card-actions">
+            <button type="submit" class="w-full sm:w-auto btn btn-primary">
+                {% trans "Save" %}
+            </button>
+            <button type="button" class="w-full sm:w-auto btn btn-secondary btn-outline btn-soft" @click="show = false">
+                {% trans "Cancel" %}
+            </button>
+        </div>
+    </form>
+</div>

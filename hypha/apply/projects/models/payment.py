@@ -12,6 +12,19 @@ from viewflow.fsm import State
 
 from hypha.apply.utils.storage import PrivateStorage
 
+
+class InvoiceTag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        verbose_name = _("invoice tag")
+        verbose_name_plural = _("invoice tags")
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 SUBMITTED = "submitted"
 RESUBMITTED = "resubmitted"
 CHANGES_REQUESTED_BY_STAFF = "changes_requested_staff"
@@ -138,6 +151,12 @@ class Invoice(models.Model):
     )
     status_field = State(default=SUBMITTED, states=INVOICE_STATUS_CHOICES)
     requested_at = models.DateTimeField(auto_now_add=True)
+    tags = models.ManyToManyField(
+        InvoiceTag,
+        blank=True,
+        related_name="invoices",
+        verbose_name=_("tags"),
+    )
     objects = InvoiceQueryset.as_manager()
 
     wagtail_reference_index_ignore = True
