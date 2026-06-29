@@ -66,6 +66,16 @@ class ProjectListFilter(filters.FilterSet):
         label=_("Reporting"),
     )
 
+    # Maps the public exclude keys (which match the table column names) to this
+    # filterset's field names, so a single key in PROJECTS_TABLE_EXCLUDED_FIELDS
+    # hides both the table column and its matching filter. Keys without a filter
+    # (e.g. "end_date") simply have no effect here.
+    COLUMN_TO_FILTER = {
+        "fund": "project_fund",
+        "lead": "project_lead",
+        "status": "project_status",
+    }
+
     class Meta:
         fields = ["project_status", "project_lead", "project_fund"]
         model = Project
@@ -75,6 +85,8 @@ class ProjectListFilter(filters.FilterSet):
             exclude = []
 
         super().__init__(*args, **kwargs)
+
+        exclude = {self.COLUMN_TO_FILTER.get(field, field) for field in exclude}
 
         self.filters = {
             field: filter
