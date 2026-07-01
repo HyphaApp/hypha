@@ -172,7 +172,7 @@ class AdminInvoiceListTable(BaseInvoiceTable):
 class BaseProjectsTable(tables.Table):
     title = tables.LinkColumn(
         "funds:submissions:project",
-        args=[tables.utils.A("application_id")],
+        args=[tables.utils.A("submission_id"), tables.utils.A("pk")],
         attrs={
             "a": {
                 "class": "link link-hover text-h4 font-semibold break-words line-clamp-2 max-w-md"
@@ -254,7 +254,10 @@ class PAFForReviewDashboardTable(tables.Table):
     )
     title = tables.LinkColumn(
         "funds:submissions:project",
-        args=[tables.utils.A("application_id")],
+        args=[
+            tables.utils.A("project__submission_id"),
+            tables.utils.A("project__pk"),
+        ],
         orderable=False,
     )
     status = tables.Column(verbose_name=_("Status"), accessor="pk", orderable=False)

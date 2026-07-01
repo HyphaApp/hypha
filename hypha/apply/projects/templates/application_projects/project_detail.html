@@ -17,12 +17,7 @@
                 {% trans "Application" %}
             </a>
 
-            <a
-                class="tab tab-active"
-                href="{% url 'funds:submissions:project' pk=object.submission.id %}"
-            >
-                {% trans "Project" %}
-            </a>
+            {% include "funds/includes/projects_tab.html" with submission=object.submission user=user current_project=object active=True %}
 
             <a
                 class="tab [--color-base-content:var(--color-neutral-content)]"
@@ -56,7 +51,7 @@
 
                     <dl
                         class="grid grid-cols-1 @md:grid-cols-2 gap-2"
-                        hx-get='{% url "apply:projects:project_information" object.submission.id %}'
+                        hx-get='{% url "apply:projects:project_information" object.pk %}'
                         hx-trigger="informationUpdated from:body"
                     >
                         {% include "application_projects/partials/project_information.html" %}

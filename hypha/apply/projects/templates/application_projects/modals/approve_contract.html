@@ -6,6 +6,6 @@
         {% trans "Are you sure you want to accept and approve the contract for commencing the project?" %}
         {% trans "This cannot be undone." %}
     </p>
-    {% url 'apply:projects:contract_approve' pk=object.submission.id as url %}
+    {% url 'apply:projects:contract_approve' pk=object.pk as url %}
     {% include 'includes/dialog_form_base.html' with form=form value=value url=url %}
 </div>

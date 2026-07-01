@@ -5,11 +5,7 @@
 
 {% block hero %}
     <c-hero padding="pt-4">
-        {% if object.project %}
-            {% include "application_projects/includes/project_header.html" with object=object.project %}
-        {% else %}
-            {% include "funds/includes/application_header.html" %}
-        {% endif %}
+        {% include "funds/includes/application_header.html" %}
 
         <div role="tablist" class="font-medium tabs tabs-lg tabs-lift text-base-content print-hidden">
             <a
@@ -18,16 +14,8 @@
                 {% trans "Application" %}
             </a>
 
-            {% if PROJECTS_ENABLED and object.project %}
-                {% user_can_access_project object.project user as can_access_project %}
-                {% if can_access_project %}
-                    <a
-                        class="tab [--color-base-content:var(--color-neutral-content)]"
-                        href="{% url 'funds:submissions:project' pk=object.id %}"
-                    >
-                        {% trans "Project" %}
-                    </a>
-                {% endif %}
+            {% if PROJECTS_ENABLED %}
+                {% include "funds/includes/projects_tab.html" with submission=object user=user %}
             {% endif %}
 
             <a class="tab tab-active"
@@ -53,7 +41,7 @@
 {% block content %}
     <div class="my-4">
         {% if form %}
-            {% if not object.is_archive or object.project %}
+            {% if not object.is_archive or object.projects.exists %}
                 <h2 class="sr-only">{% trans "Add communication" %}</h2>
                 <div class="pb-6 mb-4 w-full border-b border-base-300">
                     <form

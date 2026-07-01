@@ -2,7 +2,7 @@ from django.urls import include, path
 from django.views.generic import RedirectView
 
 from hypha.apply.projects import urls as projects_urls
-from hypha.apply.projects.views import ProjectDetailView
+from hypha.apply.projects.views import ProjectDetailView, SubmissionProjectsView
 
 from .views import (
     RoundListView,
@@ -226,7 +226,16 @@ submission_urls = (
             include(
                 [
                     path("", SubmissionDetailView.as_view(), name="detail"),
-                    path("project/", ProjectDetailView.as_view(), name="project"),
+                    path(
+                        "project/",
+                        SubmissionProjectsView.as_view(),
+                        name="projects",
+                    ),
+                    path(
+                        "project/<int:project_pk>/",
+                        ProjectDetailView.as_view(),
+                        name="project",
+                    ),
                     path(
                         "partial/lead/",
                         partial_submission_lead,

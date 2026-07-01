@@ -679,7 +679,7 @@ class TestReportFrequencyUpdate(BaseViewTestCase):
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
-        return {"pk": instance.submission.id}
+        return {"pk": instance.pk}
 
     def test_staff_can_access(self):
         project = ProjectFactory(status=INVOICING_AND_REPORTING)
@@ -693,7 +693,7 @@ class TestReportFrequencyUpdate(BaseViewTestCase):
         self.client.force_login(ApplicantFactory())
         url = reverse(
             "funds:projects:report_frequency_update",
-            kwargs={"pk": project.submission.id},
+            kwargs={"pk": project.pk},
         )
         response = self.client.get(url)
         assert response.status_code == 403
@@ -705,7 +705,7 @@ class TestReportDateAddView(BaseViewTestCase):
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
-        return {"pk": instance.submission.id}
+        return {"pk": instance.pk}
 
     def test_staff_can_get_form(self):
         project = ProjectFactory(status=INVOICING_AND_REPORTING)
@@ -733,7 +733,7 @@ class TestReportDateAddView(BaseViewTestCase):
     def test_applicant_cannot_access(self):
         project = ProjectFactory(status=INVOICING_AND_REPORTING)
         self.client.force_login(ApplicantFactory())
-        url = reverse("funds:projects:report_add", kwargs={"pk": project.submission.id})
+        url = reverse("funds:projects:report_add", kwargs={"pk": project.pk})
         response = self.client.get(url)
         assert response.status_code == 403
 

@@ -6,8 +6,8 @@
 {% if request.user.is_apply_staff %}
     <a
         class="transition-opacity hover:opacity-70 btn btn-square btn-sm btn-ghost"
-        href="{% url 'apply:projects:project_title_update' object.submission.id %}"
-        hx-get="{% url 'apply:projects:project_title_update' object.submission.id %}"
+        href="{% url 'apply:projects:project_title_update' object.pk %}"
+        hx-get="{% url 'apply:projects:project_title_update' object.pk %}"
         hx-target="#htmx-modal"
     >
         {% heroicon_mini "pencil-square" aria_hidden=true %}

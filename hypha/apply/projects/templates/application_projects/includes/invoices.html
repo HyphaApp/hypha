@@ -9,7 +9,7 @@
         {% if can_add_invoice %}
             <a
                 class="btn btn-primary btn-sm"
-                href="{% url "apply:projects:invoice" pk=object.submission.pk %}"
+                href="{% url "apply:projects:invoice" pk=object.pk %}"
             >
                 {% trans "Add Invoice" %}
             </a>

@@ -30,7 +30,7 @@
                                 {% heroicon_mini "information-circle" class="inline align-middle fill-primary" aria_hidden=true %}
                                 <a
                                     class="link"
-                                    href="{% url 'apply:projects:category_template' pk=object.submission.pk type='contract_document' category_pk=document_category.pk %}"
+                                    href="{% url 'apply:projects:category_template' pk=object.pk type='contract_document' category_pk=document_category.pk %}"
                                     target="_blank"
                                 >
                                     {% trans "View template" %}
@@ -51,8 +51,8 @@
                     {% if document_category in remaining_contract_document_categories and can_update_documents %}
                         <a
                             class="btn btn-primary btn-sm"
-                            href="{% url 'apply:projects:contract_doc_upload' object.submission.id document_category.id %}"
-                            hx-get="{% url 'apply:projects:contract_doc_upload' object.submission.id document_category.id %}"
+                            href="{% url 'apply:projects:contract_doc_upload' object.pk document_category.id %}"
+                            hx-get="{% url 'apply:projects:contract_doc_upload' object.pk document_category.id %}"
                             hx-target="#htmx-modal"
                             aria-label="{% trans 'Upload Contracting Documents' %}"
                         >
@@ -65,7 +65,7 @@
                             <div class="flex flex-wrap gap-2 items-center">
                                 <a
                                     class="btn btn-outline btn-secondary btn-sm"
-                                    href="{% url 'apply:projects:contract_document' pk=object.submission.pk file_pk=latest_file.pk %}"
+                                    href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=latest_file.pk %}"
                                     target="_blank"
                                 >
                                     {% heroicon_outline "document" size=14 class="opacity-80 size-4" aria_hidden=true stroke_width=2 %}
@@ -74,7 +74,7 @@
                                 {% if can_update_documents %}
                                     <button
                                         class="btn btn-outline btn-error btn-sm"
-                                        hx-delete="{% url "apply:projects:remove_contracting_document" object.submission.pk latest_file.pk %}"
+                                        hx-delete="{% url "apply:projects:remove_contracting_document" object.pk latest_file.pk %}"
                                         hx-swap="none"
                                         hx-confirm="{% trans 'Are you sure you want to remove this document?' %}"
                                     >
@@ -99,8 +99,8 @@
         class="btn btn-primary{% if required_remaining_contract_document_categories or not contract.signed_by_applicant %} btn-disabled{% endif %}"
         id="submit_contract_document"
         hx-swap-oob="true"
-        hx-get="{% url 'apply:projects:contract_documents_submit' object.submission.id %}"
-        href="{% url 'apply:projects:contract_documents_submit' object.submission.id %}"
+        hx-get="{% url 'apply:projects:contract_documents_submit' object.pk %}"
+        href="{% url 'apply:projects:contract_documents_submit' object.pk %}"
         hx-target="#htmx-modal"
     >
         {% trans "Submit contract documents" %}

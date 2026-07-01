@@ -317,15 +317,13 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
 
     def test_can_create_project(self):
         # check submission doesn't already have a Project
-        with self.assertRaisesMessage(
-            Project.DoesNotExist, "ApplicationSubmission has no project."
-        ):
-            self.submission.project  # noqa: B018
+        self.assertFalse(self.submission.projects.exists())
 
         self.post_page(
             self.submission,
             {
                 "project_create_form": "",
+                "title": "Bucket one",
                 "project_lead": self.user.id,
                 "project_initial_status": CONTRACTING,
                 "project_end": timezone.now().date(),
@@ -337,9 +335,49 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         project = Project.objects.order_by("-pk").first()
         submission = ApplicationSubmission.objects.get(pk=self.submission.pk)
 
-        self.assertTrue(hasattr(submission, "project"))
-        self.assertEqual(submission.project.id, project.id)
-        self.assertEqual(submission.project.status, CONTRACTING)
+        self.assertTrue(submission.projects.exists())
+        self.assertEqual(submission.projects.first().id, project.id)
+        self.assertEqual(submission.projects.first().status, CONTRACTING)
+        self.assertEqual(project.title, "Bucket one")
+
+    @override_settings(PROJECTS_ALLOW_MULTIPLE=False)
+    def test_cannot_create_second_project_when_multiple_disallowed(self):
+        ProjectFactory(submission=self.submission)
+
+        self.post_page(
+            self.submission,
+            {
+                "project_create_form": "",
+                "title": "Bucket two",
+                "project_lead": self.user.id,
+                "project_initial_status": CONTRACTING,
+                "project_end": timezone.now().date(),
+                "submission": self.submission.id,
+            },
+            view_name="create_project",
+        )
+
+        # The second project should have been rejected.
+        self.assertEqual(self.submission.projects.count(), 1)
+
+    @override_settings(PROJECTS_ALLOW_MULTIPLE=True)
+    def test_can_create_second_project_when_multiple_allowed(self):
+        ProjectFactory(submission=self.submission)
+
+        self.post_page(
+            self.submission,
+            {
+                "project_create_form": "",
+                "title": "Bucket two",
+                "project_lead": self.user.id,
+                "project_initial_status": CONTRACTING,
+                "project_end": timezone.now().date(),
+                "submission": self.submission.id,
+            },
+            view_name="create_project",
+        )
+
+        self.assertEqual(self.submission.projects.count(), 2)
 
     def test_can_see_add_determination_primary_action(self):
         def assert_add_determination_displayed(submission, button_text):
