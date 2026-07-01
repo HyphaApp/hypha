@@ -17,8 +17,8 @@
     </a>
 {% else %}
     <div class="flex flex-col gap-2">
-        {% if PROJECTS_ENABLED %}
-            {% if object.accepted_for_funding %}
+        {% if PROJECTS_ENABLED and object.accepted_for_funding %}
+            {% if not object.projects.exists or PROJECTS_ALLOW_MULTIPLE %}
                 <button
                     class="btn btn-primary btn-block"
                     hx-get="{% url 'funds:submissions:create_project' pk=object.pk %}"

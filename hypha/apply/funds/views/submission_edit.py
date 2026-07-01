@@ -406,6 +406,9 @@ class CreateProjectView(View):
         if not permission:
             messages.warning(self.request, reason)
             return HttpResponseRedirect(self.submission.get_absolute_url())
+        if not settings.PROJECTS_ALLOW_MULTIPLE and self.submission.projects.exists():
+            messages.warning(self.request, _("This submission already has a project."))
+            return HttpResponseRedirect(self.submission.get_absolute_url())
         return super(CreateProjectView, self).dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
