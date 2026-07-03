@@ -112,25 +112,25 @@
 
             <div class="flex gap-2">
                 {% user_can_edit_pfs object user as can_edit_pfs %}
-                {% if can_edit_pfs %}
-                    <a
-                        class="btn btn-sm {% if not object.user_has_updated_pf_details %}btn-primary{% endif %}"
-                        href="{% url 'apply:projects:edit_pf' pk=object.submission.pk %}"
-                    >
-                        {% if object.user_has_updated_pf_details %}
-                            {% heroicon_micro "pencil-square" class="inline size-4" aria_hidden=true %}
-                            {% trans "Edit" %}
-                        {% else %}
-                            {% trans "Fill in" %}
-                        {% endif %}
-                    </a>
-                {% endif %}
                 {% if object.user_has_updated_pf_details and not user.is_applicant %}
                     <a
                         class="btn btn-outline btn-secondary btn-sm"
                         href="{% url 'apply:projects:approval' pk=project.submission.pk %}">
-                        {% heroicon_micro "eye" class="inline size-4" aria_hidden=true %}
+                        {% heroicon_micro "eye" class="inline opacity-80 size-4" aria_hidden=true %}
                         {% trans "View" %}
+                    </a>
+                {% endif %}
+                {% if can_edit_pfs %}
+                    <a
+                        class="btn btn-sm {% if not object.user_has_updated_pf_details %}btn-primary{% else %}btn-outline btn-secondary{% endif %}"
+                        href="{% url 'apply:projects:edit_pf' pk=object.submission.pk %}"
+                    >
+                        {% if object.user_has_updated_pf_details %}
+                            {% heroicon_micro "pencil-square" class="inline size-4" aria_hidden=true %}
+                            <span class="sr-only">{% trans "Edit" %}</span>
+                        {% else %}
+                            {% trans "Fill in" %}
+                        {% endif %}
                     </a>
                 {% endif %}
             </div>
@@ -149,24 +149,24 @@
                     {% trans "Scope of work" %}
                 </h3>
 
-                <div class="inline-flex gap-3">
+                <div class="flex gap-2">
                     {% if object.user_has_updated_sow_details %}
                         <a
                             class="btn btn-outline btn-secondary btn-sm"
                             href="{% url 'apply:projects:sow' pk=project.submission.pk %}"
                         >
-                            {% heroicon_micro "eye" class="opacity-80 size-4" aria_hidden=true %}
+                            {% heroicon_micro "eye" class="inline opacity-80 size-4" aria_hidden=true %}
                             {% trans "View" %}
                         </a>
                     {% endif %}
 
                     {% if can_edit_pfs %}
                         <a
-                            class="btn btn-sm btn-square {% if not object.user_has_updated_sow_details %}btn-primary{% else %}btn-outline btn-secondary{% endif %}"
+                            class="btn btn-sm {% if not object.user_has_updated_sow_details %}btn-primary{% else %}btn-outline btn-secondary{% endif %}"
                             href="{% url 'apply:projects:edit_sow' pk=object.submission.pk %}"
                         >
                             {% if object.user_has_updated_sow_details %}
-                                {% heroicon_micro "pencil-square" class="size-4" aria_hidden=true %}
+                                {% heroicon_micro "pencil-square" class="inline size-4" aria_hidden=true %}
                                 <span class="sr-only">{% trans "Edit" %}</span>
                             {% else %}
                                 {% trans "Fill in" %}
