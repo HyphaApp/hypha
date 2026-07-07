@@ -61,6 +61,7 @@ from ..forms import (
     ChangeInvoiceStatusForm,
     CreateInvoiceForm,
     EditInvoiceForm,
+    InvoiceTagsForm,
 )
 from ..models.payment import (
     APPROVED_BY_FINANCE,
@@ -588,9 +589,54 @@ class InvoiceListView(SingleTableMixin, FilterView, DelegateableListView):
     template_name = "application_projects/invoice_list.html"
 
     def get_queryset(self):
-        return super().get_queryset().select_related("project", "project__user")
+        return (
+            super()
+            .get_queryset()
+            .select_related("project", "project__user")
+            .prefetch_related("tags")
+        )
 
     def get_table_class(self):
         if self.request.user.is_finance:
             return FinanceInvoiceTable
         return super().get_table_class()
+
+
+@method_decorator(staff_or_finance_required, name="dispatch")
+class TagInvoiceView(InvoiceAccessMixin, View):
+    form_class = InvoiceTagsForm
+    template_name = "application_projects/modals/invoice_tag.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(Invoice, id=kwargs.get("invoice_pk"))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        form = self.form_class(instance=self.object)
+        return render(
+            self.request,
+            self.template_name,
+            {"form": form, "object": self.object},
+        )
+
+    def post(self, *args, **kwargs):
+        form = self.form_class(self.request.POST, instance=self.object)
+        if form.is_valid():
+            form.save()
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "invoicesUpdated": None,
+                            "showMessage": _("Invoice tags updated."),
+                        }
+                    )
+                },
+            )
+        return render(
+            self.request,
+            self.template_name,
+            {"form": form, "object": self.object},
+            status=400,
+        )

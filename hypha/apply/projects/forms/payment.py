@@ -8,6 +8,7 @@ from django.forms.widgets import RadioSelect
 from django.utils.translation import gettext_lazy as _
 from django_file_form.forms import FileFormMixin
 
+from hypha.apply.funds.widgets import MultiCheckboxesWidget
 from hypha.apply.stream_forms.fields import MultiFileField, SingleFileField
 
 from ..models.payment import (
@@ -22,6 +23,7 @@ from ..models.payment import (
     RESUBMITTED,
     SUBMITTED,
     Invoice,
+    InvoiceTag,
     SupportingDocument,
     invoice_status_user_choices,
 )
@@ -226,3 +228,16 @@ class BatchUpdateInvoiceStatusForm(forms.Form):
         value = self.cleaned_data["invoices"]
         invoice_ids = [int(invoice) for invoice in value.split(",")]
         return Invoice.objects.filter(id__in=invoice_ids)
+
+
+class InvoiceTagsForm(forms.ModelForm):
+    tags = forms.ModelMultipleChoiceField(
+        queryset=InvoiceTag.objects.all(),
+        widget=MultiCheckboxesWidget,
+        required=False,
+        label=_("Tags"),
+    )
+
+    class Meta:
+        model = Invoice
+        fields = ["tags"]

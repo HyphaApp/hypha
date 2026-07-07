@@ -1,0 +1,6 @@
+{% load i18n %}
+{% with tags=object.tags.all %}
+    {% if tags %}
+        <b>{% trans "Tags" %}:</b> {{ tags|join:", " }}
+    {% endif %}
+{% endwith %}

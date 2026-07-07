@@ -7,6 +7,7 @@ from .payment import (
     InvoiceListView,
     InvoicePrivateMedia,
     InvoiceView,
+    TagInvoiceView,
 )
 from .project import (
     AdminProjectDetailView,
@@ -45,6 +46,7 @@ from .project_partials import (
     partial_get_invoice_detail_actions,
     partial_get_invoice_status,
     partial_get_invoice_status_table,
+    partial_get_invoice_tags,
     partial_project_information,
     partial_project_lead,
     partial_project_title,
@@ -59,6 +61,7 @@ __all__ = [
     "partial_get_invoice_status_table",
     "partial_get_invoice_status",
     "partial_get_invoice_detail_actions",
+    "partial_get_invoice_tags",
     "partial_contracting_documents",
     "BatchUpdateInvoiceStatusView",
     "ChangeInvoiceStatusView",
@@ -98,4 +101,5 @@ __all__ = [
     "EditInvoiceView",
     "DeleteInvoiceView",
     "InvoicePrivateMedia",
+    "TagInvoiceView",
 ]

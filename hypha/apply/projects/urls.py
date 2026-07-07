@@ -31,6 +31,7 @@ from .views import (
     SendForApprovalView,
     SkipPAFApprovalProcessView,
     SubmitContractDocumentsView,
+    TagInvoiceView,
     UpdateAssignApproversView,
     UpdateLeadView,
     UpdatePAFApproversView,
@@ -41,6 +42,7 @@ from .views import (
     partial_get_invoice_detail_actions,
     partial_get_invoice_status,
     partial_get_invoice_status_table,
+    partial_get_invoice_tags,
     partial_project_information,
     partial_project_lead,
     partial_project_title,
@@ -251,6 +253,16 @@ urlpatterns = [
                                 "actions/",
                                 partial_get_invoice_detail_actions,
                                 name="partial-invoice-detail-actions",
+                            ),
+                            path(
+                                "tags/",
+                                TagInvoiceView.as_view(),
+                                name="invoice-tags",
+                            ),
+                            path(
+                                "partial/tags/",
+                                partial_get_invoice_tags,
+                                name="partial-invoice-tags",
                             ),
                             path(
                                 "documents/invoice/",
