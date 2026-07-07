@@ -75,6 +75,18 @@ def invoice_path(instance, filename):
     return f"projects/{instance.project_id}/payment_invoices/{filename}"
 
 
+class InvoiceTag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        verbose_name = _("invoice tag")
+        verbose_name_plural = _("invoice tags")
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 class InvoiceQueryset(models.QuerySet):
     def in_progress(self):
         return self.exclude(status__in=[DECLINED, PAID])
@@ -361,15 +373,3 @@ class InvoiceExportManager(models.Model):
 
     def get_absolute_url(self) -> str:
         return reverse("apply:projects:invoices")
-
-
-class InvoiceTag(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-
-    class Meta:
-        verbose_name = _("invoice tag")
-        verbose_name_plural = _("invoice tags")
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
