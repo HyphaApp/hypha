@@ -147,6 +147,7 @@ def export_invoices_to_csv(invoices_iter) -> str:
         "Project #",
         "Vendor Name",
         "Invoice Amount",
+        "Tags",
     ]
     writer = csv.DictWriter(output, fieldnames=fieldnames)
     writer.writeheader()
@@ -168,6 +169,7 @@ def export_invoices_to_csv(invoices_iter) -> str:
                 "Invoice Amount": str(invoice.invoice_amount)
                 if invoice.invoice_amount is not None
                 else "",
+                "Tags": ", ".join(tag.name for tag in invoice.tags.all()),
             }
         )
 

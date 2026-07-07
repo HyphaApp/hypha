@@ -23,8 +23,10 @@ def generate_invoice_csv(qs_ids: List[int], request_user_id: int) -> None:
     try:
         from hypha.apply.projects.models.payment import Invoice
 
-        qs = Invoice.objects.filter(id__in=qs_ids).select_related(
-            "project", "project__user"
+        qs = (
+            Invoice.objects.filter(id__in=qs_ids)
+            .select_related("project", "project__user")
+            .prefetch_related("tags")
         )
         request_user = User.objects.get(pk=request_user_id)
 
