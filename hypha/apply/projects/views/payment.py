@@ -692,6 +692,7 @@ class InvoiceListView(SingleTableMixin, FilterView, DelegateableListView):
         ctx["can_export_invoices"] = True
         return ctx
 
+
 @method_decorator(staff_or_finance_required, name="dispatch")
 class TagInvoiceView(InvoiceAccessMixin, View):
     form_class = InvoiceTagsForm
