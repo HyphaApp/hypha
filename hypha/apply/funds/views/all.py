@@ -129,13 +129,11 @@ def submissions_all(
     else:
         qs = ApplicationSubmission.objects.current()
 
-    # Reviewers also have access to this view but should only see a subset of submissions.
+    # By default, reviewers can see all submissions. This can be configured in Wagtail Admin > Apply > Reviewer Settings
     if request.user.is_reviewer:
         reviewer_settings = ReviewerSettings.for_request(request)
         if reviewer_settings.use_settings:
             qs = qs.for_reviewer_settings(request.user, reviewer_settings)
-        else:
-            qs = qs.filter(reviewers=request.user)
 
     if not can_access_drafts or not show_drafts:
         qs = qs.exclude_draft()

@@ -9,6 +9,7 @@ from hypha.apply.funds.models.co_applicants import (
     CoApplicantInviteStatus,
     CoApplicantRole,
 )
+from hypha.apply.funds.models.reviewer_role import ReviewerSettings
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.funds.workflows import DRAFT_STATE
 from hypha.apply.users.tests.factories import (
@@ -18,6 +19,7 @@ from hypha.apply.users.tests.factories import (
     StaffFactory,
     UserFactory,
 )
+from hypha.home.factories import ApplySiteFactory
 
 from ..permissions import (
     can_access_drafts,
@@ -221,9 +223,42 @@ class TestIsUserHasAccessToViewSubmission(TestCase):
         result, _ = can_view_submission(applicant, submission)
         self.assertTrue(result)
 
-    def test_reviewer_can_view(self):
+    def test_reviewer_can_view_by_default(self):
         reviewer = ReviewerFactory()
         submission = ApplicationSubmissionFactory()
+        result, _ = can_view_submission(reviewer, submission)
+        self.assertTrue(result)
+
+    # Basic tests to ensure functionality, more in-depth tests happen in hypha/apply/funds/tests/test_views.py::TestReviewerSubmissionView
+    def test_reviewer_cannot_view_unassigned_when_configured(self):
+        reviewer = ReviewerFactory()
+        apply_site = ApplySiteFactory()
+        reviewer_settings, _ = ReviewerSettings.objects.get_or_create(
+            site_id=apply_site.id
+        )
+        reviewer_settings.use_settings = True
+        reviewer_settings.submission = "all"
+        reviewer_settings.outcome = "all"
+        reviewer_settings.assigned = True
+        reviewer_settings.save()
+
+        submission = ApplicationSubmissionFactory()
+        result, _ = can_view_submission(reviewer, submission)
+        self.assertFalse(result)
+
+    def test_reviewer_can_view_assigned_when_configured(self):
+        reviewer = ReviewerFactory()
+        apply_site = ApplySiteFactory()
+        reviewer_settings, _ = ReviewerSettings.objects.get_or_create(
+            site_id=apply_site.id
+        )
+        reviewer_settings.use_settings = True
+        reviewer_settings.submission = "all"
+        reviewer_settings.outcome = "all"
+        reviewer_settings.assigned = True
+        reviewer_settings.save()
+
+        submission = ApplicationSubmissionFactory(reviewers=[reviewer])
         result, _ = can_view_submission(reviewer, submission)
         self.assertTrue(result)
 

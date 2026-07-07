@@ -1,10 +1,13 @@
+from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.utils.translation import gettext as _
 from rolepermissions.permissions import register_object_checker
 
 from hypha.apply.funds.models.co_applicants import CoApplicant, CoApplicantRole
+from hypha.apply.funds.models.reviewer_role import ReviewerSettings
 from hypha.apply.funds.models.submissions import DRAFT_STATE
+from hypha.home.models import ApplyHomePage
 
 from ..users.roles import STAFF_GROUP_NAME, SUPERADMIN, TEAMADMIN_GROUP_NAME, StaffAdmin
 
@@ -210,10 +213,21 @@ def can_view_submission(user, submission):
     if submission.is_archive and not can_view_archived_submissions(user):
         return False, _("Archived Submission")
 
+    # By default, reviewers can see all submissions. This can be configured in Wagtail Admin > Apply > Reviewer Settings
+    if user.is_reviewer:
+        site = ApplyHomePage.objects.first().get_site()
+        reviewer_settings = ReviewerSettings.for_site(site)
+        ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
+        if reviewer_settings.use_settings:
+            return ApplicationSubmission.objects.for_reviewer_settings(
+                user, reviewer_settings
+            ).filter(pk=submission.pk).exists(), ""
+        else:
+            return True, ""
+
     if (
         user.is_apply_staff
         or submission.user == user
-        or user.is_reviewer
         or submission.co_applicants.filter(user=user).exists()
     ):
         return True, ""
