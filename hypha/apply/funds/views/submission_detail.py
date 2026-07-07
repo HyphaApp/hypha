@@ -33,7 +33,6 @@ from hypha.core.models import SystemSettings
 
 from ..models import (
     ApplicationSubmission,
-    ReviewerSettings,
 )
 from ..permissions import (
     can_alter_archived_submissions,
@@ -141,15 +140,6 @@ class ReviewerSubmissionDetailView(ActivityContextMixin, DetailView):
         permission, _ = has_permission(
             "submission_view", request.user, object=submission, raise_exception=True
         )
-
-        reviewer_settings = ReviewerSettings.for_request(request)
-        if reviewer_settings.use_settings:
-            queryset = ApplicationSubmission.objects.for_reviewer_settings(
-                request.user, reviewer_settings
-            )
-            # Reviewer can't view submission which is not listed in ReviewerSubmissionsTable
-            if not queryset.filter(id=submission.id).exists():
-                raise PermissionDenied
 
         return super().dispatch(request, *args, **kwargs)
 
