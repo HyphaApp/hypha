@@ -213,6 +213,13 @@ def can_view_submission(user, submission):
     if submission.is_archive and not can_view_archived_submissions(user):
         return False, _("Archived Submission")
 
+    if (
+        user.is_apply_staff
+        or submission.user == user
+        or submission.co_applicants.filter(user=user).exists()
+    ):
+        return True, ""
+
     # By default, reviewers can see all submissions. This can be configured in Wagtail Admin > Apply > Reviewer Settings
     if user.is_reviewer:
         site = ApplyHomePage.objects.first().get_site()
@@ -224,13 +231,6 @@ def can_view_submission(user, submission):
             ).filter(pk=submission.pk).exists(), ""
         else:
             return True, ""
-
-    if (
-        user.is_apply_staff
-        or submission.user == user
-        or submission.co_applicants.filter(user=user).exists()
-    ):
-        return True, ""
 
     if user.is_community_reviewer and submission.community_review:
         return True, ""
