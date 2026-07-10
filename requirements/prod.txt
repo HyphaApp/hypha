@@ -801,9 +801,9 @@ marshmallow==4.3.0 \
     --hash=sha256:46c4fe6984707e3cbd485dfebbf0a59874f58d695aad05c1668d15e8c6e13b46 \
     --hash=sha256:fb43c53b3fe240b8f6af37223d6ef1636f927ad9bea8ab323afad95dff090880
     # via environs
-mistune==3.2.1 \
-    --hash=sha256:78cdb0ba5e938053ccf63651b352508d2efa9411dc8810bfb05f2dc5140c0048 \
-    --hash=sha256:7c8e5501d38bac1582e067e46c8343f17d57ea1aaa735823f3aba1fd59c88a28
+mistune==3.3.0 \
+    --hash=sha256:3074ec4c61b384abe725128e4dcbb483f5a09cc4632012505cdee655d3a113b9 \
+    --hash=sha256:a758e578acda49d8195f9a860b132dae2cf7bf409381393b1c4e6e489a65397b
     # via hypha
 nh3==0.3.6 \
     --hash=sha256:082675ff87b9385ec430ffe6d5847ba7456cc39b73720cd4add472f9f4cffd56 \
