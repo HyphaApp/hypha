@@ -3,12 +3,12 @@ from django.utils.translation import gettext as _
 NA = 99
 
 RATE_CHOICES = (
-    (0, _("0. Need more info")),
-    (1, _("1. Poor")),
-    (2, _("2. Not so good")),
-    (3, _("3. Is o.k.")),
-    (4, _("4. Good")),
-    (5, _("5. Excellent")),
+    (0, _("0. Not applicable")),
+    (1, _("1. Has little merit, relevance to the program objectives")),
+    (2, _("2. Has some merit but unlikely to succeed / meet its own and Breakout program's objectives")),
+    (3, _("3. Has merit if they can positively adapt the proposal according to my feedback")),
+    (4, _("4. Let's support this provided they can answer a few clarifying questions")),
+    (5, _("5. Perfect as is, proceed!")),
     (NA, _("n/a - choose not to answer")),
 )
 
