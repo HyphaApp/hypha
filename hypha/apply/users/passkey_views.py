@@ -68,10 +68,10 @@ def passkey_elevate_required(view_func):
     passkey management actions — adding and removing passkeys.
 
     This mirrors the elevation gate used for disabling 2FA and changing the
-    account email: a user with a usable password must confirm it again before
-    the action is allowed. Users without a usable password (e.g. OAuth logins)
-    have no password to re-confirm and are let through, matching the behaviour
-    of ``account_email_change``.
+    account email. All users must re-authenticate before the action is allowed:
+    users with a usable password confirm it again, while users without one
+    (e.g. OAuth logins) are routed to the same elevate page where they confirm
+    access via an emailed one-time code.
 
     These endpoints are called via ``fetch`` (registration) and HTMX (delete),
     so instead of returning a normal redirect we hand the client the elevate
@@ -81,7 +81,7 @@ def passkey_elevate_required(view_func):
 
     @wraps(view_func)
     def _wrapped(request, *args, **kwargs):
-        if request.user.has_usable_password() and not request.is_elevated():
+        if not request.is_elevated():
             elevate_url = redirect_to_elevate(resolve_url("users:account"))["Location"]
             if request.headers.get("HX-Request"):
                 response = HttpResponse(status=204)

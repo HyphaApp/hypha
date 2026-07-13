@@ -706,19 +706,31 @@ class TestPasskeyElevationRequired(TestCase):
 
 
 @override_settings(RATELIMIT_ENABLE=False)
-class TestPasskeyElevationSkippedForOAuthUsers(TestCase):
-    """OAuth users have no usable password, so the elevation gate is skipped."""
+class TestPasskeyElevationRequiredForOAuthUsers(TestCase):
+    """OAuth users have no usable password, but must still elevate — the elevate
+    page routes them through the emailed confirmation-code flow.
+    """
 
     def setUp(self):
         self.user = OAuthUserFactory()  # no usable password
         self.client.force_login(self.user)
 
-    def test_register_begin_allowed_without_elevation(self):
+    def test_register_begin_requires_elevation(self):
         response = self.client.post(REGISTER_BEGIN_URL)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("challenge", response.json())
+        self.assertEqual(response.status_code, 403)
+        self.assertIn("elevate_url", response.json())
+        self.assertIn(reverse("users:elevate"), response.json()["elevate_url"])
 
-    def test_delete_allowed_without_elevation(self):
+    def test_delete_requires_elevation_and_keeps_passkey(self):
+        passkey = make_passkey(self.user)
+        url = reverse("users:passkey_delete", args=[passkey.pk])
+        response = self.client.post(url, HTTP_HX_REQUEST="true")
+        self.assertEqual(response.status_code, 204)
+        self.assertIn(reverse("users:elevate"), response["HX-Redirect"])
+        self.assertTrue(Passkey.objects.filter(pk=passkey.pk).exists())
+
+    def test_elevated_user_can_delete(self):
+        force_elevated(self)
         passkey = make_passkey(self.user)
         url = reverse("users:passkey_delete", args=[passkey.pk])
         response = self.client.post(url, HTTP_HX_REQUEST="true")

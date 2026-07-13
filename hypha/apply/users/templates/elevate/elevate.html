@@ -9,7 +9,7 @@
 
         <h2 class="text-2xl text-center">{% trans "Confirm access" %}</h2>
 
-        <p class="mb-4 text-center">
+        <p class="m-4 text-center">
             {% if request.user.full_name %}
                 {% blocktrans with name=request.user.full_name email=request.user.email trimmed %}
                     Signed in as <strong>{{ name }}({{ email }})</strong>
