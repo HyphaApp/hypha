@@ -16,7 +16,7 @@ from ..passkey_views import (
     SESSION_CHALLENGE_KEY_AUTH,
     SESSION_CHALLENGE_KEY_REGISTER,
 )
-from .factories import UserFactory
+from .factories import OAuthUserFactory, UserFactory
 
 AUTH_BEGIN_URL = reverse("users:passkey_auth_begin")
 AUTH_COMPLETE_URL = reverse("users:passkey_auth_complete")
@@ -53,6 +53,20 @@ def set_challenge(client, key, challenge_bytes=b"test-challenge"):
     session.save()
 
 
+def force_elevated(test_case):
+    """Treat the test client's session as recently re-authenticated (elevated).
+
+    Adding and deleting passkeys requires an elevated session; patch the
+    elevate middleware so gated views let the request through for the duration
+    of the test.
+    """
+    patcher = patch(
+        "hypha.elevate.middleware.has_elevated_privileges", return_value=True
+    )
+    patcher.start()
+    test_case.addCleanup(patcher.stop)
+
+
 # ---------------------------------------------------------------------------
 # Registration begin
 # ---------------------------------------------------------------------------
@@ -63,6 +77,7 @@ class TestPasskeyRegisterBegin(TestCase):
     def setUp(self):
         self.user = UserFactory()
         self.client.force_login(self.user)
+        force_elevated(self)
 
     def test_requires_login(self):
         self.client.logout()
@@ -107,6 +122,7 @@ class TestPasskeyRegisterComplete(TestCase):
     def setUp(self):
         self.user = UserFactory()
         self.client.force_login(self.user)
+        force_elevated(self)
 
     def _set_challenge(self):
         set_challenge(self.client, SESSION_CHALLENGE_KEY_REGISTER, self.CHALLENGE)
@@ -543,6 +559,7 @@ class TestPasskeyDelete(TestCase):
     def setUp(self):
         self.user = UserFactory()
         self.client.force_login(self.user)
+        force_elevated(self)
 
     def test_requires_login(self):
         self.client.logout()
@@ -634,6 +651,79 @@ class TestPasskeyRename(TestCase):
         url = reverse("users:passkey_rename", args=[passkey.pk])
         response = self.client.post(url, {"name": "Updated"})
         self.assertTemplateUsed(response, "users/partials/passkey-list.html")
+
+
+# ---------------------------------------------------------------------------
+# Elevation gate — adding and deleting passkeys requires a re-authenticated
+# (elevated) session, mirroring the 2FA-disable and email-change flows.
+# ---------------------------------------------------------------------------
+
+
+@override_settings(RATELIMIT_ENABLE=False)
+class TestPasskeyElevationRequired(TestCase):
+    """Users with a usable password must elevate before adding/removing passkeys."""
+
+    def setUp(self):
+        self.user = UserFactory()  # has a usable password
+        self.client.force_login(self.user)
+
+    def test_register_begin_requires_elevation(self):
+        response = self.client.post(REGISTER_BEGIN_URL)
+        self.assertEqual(response.status_code, 403)
+        self.assertIn("elevate_url", response.json())
+        self.assertIn(reverse("users:elevate"), response.json()["elevate_url"])
+
+    def test_register_begin_elevate_url_returns_to_account(self):
+        response = self.client.post(REGISTER_BEGIN_URL)
+        self.assertIn(reverse("users:account"), response.json()["elevate_url"])
+
+    def test_register_complete_requires_elevation(self):
+        set_challenge(self.client, SESSION_CHALLENGE_KEY_REGISTER)
+        response = self.client.post(
+            REGISTER_COMPLETE_URL,
+            data=json.dumps({}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertIn("elevate_url", response.json())
+
+    def test_delete_requires_elevation_and_keeps_passkey(self):
+        passkey = make_passkey(self.user)
+        url = reverse("users:passkey_delete", args=[passkey.pk])
+        # HTMX request — expect an HX-Redirect header instead of a JSON body.
+        response = self.client.post(url, HTTP_HX_REQUEST="true")
+        self.assertEqual(response.status_code, 204)
+        self.assertIn(reverse("users:elevate"), response["HX-Redirect"])
+        self.assertTrue(Passkey.objects.filter(pk=passkey.pk).exists())
+
+    def test_elevated_user_can_delete(self):
+        force_elevated(self)
+        passkey = make_passkey(self.user)
+        url = reverse("users:passkey_delete", args=[passkey.pk])
+        response = self.client.post(url, HTTP_HX_REQUEST="true")
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Passkey.objects.filter(pk=passkey.pk).exists())
+
+
+@override_settings(RATELIMIT_ENABLE=False)
+class TestPasskeyElevationSkippedForOAuthUsers(TestCase):
+    """OAuth users have no usable password, so the elevation gate is skipped."""
+
+    def setUp(self):
+        self.user = OAuthUserFactory()  # no usable password
+        self.client.force_login(self.user)
+
+    def test_register_begin_allowed_without_elevation(self):
+        response = self.client.post(REGISTER_BEGIN_URL)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("challenge", response.json())
+
+    def test_delete_allowed_without_elevation(self):
+        passkey = make_passkey(self.user)
+        url = reverse("users:passkey_delete", args=[passkey.pk])
+        response = self.client.post(url, HTTP_HX_REQUEST="true")
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Passkey.objects.filter(pk=passkey.pk).exists())
 
 
 # ---------------------------------------------------------------------------

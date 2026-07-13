@@ -8,7 +8,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, resolve_url
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -36,6 +36,8 @@ from webauthn.helpers.structs import (
     UserVerificationRequirement,
 )
 
+from hypha.elevate.views import redirect_to_elevate
+
 from .models import Passkey
 
 logger = logging.getLogger(__name__)
@@ -56,6 +58,36 @@ def passkeys_required(view_func):
     def _wrapped(request, *args, **kwargs):
         if not passkeys_enabled():
             raise Http404
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped
+
+
+def passkey_elevate_required(view_func):
+    """Require an elevated (recently re-authenticated) session for sensitive
+    passkey management actions — adding and removing passkeys.
+
+    This mirrors the elevation gate used for disabling 2FA and changing the
+    account email: a user with a usable password must confirm it again before
+    the action is allowed. Users without a usable password (e.g. OAuth logins)
+    have no password to re-confirm and are let through, matching the behaviour
+    of ``account_email_change``.
+
+    These endpoints are called via ``fetch`` (registration) and HTMX (delete),
+    so instead of returning a normal redirect we hand the client the elevate
+    URL: an ``HX-Redirect`` header for HTMX requests, otherwise a JSON body with
+    an ``elevate_url`` the JavaScript can navigate to.
+    """
+
+    @wraps(view_func)
+    def _wrapped(request, *args, **kwargs):
+        if request.user.has_usable_password() and not request.is_elevated():
+            elevate_url = redirect_to_elevate(resolve_url("users:account"))["Location"]
+            if request.headers.get("HX-Request"):
+                response = HttpResponse(status=204)
+                response["HX-Redirect"] = elevate_url
+                return response
+            return JsonResponse({"elevate_url": elevate_url}, status=403)
         return view_func(request, *args, **kwargs)
 
     return _wrapped
@@ -111,6 +143,7 @@ MAX_PASSKEYS_PER_USER = 10
 @passkeys_required
 @login_required
 @require_POST
+@passkey_elevate_required
 @ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
 def passkey_register_begin(request):
     user = request.user
@@ -149,6 +182,7 @@ def passkey_register_begin(request):
 @passkeys_required
 @login_required
 @require_POST
+@passkey_elevate_required
 @ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
 def passkey_register_complete(request):
     try:
@@ -348,6 +382,7 @@ def passkey_list(request):
 @passkeys_required
 @login_required
 @require_POST
+@passkey_elevate_required
 def passkey_delete(request, pk):
     passkey = get_object_or_404(Passkey, pk=pk, user=request.user)
     logger.info(

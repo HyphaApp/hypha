@@ -87,6 +87,12 @@ window.hypha.passkeys = (function () {
       const beginResp = await jsonPost(beginUrl, {});
       if (!beginResp.ok) {
         const err = await beginResp.json();
+        // The session must be elevated (re-authenticated) before adding a
+        // passkey — send the user to the elevate page and back.
+        if (err.elevate_url) {
+          window.location.href = err.elevate_url;
+          return;
+        }
         throw new Error(
           err.error || formEl?.dataset.errorServer || "Server error"
         );
@@ -105,6 +111,10 @@ window.hypha.passkeys = (function () {
       });
       if (!completeResp.ok) {
         const err = await completeResp.json();
+        if (err.elevate_url) {
+          window.location.href = err.elevate_url;
+          return;
+        }
         throw new Error(
           err.error || formEl?.dataset.errorRegister || "Registration failed"
         );
