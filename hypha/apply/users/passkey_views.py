@@ -112,15 +112,26 @@ def _get_origin(request):
     return f"{scheme}://{request.get_host()}"
 
 
+# WebAuthn challenges are single-use, but they should also be short-lived.
+# Reject any challenge older than this to match spec guidance (a few minutes).
+CHALLENGE_TTL_SECONDS = 300
+
+
 def _store_challenge(request, challenge: bytes, key: str):
-    request.session[key] = base64.b64encode(challenge).decode()
+    request.session[key] = {
+        "challenge": base64.b64encode(challenge).decode(),
+        "created": timezone.now().timestamp(),
+    }
 
 
 def _load_challenge(request, key: str) -> bytes:
-    encoded = request.session.pop(key, None)
-    if not encoded:
+    stored = request.session.pop(key, None)
+    if not isinstance(stored, dict):
         raise PermissionDenied("No active WebAuthn challenge.")
-    return base64.b64decode(encoded)
+    created = stored.get("created")
+    if created is None or timezone.now().timestamp() - created > CHALLENGE_TTL_SECONDS:
+        raise PermissionDenied("WebAuthn challenge expired.")
+    return base64.b64decode(stored["challenge"])
 
 
 _VALID_TRANSPORTS = {t.value for t in AuthenticatorTransport}

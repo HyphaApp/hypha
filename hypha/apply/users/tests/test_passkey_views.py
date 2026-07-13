@@ -7,11 +7,13 @@ from unittest.mock import MagicMock, patch
 from django.conf import settings
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.utils import timezone
 from webauthn.helpers import bytes_to_base64url
 from webauthn.helpers.exceptions import InvalidAuthenticationResponse
 
 from ..models import Passkey
 from ..passkey_views import (
+    CHALLENGE_TTL_SECONDS,
     MAX_PASSKEYS_PER_USER,
     SESSION_CHALLENGE_KEY_AUTH,
     SESSION_CHALLENGE_KEY_REGISTER,
@@ -46,10 +48,13 @@ def make_passkey(
     )
 
 
-def set_challenge(client, key, challenge_bytes=b"test-challenge"):
-    """Store a base64-encoded WebAuthn challenge in the test client session."""
+def set_challenge(client, key, challenge_bytes=b"test-challenge", created=None):
+    """Store a WebAuthn challenge in the test client session."""
     session = client.session
-    session[key] = base64.b64encode(challenge_bytes).decode()
+    session[key] = {
+        "challenge": base64.b64encode(challenge_bytes).decode(),
+        "created": timezone.now().timestamp() if created is None else created,
+    }
     session.save()
 
 
@@ -169,6 +174,22 @@ class TestPasskeyRegisterComplete(TestCase):
         )
         self.assertEqual(response.status_code, 400)
         self.assertIn("error", response.json())
+
+    def test_expired_challenge_returns_400(self):
+        # Challenge created well beyond the TTL is rejected.
+        set_challenge(
+            self.client,
+            SESSION_CHALLENGE_KEY_REGISTER,
+            self.CHALLENGE,
+            created=timezone.now().timestamp() - (CHALLENGE_TTL_SECONDS + 60),
+        )
+        response = self.client.post(
+            REGISTER_COMPLETE_URL,
+            data=json.dumps(self._payload()),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("challenge", response.json()["error"].lower())
 
     @patch("hypha.apply.users.passkey_views.verify_registration_response")
     def test_successful_registration_saves_passkey(self, mock_verify):
