@@ -39,18 +39,13 @@ from webauthn.helpers.structs import (
 from hypha.elevate.views import redirect_to_elevate
 
 from .models import Passkey
+from .services import send_passkey_notification
+from .utils import passkeys_enabled
 
 logger = logging.getLogger(__name__)
 
 SESSION_CHALLENGE_KEY_REGISTER = "webauthn_challenge_register"
 SESSION_CHALLENGE_KEY_AUTH = "webauthn_challenge_auth"
-
-
-def passkeys_enabled() -> bool:
-    """Passkeys require WEBAUTHN_RP_ID in production. In DEBUG (local/dev)
-    we fall back to the request host so the feature can be exercised locally.
-    """
-    return bool(getattr(settings, "WEBAUTHN_RP_ID", None)) or settings.DEBUG
 
 
 def passkeys_required(view_func):
@@ -252,6 +247,7 @@ def passkey_register_complete(request):
         )
         return JsonResponse({"error": _("Could not save passkey")}, status=500)
     logger.info("Passkey registered for user %s (name=%r)", request.user.pk, name)
+    send_passkey_notification(request, request.user, name, added=True)
     return JsonResponse({"status": "ok"})
 
 
@@ -402,7 +398,9 @@ def passkey_delete(request, pk):
         pk,
         passkey.name,
     )
+    passkey_name = passkey.name
     passkey.delete()
+    send_passkey_notification(request, request.user, passkey_name, added=False)
     passkeys = request.user.passkeys.all()
     return render(request, "users/partials/passkey-list.html", {"passkeys": passkeys})
 

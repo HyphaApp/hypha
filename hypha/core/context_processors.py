@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from hypha.apply.users.passkey_views import passkeys_enabled
+from hypha.apply.users.utils import passkeys_enabled
 from hypha.home.models import ApplyHomePage
 
 

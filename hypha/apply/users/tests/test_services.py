@@ -4,7 +4,7 @@ from django.core import mail
 from django.test import RequestFactory, TestCase, override_settings
 
 from ..models import PendingSignup
-from ..services import PasswordlessAuthService
+from ..services import PasswordlessAuthService, send_passkey_notification
 from .factories import UserFactory
 
 
@@ -90,3 +90,42 @@ class TestPasswordlessAuthServiceInitiateLoginSignup(TestCase):
         service.initiate_login_signup(email=user.email)
 
         self.assertIn("/account/auth/", mail.outbox[0].body)
+
+
+@override_settings(SEND_MESSAGES=True)
+class TestSendPasskeyNotification(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user = UserFactory()
+
+    def _request(self):
+        return self.factory.get("/")
+
+    def test_sends_email_when_added(self):
+        send_passkey_notification(self._request(), self.user, "My Key", added=True)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(self.user.email, mail.outbox[0].to)
+        self.assertIn("added", mail.outbox[0].subject.lower())
+        self.assertIn("My Key", mail.outbox[0].body)
+
+    def test_sends_email_when_removed(self):
+        send_passkey_notification(self._request(), self.user, "My Key", added=False)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(self.user.email, mail.outbox[0].to)
+        self.assertIn("removed", mail.outbox[0].subject.lower())
+        self.assertIn("My Key", mail.outbox[0].body)
+
+    def test_no_email_when_send_messages_disabled(self):
+        with self.settings(SEND_MESSAGES=False):
+            send_passkey_notification(self._request(), self.user, "My Key", added=True)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_no_email_when_user_has_no_email(self):
+        self.user.email = ""
+        self.user.save()
+        send_passkey_notification(self._request(), self.user, "My Key", added=True)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_works_without_request(self):
+        send_passkey_notification(None, self.user, "My Key", added=True)
+        self.assertEqual(len(mail.outbox), 1)

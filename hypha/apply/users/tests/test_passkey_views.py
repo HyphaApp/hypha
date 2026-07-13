@@ -5,6 +5,7 @@ import json
 from unittest.mock import MagicMock, patch
 
 from django.conf import settings
+from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -208,6 +209,26 @@ class TestPasskeyRegisterComplete(TestCase):
         self.assertEqual(response.json()["status"], "ok")
         self.assertEqual(self.user.passkeys.count(), 1)
         self.assertEqual(self.user.passkeys.first().name, "My Key")
+
+    @override_settings(SEND_MESSAGES=True)
+    @patch("hypha.apply.users.passkey_views.verify_registration_response")
+    def test_successful_registration_sends_notification_email(self, mock_verify):
+        mock_verify.return_value = MagicMock(
+            credential_id=b"saved-cred-id",
+            credential_public_key=b"saved-pubkey",
+            sign_count=0,
+        )
+        self._set_challenge()
+        mail.outbox = []
+        self.client.post(
+            REGISTER_COMPLETE_URL,
+            data=json.dumps(self._payload(name="My Key")),
+            content_type="application/json",
+        )
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(self.user.email, mail.outbox[0].to)
+        self.assertIn("added", mail.outbox[0].subject.lower())
+        self.assertIn("My Key", mail.outbox[0].body)
 
     @patch("hypha.apply.users.passkey_views.verify_registration_response")
     def test_name_is_truncated_to_128_chars(self, mock_verify):
@@ -609,6 +630,17 @@ class TestPasskeyDelete(TestCase):
         url = reverse("users:passkey_delete", args=[passkey.pk])
         response = self.client.post(url)
         self.assertTemplateUsed(response, "users/partials/passkey-list.html")
+
+    @override_settings(SEND_MESSAGES=True)
+    def test_delete_sends_notification_email(self):
+        passkey = make_passkey(self.user, name="My Key")
+        url = reverse("users:passkey_delete", args=[passkey.pk])
+        mail.outbox = []
+        self.client.post(url)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(self.user.email, mail.outbox[0].to)
+        self.assertIn("removed", mail.outbox[0].subject.lower())
+        self.assertIn("My Key", mail.outbox[0].body)
 
 
 # ---------------------------------------------------------------------------

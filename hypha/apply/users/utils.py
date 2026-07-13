@@ -8,6 +8,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import formats, timezone
 from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_encode
@@ -205,6 +206,31 @@ def get_zoneinfo(tz_name):
         return zoneinfo.ZoneInfo(tz_name)
     except (zoneinfo.ZoneInfoNotFoundError, KeyError):
         return None
+
+
+def local_event_time(request):
+    """Return a human-readable "now", localised to the user's timezone.
+
+    Shared by the account-security notification emails (login, passkey
+    added/removed) so the timestamp line reads the same across them.
+    """
+    tz_name = (
+        getattr(request, "session", {}).get("user_timezone", "") if request else ""
+    )
+    user_tz = get_zoneinfo(tz_name)
+    return "{} ({})".format(
+        formats.date_format(
+            timezone.localtime(timezone=user_tz), "SHORT_DATETIME_FORMAT"
+        ),
+        tz_name or timezone.get_current_timezone_name(),
+    )
+
+
+def passkeys_enabled() -> bool:
+    """Passkeys require WEBAUTHN_RP_ID in production. In DEBUG (local/dev)
+    we fall back to the request host so the feature can be exercised locally.
+    """
+    return bool(getattr(settings, "WEBAUTHN_RP_ID", None)) or settings.DEBUG
 
 
 def strip_html_and_nerf_urls(value: str):
