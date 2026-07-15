@@ -9,27 +9,18 @@
   },
   "babel": {
     "exclude": ["**/*.min.js", "**/esm/*.js"],
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "useBuiltIns": "entry",
-          "corejs": "3"
-        }
-      ]
-    ]
+    "presets": ["@babel/preset-env"]
   },
   "browserslist": ["> 0.5%", "last 2 versions", "Firefox ESR", "not dead"],
   "devDependencies": {
     "@alpinejs/focus": "^3.15.8",
-    "@babel/cli": "^7.28.6",
-    "@babel/core": "^7.29.0",
-    "@babel/preset-env": "^7.29.2",
+    "@babel/cli": "^8.0.4",
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
     "@biomejs/biome": "^1.9.4",
     "@tailwindcss/cli": "^4.2.2",
     "@tailwindcss/typography": "^0.5.19",
     "alpinejs": "^3.15.8",
-    "core-js": "^3.49.0",
     "daisyui": "^5.5.19",
     "htmx-ext-multi-swap": "^2.0.2",
     "htmx.org": "^2.0.8",
