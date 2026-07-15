@@ -38,6 +38,10 @@ class MESSAGES(TextChoices):
     CREATED_PROJECT = "CREATED_PROJECT", _("created project")
     UPDATE_PROJECT_LEAD = "UPDATE_PROJECT_LEAD", _("updated project lead")
     UPDATE_PROJECT_TITLE = "UPDATE_PROJECT_TITLE", _("updated project title")
+    UPDATE_PROJECT_CONTRACT_NUMBER = (
+        "UPDATE_PROJECT_CONTRACT_NUMBER",
+        _("updated project contract number"),
+    )
     EDIT_REVIEW = "EDIT_REVIEW", _("edited review")
     SEND_FOR_APPROVAL = "SEND_FOR_APPROVAL", _("sent for approval")
     APPROVE_PROJECT = "APPROVE_PROJECT", _("approved project")
