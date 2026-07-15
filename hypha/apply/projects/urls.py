@@ -50,6 +50,7 @@ from .views import (
     partial_project_lead,
     partial_project_title,
     partial_supporting_documents,
+    update_project_contract_number,
     update_project_dates,
     update_project_title,
 )
@@ -97,6 +98,11 @@ urlpatterns = [
                     "dates/update/",
                     update_project_dates,
                     name="project_dates_update",
+                ),
+                path(
+                    "contract-number/update/",
+                    update_project_contract_number,
+                    name="project_contract_number_update",
                 ),
                 path(
                     "edit/project-form", ProjectFormEditView.as_view(), name="edit_pf"

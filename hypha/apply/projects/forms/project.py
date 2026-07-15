@@ -500,3 +500,12 @@ class UpdateProjectDatesForm(forms.ModelForm):
             proposed_start.disabled = True
             proposed_start.required = False
             proposed_start.widget = proposed_start.hidden_widget()
+
+
+class UpdateProjectContractNumberForm(forms.ModelForm):
+    class Meta:
+        fields = ["contract_number"]
+        model = Project
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)

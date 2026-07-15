@@ -39,6 +39,7 @@ from .project import (
     UploadContractDocumentView,
     UploadContractView,
     UploadDocumentView,
+    update_project_contract_number,
     update_project_dates,
     update_project_title,
 )
@@ -73,6 +74,7 @@ __all__ = [
     "UpdatePAFApproversView",
     "update_project_title",
     "update_project_dates",
+    "update_project_contract_number",
     "UploadContractDocumentView",
     "ChangePAFStatusView",
     "UploadDocumentView",
