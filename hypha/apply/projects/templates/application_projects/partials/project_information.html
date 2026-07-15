@@ -60,3 +60,21 @@
     </dt>
     <dd>{{ object.proposed_end|date:"SHORT_DATE_FORMAT"|default:"-" }}</dd>
 </div>
+
+<div class="fieldset">
+    <dt class="font-semibold">
+        {% trans "Contract number" %}
+        {% if request.user.is_apply_staff or request.user.is_contracting %}
+            <a
+                class="btn btn-xs btn-ghost btn-square"
+                href="{% url 'apply:projects:project_contract_number_update' object.submission.id %}"
+                hx-get="{% url 'apply:projects:project_contract_number_update' object.submission.id %}"
+                hx-target="#htmx-modal"
+            >
+                {% heroicon_micro "pencil-square" aria_hidden=true size=20 %}
+                <span class="sr-only">{% trans "edit contract number" %}</span>
+            </a>
+        {% endif %}
+    </dt>
+    <dd>{{ object.contract_number|default:"-" }}</dd>
+</div>
