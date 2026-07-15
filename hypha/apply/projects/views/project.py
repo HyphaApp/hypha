@@ -550,7 +550,7 @@ def update_project_dates(request, pk):
 
 @login_required
 def update_project_contract_number(request, pk):
-    if not (request.user.is_apply_staff or request.user.is_contracting):
+    if not (request.user.is_org_faculty):
         raise PermissionDenied
 
     project = get_object_or_404(Project, submission__id=pk)

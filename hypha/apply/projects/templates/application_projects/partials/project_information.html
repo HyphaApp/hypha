@@ -64,7 +64,7 @@
 <div class="fieldset">
     <dt class="font-semibold">
         {% trans "Contract number" %}
-        {% if request.user.is_apply_staff or request.user.is_contracting %}
+        {% if request.user.is_org_faculty %}
             <a
                 class="btn btn-xs btn-ghost btn-square"
                 href="{% url 'apply:projects:project_contract_number_update' object.submission.id %}"
