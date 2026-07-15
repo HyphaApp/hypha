@@ -563,6 +563,12 @@ def update_project_contract_number(request, pk):
 
         if form.is_valid():
             form.save()
+            messenger(
+                MESSAGES.UPDATE_PROJECT_CONTRACT_NUMBER,
+                request=request,
+                user=request.user,
+                source=project,
+            )
 
             return HttpResponse(
                 status=204,
