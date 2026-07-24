@@ -27,7 +27,7 @@
                 hx-get="{% url 'apply:projects:project_dates_update' object.pk %}"
                 hx-target="#htmx-modal"
             >
-                {% heroicon_micro "pencil-square" aria_hidden=true size=20 %}
+                {% heroicon_micro "pencil-square" class="text-gray-500" aria_hidden=true size=20 %}
                 <span class="sr-only">{% trans "edit dates" %}</span>
             </a>
         {% endif %}
@@ -53,10 +53,43 @@
                 hx-get="{% url 'apply:projects:project_dates_update' object.pk %}"
                 hx-target="#htmx-modal"
             >
-                {% heroicon_micro "pencil-square" aria_hidden=true size=20 %}
+                {% heroicon_micro "pencil-square" class="text-gray-500" aria_hidden=true size=20 %}
                 <span class="sr-only">{% trans "edit dates" %}</span>
             </a>
         {% endif %}
     </dt>
     <dd>{{ object.proposed_end|date:"SHORT_DATE_FORMAT"|default:"-" }}</dd>
+</div>
+
+<div class="fieldset">
+    <dt class="font-semibold">
+        {% trans "Contract #" %}
+        {% if request.user.is_org_faculty %}
+            <a
+                class="btn btn-xs btn-ghost btn-square"
+                href="{% url 'apply:projects:project_contract_number_update' object.submission.id %}"
+                hx-get="{% url 'apply:projects:project_contract_number_update' object.submission.id %}"
+                hx-target="#htmx-modal"
+            >
+                {% heroicon_micro "pencil-square" class="text-gray-500" aria_hidden=true size=20 %}
+                <span class="sr-only">{% trans "edit contract number" %}</span>
+            </a>
+        {% endif %}
+    </dt>
+    <dd>
+        {{ object.contract_number|default:"-" }}
+        {% if object.contract_number %}
+            <button
+                type="button"
+                class="btn btn-xs btn-ghost btn-square"
+                x-data="{ copied: false }"
+                @click="navigator.clipboard.writeText('{{ object.contract_number|escapejs }}'); copied = true; setTimeout(() => copied = false, 2000)"
+                :title="copied ? '{% trans 'Copied!' %}' : '{% trans 'Copy contract number' %}'"
+            >
+                <span x-show="!copied">{% heroicon_micro "clipboard-document" class="text-gray-500" aria_hidden=true size=20 %}</span>
+                <span x-show="copied" x-cloak>{% heroicon_micro "check" aria_hidden=true size=20 %}</span>
+                <span class="sr-only">{% trans "copy contract number" %}</span>
+            </button>
+        {% endif %}
+    </dd>
 </div>

@@ -261,6 +261,8 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     )
     proposed_end = models.DateField(_("proposed end date"), null=True)
 
+    contract_number = models.CharField(_("contract number"), max_length=255, blank=True)
+
     status = models.TextField(
         _("status"), choices=PROJECT_STATUS_CHOICES, default=DRAFT
     )

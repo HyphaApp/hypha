@@ -85,6 +85,7 @@ from ..forms import (
     SetPendingForm,
     SkipPAFApprovalProcessForm,
     SubmitContractDocumentsForm,
+    UpdateProjectContractNumberForm,
     UpdateProjectDatesForm,
     UpdateProjectLeadForm,
     UpdateProjectTitleForm,
@@ -534,6 +535,48 @@ def update_project_dates(request, pk):
                         {
                             "informationUpdated": None,
                             "showMessage": _("Dates has been updated"),
+                        }
+                    ),
+                },
+            )
+
+    ctx = {
+        "form": form,
+        "value": _("Update"),
+        "object": project,
+    }
+    return render(request, template_name, ctx)
+
+
+@login_required
+def update_project_contract_number(request, pk):
+    if not (request.user.is_org_faculty):
+        raise PermissionDenied
+
+    project = get_object_or_404(Project, submission__id=pk)
+    template_name = "application_projects/modals/project_contract_number_update.html"
+
+    form = UpdateProjectContractNumberForm(instance=project)
+
+    if request.method == "POST":
+        form = UpdateProjectContractNumberForm(request.POST, instance=project)
+
+        if form.is_valid():
+            form.save()
+            messenger(
+                MESSAGES.UPDATE_PROJECT_CONTRACT_NUMBER,
+                request=request,
+                user=request.user,
+                source=project,
+            )
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "informationUpdated": None,
+                            "showMessage": _("Contract number has been updated"),
                         }
                     ),
                 },

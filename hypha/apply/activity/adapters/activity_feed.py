@@ -54,6 +54,9 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.UPDATE_PROJECT_TITLE: _(
             "updated the project title from {old_title} to {source.title}"
         ),
+        MESSAGES.UPDATE_PROJECT_CONTRACT_NUMBER: _(
+            "updated contract number to {source.contract_number}"
+        ),
         MESSAGES.UPDATE_PROJECT_LEAD: _("update Lead from {old_lead} to {source.lead}"),
         MESSAGES.SEND_FOR_APPROVAL: _("Requested approval"),
         MESSAGES.APPROVE_PAF: "handle_paf_assignment",
