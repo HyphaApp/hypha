@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("application_projects", "0104_invoice_tags"),
+        ("application_projects", "0105_alter_project_options_alter_project_submission"),
     ]
 
     operations = [
