@@ -25,6 +25,8 @@ REPORT_DUE = "report_due"
 COMMENT_TASK = "comment_task"
 DOWNLOAD_SUBMISSIONS_EXPORT = "download_submissions_export"
 FAILED_SUBMISSIONS_EXPORT = "failed_submission_export"
+DOWNLOAD_INVOICES_EXPORT = "download_invoices_export"
+FAILED_INVOICES_EXPORT = "failed_invoices_export"
 
 TASKS_CODE_CHOICES = (
     (COMMENT_TASK, _("Comment Task")),
@@ -53,6 +55,11 @@ TASKS_CODE_CHOICES = (
     (
         FAILED_SUBMISSIONS_EXPORT,
         _("Failed to generate submissions export file"),
+    ),
+    (DOWNLOAD_INVOICES_EXPORT, _("Download exported invoices")),
+    (
+        FAILED_INVOICES_EXPORT,
+        _("Failed to generate invoices export file"),
     ),
 )
 
@@ -221,6 +228,21 @@ template_map = {
     FAILED_SUBMISSIONS_EXPORT: {
         "text": _(
             "There was an issue generating your submission export file, please try again."
+        ),
+        "icon": "exclamation-circle",
+        "url": "{link}",
+        "type": _("export"),
+    },
+    # INVOICE EXPORT ACTIONS
+    DOWNLOAD_INVOICES_EXPORT: {
+        "text": _("Your generated invoice export file is ready for download"),
+        "icon": "arrow-down-tray",
+        "url": "{link}",
+        "type": _("export"),
+    },
+    FAILED_INVOICES_EXPORT: {
+        "text": _(
+            "There was an issue generating your invoice export file, please try again."
         ),
         "icon": "exclamation-circle",
         "url": "{link}",
