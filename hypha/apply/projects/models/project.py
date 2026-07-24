@@ -235,8 +235,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         on_delete=models.SET_NULL,
         related_name="lead_projects",
     )
-    submission = models.OneToOneField(
-        "funds.ApplicationSubmission", on_delete=models.CASCADE
+    submission = models.ForeignKey(
+        "funds.ApplicationSubmission",
+        on_delete=models.CASCADE,
+        related_name="projects",
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -301,6 +303,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     class Meta:
         verbose_name = _("project")
         verbose_name_plural = _("projects")
+        ordering = ("pk",)
 
     def __str__(self):
         return self.title
@@ -340,25 +343,26 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     @classmethod
     def create_from_submission(
-        cls, submission, lead=None, status=None, end_date=None, start_date=None
+        cls,
+        submission,
+        lead=None,
+        status=None,
+        end_date=None,
+        start_date=None,
+        title=None,
     ):
         """
         Create a Project from the given submission.
 
-        Returns a new Project or the given ApplicationSubmissions existing
-        Project.
+        A submission can have multiple projects, so callers that want
+        at-most-one (e.g. auto-create on determination) must guard with
+        submission.projects.exists() themselves.
         """
         if not settings.PROJECTS_ENABLED:
             logging.error(
                 f"Tried to create a Project for Submission ID={submission.id} while projects are disabled"
             )
             return None
-
-        # OneToOne relations on the targeted model cannot be accessed without
-        # an exception when the relation doesn't exist (is None).  Since we
-        # want to fail fast here, we can use hasattr instead.
-        if hasattr(submission, "project"):
-            return submission.project
 
         # If default status is valid and status arg is None, use it otherwise fallback to draft
         if status is None:
@@ -374,7 +378,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return Project.objects.create(
             submission=submission,
             user=submission.user,
-            title=submission.title,
+            title=title if title else submission.title,
             status=status,
             lead=lead if lead else None,
             proposed_end=end_date,
@@ -466,7 +470,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return False
 
     def get_absolute_url(self):
-        return reverse("funds:submissions:project", args=[self.submission_id])
+        return reverse("funds:submissions:project", args=[self.submission_id, self.pk])
 
     @property
     def can_make_approval(self):
@@ -742,9 +746,7 @@ class Contract(models.Model):
         )
 
     def get_absolute_url(self):
-        return reverse(
-            "apply:projects:contract", args=[self.project.submission_id, self.pk]
-        )
+        return reverse("apply:projects:contract", args=[self.project.pk, self.pk])
 
 
 class PacketFile(models.Model):

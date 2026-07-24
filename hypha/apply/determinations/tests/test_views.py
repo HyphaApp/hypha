@@ -202,8 +202,10 @@ class DeterminationFormTestCase(BaseViewTestCase):
 
         # Confirm a Project was not created for either submission since it's
         # not in the final stage of its workflow.
-        self.assertFalse(hasattr(submission_original, "project"))
-        self.assertFalse(hasattr(submission_next, "project"))
+        self.assertFalse(submission_original.projects.exists())
+        self.assertFalse(
+            submission_next.projects.exists() if submission_next else False
+        )
 
     def test_first_stage_rejected_determination_does_not_create_project(self):
         submission = ApplicationSubmissionFactory(
@@ -232,7 +234,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
 
         # Confirm a Project was not created for the original
         # ApplicationSubmission.
-        self.assertFalse(hasattr(submission_original, "project"))
+        self.assertFalse(submission_original.projects.exists())
 
     def test_second_stage_accepted_determination_creates_project(self):
         submission = ApplicationSubmissionFactory(
@@ -260,8 +262,10 @@ class DeterminationFormTestCase(BaseViewTestCase):
         # applications flow.
         self.assertIsNone(submission_next)
 
-        self.assertTrue(hasattr(submission_original, "project"))
-        self.assertFalse(hasattr(submission_next, "project"))
+        self.assertTrue(submission_original.projects.exists())
+        self.assertFalse(
+            submission_next.projects.exists() if submission_next else False
+        )
 
     def test_second_stage_rejected_determination_does_not_create_project(self):
         submission = ApplicationSubmissionFactory(
@@ -288,7 +292,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
         # applications flow.
         self.assertIsNone(submission_next)
 
-        self.assertFalse(hasattr(submission_original, "project"))
+        self.assertFalse(submission_original.projects.exists())
 
     def test_single_stage_accepted_determination_creates_project(self):
         submission = ApplicationSubmissionFactory(
@@ -312,7 +316,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
         submission_next = submission_original.next
 
         self.assertIsNone(submission_next)
-        self.assertTrue(hasattr(submission_original, "project"))
+        self.assertTrue(submission_original.projects.exists())
 
     def test_single_stage_rejected_determination_does_not_create_project(self):
         submission = ApplicationSubmissionFactory(
@@ -336,7 +340,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
         submission_next = submission_original.next
 
         self.assertIsNone(submission_next)
-        self.assertFalse(hasattr(submission_original, "project"))
+        self.assertFalse(submission_original.projects.exists())
 
     @override_settings(PROJECTS_DEFAULT_STATUS="contracting")
     def test_auto_creation_uses_status_settings(self):
@@ -357,8 +361,8 @@ class DeterminationFormTestCase(BaseViewTestCase):
         )
 
         submission_original = self.refresh(submission)
-        self.assertTrue(hasattr(submission_original, "project"))
-        self.assertEqual(submission.project.status, CONTRACTING)
+        self.assertTrue(submission_original.projects.exists())
+        self.assertEqual(submission.projects.first().status, CONTRACTING)
 
     @override_settings(PROJECTS_DEFAULT_STATUS="garbage")
     def test_auto_creation_uses_draft_when_invalid_status_settings(self):
@@ -379,8 +383,8 @@ class DeterminationFormTestCase(BaseViewTestCase):
         )
 
         submission_original = self.refresh(submission)
-        self.assertTrue(hasattr(submission_original, "project"))
-        self.assertEqual(submission.project.status, DRAFT)
+        self.assertTrue(submission_original.projects.exists())
+        self.assertEqual(submission.projects.first().status, DRAFT)
 
     @override_settings(PROJECTS_AUTO_CREATE=False)
     def test_disabling_project_auto_creation_stops_projects_being_created(self):
@@ -405,7 +409,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
         submission_next = submission_original.next
 
         self.assertIsNone(submission_next)
-        self.assertFalse(hasattr(submission_original, "project"))
+        self.assertFalse(submission_original.projects.exists())
 
     @override_settings(PROJECTS_ENABLED=False, PROJECTS_AUTO_CREATE=True)
     def test_disabling_projects_ignores_auto_creation_setting(self):
@@ -430,7 +434,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
         submission_next = submission_original.next
 
         self.assertIsNone(submission_next)
-        self.assertFalse(hasattr(submission_original, "project"))
+        self.assertFalse(submission_original.projects.exists())
 
 
 class BatchDeterminationTestCase(BaseViewTestCase):

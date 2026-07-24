@@ -18,8 +18,8 @@
                 &middot;
                 <a
                     class="link"
-                    href="{% url 'apply:projects:report_frequency_update' pk=object.submission.id %}"
-                    hx-get="{% url 'apply:projects:report_frequency_update' pk=object.submission.id %}"
+                    href="{% url 'apply:projects:report_frequency_update' pk=object.pk %}"
+                    hx-get="{% url 'apply:projects:report_frequency_update' pk=object.pk %}"
                     hx-target="#htmx-modal"
                 >
                     {% if object.report_config.disable_reporting %}
@@ -31,8 +31,8 @@
                 &middot;
                 <a
                     class="link"
-                    href="{% url 'apply:projects:report_add' pk=object.submission.id %}"
-                    hx-get="{% url 'apply:projects:report_add' pk=object.submission.id %}"
+                    href="{% url 'apply:projects:report_add' pk=object.pk %}"
+                    hx-get="{% url 'apply:projects:report_add' pk=object.pk %}"
                     hx-target="#htmx-modal"
                 >
                     {% trans "Add" %}

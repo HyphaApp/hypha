@@ -111,12 +111,20 @@ PROJECTS_ENABLED = env.bool("PROJECTS_ENABLED", False)
 # Auto create projects for approved applications.
 PROJECTS_AUTO_CREATE = env.bool("PROJECTS_AUTO_CREATE", False)
 
+# Allow a submission to have multiple projects associated.
+PROJECTS_ALLOW_MULTIPLE = env.bool("PROJECTS_ALLOW_MULTIPLE", False)
+
 # Default status for projects, must be a string literal of "draft" (default), "contracting", "invoicing_and_reporting" or "closing"
 # Will be used for auto-create or be the default selection in the project creation form
 PROJECTS_DEFAULT_STATUS = env.str("PROJECTS_DEFAULT_STATUS", "draft")
 
 # When enabled, the project start date will be set and displayed after the contracting phase, if disabled it is set on project creation
 PROJECTS_START_AFTER_CONTRACTING = env.bool("PROJECTS_START_AFTER_CONTRACTING", True)
+
+# Columns/filters to exclude from the projects table.
+# Each value hides both the table column and its matching filter (where one exists).
+# Possible values are: status, lead, fund, reporting, last_payment_request, end_date
+PROJECTS_TABLE_EXCLUDED_FIELDS = env.list("PROJECTS_TABLE_EXCLUDED_FIELDS", [])
 
 # Send out e-mail, slack messages etc. from Hypha. Set to true for production.
 SEND_MESSAGES = env.bool("SEND_MESSAGES", False)
@@ -175,11 +183,6 @@ SUBMISSIONS_EXPORT_ACCESS_STAFF_ADMIN = env.bool(
 SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list(
     "SUBMISSIONS_TABLE_EXCLUDED_FIELDS", ["organization_name"]
 )
-
-# Columns/filters to exclude from the projects table.
-# Each value hides both the table column and its matching filter (where one exists).
-# Possible values are: status, lead, fund, reporting, last_payment_request, end_date
-PROJECTS_TABLE_EXCLUDED_FIELDS = env.list("PROJECTS_TABLE_EXCLUDED_FIELDS", [])
 
 # No of co-applicants can be added to a submission (default 10)
 SUBMISSIONS_COAPPLICANT_INVITES_LIMIT = env.int(
