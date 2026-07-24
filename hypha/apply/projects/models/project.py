@@ -176,6 +176,7 @@ class ProjectQuerySet(models.QuerySet):
                 "report_config",
                 "submission__page",
                 "lead",
+                "user",
             )
             .defer("form_data", "form_fields")
         )

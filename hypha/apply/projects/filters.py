@@ -30,6 +30,10 @@ def get_project_leads(request):
     return User.objects.filter(lead_projects__isnull=False).distinct()
 
 
+def get_project_contractors(request):
+    return User.objects.filter(owned_projects__isnull=False).distinct()
+
+
 class InvoiceListFilter(filters.FilterSet):
     fund = ModelMultipleChoiceFilter(
         label=_("Funds"),
@@ -53,6 +57,9 @@ class ProjectListFilter(filters.FilterSet):
     project_lead = ModelMultipleChoiceFilter(
         field_name="lead", label=_("Lead"), queryset=get_project_leads
     )
+    project_contractor = ModelMultipleChoiceFilter(
+        field_name="user", label=_("Contractor"), queryset=get_project_contractors
+    )
     project_status = MultipleChoiceFilter(
         field_name="status", label=_("Status"), choices=PROJECT_STATUS_CHOICES
     )
@@ -74,10 +81,16 @@ class ProjectListFilter(filters.FilterSet):
         "fund": "project_fund",
         "lead": "project_lead",
         "status": "project_status",
+        "contractor": "project_contractor",
     }
 
     class Meta:
-        fields = ["project_status", "project_lead", "project_fund"]
+        fields = [
+            "project_status",
+            "project_lead",
+            "project_contractor",
+            "project_fund",
+        ]
         model = Project
 
     def __init__(self, *args, exclude=None, **kwargs):

@@ -199,6 +199,7 @@ class BaseProjectsTable(tables.Table):
     status = tables.Column(
         verbose_name=_("Status"), accessor="get_status_display", order_by=("status",)
     )
+    contractor = tables.Column(verbose_name=_("Contractor"), accessor="user")
     fund = tables.Column(verbose_name=_("Fund"), accessor="submission__page")
     reporting = tables.Column(verbose_name=_("Reporting"), accessor="pk")
     last_payment_request = RelativeTimeColumn()
@@ -317,6 +318,7 @@ class ProjectsListTable(BaseProjectsTable):
             "title",
             "status",
             "lead",
+            "contractor",
             "fund",
             "reporting",
             "last_payment_request",
