@@ -36,7 +36,9 @@ def generate_invoice_csv(qs_ids: List[int], request_user_id: int) -> None:
         export_manager = InvoiceExportManager.objects.create(
             user=request_user, total_export=len(qs_ids)
         )
-        export_manager.export_data = export_invoices_to_csv(qs.iterator())
+        export_manager.export_data = export_invoices_to_csv(
+            qs.iterator(chunk_size=2000)
+        )
         export_manager.set_completed_and_save()
 
         user_task = DOWNLOAD_INVOICES_EXPORT
