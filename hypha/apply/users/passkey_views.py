@@ -8,7 +8,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, resolve_url
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -36,7 +36,11 @@ from webauthn.helpers.structs import (
     UserVerificationRequirement,
 )
 
+from hypha.elevate.views import redirect_to_elevate
+
 from .models import Passkey
+from .services import send_passkey_notification
+from .utils import passkeys_enabled
 
 logger = logging.getLogger(__name__)
 
@@ -44,18 +48,41 @@ SESSION_CHALLENGE_KEY_REGISTER = "webauthn_challenge_register"
 SESSION_CHALLENGE_KEY_AUTH = "webauthn_challenge_auth"
 
 
-def passkeys_enabled() -> bool:
-    """Passkeys require WEBAUTHN_RP_ID in production. In DEBUG (local/dev)
-    we fall back to the request host so the feature can be exercised locally.
-    """
-    return bool(getattr(settings, "WEBAUTHN_RP_ID", None)) or settings.DEBUG
-
-
 def passkeys_required(view_func):
     @wraps(view_func)
     def _wrapped(request, *args, **kwargs):
         if not passkeys_enabled():
             raise Http404
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped
+
+
+def passkey_elevate_required(view_func):
+    """Require an elevated (recently re-authenticated) session for sensitive
+    passkey management actions — adding and removing passkeys.
+
+    This mirrors the elevation gate used for disabling 2FA and changing the
+    account email. All users must re-authenticate before the action is allowed:
+    users with a usable password confirm it again, while users without one
+    (e.g. OAuth logins) are routed to the same elevate page where they confirm
+    access via an emailed one-time code.
+
+    These endpoints are called via ``fetch`` (registration) and HTMX (delete),
+    so instead of returning a normal redirect we hand the client the elevate
+    URL: an ``HX-Redirect`` header for HTMX requests, otherwise a JSON body with
+    an ``elevate_url`` the JavaScript can navigate to.
+    """
+
+    @wraps(view_func)
+    def _wrapped(request, *args, **kwargs):
+        if not request.is_elevated():
+            elevate_url = redirect_to_elevate(resolve_url("users:account"))["Location"]
+            if request.headers.get("HX-Request"):
+                response = HttpResponse(status=204)
+                response["HX-Redirect"] = elevate_url
+                return response
+            return JsonResponse({"elevate_url": elevate_url}, status=403)
         return view_func(request, *args, **kwargs)
 
     return _wrapped
@@ -80,15 +107,26 @@ def _get_origin(request):
     return f"{scheme}://{request.get_host()}"
 
 
+# WebAuthn challenges are single-use, but they should also be short-lived.
+# Reject any challenge older than this to match spec guidance (a few minutes).
+CHALLENGE_TTL_SECONDS = 300
+
+
 def _store_challenge(request, challenge: bytes, key: str):
-    request.session[key] = base64.b64encode(challenge).decode()
+    request.session[key] = {
+        "challenge": base64.b64encode(challenge).decode(),
+        "created": timezone.now().timestamp(),
+    }
 
 
 def _load_challenge(request, key: str) -> bytes:
-    encoded = request.session.pop(key, None)
-    if not encoded:
+    stored = request.session.pop(key, None)
+    if not isinstance(stored, dict):
         raise PermissionDenied("No active WebAuthn challenge.")
-    return base64.b64decode(encoded)
+    created = stored.get("created")
+    if created is None or timezone.now().timestamp() - created > CHALLENGE_TTL_SECONDS:
+        raise PermissionDenied("WebAuthn challenge expired.")
+    return base64.b64decode(stored["challenge"])
 
 
 _VALID_TRANSPORTS = {t.value for t in AuthenticatorTransport}
@@ -111,6 +149,7 @@ MAX_PASSKEYS_PER_USER = 10
 @passkeys_required
 @login_required
 @require_POST
+@passkey_elevate_required
 @ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
 def passkey_register_begin(request):
     user = request.user
@@ -149,6 +188,7 @@ def passkey_register_begin(request):
 @passkeys_required
 @login_required
 @require_POST
+@passkey_elevate_required
 @ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
 def passkey_register_complete(request):
     try:
@@ -207,6 +247,7 @@ def passkey_register_complete(request):
         )
         return JsonResponse({"error": _("Could not save passkey")}, status=500)
     logger.info("Passkey registered for user %s (name=%r)", request.user.pk, name)
+    send_passkey_notification(request, request.user, name, added=True)
     return JsonResponse({"status": "ok"})
 
 
@@ -348,6 +389,7 @@ def passkey_list(request):
 @passkeys_required
 @login_required
 @require_POST
+@passkey_elevate_required
 def passkey_delete(request, pk):
     passkey = get_object_or_404(Passkey, pk=pk, user=request.user)
     logger.info(
@@ -356,7 +398,9 @@ def passkey_delete(request, pk):
         pk,
         passkey.name,
     )
+    passkey_name = passkey.name
     passkey.delete()
+    send_passkey_notification(request, request.user, passkey_name, added=False)
     passkeys = request.user.passkeys.all()
     return render(request, "users/partials/passkey-list.html", {"passkeys": passkeys})
 

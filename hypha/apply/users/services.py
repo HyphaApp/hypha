@@ -14,9 +14,51 @@ from hypha.core.mail import MarkdownMail
 
 from .models import PendingSignup
 from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGenerator
-from .utils import get_redirect_url, get_user_by_email
+from .utils import get_redirect_url, get_user_by_email, local_event_time
 
 User = get_user_model()
+
+
+def send_passkey_notification(request, user, passkey_name, *, added):
+    """Notify the user by email that a passkey was added to or removed from
+    their account. Mirrors the login notification so the two feel consistent.
+
+    Args:
+        request: The current request (used for timezone and site resolution).
+        user: The user whose account changed.
+        passkey_name: Display name of the affected passkey.
+        added: True if the passkey was added, False if it was removed.
+    """
+    if not settings.SEND_MESSAGES or not user.email:
+        return
+
+    if added:
+        subject = _("A passkey was added to your %(org)s account") % {
+            "org": settings.ORG_LONG_NAME
+        }
+        template = "users/emails/passkey_added_notification.md"
+    else:
+        subject = _("A passkey was removed from your %(org)s account") % {
+            "org": settings.ORG_LONG_NAME
+        }
+        template = "users/emails/passkey_removed_notification.md"
+
+    if settings.EMAIL_SUBJECT_PREFIX:
+        subject = str(settings.EMAIL_SUBJECT_PREFIX) + str(subject)
+
+    email = MarkdownMail(template)
+    email.send(
+        to=user.email,
+        subject=subject,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        context={
+            "user": user,
+            "passkey_name": passkey_name,
+            "event_time": local_event_time(request),
+            "site": Site.find_for_request(request) if request else None,
+            "ORG_EMAIL": settings.ORG_EMAIL,
+        },
+    )
 
 
 class PasswordlessAuthService:

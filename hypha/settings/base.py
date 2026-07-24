@@ -645,7 +645,7 @@ SECURE_REFERRER_POLICY = env.str(
 # https://django-elevate.readthedocs.io/en/latest/config/index.html
 # ------------------------------------------------------------------------------
 # How long should Elevate mode be active for?
-ELEVATE_COOKIE_AGE = env.int("ELEVATE_COOKIE_AGE", 3600)  # 1 hours
+ELEVATE_COOKIE_AGE = env.int("ELEVATE_COOKIE_AGE", 900)  # 15 minutes
 
 # An extra salt to be added into the cookie signature.
 ELEVATE_COOKIE_SALT = env.str("ELEVATE_COOKIE_SALT", SECRET_KEY)
