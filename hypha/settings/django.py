@@ -214,6 +214,7 @@ CUSTOM_AUTH_BACKEND = "hypha.apply.users.backends.CustomModelBackend"
 
 AUTHENTICATION_BACKENDS = (
     "social_core.backends.google.GoogleOAuth2",
+    "social_core.backends.okta.OktaOAuth2",
     CUSTOM_AUTH_BACKEND,
 )
 

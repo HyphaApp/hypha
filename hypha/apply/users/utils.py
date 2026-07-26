@@ -52,7 +52,11 @@ def can_use_oauth_check(user):
     """
     try:
         domain = user.email.split("@")[-1]
-        return domain in settings.SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS
+        whitelisted_domains = {
+            *settings.SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS,
+            *settings.SOCIAL_AUTH_OKTA_OAUTH2_WHITELISTED_DOMAINS,
+        }
+        return domain in whitelisted_domains
     except AttributeError:
         # Anonymous user or setting not defined
         pass

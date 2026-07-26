@@ -441,6 +441,19 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = env.list(
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY", "")
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET", "")
 
+# Set the Okta OAuth2 credentials in ENV variables or local.py
+# Create an OIDC "Web" app in the Okta admin console and grant it the
+# openid, profile and email scopes.
+# SOCIAL_AUTH_OKTA_OAUTH2_API_URL should point at the Okta authorization
+# server, e.g. https://your-org.okta.com/oauth2/default
+SOCIAL_AUTH_OKTA_OAUTH2_WHITELISTED_DOMAINS = env.list(
+    "SOCIAL_AUTH_OKTA_OAUTH2_WHITELISTED_DOMAINS", STAFF_EMAIL_DOMAINS
+)
+
+SOCIAL_AUTH_OKTA_OAUTH2_KEY = env.str("SOCIAL_AUTH_OKTA_OAUTH2_KEY", "")
+SOCIAL_AUTH_OKTA_OAUTH2_SECRET = env.str("SOCIAL_AUTH_OKTA_OAUTH2_SECRET", "")
+SOCIAL_AUTH_OKTA_OAUTH2_API_URL = env.str("SOCIAL_AUTH_OKTA_OAUTH2_API_URL", "")
+
 SOCIAL_AUTH_URL_NAMESPACE = "social"
 SOCIAL_AUTH_LOGIN_ERROR_URL = "users:login"
 SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = "users:account"

@@ -21,6 +21,8 @@ def backend_name(name):
         "google-oauth": "Google OAuth",
         "google-oauth2": "Google OAuth",
         "google-openidconnect": "Google OpenId",
+        "okta-oauth2": "Okta OAuth",
+        "okta-openidconnect": "Okta OpenId",
     }.get(name, name)
 
 
