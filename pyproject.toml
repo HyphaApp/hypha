@@ -48,7 +48,6 @@ dependencies = [
     "python-docx~=1.2.0",
     "redis~=8.0.0",
     "sentry-sdk~=2.63.0",
-    "setuptools~=80.9.0",
     "social_auth_app_django~=5.9.0",
     "svglib==1.5.1",
     "svgwrite~=1.4.3",
