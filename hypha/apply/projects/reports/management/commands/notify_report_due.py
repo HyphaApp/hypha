@@ -46,6 +46,9 @@ class Command(BaseCommand):
 
             due_date = today + relativedelta(days=delta)
             for project in Project.objects.in_progress():
+                # Check that project has report_config.
+                if not hasattr(project, "report_config"):
+                    continue
                 next_report = project.report_config.ensure_due_report()
                 if not next_report:
                     continue
