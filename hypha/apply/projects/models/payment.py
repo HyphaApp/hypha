@@ -201,7 +201,7 @@ class Invoice(models.Model):
             CoApplicantRole,
         )
 
-        if self.status in (SUBMITTED):
+        if self.status == SUBMITTED:
             if user.is_apply_staff:
                 return True
             if user.is_applicant:
