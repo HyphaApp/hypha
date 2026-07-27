@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.users.models import User
@@ -59,6 +60,11 @@ class CoApplicantInvite(models.Model):
 
     def __str__(self):
         return f"{self.invited_user_email} invited to {self.submission})"
+
+    def respond(self, status):
+        self.status = status
+        self.responded_on = timezone.now()
+        self.save(update_fields=["status", "responded_on"])
 
 
 class CoApplicant(models.Model):
