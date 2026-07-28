@@ -7,7 +7,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("application_projects", "0104_invoice_tags"),
+        ("application_projects", "0106_project_contract_number"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
