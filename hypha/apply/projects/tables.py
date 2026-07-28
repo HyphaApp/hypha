@@ -201,6 +201,7 @@ class BaseProjectsTable(tables.Table):
     )
     contractor = tables.Column(verbose_name=_("Contractor"), accessor="user")
     fund = tables.Column(verbose_name=_("Fund"), accessor="submission__page")
+    contract_number = tables.Column(verbose_name=_("Contract #"), default="-")
     reporting = tables.Column(verbose_name=_("Reporting"), accessor="pk")
     last_payment_request = RelativeTimeColumn()
     end_date = RelativeTimeColumn(verbose_name=_("End date"), accessor="proposed_end")
@@ -320,6 +321,7 @@ class ProjectsListTable(BaseProjectsTable):
             "lead",
             "contractor",
             "fund",
+            "contract_number",
             "reporting",
             "last_payment_request",
             "end_date",

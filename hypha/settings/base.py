@@ -124,7 +124,10 @@ PROJECTS_START_AFTER_CONTRACTING = env.bool("PROJECTS_START_AFTER_CONTRACTING", 
 # Columns/filters to exclude from the projects table.
 # Each value hides both the table column and its matching filter (where one exists).
 # Possible values are: status, lead, fund, reporting, last_payment_request, end_date
-PROJECTS_TABLE_EXCLUDED_FIELDS = env.list("PROJECTS_TABLE_EXCLUDED_FIELDS", [])
+# and contract_number
+PROJECTS_TABLE_EXCLUDED_FIELDS = env.list(
+    "PROJECTS_TABLE_EXCLUDED_FIELDS", ["contract_number"]
+)
 
 # Send out e-mail, slack messages etc. from Hypha. Set to true for production.
 SEND_MESSAGES = env.bool("SEND_MESSAGES", False)

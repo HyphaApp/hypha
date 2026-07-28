@@ -87,6 +87,9 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPDATE_PROJECT_TITLE: _(
             "The project title has been updated from <{link}|{old_title}> to <{link}|{source.title}> by {user}"
         ),
+        MESSAGES.UPDATE_PROJECT_CONTRACT_NUMBER: _(
+            "The contract number of project <{link}|{source.title}> has been updated to {source.contract_number} by {user}"
+        ),
         MESSAGES.EDIT_REVIEW: _(
             "{user} has edited {review.author} review for <{link}|{source.title_text_display}>"
         ),
