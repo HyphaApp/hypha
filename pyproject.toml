@@ -154,6 +154,7 @@ extend-exclude = [
     ".git/",
     "*migrations*",
     "hypha/static_src/javascript/esm/",
+    "public/sandbox_db.dump",
     "*.min.js",
     "*.po",
     "*.min.json",
