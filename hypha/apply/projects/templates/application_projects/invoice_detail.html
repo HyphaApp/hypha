@@ -60,7 +60,7 @@
             <!-- status -->
             <section>
                 {% url 'apply:projects:partial-invoice-status' pk=object.project.pk invoice_pk=object.pk as activity_url %}
-                {% include "application_projects/includes/fetch_object_activity.html" with fetch_activity_url=activity_url %}
+                {% include "application_projects/includes/fetch_object_activity.html" with fetch_activity_url=activity_url extra_triggers="invoicesUpdated from:body" %}
             </section>
 
             <!-- invoice -->

@@ -8,14 +8,16 @@ Params:
   fetch_activity_url        – the URL to pull the activities from (ie. `/apply/projects/<PROJECT ID>/project-sow/<SOW ID>/partial/status/`)
   extra_triggers            - any other htmx triggers that should cause a refresh of the activities. If multiple, should be comma delimited (ie. `extra_triggers="myaction, anotheraction"`)
 {% endcomment %}
-<section
-    hx-get="{{ fetch_activity_url }}"
-    {# Fetch current state of the collapsed section to determine if it should be open by default #}
-    hx-vals="js:{open: Boolean(document.getElementById('statusDetail')?.open) }"
-    hx-trigger="load, commentAdded from:body{% if extra_triggers %}, {{ extra_triggers }}{% endif %}"
-    class="card card-border"
->
-    <div class="flex-none content-center min-h-10">
-        <div class="h-4 rounded-full animate-pulse bg-base-300 min-w-96"></div>
-    </div>
-</section>
+{% if fetch_activity_url %}
+    <section
+        hx-get="{{ fetch_activity_url }}"
+        {# Fetch current state of the collapsed section to determine if it should be open by default #}
+        hx-vals="js:{open: Boolean(document.getElementById('statusDetail')?.open) }"
+        hx-trigger="load, commentAdded from:body{% if extra_triggers %}, {{ extra_triggers }}{% endif %}"
+        class="card card-border"
+    >
+        <div class="flex-none content-center min-h-10">
+            <div class="h-4 rounded-full animate-pulse bg-base-300 min-w-96"></div>
+        </div>
+    </section>
+{% endif %}

@@ -19,7 +19,7 @@
         <div class="layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-start">
             <article class="flex flex-col gap-4 layout-main">
                 <section>
-                    {% url 'apply:projects:partial-pf-status' pk=object.pk pf_pk=object.pfp.pk as activity_url %}
+                    {% url 'apply:projects:partial-pf-status' pk=object.pk pfp_pk=object.pfp.pk as activity_url %}
                     {% include "application_projects/includes/fetch_object_activity.html" with fetch_activity_url=activity_url %}
                 </section>
                 <section>
