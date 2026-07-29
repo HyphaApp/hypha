@@ -108,12 +108,13 @@ urlpatterns += [
     ),
 ]
 
+# Load urls from any djp plugins.
+urlpatterns += djp.urlpatterns()
+
+# Need to be last.
 urlpatterns += [
     path("", include(wagtail_urls)),
 ]
-
-# Load urls from any djp plugins.
-urlpatterns += djp.urlpatterns()
 
 if settings.DEBUG:
     import debug_toolbar
