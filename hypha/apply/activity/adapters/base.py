@@ -21,6 +21,10 @@ neat_related = {
     MESSAGES.DELETE_REVIEW_OPINION: "review_opinion",
     MESSAGES.EDIT_REVIEW: "review",
     MESSAGES.CREATED_PROJECT: "submission",
+    MESSAGES.CREATED_SOW: "sow",
+    MESSAGES.EDITED_SOW: "sow",
+    MESSAGES.EDITED_PF: "pfp",
+    MESSAGES.CREATED_PF: "pfp",
     MESSAGES.PROJECT_TRANSITION: "old_stage",
     MESSAGES.APPROVE_PAF: "paf_approvals",  # expect a list
     MESSAGES.UPDATE_PROJECT_LEAD: "old_lead",

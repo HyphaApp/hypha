@@ -1,23 +1,31 @@
+{% comment %}
+Renders a comment activity item. Intended to be used as a part of a timeline
+
+Params:
+  activity              – a comment Activity object to render into a timeline
+  mini                  - bool that will force including only essential elements of the comment item 
+{% endcomment %}
+
 {% load i18n activity_tags nh3_tags markdown_tags submission_tags apply_tags heroicons users_tags %}
 
 <article class="relative h-timeline-item" id="communications-wrapper--{{ activity.id }}">
-    <div
-        class="flex py-3 -ms-8 before:block before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-base-300 md:-ms-20"
-    >
-        {% with activity|display_activity_author:request.user as author_name %}
-            <div class="inline-flex relative z-0 justify-center items-start me-4">
-                <div class="relative rounded-full inline-flex items-center justify-center border-white border-2 -ms-0.5 {% if activity.user.is_staff %}bg-slate-200 {% else %}bg-base-200{% endif %}">
-                    <div class="hidden p-2 md:block">
-                        {% user_image author_name size=25 %}
+    {% if not mini %}
+        <div
+            class="flex py-3 -ms-8 before:block before:absolute before:top-0 before:bottom-0 before:left-0 before:w-px before:bg-base-300 md:-ms-20"
+        >
+            {% with activity|display_activity_author:request.user as author_name %}
+                <div class="inline-flex relative z-0 justify-center items-start me-4">
+                    <div class="relative rounded-full inline-flex items-center justify-center border-white border-2 -ms-0.5 {% if activity.user.is_staff %}bg-slate-200 {% else %}bg-base-200{% endif %}">
+                        <div class="hidden p-2 md:block">
+                            {% user_image author_name size=25 %}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="{% if activity.user == request.user %}border-info/30{% else %}border-base-300{% endif %} flex-1 pb-2 bg-base-100 border rounded-box target:ring-2 target:ring-info scroll-m-2  z-1"
-                 id="communications--{{ activity.id }}">
-                <header class="{% if activity.user == request.user %}bg-info/20{% else %}bg-base-200{% endif %} flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-t-box">
-                    <div>
-                        <span>
+                <div class="{% if activity.user == request.user %}border-info/30{% else %}border-base-300{% endif %} flex-1 pb-2 bg-base-100 border rounded-box target:ring-2 target:ring-info scroll-m-2  z-1"
+                     id="communications--{{ activity.id }}">
+                    <header class="{% if activity.user == request.user %}bg-info/20{% else %}bg-base-200{% endif %} flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-t-box">
+                        <div class="flex gap-1">
                             <strong class="font-semibold">{{ author_name }}</strong>
 
                             {% if not request.user.is_applicant %}
@@ -33,88 +41,188 @@
                                 </span>
                             {% endif %}
 
-                            <a href="#communications--{{activity.id}}" class="hover:underline">
+                            <a href="#communications--{{activity.id}}" class="flex gap-1 hover:underline">
+                                <span class="text-fg-muted">
+                                    {% if not submission_title and activity|user_can_see_related:request.user %}
+                                            {# Determine if an/a should be used in the following text (not relevant to languages other than english) #}
+                                        {% with activity.related_object|model_verbose_name|an as an_or_a %}
+                                            {% blocktrans with verbose_related_name=activity.related_object|model_verbose_name %}commented on {{an_or_a}} {{ verbose_related_name }}{% endblocktrans %}
+                                        {% endwith %}
+                                    {% else %}
+                                        {% trans "commented" %}
+                                    {% endif %}
+                                </span>
+                                <relative-time
+                                    class="text-fg-muted"
+                                    datetime="{{ activity.timestamp|date:"c" }}"
+                                >{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
+                            </a>
+                        </div>
+
+                        <div class="flex gap-1 items-center">
+                            {% if not request.user.is_applicant %}
+                                {% if request.user.is_apply_staff and activity.assigned_to %}
+                                    <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs rounded-xl border border-gray-300 text-fg-muted">
+                                        {% heroicon_outline "user-plus" size=14 class="inline" aria_hidden=true %}
+                                        {% if activity.assigned_to.id == request.user.id %}
+                                            {% trans "Assigned to you" %}
+                                        {% else %}
+                                            {% blocktrans with activity.assigned_to.full_name as assigned_to %}Assigned to {{ assigned_to }}{% endblocktrans %}
+                                        {% endif %}
+                                    </span>
+                                {% endif %}
+
+                                {% with activity.visibility|visibility_display:request.user as visibility_text  %}
+                                    <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs uppercase rounded-xl border border-gray-300 text-fg-muted"
+                                          data-tippy-content="{% blocktrans %}This is visible to {{ visibility_text }}{% endblocktrans %}">
+                                        {% heroicon_outline "eye" size=14 class="inline" aria_hidden=true %}
+                                        {{ visibility_text }}
+                                    </span>
+                                {% endwith %}
+                            {% endif %}
+
+                            {% if editable and activity.user == request.user and not activity.deleted %}
+                                <a
+                                    hx-get="{% url 'activity:edit-comment' activity.id %}"
+                                    hx-target="#text-comment-{{activity.id}}"
+                                    title="{% trans 'Edit comment' %}"
+                                    class="btn btn-sm btn-square btn-ghost"
+                                >
+                                    {% heroicon_micro "pencil-square" aria_hidden=true %}
+                                    <span class="sr-only">{% trans "Edit" %}</span>
+                                </a>
+                            {% endif %}
+
+                            {% if editable and activity.user == request.user  and not activity.deleted and request.user.is_apply_staff %}
+                                <a
+                                    hx-delete="{% url 'activity:delete-comment' activity.id %}"
+                                    hx-target="#communications-wrapper--{{activity.id}}"
+                                    hx-confirm="{% trans 'Are you sure you want to delete this comment? This action cannot be undone.' %}"
+                                    title="{% trans 'Delete comment' %}"
+                                    class="btn btn-error btn-sm btn-square btn-ghost"
+                                >
+                                    {% heroicon_micro "trash" class="opacity-80 size-4" aria_hidden=true %}
+                                    <span class="sr-only">{% trans "Delete" %}</span>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </header>
+
+                    <div class="">
+                        {% if submission_title %}
+                            {% trans "updated" %} <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title }}</a>
+                        {% endif %}
+
+                        <div class="px-3 pt-2" id="text-comment-{{activity.id}}">
+                            {% include 'activity/partial_comment_message.html' with activity=activity %}
+                        </div>
+                        {% if not submission_title and activity|user_can_see_related:request.user %}
+                            {% with url=activity.related_object.get_absolute_url %}
+                                {% if url %}
+                                    <div class="px-3">
+                                        <a href="{{ url }}" class="mt-2 font-semibold uppercase btn btn-sm btn-info btn-soft">
+                                            {% trans "View " %}{{ activity.related_object|instance_verbose_name }}
+                                            {% heroicon_mini "arrow-right" aria_hidden="true" class="opacity-80 size-4" %}
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endwith %}
+        </div>
+    {% else %}
+        <div class="flex py-3 -ms-4 before:block before:absolute before:top-0 before:bottom-0 before:left-0 before:w-px before:bg-base-300">
+            {% with activity|display_activity_author:request.user as author_name %}
+                <div class="{% if activity.user == request.user %}border-info/30{% else %}border-base-300{% endif %} flex-1 pb-2 bg-base-100 border rounded-box target:ring-2 target:ring-info scroll-m-2 z-1 text-sm"
+                     id="communications--{{ activity.id }}">
+                    <header class="{% if activity.user == request.user %}bg-info/20{% else %}bg-base-200{% endif %} flex flex-wrap items-center justify-between gap-2 px-3 py-1 rounded-t-box">
+                        <div class="flex gap-1">
+                            <strong class="font-semibold">{{ author_name }}</strong>
+
+                            {% if not request.user.is_applicant %}
+                                <span>
+                                    {% for role in activity.user.get_role_names  %}
+                                        <span
+                                            class="inline-block py-0 px-2 text-sm font-semibold rounded-xl border border-gray-300 text-fg-muted"
+                                            data-tippy-content="{% blocktrans %}This user is a {{ role }}{% endblocktrans %}"
+                                        >
+                                            {{ role }}
+                                        </span>
+                                    {% endfor %}
+                                </span>
+                            {% endif %}
+
+                            <a href="#communications--{{activity.id}}" class="flex gap-1 hover:underline">
                                 <span class="text-fg-muted">{% trans "commented" %}</span>
                                 <relative-time
                                     class="text-fg-muted"
                                     datetime="{{ activity.timestamp|date:"c" }}"
                                 >{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
                             </a>
-                        </span>
-                    </div>
+                        </div>
 
-                    <div class="flex gap-1 items-center">
-                        {% if not request.user.is_applicant %}
-                            {% if request.user.is_apply_staff and activity.assigned_to %}
-                                <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs rounded-xl border border-gray-300 text-fg-muted">
-                                    {% heroicon_outline "user-plus" size=14 class="inline" aria_hidden=true %}
-                                    {% if activity.assigned_to.id == request.user.id %}
-                                        {% trans "Assigned to you" %}
-                                    {% else %}
-                                        {% blocktrans with activity.assigned_to.full_name as assigned_to %}Assigned to {{ assigned_to }}{% endblocktrans %}
-                                    {% endif %}
-                                </span>
+                        <div class="flex gap-1 items-center">
+                            {% if not request.user.is_applicant %}
+                                {% if request.user.is_apply_staff and activity.assigned_to %}
+                                    <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs rounded-xl border border-gray-300 text-fg-muted">
+                                        {% heroicon_outline "user-plus" size=14 class="inline" aria_hidden=true %}
+                                        {% if activity.assigned_to.id == request.user.id %}
+                                            {% trans "Assigned to you" %}
+                                        {% else %}
+                                            {% blocktrans with activity.assigned_to.full_name as assigned_to %}Assigned to {{ assigned_to }}{% endblocktrans %}
+                                        {% endif %}
+                                    </span>
+                                {% endif %}
+
+                                {% with activity.visibility|visibility_display:request.user as visibility_text  %}
+                                    <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs uppercase rounded-xl border border-gray-300 text-fg-muted"
+                                          data-tippy-content="{% blocktrans %}This is visible to {{ visibility_text }}{% endblocktrans %}">
+                                        {% heroicon_outline "eye" size=14 class="inline" aria_hidden=true %}
+                                        {{ visibility_text }}
+                                    </span>
+                                {% endwith %}
                             {% endif %}
 
-                            {% with activity.visibility|visibility_display:request.user as visibility_text  %}
-                                <span class="flex gap-1 items-center py-0.5 px-1.5 text-xs uppercase rounded-xl border border-gray-300 text-fg-muted"
-                                      data-tippy-content="{% blocktrans %}This is visible to {{ visibility_text }}{% endblocktrans %}">
-                                    {% heroicon_outline "eye" size=14 class="inline" aria_hidden=true %}
-                                    {{ visibility_text }}
-                                </span>
-                            {% endwith %}
-                        {% endif %}
-
-                        {% if editable and activity.user == request.user and not activity.deleted %}
-                            <a
-                                hx-get="{% url 'activity:edit-comment' activity.id %}"
-                                hx-target="#text-comment-{{activity.id}}"
-                                title="{% trans 'Edit comment' %}"
-                                class="btn btn-sm btn-square btn-ghost"
-                            >
-                                {% heroicon_micro "pencil-square" aria_hidden=true %}
-                                <span class="sr-only">{% trans "Edit" %}</span>
-                            </a>
-                        {% endif %}
-
-                        {% if editable and activity.user == request.user  and not activity.deleted and request.user.is_apply_staff %}
-                            <a
-                                hx-delete="{% url 'activity:delete-comment' activity.id %}"
-                                hx-target="#communications-wrapper--{{activity.id}}"
-                                hx-confirm="{% trans 'Are you sure you want to delete this comment? This action cannot be undone.' %}"
-                                title="{% trans 'Delete comment' %}"
-                                class="btn btn-error btn-sm btn-square btn-ghost"
-                            >
-                                {% heroicon_micro "trash" class="opacity-80 size-4" aria_hidden=true %}
-                                <span class="sr-only">{% trans "Delete" %}</span>
-                            </a>
-                        {% endif %}
-                    </div>
-                </header>
-
-                <div class="">
-                    {% if submission_title %}
-                        {% trans "updated" %} <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title }}</a>
-                    {% endif %}
-
-                    <div class="px-3 pt-2" id="text-comment-{{activity.id}}">
-                        {% include 'activity/partial_comment_message.html' with activity=activity %}
-                    </div>
-
-                    {% if not submission_title and activity|user_can_see_related:request.user %}
-                        {% with url=activity.related_object.get_absolute_url %}
-                            {% if url %}
-                                <div class="px-3">
-                                    <a href="{{ url }}" class="mt-2 font-semibold uppercase btn btn-sm btn-info btn-soft">
-                                        {% trans "View " %}{{ activity.related_object|model_verbose_name }}
-                                        {% heroicon_mini "arrow-right" aria_hidden="true" class="opacity-80 size-4" %}
-                                    </a>
-                                </div>
+                            {% if editable and activity.user == request.user and not activity.deleted %}
+                                <a
+                                    hx-get="{% url 'activity:edit-comment' activity.id %}"
+                                    hx-target="#text-comment-{{activity.id}}"
+                                    title="{% trans 'Edit comment' %}"
+                                    class="btn btn-sm btn-square btn-ghost"
+                                >
+                                    {% heroicon_micro "pencil-square" aria_hidden=true %}
+                                    <span class="sr-only">{% trans "Edit" %}</span>
+                                </a>
                             {% endif %}
-                        {% endwith %}
-                    {% endif %}
+
+                            {% if editable and activity.user == request.user  and not activity.deleted and request.user.is_apply_staff %}
+                                <a
+                                    hx-delete="{% url 'activity:delete-comment' activity.id %}"
+                                    hx-target="#communications-wrapper--{{activity.id}}"
+                                    hx-confirm="{% trans 'Are you sure you want to delete this comment? This action cannot be undone.' %}"
+                                    title="{% trans 'Delete comment' %}"
+                                    class="btn btn-error btn-sm btn-square btn-ghost"
+                                >
+                                    {% heroicon_micro "trash" class="opacity-80 size-4" aria_hidden=true %}
+                                    <span class="sr-only">{% trans "Delete" %}</span>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </header>
+
+                    <div>
+                        {% if submission_title %}
+                            {% trans "updated" %} <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title }}</a>
+                        {% endif %}
+
+                        <div class="px-2 pt-1" id="text-comment-{{activity.id}}">
+                            {% include 'activity/partial_comment_message.html' with activity=activity %}
+                        </div>
+                    </div>
                 </div>
-            </div>
-        {% endwith %}
-    </div>
+            {% endwith %}
+        </div>
+    {% endif %}
 </article>
