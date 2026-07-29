@@ -1,5 +1,5 @@
 {% extends 'base-apply.html' %}
-{% load i18n users_tags wagtailcore_tags heroicons static %}
+{% load i18n users_tags wagtailcore_tags heroicons static hooks_tags %}
 
 {% block title %}{% trans "Account" %}{% endblock %}
 
@@ -54,6 +54,9 @@
                     {% trans "Save" %}
                 </button>
             </form>
+
+            {# Extension point for plugins to inject content into the profile column. #}
+            {% hook "user_account_profile" %}
         </div>
 
         <div class="flex-1 md:ps-8">
