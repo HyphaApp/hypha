@@ -525,6 +525,32 @@ class ProjectSOW(BaseStreamForm, AccessFormData, models.Model):
         verbose_name = pgettext_lazy("singular", "project SOW")
         verbose_name_plural = pgettext_lazy("plural", "project SOW")
 
+    def get_absolute_url(self):
+        return reverse("apply:projects:sow", kwargs={"pk": self.project.submission.pk})
+
+    def __str__(self):
+        return _("Scope of Work for {project}").format(project=self.project)
+
+
+class ProjectFormPointer(models.Model):
+    """Due to the actual Project Form being embedded in the project object, this model serves as a way to differentiate activities between the project & project form"""
+
+    project = models.OneToOneField(
+        Project, related_name="pfp", on_delete=models.CASCADE
+    )
+
+    class Meta:
+        verbose_name = pgettext_lazy("singular", "project form")
+        verbose_name_plural = pgettext_lazy("plural", "project forms")
+
+    def get_absolute_url(self):
+        return reverse(
+            "apply:projects:approval", kwargs={"pk": self.project.submission.pk}
+        )
+
+    def __str__(self):
+        return _("Project form for {project}").format(project=self.project)
+
 
 class ProjectBaseStreamForm(BaseStreamForm, models.Model):
     name = models.CharField(max_length=255)

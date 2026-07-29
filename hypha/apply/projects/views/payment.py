@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
@@ -31,6 +32,7 @@ from django_htmx.http import (
 from django_tables2 import SingleTableMixin
 from rolepermissions.checkers import has_object_permission
 
+from hypha.apply.activity.forms import CommentFormMini
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import APPLICANT, COMMENT, Activity
 from hypha.apply.funds.models.co_applicants import CoApplicantProjectPermission
@@ -265,11 +267,23 @@ class DeleteInvoiceView(DeleteView):
         return self.object.project.get_absolute_url()
 
 
-class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
+class InvoiceDetailView(DetailView):
+    def get_context_data(self, **kwargs):
+        comment_form = CommentFormMini(user=self.request.user, data=None)
+        comment_form.fields[
+            "related_content_type"
+        ].initial = ContentType.objects.get_for_model(self.object)
+        comment_form.fields["related_object_id"].initial = self.object.id
+        kwargs["comment_form"] = comment_form
+
+        return super().get_context_data(**kwargs)
+
+
+class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, InvoiceDetailView):
     form_views: list = []
 
 
-class InvoiceApplicantView(InvoiceAccessMixin, DelegateableView, DetailView):
+class InvoiceApplicantView(InvoiceAccessMixin, DelegateableView, InvoiceDetailView):
     form_views: list = []
 
 

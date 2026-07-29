@@ -1,5 +1,6 @@
 from django import forms
 from django.db import transaction
+from django.forms.widgets import Textarea
 from django.utils.translation import gettext_lazy as _
 from django_file_form.forms import FileFormMixin
 
@@ -28,6 +29,10 @@ class CommentForm(FileFormMixin, forms.ModelForm):
             "message",
             "visibility",
             "assign_to",
+            "related_content_type",
+            "related_object_id",
+            "source_content_type",
+            "source_object_id",
         )
         labels = {
             "visibility": _("Visible to"),
@@ -41,6 +46,10 @@ class CommentForm(FileFormMixin, forms.ModelForm):
         widgets = {
             "visibility": forms.RadioSelect(),
             "message": PagedownWidget(),
+            "related_content_type": forms.HiddenInput(),
+            "related_object_id": forms.HiddenInput(),
+            "source_content_type": forms.HiddenInput(),
+            "source_object_id": forms.HiddenInput(),
         }
 
     def __init__(self, *args, user=None, has_coapplicants=False, **kwargs):
@@ -78,3 +87,11 @@ class CommentForm(FileFormMixin, forms.ModelForm):
                 ActivityAttachment(activity=instance, file=file) for file in added_files
             )
         return instance
+
+
+class CommentFormMini(CommentForm):
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, user=user, **kwargs)
+        self.fields["message"].widget = Textarea(
+            attrs={"rows": 2, "placeholder": "Write a comment"}
+        )

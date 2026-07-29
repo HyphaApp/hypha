@@ -1,10 +1,15 @@
 import decimal
+import re
+import urllib.parse
 
 import babel.numbers
 from django import template
+from django.apps import apps
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.db.models.fields.files import FieldFile
 from django.template.defaultfilters import stringfilter
+from django.urls import reverse
 
 from hypha.core.navigation import get_primary_navigation_items
 
@@ -14,7 +19,23 @@ register = template.Library()
 # Get the verbose name of a model instance
 @register.filter
 def model_verbose_name(instance):
-    return instance._meta.verbose_name.title()
+    return instance._meta.verbose_name
+
+
+@register.filter
+def instance_verbose_name(instance):
+    Report = apps.get_model("project_reports", "Report")
+    Project = apps.get_model("application_projects", "Project")
+    Invoice = apps.get_model("application_projects", "Invoice")
+    ProjectSOW = apps.get_model("application_projects", "ProjectSOW")
+    ProjectFormPointer = apps.get_model("application_projects", "ProjectFormPointer")
+    if any(
+        isinstance(instance, model)
+        for model in [Report, Project, Invoice, ProjectSOW, ProjectFormPointer]
+    ):
+        return str(instance)
+
+    return model_verbose_name(instance)
 
 
 @register.filter
@@ -76,3 +97,61 @@ def primary_navigation_items(request):
 def does_file_exist(file: FieldFile) -> bool:
     """Check whether a file in a FieldFile actually exists"""
     return bool(file.name) and file.storage.exists(file.name)
+
+
+@register.simple_tag
+def generate_post_comment_url(source, related=None) -> str:
+    """Takes the source + related object to generate query params for the `post-comment` url"""
+    params = {}
+
+    for obj_type, obj in {"source": source, "related": related}.items():
+        if obj:
+            obj_type_id = ContentType.objects.get_for_model(obj).id
+            params.update(
+                {
+                    f"{obj_type}_content_type": obj_type_id,
+                    f"{obj_type}_object_id": obj.id,
+                }
+            )
+
+    return f"{reverse('activity:post-comment')}?{urllib.parse.urlencode(params)}"
+
+
+CONSONANT_SOUND = re.compile(
+    r"""
+one(![ir])
+""",
+    re.IGNORECASE | re.VERBOSE,
+)
+VOWEL_SOUND = re.compile(
+    r"""
+[aeio]|
+u([aeiou]|[^n][^aeiou]|ni[^dmnl]|nil[^l])|
+h(ier|onest|onou?r|ors\b|our(!i))|
+[fhlmnrsx]\b
+""",
+    re.IGNORECASE | re.VERBOSE,
+)
+
+
+@register.filter
+@stringfilter
+def an(text):
+    """
+    Very English specific!
+
+    Guess "a" vs "an" based on the phonetic value of the text.
+
+    "An" is used for the following words / derivatives with an unsounded "h":
+    heir, honest, hono[u]r, hors (d'oeuvre), hour
+
+    "An" is used for single consonant letters which start with a vowel sound.
+
+    "A" is used for appropriate words starting with "one".
+
+    An attempt is made to guess whether "u" makes the same sound as "y" in
+    "you".
+    """
+    if not CONSONANT_SOUND.match(text) and VOWEL_SOUND.match(text):
+        return "an"
+    return "a"

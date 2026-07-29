@@ -108,6 +108,7 @@ from ..models.project import (
     PacketFile,
     PAFApprovals,
     Project,
+    ProjectFormPointer,
     ProjectSettings,
 )
 from ..permissions import has_permission
@@ -2233,8 +2234,28 @@ class ProjectFormEditView(ProjectFormsEditView):
                 pf_form_fields = self.get_pf_form_fields()
             except AttributeError:
                 pf_form_fields = []
+
+            # If the project form pointer doesn't already exist, this is a new project form
+            creating = not hasattr(self.object, "pfp")
+
             self.pf_form.save(pf_form_fields=pf_form_fields)
             self.pf_form.delete_temporary_files()
+
+            message = MESSAGES.EDITED_PF
+            if creating:
+                message = MESSAGES.CREATED_PF
+                pfp = ProjectFormPointer.objects.create(project=self.object)
+            else:
+                pfp = self.object.pfp
+
+            messenger(
+                message,
+                request=request,
+                user=request.user,
+                source=self.object.submission,
+                related=pfp,
+            )
+
             # remove PAF addition task for staff group
             remove_tasks_for_user(
                 code=PROJECT_WAITING_PF,
@@ -2338,8 +2359,21 @@ class ProjectSOWEditView(ProjectFormEditView):
                 except AttributeError:
                     sow_form_fields = []
 
+                creating = not hasattr(self.object, "sow")
+
                 self.sow_form.save(sow_form_fields=sow_form_fields, project=self.object)
                 self.sow_form.delete_temporary_files()
+
+                message = MESSAGES.EDITED_SOW
+                if creating:
+                    message = MESSAGES.CREATED_SOW
+                messenger(
+                    message,
+                    request=request,
+                    user=request.user,
+                    source=self.object.submission,
+                    related=self.object.sow,
+                )
                 # remove SOW addition task for staff group
                 remove_tasks_for_user(
                     code=PROJECT_WAITING_SOW,

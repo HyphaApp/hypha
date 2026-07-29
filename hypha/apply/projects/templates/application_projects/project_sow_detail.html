@@ -15,49 +15,63 @@
 {% block content %}
     <div class="my-4">
         <div class="layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-start">
-            <article class="layout-main">
-                <h2 class="section-header">{% trans "Scope of Work" %}</h2>
-
-                <div class="p-4 mb-4 card card-border">
-                    {% if object.sow.output_answers %}
-                        <div class="flex flex-col gap-8 rich-text">
-                            {{ object.sow.output_answers }}
-                        </div>
-                    {% endif %}
-                </div>
+            <article class="flex flex-col gap-8 layout-main">
+                <section>
+                    {% url 'apply:projects:partial-sow-status' pk=object.pk sow_pk=object.sow.pk as activity_url %}
+                    {% include "application_projects/includes/fetch_object_activity.html" with fetch_activity_url=activity_url %}
+                </section>
+                <section>
+                    <div class="p-4 mb-4 card card-border">
+                        <h2 class="card-title">{% trans "Scope of Work" %}</h2>
+                        {% if object.sow.output_answers %}
+                            <div class="flex flex-col gap-8 rich-text">
+                                {{ object.sow.output_answers }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
             </article>
 
             {% user_can_take_actions object user as can_take_actions %}
             {% if can_take_actions %}
                 <aside class="layout-sidebar">
-                    <div class="card card-border">
-                        <div class="card-body">
-                            <h2 class="card-title">{% trans "Actions to take" %}</h2>
+                    <div class="flex sticky top-8 flex-col gap-2">
+                        <div class="card card-border shadow-xs bg-base-200 sidebar__inner--actions">
+                            <div class="card-body">
+                                <h2 class="card-title">{% trans "Actions to take" %}</h2>
 
-                            {% user_can_edit_pfs object user as can_edit_pfs %}
-                            {% if can_edit_pfs %}
-                                <a
-                                    class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
-                                    href="{% url 'apply:projects:edit_sow' pk=object.pk %}"
-                                >
-                                    {% heroicon_mini "pencil-square" class="opacity-80 size-4" %}
-                                    {% trans "Edit" %}
-                                </a>
-                            {% endif %}
+                                {% user_can_edit_pfs object user as can_edit_pfs %}
+                                {% if can_edit_pfs %}
+                                    <a
+                                        class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
+                                        href="{% url 'apply:projects:edit_sow' pk=object.pk %}"
+                                    >
+                                        {% heroicon_mini "pencil-square" class="opacity-80 size-4" %}
+                                        {% trans "Edit" %}
+                                    </a>
+                                {% endif %}
 
-                            <div class="dropdown dropdown-hover">
-                                <div tabindex="0" role="button" class="w-full btn btn-outline">{% trans 'Export' %}</div>
-                                <ul tabindex="0" class="p-2 w-52 shadow-sm dropdown-content menu bg-base-100 rounded-box z-1">
-                                    <li>
-                                        <a href="{% url 'apply:projects:download-sow' pk=object.pk export_type='pdf' %}">
-                                            {% trans 'Download as PDF' %}</a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'apply:projects:download-sow' pk=object.pk export_type='docx' %}">
-                                            {% trans 'Download as DOCX' %}</a>
-                                    </li>
-                                </ul>
+                                <div class="dropdown dropdown-hover">
+                                    <div tabindex="0" role="button" class="w-full btn btn-outline">{% trans 'Export' %}</div>
+                                    <ul tabindex="0" class="p-2 w-52 shadow-sm dropdown-content menu bg-base-100 rounded-box z-1">
+                                        <li>
+                                            <a href="{% url 'apply:projects:download-sow' pk=object.pk export_type='pdf' %}">
+                                                {% trans 'Download as PDF' %}</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'apply:projects:download-sow' pk=object.pk export_type='docx' %}">
+                                                {% trans 'Download as DOCX' %}</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
+                        </div>
+                        {% generate_post_comment_url object.submission object.sow as comment_url %}
+                        <div
+                            class="card card-border bg-base-200 shadow-xs sidebar__inner"
+                            hx-get="{{ comment_url }}"
+                            hx-trigger="load"
+                        >
                         </div>
                     </div>
                 </aside>
