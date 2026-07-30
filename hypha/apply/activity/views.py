@@ -14,7 +14,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
 from rolepermissions.checkers import has_object_permission
 
-from hypha.apply.activity.forms import CommentFormMini
+from hypha.apply.activity.forms import CommentForm
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.funds.models.submissions import ApplicationSubmission
 from hypha.apply.users.decorators import is_apply_staff, staff_required
@@ -123,7 +123,7 @@ def delete_comment(request, pk):
 @user_passes_test(is_apply_staff)
 def post_comment(request: HttpRequest):
     if request.method == "POST":
-        form = CommentFormMini(user=request.user, data=request.POST or None)
+        form = CommentForm(user=request.user, data=request.POST or None)
         if (source_content_type := form.data["source_content_type"]) and (
             source_object_id := form.data["source_object_id"]
         ):
@@ -167,7 +167,7 @@ def post_comment(request: HttpRequest):
                 request, "activity/partials/comment_form.html", {"form": form}
             )
     else:
-        form = CommentFormMini(user=request.user)
+        form = CommentForm(user=request.user, mini=True)
 
         params = request.GET.dict()
 
