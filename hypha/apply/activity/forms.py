@@ -52,7 +52,7 @@ class CommentForm(FileFormMixin, forms.ModelForm):
             "source_object_id": forms.HiddenInput(),
         }
 
-    def __init__(self, *args, user=None, has_coapplicants=False, **kwargs):
+    def __init__(self, *args, user=None, has_coapplicants=False, mini=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.visibility_choices = self._meta.model.visibility_choices_for(
             user, has_coapplicants
@@ -69,6 +69,11 @@ class CommentForm(FileFormMixin, forms.ModelForm):
             visibility.widget = forms.HiddenInput()
         if not user.is_apply_staff:
             self.fields["assign_to"].widget = forms.HiddenInput()
+
+        if mini:
+            self.fields["message"].widget = Textarea(
+                attrs={"rows": 2, "placeholder": "Write a comment..."}
+            )
 
     @transaction.atomic
     def save(self, commit=True):
@@ -87,11 +92,3 @@ class CommentForm(FileFormMixin, forms.ModelForm):
                 ActivityAttachment(activity=instance, file=file) for file in added_files
             )
         return instance
-
-
-class CommentFormMini(CommentForm):
-    def __init__(self, *args, user=None, **kwargs):
-        super().__init__(*args, user=user, **kwargs)
-        self.fields["message"].widget = Textarea(
-            attrs={"rows": 2, "placeholder": "Write a comment"}
-        )
