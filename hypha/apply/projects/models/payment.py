@@ -7,23 +7,21 @@ from django.db import models
 from django.db.models import Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from viewflow.fsm import State
 
 from hypha.apply.utils.storage import PrivateStorage
 
+EXPORT_STATUS_ERROR = "error"
+EXPORT_STATUS_SUCCESS = "success"
+EXPORT_STATUS_GENERATING = "generating"
 
-class InvoiceTag(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-
-    class Meta:
-        verbose_name = _("invoice tag")
-        verbose_name_plural = _("invoice tags")
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
+EXPORT_STATUS_CHOICES = [
+    (EXPORT_STATUS_ERROR, _("Failed")),
+    (EXPORT_STATUS_SUCCESS, _("Success")),
+    (EXPORT_STATUS_GENERATING, _("In Progress")),
+]
 
 SUBMITTED = "submitted"
 RESUBMITTED = "resubmitted"
@@ -75,6 +73,18 @@ def invoice_status_user_choices(user):
 
 def invoice_path(instance, filename):
     return f"projects/{instance.project_id}/payment_invoices/{filename}"
+
+
+class InvoiceTag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        verbose_name = _("invoice tag")
+        verbose_name_plural = _("invoice tags")
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
 
 
 class InvoiceQueryset(models.QuerySet):
@@ -333,3 +343,33 @@ class SupportingDocument(models.Model):
                 "file_pk": self.pk,
             },
         )
+
+
+class InvoiceExportManager(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    export_data = models.TextField()
+    created_time = models.DateTimeField(auto_now_add=True)
+    completed_time = models.DateTimeField(null=True)
+    status = models.CharField(
+        choices=EXPORT_STATUS_CHOICES, default=EXPORT_STATUS_GENERATING
+    )
+    total_export = models.IntegerField(null=True)
+
+    class Meta:
+        verbose_name = _("invoice export manager")
+        verbose_name_plural = _("invoice export managers")
+
+    def set_completed_and_save(self) -> None:
+        self.status = EXPORT_STATUS_SUCCESS
+        self.completed_time = timezone.now()
+        self.save()
+
+    def set_failed_and_save(self) -> None:
+        self.status = EXPORT_STATUS_ERROR
+        self.save()
+
+    def get_absolute_url(self) -> str:
+        return reverse("apply:projects:invoices")

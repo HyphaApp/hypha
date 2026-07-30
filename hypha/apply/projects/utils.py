@@ -1,3 +1,6 @@
+import csv
+import io
+
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from django_file_form.uploaded_file import PlaceholderUploadedFile
@@ -126,6 +129,51 @@ def get_invoice_table_status(invoice_status, is_applicant=False):
         return INT_DECLINED
     if invoice_status == PAYMENT_FAILED:
         return INT_PAYMENT_FAILED
+
+
+def export_invoices_to_csv(invoices_iter) -> str:
+    """Generate a CSV string from an invoice queryset iterator.
+
+    Columns match those shown in the invoice list table. Add more fields here
+    as needed.
+    """
+    output = io.StringIO()
+    fieldnames = [
+        "Invoice #",
+        "Invoice Date",
+        "Status",
+        "Submitted",
+        "Project Title",
+        "Project #",
+        "Vendor Name",
+        "Invoice Amount",
+        "Tags",
+    ]
+    writer = csv.DictWriter(output, fieldnames=fieldnames)
+    writer.writeheader()
+
+    for invoice in invoices_iter:
+        writer.writerow(
+            {
+                "Invoice #": invoice.invoice_number or "",
+                "Invoice Date": invoice.invoice_date.isoformat()
+                if invoice.invoice_date
+                else "",
+                "Status": invoice.get_status_display(),
+                "Submitted": invoice.requested_at.strftime("%Y-%m-%d %H:%M")
+                if invoice.requested_at
+                else "",
+                "Project Title": invoice.project.title,
+                "Project #": invoice.project.application_id,
+                "Vendor Name": str(invoice.project.user),
+                "Invoice Amount": str(invoice.invoice_amount)
+                if invoice.invoice_amount is not None
+                else "",
+                "Tags": ", ".join(tag.name for tag in invoice.tags.all()),
+            }
+        )
+
+    return output.getvalue()
 
 
 def get_placeholder_file(initial_file):
