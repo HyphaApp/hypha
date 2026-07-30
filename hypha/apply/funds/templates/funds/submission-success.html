@@ -51,32 +51,31 @@
             {% endif %}
 
         {% endif %}
-
-        <div class="mt-4 card-actions">
-            {% if request.user.is_authenticated and request.user.can_access_dashboard%}
-                <a class="btn btn-primary" href="{% url 'dashboard:dashboard' %}">
-                    {% trans "Go to your dashboard" %}
+    </div>
+    <div class="mx-auto mt-8 max-w-2xl card-actions">
+        {% if request.user.is_authenticated and request.user.can_access_dashboard%}
+            <a class="btn btn-primary" href="{% url 'dashboard:dashboard' %}">
+                {% trans "Go to your dashboard" %}
+            </a>
+            {% if form_submission.status == 'draft' %}
+                <a
+                    class="btn btn-secondary btn-outline"
+                    href="{% url 'apply:submissions:edit' form_submission.id %}"
+                >
+                    {% trans "Continue editing" %}
                 </a>
-                {% if form_submission.status == 'draft' %}
-                    <a
-                        class="btn btn-secondary btn-outline"
-                        href="{% url 'apply:submissions:edit' form_submission.id %}"
-                    >
-                        {% trans "Continue editing" %}
-                    </a>
-                {% else %}
-                    <a
-                        class="btn btn-secondary btn-outline"
-                        href="{% url 'apply:submissions:detail' form_submission.id %}"
-                    >
-                        {% trans "View your submission" %}
-                    </a>
-                {% endif %}
             {% else %}
-                <a class="btn btn-primary" href="{% url 'users:login' %}">
-                    {% trans "Log in" %}
+                <a
+                    class="btn btn-secondary btn-outline"
+                    href="{% url 'apply:submissions:detail' form_submission.id %}"
+                >
+                    {% trans "View your submission" %}
                 </a>
             {% endif %}
-        </div>
+        {% else %}
+            <a class="btn btn-primary" href="{% url 'users:login' %}">
+                {% trans "Log in" %}
+            </a>
+        {% endif %}
     </div>
 {% endblock %}
