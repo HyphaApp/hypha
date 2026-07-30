@@ -5,7 +5,7 @@
 {% block content %}
     <div class="mx-auto mt-8 max-w-2xl prose">
         {% if form_submission.status == 'draft' %}
-            <h2>{% trans "Your application is saved as a draft." %}</h2>
+            <h1>{% trans "Your application is saved as a draft." %}</h1>
 
             <p>{% trans "Please note that your application is not submitted for review." %}</p>
 
@@ -16,11 +16,11 @@
             {% endif %}
 
         {% else %}
-            <h3>
+            <h1>
                 {% blocktrans trimmed %}
                     Thank you for your submission to the {{ ORG_LONG_NAME }}.
                 {% endblocktrans %}
-            </h3>
+            </h1>
 
             <p>{% trans "An e-mail with more information has been sent to the address you entered." %}</p>
 
