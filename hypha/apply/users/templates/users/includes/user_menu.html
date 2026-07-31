@@ -60,7 +60,7 @@
             {% endif %}
             {% if HIJACK_ENABLE and not user.is_hijacked and user.is_superuser %}
                 <a
-                    class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
+                    class="flex gap-2 items-center py-2 px-3 transition-colors cursor-pointer hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
                     hx-get="{% url 'users:hijack' %}?next={{ request.path }}"
                     hx-target="#htmx-modal"
                     x-on:click="show = false"
