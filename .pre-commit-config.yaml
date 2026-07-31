@@ -56,7 +56,7 @@ repos:
         name: rustywind Tailwind CSS class linter
         language: node
         additional_dependencies:
-          - rustywind@latest
+          - rustywind@0.24.3
         entry: rustywind
         args: [--write]
         types_or: [html, css]
