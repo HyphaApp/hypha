@@ -1,4 +1,4 @@
-{% load i18n heroicons %}
+{% load i18n heroicons hooks_tags %}
 
 {% if request.user.is_authenticated %}
     <div x-data="{ show: false }" x-on:keydown.escape="show = false" class="flex relative">
@@ -85,6 +85,7 @@
                     </button>
                 </form>
             {% endif %}
+            {% hook "user_menu" %}
             <hr />
             <form id="logout-form" method="post" action="{% url 'users:logout' %}">
                 {% csrf_token %}
