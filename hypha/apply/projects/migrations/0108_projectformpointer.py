@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("application_projects", "0103_alter_contract_options_and_more"),
+        ("application_projects", "0107_invoiceexportmanager"),
     ]
 
     operations = [

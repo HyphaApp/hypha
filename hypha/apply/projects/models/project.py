@@ -526,7 +526,7 @@ class ProjectSOW(BaseStreamForm, AccessFormData, models.Model):
         verbose_name_plural = pgettext_lazy("plural", "project SOW")
 
     def get_absolute_url(self):
-        return reverse("apply:projects:sow", kwargs={"pk": self.project.submission.pk})
+        return reverse("apply:projects:sow", kwargs={"pk": self.project.pk})
 
     def __str__(self):
         return _("Scope of Work for {project}").format(project=self.project)
@@ -544,9 +544,7 @@ class ProjectFormPointer(models.Model):
         verbose_name_plural = pgettext_lazy("plural", "project forms")
 
     def get_absolute_url(self):
-        return reverse(
-            "apply:projects:approval", kwargs={"pk": self.project.submission.pk}
-        )
+        return reverse("apply:projects:approval", kwargs={"pk": self.project.pk})
 
     def __str__(self):
         return _("Project form for {project}").format(project=self.project)

@@ -13,7 +13,7 @@ def create_pf_pointers(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("application_projects", "0104_projectformpointer"),
+        ("application_projects", "0108_projectformpointer"),
     ]
 
     operations = [
