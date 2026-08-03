@@ -31,7 +31,10 @@ from hypha.apply.funds.services import annotate_review_recommendation_and_count
 from hypha.apply.review.options import REVIEWER
 from hypha.apply.todo.options import DOWNLOAD_SUBMISSIONS_EXPORT
 from hypha.apply.todo.views import remove_tasks_of_related_obj_for_specific_code
-from hypha.apply.users.decorators import is_apply_staff
+from hypha.apply.users.decorators import (
+    is_apply_staff,
+    is_apply_staff_or_reviewer_required,
+)
 from hypha.apply.users.roles import REVIEWER_GROUP_NAME
 
 from .. import services
@@ -59,6 +62,7 @@ def partial_submission_lead(request, pk):
 
 
 @login_required
+@user_passes_test(is_apply_staff_or_reviewer_required)
 @require_http_methods(["GET"])
 def sub_menu_funds(request):
     selected_funds = request.GET.getlist("fund")
@@ -80,6 +84,7 @@ def sub_menu_funds(request):
 
 
 @login_required
+@user_passes_test(is_apply_staff_or_reviewer_required)
 @require_http_methods(["GET"])
 def sub_menu_leads(
     request, template_name="submissions/submenu/leads.html"
@@ -114,6 +119,7 @@ def sub_menu_leads(
 
 
 @login_required
+@user_passes_test(is_apply_staff_or_reviewer_required)
 @require_http_methods(["GET"])
 def sub_menu_rounds(request):
     selected_rounds = request.GET.getlist("round")
@@ -147,6 +153,7 @@ def sub_menu_rounds(request):
 
 
 @login_required
+@user_passes_test(is_apply_staff)
 @require_http_methods(["GET"])
 def sub_menu_reviewers(request):
     selected_reviewers = request.GET.getlist("reviewers")
@@ -178,6 +185,7 @@ def sub_menu_reviewers(request):
 
 
 @login_required
+@user_passes_test(is_apply_staff_or_reviewer_required)
 @require_http_methods(["GET"])
 def sub_menu_meta_terms(request):
     selected_meta_terms = request.GET.getlist("meta_terms")
@@ -209,6 +217,7 @@ def sub_menu_meta_terms(request):
 
 
 @login_required
+@user_passes_test(is_apply_staff_or_reviewer_required)
 @require_http_methods(["GET"])
 def sub_menu_category_options(request):
     selected_category_options = request.GET.getlist("category_options")
@@ -278,6 +287,7 @@ def partial_reviews_card(request: HttpRequest, pk: str) -> HttpResponse:
 
 
 @login_required
+@user_passes_test(is_apply_staff_or_reviewer_required)
 @require_http_methods(["GET"])
 def partial_reviews_decisions(request: HttpRequest) -> HttpResponse:
     submission_ids = request.GET.get("ids")
