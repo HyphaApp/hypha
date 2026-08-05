@@ -289,7 +289,9 @@ class Activity(models.Model):
         return [ALL]
 
     @classmethod
-    def visibility_choices_for(cls, user) -> List[Tuple[str, str]]:
+    def visibility_choices_for(
+        cls, user, has_coapplicants=False
+    ) -> List[Tuple[str, str]]:
         """Gets activity visibility choices for the specified user
 
         Args:
@@ -309,7 +311,10 @@ class Activity(models.Model):
             ]
 
         if user.is_applicant:
-            return [(APPLICANT, VISIBILITY[APPLICANT])]
+            applicant_choices = [(APPLICANT, VISIBILITY[APPLICANT])]
+            if has_coapplicants:
+                applicant_choices.append((TEAM, VISIBILITY[TEAM]))
+            return applicant_choices
 
         if user.is_reviewer:
             return [(REVIEWER, VISIBILITY[REVIEWER])]
