@@ -7,6 +7,9 @@ from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
+from hypha.apply.activity.adapters.activity_feed import ActivityAdapter
+from hypha.apply.activity.options import MESSAGES
+from hypha.apply.activity.tests.factories import ActivityFactory
 from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     LabSubmissionFactory,
@@ -45,6 +48,7 @@ from .factories import (
     PAFApprovalsFactory,
     PAFReviewerRoleFactory,
     ProjectFactory,
+    ProjectFormPointerFactory,
     SupportingDocumentFactory,
 )
 
@@ -263,6 +267,26 @@ class TestChangePAFStatusView(BaseViewTestCase):
         self.assertEqual(self.role.label, approval.paf_reviewer_role.label)
         self.assertFalse(approval.approved)
         self.assertIn(approval, project.paf_approvals.filter(approved=False))
+
+    def test_activity_renders(self):
+        pfp = ProjectFormPointerFactory()
+        pf_added_msg = ActivityAdapter.messages[MESSAGES.CREATED_PF].lower()
+        ActivityFactory(
+            message=pf_added_msg,
+            source=pfp.project.submission,
+            related_object=pfp,
+            user=self.user,
+        )
+        response = self.client.get(
+            reverse(
+                "apply:projects:partial-pf-status",
+                kwargs={"pk": pfp.project.pk, "pfp_pk": pfp.pk},
+            ),
+            secure=True,
+            follow=True,
+        )
+
+        self.assertContains(response, pf_added_msg)
 
 
 class BaseProjectDetailTestCase(BaseViewTestCase):
@@ -862,6 +886,27 @@ class TestStaffDetailInvoiceStatus(BaseViewTestCase):
         response = self.get_page(invoice, url_kwargs={"pk": other_project.pk})
         self.assertEqual(response.status_code, 404)
 
+    def test_activity_renders(self):
+        invoice = InvoiceFactory()
+        vendor = ApplicantFactory()
+        invoice_added_msg = ActivityAdapter.messages[MESSAGES.CREATE_INVOICE].lower()
+        ActivityFactory(
+            message=invoice_added_msg,
+            source=invoice.project.submission,
+            related_object=invoice,
+            user=vendor,
+        )
+        response = self.client.get(
+            reverse(
+                "apply:projects:partial-invoice-status",
+                kwargs={"pk": invoice.project.pk, "invoice_pk": invoice.pk},
+            ),
+            secure=True,
+            follow=True,
+        )
+
+        self.assertContains(response, invoice_added_msg)
+
 
 class TestFinanceDetailInvoiceStatus(BaseViewTestCase):
     base_view_name = "invoice-detail"
@@ -885,6 +930,27 @@ class TestFinanceDetailInvoiceStatus(BaseViewTestCase):
         response = self.get_page(invoice, url_kwargs={"pk": other_project.pk})
         self.assertEqual(response.status_code, 404)
 
+    def test_activity_renders(self):
+        invoice = InvoiceFactory()
+        vendor = ApplicantFactory()
+        invoice_added_msg = ActivityAdapter.messages[MESSAGES.CREATE_INVOICE].lower()
+        ActivityFactory(
+            message=invoice_added_msg,
+            source=invoice.project.submission,
+            related_object=invoice,
+            user=vendor,
+        )
+        response = self.client.get(
+            reverse(
+                "apply:projects:partial-invoice-status",
+                kwargs={"pk": invoice.project.pk, "invoice_pk": invoice.pk},
+            ),
+            secure=True,
+            follow=True,
+        )
+
+        self.assertContains(response, invoice_added_msg)
+
 
 class TestApplicantDetailInvoiceStatus(BaseViewTestCase):
     base_view_name = "invoice-detail"
@@ -906,6 +972,26 @@ class TestApplicantDetailInvoiceStatus(BaseViewTestCase):
         invoice = InvoiceFactory()
         response = self.get_page(invoice)
         self.assertEqual(response.status_code, 403)
+
+    def test_activity_renders(self):
+        invoice = InvoiceFactory()
+        invoice_added_msg = ActivityAdapter.messages[MESSAGES.CREATE_INVOICE].lower()
+        ActivityFactory(
+            message=invoice_added_msg,
+            source=invoice.project.submission,
+            related_object=invoice,
+            user=self.user,
+        )
+        response = self.client.get(
+            reverse(
+                "apply:projects:partial-invoice-status",
+                kwargs={"pk": invoice.project.pk, "invoice_pk": invoice.pk},
+            ),
+            secure=True,
+            follow=True,
+        )
+
+        self.assertContains(response, invoice_added_msg)
 
 
 class TestApplicantEditInvoiceView(BaseViewTestCase):
