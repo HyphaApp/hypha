@@ -126,7 +126,7 @@ account_urls = [
         name="confirm_link_sent",
     ),
     path(
-        "confirmation/<uidb64>/<token>/",
+        "confirmation/<token>/",
         EmailChangeConfirmationView.as_view(),
         name="confirm_email",
     ),
