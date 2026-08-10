@@ -222,7 +222,13 @@ class ProfileForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data["email"]
-        if User.objects.filter(email=email).exists():
+        # Case-insensitive, to match `is_user_already_registered()` and to stop
+        # a case variant of an existing address being registered.
+        if (
+            User.objects.filter(email__iexact=email)
+            .exclude(pk=self.instance.pk)
+            .exists()
+        ):
             email = (
                 self.instance.email
             )  # updated email to avoid email existing message, fix information leak.
