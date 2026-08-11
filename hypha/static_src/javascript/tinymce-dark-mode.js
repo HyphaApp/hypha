@@ -41,10 +41,22 @@
       doc.querySelectorAll('link[rel="stylesheet"]')
     ).find((stylesheet) => stylesheet.href.includes("/skins/content/"));
 
-    if (link) {
-      link.href = `${tinymce.baseURL}/skins/content/${name}/content${tinymce.suffix}.css`;
+    const href = `${tinymce.baseURL}/skins/content/${name}/content${tinymce.suffix}.css`;
+
+    if (link && link.href !== href) {
+      link.href = href;
     }
   }
+
+  // An editor freezes content_css when it is constructed, but its iframe
+  // document only exists once it is initialised. A theme change in between is
+  // therefore invisible to both overrideDefaults and swapContentCss, so re-sync
+  // every editor as it becomes ready.
+  tinymce.on("AddEditor", function (event) {
+    event.editor.on("init", function () {
+      swapContentCss(event.editor, contentCss());
+    });
+  });
 
   // The theme toggle sets data-theme on <html>. It also re-sets the attribute
   // when the OS preference changes while in "auto" mode, so this covers both.
