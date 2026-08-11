@@ -1,13 +1,13 @@
 import csv
 import os
 import re
-from datetime import datetime
 from io import StringIO
 from itertools import chain
 from typing import Iterable
 
 from django.core.files.storage import default_storage
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.html import strip_tags
 from django.utils.http import urlsafe_base64_encode
@@ -162,7 +162,7 @@ def get_copied_form_name(original_form_name: str) -> str:
         str: name of the copied form
     """
     copy_str = _("Copied on {copy_time}")
-    copy_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-4]
+    copy_time = timezone.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-4]
     date_reg = r"(\d{2,4}-?){3} (\d{2}(:|.)?){4}"  # match the strftime pattern of %Y-%m-%d %H:%M:%S.%f
 
     # Escape the `copy_str` to allow for translations to be matched & replace the

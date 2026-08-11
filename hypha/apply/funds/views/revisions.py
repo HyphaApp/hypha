@@ -174,8 +174,7 @@ class RevisionCompareView(DetailView):
 
                 sanitized_answers.append(f"{heading}{answer}")
             except AttributeError:
-                # If it fails to match for some reason just cleanse the fields but leave h2s
-                answer = nh3.clean(answer, attributes={}, tags={"h2"})
-                sanitized_answers.append(field)
+                # If it fails to match for some reason just cleanse the field but leave h2s
+                sanitized_answers.append(nh3.clean(field, attributes={}, tags={"h2"}))
 
         return sanitized_answers

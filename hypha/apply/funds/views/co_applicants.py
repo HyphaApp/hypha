@@ -1,4 +1,3 @@
-import datetime
 import json
 
 from django.conf import settings
@@ -153,9 +152,7 @@ class CoApplicantInviteAcceptView(View):
     def post(self, args, **kwargs):
         action = self.request.POST.get("action")
         if action == "accept":
-            self.invite.status = CoApplicantInviteStatus.ACCEPTED
-            self.invite.responded_on = datetime.datetime.now()
-            self.invite.save(update_fields=["status", "responded_on"])
+            self.invite.respond(CoApplicantInviteStatus.ACCEPTED)
 
             # handle auto login/signup
             user, created = User.objects.get_or_create(
@@ -194,9 +191,7 @@ class CoApplicantInviteAcceptView(View):
 
                 login(self.request, user)
             return HttpResponseClientRedirect(self.get_success_url())
-        self.invite.status = CoApplicantInviteStatus.REJECTED
-        self.invite.responded_on = datetime.datetime.now()
-        self.invite.save(update_fields=["status", "responded_on"])
+        self.invite.respond(CoApplicantInviteStatus.REJECTED)
         if self.request.user.is_authenticated:
             return HttpResponseClientRedirect(reverse_lazy("dashboard:dashboard"))
         return HttpResponseClientRedirect("/")
