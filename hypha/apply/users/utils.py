@@ -13,6 +13,7 @@ from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_encode
 from django.utils.translation import gettext as _
+from django_ratelimit.core import _get_ip
 
 
 def get_user_by_email(email):
@@ -177,6 +178,22 @@ def generate_numeric_token(length=6):
     We use this formatting to allow leading 0s.
     """
     return get_random_string(length, allowed_chars=string.digits)
+
+
+def login_ratelimit_key(group, request):
+    """Per-account rate-limit key for the two-factor login wizard.
+
+    The wizard prefixes its fields, so the account identifier arrives as
+    `auth-username`, not `email`. The later steps (OTP, backup token) post no
+    username at all, and neither do the passwordless views that share this
+    decorated `dispatch` — those fall back to the client IP.
+
+    Never return a constant for the missing-field case: django-ratelimit hashes
+    whatever it is given, so every such request would land in a single bucket
+    and any one client could exhaust login for everybody.
+    """
+    username = request.POST.get("auth-username", "").strip().lower()
+    return username or f"ip:{_get_ip(request)}"
 
 
 def update_is_staff(request, user):
