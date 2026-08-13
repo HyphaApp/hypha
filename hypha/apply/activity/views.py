@@ -123,7 +123,7 @@ def delete_comment(request, pk):
 @user_passes_test(is_apply_staff)
 def post_comment(request: HttpRequest):
     if request.method == "POST":
-        form = CommentForm(user=request.user, data=request.POST or None)
+        form = CommentForm(user=request.user, data=request.POST or None, mini=True)
         if (source_content_type := form.data["source_content_type"]) and (
             source_object_id := form.data["source_object_id"]
         ):
@@ -168,7 +168,6 @@ def post_comment(request: HttpRequest):
             )
     else:
         form = CommentForm(user=request.user, mini=True)
-
         params = request.GET.dict()
 
         # Ensure the provided source content type & object actually exist

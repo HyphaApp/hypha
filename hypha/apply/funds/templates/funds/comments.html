@@ -43,7 +43,7 @@
         {% if form %}
             {% if not object.is_archive or object.projects.exists %}
                 <h2 class="sr-only">{% trans "Add communication" %}</h2>
-                <div class="pb-6 mb-4 w-full border-b border-base-300">
+                <div class="pb-6 w-full border-b border-base-300">
                     <form
                         class="form form__comments"
                         method="POST"
