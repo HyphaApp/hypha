@@ -100,6 +100,6 @@
     "formatter": {
       "trailingCommas": "es5"
     },
-    "globals": ["define", "htmx", "Alpine"]
+    "globals": ["define", "htmx", "Alpine", "tinymce"]
   }
 }

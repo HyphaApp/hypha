@@ -522,7 +522,7 @@ NH3_STRIP_COMMENTS = True
 # TinyMCE settings
 
 TINYMCE_EXTRA_MEDIA = {
-    "js": ["js/tinymce-word-count.js"],
+    "js": ["js/tinymce-dark-mode.js", "js/tinymce-word-count.js"],
 }
 # COMPRESSOR setting does not work but would be good to have in place.
 # TINYMCE_JS_ROOT = os.path.join(STATIC_URL, "tinymce")
