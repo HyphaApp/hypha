@@ -119,7 +119,7 @@ def generate_post_comment_url(source, related=None) -> str:
 
 CONSONANT_SOUND = re.compile(
     r"""
-one(![ir])
+one(?![ir])
 """,
     re.IGNORECASE | re.VERBOSE,
 )
@@ -127,7 +127,7 @@ VOWEL_SOUND = re.compile(
     r"""
 [aeio]|
 u([aeiou]|[^n][^aeiou]|ni[^dmnl]|nil[^l])|
-h(ier|onest|onou?r|ors\b|our(!i))|
+h(ier|onest|onou?r|ors\b|our(?!i))|
 [fhlmnrsx]\b
 """,
     re.IGNORECASE | re.VERBOSE,
@@ -136,7 +136,7 @@ h(ier|onest|onou?r|ors\b|our(!i))|
 
 @register.filter
 @stringfilter
-def an(text):
+def an_or_a(text):
     """
     Very English specific!
 

@@ -19,7 +19,7 @@ Params:
     </div>
 
     <details class="mb-1 collapse bg-base-100 group">
-        <summary class="flex gap-1.5 items-center text-sm collapse-title"><span>Additional options</span>{% heroicon_mini 'chevron-down' class="size-5 group-open:-rotate-180" %}</summary>
+        <summary class="flex gap-1.5 items-center text-sm collapse-title"><span>{% trans 'Additional options' %}</span>{% heroicon_mini 'chevron-down' class="size-5 group-open:-rotate-180" %}</summary>
         {# Some small modifications to django-file-form to make it fit better with the smaller modal #}
         <div class="collapse-content [&_.dff-uploader]:hidden [&_.btn-upload]:w-full">
             {% include "forms/includes/field.html" with field=form.visibility %}
