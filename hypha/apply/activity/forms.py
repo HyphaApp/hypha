@@ -43,9 +43,11 @@ class CommentForm(FileFormMixin, forms.ModelForm):
             "message": PagedownWidget(),
         }
 
-    def __init__(self, *args, user=None, **kwargs):
+    def __init__(self, *args, user=None, has_coapplicants=False, **kwargs):
         super().__init__(*args, **kwargs)
-        self.visibility_choices = self._meta.model.visibility_choices_for(user)
+        self.visibility_choices = self._meta.model.visibility_choices_for(
+            user, has_coapplicants
+        )
         visibility = self.fields["visibility"]
         # Set default visibility to "Applicant" for staff and staff can view everything.
         visibility.initial = self.visibility_choices[0]
