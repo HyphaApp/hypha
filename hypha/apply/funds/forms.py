@@ -23,7 +23,7 @@ from .models import (
 from .models.co_applicants import CoApplicantProjectPermission, CoApplicantRole
 from .permissions import can_change_external_reviewers
 from .utils import model_form_initial, render_icon
-from .widgets import MetaTermWidget, MultiCheckboxesWidget
+from .widgets import MultiCheckboxesWidget
 
 
 class ApplicationSubmissionModelForm(forms.ModelForm):
@@ -382,19 +382,11 @@ class GroupedModelMultipleChoiceField(forms.ModelMultipleChoiceField):
         self.iterator = partial(GroupedModelChoiceIterator, groupby=choices_groupby)
         super().__init__(*args, **kwargs)
 
-    def label_from_instance(self, obj):
-        return {
-            "label": super().label_from_instance(obj),
-            "disabled": not obj.is_leaf(),
-        }
-
 
 class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
     meta_terms = GroupedModelMultipleChoiceField(
         queryset=None,  # updated in init method
-        widget=MetaTermWidget(
-            attrs={"data-placeholder": _("Select..."), "data-js-choices": ""}
-        ),
+        widget=MultiCheckboxesWidget(attrs={"data-placeholder": _("Select...")}),
         label=_("Tags"),
         choices_groupby="get_parent",
         required=False,
