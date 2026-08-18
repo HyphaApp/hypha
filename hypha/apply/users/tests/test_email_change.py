@@ -1,6 +1,7 @@
 from unittest.mock import patch
 from urllib.parse import urlencode
 
+from django.contrib.messages import get_messages
 from django.core.signing import TimestampSigner, dumps
 from django.test import TestCase
 from django.urls import reverse
@@ -179,7 +180,10 @@ class TestEmailChangeElevatedUserWithPassword(TestCase):
 
 
 class EmailChangeConfirmation(TestCase):
-    """Testing the view that handles the actual confirmation & token validation that comes from the confirmation email"""
+    """Testing the view that handles the actual confirmation & token validation that comes from the confirmation email
+
+    Both a valid & invalid view will result in a 302 response, the big difference is in the messages that get added.
+    """
 
     def setUp(self):
         self.user = UserFactory()
@@ -197,7 +201,10 @@ class EmailChangeConfirmation(TestCase):
                 "users:confirm_email", kwargs={"uidb64": uidb64, "token": signed_value}
             )
         )
-        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn("email has been successfully updated", messages[0].message)
 
     def test_mismatched_id_fails(self):
         """Indicates tampering of the URL to attempt to change another user's email, should redirect to account page"""
@@ -214,3 +221,5 @@ class EmailChangeConfirmation(TestCase):
             )
         )
         self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 0)
