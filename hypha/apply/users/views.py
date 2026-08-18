@@ -203,7 +203,9 @@ def account_email_change(request):
     if request.user.email != value["updated_email"]:
         send_confirmation_email(
             request.user,
-            signer.sign(dumps(value["updated_email"])),
+            signer.sign(
+                dumps({"updated_email": value["updated_email"], "id": request.user.id})
+            ),
             updated_email=value["updated_email"],
             site=Site.find_for_request(request),
         )
@@ -262,7 +264,17 @@ def oauth(request):
 class EmailChangeConfirmationView(TemplateView):
     def get(self, request, *args, **kwargs):
         user = self.get_user(kwargs.get("uidb64"))
-        email = self.unsigned(kwargs.get("token"))
+        value = self.unsigned(kwargs.get("token"))
+
+        # A non-dict `value` means an expired, tampered, or legacy-format token.
+        if not isinstance(value, dict):
+            return render(request, "users/email_change/invalid_link.html")
+
+        # Verify that the user who requested this change is the same as the current user
+        # ie. an attacker didn't swap out the uidb64 ID for another user's
+        if user and user.id != value.get("id"):
+            return redirect("users:account")
+        email = value.get("updated_email")
         if user and email:
             if user.email != email:
                 user.email = email
