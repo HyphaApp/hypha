@@ -1,9 +1,12 @@
 from unittest.mock import patch
 from urllib.parse import urlencode
 
+from django.contrib.messages import get_messages
 from django.core.signing import TimestampSigner, dumps
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from .factories import OAuthUserFactory, UserFactory
 
@@ -76,7 +79,7 @@ class TestEmailChangeOAuthUserSkipsElevation(TestCase):
 
 
 class TestEmailChangeTokenValidation(TestCase):
-    """The signed token in the query string must be valid and unexpired."""
+    """The signed token in the query string must be valid, unexpired and requested by the same user that the change is being executed for."""
 
     def setUp(self):
         self.user = OAuthUserFactory()  # skip elevation
@@ -174,3 +177,49 @@ class TestEmailChangeElevatedUserWithPassword(TestCase):
             self.client.get(url_with_value(signed))
         self.user.refresh_from_db()
         self.assertEqual(self.user.full_name, "Elevated Name")
+
+
+class EmailChangeConfirmation(TestCase):
+    """Testing the view that handles the actual confirmation & token validation that comes from the confirmation email
+
+    Both a valid & invalid view will result in a 302 response, the big difference is in the messages that get added.
+    """
+
+    def setUp(self):
+        self.user = UserFactory()
+        self.client.force_login(self.user)
+
+    def test_processing_valid_token_success(self):
+        new_email = f"new{self.user.email}"
+        signer = TimestampSigner()
+        signed_value = signer.sign(
+            dumps({"updated_email": new_email, "id": self.user.id})
+        )
+        uidb64 = urlsafe_base64_encode(force_bytes(self.user.id))
+        response = self.client.get(
+            reverse(
+                "users:confirm_email", kwargs={"uidb64": uidb64, "token": signed_value}
+            )
+        )
+
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn("email has been successfully updated", messages[0].message)
+
+    def test_mismatched_id_fails(self):
+        """Indicates tampering of the URL to attempt to change another user's email, should redirect to account page"""
+        other_user = UserFactory()
+        new_email = f"new{self.user.email}"
+        signer = TimestampSigner()
+        signed_value = signer.sign(
+            dumps({"updated_email": new_email, "id": self.user.id})
+        )
+        uidb64 = urlsafe_base64_encode(force_bytes(other_user.id))
+        response = self.client.get(
+            reverse(
+                "users:confirm_email", kwargs={"uidb64": uidb64, "token": signed_value}
+            )
+        )
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 0)
