@@ -58,6 +58,17 @@
                     </dl>
                 </header>
 
+                {% user_can_view_project_documents object user as can_view_project_documents %}
+                {% if can_view_project_documents %}
+                    {% include "application_projects/includes/project_documents.html" %}
+                {% endif %}
+
+                {% project_can_have_contracting_section object as can_have_contracting_section %}
+                {% user_can_view_contracting_documents object user as can_view_contracting_documents %}
+                {% if can_have_contracting_section and can_view_contracting_documents %}
+                    {% include "application_projects/includes/contracting_documents.html" %}
+                {% endif %}
+
                 {% project_can_have_invoices object as can_have_invoices %}
                 {% user_can_view_invoices object user as can_view_invoices %}
                 {% if can_have_invoices and can_view_invoices %}
@@ -68,17 +79,6 @@
                 {% user_can_view_reports object user as can_view_reports %}
                 {% if show_reports_section and can_view_reports %}
                     {% include "reports/includes/reports.html" %}
-                {% endif %}
-
-                {% project_can_have_contracting_section object as can_have_contracting_section %}
-                {% user_can_view_contracting_documents object user as can_view_contracting_documents %}
-                {% if can_have_contracting_section and can_view_contracting_documents %}
-                    {% include "application_projects/includes/contracting_documents.html" %}
-                {% endif %}
-
-                {% user_can_view_project_documents object user as can_view_project_documents %}
-                {% if can_view_project_documents %}
-                    {% include "application_projects/includes/project_documents.html" %}
                 {% endif %}
             </article>
         </div>
