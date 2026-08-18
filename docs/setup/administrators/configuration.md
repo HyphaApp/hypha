@@ -213,7 +213,7 @@ If automatic e-mails should be sent out to reviewers when submissions are ready 
 
 ----
 
-Staff e-mail domain. Used for OAUTH2 whitelist default value and staff account creation.
+Staff e-mail domains. Used as the default value for the OAuth2 whitelists.
 
     STAFF_EMAIL_DOMAINS = env.list('STAFF_EMAIL_DOMAINS', [])
 
