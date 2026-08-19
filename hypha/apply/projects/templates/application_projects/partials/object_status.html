@@ -18,7 +18,7 @@ Params:
 {% if activities.count > 1  or activities.count == 1 and not preview_activity %}
     <details class="collapse collapse-arrow group" id="statusDetail" {% if open %}open{% endif %}>
         <summary class="collapse-title">
-            <h2 class="card-title">{% blocktrans with activity_count=activities.count %}Status & Activity <span class="font-normal text-base-content/70">({{ activity_count }})</span>{% endblocktrans %}</h2>
+            <h2 class="card-title">{% trans "Status & Activity" %} <span class="font-normal text-base-content/70">({{ activities.count }})</span></h2>
             {% if preview_activity %}
                 <div class="px-4 pt-4 group-open:hidden">
                     {% include "activity/ui/activity-action-item.html" with activity=preview_activity no_timeline=True mini=True %}
@@ -40,7 +40,7 @@ Params:
     </details>
 {% else %}
     <div class="p-4">
-        <h2 class="card-title">{% blocktrans with activity_count=activities.count %}Status & Activity <span class="font-normal text-base-content/70">({{ activity_count }})</span>{% endblocktrans %}</h2>
+        <h2 class="card-title">{% trans "Status & Activity" %} <span class="font-normal text-base-content/70">({{ activities.count }})</span></h2>
         <div class="px-4 pt-4">
             {% if preview_activity %}
                 {% include "activity/ui/activity-action-item.html" with activity=preview_activity no_timeline=True mini=True %}
