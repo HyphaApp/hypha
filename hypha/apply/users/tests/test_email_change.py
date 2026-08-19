@@ -148,8 +148,11 @@ class TestEmailChangeSuccess(TestCase):
 
         signed = make_signed_value(self.user.email)  # same email
         self.client.get(url_with_value(signed))
-        # Only alert email, no confirmation needed
+        # Only the alert to the existing address — nothing is sent anywhere else.
         self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(
+            [addr for msg in mail.outbox for addr in msg.to], [self.user.email]
+        )
 
 
 class TestEmailChangeElevatedUserWithPassword(TestCase):

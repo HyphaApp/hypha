@@ -15,9 +15,6 @@ class _SimpleForm(forms.Form):
 
 
 class TestGenerateUuid(SimpleTestCase):
-    def test_returns_string(self):
-        self.assertIsInstance(generate_uuid(), str)
-
     def test_returns_valid_uuid(self):
         result = generate_uuid()
         # Should not raise

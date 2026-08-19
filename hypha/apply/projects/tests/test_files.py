@@ -32,8 +32,8 @@ class TestFlatten(TestCase):
         self.assertEqual(output, [1, 2, 3])
 
     def test_three_levels_of_items(self):
-        output = list(flatten([1, [2, (3)]]))
-        self.assertEqual(output, [1, 2, (3)])
+        output = list(flatten([1, [2, [3]]]))
+        self.assertEqual(output, [1, 2, 3])
 
 
 class TestGetFiles(TestCase):

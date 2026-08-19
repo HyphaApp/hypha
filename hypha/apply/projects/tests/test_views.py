@@ -331,6 +331,11 @@ class TestApplicantProjectDetailView(BaseProjectDetailTestCase):
         response = self.get_page(project)
         self.assertEqual(response.status_code, 200)
 
+    def test_doesnt_have_access_to_other_project(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 403)
+
     def test_lab_project_renders(self):
         project = ProjectFactory(user=self.user, submission=LabSubmissionFactory())
         response = self.get_page(project)
@@ -397,20 +402,6 @@ class TestFinanceProjectDetailView(BaseProjectDetailTestCase):
         project = ProjectFactory(
             submission=LabSubmissionFactory(), status=INTERNAL_APPROVAL
         )
-        response = self.get_page(project)
-        self.assertEqual(response.status_code, 200)
-
-
-class TestUserProjectDetailView(BaseProjectDetailTestCase):
-    user_factory = ApplicantFactory
-
-    def test_doesnt_have_access(self):
-        project = ProjectFactory()
-        response = self.get_page(project)
-        self.assertEqual(response.status_code, 403)
-
-    def test_owner_has_access(self):
-        project = ProjectFactory(user=self.user)
         response = self.get_page(project)
         self.assertEqual(response.status_code, 200)
 

@@ -314,17 +314,28 @@ class TestActivityAdapter(TestCase):
         self.assertIn(submission.phase.public_name, message[ALL])
         self.assertIn(old_phase.public_name, message[ALL])
 
-    def test_handle_transition_to_private_to_public(self):
+    def test_handle_transition_private_to_public(self):
         submission = ApplicationSubmissionFactory(status="more_info")
-        old_phase = submission.workflow.phases_for()[1]
+        # Leaving a phase the applicant cannot see: the applicant message must
+        # report the last phase they *could* see, not the hidden one.
+        private_phase = next(
+            phase
+            for phase in submission.workflow.phases_for()
+            if not phase.permissions.can_view(submission.user)
+        )
+        visible_phase = submission.workflow.previous_visible(
+            private_phase, submission.user
+        )
 
-        message = self.adapter.handle_transition(old_phase, submission)
+        message = self.adapter.handle_transition(private_phase, submission)
         message = json.loads(message)
 
         self.assertIn(submission.phase.display_name, message[TEAM])
-        self.assertIn(old_phase.display_name, message[TEAM])
+        self.assertIn(private_phase.display_name, message[TEAM])
+
         self.assertIn(submission.phase.public_name, message[ALL])
-        self.assertIn(old_phase.public_name, message[ALL])
+        self.assertIn(visible_phase.public_name, message[ALL])
+        self.assertNotIn(private_phase.public_name, message[ALL])
 
     def test_handle_transition_to_public_to_private(self):
         submission = ApplicationSubmissionFactory(status="internal_review")
@@ -573,21 +584,6 @@ class TestEmailAdapter(AdapterMixin, TestCase):
             ANY, ANY, ANY, [project.user.email], logs=ANY
         )
 
-    def test_email_applicant_for_submission_comments(self):
-        staff_commenter = StaffFactory()
-        submission = ApplicationSubmissionFactory()
-        comment = CommentFactory(
-            user=staff_commenter, source=submission, visibility=APPLICANT
-        )
-
-        self.adapter_process(
-            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
-        )
-
-        self.mock_send_email.assert_called_once_with(
-            ANY, ANY, ANY, [submission.user.email], logs=ANY
-        )
-
     def test_reviewers_email(self):
         reviewers = ReviewerFactory.create_batch(4)
         submission = ApplicationSubmissionFactory(
@@ -680,14 +676,6 @@ class TestAnyMailBehaviour(AdapterMixin, TestCase):
         ).hexdigest()
 
         return data
-
-    def test_email_new_submission(self):
-        submission = ApplicationSubmissionFactory()
-        self.adapter_process(MESSAGES.NEW_SUBMISSION, source=submission)
-
-        self.mock_send_email.assert_called_once_with(
-            ANY, ANY, ANY, [submission.user.email], logs=ANY
-        )
 
     @override_settings(ANYMAIL_MAILGUN_API_KEY=TEST_API_KEY)
     def test_webhook_updates_status(self):

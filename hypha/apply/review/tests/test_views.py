@@ -210,8 +210,10 @@ class TestReviewScore(BaseViewTestCase):
         self.assertEqual(review.score, 2.5)
 
     def test_na_included_reviews_average(self):
+        # A lone NA scores 0 for the review, which is then included in the
+        # aggregate (only reviews whose overall score is NA are excluded).
         self.submit_review_scores((NA,))
-        self.assertIsNotNone(Review.objects.score())
+        self.assertEqual(Review.objects.score(), 0)
 
     def test_na_included_multiple_reviews_average(self):
         self.submit_review_scores((NA,))

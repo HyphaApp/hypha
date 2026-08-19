@@ -41,8 +41,9 @@ class TestCategoryQuestionBlock(TestCase):
         self.assertTrue(isinstance(field, forms.MultipleChoiceField))
 
     def test_multi_select_disabled(self):
-        field = self.get_field(multi=True)
-        self.assertTrue(isinstance(field, forms.ChoiceField))
+        field = self.get_field(multi=False)
+        self.assertNotIsInstance(field, forms.MultipleChoiceField)
+        self.assertIsInstance(field, forms.ChoiceField)
 
     def test_options_included_in_choices(self):
         # Don't assign to variable as the ordering wont match choices

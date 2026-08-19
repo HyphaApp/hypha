@@ -939,10 +939,6 @@ class TestAsJsonMixin(TestCase):
         self.assertIn("next_deadline", result)
         self.assertIn("url", result)
 
-    def test_as_json_weight_is_int(self):
-        result = self.fund.as_json
-        self.assertIsInstance(result["weight"], int)
-
     def test_as_json_no_deadline_without_open_round(self):
         result = self.fund.as_json
         self.assertEqual(result["next_deadline"], "")

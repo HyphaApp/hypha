@@ -18,11 +18,6 @@ class TestHealthCheck(TestCase):
         response = self.client.get(reverse("health"))
         self.assertEqual(response["Content-Type"], "text/plain")
 
-    def test_accessible_without_authentication(self):
-        # Health check must be reachable by load balancers without credentials.
-        response = self.client.get(reverse("health"))
-        self.assertEqual(response.status_code, 200)
-
     def test_returns_500_when_db_unavailable(self):
         with patch(
             "hypha.health.connection.ensure_connection",

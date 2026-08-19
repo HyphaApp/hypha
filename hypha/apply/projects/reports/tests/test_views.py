@@ -516,7 +516,7 @@ class TestApplicantReportDetail(BaseViewTestCase):
 
     base_view_name = "detail"
     url_name = "funds:projects:reports:{}"
-    user_factory = StaffFactory
+    user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
         return {
@@ -559,7 +559,7 @@ class TestApplicantReportDetail(BaseViewTestCase):
             project__status=INVOICING_AND_REPORTING, is_submitted=True
         )
         response = self.get_page(report)
-        assert response.status_code == 200
+        assert response.status_code == 403
 
     def test_cant_access_other_draft_report(self):
         """Tests applicants cannot access other users' draft reports"""
