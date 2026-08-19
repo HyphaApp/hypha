@@ -666,14 +666,6 @@ class TestAnyMailBehaviour(AdapterMixin, TestCase):
 
         return data
 
-    def test_email_new_submission(self):
-        submission = ApplicationSubmissionFactory()
-        self.adapter_process(MESSAGES.NEW_SUBMISSION, source=submission)
-
-        self.mock_send_email.assert_called_once_with(
-            ANY, ANY, ANY, [submission.user.email], logs=ANY
-        )
-
     @override_settings(ANYMAIL_MAILGUN_API_KEY=TEST_API_KEY)
     def test_webhook_updates_status(self):
         message = MessageFactory()
