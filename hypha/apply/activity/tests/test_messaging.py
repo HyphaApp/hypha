@@ -314,17 +314,28 @@ class TestActivityAdapter(TestCase):
         self.assertIn(submission.phase.public_name, message[ALL])
         self.assertIn(old_phase.public_name, message[ALL])
 
-    def test_handle_transition_to_private_to_public(self):
+    def test_handle_transition_private_to_public(self):
         submission = ApplicationSubmissionFactory(status="more_info")
-        old_phase = submission.workflow.phases_for()[1]
+        # Leaving a phase the applicant cannot see: the applicant message must
+        # report the last phase they *could* see, not the hidden one.
+        private_phase = next(
+            phase
+            for phase in submission.workflow.phases_for()
+            if not phase.permissions.can_view(submission.user)
+        )
+        visible_phase = submission.workflow.previous_visible(
+            private_phase, submission.user
+        )
 
-        message = self.adapter.handle_transition(old_phase, submission)
+        message = self.adapter.handle_transition(private_phase, submission)
         message = json.loads(message)
 
         self.assertIn(submission.phase.display_name, message[TEAM])
-        self.assertIn(old_phase.display_name, message[TEAM])
+        self.assertIn(private_phase.display_name, message[TEAM])
+
         self.assertIn(submission.phase.public_name, message[ALL])
-        self.assertIn(old_phase.public_name, message[ALL])
+        self.assertIn(visible_phase.public_name, message[ALL])
+        self.assertNotIn(private_phase.public_name, message[ALL])
 
     def test_handle_transition_to_public_to_private(self):
         submission = ApplicationSubmissionFactory(status="internal_review")

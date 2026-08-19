@@ -23,10 +23,6 @@ class TestHomeView(TestCase):
         response = self.client.get(reverse("home"))
         self.assertTemplateUsed(response, "home/home.html")
 
-    def test_home_context_contains_funds_key(self):
-        response = self.client.get(reverse("home"))
-        self.assertIn("funds", response.context)
-
     def test_home_funds_empty_with_no_open_rounds(self):
         response = self.client.get(reverse("home"))
         self.assertEqual(response.context["funds"], [])
