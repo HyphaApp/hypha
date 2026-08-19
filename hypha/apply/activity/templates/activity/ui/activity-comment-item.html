@@ -121,7 +121,7 @@ Params:
                                 {% if url %}
                                     <div class="px-3">
                                         <a href="{{ url }}" class="mt-2 font-semibold uppercase btn btn-sm btn-info btn-soft">
-                                            {% trans "View " %}{{ activity.related_object|instance_verbose_name }}
+                                            {% blocktrans with related_name=activity.related_object|instance_verbose_name %}View {{ related_name }}{% endblocktrans %}
                                             {% heroicon_mini "arrow-right" aria_hidden="true" class="opacity-80 size-4" %}
                                         </a>
                                     </div>
