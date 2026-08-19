@@ -139,6 +139,7 @@ class FinanceInvoiceTable(BaseInvoiceTable):
         template_name = "application_projects/tables/table.html"
         attrs = {"class": "table border-x border-b mb-2 invoices-table"}
         row_attrs = {
+            **BaseInvoiceTable.Meta.row_attrs,
             "data-record-id": lambda record: record.id,
         }
 
@@ -177,6 +178,7 @@ class AdminInvoiceListTable(BaseInvoiceTable):
         template_name = "application_projects/tables/table.html"
         attrs = {"class": "table border-x border-b mb-2 invoices-table"}
         row_attrs = {
+            **BaseInvoiceTable.Meta.row_attrs,
             "data-record-id": lambda record: record.id,
         }
 

@@ -49,6 +49,14 @@ class ReportingTable(tables.Table):
         model = Project
         orderable = True
         attrs = {"class": "table overflow-x-auto ReportingTable"}
+        row_attrs = {
+            "onclick": lambda record: (
+                f"window.location.href='{record.get_absolute_url()}'"
+            ),
+            "class": "table-row-link",
+            "role": "button",
+            "tabindex": "0",  # Accessibility
+        }
 
     def render_title(self, record):
         return get_project_title(record)
@@ -80,6 +88,14 @@ class ReportListTable(tables.Table):
         model = Report
         template_name = "application_projects/tables/table.html"
         attrs = {"class": "table projects-table ReportListTable"}
+        row_attrs = {
+            "onclick": lambda record: (
+                f"window.location.href='{record.get_absolute_url()}'"
+            ),
+            "class": "table-row-link",
+            "role": "button",
+            "tabindex": "0",  # Accessibility
+        }
 
     def render_report_period(self, record):
         return format_html(
