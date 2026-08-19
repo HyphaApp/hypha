@@ -2,7 +2,6 @@ import json
 
 import django_tables2 as tables
 from django.conf import settings
-from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
@@ -26,10 +25,9 @@ def render_invoice_actions(table, record):
 
 
 class BaseInvoiceTable(tables.Table):
-    invoice_number = tables.LinkColumn(
-        "funds:projects:invoice-detail",
+    invoice_number = tables.Column(
         verbose_name=_("Invoice #"),
-        args=[tables.utils.A("project__submission_id"), tables.utils.A("pk")],
+        linkify=True,
         attrs={
             "a": {
                 "class": "link link-hover text-h4 font-semibold break-words line-clamp-2 max-w-md",
@@ -48,7 +46,7 @@ class BaseInvoiceTable(tables.Table):
     class Meta:
         row_attrs = {
             "onclick": lambda record: (
-                f"window.location.href='{reverse('funds:projects:invoice-detail', args=[record.project.submission_id, record.pk])}'"
+                f"window.location.href='{record.get_absolute_url()}'"
             ),
             "class": "table-row-link",
             "role": "button",
