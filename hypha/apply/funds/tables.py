@@ -413,6 +413,14 @@ class RoundsTable(tables.Table):
     class Meta:
         fields = ("title", "fund", "lead", "start_date", "end_date", "deterrmined")
         attrs = {"class": "table"}
+        row_attrs = {
+            "onclick": lambda record: (
+                f"window.location.href='{record.get_absolute_url()}'"
+            ),
+            "class": "table-row-link",
+            "role": "button",
+            "tabindex": "0",  # Accessibility
+        }
         template_name = "funds/tables/table.html"
 
     def render_lead(self, value):
@@ -574,6 +582,14 @@ class ReviewerLeaderboardTable(tables.Table):
         order_by = ("-ninety_days",)
         attrs = {"class": "table"}
         empty_text = _("No reviews available")
+        row_attrs = {
+            "onclick": lambda record: (
+                f"window.location.href='{record.get_absolute_url()}'"
+            ),
+            "class": "table-row-link",
+            "role": "button",
+            "tabindex": "0",  # Accessibility
+        }
 
 
 class ReviewerLeaderboardDetailTable(tables.Table):
@@ -622,3 +638,11 @@ class StaffAssignmentsTable(tables.Table):
         ]
         attrs = {"class": "table"}
         empty_text = _("No staff available")
+        row_attrs = {
+            "onclick": lambda record: (
+                f"window.location.href='{record.get_absolute_url()}'"
+            ),
+            "class": "table-row-link",
+            "role": "button",
+            "tabindex": "0",  # Accessibility
+        }
