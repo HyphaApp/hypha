@@ -11,7 +11,7 @@ from django_file_form.forms import FileFormMixin
 from hypha.apply.funds.widgets import MultiCheckboxesWidget
 from hypha.apply.stream_forms.fields import MultiFileField, SingleFileField
 
-from ..models.payment import (
+from ..models.invoice import (
     APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,

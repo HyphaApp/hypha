@@ -1,4 +1,4 @@
-from .payment import Invoice, InvoiceExportManager, InvoiceTag, SupportingDocument
+from .invoice import Invoice, InvoiceExportManager, InvoiceTag, SupportingDocument
 from .project import (
     Contract,
     ContractDocumentCategory,

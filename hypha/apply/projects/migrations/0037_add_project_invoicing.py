@@ -6,7 +6,7 @@ import django.core.files.storage
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import hypha.apply.projects.models.payment
+import hypha.apply.projects.models.invoice
 
 
 class Migration(migrations.Migration):
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
                     "document",
                     models.FileField(
                         storage=django.core.files.storage.FileSystemStorage(),
-                        upload_to=hypha.apply.projects.models.payment.invoice_path,
+                        upload_to=hypha.apply.projects.models.invoice.invoice_path,
                     ),
                 ),
                 ("requested_at", models.DateTimeField(auto_now_add=True)),

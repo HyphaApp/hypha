@@ -3,7 +3,7 @@ from typing import List
 from celery import shared_task
 from django.conf import settings
 
-from hypha.apply.projects.models.payment import InvoiceExportManager
+from hypha.apply.projects.models.invoice import InvoiceExportManager
 from hypha.apply.projects.utils import export_invoices_to_csv
 from hypha.apply.todo.options import (
     DOWNLOAD_INVOICES_EXPORT,
@@ -21,7 +21,7 @@ def generate_invoice_csv(qs_ids: List[int], request_user_id: int) -> None:
     adds a download task to the user's `My Tasks` when completed.
     """
     try:
-        from hypha.apply.projects.models.payment import Invoice
+        from hypha.apply.projects.models.invoice import Invoice
 
         qs = (
             Invoice.objects.filter(id__in=qs_ids)
