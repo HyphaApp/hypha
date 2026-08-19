@@ -8,7 +8,7 @@ from django.views.decorators.http import require_GET
 
 from hypha.apply.activity.models import Activity
 
-from ..models.payment import Invoice
+from ..models.invoice import Invoice
 from ..models.project import ContractDocumentCategory, DocumentCategory, Project
 
 

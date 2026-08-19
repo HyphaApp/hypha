@@ -10,7 +10,7 @@ from hypha.apply.funds.tables import (
     get_used_funds,
 )
 
-from .models.payment import INVOICE_STATUS_CHOICES, Invoice
+from .models.invoice import INVOICE_STATUS_CHOICES, Invoice
 from .models.project import (
     CLOSING,
     INVOICING_AND_REPORTING,

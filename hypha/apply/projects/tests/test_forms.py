@@ -13,7 +13,7 @@ from hypha.apply.users.tests.factories import (
 from hypha.home.factories import ApplySiteFactory
 
 from ..files import get_files
-from ..forms.payment import (
+from ..forms.invoice import (
     ChangeInvoiceStatusForm,
     CreateInvoiceForm,
     EditInvoiceForm,
@@ -26,7 +26,7 @@ from ..forms.project import (
     StaffUploadContractForm,
     UploadContractForm,
 )
-from ..models.payment import (
+from ..models.invoice import (
     APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
