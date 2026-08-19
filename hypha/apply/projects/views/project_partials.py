@@ -106,19 +106,18 @@ def partial_get_invoice_status_table(
 
 
 @login_required
-def partial_get_invoice_status(request: HttpRequest, pk: int, invoice_pk: int):
+def partial_get_invoice_status(request: HttpRequest, pk: int):
     """
     Partial to get the invoice status for invoice detail view
 
     Args:
         request: request used to retrieve partial
-        pk: ID of the associated project
-        invoice_pk: ID of the invoice to retrieve the status of
+        pk: ID of the invoice to retrieve the status of
 
     Returns:
         HttpResponse containing the status line of requested invoice
     """
-    invoice = get_object_or_404(Invoice, pk=invoice_pk)
+    invoice = get_object_or_404(Invoice, pk=pk)
     user = request.user
     invoice_activities = Activity.actions.filter(
         related_content_type__model="invoice", related_object_id=invoice.id
@@ -137,19 +136,18 @@ def partial_get_invoice_status(request: HttpRequest, pk: int, invoice_pk: int):
 
 
 @login_required
-def partial_get_invoice_detail_actions(request: HttpRequest, pk: int, invoice_pk: int):
+def partial_get_invoice_detail_actions(request: HttpRequest, pk: int):
     """
     Partial to get the actions for the invoice detail view
 
     Args:
         request: request used to retrieve partial
-        pk: ID of the associated project
-        invoice_pk: ID of the invoice to retrieve the status of
+        pk: ID of the invoice to retrieve the actions for
 
     Returns:
         HttpResponse containing the status line of requested invoice
     """
-    invoice = get_object_or_404(Invoice, pk=invoice_pk)
+    invoice = get_object_or_404(Invoice, pk=pk)
     user = request.user
 
     return render(
@@ -160,8 +158,8 @@ def partial_get_invoice_detail_actions(request: HttpRequest, pk: int, invoice_pk
 
 
 @login_required
-def partial_get_invoice_tags(request: HttpRequest, pk: int, invoice_pk: int):
-    invoice = get_object_or_404(Invoice, pk=invoice_pk)
+def partial_get_invoice_tags(request: HttpRequest, pk: int):
+    invoice = get_object_or_404(Invoice, pk=pk)
     return render(
         request,
         "application_projects/partials/invoice_tags.html",
