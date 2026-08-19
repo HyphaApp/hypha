@@ -72,6 +72,7 @@ from .utils import (
     generate_numeric_token,
     get_redirect_url,
     get_zoneinfo,
+    login_ratelimit_key,
     send_activation_email,
     send_confirmation_email,
 )
@@ -84,7 +85,7 @@ User = get_user_model()
     name="dispatch",
 )
 @method_decorator(
-    ratelimit(key="post:email", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    ratelimit(key=login_ratelimit_key, rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
     name="dispatch",
 )
 class LoginView(TwoFactorLoginView):
