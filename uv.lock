@@ -2059,7 +2059,7 @@ wheels = [
 
 [[package]]
 name = "hypha"
-version = "6.6.0"
+version = "6.7.0"
 source = { virtual = "." }
 dependencies = [
     { name = "babel" },
