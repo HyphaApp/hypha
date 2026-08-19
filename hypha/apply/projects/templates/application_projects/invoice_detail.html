@@ -51,7 +51,7 @@
                     </p>
                     <p
                         class="lg:col-span-2"
-                        hx-get="{% url 'apply:projects:partial-invoice-tags' pk=object.project.pk invoice_pk=object.pk %}"
+                        hx-get="{% url 'apply:projects:partial-invoice-tags' pk=object.pk %}"
                         hx-trigger="load, invoicesUpdated from:body"
                     ></p>
                 </div>
@@ -59,7 +59,7 @@
 
             <!-- status -->
             <section
-                hx-get="{% url 'apply:projects:partial-invoice-status' pk=object.project.pk invoice_pk=object.pk %}"
+                hx-get="{% url 'apply:projects:partial-invoice-status' pk=object.pk %}"
                 hx-trigger="load, invoicesUpdated from:body"
                 class="card card-border"
             >
@@ -75,7 +75,7 @@
                     <h2 class="card-title">{% trans "Invoice" %}</h2>
                     <p class="max-w-md">
                         <c-card-attachment
-                            href="{% url 'apply:projects:invoice-document' pk=object.project.pk invoice_pk=object.pk %}"
+                            href="{% url 'apply:projects:invoice-document' pk=object.pk %}"
                             :filename="object.filename"
                             :exists="invoice_file_exists"
                             title="{% trans 'Download invoice' %}"
@@ -84,7 +84,7 @@
                     {% if invoice_file_exists %}
                         <div class="overflow-x-auto mt-4">
                             <embed
-                                src="{% url 'apply:projects:invoice-document' pk=object.project.pk invoice_pk=object.pk %}"
+                                src="{% url 'apply:projects:invoice-document' pk=object.pk %}"
                                 width="800px"
                                 height="800px"
                             />
@@ -112,7 +112,7 @@
         <aside class="layout-sidebar">
             <div
                 class="sticky top-8 card card-border bg-base-200 shadow-xs sidebar__inner--actions"
-                hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}"
+                hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.pk %}"
                 hx-trigger="invoicesUpdated from:body"
                 data-testid="sidebar-primary-actions"
             >

@@ -9,7 +9,7 @@
         {% if user_can_change_status %}
             <button
                 class="btn btn-primary btn-block"
-                hx-get="{% url 'apply:projects:invoice-update' pk=object.project.pk invoice_pk=object.pk %}"
+                hx-get="{% url 'apply:projects:invoice-update' pk=object.pk %}"
                 hx-target="#htmx-modal"
             >
                 {% trans "Update Status" %}
@@ -37,7 +37,7 @@
             {% endif %}
             class="btn btn-secondary btn-outline btn-block"
             href={% if user_can_edit_request %}
-                 "{% url "apply:projects:invoice-edit" pk=object.project.pk invoice_pk=object.pk %}"
+                 "{% url "apply:projects:invoice-edit" pk=object.pk %}"
             {% else %}
                  "#"
             {% endif %}
@@ -51,7 +51,7 @@
     {% if user.is_apply_staff or user.is_finance %}
         <button
             class="btn btn-secondary btn-outline btn-block"
-            hx-get="{% url 'apply:projects:invoice-tags' pk=object.project.pk invoice_pk=object.pk %}"
+            hx-get="{% url 'apply:projects:invoice-tags' pk=object.pk %}"
             hx-target="#htmx-modal"
         >
             {% heroicon_micro "tag" aria_hidden=true class="opacity-80 size-4" %}
@@ -64,7 +64,7 @@
     {% if user_can_delete_request %}
         <a
             class="btn btn-error btn-outline btn-block"
-            hx-get="{% url 'apply:projects:invoice-delete' pk=object.project.pk invoice_pk=object.pk %}"
+            hx-get="{% url 'apply:projects:invoice-delete' pk=object.pk %}"
             hx-target="#htmx-modal"
         >
             {% heroicon_micro "trash" aria_hidden=true class="opacity-80 size-4" %}
