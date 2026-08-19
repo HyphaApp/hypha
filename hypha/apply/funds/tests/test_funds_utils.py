@@ -36,9 +36,6 @@ class TestGetExportPollingTime(SimpleTestCase):
         result = get_export_polling_time(6750)
         self.assertEqual(result, 45)
 
-    def test_return_type_is_int(self):
-        self.assertIsInstance(get_export_polling_time(500), int)
-
 
 class TestGetStatusesAsParams(SimpleTestCase):
     def test_single_status(self):

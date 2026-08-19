@@ -72,11 +72,10 @@ class TestStaffProfileForm(BaseTestProfileForm):
         self.assertEqual(self.staff.slack, slack_name)
 
     def test_can_set_slack_name_with_trailing_space(self):
-        slack_name = "@foobar"
-        self.submit_form(instance=self.staff, slack=slack_name)
+        self.submit_form(instance=self.staff, slack="@foobar ")
 
         self.staff.refresh_from_db()
-        self.assertEqual(self.staff.slack, slack_name)
+        self.assertEqual(self.staff.slack, "@foobar")
 
     def test_cant_set_slack_name_with_space(self):
         slack_name = "@ foobar"

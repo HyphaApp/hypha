@@ -1,6 +1,6 @@
 """Tests for projects/utils.py pure functions."""
 
-import pytest
+from django.conf import settings
 from django.test import TestCase
 
 from ..constants import (
@@ -158,17 +158,44 @@ class TestGetProjectStatusChoices(TestCase):
 
 
 class TestGetProjectPublicStatus(TestCase):
-    @pytest.mark.parametrize(
-        "status", [DRAFT, CONTRACTING, INVOICING_AND_REPORTING, CLOSING, COMPLETE]
-    )
-    def test_returns_string_for_all_statuses(self):
-        for status in [DRAFT, CONTRACTING, INVOICING_AND_REPORTING, CLOSING, COMPLETE]:
-            result = get_project_public_status(status)
-            self.assertIsNotNone(result)
+    def test_returns_public_label_for_each_status(self):
+        expected = {
+            DRAFT: "Draft",
+            CONTRACTING: "Contracting",
+            INVOICING_AND_REPORTING: "Invoicing and reporting",
+            CLOSING: "Closing",
+            COMPLETE: "Complete",
+        }
+        for status, label in expected.items():
+            with self.subTest(status=status):
+                self.assertEqual(str(get_project_public_status(status)), label)
+
+    def test_internal_approval_uses_org_short_name(self):
+        # The public label hides the "internal" wording used by staff.
+        self.assertEqual(
+            str(get_project_public_status(INTERNAL_APPROVAL)),
+            f"{settings.ORG_SHORT_NAME} approval",
+        )
+
+    def test_unknown_status_raises(self):
+        with self.assertRaises(KeyError):
+            get_project_public_status("not-a-status")
 
 
 class TestGetProjectStatusDisplayValue(TestCase):
-    def test_returns_display_for_draft(self):
-        result = get_project_status_display_value(DRAFT)
-        self.assertIsNotNone(result)
-        self.assertIsInstance(str(result), str)
+    def test_returns_display_for_each_status(self):
+        expected = {
+            DRAFT: "Draft",
+            INTERNAL_APPROVAL: "Internal approval",
+            CONTRACTING: "Contracting",
+            INVOICING_AND_REPORTING: "Invoicing and reporting",
+            CLOSING: "Closing",
+            COMPLETE: "Complete",
+        }
+        for status, label in expected.items():
+            with self.subTest(status=status):
+                self.assertEqual(str(get_project_status_display_value(status)), label)
+
+    def test_unknown_status_raises(self):
+        with self.assertRaises(KeyError):
+            get_project_status_display_value("not-a-status")

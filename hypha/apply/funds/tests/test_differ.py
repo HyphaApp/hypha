@@ -43,10 +43,6 @@ class TestCompare(SimpleTestCase):
         self.assertIn("<del>", a)
         self.assertIn("<ins>", b)
 
-    def test_returns_tuple_of_two(self):
-        result = compare("a", "b")
-        self.assertEqual(len(result), 2)
-
     def test_html_stripped_when_should_clean_true(self):
         # HTML tags should be stripped when should_clean=True (default)
         a, b = compare("<b>hello</b>", "<b>hello</b>")

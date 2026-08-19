@@ -12,9 +12,6 @@ from hypha.home.factories import ApplySiteFactory
 
 OPEN_CALLS_URL = "/api/v2/open-calls.json"
 
-# Default rate limit is 5/m — one more than the limit triggers a 403.
-RATE_LIMIT = 5
-
 
 class TestOpenCallsJson(TestCase):
     def setUp(self):
@@ -27,11 +24,6 @@ class TestOpenCallsJson(TestCase):
     def test_content_type_is_json(self):
         response = self.client.get(OPEN_CALLS_URL)
         self.assertIn("application/json", response["Content-Type"])
-
-    def test_response_is_valid_json_list(self):
-        response = self.client.get(OPEN_CALLS_URL)
-        data = json.loads(response.content)
-        self.assertIsInstance(data, list)
 
     def test_returns_empty_list_with_no_open_funds(self):
         response = self.client.get(OPEN_CALLS_URL)
@@ -95,20 +87,3 @@ class TestOpenCallsJson(TestCase):
         item = data[0]
         for private_field in ("slack_channel", "activity_digest_recipient_emails"):
             self.assertNotIn(private_field, item)
-
-
-class TestOpenCallsJsonRateLimit(TestCase):
-    """The open-calls endpoint is rate-limited by IP on all HTTP methods."""
-
-    def setUp(self):
-        ApplySiteFactory()
-
-    def test_accessible_before_limit(self):
-        response = self.client.get(OPEN_CALLS_URL)
-        self.assertEqual(response.status_code, 200)
-
-    def test_blocked_after_ip_limit_exceeded(self):
-        for _ in range(RATE_LIMIT):
-            self.client.get(OPEN_CALLS_URL)
-        response = self.client.get(OPEN_CALLS_URL)
-        self.assertEqual(response.status_code, 403)

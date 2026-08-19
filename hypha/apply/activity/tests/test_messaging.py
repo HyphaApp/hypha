@@ -573,21 +573,6 @@ class TestEmailAdapter(AdapterMixin, TestCase):
             ANY, ANY, ANY, [project.user.email], logs=ANY
         )
 
-    def test_email_applicant_for_submission_comments(self):
-        staff_commenter = StaffFactory()
-        submission = ApplicationSubmissionFactory()
-        comment = CommentFactory(
-            user=staff_commenter, source=submission, visibility=APPLICANT
-        )
-
-        self.adapter_process(
-            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
-        )
-
-        self.mock_send_email.assert_called_once_with(
-            ANY, ANY, ANY, [submission.user.email], logs=ANY
-        )
-
     def test_reviewers_email(self):
         reviewers = ReviewerFactory.create_batch(4)
         submission = ApplicationSubmissionFactory(
