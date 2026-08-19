@@ -10,6 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models.fields.files import FieldFile
 from django.template.defaultfilters import stringfilter
 from django.urls import reverse
+from django.utils.translation import get_language
 
 from hypha.core.navigation import get_primary_navigation_items
 
@@ -134,11 +135,13 @@ h(ier|onest|onou?r|ors\b|our(?!i))|
 )
 
 
-@register.filter
-@stringfilter
 def an_or_a(text):
     """
     Very English specific!
+
+    A helper for `with_indefinite_article`, not a template filter - exposing it
+    to templates invites putting a bare English article into a translatable
+    string.
 
     Guess "a" vs "an" based on the phonetic value of the text.
 
@@ -155,3 +158,20 @@ def an_or_a(text):
     if not CONSONANT_SOUND.match(text) and VOWEL_SOUND.match(text):
         return "an"
     return "a"
+
+
+@register.filter
+@stringfilter
+def with_indefinite_article(text):
+    """Prefix `text` with an indefinite article, when the active language has one.
+
+    Composing the article and the noun here keeps the article out of the
+    surrounding translatable string - `an_or_a` only knows English rules, so
+    every other language gets the bare noun and lets its own translation of the
+    surrounding phrase carry the grammar.
+    """
+    language = get_language() or settings.LANGUAGE_CODE
+    if not language.lower().startswith("en"):
+        return text
+
+    return f"{an_or_a(text)} {text}"

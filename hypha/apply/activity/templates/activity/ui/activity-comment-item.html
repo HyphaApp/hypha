@@ -44,10 +44,7 @@ Params:
                             <a href="#communications--{{activity.id}}" class="flex gap-1 hover:underline">
                                 <span class="text-fg-muted">
                                     {% if not submission_title and activity|user_can_see_related:request.user %}
-                                            {# Determine if an/a should be used in the following text (not relevant to languages other than english) #}
-                                        {% with activity.related_object|model_verbose_name|an_or_a as an_or_a_word %}
-                                            {% blocktrans with verbose_related_name=activity.related_object|model_verbose_name %}commented on {{an_or_a_word}} {{ verbose_related_name }}{% endblocktrans %}
-                                        {% endwith %}
+                                        {% blocktrans with related_name=activity.related_object|model_verbose_name|with_indefinite_article %}commented on {{ related_name }}{% endblocktrans %}
                                     {% else %}
                                         {% trans "commented" %}
                                     {% endif %}
