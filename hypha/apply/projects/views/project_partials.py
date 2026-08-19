@@ -37,6 +37,53 @@ def get_accessible_invoice(request: HttpRequest, pk: int, invoice_pk: int) -> In
     return invoice
 
 
+def get_object_activity(request: HttpRequest, obj: Model) -> HttpResponse:
+    """A generic view function to be leveraged by more specific object views
+
+    The caller is responsible for resolving `obj` and for checking that the
+    requesting user is allowed to see it.
+
+    Args:
+        request: request used to retrieve partial
+        obj: the object to get activity for
+
+    Returns:
+        A rendered object_status.html template containing all status/activity relating to the specific object
+    """
+    user = request.user
+
+    related_type_pk = ContentType.objects.get_for_model(obj).pk
+
+    activities = (
+        Activity.objects.filter(
+            related_content_type=related_type_pk, related_object_id=obj.pk
+        )
+        .exclude(current=False)
+        .visible_to(user)
+    )
+
+    preview_activity = (
+        Activity.actions.filter(
+            related_content_type=related_type_pk, related_object_id=obj.pk
+        )
+        .visible_to(user)
+        .first()
+    )
+
+    return render(
+        request,
+        "application_projects/partials/object_status.html",
+        context={
+            "object": obj,
+            "preview_activity": preview_activity,
+            "activities": activities,
+            "user": user,
+            # Determine if the collapsible be open by default
+            "open": True if request.GET.get("open") == "true" else False,
+        },
+    )
+
+
 @login_required
 @require_GET
 def partial_project_lead(request, pk):
@@ -130,53 +177,6 @@ def partial_get_invoice_status_table(
             "invoices": invoices.rejected if rejected else invoices.not_rejected,
             "user": request.user,
             "rejected": rejected,
-        },
-    )
-
-
-def get_object_activity(request: HttpRequest, obj: Model) -> HttpResponse:
-    """A generic view function to be leveraged by more specific object views
-
-    The caller is responsible for resolving `obj` and for checking that the
-    requesting user is allowed to see it.
-
-    Args:
-        request: request used to retrieve partial
-        obj: the object to get activity for
-
-    Returns:
-        A rendered object_status.html template containing all status/activity relating to the specific object
-    """
-    user = request.user
-
-    related_type_pk = ContentType.objects.get_for_model(obj).pk
-
-    activities = (
-        Activity.objects.filter(
-            related_content_type=related_type_pk, related_object_id=obj.pk
-        )
-        .exclude(current=False)
-        .visible_to(user)
-    )
-
-    preview_activity = (
-        Activity.actions.filter(
-            related_content_type=related_type_pk, related_object_id=obj.pk
-        )
-        .visible_to(user)
-        .first()
-    )
-
-    return render(
-        request,
-        "application_projects/partials/object_status.html",
-        context={
-            "object": obj,
-            "preview_activity": preview_activity,
-            "activities": activities,
-            "user": user,
-            # Determine if the collapsible be open by default
-            "open": True if request.GET.get("open") == "true" else False,
         },
     )
 
