@@ -7,8 +7,10 @@ Params:
 
 {% load i18n static heroicons %}
 
-<form  hx-post="{% url 'activity:post-comment' %}" class="flex flex-col gap-2 p-2 card-body" hx-on::after-request="if(event.detail.successful) this.reset()">
-    <h2 class="card-title">Comment</h2>
+{# Success is the 204 returned by `post_comment`, which htmx does not swap - a #}
+{# 200 means the form came back with validation errors, so keep what was typed. #}
+<form  hx-post="{% url 'activity:post-comment' %}" hx-target="this" hx-swap="outerHTML" class="flex flex-col gap-2 p-2 card-body" hx-on::after-request="if(event.detail.xhr.status === 204) this.reset()">
+    <h2 class="card-title">{% trans "Comment" %}</h2>
     {% csrf_token %}
 
     {% for hidden in form.hidden_fields %}
@@ -25,7 +27,6 @@ Params:
             {% include "forms/includes/field.html" with field=form.visibility %}
             {% include "forms/includes/field.html" with field=form.assign_to %}
             {% include "forms/includes/field.html" with field=form.attachments %}
-            {{ form.related_content_type }}
         </div>
     </details>
     <button

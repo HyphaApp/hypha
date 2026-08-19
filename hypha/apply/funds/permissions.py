@@ -60,8 +60,9 @@ def view_comments(role, user, submission) -> bool:
     if submission_view:
         return True
 
-    project = getattr(submission, "project", None)
-    if project:
+    # Users such as contracting staff and project form approvers reach a
+    # submission's comments through its project rather than the submission.
+    for project in submission.projects.all():
         can_access, _ = can_access_project(user, project)
         if can_access:
             return True

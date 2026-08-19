@@ -27,6 +27,7 @@ from ..models.project import (
     ProjectFormPointer,
     ProjectReportForm,
     ProjectSettings,
+    ProjectSOW,
     ProjectSOWForm,
 )
 
@@ -135,6 +136,14 @@ class ProjectFactory(factory.django.DjangoModelFactory):
 class ProjectFormPointerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ProjectFormPointer
+        skip_postgeneration_save = True
+
+    project = factory.SubFactory(ProjectFactory)
+
+
+class ProjectSOWFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ProjectSOW
         skip_postgeneration_save = True
 
     project = factory.SubFactory(ProjectFactory)

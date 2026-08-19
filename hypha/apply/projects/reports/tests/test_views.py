@@ -604,7 +604,9 @@ class TestApplicantReportDetail(BaseViewTestCase):
 
     def test_activity_renders(self):
         report = ReportFactory(
-            project__status=INVOICING_AND_REPORTING, is_submitted=True
+            project__status=INVOICING_AND_REPORTING,
+            is_submitted=True,
+            project__user=self.user,
         )
         report_added_msg = ActivityAdapter.messages[MESSAGES.SUBMIT_REPORT].lower()
         ActivityFactory(

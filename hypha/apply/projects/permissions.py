@@ -390,6 +390,30 @@ def can_access_project(user, project):
     return False, _("Forbidden Error")
 
 
+def can_view_invoice(user, invoice, **kwargs):
+    """Whether a user may see an invoice and the partials that make up its detail view"""
+    if not user.is_authenticated:
+        return False, _("Login Required")
+
+    if user.is_apply_staff or user.is_finance:
+        return True, _("Staff and Finance can view all invoices")
+
+    if user == invoice.project.user:
+        return True, _("Vendor(project user) can view their own invoices")
+
+    if user.is_applicant:
+        co_applicant = invoice.project.submission.co_applicants.filter(
+            user=user
+        ).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.INVOICES in co_applicant.project_permission
+        ):
+            return True, _("Co-applicant with invoice permission can view invoices")
+
+    return False, _("Forbidden Error")
+
+
 def can_view_contract_category_documents(user, project, **kwargs):
     if user.is_superuser:
         return True, _("Superuser can view all documents")
@@ -505,4 +529,5 @@ permissions_map = {
     "paf_edit": can_edit_paf,
     "skip_pafapproval_process": can_skip_pafapproval_process,
     "view_contract_documents": can_view_contract_category_documents,
+    "invoice_access": can_view_invoice,
 }

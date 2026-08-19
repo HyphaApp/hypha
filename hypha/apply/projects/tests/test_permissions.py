@@ -9,6 +9,7 @@ Coverage targets (all previously untested):
   - can_access_project
   - can_edit_paf
   - can_view_contract_category_documents
+  - can_view_invoice
   - PAF approval functions (can_update_paf_approvers, can_update_assigned_paf_approvers,
                             can_assign_paf_approvers, can_update_paf_status)
 """
@@ -52,9 +53,11 @@ from ..permissions import (
     can_update_project_status,
     can_upload_contract,
     can_view_contract_category_documents,
+    can_view_invoice,
 )
 from .factories import (
     ContractFactory,
+    InvoiceFactory,
     PAFApprovalsFactory,
     PAFReviewerRoleFactory,
     ProjectFactory,
@@ -747,3 +750,44 @@ class TestCanUpdateAssignedPafApprovers(TestCase):
                 approver, self.project, request=request
             )
         self.assertTrue(ok)
+
+
+class TestCanViewInvoice(TestCase):
+    """`can_view_invoice` backs both `InvoiceAccessMixin` and the invoice partials"""
+
+    def setUp(self):
+        self.vendor = ApplicantFactory()
+        self.project = ProjectFactory(status=INVOICING_AND_REPORTING, user=self.vendor)
+        self.invoice = InvoiceFactory(project=self.project)
+
+    def test_anonymous_cant(self):
+        can_view, _reason = can_view_invoice(AnonymousUser(), self.invoice)
+        self.assertFalse(can_view)
+
+    def test_staff_and_finance_can(self):
+        for user in [StaffFactory(), FinanceFactory()]:
+            with self.subTest(user.roles):
+                self.assertTrue(can_view_invoice(user, self.invoice)[0])
+
+    def test_vendor_can(self):
+        self.assertTrue(can_view_invoice(self.vendor, self.invoice)[0])
+
+    def test_contracting_cant(self):
+        """Contracting has project access but no business with invoices"""
+        self.assertFalse(can_view_invoice(ContractingFactory(), self.invoice)[0])
+
+    def test_unrelated_applicant_cant(self):
+        self.assertFalse(can_view_invoice(ApplicantFactory(), self.invoice)[0])
+
+    def test_co_applicant_needs_the_invoices_permission(self):
+        without = ApplicantFactory()
+        make_co_applicant(self.project, without, permissions=[])
+        self.assertFalse(can_view_invoice(without, self.invoice)[0])
+
+        with_perm = ApplicantFactory()
+        make_co_applicant(
+            self.project,
+            with_perm,
+            permissions=[CoApplicantProjectPermission.INVOICES],
+        )
+        self.assertTrue(can_view_invoice(with_perm, self.invoice)[0])

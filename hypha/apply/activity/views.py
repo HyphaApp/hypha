@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
@@ -12,11 +13,13 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
+from django_ratelimit.decorators import ratelimit
 from rolepermissions.checkers import has_object_permission
 
 from hypha.apply.activity.forms import CommentForm
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.funds.models.submissions import ApplicationSubmission
+from hypha.apply.funds.permissions import user_can_view_post_comment_form
 from hypha.apply.users.decorators import is_apply_staff, staff_required
 from hypha.apply.utils.storage import PrivateMediaView
 
@@ -118,87 +121,156 @@ def delete_comment(request, pk):
     )
 
 
+# Models a "mini" comment may be attached to via `related`, mapped to the
+# attribute holding the id of the project they belong to (`None` when the object
+# *is* the project). Keyed by ContentType `(app_label, model)`.
+RELATED_MODEL_PROJECT_ATTRS = {
+    ("application_projects", "project"): None,
+    ("application_projects", "invoice"): "project_id",
+    ("application_projects", "projectsow"): "project_id",
+    ("application_projects", "projectformpointer"): "project_id",
+    ("project_reports", "report"): "project_id",
+}
+
+
+def _clean_id(value) -> int | None:
+    """Coerce a content type/object id from request params, `None` if unusable"""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _get_comment_source(params) -> ApplicationSubmission:
+    """Resolve the submission a mini comment form is bound to.
+
+    Comments always hang off the submission - every caller of
+    `generate_post_comment_url` passes one - so anything else is rejected rather
+    than resolved as an arbitrary content type.
+    """
+    content_type_id = _clean_id(params.get("source_content_type"))
+    object_id = _clean_id(params.get("source_object_id"))
+
+    if content_type_id is None or object_id is None:
+        raise Http404
+
+    if content_type_id != ContentType.objects.get_for_model(ApplicationSubmission).pk:
+        raise Http404
+
+    return get_object_or_404(ApplicationSubmission, pk=object_id)
+
+
+def _get_comment_project(submission: ApplicationSubmission):
+    """The project a submission's comment sidebar hangs off, if there is one.
+
+    Used to keep the comment's related object within the submission's own
+    project.
+    """
+    return submission.projects.first()
+
+
+def _user_can_comment(user, submission: ApplicationSubmission) -> bool:
+    """Whether `user` may use the mini comment form on `submission`
+
+    The same gate `comments_view` applies to the full comment form.
+    """
+    return user_can_view_post_comment_form(
+        user=user, submission=submission
+    ) and has_object_permission("view_comments", user, submission)
+
+
+def _get_comment_related(params, project):
+    """Resolve the (optional) object a mini comment is being attached to.
+
+    Restricted to the objects that render a comment sidebar, and to objects
+    belonging to the comment's own project.
+    """
+    raw_content_type = params.get("related_content_type") or ""
+    raw_object_id = params.get("related_object_id") or ""
+
+    if not raw_content_type and not raw_object_id:
+        return None
+
+    content_type_id = _clean_id(raw_content_type)
+    object_id = _clean_id(raw_object_id)
+    if content_type_id is None or object_id is None or project is None:
+        raise Http404
+
+    content_type = ContentType.objects.filter(pk=content_type_id).first()
+    if content_type is None:
+        raise Http404
+
+    project_attr_key = (content_type.app_label, content_type.model)
+    if project_attr_key not in RELATED_MODEL_PROJECT_ATTRS:
+        raise Http404
+
+    related = get_object_or_404(content_type.model_class(), pk=object_id)
+
+    project_attr = RELATED_MODEL_PROJECT_ATTRS[project_attr_key]
+    related_project_id = (
+        related.pk if project_attr is None else getattr(related, project_attr)
+    )
+    if related_project_id != project.pk:
+        raise Http404
+
+    return related
+
+
 @login_required
 @require_http_methods(["POST", "GET"])
-@user_passes_test(is_apply_staff)
+@ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
 def post_comment(request: HttpRequest):
-    if request.method == "POST":
-        form = CommentForm(user=request.user, data=request.POST or None, mini=True)
-        if (source_content_type := form.data["source_content_type"]) and (
-            source_object_id := form.data["source_object_id"]
-        ):
-            if (
-                not ContentType.objects.filter(id=source_content_type).exists()
-                or not ContentType.objects.get_for_id(source_content_type)
-                .model_class()
-                .objects.filter(id=source_object_id)
-                .exists()
-            ):
-                raise Http404
+    """Render & handle the "mini" comment form shown in object detail sidebars."""
+    params = request.POST if request.method == "POST" else request.GET
 
-            source = ContentType.objects.get_for_id(
-                source_content_type
-            ).get_object_for_this_type(id=source_object_id)
-            form.instance.user = request.user
-            form.instance.source = source
-            form.instance.type = COMMENT
-            form.instance.timestamp = timezone.now()
-            if form.is_valid():
-                obj = form.save()
-                messenger(
-                    MESSAGES.COMMENT,
-                    request=request,
-                    user=request.user,
-                    source=source,
-                    related=obj,
-                )
-                return HttpResponse(
-                    status=204,
-                    headers={
-                        "HX-Trigger": json.dumps(
-                            {
-                                "commentAdded": obj.pk,
-                                "showMessage": mark_safe(_("Comment added!")),
-                            }
-                        ),
-                    },
-                )
-            return render(
-                request, "activity/partials/comment_form.html", {"form": form}
-            )
-    else:
+    source = _get_comment_source(params)
+    project = _get_comment_project(source)
+    if not _user_can_comment(request.user, source):
+        raise PermissionDenied
+
+    related = _get_comment_related(params, project)
+
+    if request.method == "GET":
         form = CommentForm(user=request.user, mini=True)
-        params = request.GET.dict()
-
-        # Ensure the provided source content type & object actually exist
-        source_content_type = params.get("source_content_type")
-        source_object_id = params.get("source_object_id")
-        if not (source_content_type and source_object_id) or (
-            not ContentType.objects.filter(id=source_content_type).exists()
-            or not ContentType.objects.get_for_id(source_content_type)
-            .model_class()
-            .objects.filter(id=source_object_id)
-            .exists()
-        ):
-            raise Http404
-
-        form.fields["source_content_type"].initial = source_content_type
-        form.fields["source_object_id"].initial = source_object_id
-
-        if (related_content_type := params.get("related_content_type")) and (
-            related_object_id := params.get("related_object_id")
-        ):
-            if (
-                ContentType.objects.filter(id=related_content_type).exists()
-                and ContentType.objects.get_for_id(related_content_type)
-                .model_class()
-                .objects.filter(id=related_object_id)
-                .exists()
-            ):
-                form.fields["related_content_type"].initial = related_content_type
-                form.fields["related_object_id"].initial = related_object_id
-
+        form.fields["source_content_type"].initial = ContentType.objects.get_for_model(
+            source
+        ).pk
+        form.fields["source_object_id"].initial = source.pk
+        if related is not None:
+            form.fields[
+                "related_content_type"
+            ].initial = ContentType.objects.get_for_model(related).pk
+            form.fields["related_object_id"].initial = related.pk
         return render(request, "activity/partials/comment_form.html", {"form": form})
+
+    form = CommentForm(user=request.user, data=request.POST, mini=True)
+    form.instance.user = request.user
+    form.instance.source = source
+    form.instance.type = COMMENT
+    form.instance.timestamp = timezone.now()
+
+    if not form.is_valid():
+        return render(request, "activity/partials/comment_form.html", {"form": form})
+
+    obj = form.save()
+    messenger(
+        MESSAGES.COMMENT,
+        request=request,
+        user=request.user,
+        source=source,
+        related=obj,
+    )
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Trigger": json.dumps(
+                {
+                    "commentAdded": obj.pk,
+                    "showMessage": mark_safe(_("Comment added!")),
+                }
+            ),
+        },
+    )
 
 
 class ActivityContextMixin:

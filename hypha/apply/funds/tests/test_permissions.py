@@ -15,6 +15,8 @@ from hypha.apply.funds.workflows import DRAFT_STATE
 from hypha.apply.users.tests.factories import (
     AdminFactory,
     ApplicantFactory,
+    ContractingFactory,
+    FinanceFactory,
     ReviewerFactory,
     StaffFactory,
     UserFactory,
@@ -503,4 +505,48 @@ class TestUserCanViewPostCommentForm(TestCase):
     def test_staff_can_post_comment(self):
         self.assertTrue(
             user_can_view_post_comment_form(StaffFactory(), self.submission)
+        )
+
+
+class TestViewComments(TestCase):
+    """`view_comments` reaches a submission's project via `submission.projects`"""
+
+    def setUp(self):
+        from hypha.apply.projects.models.project import INVOICING_AND_REPORTING
+        from hypha.apply.projects.tests.factories import ProjectFactory
+
+        self.vendor = ApplicantFactory()
+        self.project = ProjectFactory(status=INVOICING_AND_REPORTING, user=self.vendor)
+        self.submission = self.project.submission
+
+    def check(self, user):
+        return has_object_permission("view_comments", user, self.submission)
+
+    def test_staff_can(self):
+        self.assertTrue(self.check(StaffFactory()))
+
+    def test_admin_can(self):
+        self.assertTrue(self.check(AdminFactory()))
+
+    def test_project_vendor_can(self):
+        self.assertTrue(self.check(self.vendor))
+
+    def test_finance_and_contracting_can_via_the_project(self):
+        """These roles have no submission access, only project access"""
+        for user in [FinanceFactory(), ContractingFactory()]:
+            with self.subTest(user.roles):
+                self.assertFalse(can_view_submission(user, self.submission)[0])
+                self.assertTrue(self.check(user))
+
+    def test_unrelated_applicant_cannot(self):
+        self.assertFalse(self.check(ApplicantFactory()))
+
+    def test_submission_without_a_project_falls_back_to_submission_access(self):
+        submission = ApplicationSubmissionFactory()
+        self.assertFalse(submission.projects.exists())
+        self.assertTrue(
+            has_object_permission("view_comments", StaffFactory(), submission)
+        )
+        self.assertFalse(
+            has_object_permission("view_comments", ContractingFactory(), submission)
         )

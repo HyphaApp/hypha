@@ -84,6 +84,7 @@ from ..models.payment import (
     InvoiceExportManager,
 )
 from ..models.project import Project
+from ..permissions import can_view_invoice
 from ..service_utils import batch_update_invoices_status, handle_tasks_on_invoice_update
 from ..tables import AdminInvoiceListTable, FinanceInvoiceTable
 
@@ -97,29 +98,8 @@ class InvoiceAccessMixin(UserPassesTestMixin):
         return get_object_or_404(project.invoices.all(), pk=self.kwargs["invoice_pk"])
 
     def test_func(self):
-        if self.request.user.is_apply_staff:
-            return True
-
-        if self.request.user.is_finance:
-            return True
-
-        if self.request.user == self.get_object().project.user:
-            return True
-
-        if self.request.user.is_applicant:
-            co_applicant = (
-                self.get_object()
-                .project.submission.co_applicants.filter(user=self.request.user)
-                .first()
-            )
-            if (
-                co_applicant
-                and CoApplicantProjectPermission.INVOICES
-                in co_applicant.project_permission
-            ):
-                return True
-
-        return False
+        can_view, _reason = can_view_invoice(self.request.user, self.get_object())
+        return can_view
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")

@@ -8,7 +8,9 @@ def create_pf_pointers(apps, schema_editor):
     all_projects = apps.get_model("application_projects", "Project").objects.all()
     for project in all_projects:
         if bool(project.form_fields):
-            ProjectFormPointer.objects.create(project=project)
+            # `get_or_create` so re-applying after a downgrade (whose reverse is
+            # a no-op, to avoid destroying pointers activities reference) works.
+            ProjectFormPointer.objects.get_or_create(project=project)
 
 
 class Migration(migrations.Migration):
@@ -17,5 +19,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_pf_pointers),
+        migrations.RunPython(create_pf_pointers, migrations.RunPython.noop),
     ]
