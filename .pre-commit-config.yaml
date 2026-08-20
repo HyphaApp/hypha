@@ -35,6 +35,11 @@ repos:
             "requirements/translate.txt",
           ]
 
+  - repo: https://github.com/adamchainz/django-upgrade
+    rev: "1.32.0"
+    hooks:
+      - id: django-upgrade
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: "v0.15.11"
     hooks:
@@ -76,6 +81,7 @@ repos:
         additional_dependencies:
           - stylelint@16.26.1
           - stylelint-config-standard-scss@13.1.0
+
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.0
     hooks:
