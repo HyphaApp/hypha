@@ -19,7 +19,7 @@ class MixedFieldMetaclass(DeclarativeFieldsMetaclass):
 
     def __new__(mcs, name, bases, attrs):
         display = attrs.copy()
-        new_class = super(MixedFieldMetaclass, mcs).__new__(mcs, name, bases, attrs)
+        new_class = super().__new__(mcs, name, bases, attrs)
         new_class.display = display
         return new_class
 
