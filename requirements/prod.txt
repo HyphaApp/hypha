@@ -1430,9 +1430,9 @@ vine==5.1.0 \
     #   amqp
     #   celery
     #   kombu
-wagtail==7.0.8 \
-    --hash=sha256:2de4a237e7e21cac8c572527b03257e6c5a6e562da302a65620c0a5085ce3955 \
-    --hash=sha256:a19110cd4aed36f95f4ae2b7235fdb9a3a2a0934d95dabdad7106070e4aa0b10
+wagtail==7.0.9 \
+    --hash=sha256:1f72a023c2aa47c2995188955e3bd3134dfeb019b3abbdacdd9d6c96be7d3d49 \
+    --hash=sha256:93c41a52f4f440de5016a53af857a42f05e742608692087e39363a4da9b36c36
     # via
     #   hypha
     #   wagtail-modeladmin
