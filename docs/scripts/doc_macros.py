@@ -52,7 +52,7 @@ def get_python_version() -> str:
     version: str
 
     try:
-        with open(PYTHON_VERSION_FILE, "r") as py_ver:
+        with open(PYTHON_VERSION_FILE) as py_ver:
             version = py_ver.read()
 
         if not valid_semver(version):
@@ -74,7 +74,7 @@ def get_node_version() -> str:
     version: str
 
     try:
-        with open(NVM_VERSION_FILE, "r") as nvm_ver:
+        with open(NVM_VERSION_FILE) as nvm_ver:
             version = nvm_ver.read()
 
         # Node version is usually in the format of "vX.X.X"

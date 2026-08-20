@@ -749,7 +749,7 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
         )
         self.assertEqual(Activity.objects.count(), 1)
         activity = Activity.objects.first()
-        self.assertIn(str("Unassigned"), activity.message)
+        self.assertIn("Unassigned", activity.message)
         self.assertIn(str(project.lead), activity.message)
 
     def test_activity_created(self):

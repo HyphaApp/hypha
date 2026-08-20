@@ -31,7 +31,7 @@ def language(lang):
         translation.activate(old_language)
 
 
-class MarkdownMail(object):
+class MarkdownMail:
     """Render and send an html + plain-text email using a markdown template.
 
     Usages:
@@ -57,7 +57,7 @@ class MarkdownMail(object):
             context.update(global_vars(None))
             return loader.render_to_string(self.template_name, context)
         except TemplateDoesNotExist as e:
-            logger.warning("Template '{0}' does not exists.".format(e))
+            logger.warning("Template '{}' does not exists.".format(e))
             return None
 
     def make_email_object(self, to: str | List[str], context, **kwargs):
