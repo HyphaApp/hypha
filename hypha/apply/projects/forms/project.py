@@ -513,7 +513,7 @@ class UploadContractForm(FileFormMixin, forms.ModelForm):
 class StaffUploadContractForm(FileFormMixin, forms.ModelForm):
     file = SingleFileField(label=_("Contract"), required=True)
     signed_by_applicant = forms.BooleanField(
-        label=_("Signed by Applicant"), initial=True
+        label=_("Signed by Applicant"), initial=True, required=False
     )
     currency = CurrencyCodeField(required=False)
     amount_requested = forms.DecimalField(
