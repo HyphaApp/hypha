@@ -13,7 +13,7 @@ from ..constants import (
     INT_STAFF_PENDING,
     INT_VENDOR_PENDING,
 )
-from ..models.payment import (
+from ..models.invoice import (
     APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,

@@ -68,7 +68,7 @@ from ..forms import (
     EditInvoiceForm,
     InvoiceTagsForm,
 )
-from ..models.payment import (
+from ..models.invoice import (
     APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
@@ -93,8 +93,7 @@ class InvoiceAccessMixin(UserPassesTestMixin):
     model = Invoice
 
     def get_object(self):
-        project = get_object_or_404(Project, pk=self.kwargs["pk"])
-        return get_object_or_404(project.invoices.all(), pk=self.kwargs["invoice_pk"])
+        return get_object_or_404(Invoice, pk=self.kwargs["pk"])
 
     def test_func(self):
         if self.request.user.is_apply_staff:
@@ -130,7 +129,7 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
     template = "application_projects/modals/invoice_status_update.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.object: Invoice = get_object_or_404(Invoice, id=kwargs.get("invoice_pk"))
+        self.object: Invoice = self.get_object()
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -232,10 +231,6 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
 class DeleteInvoiceView(DeleteView):
     model = Invoice
     template_name = "application_projects/modals/invoice_confirm_delete.html"
-
-    def get_object(self):
-        project = get_object_or_404(Project, pk=self.kwargs["pk"])
-        return get_object_or_404(project.invoices.all(), pk=self.kwargs["invoice_pk"])
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -381,11 +376,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         self.object = self.get_object()
         form = self.get_form()
         if "delete" in form.data:
-            return redirect(
-                "apply:projects:invoice-delete",
-                pk=self.object.project.pk,
-                invoice_pk=self.object.id,
-            )
+            return redirect("apply:projects:invoice-delete", pk=self.object.pk)
         if form.is_valid():
             return self.form_valid(form)
         else:
@@ -472,9 +463,8 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        invoice_pk = self.kwargs["invoice_pk"]
-        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
-        self.invoice = get_object_or_404(self.project.invoices.all(), pk=invoice_pk)
+        self.invoice = get_object_or_404(Invoice, pk=self.kwargs["pk"])
+        self.project = self.invoice.project
 
         return super().dispatch(*args, **kwargs)
 
@@ -699,7 +689,7 @@ class TagInvoiceView(InvoiceAccessMixin, View):
     template_name = "application_projects/modals/invoice_tag.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.object = get_object_or_404(Invoice, id=kwargs.get("invoice_pk"))
+        self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):

@@ -3,7 +3,7 @@
 from django.test import SimpleTestCase, TestCase
 
 from hypha.apply.activity.options import MESSAGES
-from hypha.apply.projects.models.payment import (
+from hypha.apply.projects.models.invoice import (
     APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_STAFF,
