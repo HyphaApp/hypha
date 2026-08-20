@@ -58,3 +58,18 @@ class TestOAuthAccess(TestCase):
         self.assertNotContains(response, "Disconnect Google OAuth")
 
         self.assertTemplateUsed(response, "users/oauth.html")
+
+    @override_settings(
+        SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS=[],
+        SOCIAL_AUTH_OKTA_OAUTH2_WHITELISTED_DOMAINS=["email.com"],
+    )
+    def test_oauth_okta_whitelisted_user_can_access_oauth_settings_page(self):
+        """
+        Checks that a user whose email is whitelisted for Okta (but not Google)
+        can still access the OAuth page
+        """
+        self.login()
+
+        response = self.client.get(reverse("users:oauth"), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "users/oauth.html")

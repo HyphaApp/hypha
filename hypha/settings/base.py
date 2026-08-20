@@ -156,7 +156,7 @@ ACTIVITY_DIGEST_RECIPIENT_EMAILS = env.list(
     "ACTIVITY_DIGEST_RECIPIENT_EMAILS", default=[]
 )
 
-# Staff e-mail domain. Used for OAUTH2 whitelist default value and staff account creation.
+# Staff e-mail domains. Used as the default value for the OAuth2 whitelists.
 STAFF_EMAIL_DOMAINS = env.list("STAFF_EMAIL_DOMAINS", [])
 
 # Should staff identities be obscured from Applicants (ie. comments will be ORG_LONG_NAME rather than John Doe).
@@ -440,6 +440,19 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = env.list(
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY", "")
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET", "")
+
+# Set the Okta OAuth2 credentials in ENV variables or local.py
+# Create an OIDC "Web" app in the Okta admin console and grant it the
+# openid, profile and email scopes.
+# SOCIAL_AUTH_OKTA_OAUTH2_API_URL should point at the Okta authorization
+# server, e.g. https://your-org.okta.com/oauth2/default
+SOCIAL_AUTH_OKTA_OAUTH2_WHITELISTED_DOMAINS = env.list(
+    "SOCIAL_AUTH_OKTA_OAUTH2_WHITELISTED_DOMAINS", STAFF_EMAIL_DOMAINS
+)
+
+SOCIAL_AUTH_OKTA_OAUTH2_KEY = env.str("SOCIAL_AUTH_OKTA_OAUTH2_KEY", "")
+SOCIAL_AUTH_OKTA_OAUTH2_SECRET = env.str("SOCIAL_AUTH_OKTA_OAUTH2_SECRET", "")
+SOCIAL_AUTH_OKTA_OAUTH2_API_URL = env.str("SOCIAL_AUTH_OKTA_OAUTH2_API_URL", "")
 
 SOCIAL_AUTH_URL_NAMESPACE = "social"
 SOCIAL_AUTH_LOGIN_ERROR_URL = "users:login"
