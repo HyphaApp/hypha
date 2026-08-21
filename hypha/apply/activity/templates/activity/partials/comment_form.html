@@ -1,0 +1,37 @@
+{% comment %}
+Renders the sidebar comments form.
+
+Params:
+  form             – the CommentForm form
+{% endcomment %}
+
+{% load i18n static heroicons %}
+
+<form  hx-post="{% url 'activity:post-comment' %}" class="flex flex-col gap-2 p-2 card-body" hx-on::after-request="if(event.detail.successful) this.reset()">
+    <h2 class="card-title">Comment</h2>
+    {% csrf_token %}
+
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    <div>
+        {% include "forms/includes/field.html" with field=form.message label_classes="sr-only" %}
+    </div>
+
+    <details class="mb-1 collapse bg-base-100 group">
+        <summary class="flex gap-1.5 items-center text-sm collapse-title"><span>{% trans 'Additional options' %}</span>{% heroicon_mini 'chevron-down' class="size-5 group-open:-rotate-180" %}</summary>
+        {# Some small modifications to django-file-form to make it fit better with the smaller modal #}
+        <div class="collapse-content [&_.dff-uploader]:hidden [&_.btn-upload]:w-full">
+            {% include "forms/includes/field.html" with field=form.visibility %}
+            {% include "forms/includes/field.html" with field=form.assign_to %}
+            {% include "forms/includes/field.html" with field=form.attachments %}
+            {{ form.related_content_type }}
+        </div>
+    </details>
+    <button
+        class="btn btn-primary"
+        type="submit"
+    >
+        {% trans "Add Comment" %}
+    </button>
+</form>

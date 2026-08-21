@@ -4,6 +4,9 @@ from dateutil.relativedelta import relativedelta
 from django.urls import reverse
 from django.utils import timezone
 
+from hypha.apply.activity.adapters.activity_feed import ActivityAdapter
+from hypha.apply.activity.options import MESSAGES
+from hypha.apply.activity.tests.factories import ActivityFactory
 from hypha.apply.funds.models.forms import ApplicationBaseProjectReportForm
 from hypha.apply.projects.models.project import (
     CLOSING,
@@ -510,6 +513,29 @@ class TestStaffReportDetail(BaseViewTestCase):
         response = self.get_page(report)
         assert response.status_code == 403
 
+    def test_activity_renders(self):
+        report = ReportFactory(
+            project__status=INVOICING_AND_REPORTING, is_submitted=True
+        )
+        vendor = ApplicantFactory()
+        report_added_msg = ActivityAdapter.messages[MESSAGES.SUBMIT_REPORT].lower()
+        ActivityFactory(
+            message=report_added_msg,
+            source=report.project.submission,
+            related_object=report,
+            user=vendor,
+        )
+        response = self.client.get(
+            reverse(
+                "apply:projects:partial-report-status",
+                kwargs={"pk": report.project.pk, "report_pk": report.pk},
+            ),
+            secure=True,
+            follow=True,
+        )
+
+        self.assertContains(response, report_added_msg)
+
 
 class TestApplicantReportDetail(BaseViewTestCase):
     """Tests applicant access to report details"""
@@ -575,6 +601,28 @@ class TestApplicantReportDetail(BaseViewTestCase):
         )
         response = self.get_page(report)
         assert response.status_code == 403
+
+    def test_activity_renders(self):
+        report = ReportFactory(
+            project__status=INVOICING_AND_REPORTING, is_submitted=True
+        )
+        report_added_msg = ActivityAdapter.messages[MESSAGES.SUBMIT_REPORT].lower()
+        ActivityFactory(
+            message=report_added_msg,
+            source=report.project.submission,
+            related_object=report,
+            user=self.user,
+        )
+        response = self.client.get(
+            reverse(
+                "apply:projects:partial-report-status",
+                kwargs={"pk": report.project.pk, "report_pk": report.pk},
+            ),
+            secure=True,
+            follow=True,
+        )
+
+        self.assertContains(response, report_added_msg)
 
 
 class TestSkipReport(BaseViewTestCase):

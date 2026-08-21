@@ -127,6 +127,11 @@ class Report(BaseStreamForm, AccessFormData, models.Model):
     def get_absolute_url(self):
         return reverse("apply:projects:reports:detail", kwargs={"pk": self.pk})
 
+    def __str__(self):
+        return _("Report due {due_date} for {project}").format(
+            due_date=self.end_date, project=self.project
+        )
+
     @property
     def previous(self):
         return (

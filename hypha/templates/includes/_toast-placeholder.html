@@ -79,7 +79,7 @@ How this works:
 
 <div
     x-data="toastHandler()"
-    class="flex fixed inset-0 z-50 flex-col justify-start items-end px-8 mx-auto w-screen h-screen pointer-events-none max-w-[2200px]"
+    class="flex fixed inset-0 z-50 flex-col justify-start items-end px-8 mx-auto w-screen h-screen pointer-events-none max-w-550"
     @notice.window="add($event.detail)"
 >
     <template x-for="toast of toasts" :key="toast.id">

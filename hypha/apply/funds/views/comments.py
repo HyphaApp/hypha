@@ -50,7 +50,6 @@ def comments_view(request, pk):
                     related=obj,
                 )
                 return redirect("funds:submissions:comments", pk=submission.pk)
-
     ctx = {
         "object": submission,
         "comments_count": comments_count,

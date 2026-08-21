@@ -58,14 +58,9 @@
             </section>
 
             <!-- status -->
-            <section
-                hx-get="{% url 'apply:projects:partial-invoice-status' pk=object.project.pk invoice_pk=object.pk %}"
-                hx-trigger="load, invoicesUpdated from:body"
-                class="card card-border"
-            >
-                <div class="flex-none content-center min-h-10">
-                    <div class="h-4 rounded-full animate-pulse bg-base-300 min-w-96"></div>
-                </div>
+            <section>
+                {% url 'apply:projects:partial-invoice-status' pk=object.project.pk invoice_pk=object.pk as activity_url %}
+                {% include "application_projects/includes/fetch_object_activity.html" with fetch_activity_url=activity_url extra_triggers="invoicesUpdated from:body" %}
             </section>
 
             <!-- invoice -->
@@ -110,13 +105,24 @@
         </article>
 
         <aside class="layout-sidebar">
-            <div
-                class="sticky top-8 card card-border bg-base-200 shadow-xs sidebar__inner--actions"
-                hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}"
-                hx-trigger="invoicesUpdated from:body"
-                data-testid="sidebar-primary-actions"
-            >
-                {% include "application_projects/partials/invoice_detail_actions.html" %}
+            <div class="flex sticky top-8 flex-col gap-2">
+                <div
+                    class="card card-border bg-base-200 shadow-xs sidebar__inner--actions"
+                    hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}"
+                    hx-trigger="invoicesUpdated from:body"
+                    data-testid="sidebar-primary-actions"
+                >
+                    {% include "application_projects/partials/invoice_detail_actions.html" %}
+                </div>
+                {% if request.user.is_apply_staff %}
+                    {% generate_post_comment_url object.project.submission object as comment_url %}
+                    <div
+                        class="card card-border bg-base-200 shadow-xs sidebar__inner"
+                        hx-get="{{ comment_url }}"
+                        hx-trigger="load"
+                    >
+                    </div>
+                {% endif %}
             </div>
         </aside>
     </div>

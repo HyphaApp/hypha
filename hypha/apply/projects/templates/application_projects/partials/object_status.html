@@ -1,0 +1,52 @@
+{% comment %}
+Renders the historical status/activity of an object
+
+If more than one activity exists:
+    - Will render a collapsible. The summary will show the provided `preview_activity` and the expanded dropdown will show a timeline of all activities
+If only 1 activity exists (and `preview activity` is provided):
+    - Will render the single activity w/o a collapsible.
+If no activities exist:
+    - Renders a generic "no activities exist" message
+
+Params:
+  activities            – a queryset of Activity objects to render into a timeline
+  preview_activity      - an activity that should show as the preview (show in the summary section of the collapsible)
+{% endcomment %}
+
+{% load i18n invoice_tools heroicons %}
+
+{% if activities.count > 1  or activities.count == 1 and not preview_activity %}
+    <details class="collapse collapse-arrow group" id="statusDetail" {% if open %}open{% endif %}>
+        <summary class="collapse-title">
+            <h2 class="card-title">{% trans "Status & Activity" %} <span class="font-normal text-base-content/70">({{ activities.count }})</span></h2>
+            {% if preview_activity %}
+                <div class="px-4 pt-4 group-open:hidden">
+                    {% include "activity/ui/activity-action-item.html" with activity=preview_activity no_timeline=True mini=True %}
+                </div>
+            {% endif %}
+        </summary>
+        <div>
+            <div class="px-8 border-t h-timeline">
+                {% for activity in activities %}
+
+                    {% if activity.type == "comment" %}
+                        {% include "activity/ui/activity-comment-item.html" with activity=activity mini=True %}
+                    {% elif activity %}
+                        {% include "activity/ui/activity-action-item.html" with activity=activity mini=True %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </details>
+{% else %}
+    <div class="p-4">
+        <h2 class="card-title">{% trans "Status & Activity" %} <span class="font-normal text-base-content/70">({{ activities.count }})</span></h2>
+        <div class="px-4 pt-4">
+            {% if preview_activity %}
+                {% include "activity/ui/activity-action-item.html" with activity=preview_activity no_timeline=True mini=True %}
+            {% else %}
+                <p class="text-sm text-base-content/70">{% heroicon_outline 'chat-bubble-left-right' class='inline size-4' %}{% trans "When you leave a comment or change the statuses, it'll show up here!" %}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}

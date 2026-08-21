@@ -17,13 +17,15 @@
 {% block content %}
     <div class="my-4">
         <div class="layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-start">
-            <article class="flex flex-col gap-8 layout-main">
-
+            <article class="flex flex-col gap-4 layout-main">
                 <section>
-                    <h2 class="section-header">{% trans "Project Information" %}</h2>
-
+                    {% url 'apply:projects:partial-pf-status' pk=object.pk pfp_pk=object.pfp.pk as activity_url %}
+                    {% include "application_projects/includes/fetch_object_activity.html" with fetch_activity_url=activity_url %}
+                </section>
+                <section>
                     <div class="card card-border">
                         <div class="card-body">
+                            <h2 class="card-title">{% trans "Project Information" %}</h2>
                             {% if object.output_answers %}
                                 <div class="flex flex-col gap-4 rich-text">
                                     {{ object.output_answers }}
@@ -40,29 +42,30 @@
                     </div>
                 </section>
 
-                <section>
-                    <h2 class="section-header">{% trans "Approvals" %}</h2>
-                    <div class="card card-border rounded-box">
-                        <div class="card-body">
-                            {% for approval in project.paf_approvals.all %}
-                                {% if approval.approved %}
-                                    <p><b>{{ approval.paf_reviewer_role.label }}</b> - {{ approval.user }} ({{ approval.approved_at|date:"DATE_FORMAT" }})</p>
-                                {% else %}
-                                    <p>
-                                        <strong class="inline-block min-w-32">{{ approval.paf_reviewer_role.label }}:</strong>
-                                        <span class="badge badge-warning badge-outline">{% trans "Pending" %}</span>
-                                    </p>
-                                {% endif %}
-                            {% endfor %}
+                {% if project.paf_approvals.all.exists %}
+                    <section>
+                        <div class="card card-border rounded-box">
+                            <div class="card-body">
+                                <h2 class="card-title">{% trans "Approvals" %}</h2>
+                                {% for approval in project.paf_approvals.all %}
+                                    {% if approval.approved %}
+                                        <p><b>{{ approval.paf_reviewer_role.label }}</b> - {{ approval.user }} ({{ approval.approved_at|date:"DATE_FORMAT" }})</p>
+                                    {% else %}
+                                        <p>
+                                            <strong class="inline-block min-w-32">{{ approval.paf_reviewer_role.label }}:</strong>
+                                            <span class="badge badge-warning badge-outline">{% trans "Pending" %}</span>
+                                        </p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                {% endif %}
 
                 <section>
-                    <h2 class="section-header">{% trans "Reviews" %}</h2>
                     <div class="card card-border">
                         <div class="card-body">
-
+                            <h2 class="card-title">{% trans "Reviews" %}</h2>
                             <h3 class="font-bold">{% trans "Submission lead" %}:</h3>
                             <p>{{ project.submission.lead }}</p>
 
@@ -98,10 +101,9 @@
                 </section>
 
                 <section>
-                    <h2 class="section-header">{% trans "Supporting Documents" %}</h2>
-
-                    <div class="card card-border rounded-box bg-base-200">
+                    <div class="card card-border rounded-box">
                         <div class="card-body">
+                            <h2 class="card-title">{% trans "Supporting Documents" %}</h2>
                             <a href="{{ object.submission.get_absolute_url }}" class="flex gap-2 items-center link">
                                 {% heroicon_outline "document" size=14 class="opacity-80 size-4" aria_hidden=true %}
                                 {% trans "Application" %}
@@ -123,66 +125,75 @@
             {% user_can_take_actions object user as can_take_actions %}
             {% if can_take_actions %}
                 <aside class="layout-sidebar">
-                    <div class="card card-border shadow-xs" data-testid="sidebar-primary-actions">
-                        <div class="card-body">
-                            <h2 class="card-title">{% trans "Actions to take" %}</h2>
+                    <div class="flex sticky top-8 flex-col gap-2">
+                        <div class="card card-border shadow-xs bg-base-200 sidebar__inner--actions" data-testid="sidebar-primary-actions">
+                            <div class="card-body">
+                                <h2 class="card-title">{% trans "Actions to take" %}</h2>
 
-                            {% user_can_update_paf_status object user request=request as can_update_paf_status %}
-                            {% if can_update_paf_status %}
-                                <a class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
-                                   href="{% url 'apply:projects:update_pafstatus' object.pk %}"
-                                   hx-get="{% url 'apply:projects:update_pafstatus' object.pk %}"
-                                   hx-target="#htmx-modal"
-                                >
-                                    {% trans "Update Status" %}
-                                </a>
-                            {% endif %}
+                                {% user_can_update_paf_status object user request=request as can_update_paf_status %}
+                                {% if can_update_paf_status %}
+                                    <a class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
+                                       href="{% url 'apply:projects:update_pafstatus' object.pk %}"
+                                       hx-get="{% url 'apply:projects:update_pafstatus' object.pk %}"
+                                       hx-target="#htmx-modal"
+                                    >
+                                        {% trans "Update Status" %}
+                                    </a>
+                                {% endif %}
 
-                            {% user_can_edit_pfs object user as can_edit_pfs %}
-                            {% if can_edit_pfs %}
-                                <a class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
-                                   href="{% url 'apply:projects:edit_pf' pk=object.pk %}"
-                                >{% trans "Edit" %}</a>
-                            {% endif %}
+                                {% user_can_edit_pfs object user as can_edit_pfs %}
+                                {% if can_edit_pfs %}
+                                    <a class="btn btn-primary btn-block {% if user_can_approve %}btn-disabled{% endif %}"
+                                       href="{% url 'apply:projects:edit_pf' pk=object.pk %}"
+                                    >{% trans "Edit" %}</a>
+                                {% endif %}
 
-                            {% user_can_update_paf_approvers object user request as can_update_paf_approvers %}
-                            {% if can_update_paf_approvers %}
-                                {% if user != project.lead %}
-                                    <a class="btn btn-secondary btn-block btn-outline"
+                                {% user_can_update_paf_approvers object user request as can_update_paf_approvers %}
+                                {% if can_update_paf_approvers %}
+                                    {% if user != project.lead %}
+                                        <a class="btn btn-secondary btn-block btn-outline"
+                                           href="{% url 'apply:projects:assign_pafapprovers' pk=object.pk %}"
+                                           hx-get="{% url 'apply:projects:assign_pafapprovers' pk=object.pk %}"
+                                           hx-target="#htmx-modal"
+                                        >
+                                            {% trans "Change approver" %}
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
+                                {% if can_assign_paf_approvers %}
+                                    <a class="btn btn-block btn-outline"
                                        href="{% url 'apply:projects:assign_pafapprovers' pk=object.pk %}"
                                        hx-get="{% url 'apply:projects:assign_pafapprovers' pk=object.pk %}"
                                        hx-target="#htmx-modal"
                                     >
-                                        {% trans "Change approver" %}
+                                        {% trans "Assign approver" %}
                                     </a>
                                 {% endif %}
-                            {% endif %}
-
-                            {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
-                            {% if can_assign_paf_approvers %}
-                                <a class="btn btn-block btn-outline"
-                                   href="{% url 'apply:projects:assign_pafapprovers' pk=object.pk %}"
-                                   hx-get="{% url 'apply:projects:assign_pafapprovers' pk=object.pk %}"
-                                   hx-target="#htmx-modal"
-                                >
-                                    {% trans "Assign approver" %}
-                                </a>
-                            {% endif %}
 
 
-                            <div class="dropdown dropdown-hover">
-                                <div tabindex="0" role="button" class="w-full btn btn-outline">{% trans 'Download' %}</div>
-                                <ul tabindex="0" class="p-2 w-52 shadow-sm dropdown-content menu bg-base-100 rounded-box z-1">
-                                    <li>
-                                        <a href="{% url 'apply:projects:download' pk=object.pk export_type='pdf' %}">
-                                            {% trans 'Download as PDF' %}</a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'apply:projects:download' pk=object.pk export_type='docx' %}">
-                                            {% trans 'Download as DOCX' %}</a>
-                                    </li>
-                                </ul>
+                                <div class="dropdown dropdown-hover">
+                                    <div tabindex="0" role="button" class="w-full btn btn-outline">{% trans 'Download' %}</div>
+                                    <ul tabindex="0" class="p-2 w-52 shadow-sm dropdown-content menu bg-base-100 rounded-box z-1">
+                                        <li>
+                                            <a href="{% url 'apply:projects:download' pk=object.pk export_type='pdf' %}">
+                                                {% trans 'Download as PDF' %}</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'apply:projects:download' pk=object.pk export_type='docx' %}">
+                                                {% trans 'Download as DOCX' %}</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
+                        </div>
+                        {% generate_post_comment_url object.submission object.pfp as comment_url %}
+                        <div
+                            class="card card-border bg-base-200 shadow-xs sidebar__inner"
+                            hx-get="{{ comment_url }}"
+                            hx-trigger="load"
+                        >
                         </div>
                     </div>
                 </aside>
