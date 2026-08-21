@@ -974,7 +974,7 @@ class TestApplicantDetailInvoiceStatus(BaseViewTestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_activity_renders(self):
-        invoice = InvoiceFactory()
+        invoice = InvoiceFactory(project__user=self.user)
         invoice_added_msg = ActivityAdapter.messages[MESSAGES.CREATE_INVOICE].lower()
         ActivityFactory(
             message=invoice_added_msg,
@@ -992,6 +992,18 @@ class TestApplicantDetailInvoiceStatus(BaseViewTestCase):
         )
 
         self.assertContains(response, invoice_added_msg)
+
+    def test_other_activity_cant_be_read(self):
+        """Activity on another vendor's invoice must not be readable"""
+        invoice = InvoiceFactory()
+        response = self.client.get(
+            reverse(
+                "apply:projects:partial-invoice-status",
+                kwargs={"pk": invoice.project.pk, "invoice_pk": invoice.pk},
+            ),
+            secure=True,
+        )
+        self.assertEqual(response.status_code, 403)
 
 
 class TestApplicantEditInvoiceView(BaseViewTestCase):
