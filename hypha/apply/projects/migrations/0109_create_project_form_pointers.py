@@ -5,12 +5,22 @@ from django.db import migrations
 
 def create_pf_pointers(apps, schema_editor):
     ProjectFormPointer = apps.get_model("application_projects", "ProjectFormPointer")
-    all_projects = apps.get_model("application_projects", "Project").objects.all()
-    for project in all_projects:
-        if bool(project.form_fields):
-            # `get_or_create` so re-applying after a downgrade (whose reverse is
-            # a no-op, to avoid destroying pointers activities reference) works.
-            ProjectFormPointer.objects.get_or_create(project=project)
+    # `.only()` keeps the large `form_fields` StreamField the only heavy column
+    # loaded, and `.iterator()` avoids materialising every project at once.
+    projects = apps.get_model("application_projects", "Project").objects.only(
+        "id", "form_fields"
+    )
+    # `ignore_conflicts` so re-applying after a downgrade (whose reverse is a
+    # no-op, to avoid destroying pointers activities reference) works.
+    ProjectFormPointer.objects.bulk_create(
+        [
+            ProjectFormPointer(project_id=project.id)
+            for project in projects.iterator(chunk_size=500)
+            if bool(project.form_fields)
+        ],
+        ignore_conflicts=True,
+        batch_size=500,
+    )
 
 
 class Migration(migrations.Migration):
