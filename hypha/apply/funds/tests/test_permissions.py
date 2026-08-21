@@ -312,6 +312,23 @@ class TestCanInviteCoApplicants(TestCase):
         result, _ = can_invite_co_applicants(applicant, submission)
         self.assertFalse(result)
 
+    def test_complete_project_blocks_invite(self):
+        """The submission owner could otherwise invite, so this isolates status"""
+        from hypha.apply.projects.models.project import COMPLETE
+        from hypha.apply.projects.tests.factories import ProjectFactory
+
+        submission = ProjectFactory(status=COMPLETE).submission
+        result, _ = can_invite_co_applicants(submission.user, submission)
+        self.assertFalse(result)
+
+    def test_incomplete_project_does_not_block_invite(self):
+        from hypha.apply.projects.models.project import INVOICING_AND_REPORTING
+        from hypha.apply.projects.tests.factories import ProjectFactory
+
+        submission = ProjectFactory(status=INVOICING_AND_REPORTING).submission
+        result, _ = can_invite_co_applicants(submission.user, submission)
+        self.assertTrue(result)
+
 
 class TestGetArchiveGroups(TestCase):
     @override_settings(
@@ -456,6 +473,15 @@ class TestCanUpdateCoApplicant(TestCase):
             user=self.inviter, is_archive=True
         )
         invite = self._make_invite(archived_submission, invited_by=self.inviter)
+        result, _ = can_update_co_applicant(self.inviter, invite)
+        self.assertFalse(result)
+
+    def test_complete_project_blocks_update(self):
+        from hypha.apply.projects.models.project import COMPLETE
+        from hypha.apply.projects.tests.factories import ProjectFactory
+
+        project = ProjectFactory(status=COMPLETE, user=self.inviter)
+        invite = self._make_invite(project.submission, invited_by=self.inviter)
         result, _ = can_update_co_applicant(self.inviter, invite)
         self.assertFalse(result)
 
