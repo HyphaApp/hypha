@@ -43,7 +43,7 @@ class CoApplicantInviteView(View):
         if not permission:
             messages.warning(self.request, reason)
             return HttpResponseRedirect(self.submission.get_absolute_url())
-        return super(CoApplicantInviteView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         invite_form = InviteCoApplicantForm(
@@ -211,7 +211,7 @@ class EditCoApplicantView(View):
             object=self.invite,
             raise_exception=True,
         )
-        return super(EditCoApplicantView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         if self.invite.status == CoApplicantInviteStatus.ACCEPTED:

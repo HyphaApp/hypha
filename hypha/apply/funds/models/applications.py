@@ -200,7 +200,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm, AsJsonMixin):  # type: igno
         # Manually do what the login_required decorator does so that we can check settings
         if not request.user.is_authenticated and settings.FORCE_LOGIN_FOR_APPLICATION:
             return redirect(
-                "%s?next=%s" % (settings.WAGTAIL_FRONTEND_LOGIN_URL, request.path)
+                "{}?next={}".format(settings.WAGTAIL_FRONTEND_LOGIN_URL, request.path)
             )
 
         if hasattr(request, "is_preview") or not self.open_round:
@@ -739,7 +739,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm, AsJsonMixin)
         # Manually do what the login_required decorator does so that we can check settings
         if not request.user.is_authenticated and settings.FORCE_LOGIN_FOR_APPLICATION:
             return redirect(
-                "%s?next=%s" % (settings.WAGTAIL_FRONTEND_LOGIN_URL, request.path)
+                "{}?next={}".format(settings.WAGTAIL_FRONTEND_LOGIN_URL, request.path)
             )
 
         if request.method == "POST":

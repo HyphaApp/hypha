@@ -12,6 +12,7 @@ class MessageInline(admin.TabularInline):
         return False
 
 
+@admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ("type", "by", "when", "source")
     list_filter = ("type", "when")
@@ -23,6 +24,3 @@ class EventAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, *args):
         return False
-
-
-admin.site.register(Event, EventAdmin)

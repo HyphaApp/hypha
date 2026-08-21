@@ -43,7 +43,7 @@ class TestTwoFactorAuthenticationMiddleware(TestCase):
                 path = str(path) + f"{submission.id}/"
                 response = self.client.get(path, follow=True)
             elif "upload" in path:
-                response = self.client.post(path, HTTP_TUS_RESUMABLE=True)
+                response = self.client.post(path, headers={"tus-resumable": "1.0.0"})
             elif "logout" in path:
                 response = self.client.post(path, follow=True)
             else:

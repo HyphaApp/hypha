@@ -100,7 +100,7 @@ class LoginView(TwoFactorLoginView):
     template_name = "users/login.html"
 
     def get_context_data(self, form, **kwargs):
-        context_data = super(LoginView, self).get_context_data(form, **kwargs)
+        context_data = super().get_context_data(form, **kwargs)
         context_data["redirect_url"] = get_redirect_url(
             self.request, self.redirect_field_name
         )

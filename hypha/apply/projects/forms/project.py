@@ -427,7 +427,7 @@ class UploadDocumentForm(FileFormMixin, forms.ModelForm):
 
     def save(self, commit=True):
         self.instance.title = self.instance.document
-        return super(UploadDocumentForm, self).save(commit=True)
+        return super().save(commit=True)
 
 
 class UploadContractDocumentForm(FileFormMixin, forms.ModelForm):
@@ -443,7 +443,7 @@ class UploadContractDocumentForm(FileFormMixin, forms.ModelForm):
 
     def save(self, commit=True):
         self.instance.title = self.instance.document
-        return super(UploadContractDocumentForm, self).save(commit=True)
+        return super().save(commit=True)
 
 
 class UpdateProjectLeadForm(forms.ModelForm):

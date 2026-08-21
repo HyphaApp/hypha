@@ -115,9 +115,7 @@ class SubmissionsTable(tables.Table):
         return qs, True
 
     def get_column_class_names(self, classes_set, bound_column):
-        classes_set = super(SubmissionsTable, self).get_column_class_names(
-            classes_set, bound_column
-        )
+        classes_set = super().get_column_class_names(classes_set, bound_column)
         classes_set.add(bound_column.name)
         return classes_set
 
@@ -445,9 +443,7 @@ class RoundsTable(tables.Table):
         return qs.order_by(self._field_order("progress", desc)), True
 
     def get_column_class_names(self, classes_set, bound_column):
-        classes_set = super(RoundsTable, self).get_column_class_names(
-            classes_set, bound_column
-        )
+        classes_set = super().get_column_class_names(classes_set, bound_column)
         classes_set.add(bound_column.name)
         return classes_set
 

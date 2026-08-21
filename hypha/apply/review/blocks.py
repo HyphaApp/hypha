@@ -154,7 +154,7 @@ class VisibilityBlock(ReviewMustIncludeFieldBlock):
         icon = "radio-empty"
 
     def get_field_kwargs(self, struct_value):
-        kwargs = super(VisibilityBlock, self).get_field_kwargs(struct_value)
+        kwargs = super().get_field_kwargs(struct_value)
         kwargs["choices"] = VISIBILITY.items()
         kwargs["initial"] = settings.REVIEW_VISIBILITY_DEFAULT
         kwargs["help_text"] = mark_safe(

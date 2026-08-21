@@ -351,7 +351,7 @@ class ProgressSubmissionView(View):
         if not permission:
             messages.warning(self.request, reason)
             return HttpResponseRedirect(self.submission.get_absolute_url())
-        return super(ProgressSubmissionView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         project_creation_form = ProgressSubmissionForm(
@@ -409,7 +409,7 @@ class CreateProjectView(View):
         if not settings.PROJECTS_ALLOW_MULTIPLE and self.submission.projects.exists():
             messages.warning(self.request, _("This submission already has a project."))
             return HttpResponseRedirect(self.submission.get_absolute_url())
-        return super(CreateProjectView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         project_creation_form = ProjectCreateForm(instance=self.submission)
@@ -582,7 +582,7 @@ class UpdateReviewersView(View):
         if not permission:
             messages.warning(self.request, reason)
             return HttpResponseRedirect(self.submission.get_absolute_url())
-        return super(UpdateReviewersView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         reviewer_form = UpdateReviewersForm(
@@ -658,7 +658,7 @@ class UpdateAuthorView(View):
         if not permission:
             messages.warning(self.request, reason)
             return HttpResponseRedirect(self.submission.get_absolute_url())
-        return super(UpdateAuthorView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         author_form = self.form_class(user=self.request.user, instance=self.submission)
@@ -712,7 +712,7 @@ class UpdateMetaTermsView(View):
         if not permission:
             messages.warning(self.request, reason)
             return HttpResponseRedirect(self.submission.get_absolute_url())
-        return super(UpdateMetaTermsView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         metaterms_form = UpdateMetaTermsForm(
