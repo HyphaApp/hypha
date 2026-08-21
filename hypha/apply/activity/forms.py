@@ -70,7 +70,7 @@ class CommentForm(FileFormMixin, forms.ModelForm):
 
         if mini:
             self.fields["message"].widget = Textarea(
-                attrs={"rows": 2, "placeholder": "Write a comment..."}
+                attrs={"rows": 2, "placeholder": _("Write a comment...")}
             )
         else:
             # If not mini, remove the unneeded fields from the form.
