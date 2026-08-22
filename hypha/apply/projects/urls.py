@@ -16,6 +16,7 @@ from .views import (
     ChangeProjectstatusView,
     ContractDocumentPrivateMediaView,
     ContractPrivateMediaView,
+    CreateContractView,
     CreateDisbursementView,
     CreateInvoiceView,
     DeleteDisbursementView,
@@ -223,6 +224,11 @@ urlpatterns = [
                     "contract/upload/",
                     UploadContractView.as_view(),
                     name="contract_upload",
+                ),
+                path(
+                    "contract/add/",
+                    CreateContractView.as_view(),
+                    name="contract_add",
                 ),
                 path(
                     "partial/contract/documents/",

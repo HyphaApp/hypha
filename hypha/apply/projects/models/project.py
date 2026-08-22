@@ -765,6 +765,7 @@ class Contract(models.Model):
     class Meta:
         verbose_name = _("contract")
         verbose_name_plural = _("contracts")
+        ordering = ["-created_at"]
         constraints = [
             models.CheckConstraint(
                 condition=Q(currency__isnull=True) | Q(currency__regex=r"^[A-Z]{3}$"),
