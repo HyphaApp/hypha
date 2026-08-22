@@ -1,0 +1,21 @@
+{% load i18n %}
+
+<c-modal.header>
+    {% if object %}{% trans "Edit disbursement" %}{% else %}{% trans "Add disbursement" %}{% endif %}
+</c-modal.header>
+
+<div class="p-4">
+    {% if contract and not contract.signed_by_applicant %}
+        {% comment %}Warn the user they are disbursing against a contract that
+        has not been countersigned yet. Link to the contract's sign-off flow
+        is left out for now to avoid stacking modals.{% endcomment %}
+        <div class="mb-4 alert alert-warning">
+            {% blocktrans with url=contract.get_absolute_url %}
+                This contract has not been countersigned. You are disbursing
+                toward a potentially unsigned contract.
+            {% endblocktrans %}
+            <a class="link link-hover" href="{{ url }}">{% trans "View contract" %}</a>.
+        </div>
+    {% endif %}
+    {% include "includes/dialog_form_base.html" with form=form value=value %}
+</div>
