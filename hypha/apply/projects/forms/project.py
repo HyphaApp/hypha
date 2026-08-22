@@ -534,6 +534,21 @@ class StaffUploadContractForm(FileFormMixin, forms.ModelForm):
         model = Contract
 
 
+class CreateContractForm(UploadContractForm):
+    """Additional contract uploaded from the Contracts and Disbursements
+    section. Reuses the countersigned contract form's fields (file, signed by
+    applicant, currency, amounts) but does not require ``signed_by_applicant``
+    -- an added contract may not be countersigned yet. The view performs no
+    stage transition (the first contract still goes through the contracting
+    flow, which transitions the project).
+
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["signed_by_applicant"].required = False
+
+
 class UploadDocumentForm(FileFormMixin, forms.ModelForm):
     document = SingleFileField(label=_("Document"), required=True)
 

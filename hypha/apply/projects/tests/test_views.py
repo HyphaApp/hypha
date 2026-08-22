@@ -1743,3 +1743,198 @@ class TestDisbursementActivityMessage(TestCase):
         )
         self.assertIn("271.83", message)
         self.assertNotIn("secret note", message)
+
+
+class TestStaffDisbursementsSection(BaseProjectDetailTestCase):
+    user_factory = StaffFactory
+
+    def test_section_not_shown_without_contract(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+        self.assertNotContains(response, 'id="disbursements"')
+
+    def test_section_shown_with_contract(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, 'id="disbursements"')
+
+    def test_add_button_shown_to_staff(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Add Disbursement")
+
+    def test_add_contract_button_shown_to_staff(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Add Contract")
+
+    def test_section_header_is_contracts_and_disbursements(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Contracts and Disbursements")
+
+    def test_contract_approved_amount_shown(self):
+        from decimal import Decimal
+
+        project = ProjectFactory()
+        ContractFactory(project=project, amount_approved=Decimal("99.50"))
+        response = self.get_page(project)
+        self.assertContains(response, "(approved: 99.50)")
+
+    def test_edit_and_delete_links_shown_for_existing_disbursement(self):
+        from django.urls import reverse
+
+        from hypha.apply.projects.models import Disbursement
+
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        disbursement = DisbursementFactory(contract=contract)
+        response = self.get_page(project)
+        # The URL name is "disbursement-edit"/"disbursement-delete", but the
+        # rendered href is the resolved path (.../disbursements/<pk>/edit/),
+        # so assert on the reversed URLs rather than the hyphenated name.
+        edit_url = reverse(
+            "funds:projects:disbursement-edit",
+            kwargs={
+                "pk": project.submission.pk,
+                "contract_pk": contract.pk,
+                "disbursement_pk": disbursement.pk,
+            },
+        )
+        delete_url = reverse(
+            "funds:projects:disbursement-delete",
+            kwargs={
+                "pk": project.submission.pk,
+                "contract_pk": contract.pk,
+                "disbursement_pk": disbursement.pk,
+            },
+        )
+        self.assertContains(response, edit_url)
+        self.assertContains(response, delete_url)
+        # Sanity: the Disbursement row is the one we created.
+        self.assertEqual(Disbursement.objects.filter(contract=contract).count(), 1)
+
+    def test_empty_state_message(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "No disbursements yet.")
+
+    def test_amount_displayed_with_minimum_two_decimals(self):
+        from decimal import Decimal
+
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract, amount=Decimal("99.5"))
+        response = self.get_page(project)
+        # 99.5 is padded to "99.50" to match the contract amount rendering.
+        self.assertContains(response, "99.50")
+
+    def test_amount_display_keeps_extra_precision(self):
+        from decimal import Decimal
+
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract, amount=Decimal("99.123"))
+        response = self.get_page(project)
+        # More than two decimal places are preserved, not truncated.
+        self.assertContains(response, "99.123")
+
+
+class TestApplicantDisbursementsSection(BaseProjectDetailTestCase):
+    user_factory = ApplicantFactory
+
+    def test_section_shown_read_only_with_contract(self):
+        project = ProjectFactory(user=self.user)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, 'id="disbursements"')
+
+    def test_add_button_hidden_from_applicant(self):
+        project = ProjectFactory(user=self.user)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertNotContains(response, "Add Disbursement")
+
+    def test_edit_delete_hidden_from_applicant(self):
+        project = ProjectFactory(user=self.user)
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract)
+        response = self.get_page(project)
+        self.assertNotContains(response, "disbursement-edit")
+        self.assertNotContains(response, "disbursement-delete")
+
+    def test_add_contract_button_hidden_from_applicant(self):
+        project = ProjectFactory(user=self.user)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertNotContains(response, "Add Contract")
+
+
+@override_settings(PROJECTS_PAYMENTS_MODEL="DISBURSEMENTS")
+class TestFinanceDisbursementsSection(BaseProjectDetailTestCase):
+    user_factory = FinanceFactory
+
+    def test_add_disbursement_button_shown_to_finance(self):
+        # Finance may record disbursements (matches staff_or_finance_required).
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Add Disbursement")
+
+    def test_add_contract_button_shown_to_finance(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Add Contract")
+
+
+@override_settings(PROJECTS_PAYMENTS_MODEL="DISBURSEMENTS")
+class TestCreateContractView(BaseViewTestCase):
+    base_view_name = "contract_add"
+    url_name = "funds:projects:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.submission.id}
+
+    def test_get_form(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_creates_additional_contract(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(project=project)
+        before = project.contracts.count()
+
+        response = self.post_page(
+            project,
+            {"file": SimpleUploadedFile("contract.pdf", b"contract-bytes")},
+        )
+        self.assertEqual(response.status_code, 200)
+        project.refresh_from_db()
+        # A new contract is attached; the project stage is unchanged (no
+        # transition: the first contract already moved the project on).
+        self.assertEqual(project.contracts.count(), before + 1)
+        self.assertEqual(project.status, INVOICING_AND_REPORTING)
+
+    def test_applicant_forbidden(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        applicant = ApplicantFactory()
+        self.client.force_login(applicant)
+        project = ProjectFactory(status=INVOICING_AND_REPORTING, user=applicant)
+        ContractFactory(project=project)
+        response = self.post_page(
+            project,
+            {"file": SimpleUploadedFile("contract.pdf", b"contract-bytes")},
+        )
+        self.assertEqual(response.status_code, 403)

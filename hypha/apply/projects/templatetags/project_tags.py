@@ -424,3 +424,14 @@ def show_start_date(project) -> bool:
         CLOSING,
         COMPLETE,
     ]
+
+
+@register.filter
+def trimmed_decimal(value):
+    """Format a decimal with a minimum of 2 decimal places, preserving any
+    extra precision, so the disbursements table matches the amount input.
+
+    """
+    from hypha.apply.projects.forms.project import TrimmedDecimalInput
+
+    return TrimmedDecimalInput().format_value(value)

@@ -13,6 +13,7 @@ from .project import (
     AssignApproversForm,
     ChangePAFStatusForm,
     ChangeProjectStatusForm,
+    CreateContractForm,
     ProjectCreateForm,
     ProjectForm,
     ProjectSOWForm,
@@ -56,4 +57,5 @@ __all__ = [
     "EditInvoiceForm",
     "InvoiceTagsForm",
     "DisbursementForm",
+    "CreateContractForm",
 ]

@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import Group
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
 from django.db.models import Q
@@ -15,6 +16,7 @@ from django.http import (
     FileResponse,
     Http404,
     HttpResponse,
+    HttpResponseForbidden,
     HttpResponseRedirect,
 )
 from django.shortcuts import get_object_or_404, render
@@ -69,6 +71,7 @@ from hypha.apply.todo.views import (
 )
 from hypha.apply.users.decorators import (
     staff_or_finance_or_contracting_required,
+    staff_or_finance_required,
     staff_required,
 )
 from hypha.apply.users.roles import CONTRACTING_GROUP_NAME
@@ -85,6 +88,7 @@ from ..forms import (
     AssignApproversForm,
     ChangePAFStatusForm,
     ChangeProjectStatusForm,
+    CreateContractForm,
     ProjectForm,
     ProjectSOWForm,
     SetPendingForm,
@@ -1001,6 +1005,36 @@ class SubmitContractDocumentsView(View):
                 "object": self.project,
             },
         )
+
+
+@method_decorator(staff_or_finance_required, name="dispatch")
+class CreateContractView(SuccessMessageMixin, ProjectByIdMixin, CreateView):
+    """Add a further contract from the Contracts and Disbursements section
+    (DISBURSEMENTS model). The first contract still goes through the
+    contracting flow, so this view performs no stage transition.
+
+    """
+
+    form_class = CreateContractForm
+    model = Contract
+    template_name = "application_projects/modals/contract_form.html"
+    success_message = _("Contract added")
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = self.get_object()
+        if has_object_permission("add_contract", request.user, obj=self.project):
+            return super().dispatch(request, *args, **kwargs)
+        return HttpResponseForbidden()
+
+    def form_valid(self, form):
+        form.instance.project = self.project
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(project=self.project, value=_("Save"), **kwargs)
+
+    def get_success_url(self):
+        return reverse("funds:submissions:project", kwargs={"pk": self.kwargs["pk"]})
 
 
 @method_decorator(login_required, name="dispatch")
