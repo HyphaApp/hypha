@@ -1,0 +1,110 @@
+{% load i18n heroicons %}
+{% load can from permission_tags %}
+{% load trimmed_decimal from project_tags %}
+
+{% comment %}
+Contracts and Disbursements section. Placed where upstream puts invoices, but
+with no status-based phase gate: it renders once the project has at least one
+contract. The Add/Edit/Delete disbursement buttons are gated by the
+``add_disbursement`` object checker (staff/finance); the list is visible to
+anyone who can view the project. Staff/finance can also add further contracts
+from here via the ``add_contract`` checker (the first contract still goes
+through the contracting flow, which transitions the project). Notes are
+staff/finance-only, so the Notes column is omitted for applicants.
+Loops contracts so it is correct in the 1:many Project:Contract world too.
+{% endcomment %}
+
+{% can "add_disbursement" object as can_add_disbursement %}
+{% can "add_contract" object as can_add_contract %}
+
+{% if object.contracts.exists %}
+    <section id="disbursements" class="card card-border">
+        <header class="card-header">
+            <h2 class="card-title">{% trans "Contracts and Disbursements" %}</h2>
+            {% if can_add_contract %}
+                <div class="card-actions">
+                    <a
+                        class="btn btn-primary btn-sm"
+                        href="{% url "apply:projects:contract_add" pk=object.submission.pk %}"
+                        hx-get="{% url "apply:projects:contract_add" pk=object.submission.pk %}"
+                        hx-target="#htmx-modal"
+                    >{% trans "Add Contract" %}</a>
+                </div>
+            {% endif %}
+        </header>
+
+        <div class="p-4 card-body">
+            {% for contract in object.contracts.all %}
+                <div class="mb-4 last:mb-0">
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="text-sm font-semibold text-fg-muted">
+                            {% trans "Contract" %}
+                            <a class="link link-hover" href="{{ contract.get_absolute_url }}">#{{ contract.pk }}</a>
+                            {% if contract.amount_approved is not None %}
+                                <span class="text-fg-muted/80">
+                                    {% blocktrans with amount=contract.amount_approved|trimmed_decimal %}
+                                        (approved: {{ amount }})
+                                    {% endblocktrans %}
+                                </span>
+                            {% endif %}
+                        </h3>
+                        {% if can_add_disbursement %}
+                            <a
+                                class="btn btn-primary btn-sm"
+                                href="{% url "apply:projects:disbursement" pk=object.submission.pk contract_pk=contract.pk %}"
+                                hx-get="{% url "apply:projects:disbursement" pk=object.submission.pk contract_pk=contract.pk %}"
+                                hx-target="#htmx-modal"
+                            >
+                                {% trans "Add Disbursement" %}
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    {% if contract.disbursements.exists %}
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "Date" %}</th>
+                                    <th>{% trans "Amount" %}</th>
+                                    {% if can_add_disbursement %}<th>
+                                        <span>{% trans "Notes" %} ({% trans "visible to staff and finance only" %})</span>
+                                    </th>{% endif %}
+                                    <th>{% if can_add_disbursement %}{% endif %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for disbursement in contract.disbursements.all %}
+                                    <tr>
+                                        <td>{{ disbursement.date|date:"SHORT_DATE_FORMAT" }}</td>
+                                        <td>{{ disbursement.amount|trimmed_decimal }}</td>
+                                        {% if can_add_disbursement %}<td>{{ disbursement.notes|default:"-" }}</td>{% endif %}
+                                        <td>
+                                            {% if can_add_disbursement %}
+                                                <div class="flex gap-1">
+                                                    <a
+                                                        class="btn btn-ghost btn-xs"
+                                                        href="{% url "apply:projects:disbursement-edit" pk=object.submission.pk contract_pk=contract.pk disbursement_pk=disbursement.pk %}"
+                                                        hx-get="{% url "apply:projects:disbursement-edit" pk=object.submission.pk contract_pk=contract.pk disbursement_pk=disbursement.pk %}"
+                                                        hx-target="#htmx-modal"
+                                                    >{% heroicon_micro "pencil-square" size=16 aria_hidden=true %}<span class="sr-only">{% trans "Edit" %}</span></a>
+                                                    <a
+                                                        class="btn btn-ghost btn-xs"
+                                                        href="{% url "apply:projects:disbursement-delete" pk=object.submission.pk contract_pk=contract.pk disbursement_pk=disbursement.pk %}"
+                                                        hx-get="{% url "apply:projects:disbursement-delete" pk=object.submission.pk contract_pk=contract.pk disbursement_pk=disbursement.pk %}"
+                                                        hx-target="#htmx-modal"
+                                                    >{% heroicon_micro "trash" size=16 aria_hidden=true %}<span class="sr-only">{% trans "Delete" %}</span></a>
+                                                </div>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="py-1 px-2 text-sm text-fg-muted">{% trans "No disbursements yet." %}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
