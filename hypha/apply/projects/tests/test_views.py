@@ -1745,11 +1745,26 @@ class TestDisbursementActivityMessage(TestCase):
         self.assertNotIn("secret note", message)
 
 
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
 class TestStaffDisbursementsSection(BaseProjectDetailTestCase):
     user_factory = StaffFactory
 
     def test_section_not_shown_without_contract(self):
         project = ProjectFactory()
+        response = self.get_page(project)
+        self.assertNotContains(response, 'id="disbursements"')
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING")
+    def test_section_hidden_when_invoicing(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertNotContains(response, 'id="disbursements"')
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISABLED")
+    def test_section_hidden_when_disabled(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
         response = self.get_page(project)
         self.assertNotContains(response, 'id="disbursements"')
 
@@ -1844,7 +1859,39 @@ class TestStaffDisbursementsSection(BaseProjectDetailTestCase):
         # More than two decimal places are preserved, not truncated.
         self.assertContains(response, "99.123")
 
+    def test_contracting_section_hidden_under_disbursements(self):
+        # The disbursements section already lists the contracts, so the
+        # contracting documents section is hidden under DISBURSEMENTS to
+        # avoid duplication.
+        from hypha.apply.projects.models.project import INVOICING_AND_REPORTING
 
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertNotContains(response, 'id="contract-documents-section"')
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING")
+    def test_contracting_section_shown_under_invoicing(self):
+        from hypha.apply.projects.models.project import INVOICING_AND_REPORTING
+
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, 'id="contract-documents-section"')
+
+    def test_contracting_section_shown_during_contracting_under_disbursements(self):
+        # The first contract still goes through the contracting flow, so the
+        # contracting section shows during the Contracting stage even under
+        # DISBURSEMENTS (a contract may already be uploaded, awaiting signoff).
+        from hypha.apply.projects.models.project import CONTRACTING
+
+        project = ProjectFactory(status=CONTRACTING)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, 'id="contract-documents-section"')
+
+
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
 class TestApplicantDisbursementsSection(BaseProjectDetailTestCase):
     user_factory = ApplicantFactory
 
@@ -1875,7 +1922,7 @@ class TestApplicantDisbursementsSection(BaseProjectDetailTestCase):
         self.assertNotContains(response, "Add Contract")
 
 
-@override_settings(PROJECTS_PAYMENTS_MODEL="DISBURSEMENTS")
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
 class TestFinanceDisbursementsSection(BaseProjectDetailTestCase):
     user_factory = FinanceFactory
 
@@ -1893,7 +1940,7 @@ class TestFinanceDisbursementsSection(BaseProjectDetailTestCase):
         self.assertContains(response, "Add Contract")
 
 
-@override_settings(PROJECTS_PAYMENTS_MODEL="DISBURSEMENTS")
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
 class TestCreateContractView(BaseViewTestCase):
     base_view_name = "contract_add"
     url_name = "funds:projects:{}"

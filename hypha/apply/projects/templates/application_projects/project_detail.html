@@ -58,7 +58,15 @@
                     </dl>
                 </header>
 
-                {% include "application_projects/includes/disbursements.html" %}
+                {% project_can_have_invoices_section object user as can_have_invoices_section %}
+                {% if can_have_invoices_section %}
+                    {% include "application_projects/includes/invoices.html" %}
+                {% endif %}
+
+                {% project_can_have_disbursements_section object as can_have_disbursements_section %}
+                {% if can_have_disbursements_section %}
+                    {% include "application_projects/includes/disbursements.html" %}
+                {% endif %}
 
                 {% user_can_view_project_documents object user as can_view_project_documents %}
                 {% if can_view_project_documents %}
