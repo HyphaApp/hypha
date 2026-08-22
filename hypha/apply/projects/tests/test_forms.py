@@ -4,7 +4,7 @@ from decimal import Decimal
 from io import BytesIO
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from hypha.apply.users.tests.factories import (
     FinanceFactory,
@@ -23,6 +23,7 @@ from ..forms.invoice import (
 )
 from ..forms.project import (
     ChangePAFStatusForm,
+    CreateContractForm,
     ProjectCreateForm,
     StaffUploadContractForm,
     UploadContractForm,
@@ -413,6 +414,7 @@ class TestStaffContractUploadForm(TestCase):
         self.assertTrue(form.cleaned_data.get("signed_by_applicant"))
 
 
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
 class TestContractUploadForm(TestCase):
     mock_file = SimpleUploadedFile(
         "test_contract.pdf", BytesIO(b"somebinarydata").read()
@@ -528,3 +530,48 @@ class TestContractUploadForm(TestCase):
         self.assertIn('value=""', html_requested)
         self.assertNotIn('value=".00"', html_approved)
         self.assertNotIn('value=".00"', html_requested)
+
+
+class TestContractFormPaymentsFlowGating(TestCase):
+    """The contract forms expose ``amount_requested``, ``amount_approved``
+    and ``currency`` only under the DISBURSEMENTS payments flow; under
+    INVOICING or DISABLED those fields are popped so the form collects only
+    the file and the relevant signed flag.
+    """
+
+    amount_fields = ("amount_requested", "amount_approved", "currency")
+
+    def _forms(self):
+        # Unbound instances are enough to inspect declared fields after
+        # __init__ has run (the gating pops fields there).
+        return [
+            UploadContractForm(),
+            CreateContractForm(),
+        ]
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_amount_and_currency_fields_present_under_disbursements(self):
+        for form in self._forms():
+            for field in self.amount_fields:
+                self.assertIn(
+                    field, form.fields, f"{type(form).__name__} missing {field}"
+                )
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING")
+    def test_amount_and_currency_fields_hidden_under_invoicing(self):
+        for form in self._forms():
+            # The file field always remains; only the ledger fields are hidden.
+            self.assertIn("file", form.fields)
+            for field in self.amount_fields:
+                self.assertNotIn(
+                    field, form.fields, f"{type(form).__name__} leaked {field}"
+                )
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISABLED")
+    def test_amount_and_currency_fields_hidden_under_disabled(self):
+        for form in self._forms():
+            self.assertIn("file", form.fields)
+            for field in self.amount_fields:
+                self.assertNotIn(
+                    field, form.fields, f"{type(form).__name__} leaked {field}"
+                )

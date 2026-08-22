@@ -39,6 +39,7 @@ from ..models.project import (
     Project,
     ProjectSOW,
 )
+from ..payments import PaymentsFlow
 
 User = get_user_model()
 
@@ -508,6 +509,12 @@ class UploadContractForm(FileFormMixin, forms.ModelForm):
         # the project-relative ownership check lives in can_upload_contract.
         if user is None or user.is_applicant:
             self.fields.pop("signed_and_approved")
+        # Amounts and currency belong to the per-contract disbursement ledger
+        # (DISBURSEMENTS flow); under INVOICING/DISABLED the contract form
+        # collects only the file and signed-and-approved flag, so hide them.
+        if settings.PROJECTS_PAYMENTS_FLOW != PaymentsFlow.DISBURSEMENTS:
+            for field in ("amount_requested", "amount_approved", "currency"):
+                self.fields.pop(field, None)
 
 
 class StaffUploadContractForm(FileFormMixin, forms.ModelForm):
@@ -532,6 +539,15 @@ class StaffUploadContractForm(FileFormMixin, forms.ModelForm):
             "amount_approved",
         ]
         model = Contract
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Amounts and currency belong to the per-contract disbursement ledger
+        # (DISBURSEMENTS flow); under INVOICING/DISABLED the contract form
+        # collects only the file and signed-by-applicant flag, so hide them.
+        if settings.PROJECTS_PAYMENTS_FLOW != PaymentsFlow.DISBURSEMENTS:
+            for field in ("amount_requested", "amount_approved", "currency"):
+                self.fields.pop(field, None)
 
 
 class CreateContractForm(UploadContractForm):
