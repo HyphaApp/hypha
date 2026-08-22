@@ -1,3 +1,4 @@
+import decimal
 import json
 from io import BytesIO
 
@@ -42,6 +43,7 @@ from ..models.project import (
 from ..views.project import ContractsMixin, ProjectDetailApprovalView
 from .factories import (
     ContractFactory,
+    DisbursementFactory,
     DocumentCategoryFactory,
     InvoiceFactory,
     PacketFileFactory,
@@ -1394,3 +1396,350 @@ class ApplicantStaffProjectDetailDownloadView(BaseViewTestCase):
         project = ProjectFactory()
         response = self.get_page(project, url_kwargs={"export_type": "docx"})
         self.assertEqual(response.status_code, 403)
+
+
+class TestStaffCreateDisbursementView(BaseViewTestCase):
+    """Disbursement create/edit/delete views. The disbursement FK->Contract,
+    so routes are scoped under the project's contract (pk = submission pk,
+    contract_pk, disbursement_pk). Only staff/finance may record disbursements.
+
+    """
+
+    base_view_name = "disbursement"
+    url_name = "funds:projects:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        # instance is a Contract
+        return {"pk": instance.project.submission.pk, "contract_pk": instance.pk}
+
+    def test_can_get(self):
+        contract = ContractFactory()
+        response = self.get_page(contract)
+        self.assertEqual(response.status_code, 200)
+
+    def test_warns_for_unsigned_contract(self):
+        # A disbursement against a not-yet-countersigned contract shows a
+        # warning so the user knows they are disbursing toward an unsigned
+        # contract.
+        contract = ContractFactory(signed_by_applicant=False)
+        response = self.get_page(contract)
+        self.assertContains(response, "has not been countersigned")
+
+    def test_no_warning_for_countersigned_contract(self):
+        contract = ContractFactory(signed_by_applicant=True)
+        response = self.get_page(contract)
+        self.assertNotContains(response, "has not been countersigned")
+
+    def test_can_create(self):
+        contract = ContractFactory()
+        url = self.url(contract)
+        response = self.client.post(
+            url,
+            {"amount": "263.53", "date": "2541-03-07", "notes": "first tranche"},
+        )
+        self.assertEqual(response.status_code, 302)
+        # Saving returns to the project page (where the Add button is), not the
+        # contract PDF.
+        self.assertEqual(
+            response["Location"],
+            reverse(
+                "funds:submissions:project",
+                kwargs={"pk": contract.project.submission_id},
+            ),
+        )
+        self.assertEqual(contract.disbursements.count(), 1)
+        disbursement = contract.disbursements.get()
+        self.assertEqual(disbursement.amount, decimal.Decimal("263.53"))
+        self.assertEqual(disbursement.created_by, self.user)
+        self.assertEqual(disbursement.updated_by, self.user)
+
+    def test_can_create_negative_repayment(self):
+        contract = ContractFactory()
+        url = self.url(contract)
+        response = self.client.post(
+            url,
+            {"amount": "-269.71", "date": "2545-09-19", "notes": "repayment"},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            contract.disbursements.get().amount, decimal.Decimal("-269.71")
+        )
+
+    def test_create_records_event(self):
+        from hypha.apply.activity.models import Event
+
+        contract = ContractFactory()
+        self.client.post(
+            self.url(contract),
+            {"amount": "271.83", "date": "2547-11-29", "notes": ""},
+        )
+        # Event.source is a GenericForeignKey, so filter by object_id.
+        self.assertTrue(
+            Event.objects.filter(
+                type="CREATE_DISBURSEMENT", object_id=contract.project.id
+            ).exists()
+        )
+
+
+class TestApplicantCreateDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement"
+    url_name = "funds:projects:{}"
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.project.submission.pk, "contract_pk": instance.pk}
+
+    def test_cannot_get(self):
+        contract = ContractFactory()
+        response = self.get_page(contract)
+        self.assertEqual(response.status_code, 403)
+
+
+class TestFinanceCreateDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement"
+    url_name = "funds:projects:{}"
+    user_factory = FinanceFactory
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.project.submission.pk, "contract_pk": instance.pk}
+
+    def test_can_get(self):
+        contract = ContractFactory()
+        response = self.get_page(contract)
+        self.assertEqual(response.status_code, 200)
+
+    def test_can_create(self):
+        contract = ContractFactory()
+        response = self.client.post(
+            self.url(contract),
+            {"amount": "277.89", "date": "2549-01-13", "notes": ""},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            response["Location"],
+            reverse(
+                "funds:submissions:project",
+                kwargs={"pk": contract.project.submission_id},
+            ),
+        )
+        self.assertEqual(contract.disbursements.count(), 1)
+        self.assertEqual(contract.disbursements.get().created_by, self.user)
+
+
+class TestStaffEditDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-edit"
+    url_name = "funds:projects:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        # instance is a Disbursement
+        return {
+            "pk": instance.contract.project.submission.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_can_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 200)
+
+    def test_can_edit(self):
+        disbursement = DisbursementFactory(amount=decimal.Decimal("281.97"))
+        url = self.url(disbursement)
+        response = self.client.post(
+            url,
+            {
+                "amount": "293.59",
+                "date": disbursement.date.isoformat(),
+                "notes": "updated",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            response["Location"],
+            reverse(
+                "funds:submissions:project",
+                kwargs={"pk": disbursement.contract.project.submission_id},
+            ),
+        )
+        disbursement.refresh_from_db()
+        self.assertEqual(disbursement.amount, decimal.Decimal("293.59"))
+        self.assertEqual(disbursement.updated_by, self.user)
+
+    def test_edit_records_event(self):
+        from hypha.apply.activity.models import Event
+
+        disbursement = DisbursementFactory()
+        self.client.post(
+            self.url(disbursement),
+            {
+                "amount": "307.61",
+                "date": disbursement.date.isoformat(),
+                "notes": "",
+            },
+        )
+        self.assertTrue(
+            Event.objects.filter(
+                type="UPDATE_DISBURSEMENT",
+                object_id=disbursement.contract.project.id,
+            ).exists()
+        )
+
+
+class TestStaffDeleteDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-delete"
+    url_name = "funds:projects:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {
+            "pk": instance.contract.project.submission.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_can_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 200)
+
+    def test_can_delete(self):
+        disbursement = DisbursementFactory()
+        contract = disbursement.contract
+        response = self.client.post(self.url(disbursement), {})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            response["Location"],
+            reverse(
+                "funds:submissions:project",
+                kwargs={"pk": contract.project.submission_id},
+            ),
+        )
+        self.assertFalse(contract.disbursements.filter(pk=disbursement.pk).exists())
+
+    def test_delete_records_event(self):
+        from hypha.apply.activity.models import Event
+
+        disbursement = DisbursementFactory()
+        contract = disbursement.contract
+        self.client.post(self.url(disbursement), {})
+        self.assertTrue(
+            Event.objects.filter(
+                type="DELETE_DISBURSEMENT", object_id=contract.project.id
+            ).exists()
+        )
+
+
+class TestApplicantDeleteDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-delete"
+    url_name = "funds:projects:{}"
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {
+            "pk": instance.contract.project.submission.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_cannot_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 403)
+
+
+class TestFinanceEditDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-edit"
+    url_name = "funds:projects:{}"
+    user_factory = FinanceFactory
+
+    def get_kwargs(self, instance):
+        return {
+            "pk": instance.contract.project.submission.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_can_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 200)
+
+
+class TestFinanceDeleteDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-delete"
+    url_name = "funds:projects:{}"
+    user_factory = FinanceFactory
+
+    def get_kwargs(self, instance):
+        return {
+            "pk": instance.contract.project.submission.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_can_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 200)
+
+
+class TestDisbursementFormWidget(TestCase):
+    def test_amount_uses_trimmed_decimal_input(self):
+        from ..forms import DisbursementForm
+        from ..forms.project import TrimmedDecimalInput
+
+        form = DisbursementForm()
+        self.assertIsInstance(form.fields["amount"].widget, TrimmedDecimalInput)
+
+    def test_negatives_allowed(self):
+        from ..forms import DisbursementForm
+
+        form = DisbursementForm(
+            data={"amount": "-311.13", "date": "2551-03-17", "notes": ""}
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_amount_input_pattern_allows_negative(self):
+        # The disbursement amount widget accepts a leading minus so
+        # repayments can be recorded; the shared number widget stays
+        # positive-only for the rest of the codebase.
+        from ..forms import DisbursementForm
+        from ..forms.disbursement import TrimmedSignedDecimalInput
+
+        form = DisbursementForm()
+        self.assertIsInstance(form.fields["amount"].widget, TrimmedSignedDecimalInput)
+        self.assertIn('pattern="-?[0-9.]*"', str(form["amount"]))
+
+    def test_exposes_expected_fields(self):
+        from ..forms import DisbursementForm
+
+        form = DisbursementForm()
+        self.assertEqual(set(form.fields), {"amount", "date", "notes"})
+
+    def test_date_defaults_to_today(self):
+        from django.utils import timezone
+
+        from ..forms import DisbursementForm
+
+        form = DisbursementForm()
+        self.assertEqual(form.fields["date"].initial, timezone.localdate())
+
+
+class TestDisbursementActivityMessage(TestCase):
+    def test_create_message_includes_amount_not_note(self):
+        from hypha.apply.activity.adapters.activity_feed import ActivityAdapter
+        from hypha.apply.activity.options import MESSAGES
+
+        from ..models import Disbursement
+
+        disbursement = Disbursement(
+            amount=decimal.Decimal("271.83"), notes="secret note"
+        )
+        message = ActivityAdapter().message(
+            MESSAGES.CREATE_DISBURSEMENT, disbursement=disbursement
+        )
+        self.assertIn("271.83", message)
+        self.assertNotIn("secret note", message)

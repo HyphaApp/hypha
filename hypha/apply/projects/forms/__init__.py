@@ -1,3 +1,4 @@
+from .disbursement import DisbursementForm
 from .invoice import (
     BatchUpdateInvoiceStatusForm,
     ChangeInvoiceStatusForm,
@@ -54,4 +55,5 @@ __all__ = [
     "ChangeInvoiceStatusForm",
     "EditInvoiceForm",
     "InvoiceTagsForm",
+    "DisbursementForm",
 ]

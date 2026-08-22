@@ -70,6 +70,13 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.APPROVE_CONTRACT: _("Approved contract"),
         MESSAGES.UPDATE_INVOICE_STATUS: "handle_update_invoice_status",
         MESSAGES.CREATE_INVOICE: _("Invoice added"),
+        MESSAGES.CREATE_DISBURSEMENT: _("Disbursement of {disbursement.amount} added"),
+        MESSAGES.UPDATE_DISBURSEMENT: _(
+            "Disbursement of {disbursement.amount} updated"
+        ),
+        MESSAGES.DELETE_DISBURSEMENT: _(
+            "Disbursement of {disbursement.amount} deleted"
+        ),
         MESSAGES.SUBMIT_REPORT: _("Submitted a report"),
         MESSAGES.DELETE_REPORT: _("deleted a report"),
         MESSAGES.SKIPPED_REPORT: "handle_skipped_report",
@@ -124,6 +131,9 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.DELETE_INVOICE,
             MESSAGES.CREATE_INVOICE,
             MESSAGES.DELETE_REPORT,
+            MESSAGES.CREATE_DISBURSEMENT,
+            MESSAGES.UPDATE_DISBURSEMENT,
+            MESSAGES.DELETE_DISBURSEMENT,
         ]:
             return {"visibility": APPLICANT}
 
