@@ -58,7 +58,10 @@
                     </dl>
                 </header>
 
-                {% include "application_projects/includes/disbursements.html" %}
+                {% project_can_have_disbursements_section object as can_have_disbursements_section %}
+                {% if can_have_disbursements_section %}
+                    {% include "application_projects/includes/disbursements.html" %}
+                {% endif %}
 
                 {% user_can_view_project_documents object user as can_view_project_documents %}
                 {% if can_view_project_documents %}
@@ -71,9 +74,10 @@
                     {% include "application_projects/includes/contracting_documents.html" %}
                 {% endif %}
 
+                {% project_can_have_invoices_section object user as can_have_invoices_section %}
                 {% project_can_have_invoices object as can_have_invoices %}
                 {% user_can_view_invoices object user as can_view_invoices %}
-                {% if can_have_invoices and can_view_invoices %}
+                {% if project_can_have_invoices_section and can_have_invoices and can_view_invoices %}
                     {% include "application_projects/includes/invoices.html" %}
                 {% endif %}
 

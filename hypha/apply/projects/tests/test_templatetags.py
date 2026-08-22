@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
@@ -22,8 +22,13 @@ from ..models.project import (
     INTERNAL_APPROVAL,
     INVOICING_AND_REPORTING,
 )
+from ..payments import PaymentsFlow
 from ..templatetags.contract_tools import user_can_upload_contract
 from ..templatetags.invoice_tools import can_change_status, can_delete, can_edit
+from ..templatetags.project_tags import (
+    project_can_have_disbursements_section,
+    project_can_have_invoices_section,
+)
 from .factories import ContractFactory, InvoiceFactory, ProjectFactory
 
 
@@ -261,3 +266,60 @@ class TestInvoiceTools(TestCase):
 
         self.assertFalse(can_edit(invoice, applicant))
         self.assertFalse(can_edit(invoice, staff))
+
+
+class TestPaymentsFlowEnum(TestCase):
+    def test_members_equal_their_string_values(self):
+        # PaymentsFlow subclasses str so members compare equal to plain
+        # strings, which keeps the {% if %} comparisons in templates simple.
+        self.assertEqual(PaymentsFlow.INVOICING, "INVOICING")
+        self.assertEqual(PaymentsFlow.DISBURSEMENTS, "DISBURSEMENTS")
+        self.assertEqual(PaymentsFlow.DISABLED, "DISABLED")
+
+    def test_three_valid_values(self):
+        self.assertEqual(
+            {m.value for m in PaymentsFlow},
+            {"INVOICING", "DISBURSEMENTS", "DISABLED"},
+        )
+
+
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+class TestCanHaveDisbursementsSection(TestCase):
+    def test_shown_under_disbursements(self):
+        project = ProjectFactory()
+        self.assertTrue(project_can_have_disbursements_section(project))
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING")
+    def test_hidden_under_invoicing(self):
+        project = ProjectFactory()
+        self.assertFalse(project_can_have_disbursements_section(project))
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISABLED")
+    def test_hidden_under_disabled(self):
+        project = ProjectFactory()
+        self.assertFalse(project_can_have_disbursements_section(project))
+
+
+@override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING")
+class TestCanHaveInvoicesSection(TestCase):
+    def test_shown_under_invoicing_when_in_scope(self):
+        staff = StaffFactory()
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        self.assertTrue(project_can_have_invoices_section(project, staff))
+
+    def test_hidden_when_project_not_in_scope(self):
+        staff = StaffFactory()
+        project = ProjectFactory(status=CONTRACTING)
+        self.assertFalse(project_can_have_invoices_section(project, staff))
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_hidden_under_disbursements(self):
+        staff = StaffFactory()
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        self.assertFalse(project_can_have_invoices_section(project, staff))
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISABLED")
+    def test_hidden_under_disabled(self):
+        staff = StaffFactory()
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        self.assertFalse(project_can_have_invoices_section(project, staff))
