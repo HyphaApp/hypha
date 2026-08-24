@@ -19,6 +19,7 @@ from django.utils.translation import gettext_lazy as _
 from .definitions.double_stage import DoubleStageDefinition
 from .definitions.single_stage import SingleStageDefinition
 from .definitions.single_stage_community import SingleStageCommunityDefinition
+from .definitions.single_stage_ext_int import SingleStageExtIntDefinition
 from .definitions.single_stage_external import SingleStageExternalDefinition
 from .definitions.single_stage_same import SingleStageSameDefinition
 from .models.phase import Phase
@@ -83,6 +84,12 @@ RequestCommunity = Workflow(
     **phase_data(SingleStageCommunityDefinition),
 )
 
+RequestExternalInternal = Workflow(
+    _("Request external then internal review"),
+    "single_ext_int",
+    **phase_data(SingleStageExtIntDefinition),
+)
+
 ConceptProposal = Workflow(
     _("Concept & Proposal"), "double", **phase_data(DoubleStageDefinition)
 )
@@ -92,6 +99,7 @@ WORKFLOWS = {
     RequestSameTime.admin_name: RequestSameTime,
     RequestExternal.admin_name: RequestExternal,
     RequestCommunity.admin_name: RequestCommunity,
+    RequestExternalInternal.admin_name: RequestExternalInternal,
     ConceptProposal.admin_name: ConceptProposal,
 }
 

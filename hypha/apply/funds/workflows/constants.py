@@ -22,6 +22,7 @@ PHASE_BG_COLORS = {
     "External Review": "bg-yellow-200",
     "More information required": "bg-yellow-200",
     "Accepted but additional info required": "bg-green-100",
+    "Waitlisted": "bg-amber-200",
     "Dismissed": "bg-rose-200",
 }
 
@@ -42,6 +43,7 @@ DETERMINATION_RESPONSE_PHASES = [
     "post_external_review_discussion",
     "ext_post_external_review_discussion",
     "com_post_external_review_discussion",
+    "ext_int_post_review_discussion",
 ]
 
 DETERMINATION_OUTCOMES = get_determination_transitions()

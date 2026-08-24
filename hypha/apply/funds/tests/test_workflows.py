@@ -1,0 +1,113 @@
+"""Tests for the workflow registry, focused on the external-then-internal workflow."""
+
+import pytest
+from django.test import SimpleTestCase
+
+from hypha.apply.users.tests.factories import StaffFactory
+
+from ..workflows import (
+    DETERMINATION_OUTCOMES,
+    WORKFLOWS,
+    ext_or_higher_statuses,
+    ext_review_statuses,
+)
+from ..workflows.constants import DETERMINATION_RESPONSE_PHASES
+from .factories import ApplicationSubmissionFactory
+
+WORKFLOW_NAME = "single_ext_int"
+
+
+class TestRequestExternalInternalWorkflow(SimpleTestCase):
+    @property
+    def workflow(self):
+        return WORKFLOWS[WORKFLOW_NAME]
+
+    def test_workflow_is_registered(self):
+        self.assertIn(WORKFLOW_NAME, WORKFLOWS)
+        self.assertEqual(
+            str(self.workflow.name), "Request external then internal review"
+        )
+
+    def test_phases_and_steps(self):
+        expected = {
+            "draft": 0,
+            "in_discussion": 1,
+            "ext_int_more_info": 1,
+            "ext_int_external_review": 2,
+            "ext_int_post_external_review_discussion": 3,
+            "ext_int_post_external_review_more_info": 3,
+            "ext_int_internal_review": 4,
+            "ext_int_post_review_discussion": 5,
+            "ext_int_post_review_more_info": 5,
+            "ext_int_determination": 6,
+            "ext_int_accepted": 7,
+            "ext_int_waitlisted": 7,
+            "ext_int_rejected": 7,
+        }
+        self.assertEqual(
+            {name: phase.step for name, phase in self.workflow.items()}, expected
+        )
+
+    def test_external_review_comes_before_internal_review(self):
+        self.assertLess(
+            self.workflow["ext_int_external_review"].step,
+            self.workflow["ext_int_internal_review"].step,
+        )
+
+    def test_single_stage_with_external_review(self):
+        (stage,) = self.workflow.stages
+        self.assertEqual(stage.name, "RequestExtInt")
+        self.assertTrue(stage.has_external_review)
+
+    def test_waitlisted_is_not_a_determination_outcome(self):
+        self.assertNotIn("ext_int_waitlisted", DETERMINATION_OUTCOMES)
+
+    def test_waitlisted_transitions(self):
+        self.assertEqual(
+            set(self.workflow["ext_int_waitlisted"].transitions),
+            {"ext_int_accepted", "ext_int_rejected", "ext_int_determination"},
+        )
+
+    def test_waitlist_offered_from_discussion_and_determination(self):
+        for phase_name in [
+            "ext_int_post_review_discussion",
+            "ext_int_determination",
+        ]:
+            with self.subTest(phase=phase_name):
+                self.assertIn(
+                    "ext_int_waitlisted", self.workflow[phase_name].transitions
+                )
+
+    def test_outcome_phases_are_terminal(self):
+        for phase_name in ["ext_int_accepted", "ext_int_rejected"]:
+            with self.subTest(phase=phase_name):
+                self.assertEqual(self.workflow[phase_name].transitions, {})
+
+    def test_picked_up_by_derived_status_sets(self):
+        self.assertIn("ext_int_external_review", ext_review_statuses)
+        self.assertIn("ext_int_internal_review", ext_or_higher_statuses)
+        self.assertIn("ext_int_post_review_discussion", DETERMINATION_RESPONSE_PHASES)
+
+
+@pytest.mark.django_db
+def test_walk_the_whole_workflow():
+    """The generated FSM transitions actually fire, in the intended order."""
+    staff = StaffFactory()
+    submission = ApplicationSubmissionFactory(workflow_name=WORKFLOW_NAME)
+    assert submission.status == "in_discussion"
+
+    chain = [
+        "ext_int_external_review",
+        "ext_int_post_external_review_discussion",
+        "ext_int_internal_review",
+        "ext_int_post_review_discussion",
+        "ext_int_determination",
+        "ext_int_waitlisted",
+        "ext_int_accepted",
+    ]
+    for target in chain:
+        submission.perform_transition(target, staff)
+        submission.save()
+        assert submission.status == target
+
+    assert submission.phase.display_name == "Accepted"

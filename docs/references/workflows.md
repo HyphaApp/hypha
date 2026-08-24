@@ -8,13 +8,14 @@ Each workflow offers different statuses (e.g. External Review, Ready for Determi
     Hypha covers more than just the application phase, but workflows are used in the application process only.
 
 
-## What are the 4 workflows?
+## What are the 6 workflows?
 
 1. [Request](#request)
 2. [Request with same time review](#request-with-same-time-review) (new in v5.20.0)
 3. [Request with external review](#request-with-external-review)
 4. [Request with community review](#request-with-community-review)
-5. [Concept and Proposal](#concept-and-proposal)
+5. [Request external then internal review](#request-external-then-internal-review)
+6. [Concept and Proposal](#concept-and-proposal)
 
 All workflows begin with applicant drafting, revising and submitting an application (`DRAFT_STATE`) — only transition available is to `INITIAL_STATE`, upon applicant taking the action to submit their application/request.
 
@@ -111,6 +112,32 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 - Accept application (`com_accepted`)
 - Accept application but additional information is required (`com_almost`) — can transition to accepting application (`com_accepted`) or revert back to ready for discussion (`com_post_external_review_discussion`)
 - Reject application (`com_rejected`)
+
+### 🔀 Request external then internal review
+
+This workflow is a single stage process with both an external review and an internal review stage. It is very similar to the "Request with external review" workflow, see above, but the order of the two review steps is reversed: the external reviewers see the application first, and the internal review only opens once the external review has been closed.
+
+It is also the only workflow that offers **Waitlisted** as an outcome, alongside Accepted and Dismissed.
+
+**Proposal Persona:**
+
+Funding organization wants an advisory board or external partners to give their opinion before staff spend time on an internal review, and needs to be able to park promising applications on a waitlist while funding decisions are made.
+
+Once an application is submitted (`INITIAL_STATE`) — it can transition into the following:
+
+- A request for more information (`ext_int_more_info`) — opens editing permissions to applicant again to revise their application to provide the information requested by the screeners.
+- Open external review (`ext_int_external_review`) — can transition only between closing the review period (`ext_int_post_external_review_discussion`) and reverting back to the internal screening phase.
+  - `ext_int_post_external_review_discussion` — after the external review is closed, you can request more information (`ext_int_post_external_review_more_info`), open the internal review (`ext_int_internal_review`), mark ready for determination (`ext_int_determination`), revert back to opening the external review (`ext_int_external_review`), or dismiss (`ext_int_rejected`)
+  - `ext_int_post_external_review_more_info` — opens editing permissions to applicant again to revise their application to provide the information requested by the external reviewers.
+- Open internal review (`ext_int_internal_review`) — can transition only between closing the review period (`ext_int_post_review_discussion`) and reverting back to discussion (`ext_int_post_external_review_discussion`)
+  - `ext_int_post_review_discussion` — after the internal review is closed, you can request more information (`ext_int_post_review_more_info`), mark ready for determination (`ext_int_determination`), revert back to opening the internal review (`ext_int_internal_review`), accept (`ext_int_accepted`), waitlist (`ext_int_waitlisted`) or dismiss (`ext_int_rejected`)
+  - `ext_int_post_review_more_info` — opens editing permissions to applicant again to revise their application to provide the information requested by the reviewers.
+- Ready for determination (`ext_int_determination`) — can revert back to discussion (“Ready For Discussion (revert)” — `ext_int_post_review_discussion`), accept (`ext_int_accepted`), waitlist (`ext_int_waitlisted`) or dismiss (`ext_int_rejected`)
+- Waitlisted (`ext_int_waitlisted`) — the application is kept in play without a decision. Can transition to accept (`ext_int_accepted`), dismiss (`ext_int_rejected`), or revert back to ready for determination (`ext_int_determination`). Staff can still edit this submission. Waitlisting is a plain status change — unlike Accept and Dismiss it does not open the determination form and does not create a determination record.
+- Accepted (`ext_int_accepted`) — application accepted. Staff can still edit this submission.
+- Dismissed (`ext_int_rejected`) — application rejected. Permissions removed from all roles.
+
+There is no "Accepted but additional info required" state in this workflow.
 
 ### 💡 Concept and Proposal
 
