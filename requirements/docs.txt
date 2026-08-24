@@ -213,16 +213,16 @@ gitpython==3.1.59 \
     --hash=sha256:0a1475cfdc38a5bfba1a3e9a4a9da52a39749ecec322b772915c019f94e5b7e4 \
     --hash=sha256:67a82f537384578643624c8b2c531938a9b82be431663e575dcf638526631d4c
     # via mkdocs-git-revision-date-localized-plugin
-griffe==2.1.0 \
-    --hash=sha256:2ccdab17fb9cd76f278d7b5611cfc8f68cbe846d8d48df63dff80b62ecfa6f65 \
-    --hash=sha256:c58845df5a364feaabd05ee8c767b97b03e478da8aa18b9923553c812fb0d955
-griffecli==2.1.0 \
-    --hash=sha256:2ff68dbee9395fdb668b10374c51683392d697b226ac60159798f4add1ee716c \
-    --hash=sha256:6e22b1423d562ddc510997b4be1fe89de59e19dcff78831c0f4bfc3b8134a718
+griffe==2.2.0 \
+    --hash=sha256:9c0dd9a7feda9e169d783507d777c6fb2f2fc2919b139747a5b4f5357517a611 \
+    --hash=sha256:db20672b31c3de2a1af5a18a3b3d8c186ccc2425e10290486b4f0364d25929e9
+griffecli==2.2.0 \
+    --hash=sha256:8ebb7ae1dcc2617f5d39f00e4c238dd6b5cd0b13157b0ce22c1ea4ca8b4c5d1d \
+    --hash=sha256:b9e763131218eb19887ed52de20fe944252d811bfb4a3e339874908a588f0044
     # via griffe
-griffelib==2.1.0 \
-    --hash=sha256:762a186d2c6fd6794d4ea20d428d597ffb857cb56b66421651cbba15bdd5e813 \
-    --hash=sha256:cc7b3d2d2865ad0b909fcc38086e3f554b5ea7acbaa7bbb7ecaa3f5dfb7d9f00
+griffelib==2.2.0 \
+    --hash=sha256:d71c3bc2bbed9f958488634fe788b843a9f705d6d2838ca32cd6c25eeb64dfc4 \
+    --hash=sha256:e1bc36fe9cd21d4b6b659b456346755e4cfdc5676c0a5214083126ee12612b3c
     # via
     #   griffe
     #   griffecli
@@ -233,9 +233,9 @@ hjson==3.1.0 \
     # via
     #   mkdocs-macros-plugin
     #   super-collections
-idna==3.18 \
-    --hash=sha256:7f952cbe720b688055e3f87de14f5c3e5fdaa8bc3928985c4077ca689de849a2 \
-    --hash=sha256:ffb385a7e039654cef1ab9ef32c6fafe283c0c0467bba1d9029738ce4a14a848
+idna==3.19 \
+    --hash=sha256:5e0811a4383b21dc5838069f801c4fb62113b7447663d2530d2bd6e77b49bf15 \
+    --hash=sha256:815e7be7a7806d54abb586dc943addc79e8b2ee16915059658cbeff4b1b43bf4
     # via requests
 jinja2==3.1.6 \
     --hash=sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d \
@@ -374,9 +374,9 @@ mkdocs-get-deps==0.2.2 \
     --hash=sha256:8ee8d5f316cdbbb2834bc1df6e69c08fe769a83e040060de26d3c19fad3599a1 \
     --hash=sha256:e7878cbeac04860b8b5e0ca31d3abad3df9411a75a32cde82f8e44b6c16ff650
     # via mkdocs
-mkdocs-git-revision-date-localized-plugin==1.5.3 \
-    --hash=sha256:873444b54cab4d47c69bd6e85da05ef5fbe81fee27e64508114c46a0e4f81e37 \
-    --hash=sha256:cd96e432de6a7e59b31c7041574b22f84179c8636835419ff458877ecfaaaf05
+mkdocs-git-revision-date-localized-plugin==1.5.4 \
+    --hash=sha256:07a785522008e881ff4c307e3259ad3ce00931b2d2147a22cdfbb532ff25e4ab \
+    --hash=sha256:b5e6b4b9e7d169750b6eb078fd91151bc855e65c019a065accce537ec6e69e05
 mkdocs-macros-plugin==1.5.0 \
     --hash=sha256:12aa45ce7ecb7a445c66b9f649f3dd05e9b92e8af6bc65e4acd91d26f878c01f \
     --hash=sha256:c10fabd812bf50f9170609d0ed518e54f1f0e12c334ac29141723a83c881dd6f
@@ -391,9 +391,9 @@ mkdocstrings==1.0.6 \
     --hash=sha256:2703708697487d1b6d6d7b412e176fa436edf120c1bf81dc9e126b12d00893c7 \
     --hash=sha256:a0b8c2bdd29a6416c80d717aa369bbf7831946bd9f23c2a66db1b1dbe7693dbd
     # via mkdocstrings-python
-mkdocstrings-python==2.0.5 \
-    --hash=sha256:30c837bbff016549f659fcba6539ac351303f0fd7e713c89a040611072236e9d \
-    --hash=sha256:3a4d92556ad39637e88af94a5374213af9a8e3040c3824ceaed04b486c017594
+mkdocstrings-python==2.0.7 \
+    --hash=sha256:1fce5fbfe4ffa6e8136a35351cdc97c3bf55219c7efbd3f92a82260f93235d60 \
+    --hash=sha256:8c49faf66d243072d7590a1b5dea028d9d7425fac191f54f096123a4a9c1a783
     # via mkdocstrings
 natsort==8.4.0 \
     --hash=sha256:45312c4a0e5507593da193dedd04abb1469253b601ecaf63445ad80f0a1ea581 \
@@ -539,9 +539,9 @@ pydantic-core==2.46.4 \
     --hash=sha256:fc010ab034c8c7452522748bf937df58020d256ccae0874463d1f4d01758af8e \
     --hash=sha256:fc3e9034a63de20e15e8ade85358bc6efc614008cab72898b4b4952bea0509ff
     # via pydantic
-pygments==2.20.0 \
-    --hash=sha256:6757cd03768053ff99f3039c1a36d6c0aa0b263438fcab17520b30a303a82b5f \
-    --hash=sha256:81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176
+pygments==2.21.0 \
+    --hash=sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9 \
+    --hash=sha256:610ca751c9bc2492b38eb9a38a7fbc93edbbb2d7182edaf34e66ae493dee5c8c
     # via mkdocs-material
 pymdown-extensions==11.0.1 \
     --hash=sha256:db3943a62bab7e03af1364f0c4083e64b91fb097675a4b6cceccfbe9a77e5eb2 \
