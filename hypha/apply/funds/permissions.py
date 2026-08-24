@@ -60,8 +60,9 @@ def view_comments(role, user, submission) -> bool:
     if submission_view:
         return True
 
-    project = getattr(submission, "project", None)
-    if project:
+    # Users such as contracting staff and project form approvers reach a
+    # submission's comments through its project rather than the submission.
+    for project in submission.projects.all():
         can_access, _ = can_access_project(user, project)
         if can_access:
             return True
@@ -251,12 +252,10 @@ def can_view_submission_screening(user, submission):
 def can_invite_co_applicants(user, submission):
     if submission.is_archive:
         return False, _("Co-applicant can't be added to archived submission")
-    project = getattr(submission, "project", None)
-    if project:
-        from hypha.apply.projects.models.project import COMPLETE
+    from hypha.apply.projects.models.project import COMPLETE
 
-        if project.status == COMPLETE:
-            return False, _("Co-applicants can't be invited to completed projects")
+    if submission.projects.filter(status=COMPLETE).exists():
+        return False, _("Co-applicants can't be invited to completed projects")
     if (
         submission.co_applicant_invites.count()
         >= settings.SUBMISSIONS_COAPPLICANT_INVITES_LIMIT
@@ -280,12 +279,10 @@ def can_view_co_applicants(user, submission):
 def can_update_co_applicant(user, invite):
     if invite.submission.is_archive:
         return False, _("Co-applicant can't be updated to archived submission")
-    project = getattr(invite.submission, "project", None)
-    if project:
-        from hypha.apply.projects.models.project import COMPLETE
+    from hypha.apply.projects.models.project import COMPLETE
 
-        if project.status == COMPLETE:
-            return False, _("Co-applicants can't be updated to completed projects")
+    if invite.submission.projects.filter(status=COMPLETE).exists():
+        return False, _("Co-applicants can't be updated to completed projects")
     if invite.invited_by == user:
         return True, _("Same user who invited can delete the co-applicant")
     if invite.submission.user == user:
