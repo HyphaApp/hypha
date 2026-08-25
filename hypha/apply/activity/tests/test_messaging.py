@@ -649,6 +649,26 @@ class TestEmailAdapter(AdapterMixin, TestCase):
             ANY, Contains(str(staff_commenter)), ANY, [submission.user.email], logs=ANY
         )
 
+    def test_notify_assigned_comment_user_in_email(self):
+        staff_commenter = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+        assignee = StaffFactory()
+        comment = CommentFactory(
+            user=staff_commenter, source=submission, visibility=TEAM
+        )
+
+        self.adapter_process(
+            MESSAGES.COMMENT_ASSIGNED,
+            related=comment,
+            user=comment.user,
+            source=comment.source,
+            assignee=assignee,
+        )
+
+        self.mock_send_email.assert_called_once_with(
+            ANY, Contains(str("assigned to a comment")), ANY, [assignee.email], logs=ANY
+        )
+
 
 @override_settings(
     SEND_MESSAGES=True,

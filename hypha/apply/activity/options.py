@@ -89,3 +89,4 @@ class MESSAGES(TextChoices):
     REMOVE_TASK = "REMOVE_TASK", _("remove task")
     INVITE_COAPPLICANT = "INVITE_COAPPLICANT", _("invite co-applicant")
     UPDATE_AUTHOR = "UPDATE_AUTHOR", _("updated author")
+    COMMENT_ASSIGNED = "COMMENT_ASSIGNED", _("comment assigned")

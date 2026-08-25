@@ -82,6 +82,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.REVIEW_REMINDER: "messages/email/ready_to_review.html",
         MESSAGES.PROJECT_TRANSITION: "handle_project_transition",
         MESSAGES.UPDATE_AUTHOR: "messages/email/author_updated.html",
+        MESSAGES.COMMENT_ASSIGNED: "messages/email/comment_assigned.html",
     }
 
     def get_subject(self, message_type, source):
@@ -321,6 +322,10 @@ class EmailAdapter(AdapterBase):
             # Only notify the applicant if the new phase can be seen within the workflow
             if not source.phase.permissions.can_view(source.user):
                 return []
+
+        if message_type == MESSAGES.COMMENT_ASSIGNED:
+            assignee = kwargs.get("assignee")
+            return [assignee.email]
 
         if message_type == MESSAGES.INVITE_COAPPLICANT:
             related = kwargs.get("related", None)

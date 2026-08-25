@@ -41,6 +41,7 @@ neat_related = {
     MESSAGES.BATCH_UPDATE_INVOICE_STATUS: "invoices",
     MESSAGES.REMOVE_TASK: "task",
     MESSAGES.UPDATE_AUTHOR: "old_author",
+    MESSAGES.COMMENT_ASSIGNED: "comment",
 }
 
 

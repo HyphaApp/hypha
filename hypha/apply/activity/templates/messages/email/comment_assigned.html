@@ -1,0 +1,13 @@
+{% extends "messages/email/base.html" %}
+
+{% load i18n %}
+
+{% block salutation %}{% trans "Hey there," %}{% endblock %}
+
+{% block content %}{# fmt:off #}
+{% blocktrans with title=source.title %}You have been assigned to a comment on "{{ title }}".{% endblocktrans %}
+{% endblock %}
+
+{% block more_info %}
+{% trans "View it here" %}: {{ request.scheme }}://{{ request.get_host }}{{ comment.get_absolute_url }}
+{% endblock %}
