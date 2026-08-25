@@ -9,7 +9,7 @@ Params:
 
 {# On error the view re-renders this whole form, so swap outerHTML on self to avoid nesting a form inside itself. A successful post returns 204 and is not swapped. #}
 <form  hx-post="{% url 'activity:post-comment' %}" hx-target="this" hx-swap="outerHTML" class="flex flex-col gap-2 p-2 card-body" hx-on::after-request="if(event.detail.xhr.status === 204) this.reset()">
-    <h2 class="card-title">Comment</h2>
+    <h2 class="card-title">{% trans "Comment" %}</h2>
     {% csrf_token %}
 
     {% for hidden in form.hidden_fields %}
