@@ -974,7 +974,7 @@ class TestApplicantDetailInvoiceStatus(BaseViewTestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_activity_renders(self):
-        invoice = InvoiceFactory()
+        invoice = InvoiceFactory(project__user=self.user)
         invoice_added_msg = ActivityAdapter.messages[MESSAGES.CREATE_INVOICE].lower()
         ActivityFactory(
             message=invoice_added_msg,

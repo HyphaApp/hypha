@@ -18,21 +18,45 @@ from ..models.project import (
     ProjectFormPointer,
     ProjectSOW,
 )
+from ..permissions import has_permission
+
+
+def _get_accessible_project(request: HttpRequest, project_pk: int) -> Project:
+    """Get a project, ensuring the current user is allowed to access it.
+
+    Args:
+        request: request used to retrieve the partial
+        project_pk: the pk of the project to get
+
+    Returns:
+        The project
+
+    Raises:
+        Http404: if no project with that pk exists
+        PermissionDenied: if the user may not access the project
+    """
+    project = get_object_or_404(Project, pk=project_pk)
+    has_permission("project_access", request.user, object=project, raise_exception=True)
+    return project
 
 
 def _get_object_activity(
-    request: HttpRequest, object_class: Model | Manager | QuerySet, object_pk: int
+    request: HttpRequest,
+    object_class: Model | Manager | QuerySet,
+    object_pk: int,
+    **filters,
 ) -> HttpResponse:
     """A generic view function to be leveraged by more specific object views
 
     Args:
         object_class: A Model, Manager or QuerySet of the object to get activity for
         object_pk: the pk of the object to get activity for
+        filters: additional lookups used to scope the object, e.g. to its project
 
     Returns:
         A rendered object_status.html template containing all status/activity relating to the specific object
     """
-    object = get_object_or_404(object_class, pk=object_pk)
+    object = get_object_or_404(object_class, pk=object_pk, **filters)
     user = request.user
 
     related_type_pk = ContentType.objects.get_for_model(object_class).pk
@@ -70,7 +94,7 @@ def _get_object_activity(
 @login_required
 @require_GET
 def partial_project_lead(request, pk):
-    project = get_object_or_404(Project, pk=pk)
+    project = _get_accessible_project(request, pk)
     return render(
         request, "application_projects/partials/project_lead.html", {"object": project}
     )
@@ -79,7 +103,7 @@ def partial_project_lead(request, pk):
 @login_required
 @require_GET
 def partial_project_title(request, pk):
-    project = get_object_or_404(Project, pk=pk)
+    project = _get_accessible_project(request, pk)
     return render(
         request, "application_projects/partials/project_title.html", {"object": project}
     )
@@ -88,7 +112,7 @@ def partial_project_title(request, pk):
 @login_required
 @require_GET
 def partial_project_information(request, pk):
-    project = get_object_or_404(Project, pk=pk)
+    project = _get_accessible_project(request, pk)
     return render(
         request,
         "application_projects/partials/project_information.html",
@@ -99,7 +123,7 @@ def partial_project_information(request, pk):
 @login_required
 @require_GET
 def partial_supporting_documents(request, pk):
-    project = get_object_or_404(Project, pk=pk)
+    project = _get_accessible_project(request, pk)
     ctx = {"object": project}
     ctx["all_document_categories"] = DocumentCategory.objects.all()
     ctx["remaining_document_categories"] = DocumentCategory.objects.filter(
@@ -113,7 +137,7 @@ def partial_supporting_documents(request, pk):
 @login_required
 @require_GET
 def partial_contracting_documents(request, pk):
-    project = get_object_or_404(Project, pk=pk)
+    project = _get_accessible_project(request, pk)
     ctx = {"object": project}
     ctx["all_contract_document_categories"] = ContractDocumentCategory.objects.all()
     ctx["remaining_contract_document_categories"] = (
@@ -151,7 +175,7 @@ def partial_get_invoice_status_table(
     Returns:
         HttpResponse containing the table of requested invoices
     """
-    invoices = get_object_or_404(Project, pk=pk).invoices
+    invoices = _get_accessible_project(request, pk).invoices
 
     return render(
         request,
@@ -166,66 +190,78 @@ def partial_get_invoice_status_table(
 
 @login_required
 @require_GET
-def partial_get_invoice_status(request: HttpRequest, invoice_pk: int, *args, **kwargs):
+def partial_get_invoice_status(
+    request: HttpRequest, pk: int, invoice_pk: int, *args, **kwargs
+):
     """
     Partial to get the invoice status for invoice detail view
 
     Args:
         request: request used to retrieve partial
+        pk: ID of the associated project
         invoice_pk: ID of the invoice to retrieve the status of
 
     Returns:
         HttpResponse containing the activity of requested invoice
     """
-    return _get_object_activity(request, Invoice, invoice_pk)
+    project = _get_accessible_project(request, pk)
+    return _get_object_activity(request, Invoice, invoice_pk, project=project)
 
 
 @login_required
 @require_GET
-def partial_get_report_status(request: HttpRequest, report_pk: int, *args, **kwargs):
+def partial_get_report_status(
+    request: HttpRequest, pk: int, report_pk: int, *args, **kwargs
+):
     """
-    Partial to get the invoice status for invoice detail view
+    Partial to get the report status for report detail view
 
     Args:
         request: request used to retrieve partial
-        invoice_pk: ID of the invoice to retrieve the status of
+        pk: ID of the associated project
+        report_pk: ID of the report to retrieve the status of
 
     Returns:
-        HttpResponse containing the activity of requested invoice
+        HttpResponse containing the activity of requested report
     """
-    return _get_object_activity(request, Report, report_pk)
+    project = _get_accessible_project(request, pk)
+    return _get_object_activity(request, Report, report_pk, project=project)
 
 
 @login_required
 @require_GET
-def partial_get_sow_status(request: HttpRequest, sow_pk: int, *args, **kwargs):
+def partial_get_sow_status(request: HttpRequest, pk: int, sow_pk: int, *args, **kwargs):
     """
     Partial to get the SOW status for SOW detail view
 
     Args:
         request: request used to retrieve partial
+        pk: ID of the associated project
         sow_pk: ID of the SOW to retrieve the status of
 
     Returns:
         HttpResponse containing activity
     """
-    return _get_object_activity(request, ProjectSOW, sow_pk)
+    project = _get_accessible_project(request, pk)
+    return _get_object_activity(request, ProjectSOW, sow_pk, project=project)
 
 
 @login_required
 @require_GET
-def partial_get_pf_status(request: HttpRequest, pfp_pk: int, *args, **kwargs):
+def partial_get_pf_status(request: HttpRequest, pk: int, pfp_pk: int, *args, **kwargs):
     """
     Partial to get the project form status for approval detail view
 
     Args:
         request: request used to retrieve partial
+        pk: ID of the associated project
         pfp_pk: ID of the ProjectFormPointer to retrieve status of the project form for
 
     Returns:
-        HttpResponse containing the activity of requested invoice
+        HttpResponse containing the activity of requested project form
     """
-    return _get_object_activity(request, ProjectFormPointer, pfp_pk)
+    project = _get_accessible_project(request, pk)
+    return _get_object_activity(request, ProjectFormPointer, pfp_pk, project=project)
 
 
 @login_required
@@ -242,7 +278,8 @@ def partial_get_invoice_detail_actions(request: HttpRequest, pk: int, invoice_pk
     Returns:
         HttpResponse containing the status line of requested invoice
     """
-    invoice = get_object_or_404(Invoice, pk=invoice_pk)
+    project = _get_accessible_project(request, pk)
+    invoice = get_object_or_404(Invoice, pk=invoice_pk, project=project)
     user = request.user
 
     return render(
@@ -255,7 +292,8 @@ def partial_get_invoice_detail_actions(request: HttpRequest, pk: int, invoice_pk
 @login_required
 @require_GET
 def partial_get_invoice_tags(request: HttpRequest, pk: int, invoice_pk: int):
-    invoice = get_object_or_404(Invoice, pk=invoice_pk)
+    project = _get_accessible_project(request, pk)
+    invoice = get_object_or_404(Invoice, pk=invoice_pk, project=project)
     return render(
         request,
         "application_projects/partials/invoice_tags.html",
