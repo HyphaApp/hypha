@@ -3,6 +3,7 @@ import re
 from typing import List
 
 from lark import Lark, Transformer
+from lark.exceptions import LarkError
 
 
 # Custom transformer to convert parse tree to a dictionary
@@ -131,7 +132,10 @@ def parse_search_query(search_query: str) -> dict:
         "text": "hello world"
     }
     """
-    return parser.parse(search_query)
+    try:
+        return parser.parse(search_query)
+    except LarkError:
+        return {"filters": {}, "text": search_query}
 
 
 def filter_non_digits(values: List[str]) -> List[str]:
