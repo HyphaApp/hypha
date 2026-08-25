@@ -68,6 +68,7 @@ def _get_object_activity(
 
 
 @login_required
+@require_GET
 def partial_project_lead(request, pk):
     project = get_object_or_404(Project, pk=pk)
     return render(
@@ -76,6 +77,7 @@ def partial_project_lead(request, pk):
 
 
 @login_required
+@require_GET
 def partial_project_title(request, pk):
     project = get_object_or_404(Project, pk=pk)
     return render(
@@ -84,6 +86,7 @@ def partial_project_title(request, pk):
 
 
 @login_required
+@require_GET
 def partial_project_information(request, pk):
     project = get_object_or_404(Project, pk=pk)
     return render(
@@ -133,6 +136,7 @@ def partial_contracting_documents(request, pk):
 
 
 @login_required
+@require_GET
 def partial_get_invoice_status_table(
     request: HttpRequest, pk: int, rejected: Optional[bool] = False
 ):
@@ -161,6 +165,7 @@ def partial_get_invoice_status_table(
 
 
 @login_required
+@require_GET
 def partial_get_invoice_status(request: HttpRequest, invoice_pk: int, *args, **kwargs):
     """
     Partial to get the invoice status for invoice detail view
@@ -176,6 +181,7 @@ def partial_get_invoice_status(request: HttpRequest, invoice_pk: int, *args, **k
 
 
 @login_required
+@require_GET
 def partial_get_report_status(request: HttpRequest, report_pk: int, *args, **kwargs):
     """
     Partial to get the invoice status for invoice detail view
@@ -191,6 +197,7 @@ def partial_get_report_status(request: HttpRequest, report_pk: int, *args, **kwa
 
 
 @login_required
+@require_GET
 def partial_get_sow_status(request: HttpRequest, sow_pk: int, *args, **kwargs):
     """
     Partial to get the SOW status for SOW detail view
@@ -206,6 +213,7 @@ def partial_get_sow_status(request: HttpRequest, sow_pk: int, *args, **kwargs):
 
 
 @login_required
+@require_GET
 def partial_get_pf_status(request: HttpRequest, pfp_pk: int, *args, **kwargs):
     """
     Partial to get the project form status for approval detail view
@@ -221,6 +229,7 @@ def partial_get_pf_status(request: HttpRequest, pfp_pk: int, *args, **kwargs):
 
 
 @login_required
+@require_GET
 def partial_get_invoice_detail_actions(request: HttpRequest, pk: int, invoice_pk: int):
     """
     Partial to get the actions for the invoice detail view
@@ -244,6 +253,7 @@ def partial_get_invoice_detail_actions(request: HttpRequest, pk: int, invoice_pk
 
 
 @login_required
+@require_GET
 def partial_get_invoice_tags(request: HttpRequest, pk: int, invoice_pk: int):
     invoice = get_object_or_404(Invoice, pk=invoice_pk)
     return render(
