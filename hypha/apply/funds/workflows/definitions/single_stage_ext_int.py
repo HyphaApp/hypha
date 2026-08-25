@@ -78,6 +78,8 @@ SingleStageExtIntDefinition = [
                 "ext_int_internal_review": _("Open Internal Review"),
                 "ext_int_determination": _("Ready For Determination"),
                 "ext_int_external_review": _("Open External Review (revert)"),
+                "ext_int_accepted": _("Accept"),
+                "ext_int_waitlisted": _("Waitlist"),
                 "ext_int_rejected": _("Dismiss"),
             },
             "display": _("Ready For Discussion"),
