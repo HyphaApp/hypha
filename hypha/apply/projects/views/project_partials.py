@@ -2,7 +2,7 @@ from typing import Optional
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Manager, Model, Q, QuerySet
+from django.db.models import Model, Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET
@@ -42,14 +42,14 @@ def _get_accessible_project(request: HttpRequest, project_pk: int) -> Project:
 
 def _get_object_activity(
     request: HttpRequest,
-    object_class: Model | Manager | QuerySet,
+    object_class: type[Model],
     object_pk: int,
     **filters,
 ) -> HttpResponse:
     """A generic view function to be leveraged by more specific object views
 
     Args:
-        object_class: A Model, Manager or QuerySet of the object to get activity for
+        object_class: the model class of the object to get activity for
         object_pk: the pk of the object to get activity for
         filters: additional lookups used to scope the object, e.g. to its project
 
