@@ -130,9 +130,13 @@ def get_object_activity(
 
     related_type_pk = ContentType.objects.get_for_model(object_class).pk
 
-    activities = Activity.objects.filter(
-        related_content_type=related_type_pk, related_object_id=object_pk
-    ).visible_to(user)
+    activities = (
+        Activity.objects.filter(
+            related_content_type=related_type_pk, related_object_id=object_pk
+        )
+        .exclude(current=False)
+        .visible_to(user)
+    )
 
     preview_activity = (
         Activity.actions.filter(

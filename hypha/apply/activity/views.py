@@ -2,7 +2,7 @@ import json
 
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -118,54 +118,74 @@ def delete_comment(request, pk):
     )
 
 
+def get_object_for_content_type(content_type_id, object_id):
+    """Resolve a content type id & object id pair into a model instance.
+
+    Both ids come straight from user input, so anything that doesn't resolve to
+    an existing object - missing, non-numeric or dangling ids, or a stale
+    ContentType row whose model no longer exists - returns None rather than
+    raising.
+
+    Args:
+        content_type_id: the pk of the ContentType of the object
+        object_id: the pk of the object itself
+
+    Returns:
+        The model instance, or None if it could not be resolved
+    """
+    try:
+        content_type = ContentType.objects.get_for_id(int(content_type_id))
+    except (TypeError, ValueError, ContentType.DoesNotExist):
+        return None
+
+    model_class = content_type.model_class()
+    if model_class is None:
+        return None
+
+    try:
+        return model_class._default_manager.filter(pk=object_id).first()
+    except (TypeError, ValueError, ValidationError):
+        return None
+
+
 @login_required
 @require_http_methods(["POST", "GET"])
 @user_passes_test(is_apply_staff)
 def post_comment(request: HttpRequest):
     if request.method == "POST":
         form = CommentForm(user=request.user, data=request.POST or None, mini=True)
-        if (source_content_type := form.data["source_content_type"]) and (
-            source_object_id := form.data["source_object_id"]
-        ):
-            if (
-                not ContentType.objects.filter(id=source_content_type).exists()
-                or not ContentType.objects.get_for_id(source_content_type)
-                .model_class()
-                .objects.filter(id=source_object_id)
-                .exists()
-            ):
-                raise Http404
+        source = get_object_for_content_type(
+            request.POST.get("source_content_type"),
+            request.POST.get("source_object_id"),
+        )
+        if source is None:
+            raise Http404
 
-            source = ContentType.objects.get_for_id(
-                source_content_type
-            ).get_object_for_this_type(id=source_object_id)
-            form.instance.user = request.user
-            form.instance.source = source
-            form.instance.type = COMMENT
-            form.instance.timestamp = timezone.now()
-            if form.is_valid():
-                obj = form.save()
-                messenger(
-                    MESSAGES.COMMENT,
-                    request=request,
-                    user=request.user,
-                    source=source,
-                    related=obj,
-                )
-                return HttpResponse(
-                    status=204,
-                    headers={
-                        "HX-Trigger": json.dumps(
-                            {
-                                "commentAdded": obj.pk,
-                                "showMessage": mark_safe(_("Comment added!")),
-                            }
-                        ),
-                    },
-                )
-            return render(
-                request, "activity/partials/comment_form.html", {"form": form}
+        form.instance.user = request.user
+        form.instance.source = source
+        form.instance.type = COMMENT
+        form.instance.timestamp = timezone.now()
+        if form.is_valid():
+            obj = form.save()
+            messenger(
+                MESSAGES.COMMENT,
+                request=request,
+                user=request.user,
+                source=source,
+                related=obj,
             )
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "commentAdded": obj.pk,
+                            "showMessage": mark_safe(_("Comment added!")),
+                        }
+                    ),
+                },
+            )
+        return render(request, "activity/partials/comment_form.html", {"form": form})
     else:
         form = CommentForm(user=request.user, mini=True)
         params = request.GET.dict()
@@ -173,30 +193,20 @@ def post_comment(request: HttpRequest):
         # Ensure the provided source content type & object actually exist
         source_content_type = params.get("source_content_type")
         source_object_id = params.get("source_object_id")
-        if not (source_content_type and source_object_id) or (
-            not ContentType.objects.filter(id=source_content_type).exists()
-            or not ContentType.objects.get_for_id(source_content_type)
-            .model_class()
-            .objects.filter(id=source_object_id)
-            .exists()
-        ):
+        if get_object_for_content_type(source_content_type, source_object_id) is None:
             raise Http404
 
         form.fields["source_content_type"].initial = source_content_type
         form.fields["source_object_id"].initial = source_object_id
 
-        if (related_content_type := params.get("related_content_type")) and (
-            related_object_id := params.get("related_object_id")
+        related_content_type = params.get("related_content_type")
+        related_object_id = params.get("related_object_id")
+        if (
+            get_object_for_content_type(related_content_type, related_object_id)
+            is not None
         ):
-            if (
-                ContentType.objects.filter(id=related_content_type).exists()
-                and ContentType.objects.get_for_id(related_content_type)
-                .model_class()
-                .objects.filter(id=related_object_id)
-                .exists()
-            ):
-                form.fields["related_content_type"].initial = related_content_type
-                form.fields["related_object_id"].initial = related_object_id
+            form.fields["related_content_type"].initial = related_content_type
+            form.fields["related_object_id"].initial = related_object_id
 
         return render(request, "activity/partials/comment_form.html", {"form": form})
 
