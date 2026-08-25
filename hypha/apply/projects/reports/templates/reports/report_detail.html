@@ -95,6 +95,8 @@
                             {% endif %}
                         </div>
                     </div>
+                {% endif %}
+                {% if request.user.is_apply_staff %}
                     {% generate_post_comment_url object.project.submission object as comment_url %}
                     <div
                         class="card card-border bg-base-200 shadow-xs sidebar__inner"
