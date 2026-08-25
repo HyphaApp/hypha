@@ -25,6 +25,36 @@ from .filters import NotificationFilter
 from .models import COMMENT, Activity, ActivityAttachment
 
 
+def _get_object_for_content_type(content_type_id, object_id):
+    """Resolve a content type id & object id pair into a model instance.
+
+    Both ids come straight from user input, so anything that doesn't resolve to
+    an existing object - missing, non-numeric or dangling ids, or a stale
+    ContentType row whose model no longer exists - returns None rather than
+    raising.
+
+    Args:
+        content_type_id: the pk of the ContentType of the object
+        object_id: the pk of the object itself
+
+    Returns:
+        The model instance, or None if it could not be resolved
+    """
+    try:
+        content_type = ContentType.objects.get_for_id(int(content_type_id))
+    except (TypeError, ValueError, ContentType.DoesNotExist):
+        return None
+
+    model_class = content_type.model_class()
+    if model_class is None:
+        return None
+
+    try:
+        return model_class._default_manager.filter(pk=object_id).first()
+    except (TypeError, ValueError, ValidationError):
+        return None
+
+
 @login_required
 @require_http_methods(["GET"])
 def partial_comments(request, pk: int):
@@ -118,43 +148,13 @@ def delete_comment(request, pk):
     )
 
 
-def get_object_for_content_type(content_type_id, object_id):
-    """Resolve a content type id & object id pair into a model instance.
-
-    Both ids come straight from user input, so anything that doesn't resolve to
-    an existing object - missing, non-numeric or dangling ids, or a stale
-    ContentType row whose model no longer exists - returns None rather than
-    raising.
-
-    Args:
-        content_type_id: the pk of the ContentType of the object
-        object_id: the pk of the object itself
-
-    Returns:
-        The model instance, or None if it could not be resolved
-    """
-    try:
-        content_type = ContentType.objects.get_for_id(int(content_type_id))
-    except (TypeError, ValueError, ContentType.DoesNotExist):
-        return None
-
-    model_class = content_type.model_class()
-    if model_class is None:
-        return None
-
-    try:
-        return model_class._default_manager.filter(pk=object_id).first()
-    except (TypeError, ValueError, ValidationError):
-        return None
-
-
 @login_required
 @require_http_methods(["POST", "GET"])
 @user_passes_test(is_apply_staff)
 def post_comment(request: HttpRequest):
     if request.method == "POST":
         form = CommentForm(user=request.user, data=request.POST or None, mini=True)
-        source = get_object_for_content_type(
+        source = _get_object_for_content_type(
             request.POST.get("source_content_type"),
             request.POST.get("source_object_id"),
         )
@@ -193,7 +193,7 @@ def post_comment(request: HttpRequest):
         # Ensure the provided source content type & object actually exist
         source_content_type = params.get("source_content_type")
         source_object_id = params.get("source_object_id")
-        if get_object_for_content_type(source_content_type, source_object_id) is None:
+        if _get_object_for_content_type(source_content_type, source_object_id) is None:
             raise Http404
 
         form.fields["source_content_type"].initial = source_content_type
@@ -202,7 +202,7 @@ def post_comment(request: HttpRequest):
         related_content_type = params.get("related_content_type")
         related_object_id = params.get("related_object_id")
         if (
-            get_object_for_content_type(related_content_type, related_object_id)
+            _get_object_for_content_type(related_content_type, related_object_id)
             is not None
         ):
             form.fields["related_content_type"].initial = related_content_type

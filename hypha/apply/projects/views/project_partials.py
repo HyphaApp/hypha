@@ -20,6 +20,53 @@ from ..models.project import (
 )
 
 
+def _get_object_activity(
+    request: HttpRequest, object_class: Model | Manager | QuerySet, object_pk: int
+) -> HttpResponse:
+    """A generic view function to be leveraged by more specific object views
+
+    Args:
+        object_class: A Model, Manager or QuerySet of the object to get activity for
+        object_pk: the pk of the object to get activity for
+
+    Returns:
+        A rendered object_status.html template containing all status/activity relating to the specific object
+    """
+    object = get_object_or_404(object_class, pk=object_pk)
+    user = request.user
+
+    related_type_pk = ContentType.objects.get_for_model(object_class).pk
+
+    activities = (
+        Activity.objects.filter(
+            related_content_type=related_type_pk, related_object_id=object_pk
+        )
+        .exclude(current=False)
+        .visible_to(user)
+    )
+
+    preview_activity = (
+        Activity.actions.filter(
+            related_content_type=related_type_pk, related_object_id=object_pk
+        )
+        .visible_to(user)
+        .first()
+    )
+
+    return render(
+        request,
+        "application_projects/partials/object_status.html",
+        context={
+            "object": object,
+            "preview_activity": preview_activity,
+            "activities": activities,
+            "user": user,
+            # Determine if the collapsible be open by default
+            "open": True if request.GET.get("open") == "true" else False,
+        },
+    )
+
+
 @login_required
 def partial_project_lead(request, pk):
     project = get_object_or_404(Project, pk=pk)
@@ -113,53 +160,6 @@ def partial_get_invoice_status_table(
     )
 
 
-def get_object_activity(
-    request: HttpRequest, object_class: Model | Manager | QuerySet, object_pk: int
-) -> HttpResponse:
-    """A generic view function to be leveraged by more specific object views
-
-    Args:
-        object_class: A Model, Manager or QuerySet of the object to get activity for
-        object_pk: the pk of the object to get activity for
-
-    Returns:
-        A rendered object_status.html template containing all status/activity relating to the specific object
-    """
-    object = get_object_or_404(object_class, pk=object_pk)
-    user = request.user
-
-    related_type_pk = ContentType.objects.get_for_model(object_class).pk
-
-    activities = (
-        Activity.objects.filter(
-            related_content_type=related_type_pk, related_object_id=object_pk
-        )
-        .exclude(current=False)
-        .visible_to(user)
-    )
-
-    preview_activity = (
-        Activity.actions.filter(
-            related_content_type=related_type_pk, related_object_id=object_pk
-        )
-        .visible_to(user)
-        .first()
-    )
-
-    return render(
-        request,
-        "application_projects/partials/object_status.html",
-        context={
-            "object": object,
-            "preview_activity": preview_activity,
-            "activities": activities,
-            "user": user,
-            # Determine if the collapsible be open by default
-            "open": True if request.GET.get("open") == "true" else False,
-        },
-    )
-
-
 @login_required
 def partial_get_invoice_status(request: HttpRequest, invoice_pk: int, *args, **kwargs):
     """
@@ -172,7 +172,7 @@ def partial_get_invoice_status(request: HttpRequest, invoice_pk: int, *args, **k
     Returns:
         HttpResponse containing the activity of requested invoice
     """
-    return get_object_activity(request, Invoice, invoice_pk)
+    return _get_object_activity(request, Invoice, invoice_pk)
 
 
 @login_required
@@ -187,7 +187,7 @@ def partial_get_report_status(request: HttpRequest, report_pk: int, *args, **kwa
     Returns:
         HttpResponse containing the activity of requested invoice
     """
-    return get_object_activity(request, Report, report_pk)
+    return _get_object_activity(request, Report, report_pk)
 
 
 @login_required
@@ -202,7 +202,7 @@ def partial_get_sow_status(request: HttpRequest, sow_pk: int, *args, **kwargs):
     Returns:
         HttpResponse containing activity
     """
-    return get_object_activity(request, ProjectSOW, sow_pk)
+    return _get_object_activity(request, ProjectSOW, sow_pk)
 
 
 @login_required
@@ -217,7 +217,7 @@ def partial_get_pf_status(request: HttpRequest, pfp_pk: int, *args, **kwargs):
     Returns:
         HttpResponse containing the activity of requested invoice
     """
-    return get_object_activity(request, ProjectFormPointer, pfp_pk)
+    return _get_object_activity(request, ProjectFormPointer, pfp_pk)
 
 
 @login_required
