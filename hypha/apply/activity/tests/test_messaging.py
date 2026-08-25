@@ -666,7 +666,7 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         )
 
         self.mock_send_email.assert_called_once_with(
-            ANY, Contains(str("assigned to a comment")), ANY, [assignee.email], logs=ANY
+            ANY, Contains("assigned to a comment"), ANY, [assignee.email], logs=ANY
         )
 
 
