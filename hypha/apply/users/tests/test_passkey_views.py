@@ -744,7 +744,7 @@ class TestPasskeyElevationRequired(TestCase):
         passkey = make_passkey(self.user)
         url = reverse("users:passkey_delete", args=[passkey.pk])
         # HTMX request — expect an HX-Redirect header instead of a JSON body.
-        response = self.client.post(url, HTTP_HX_REQUEST="true")
+        response = self.client.post(url, headers={"hx-request": "true"})
         self.assertEqual(response.status_code, 204)
         self.assertIn(reverse("users:elevate"), response["HX-Redirect"])
         self.assertTrue(Passkey.objects.filter(pk=passkey.pk).exists())
@@ -753,7 +753,7 @@ class TestPasskeyElevationRequired(TestCase):
         force_elevated(self)
         passkey = make_passkey(self.user)
         url = reverse("users:passkey_delete", args=[passkey.pk])
-        response = self.client.post(url, HTTP_HX_REQUEST="true")
+        response = self.client.post(url, headers={"hx-request": "true"})
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Passkey.objects.filter(pk=passkey.pk).exists())
 
@@ -777,7 +777,7 @@ class TestPasskeyElevationRequiredForOAuthUsers(TestCase):
     def test_delete_requires_elevation_and_keeps_passkey(self):
         passkey = make_passkey(self.user)
         url = reverse("users:passkey_delete", args=[passkey.pk])
-        response = self.client.post(url, HTTP_HX_REQUEST="true")
+        response = self.client.post(url, headers={"hx-request": "true"})
         self.assertEqual(response.status_code, 204)
         self.assertIn(reverse("users:elevate"), response["HX-Redirect"])
         self.assertTrue(Passkey.objects.filter(pk=passkey.pk).exists())
@@ -786,7 +786,7 @@ class TestPasskeyElevationRequiredForOAuthUsers(TestCase):
         force_elevated(self)
         passkey = make_passkey(self.user)
         url = reverse("users:passkey_delete", args=[passkey.pk])
-        response = self.client.post(url, HTTP_HX_REQUEST="true")
+        response = self.client.post(url, headers={"hx-request": "true"})
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Passkey.objects.filter(pk=passkey.pk).exists())
 

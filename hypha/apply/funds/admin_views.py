@@ -65,10 +65,8 @@ def custom_admin_round_copy_view(request, page):
         messages.info(
             request,
             _(
-                (
-                    "Please select the date in the copied page. "
-                    "Newly copied pages have NONE value for the start and end date"
-                )
+                "Please select the date in the copied page. "
+                "Newly copied pages have NONE value for the start and end date"
             ),
         )
 

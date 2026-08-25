@@ -46,9 +46,7 @@ class TranslateSubmissionView(View):
                     _("User attempted to translate submission but is not org faculty"),
                 )
                 return HttpResponseRedirect(self.submission.get_absolute_url())
-            return super(TranslateSubmissionView, self).dispatch(
-                request, *args, **kwargs
-            )
+            return super().dispatch(request, *args, **kwargs)
 
         def get(self, *args, **kwargs):
             translate_form = TranslateSubmissionForm()

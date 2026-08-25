@@ -42,11 +42,11 @@ class CoApplicantInvite(models.Model):
     status = models.CharField(
         _("status"),
         max_length=20,
-        choices=CoApplicantInviteStatus.choices,
+        choices=CoApplicantInviteStatus,
         default=CoApplicantInviteStatus.PENDING,
     )
     role = models.CharField(
-        _("role"), choices=CoApplicantRole.choices, default=CoApplicantRole.VIEW
+        _("role"), choices=CoApplicantRole, default=CoApplicantRole.VIEW
     )
     project_permission = models.JSONField(blank=True, null=True, default=list)
     responded_on = models.DateTimeField(blank=True, null=True)
@@ -80,7 +80,7 @@ class CoApplicant(models.Model):
         CoApplicantInvite, on_delete=models.CASCADE, related_name="co_applicant"
     )
     role = models.CharField(
-        _("role"), choices=CoApplicantRole.choices, default=CoApplicantRole.VIEW
+        _("role"), choices=CoApplicantRole, default=CoApplicantRole.VIEW
     )
     project_permission = models.JSONField(blank=True, null=True, default=list)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
