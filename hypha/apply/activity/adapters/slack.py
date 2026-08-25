@@ -197,10 +197,7 @@ class SlackAdapter(AdapterBase):
             assignee = kwargs.get("assignee")
             return [self.slack_id(assignee)]
 
-        if hasattr(source, "lead"):
-            recipients = [self.slack_id(source.lead)]
-        else:
-            recipients = []
+        recipients = [self.slack_id(source.lead)]
         # Notify second reviewer when first reviewer is done.
         if message_type in [MESSAGES.NEW_REVIEW, MESSAGES.REVIEW_OPINION] and related:
             submission = source
