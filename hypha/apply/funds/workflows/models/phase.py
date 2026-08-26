@@ -1,4 +1,5 @@
 from django.utils.text import slugify
+from django.utils.translation import override
 
 from ..constants import PHASE_BG_COLORS, UserPermissions
 from ..permissions import Permissions
@@ -33,7 +34,10 @@ class Phase:
 
         self.public_name = str(public) if public else self.display_name
         self.future_name_staff = str(future) if future else self.display_name
-        self.bg_color = PHASE_BG_COLORS.get(self.display_name, "bg-gray-200")
+        # Look the colour up against the untranslated source string, since
+        # PHASE_BG_COLORS is keyed by the English msgids.
+        with override(None):
+            self.bg_color = PHASE_BG_COLORS.get(str(display), "bg-gray-200")
         self.future_name_public = str(future) if future else self.public_name
         self.stage = stage
         self.permissions = Permissions(permissions)
