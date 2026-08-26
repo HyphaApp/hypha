@@ -28,16 +28,19 @@ class Phase:
             transitions = {}
         self.name = name
         self.display_name = str(display)
-        self.display_slug = slugify(display)
         if public and future:
             raise ValueError("Cant provide both a future and a public name")
 
         self.public_name = str(public) if public else self.display_name
         self.future_name_staff = str(future) if future else self.display_name
-        # Look the colour up against the untranslated source string, since
-        # PHASE_BG_COLORS is keyed by the English msgids.
+        # Derive the slug and the colour from the untranslated source string:
+        # PHASE_BG_COLORS is keyed by the English msgids, and the slug is used
+        # as a filter value in URLs, so it must not vary with the active
+        # language.
         with override(None):
-            self.bg_color = PHASE_BG_COLORS.get(str(display), "bg-gray-200")
+            source_display = str(display)
+        self.display_slug = slugify(source_display)
+        self.bg_color = PHASE_BG_COLORS.get(source_display, "bg-gray-200")
         self.future_name_public = str(future) if future else self.public_name
         self.stage = stage
         self.permissions = Permissions(permissions)

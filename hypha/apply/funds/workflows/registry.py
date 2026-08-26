@@ -112,6 +112,10 @@ STATUSES = defaultdict(set)
 for key, value in PHASES:
     STATUSES[value.display_name].add(key)
 
+# Stable, language-independent slug for each display name. Filter values are
+# built from these so that a filtered URL keeps working across languages.
+STATUS_SLUGS = {value.display_name: value.display_slug for _, value in PHASES}
+
 active_statuses = [
     status
     for status, _ in PHASES
