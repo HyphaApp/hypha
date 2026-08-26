@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from ..constants import DRAFT_STATE, INITIAL_STATE, UserPermissions
@@ -67,6 +66,7 @@ SingleStageExtIntDefinition = [
                 INITIAL_STATE: _("Need screening (revert)"),
             },
             "display": _("External Review"),
+            "public": _("Application Review"),
             "stage": RequestExtInt,
             "permissions": reviewer_review_permissions,
         },
@@ -114,11 +114,8 @@ SingleStageExtIntDefinition = [
                 ),
             },
             "display": _("Internal Review"),
-            "public": _("{ORG_SHORT_NAME} Review").format(
-                ORG_SHORT_NAME=settings.ORG_SHORT_NAME
-            ),
             "stage": RequestExtInt,
-            "permissions": default_permissions,
+            "permissions": hidden_from_applicant_permissions,
         },
     },
     {
