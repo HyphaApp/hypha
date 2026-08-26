@@ -117,6 +117,8 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 
 This workflow is a single stage process with both an external review and an internal review stage. It is very similar to the "Request with external review" workflow, see above, but the order of the two review steps is reversed: the external reviewers see the application first, and the internal review only opens once the external review has been closed.
 
+The internal review is optional — an application can be accepted, waitlisted or dismissed straight after the external review has been closed.
+
 It is also the only workflow that offers **Waitlisted** as an outcome, alongside Accepted and Dismissed.
 
 **Proposal Persona:**
@@ -127,7 +129,7 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 
 - A request for more information (`ext_int_more_info`) — opens editing permissions to applicant again to revise their application to provide the information requested by the screeners.
 - Open external review (`ext_int_external_review`) — can transition only between closing the review period (`ext_int_post_external_review_discussion`) and reverting back to the internal screening phase.
-  - `ext_int_post_external_review_discussion` — after the external review is closed, you can request more information (`ext_int_post_external_review_more_info`), open the internal review (`ext_int_internal_review`), mark ready for determination (`ext_int_determination`), revert back to opening the external review (`ext_int_external_review`), or dismiss (`ext_int_rejected`)
+  - `ext_int_post_external_review_discussion` — after the external review is closed, you can request more information (`ext_int_post_external_review_more_info`), open the internal review (`ext_int_internal_review`), mark ready for determination (`ext_int_determination`), revert back to opening the external review (`ext_int_external_review`), accept (`ext_int_accepted`), waitlist (`ext_int_waitlisted`) or dismiss (`ext_int_rejected`)
   - `ext_int_post_external_review_more_info` — opens editing permissions to applicant again to revise their application to provide the information requested by the external reviewers.
 - Open internal review (`ext_int_internal_review`) — can transition only between closing the review period (`ext_int_post_review_discussion`) and reverting back to discussion (`ext_int_post_external_review_discussion`)
   - `ext_int_post_review_discussion` — after the internal review is closed, you can request more information (`ext_int_post_review_more_info`), mark ready for determination (`ext_int_determination`), revert back to opening the internal review (`ext_int_internal_review`), accept (`ext_int_accepted`), waitlist (`ext_int_waitlisted`) or dismiss (`ext_int_rejected`)
@@ -135,9 +137,28 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 - Ready for determination (`ext_int_determination`) — can revert back to discussion (“Ready For Discussion (revert)” — `ext_int_post_review_discussion`), accept (`ext_int_accepted`), waitlist (`ext_int_waitlisted`) or dismiss (`ext_int_rejected`)
 - Waitlisted (`ext_int_waitlisted`) — the application is kept in play without a decision. Can transition to accept (`ext_int_accepted`), dismiss (`ext_int_rejected`), or revert back to ready for determination (`ext_int_determination`). Staff can still edit this submission. Waitlisting is a plain status change — unlike Accept and Dismiss it does not open the determination form and does not create a determination record.
 - Accepted (`ext_int_accepted`) — application accepted. Staff can still edit this submission.
-- Dismissed (`ext_int_rejected`) — application rejected. Permissions removed from all roles.
+- Dismissed (`ext_int_rejected`) — application rejected. Editing and reviewing permissions removed from all roles, the applicant can still view the submission.
 
 There is no "Accepted but additional info required" state in this workflow.
+
+If the `TRANSITION_AFTER_REVIEWS` setting is set to a number, submitting a review can move the application on automatically:
+
+- Need screening → External Review, as soon as the first review is submitted. The configured number is not taken into account for this step, and only staff can review during screening.
+- External Review → Ready For Discussion, once that many reviews have been submitted by users in the Reviewer group.
+- Internal Review → Ready For Discussion, once that many reviews have been submitted in total.
+
+The automatic transition is skipped if the user submitting the review is not allowed to make it.
+
+**What the applicant sees**
+
+Everything from the first discussion onwards is hidden from the applicant. The status bar shows four steps:
+
+1. **Draft** (`draft`)
+2. **Application Received** (`INITIAL_STATE`, "Need screening" to staff)
+3. **Application Review** (`ext_int_external_review`, "External Review" to staff)
+4. **Application Outcome** — shown as Accepted (`ext_int_accepted`), Waitlisted (`ext_int_waitlisted`) or Dismissed (`ext_int_rejected`) once the application reaches that step
+
+The hidden phases (`ext_int_post_external_review_discussion`, `ext_int_internal_review`, `ext_int_post_review_discussion` and `ext_int_determination`) do not add a step of their own — to the applicant the application stays on "Application Review" until an outcome is reached. The three "More information required" states are visible to the applicant, since they need to edit and resubmit their application.
 
 ### 💡 Concept and Proposal
 
