@@ -147,6 +147,9 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPDATE_AUTHOR: _(
             "{user} has updated author from {old_author} to {source.user} for submission <{link}|{source}>"
         ),
+        MESSAGES.COMMENT_ASSIGNED: _(
+            "A new comment has been assigned to {assignee} by {user} on submission <{link}|{source}>"
+        ),
     }
 
     def __init__(self):
@@ -189,6 +192,10 @@ class SlackAdapter(AdapterBase):
                 for user in User.objects.approvers()
                 if self.slack_id(user)
             ]
+
+        if message_type == MESSAGES.COMMENT_ASSIGNED:
+            assignee = kwargs.get("assignee")
+            return [self.slack_id(assignee)]
 
         recipients = [self.slack_id(source.lead)]
         # Notify second reviewer when first reviewer is done.

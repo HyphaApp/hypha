@@ -49,6 +49,17 @@ def comments_view(request, pk):
                     source=submission,
                     related=obj,
                 )
+
+                if assigned_user := form.cleaned_data["assign_to"]:
+                    messenger(
+                        MESSAGES.COMMENT_ASSIGNED,
+                        request=request,
+                        user=request.user,
+                        source=submission,
+                        related=obj,
+                        assignee=assigned_user,
+                    )
+
                 return redirect("funds:submissions:comments", pk=submission.pk)
 
     ctx = {
