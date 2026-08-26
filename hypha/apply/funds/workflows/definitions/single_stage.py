@@ -32,7 +32,7 @@ SingleStageDefinition = [
             "transitions": {
                 "more_info": _("Request More Information"),
                 "internal_review": _("Open Review"),
-                "determination": _("Ready For Determination"),
+                "determination": _("Ready for Determination"),
                 "almost": _("Accept but additional info required"),
                 "accepted": _("Accept"),
                 "rejected": _("Dismiss"),
@@ -55,7 +55,7 @@ SingleStageDefinition = [
                     "method": "create_revision",
                     "custom": {"trigger_on_submit": True},
                 },
-                "determination": _("Ready For Determination"),
+                "determination": _("Ready for Determination"),
                 "almost": _("Accept but additional info required"),
                 "accepted": _("Accept"),
                 "rejected": _("Dismiss"),
@@ -83,13 +83,13 @@ SingleStageDefinition = [
         "post_review_discussion": {
             "transitions": {
                 "post_review_more_info": _("Request More Information"),
-                "determination": _("Ready For Determination"),
+                "determination": _("Ready for Determination"),
                 "internal_review": _("Open Review (revert)"),
                 "almost": _("Accept but additional info required"),
                 "accepted": _("Accept"),
                 "rejected": _("Dismiss"),
             },
-            "display": _("Ready For Discussion"),
+            "display": _("Ready for Discussion"),
             "stage": Request,
             "permissions": hidden_from_applicant_permissions,
         },
@@ -106,7 +106,7 @@ SingleStageDefinition = [
                     "method": "create_revision",
                     "custom": {"trigger_on_submit": True},
                 },
-                "determination": _("Ready For Determination"),
+                "determination": _("Ready for Determination"),
                 "almost": _("Accept but additional info required"),
                 "accepted": _("Accept"),
                 "rejected": _("Dismiss"),
@@ -119,7 +119,7 @@ SingleStageDefinition = [
     {
         "determination": {
             "transitions": {
-                "post_review_discussion": _("Ready For Discussion (revert)"),
+                "post_review_discussion": _("Ready for Discussion (revert)"),
                 "almost": _("Accept but additional info required"),
                 "accepted": _("Accept"),
                 "rejected": _("Dismiss"),
@@ -139,7 +139,7 @@ SingleStageDefinition = [
         "almost": {
             "transitions": {
                 "accepted": _("Accept"),
-                "post_review_discussion": _("Ready For Discussion (revert)"),
+                "post_review_discussion": _("Ready for Discussion (revert)"),
             },
             "display": _("Accepted but additional info required"),
             "stage": Request,

@@ -37,7 +37,7 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 - Open review (`internal_review`) — can transition only between closing review period (`post_review_discussion`) and reverting back to the internal screening phase.
   - `post_review_discussion` — after review is closed, you can request more information (`post_review_more_info`), ready for determination (`determination`), revert back to opening the review (`internal_review`), accept but additional info is needed (`almost`), accept (`accepted`) or reject (`rejected`)
   - `post_review_more_info` — opens editing permissions to applicant again to revise their application to provide the information requested by the reviewers.
-- Ready for determination (`determination`) — can revert back to discussion (“Ready For Discussion (revert)” — `post_review_discussion`) , or accept with additional info needed (`almost`), accept (`accepted`) or reject (`rejected`)
+- Ready for determination (`determination`) — can revert back to discussion (“Ready for Discussion (revert)” — `post_review_discussion`) , or accept with additional info needed (`almost`), accept (`accepted`) or reject (`rejected`)
 - Accepted, but additional info is needed (`almost`) — opens editing permissions to applicant again to revise their application to provide the information requested by the reviewers, admin, or staff positions.
 - Accepted (`accepted`) — application accepted. Staff can still edit this submission.
 - Rejected (`rejected`) — application rejected. Permissions removed from all roles.
@@ -56,7 +56,7 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 - Open review (`same_internal_review`) — can transition only between closing review period (`same_post_review_discussion`) and reverting back to the internal screening phase.
   - `same_post_review_discussion` — after review is closed, you can request more information (`same_post_review_more_info`), ready for determination (`same_determination`), revert back to opening the review (`same_internal_review`), or reject (`same_rejected`)
   - `same_post_review_more_info` — opens editing permissions to applicant again to revise their application to provide the information requested by the screeners.
-- Ready for determination (`same_determination`) — can revert back to discussion (“Ready For Discussion (revert)” — `same_post_review_discussion`) , or accept with additional info needed (`same_almost`), accept (`same_accepted`) or reject (`same_rejected`)
+- Ready for determination (`same_determination`) — can revert back to discussion (“Ready for Discussion (revert)” — `same_post_review_discussion`) , or accept with additional info needed (`same_almost`), accept (`same_accepted`) or reject (`same_rejected`)
 - Accepted, but additional info is needed (`same_almost`) — opens editing permissions to applicant again to revise their application to provide the information requested by the reviewers, admin, or staff positions.
 - Accepted (`same_accepted`) — application accepted. Staff can still edit this submission.
 - Rejected (`same_rejected`) — application rejected. Permissions removed from all roles.
@@ -80,7 +80,7 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 - External review (`ext_external_review`) — can only transition between closing the review (`ext_post_external_review_discussion`) and reverting back to discussion (`ext_post_review_discussion`)
   - `ext_post_external_review_discussion` — can transition to a request more information (`ext_post_external_review_more_info`), ready for determination (`ext_determination`), revert back to opening the external review (`ext_external_review`), accept but additional info is needed (`ext_almost`), accept (`ext_accepted`) or reject (`ext_rejected`)
   - `ext_post_external_review_more_info` — opens editing permissions to applicant again to revise their application to provide the information requested by the reviewers.
-- Ready for determination (`ext_determination`) — can revert back to discussion (“Ready For Discussion (revert)” — `ext_post_external_review_discussion`) , or accept with additional info needed (`ext_almost`), accept (`ext_accepted`) or reject (`ext_rejected`)
+- Ready for determination (`ext_determination`) — can revert back to discussion (“Ready for Discussion (revert)” — `ext_post_external_review_discussion`) , or accept with additional info needed (`ext_almost`), accept (`ext_accepted`) or reject (`ext_rejected`)
 - Accepted, but additional info is needed (`ext_almost`) — opens editing permissions to applicant again to revise their application to provide the information requested by the reviewers, admin, or staff positions.
 - Accepted (`ext_accepted`) — application accepted. Staff can still edit this submission.
 - Rejected (`ext_rejected`) — application rejected. Permissions removed from all roles.
@@ -134,7 +134,7 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 - Open internal review (`ext_int_internal_review`) — can transition only between closing the review period (`ext_int_post_review_discussion`) and reverting back to discussion (`ext_int_post_external_review_discussion`)
   - `ext_int_post_review_discussion` — after the internal review is closed, you can request more information (`ext_int_post_review_more_info`), mark ready for determination (`ext_int_determination`), revert back to opening the internal review (`ext_int_internal_review`), accept (`ext_int_accepted`), waitlist (`ext_int_waitlisted`) or dismiss (`ext_int_rejected`)
   - `ext_int_post_review_more_info` — opens editing permissions to applicant again to revise their application to provide the information requested by the reviewers.
-- Ready for determination (`ext_int_determination`) — can revert back to discussion (“Ready For Discussion (revert)” — `ext_int_post_review_discussion`), accept (`ext_int_accepted`), waitlist (`ext_int_waitlisted`) or dismiss (`ext_int_rejected`)
+- Ready for determination (`ext_int_determination`) — can revert back to discussion (“Ready for Discussion (revert)” — `ext_int_post_review_discussion`), accept (`ext_int_accepted`), waitlist (`ext_int_waitlisted`) or dismiss (`ext_int_rejected`)
 - Waitlisted (`ext_int_waitlisted`) — the application is kept in play without a decision. Can transition to accept (`ext_int_accepted`), dismiss (`ext_int_rejected`), or revert back to ready for determination (`ext_int_determination`). Staff can still edit this submission. Waitlisting is a plain status change — unlike Accept and Dismiss it does not open the determination form and does not create a determination record.
 - Accepted (`ext_int_accepted`) — application accepted. Staff can still edit this submission.
 - Dismissed (`ext_int_rejected`) — application rejected. Editing and reviewing permissions removed from all roles, the applicant can still view the submission.
@@ -144,8 +144,8 @@ There is no "Accepted but additional info required" state in this workflow.
 If the `TRANSITION_AFTER_REVIEWS` setting is set to a number, submitting a review can move the application on automatically:
 
 - Need screening → External Review, as soon as the first review is submitted. The configured number is not taken into account for this step, and only staff can review during screening.
-- External Review → Ready For Discussion, once that many reviews have been submitted by users in the Reviewer group.
-- Internal Review → Ready For Discussion, once that many reviews have been submitted in total.
+- External Review → Ready for Discussion, once that many reviews have been submitted by users in the Reviewer group.
+- Internal Review → Ready for Discussion, once that many reviews have been submitted in total.
 
 The automatic transition is skipped if the user submitting the review is not allowed to make it.
 
