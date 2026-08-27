@@ -1,5 +1,7 @@
 """Tests for the workflow registry, focused on the external-then-internal workflow."""
 
+from types import SimpleNamespace
+
 import pytest
 from django.test import SimpleTestCase
 
@@ -7,6 +9,7 @@ from hypha.apply.users.tests.factories import StaffFactory
 
 from ..workflows import (
     DETERMINATION_OUTCOMES,
+    INITIAL_STATE,
     WORKFLOWS,
     ext_or_higher_statuses,
     ext_review_statuses,
@@ -33,20 +36,48 @@ class TestRequestExternalInternalWorkflow(SimpleTestCase):
             "draft": 0,
             "in_discussion": 1,
             "ext_int_more_info": 1,
-            "ext_int_external_review": 2,
-            "ext_int_post_external_review_discussion": 3,
-            "ext_int_post_external_review_more_info": 3,
-            "ext_int_internal_review": 4,
-            "ext_int_post_review_discussion": 5,
-            "ext_int_post_review_more_info": 5,
-            "ext_int_determination": 6,
-            "ext_int_accepted": 7,
-            "ext_int_waitlisted": 7,
-            "ext_int_rejected": 7,
+            "ext_int_ready_for_review": 2,
+            "ext_int_external_review": 3,
+            "ext_int_post_external_review_discussion": 4,
+            "ext_int_post_external_review_more_info": 4,
+            "ext_int_internal_review": 5,
+            "ext_int_post_review_discussion": 6,
+            "ext_int_post_review_more_info": 6,
+            "ext_int_determination": 7,
+            "ext_int_accepted": 8,
+            "ext_int_waitlisted": 8,
+            "ext_int_rejected": 8,
         }
         self.assertEqual(
             {name: phase.step for name, phase in self.workflow.items()}, expected
         )
+
+    def test_ready_for_review_comes_before_external_review(self):
+        self.assertLess(
+            self.workflow["ext_int_ready_for_review"].step,
+            self.workflow["ext_int_external_review"].step,
+        )
+        # Screening can only reach the external review through the new phase.
+        self.assertNotIn(
+            "ext_int_external_review", self.workflow[INITIAL_STATE].transitions
+        )
+        self.assertIn(
+            "ext_int_ready_for_review", self.workflow[INITIAL_STATE].transitions
+        )
+
+    def test_ready_for_review_is_hidden_from_the_applicant(self):
+        applicant = SimpleNamespace(
+            is_apply_staff=False, is_applicant=True, is_reviewer=False
+        )
+        reviewer = SimpleNamespace(
+            is_apply_staff=False, is_applicant=False, is_reviewer=True
+        )
+        phase = self.workflow["ext_int_ready_for_review"]
+        self.assertEqual(phase.display_name, "Ready for Review")
+        self.assertFalse(phase.permissions.can_view(applicant))
+        self.assertTrue(phase.permissions.can_view(reviewer))
+        # Reviewers only get to review once the external review is opened.
+        self.assertFalse(phase.permissions.can_review(reviewer))
 
     def test_external_review_comes_before_internal_review(self):
         self.assertLess(
@@ -78,6 +109,11 @@ class TestRequestExternalInternalWorkflow(SimpleTestCase):
                     "ext_int_waitlisted", self.workflow[phase_name].transitions
                 )
 
+    def test_dismissed_is_softened_for_the_applicant(self):
+        rejected = self.workflow["ext_int_rejected"]
+        self.assertEqual(rejected.display_name, "Dismissed")
+        self.assertEqual(rejected.public_name, "Not Accepted")
+
     def test_outcome_phases_are_terminal(self):
         for phase_name in ["ext_int_accepted", "ext_int_rejected"]:
             with self.subTest(phase=phase_name):
@@ -85,6 +121,8 @@ class TestRequestExternalInternalWorkflow(SimpleTestCase):
 
     def test_picked_up_by_derived_status_sets(self):
         self.assertIn("ext_int_external_review", ext_review_statuses)
+        self.assertNotIn("ext_int_ready_for_review", ext_review_statuses)
+        self.assertNotIn("ext_int_ready_for_review", ext_or_higher_statuses)
         self.assertIn("ext_int_internal_review", ext_or_higher_statuses)
         self.assertIn("ext_int_post_review_discussion", DETERMINATION_RESPONSE_PHASES)
 
@@ -97,6 +135,7 @@ def test_walk_the_whole_workflow():
     assert submission.status == "in_discussion"
 
     chain = [
+        "ext_int_ready_for_review",
         "ext_int_external_review",
         "ext_int_post_external_review_discussion",
         "ext_int_internal_review",
