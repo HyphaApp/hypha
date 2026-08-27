@@ -1,0 +1,8 @@
+{% load i18n heroicons %}
+<a
+    class="btn btn-secondary btn-outline"
+    href="{% url "social:begin" "okta-oauth2" %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
+>
+    {% heroicon_mini "key" size=18 class="opacity-80" aria_hidden=true %}
+    {% trans "Log in with Okta" %}
+</a>
