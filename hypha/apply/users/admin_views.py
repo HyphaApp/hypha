@@ -193,7 +193,7 @@ class CustomGroupIndexView(GroupIndexView):
             )
             if help_text:
                 group.name = mark_safe(
-                    f"{group.name}<p class=group-help-text>{help_text}</p>"
+                    f'{group.name}<p class="help w-mb-0">{help_text}</p>'
                 )
 
             custom_groups.append(group)
