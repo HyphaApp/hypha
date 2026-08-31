@@ -1,6 +1,7 @@
 """Tests for the workflow registry, focused on the external-then-internal workflow."""
 
 from types import SimpleNamespace
+from unittest import mock
 
 import pytest
 from django.test import SimpleTestCase
@@ -8,6 +9,7 @@ from django.utils.translation import gettext_lazy, override
 
 from hypha.apply.users.tests.factories import StaffFactory
 
+from ..models.submissions import get_all_possible_states
 from ..workflows import (
     DETERMINATION_OUTCOMES,
     INITIAL_STATE,
@@ -198,3 +200,12 @@ class TestPhaseSourceNames(SimpleTestCase):
         self.assertEqual(discussion.display_name_source, "Ready for Discussion")
         self.assertEqual(discussion.display_slug, "ready-for-discussion")
         self.assertEqual(discussion.bg_color, "bg-blue-100")
+
+    def test_status_choices_ignore_the_active_language(self):
+        # These choices are written into migrations, so phases built on a
+        # non-English install must not label them in that language.
+        with override("cs"):
+            phase = self.phase(gettext_lazy("Accepted"))
+
+        with mock.patch.dict(WORKFLOWS, {"fake": {"a_phase": phase}}, clear=True):
+            self.assertEqual(get_all_possible_states(), [("a_phase", "Accepted")])

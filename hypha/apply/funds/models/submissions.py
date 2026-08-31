@@ -283,10 +283,17 @@ def transition_id(target, phase):
 
 
 def get_all_possible_states():
+    """The (status, label) choices for the status fields.
+
+    The label is the untranslated source name: these choices end up in
+    migrations, so they must not change with the active language. Nothing
+    displays them — the status is shown to users through the phase, see
+    `ApplicationSubmission.phase`.
+    """
     all_states = set()
     for workflow in WORKFLOWS.values():
         for phase_name, data in workflow.items():
-            all_states.add((phase_name, data.display_name))
+            all_states.add((phase_name, data.display_name_source))
     return sorted(all_states, key=lambda x: x[0])
 
 
