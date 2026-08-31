@@ -637,11 +637,16 @@ SESSION_COOKIE_AGE_LONG = env.int(
     "SESSION_COOKIE_AGE_LONG", 60 * 60 * 24 * 7 * 2
 )  # 2 weeks
 
-# This is used by Wagtail's email notifications for constructing absolute URLs.
+# Base URL used to build absolute links in outbound emails and Slack messages,
+# and by Wagtail's own email notifications. Include the scheme, e.g.
+# "https://apply.example.org".
+WAGTAILADMIN_BASE_URL = env.str("WAGTAILADMIN_BASE_URL", None)
+
+# Deprecated, set WAGTAILADMIN_BASE_URL instead. Kept as a fallback for
+# deployments that have not migrated yet; see hypha/core/checks.py.
 PRIMARY_HOST = env.str("PRIMARY_HOST", None)
-WAGTAILADMIN_BASE_URL = env.str("WAGTAILADMIN_BASE_URL", None) or (
-    f"https://{PRIMARY_HOST}" if PRIMARY_HOST else None
-)
+if PRIMARY_HOST and not WAGTAILADMIN_BASE_URL:
+    WAGTAILADMIN_BASE_URL = f"https://{PRIMARY_HOST}"
 
 
 # Security settings

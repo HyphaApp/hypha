@@ -6,5 +6,5 @@
 
 {{ determination.message|nh3|striptags }}
 
-{% trans "Read the full determination here" %}: {{ request.scheme }}://{{ request.get_host }}{{ determination.get_absolute_url }}
+{% trans "Read the full determination here" %}: {{ BASE_URL }}{{ determination.get_absolute_url }}
 {% endblock %}{# fmt:on #}

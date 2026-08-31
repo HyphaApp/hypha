@@ -5,5 +5,5 @@
 
 {% blocktrans with title=source.title_text_display %}An {{ ORG_SHORT_NAME }} staff member has updated an invoice on your project "{{ title }}".{% endblocktrans %}
 
-{% trans "View the invoice here:" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "View the invoice here:" %}: {{ BASE_URL }}{{ source.get_absolute_url }}
 {% endblock %}{# fmt:on #}

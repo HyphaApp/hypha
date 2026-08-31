@@ -7,8 +7,8 @@
 {% endblock %}
 
 {% block more_info %}
-{% trans "Link to your submission" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
+{% trans "Link to your submission" %}: {{ BASE_URL }}{{ source.get_absolute_url }}
+{% trans "If you have any questions, please submit them here" %}: {{ BASE_URL }}{{ source.get_absolute_url }}#communications
 
 {% trans "See our guide for more information" %}: {{ ORG_GUIDE_URL }}
 

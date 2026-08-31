@@ -168,11 +168,10 @@ class SlackAdapter(AdapterBase):
     def extra_kwargs(self, message_type, **kwargs):
         source = kwargs["source"]
         sources = kwargs["sources"]
-        request = kwargs["request"]
         related = kwargs["related"]
-        link = link_to(source, request)
-        link_related = link_to(related, request)
-        links = {source.id: link_to(source, request) for source in sources}
+        link = link_to(source)
+        link_related = link_to(related)
+        links = {source.id: link_to(source) for source in sources}
         return {
             "link": link,
             "link_related": link_related,

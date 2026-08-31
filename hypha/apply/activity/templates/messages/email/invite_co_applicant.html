@@ -10,6 +10,6 @@
 {% else %}
 {% blocktrans %}Click on link if you want to accept it.{% endblocktrans %}
 
-{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ accept_link }}
+{% trans "Link" %}: {{ BASE_URL }}{{ accept_link }}
 {% endif %}
 {% endblock %}{# fmt:on #}

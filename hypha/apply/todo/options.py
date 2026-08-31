@@ -251,7 +251,7 @@ template_map = {
 }
 
 
-def get_task_template(request, task, **kwargs):
+def get_task_template(task, **kwargs):
     related_obj = task.related_object
     code = task.code
     # if related_object is none/deleted and task remain there(edge case, avoiding 500)
@@ -266,7 +266,7 @@ def get_task_template(request, task, **kwargs):
         return None
     template_kwargs = {
         "related": related_obj,
-        "link": link_to(related_obj, request),
+        "link": link_to(related_obj),
     }
     if task.code == COMMENT_TASK:
         # Replace all newlines with spaces and truncate to 60 characters

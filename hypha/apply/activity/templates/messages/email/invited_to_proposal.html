@@ -7,8 +7,8 @@
 {% blocktrans %}Please review our Proposal Guide at {{ ORG_GUIDE_URL }} to learn more about the information we’d like to see. In the proposal please also address the feedback we provided in the concept note determination.{% endblocktrans %}{% endblock %}
 
 {% block more_info %}
-{% trans "Here is the link to start creating your proposal" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'funds:submissions:comments' pk=source.pk %}
+{% trans "Here is the link to start creating your proposal" %}: {{ BASE_URL }}{{ source.get_absolute_url }}
+{% trans "If you have any questions, please submit them here" %}: {{ BASE_URL }}{% url 'funds:submissions:comments' pk=source.pk %}
 
 {% blocktrans %}The system will allow you to save a draft of your proposal as you work on it. When you feel it is ready for our review, please click the “Submit” button and we’ll know to take a look at it. We’ll reply to you with feedback on your Proposal as quickly as possible.{% endblocktrans %}
 

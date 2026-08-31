@@ -5,6 +5,6 @@
 {% block content %}{# fmt:off #}
 {% blocktrans with title=source.title_text_display %}A new invoice has been submitted for project "{{title}}".{% endblocktrans %}
 
-{% trans "View the invoice here" %}: {{ request.scheme }}://{{ request.get_host }}{{ related.get_absolute_url }}
+{% trans "View the invoice here" %}: {{ BASE_URL }}{{ related.get_absolute_url }}
 
 {% endblock %}{# fmt:on #}

@@ -9,9 +9,9 @@
 {% blocktrans with status=invoice_status %}It's status is now "{{ status }}".{% endblocktrans %}
 
 {% if invoice.comment %}
-{% trans "A comment was left that can be read here" %}: {{ request.scheme }}://{{ request.get_host }}{{ comment_url }}
+{% trans "A comment was left that can be read here" %}: {{ BASE_URL }}{{ comment_url }}
 {% endif %}
 
-{% trans "View the invoice here" %}: {{ request.scheme }}://{{ request.get_host }}{{ invoice.get_absolute_url }}
+{% trans "View the invoice here" %}: {{ BASE_URL }}{{ invoice.get_absolute_url }}
 
 {% endblock %}{# fmt:on #}

@@ -13,7 +13,7 @@
 {% trans "A new contract has been added to your Project" %}:
 
 {% trans "Title" %}: {{ source.title_text_display }}
-{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "Link" %}: {{ BASE_URL }}{{ source.get_absolute_url }}
 
 {% if contract.is_signed %}
 {% trans "This contract has already been signed and there is no action for you to take." %}
@@ -25,8 +25,8 @@
 
 {% block more_info %}
 {% if request.user != source.user %}
-{% trans "View your project here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'funds:submissions:comments' pk=source.submission.pk %}
+{% trans "View your project here" %}: {{ BASE_URL }}{{ source.get_absolute_url }}
+{% trans "If you have any questions, please submit them here" %}: {{ BASE_URL }}{% url 'funds:submissions:comments' pk=source.submission.pk %}
 
 {% trans "See our guide for more information" %}: {{ ORG_GUIDE_URL }}
 

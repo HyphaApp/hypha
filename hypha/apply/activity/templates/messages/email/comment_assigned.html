@@ -9,5 +9,5 @@
 {% endblock %}
 
 {% block more_info %}
-{% trans "View it here" %}: {{ request.scheme }}://{{ request.get_host }}{{ comment.get_absolute_url }}
+{% trans "View it here" %}: {{ BASE_URL }}{{ comment.get_absolute_url }}
 {% endblock %}
