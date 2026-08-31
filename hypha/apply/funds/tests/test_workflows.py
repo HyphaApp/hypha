@@ -5,7 +5,8 @@ from unittest import mock
 
 import pytest
 from django.test import SimpleTestCase
-from django.utils.translation import gettext_lazy, override
+from django.utils.functional import lazy
+from django.utils.translation import get_language, override
 
 from hypha.apply.users.tests.factories import StaffFactory
 
@@ -174,6 +175,15 @@ def test_walk_the_whole_workflow():
     assert submission.phase.display_name == "Accepted"
 
 
+def fake_translation(source, translated):
+    """A lazy string that translates while a language is active.
+
+    Stands in for gettext_lazy: the compiled .mo files are gitignored, so CI
+    has no catalogs and the real thing would hand back the msgid there.
+    """
+    return lazy(lambda: source if get_language() is None else translated, str)()
+
+
 class TestPhaseSourceNames(SimpleTestCase):
     """The names the code matches on must not follow the active language."""
 
@@ -188,15 +198,17 @@ class TestPhaseSourceNames(SimpleTestCase):
 
     def test_source_name_slug_and_colour_ignore_the_active_language(self):
         with override("cs"):
-            accepted = self.phase(gettext_lazy("Accepted"))
-            discussion = self.phase(gettext_lazy("Ready for Discussion"))
+            accepted = self.phase(fake_translation("Accepted", "Prijato"))
+            discussion = self.phase(
+                fake_translation("Ready for Discussion", "Pripraveno k diskusi")
+            )
 
-        # Sanity check that "cs" really does translate these.
-        self.assertNotEqual(accepted.display_name, "Accepted")
-
+        # The staff facing name is translated, everything matched on is not.
+        self.assertEqual(accepted.display_name, "Prijato")
         self.assertEqual(accepted.display_name_source, "Accepted")
         self.assertEqual(accepted.display_slug, "accepted")
         self.assertEqual(accepted.bg_color, "bg-green-200")
+        self.assertEqual(discussion.display_name, "Pripraveno k diskusi")
         self.assertEqual(discussion.display_name_source, "Ready for Discussion")
         self.assertEqual(discussion.display_slug, "ready-for-discussion")
         self.assertEqual(discussion.bg_color, "bg-blue-100")
@@ -205,7 +217,7 @@ class TestPhaseSourceNames(SimpleTestCase):
         # These choices are written into migrations, so phases built on a
         # non-English install must not label them in that language.
         with override("cs"):
-            phase = self.phase(gettext_lazy("Accepted"))
+            phase = self.phase(fake_translation("Accepted", "Prijato"))
 
         with mock.patch.dict(WORKFLOWS, {"fake": {"a_phase": phase}}, clear=True):
             self.assertEqual(get_all_possible_states(), [("a_phase", "Accepted")])
