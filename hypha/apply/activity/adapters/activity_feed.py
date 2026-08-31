@@ -38,7 +38,6 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.INVITED_TO_PROPOSAL: _("Invited to submit a proposal"),
         MESSAGES.REVIEWERS_UPDATED: "reviewers_updated",
         MESSAGES.BATCH_REVIEWERS_UPDATED: "batch_reviewers_updated",
-        MESSAGES.PARTNERS_UPDATED: "partners_updated",
         MESSAGES.NEW_REVIEW: _("Submitted a review"),
         MESSAGES.OPENED_SEALED: _("Opened the submission while still sealed"),
         MESSAGES.SCREENING: "handle_screening_statuses",
@@ -55,6 +54,9 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.UPDATE_PROJECT_TITLE: _(
             "updated the project title from {old_title} to {source.title}"
         ),
+        MESSAGES.UPDATE_PROJECT_CONTRACT_NUMBER: _(
+            "updated contract number to {source.contract_number}"
+        ),
         MESSAGES.UPDATE_PROJECT_LEAD: _("update Lead from {old_lead} to {source.lead}"),
         MESSAGES.SEND_FOR_APPROVAL: _("Requested approval"),
         MESSAGES.APPROVE_PAF: "handle_paf_assignment",
@@ -66,6 +68,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.UPDATE_INVOICE_STATUS: "handle_update_invoice_status",
         MESSAGES.CREATE_INVOICE: _("Invoice added"),
         MESSAGES.SUBMIT_REPORT: _("Submitted a report"),
+        MESSAGES.DELETE_REPORT: _("deleted a report"),
         MESSAGES.SKIPPED_REPORT: "handle_skipped_report",
         MESSAGES.REPORT_FREQUENCY_CHANGED: "handle_report_frequency",
         MESSAGES.DISABLED_REPORTING: _("disabled reporting"),
@@ -76,6 +79,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.UNARCHIVE_SUBMISSION: _("un-archived this submission"),
         MESSAGES.DELETE_INVOICE: _("deleted an invoice"),
         MESSAGES.REMOVE_TASK: "handle_task_removal",
+        MESSAGES.UPDATE_AUTHOR: _("updated author from {old_author} to {source.user}"),
     }
 
     def recipients(self, message_type, **kwargs):
@@ -89,7 +93,6 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.REVIEW_OPINION,
             MESSAGES.DELETE_REVIEW_OPINION,
             MESSAGES.BATCH_REVIEWERS_UPDATED,
-            MESSAGES.PARTNERS_UPDATED,
             MESSAGES.APPROVE_PROJECT,
             MESSAGES.REQUEST_PROJECT_CHANGE,
             MESSAGES.SEND_FOR_APPROVAL,
@@ -102,6 +105,7 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.UNARCHIVE_SUBMISSION,
             MESSAGES.BATCH_ARCHIVE_SUBMISSION,
             MESSAGES.REMOVE_TASK,
+            MESSAGES.UPDATE_AUTHOR,
         ]:
             return {"visibility": TEAM}
 
@@ -112,6 +116,7 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.SUBMIT_CONTRACT_DOCUMENTS,
             MESSAGES.DELETE_INVOICE,
             MESSAGES.CREATE_INVOICE,
+            MESSAGES.DELETE_REPORT,
         ]:
             return {"visibility": APPLICANT}
 
@@ -287,18 +292,6 @@ class ActivityAdapter(AdapterBase):
                 old_phase=old_phase, source=submission, **kwargs
             )
 
-    def partners_updated(self, added, removed, **kwargs):
-        message = [_("Partners updated.")]
-        if added:
-            message.append(_("Added:"))
-            message.append(", ".join([str(user) for user in added]) + ".")
-
-        if removed:
-            message.append(_("Removed:"))
-            message.append(", ".join([str(user) for user in removed]) + ".")
-
-        return " ".join(message)
-
     def handle_report_frequency(self, config, **kwargs):
         new_schedule = config.get_frequency_display()
         return _(
@@ -307,9 +300,9 @@ class ActivityAdapter(AdapterBase):
 
     def handle_skipped_report(self, report, **kwargs):
         if report.skipped:
-            return "Skipped a Report"
+            return _("Skipped a Report")
         else:
-            return "Marked a Report as required"
+            return _("Marked a Report as required")
 
     def handle_update_invoice_status(self, invoice, **kwargs):
         base_message = _("Updated Invoice status to: {invoice_status}.")

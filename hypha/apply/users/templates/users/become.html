@@ -1,6 +1,6 @@
 {% load i18n static %}
 
-{% modal_title %}{% trans "Switch to User..." %}{% endmodal_title %}
+<c-modal.header>{% trans "Switch to User..." %}</c-modal.header>
 
 <form class="p-4 form" action="{{ request.path }}" method="post">
     {% csrf_token %}
@@ -18,9 +18,9 @@
         {{ form.user_pk.help_text }}
     </p>
 
-    <div class="mt-5 sm:flex sm:flex-row-reverse sm:gap-4 sm:mt-4">
+    <div class="mt-5 sm:flex sm:flex-row-reverse sm:gap-2 sm:mt-4">
         <button
-            class="w-full sm:w-auto button button--warning"
+            class="w-full sm:w-auto btn btn-warning"
             type="submit"
         >
             {% trans "Switch User" %}
@@ -28,7 +28,7 @@
 
         <button
             type="button"
-            class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 rounded-xs shadow-xs"
+            class="btn btn-secondary btn-outline"
             @click="show = false"
         >{% trans "Cancel" %}</button>
     </div>

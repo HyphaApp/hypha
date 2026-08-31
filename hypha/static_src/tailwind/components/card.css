@@ -1,0 +1,12 @@
+.card-header {
+  @apply flex items-center justify-between py-2 px-4 border-b rounded-t-box gap-2;
+  background-color: var(--card-header-bg, var(--color-base-200));
+}
+
+.card-border {
+  @apply !border-base-300;
+}
+
+.card-actions {
+  @apply gap-3;
+}

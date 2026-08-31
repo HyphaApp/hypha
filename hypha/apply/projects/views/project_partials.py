@@ -1,26 +1,20 @@
 from typing import Optional
-from urllib.parse import parse_qs, urlparse
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404, render
-from django.urls import reverse_lazy
-from django.utils.translation import gettext as _
 from django.views.decorators.http import require_GET
 
 from hypha.apply.activity.models import Activity
-from hypha.apply.funds.utils import get_statuses_as_params
 
-from ..constants import statuses_and_table_statuses_mapping
 from ..models.payment import Invoice
 from ..models.project import ContractDocumentCategory, DocumentCategory, Project
-from ..utils import get_project_status_choices
 
 
 @login_required
 def partial_project_lead(request, pk):
-    project = get_object_or_404(Project, submission__pk=pk)
+    project = get_object_or_404(Project, pk=pk)
     return render(
         request, "application_projects/partials/project_lead.html", {"object": project}
     )
@@ -28,7 +22,7 @@ def partial_project_lead(request, pk):
 
 @login_required
 def partial_project_title(request, pk):
-    project = get_object_or_404(Project, submission__pk=pk)
+    project = get_object_or_404(Project, pk=pk)
     return render(
         request, "application_projects/partials/project_title.html", {"object": project}
     )
@@ -36,7 +30,7 @@ def partial_project_title(request, pk):
 
 @login_required
 def partial_project_information(request, pk):
-    project = get_object_or_404(Project, submission__pk=pk)
+    project = get_object_or_404(Project, pk=pk)
     return render(
         request,
         "application_projects/partials/project_information.html",
@@ -47,7 +41,7 @@ def partial_project_information(request, pk):
 @login_required
 @require_GET
 def partial_supporting_documents(request, pk):
-    project = get_object_or_404(Project, submission__pk=pk)
+    project = get_object_or_404(Project, pk=pk)
     ctx = {"object": project}
     ctx["all_document_categories"] = DocumentCategory.objects.all()
     ctx["remaining_document_categories"] = DocumentCategory.objects.filter(
@@ -61,7 +55,7 @@ def partial_supporting_documents(request, pk):
 @login_required
 @require_GET
 def partial_contracting_documents(request, pk):
-    project = get_object_or_404(Project, submission__pk=pk)
+    project = get_object_or_404(Project, pk=pk)
     ctx = {"object": project}
     ctx["all_contract_document_categories"] = ContractDocumentCategory.objects.all()
     ctx["remaining_contract_document_categories"] = (
@@ -80,84 +74,6 @@ def partial_contracting_documents(request, pk):
         request,
         "application_projects/partials/contracting_category_documents.html",
         ctx,
-    )
-
-
-@login_required
-@require_GET
-def get_project_status_counts(request):
-    current_url = request.headers.get("Hx-Current-Url")
-    current_url_queries = parse_qs(urlparse(current_url).query)
-    project_status_url_query = current_url_queries.get("project_status")
-    project_status_counts = dict(
-        Project.objects.all()
-        .values("status")
-        .annotate(
-            count=Count("status"),
-        )
-        .values_list(
-            "status",
-            "count",
-        )
-    )
-    status_counts = {
-        key: {
-            "name": display.replace(" and ", " & "),
-            "count": project_status_counts.get(key, 0),
-            "url": reverse_lazy("funds:projects:all") + "?project_status=" + key,
-            "is_active": True
-            if project_status_url_query and key in project_status_url_query
-            else False,
-        }
-        for key, display in get_project_status_choices()
-    }
-
-    return render(
-        request,
-        "funds/includes/status-block.html",
-        {
-            "status_counts": status_counts,
-            "type": _("Projects"),
-        },
-    )
-
-
-@login_required
-@require_GET
-def get_invoices_status_counts(request):
-    current_url = request.headers.get("Hx-Current-Url")
-    current_url_queries = parse_qs(urlparse(current_url).query)
-    invoice_status_url_query = current_url_queries.get("status")
-    invoices_status_counts = dict(
-        Invoice.objects.all()
-        .values("status")
-        .annotate(
-            count=Count("status"),
-        )
-        .values_list(
-            "status",
-            "count",
-        )
-    )
-    status_counts = {
-        name: {
-            "name": name,
-            "count": sum(invoices_status_counts.get(status, 0) for status in statuses),
-            "url": reverse_lazy("funds:projects:invoices")
-            + get_statuses_as_params(statuses),
-            "is_active": True
-            if invoice_status_url_query and statuses == invoice_status_url_query
-            else False,
-        }
-        for name, statuses in statuses_and_table_statuses_mapping.items()
-    }
-    return render(
-        request,
-        "funds/includes/status-block.html",
-        {
-            "status_counts": status_counts,
-            "type": _("Invoices"),
-        },
     )
 
 
@@ -240,4 +156,14 @@ def partial_get_invoice_detail_actions(request: HttpRequest, pk: int, invoice_pk
         request,
         "application_projects/partials/invoice_detail_actions.html",
         context={"object": invoice, "user": user},
+    )
+
+
+@login_required
+def partial_get_invoice_tags(request: HttpRequest, pk: int, invoice_pk: int):
+    invoice = get_object_or_404(Invoice, pk=invoice_pk)
+    return render(
+        request,
+        "application_projects/partials/invoice_tags.html",
+        context={"object": invoice},
     )

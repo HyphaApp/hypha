@@ -10,20 +10,23 @@ Accounts that haven't been logged into in 5 months can be marked as inactive wit
 python3 manage.py accounts_cleanup
 ```
 
-## Drafts cleanup
+## Submission cleanup
 
-Drafts that haven't been modified in a specified time (in days) can be deleted with the following command:
+There are two options for the cleaning up of user submissions
+ * Drafts: **deletes** all drafts outside the specified timeframe. Drafts are never anonymized.
+ * Submissions: by default, anonymizes all submissions that are not drafts outside the specified timeline.
+    * If `--delete` is specified, the submissions will be deleted instead of anonymized.
 
 ```shell
-python3 manage.py drafts_cleanup [days]
+python3 manage.py submission_cleanup --drafts [days] --submissions [days]
 
 # Or, to run without a confirmation prompt
 
-python3 manage.py drafts_cleanup [days] --noinput
+python3 manage.py submission_cleanup --drafts [days] --submissions [days] --noinput
 ```
 
 Example: to delete all drafts that haven't been modified in a year without a confirmation prompt:
 
 ```shell
-python3 manage.py drafts_cleanup 365 --noinput
+python3 manage.py submission_cleanup --drafts 365 --noinput
 ```

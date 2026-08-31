@@ -1,6 +1,9 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.utils.html import escape
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.review.options import NA
 from hypha.apply.stream_forms.forms import StreamBaseForm
@@ -29,7 +32,9 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
         error_messages = {
             NON_FIELD_ERRORS: {
-                "unique_together": "You have already posted a review for this submission",
+                "unique_together": _(
+                    "You have already posted a review for this submission"
+                ),
             }
         }
 
@@ -113,10 +118,12 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 class SubmitButtonWidget(forms.Widget):
     def render(self, name, value, attrs=None, renderer=None):
         disabled = "disabled" if attrs.get("disabled") else ""
-        return '<input type="submit" name="{name}" value="{value}" class="button button--primary button--bottom-space" {disabled}>'.format(
-            disabled=disabled,
-            name=escape(name),
-            value=escape(name.title()),
+        return mark_safe(
+            '<input type="submit" name="{name}" value="{value}" class="btn btn-primary" {disabled}>'.format(
+                disabled=disabled,
+                name=escape(name),
+                value=escape(name.title()),
+            )
         )
 
 
@@ -153,7 +160,9 @@ class ReviewOpinionForm(forms.ModelForm):
         opinions = [cleaned_data.get(opinion.lower()) for _, opinion in OPINION_CHOICES]
         valid_opinions = [opinion for opinion in opinions if opinion is not None]
         if len(valid_opinions) > 1:
-            self.add_error(None, "Cant submit both an agreement and disagreement")
+            self.add_error(
+                None, gettext("Can't submit both an agreement and disagreement")
+            )
         cleaned_data = {"opinion": valid_opinions[0]}
         return cleaned_data
 

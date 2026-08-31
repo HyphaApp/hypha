@@ -4,6 +4,7 @@ from django.db.models import Count
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from hypha.apply.funds.models.co_applicants import CoApplicantProjectPermission
 from hypha.apply.projects.models.project import (
     CLOSING,
     COMPLETE,
@@ -27,9 +28,82 @@ def project_show_reports_section(project):
 
 @register.simple_tag
 def user_can_skip_pafapproval_process(project, user):
-    if project.status == DRAFT and (user.is_apply_staff or user.is_apply_staff_admin):
-        return no_pafreviewer_role()
-    return False
+    permission, _ = has_permission(
+        "skip_pafapproval_process", user, object=project, raise_exception=False
+    )
+    return permission
+
+
+@register.simple_tag
+def user_can_access_project(project, user):
+    permission, _ = has_permission(
+        "project_access", user, object=project, raise_exception=False
+    )
+    return permission
+
+
+@register.simple_tag
+def accessible_projects(submission, user):
+    """Return the submission's projects the user is allowed to access."""
+    return [
+        project
+        for project in submission.projects.all()
+        if has_permission(
+            "project_access", user, object=project, raise_exception=False
+        )[0]
+    ]
+
+
+@register.simple_tag
+def user_can_view_project_documents(project, user):
+    if project.submission.co_applicants.filter(user=user).exists():
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.PROJECT_DOCUMENT
+            not in co_applicant.project_permission
+        ):
+            return False
+    return True
+
+
+@register.simple_tag
+def user_can_view_contracting_documents(project, user):
+    if project.submission.co_applicants.filter(user=user).exists():
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.CONTRACTING_DOCUMENT
+            not in co_applicant.project_permission
+        ):
+            return False
+    return True
+
+
+@register.simple_tag
+def user_can_view_invoices(project, user):
+    if project.submission.co_applicants.filter(user=user).exists():
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.INVOICES
+            not in co_applicant.project_permission
+        ):
+            return False
+    return True
+
+
+@register.simple_tag
+def user_can_view_reports(project, user):
+    if project.submission.co_applicants.filter(user=user).exists():
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.REPORTS
+            not in co_applicant.project_permission
+        ):
+            return False
+    return True
 
 
 @register.simple_tag
@@ -62,9 +136,9 @@ def user_next_step_on_project(project, user, request=None):
             return {
                 "heading": _("Waiting for"),
                 "text": _(
-                    "Awaiting project documents to be created and approved by {org_short_name} internally. "
+                    "Awaiting project documents to be created and approved by {ORG_SHORT_NAME} internally. "
                     "Please check back when the project has moved to contracting stage."
-                ).format(org_short_name=settings.ORG_SHORT_NAME),
+                ).format(ORG_SHORT_NAME=settings.ORG_SHORT_NAME),
             }
         if project.paf_approvals.exists():
             return {
@@ -80,9 +154,9 @@ def user_next_step_on_project(project, user, request=None):
             return {
                 "heading": _("Waiting for"),
                 "text": _(
-                    "Awaiting project documents to be created and approved by {org_short_name} internally. "
+                    "Awaiting project documents to be created and approved by {ORG_SHORT_NAME} internally. "
                     "Please check back when the project has moved to contracting stage."
-                ).format(org_short_name=settings.ORG_SHORT_NAME),
+                ).format(ORG_SHORT_NAME=settings.ORG_SHORT_NAME),
             }
 
         if request:
@@ -110,7 +184,7 @@ def user_next_step_on_project(project, user, request=None):
             else:
                 matched_roles = PAFReviewersRole.objects.annotate(
                     roles_count=Count("user_roles")
-                ).filter(roles_count=len(user.groups.all()))
+                ).filter(roles_count=user.groups.count())
                 for group in user.groups.all():
                     matched_roles = matched_roles.filter(user_roles__id=group.id)
                 if not matched_roles:
@@ -155,8 +229,8 @@ def user_next_step_on_project(project, user, request=None):
             if user.is_applicant:
                 return {
                     "heading": _("Waiting for"),
-                    "text": _("Awaiting signed contract from {org_short_name}").format(
-                        org_short_name=settings.ORG_SHORT_NAME
+                    "text": _("Awaiting signed contract from {ORG_SHORT_NAME}").format(
+                        ORG_SHORT_NAME=settings.ORG_SHORT_NAME
                     ),
                 }
             if settings.STAFF_UPLOAD_CONTRACT:
@@ -204,8 +278,8 @@ def user_next_step_on_project(project, user, request=None):
                     return {
                         "heading": _("Waiting for"),
                         "text": _(
-                            "Awaiting contract approval from {org_short_name}"
-                        ).format(org_short_name=settings.ORG_SHORT_NAME),
+                            "Awaiting contract approval from {ORG_SHORT_NAME}"
+                        ).format(ORG_SHORT_NAME=settings.ORG_SHORT_NAME),
                     }
                 return {
                     "heading": _("Waiting for"),
@@ -239,8 +313,8 @@ def user_next_step_instructions(project, user):
         if contract and not contract.signed_by_applicant:
             return [
                 _(
-                    "Please download the signed contract uploaded by {org_short_name}"
-                ).format(org_short_name=settings.ORG_SHORT_NAME),
+                    "Please download the signed contract uploaded by {ORG_SHORT_NAME}"
+                ).format(ORG_SHORT_NAME=settings.ORG_SHORT_NAME),
                 _("Countersign"),
                 _("Upload it back"),
                 _(

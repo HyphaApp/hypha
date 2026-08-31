@@ -31,15 +31,14 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.http import require_POST
 from django.views.generic import UpdateView
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django_htmx.http import HttpResponseClientRedirect
 from django_otp import devices_for_user
 from django_ratelimit.decorators import ratelimit
-from elevate.mixins import ElevateMixin
-from elevate.utils import grant_elevated_privileges
-from elevate.views import redirect_to_elevate
+from formtools.wizard.forms import ManagementForm as WizardManagementForm
 from hijack.views import AcquireUserView
 from social_django.utils import psa
 from social_django.views import complete
@@ -54,6 +53,9 @@ from wagtail.models import Site
 from wagtail.users.views.users import change_user_perm
 
 from hypha.core.mail import MarkdownMail
+from hypha.elevate.mixins import ElevateMixin
+from hypha.elevate.utils import grant_elevated_privileges
+from hypha.elevate.views import redirect_to_elevate
 
 from .decorators import require_oauth_whitelist
 from .forms import (
@@ -69,6 +71,8 @@ from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGene
 from .utils import (
     generate_numeric_token,
     get_redirect_url,
+    get_zoneinfo,
+    login_ratelimit_key,
     send_activation_email,
     send_confirmation_email,
 )
@@ -81,7 +85,7 @@ User = get_user_model()
     name="dispatch",
 )
 @method_decorator(
-    ratelimit(key="post:email", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    ratelimit(key=login_ratelimit_key, rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
     name="dispatch",
 )
 class LoginView(TwoFactorLoginView):
@@ -96,7 +100,7 @@ class LoginView(TwoFactorLoginView):
     template_name = "users/login.html"
 
     def get_context_data(self, form, **kwargs):
-        context_data = super(LoginView, self).get_context_data(form, **kwargs)
+        context_data = super().get_context_data(form, **kwargs)
         context_data["redirect_url"] = get_redirect_url(
             self.request, self.redirect_field_name
         )
@@ -200,7 +204,9 @@ def account_email_change(request):
     if request.user.email != value["updated_email"]:
         send_confirmation_email(
             request.user,
-            signer.sign(dumps(value["updated_email"])),
+            signer.sign(
+                dumps({"updated_email": value["updated_email"], "id": request.user.id})
+            ),
             updated_email=value["updated_email"],
             site=Site.find_for_request(request),
         )
@@ -213,9 +219,9 @@ def account_email_change(request):
             {
                 "name": request.user.get_full_name(),
                 "username": request.user.get_username(),
-                "org_email": settings.ORG_EMAIL,
-                "org_short_name": settings.ORG_SHORT_NAME,
-                "org_long_name": settings.ORG_LONG_NAME,
+                "ORG_EMAIL": settings.ORG_EMAIL,
+                "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
+                "ORG_LONG_NAME": settings.ORG_LONG_NAME,
             },
         ),
         from_email=settings.DEFAULT_FROM_EMAIL,
@@ -259,7 +265,17 @@ def oauth(request):
 class EmailChangeConfirmationView(TemplateView):
     def get(self, request, *args, **kwargs):
         user = self.get_user(kwargs.get("uidb64"))
-        email = self.unsigned(kwargs.get("token"))
+        value = self.unsigned(kwargs.get("token"))
+
+        # A non-dict `value` means an expired, tampered, or legacy-format token.
+        if not isinstance(value, dict):
+            return render(request, "users/email_change/invalid_link.html")
+
+        # Verify that the user who requested this change is the same as the current user
+        # ie. an attacker didn't swap out the uidb64 ID for another user's
+        if user and user.id != value.get("id"):
+            return redirect("users:account")
+        email = value.get("updated_email")
         if user and email:
             if user.email != email:
                 user.email = email
@@ -302,6 +318,23 @@ class ActivationView(TemplateView):
     redirect_field_name = "next"
 
     def get(self, request, *args, **kwargs):
+        user = self.get_user(kwargs.get("uidb64"))
+
+        if self.valid(user, kwargs.get("token")):
+            # Token valid — show confirmation page before consuming it.
+            # Prevents link-preview bots from activating the account on GET.
+            return render(
+                request,
+                "users/activation/confirm.html",
+                {
+                    "is_activation": True,
+                    "next": request.GET.get(self.redirect_field_name, ""),
+                },
+            )
+
+        return render(request, "users/activation/invalid.html")
+
+    def post(self, request, *args, **kwargs):
         user = self.get_user(kwargs.get("uidb64"))
 
         if self.valid(user, kwargs.get("token")):
@@ -391,10 +424,11 @@ class PasswordResetView(DjPasswordResetView):
 
     def get_extra_email_context(self):
         return {
+            "timeout_minutes": settings.PASSWORD_RESET_TIMEOUT // 60,
             "redirect_url": get_redirect_url(self.request, self.redirect_field_name),
             "site": Site.find_for_request(self.request),
-            "org_short_name": settings.ORG_SHORT_NAME,
-            "org_long_name": settings.ORG_LONG_NAME,
+            "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
+            "ORG_LONG_NAME": settings.ORG_LONG_NAME,
         }
 
     def form_valid(self, form):
@@ -615,7 +649,7 @@ class PasswordLessLoginSignupView(FormView):
 
             return TemplateResponse(
                 self.request,
-                "users/partials/passwordless_login_signup_sent.html",
+                "users/passwordless_login_signup_sent.html",
                 self.get_context_data(),
             )
         else:
@@ -625,8 +659,9 @@ class PasswordLessLoginSignupView(FormView):
 class PasswordlessLoginView(LoginView):
     """This view is used to capture the passwordless login token and log the user in.
 
-    If the token is valid, the user is logged in and redirected to the dashboard.
-    If the token is invalid, the user is shown invalid token page.
+    If the token is valid, the user is shown a confirmation page requiring a click
+    before login is completed. This prevents link-preview bots (e.g. MS Outlook's
+    MicrosoftPreview) from consuming the one-time token on a GET request.
 
     This view inherits from LoginView to reuse the 2FA views, if a mfa device is added
     to the user.
@@ -639,20 +674,51 @@ class PasswordlessLoginView(LoginView):
             user = None
 
         if user and self.check_token(user, token):
+            # Token is valid — show a confirmation page that requires a POST to
+            # complete login. This prevents link-preview bots from consuming
+            # the token before the user clicks it.
+            return render(
+                request,
+                "users/activation/confirm.html",
+                {
+                    "remember_me": "remember-me" in request.GET,
+                    "next": request.GET.get(self.redirect_field_name, ""),
+                },
+            )
+
+        return render(request, "users/activation/invalid.html")
+
+    def post(self, request, uidb64, token, *args, **kwargs):
+        # If the wizard management form is present in POST data, we are in the
+        # MFA step (user confirmed the link and is now submitting their OTP).
+        # Delegate to the parent WizardView which handles the OTP form.
+        # We check for the management form rather than just self.storage.authenticated_user
+        # because stale session data could have authenticated_user set from a previous
+        # incomplete MFA flow, causing a SuspiciousOperation crash when the user
+        # submits a fresh confirmation POST (which has no management form).
+        management_form = WizardManagementForm(request.POST, prefix=self.prefix)
+        if management_form.is_valid() and self.storage.authenticated_user:
+            return super().post(request, *args, **kwargs)
+
+        # Initial confirmation POST — validate token and log the user in.
+        try:
+            user = User.objects.get(pk=force_str(urlsafe_base64_decode(uidb64)))
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+
+        if user and self.check_token(user, token):
             user.backend = settings.CUSTOM_AUTH_BACKEND
 
-            # Check for "?remember-me" query param, set the session age to long if exists
-            if "remember-me" in request.GET:
+            if request.POST.get("remember_me"):
                 self.request.session.set_expiry(settings.SESSION_COOKIE_AGE_LONG)
 
             if default_device(user):
-                # User has mfa, set the user details and redirect to 2fa login
+                # User has MFA — store details and redirect to OTP step.
                 self.storage.reset()
                 self.storage.authenticated_user = user
                 self.storage.data["authentication_time"] = int(time.time())
                 return self.render_goto_step("token")
 
-            # No mfa, log the user in
             login(request, user)
 
             if redirect_url := get_redirect_url(request, self.redirect_field_name):
@@ -668,10 +734,14 @@ class PasswordlessLoginView(LoginView):
 
 
 class PasswordlessSignupView(TemplateView):
-    """This view is used to capture the passwordless login token and log the user in.
+    """This view is used to capture the passwordless signup token and create the account.
 
-    If the token is valid, the user is logged in and redirected to the dashboard.
-    If the token is invalid, the user is shown invalid token page.
+    On GET the token is validated but the account is NOT created yet. A confirmation
+    page is shown requiring a click before account creation completes. This prevents
+    link-preview bots (e.g. MS Outlook's MicrosoftPreview) from consuming the
+    one-time token before the user clicks it.
+
+    If the token is invalid, the user is shown the invalid token page.
     """
 
     redirect_field_name = "next"
@@ -682,13 +752,30 @@ class PasswordlessSignupView(TemplateView):
         token_generator = PasswordlessSignupTokenGenerator()
 
         if pending_signup and token_generator.check_token(pending_signup, token):
+            return render(
+                request,
+                "users/activation/confirm.html",
+                {
+                    "is_signup": True,
+                    "remember_me": "remember-me" in request.GET,
+                    "next": request.GET.get(self.redirect_field_name, ""),
+                },
+            )
+
+        return render(request, "users/activation/invalid.html")
+
+    def post(self, request, *args, **kwargs):
+        pending_signup = self.get_pending_signup(kwargs.get("uidb64"))
+        token = kwargs.get("token")
+        token_generator = PasswordlessSignupTokenGenerator()
+
+        if pending_signup and token_generator.check_token(pending_signup, token):
             user = User.objects.create(email=pending_signup.email, is_active=True)
             user.set_unusable_password()
             user.save()
             pending_signup.delete()
 
-            # Check for "?remember-me" query param, set the session age to long if exists
-            if "remember-me" in request.GET:
+            if request.POST.get("remember_me"):
                 self.request.session.set_expiry(settings.SESSION_COOKIE_AGE_LONG)
 
             user.backend = settings.CUSTOM_AUTH_BACKEND
@@ -728,16 +815,15 @@ def send_confirm_access_email_view(request):
         user=request.user, token=generate_numeric_token
     )
     email_context = {
-        "org_long_name": settings.ORG_LONG_NAME,
-        "org_email": settings.ORG_EMAIL,
-        "org_short_name": settings.ORG_SHORT_NAME,
         "token": token_obj.token,
         "username": request.user.email,
         "site": Site.find_for_request(request),
         "user": request.user,
         "timeout_minutes": settings.PASSWORDLESS_LOGIN_TIMEOUT // 60,
     }
-    subject = "Confirmation code for {org_long_name}: {token}".format(**email_context)
+    subject = _("Confirmation code for {ORG_LONG_NAME}: {token}").format(
+        ORG_LONG_NAME=settings.ORG_LONG_NAME, token=token_obj.token
+    )
     email = MarkdownMail("users/emails/confirm_access.md")
     email.send(
         to=request.user.email,
@@ -797,6 +883,15 @@ def set_password_view(request):
             email_subject_template="users/emails/set_password_subject.txt",
         )
         return HttpResponse(_("✓ Check your email for password set link."))
+
+
+@require_POST
+def set_timezone_view(request: HttpRequest) -> HttpResponse:
+    """Store the browser timezone in the session for use in login notifications."""
+    tz_name = request.POST.get("user_timezone", "")
+    if get_zoneinfo(tz_name):
+        request.session["user_timezone"] = tz_name
+    return HttpResponse(status=204)
 
 
 @never_cache

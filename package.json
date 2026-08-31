@@ -9,36 +9,26 @@
   },
   "babel": {
     "exclude": ["**/*.min.js", "**/esm/*.js"],
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "useBuiltIns": "entry",
-          "corejs": "3"
-        }
-      ]
-    ]
+    "presets": ["@babel/preset-env"]
   },
   "browserslist": ["> 0.5%", "last 2 versions", "Firefox ESR", "not dead"],
   "devDependencies": {
-    "@alpinejs/focus": "^3.14.6",
-    "@babel/cli": "^7.25.9",
-    "@babel/core": "^7.25.9",
-    "@babel/preset-env": "^7.25.9",
+    "@alpinejs/focus": "^3.15.12",
+    "@babel/cli": "^8.0.4",
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
     "@biomejs/biome": "^1.9.4",
-    "@tailwindcss/forms": "^0.5.9",
-    "@tailwindcss/typography": "^0.5.15",
-    "alpinejs": "^3.14.6",
-    "core-js": "^3.39.0",
-    "daterangepicker": "^3.1.0",
-    "htmx.org": "^2.0.3",
-    "nodemon": "^3.1.7",
-    "npm-run-all2": "^7.0.1",
-    "sass": "^1.81.1",
-    "stylelint": "^16.11.0",
-    "stylelint-config-standard": "^36.0.1",
-    "stylelint-config-standard-scss": "^13.1.0",
-    "@tailwindcss/cli": "^4.0.13"
+    "@tailwindcss/cli": "^4.3.3",
+    "@tailwindcss/typography": "^0.5.20",
+    "alpinejs": "^3.15.12",
+    "daisyui": "^5.6.22",
+    "htmx-ext-multi-swap": "^2.0.2",
+    "htmx.org": "^2.0.10",
+    "nodemon": "^3.1.14",
+    "npm-run-all2": "^9.0.2",
+    "sass": "^1.101.6",
+    "stylelint": "^16.26.1",
+    "stylelint-config-standard-scss": "^13.1.0"
   },
   "scripts": {
     "heroku-postbuild": "npm run build",
@@ -65,7 +55,7 @@
     "clean": "rm -rf ./static ./hypha/static_compiled"
   },
   "engines": {
-    "node": "24.1.x"
+    "node": "24.x"
   },
   "private": true
 }

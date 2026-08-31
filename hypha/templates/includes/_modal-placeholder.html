@@ -9,6 +9,7 @@ How this works:
 <div
     x-cloak
     x-data="{ show: false }"
+    x-init="$watch('show', v => { if (!v) $nextTick(() => { $refs.modalContent.innerHTML = '' }) })"
     @keydown.window.escape="show = false"
     x-show="show"
     class="relative z-10"
@@ -43,8 +44,9 @@ How this works:
                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 x-description="Modal panel, show/hide based on modal state."
-                class="relative w-full text-left bg-white rounded-lg border shadow-xl transition-all transform sm:my-8 sm:max-w-lg"
+                class="relative w-full text-left rounded-lg border shadow-xl transition-all transform sm:my-8 sm:max-w-lg bg-base-100"
                 id="htmx-modal"
+                x-ref="modalContent"
                 hx-target="this"
                 @htmx:after-swap="show = true"
                 @htmx:before-swap="if(!$event.detail.xhr.response) { show = false; $event.detail.shouldSwap = false;}"

@@ -210,8 +210,10 @@ class TestReviewScore(BaseViewTestCase):
         self.assertEqual(review.score, 2.5)
 
     def test_na_included_reviews_average(self):
+        # A lone NA scores 0 for the review, which is then included in the
+        # aggregate (only reviews whose overall score is NA are excluded).
         self.submit_review_scores((NA,))
-        self.assertIsNotNone(Review.objects.score())
+        self.assertEqual(Review.objects.score(), 0)
 
     def test_na_included_multiple_reviews_average(self):
         self.submit_review_scores((NA,))
@@ -252,7 +254,7 @@ class ReviewDetailTestCase(BaseViewTestCase):
         )
         response = self.get_page(review)
         self.assertContains(response, submission.title)
-        self.assertContains(response, "<p>Yes</p>")
+        self.assertContains(response, "Yes")
 
     def test_review_detail_opinion(self):
         staff = StaffFactory()

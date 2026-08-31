@@ -12,5 +12,9 @@
     "svgwrite",
     "WAGTAILADMIN",
     "wagtailcore"
-  ]
+  ],
+  "html.format.templating": true,
+  "files.associations": {
+    "*.html": "django-html"
+  }
 }

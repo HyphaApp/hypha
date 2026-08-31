@@ -1,9 +1,13 @@
+from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.utils.translation import gettext as _
 from rolepermissions.permissions import register_object_checker
 
-from hypha.apply.funds.models.co_applicants import COMMENT, READ_ONLY, CoApplicant
+from hypha.apply.funds.models.co_applicants import CoApplicant, CoApplicantRole
+from hypha.apply.funds.models.reviewer_role import ReviewerSettings
 from hypha.apply.funds.models.submissions import DRAFT_STATE
+from hypha.home.models import ApplyHomePage
 
 from ..users.roles import STAFF_GROUP_NAME, SUPERADMIN, TEAMADMIN_GROUP_NAME, StaffAdmin
 
@@ -20,31 +24,28 @@ def has_permission(action, user, object=None, raise_exception=True):
 
 def can_take_submission_actions(user, submission):
     if not user.is_authenticated:
-        return False, "Login Required"
+        return False, _("Login Required")
 
     if submission.is_archive:
-        return False, "Archived Submission"
+        return False, _("Archived Submission")
 
     return True, ""
 
 
 def can_edit_submission(user, submission):
     if not user.is_authenticated:
-        return False, "Login Required"
+        return False, _("Login Required")
 
     if submission.is_archive:
-        return False, "Archived Submission"
+        return False, _("Archived Submission")
 
     if submission.phase.permissions.can_edit(user):
         co_applicant = submission.co_applicants.filter(user=user).first()
         if co_applicant:
-            if co_applicant.role not in [READ_ONLY, COMMENT]:
-                return (
-                    True,
-                    "Co-applicant with read only or comment access can't edit submission",
-                )
-            return False, ""
-        return True, "User can edit in current phase"
+            if co_applicant.role == CoApplicantRole.EDIT:
+                return True, _("Co-applicant with edit role can edit submission")
+            return False, _("Co-applicant does not have edit role")
+        return True, _("User can edit in current phase")
     return False, ""
 
 
@@ -55,11 +56,16 @@ def view_comments(role, user, submission) -> bool:
     if role == StaffAdmin:
         return True
 
-    if is_user_has_access_to_view_submission(user, submission):
+    submission_view, _ = can_view_submission(user, submission)
+    if submission_view:
         return True
 
-    if submission.project and can_access_project(user, submission.project):
-        return True
+    # Users such as contracting staff and project form approvers reach a
+    # submission's comments through its project rather than the submission.
+    for project in submission.projects.all():
+        can_access, _ = can_access_project(user, project)
+        if can_access:
+            return True
 
     return False
 
@@ -142,24 +148,23 @@ def get_archive_alter_groups() -> list:
     return archive_access_groups
 
 
-def can_alter_archived_submissions(user, submission=None) -> (bool, str):
+def can_alter_archived_submissions(user, submission=None) -> tuple[bool, str]:
     """
     Return a boolean based on if a user can alter archived submissions
+    (submission is accepted for compatibility with permissions_map but not used)
     """
     archive_access_groups = get_archive_alter_groups()
 
     if user.is_apply_staff and STAFF_GROUP_NAME in archive_access_groups:
-        return True, "Staff is set to alter archive"
+        return True, _("Staff is set to alter archive")
     if user.is_apply_staff_admin and TEAMADMIN_GROUP_NAME in archive_access_groups:
-        return True, "Staff Admin is set to alter archive"
-    return False, "Forbidden Error"
+        return True, _("Staff Admin is set to alter archive")
+    return False, _("Forbidden Error")
 
 
 def can_bulk_archive_submissions(user) -> bool:
-    if can_alter_archived_submissions(user) and can_bulk_delete_submissions(user):
-        return True
-
-    return False
+    can_alter, _ = can_alter_archived_submissions(user)
+    return can_alter and can_bulk_delete_submissions(user)
 
 
 def can_change_external_reviewers(user, submission) -> bool:
@@ -202,23 +207,31 @@ def can_export_submissions(user) -> bool:
     return False
 
 
-def is_user_has_access_to_view_submission(user, submission):
+def can_view_submission(user, submission):
     if not user.is_authenticated:
-        return False, "Login Required"
+        return False, _("Login Required")
 
     if submission.is_archive and not can_view_archived_submissions(user):
-        return False, "Archived Submission"
+        return False, _("Archived Submission")
 
     if (
         user.is_apply_staff
         or submission.user == user
-        or user.is_reviewer
         or submission.co_applicants.filter(user=user).exists()
     ):
         return True, ""
 
-    if user.is_partner and submission.partners.filter(pk=user.pk).exists():
-        return True, ""
+    # By default, reviewers can see all submissions. This can be configured in Wagtail Admin > Apply > Reviewer Settings
+    if user.is_reviewer:
+        site = ApplyHomePage.objects.first().get_site()
+        reviewer_settings = ReviewerSettings.for_site(site)
+        ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
+        if reviewer_settings.use_settings:
+            return ApplicationSubmission.objects.for_reviewer_settings(
+                user, reviewer_settings
+            ).filter(pk=submission.pk).exists(), ""
+        else:
+            return True, ""
 
     if user.is_community_reviewer and submission.community_review:
         return True, ""
@@ -227,56 +240,80 @@ def is_user_has_access_to_view_submission(user, submission):
 
 
 def can_view_submission_screening(user, submission):
-    submission_view, _ = is_user_has_access_to_view_submission(user, submission)
+    # __ to avoid shadowing the gettext alias
+    submission_view, __ = can_view_submission(user, submission)
     if not submission_view:
-        return False, "No access to view submission"
+        return False, _("No access to view submission")
     if submission.user == user:
-        return False, "Applicant cannot view submission screening"
+        return False, _("Applicant cannot view submission screening")
     return True, ""
 
 
 def can_invite_co_applicants(user, submission):
+    if submission.is_archive:
+        return False, _("Co-applicant can't be added to archived submission")
+    from hypha.apply.projects.models.project import COMPLETE
+
+    if submission.projects.filter(status=COMPLETE).exists():
+        return False, _("Co-applicants can't be invited to completed projects")
     if (
-        submission.co_applicant_invites.all().count()
+        submission.co_applicant_invites.count()
         >= settings.SUBMISSIONS_COAPPLICANT_INVITES_LIMIT
     ):
-        return False, "Limit reached for this submission"
+        return False, _("Limit reached for this submission")
     if user.is_applicant and user == submission.user:
-        return True, "Applicants can invite co-applicants to their application"
+        return True, _("Applicants can invite co-applicants to their application")
     if user.is_apply_staff:
-        return True, "Staff can invite co-applicant on behalf of applicant"
-    return False, "Forbidden Error"
+        return True, _("Staff can invite co-applicant on behalf of applicant")
+    return False, _("Forbidden Error")
 
 
 def can_view_co_applicants(user, submission):
     if user.is_applicant and user == submission.user:
-        return True, "Submission user can access their submission's co-applicants"
+        return True, _("Submission user can access their submission's co-applicants")
     if user.is_apply_staff:
-        return True, "Staff can access each submissions' co-applicants"
-    return False, "Forbidden Error"
+        return True, _("Staff can access each submissions' co-applicants")
+    return False, _("Forbidden Error")
 
 
 def can_update_co_applicant(user, invite):
+    if invite.submission.is_archive:
+        return False, _("Co-applicant can't be updated to archived submission")
+    from hypha.apply.projects.models.project import COMPLETE
+
+    if invite.submission.projects.filter(status=COMPLETE).exists():
+        return False, _("Co-applicants can't be updated to completed projects")
     if invite.invited_by == user:
-        return True, "Same user who invited can delete the co-applicant"
+        return True, _("Same user who invited can delete the co-applicant")
     if invite.submission.user == user:
-        return True, "Submission owner can delete the co-applicant"
+        return True, _("Submission owner can delete the co-applicant")
     if user.is_apply_staff:
-        return True, "Staff can delete any co-applicant of any submission"
-    return False, "Forbidden Error"
+        return True, _("Staff can delete any co-applicant of any submission")
+    return False, _("Forbidden Error")
 
 
 def user_can_view_post_comment_form(user, submission):
     co_applicant = CoApplicant.objects.filter(user=user, submission=submission).first()
-    if co_applicant and co_applicant.role == READ_ONLY:
+    if co_applicant and co_applicant.role == CoApplicantRole.VIEW:
         return False
     return True
 
 
+def can_change_submission_author(user, submission):
+    if not user.is_authenticated:
+        return False, "Login Required"
+
+    if user.is_apply_staff:
+        return True, "Staff can update author"
+
+    return False, "Forbidden Error"
+
+
 permissions_map = {
-    "submission_view": is_user_has_access_to_view_submission,
+    "submission_view": can_view_submission,
     "submission_edit": can_edit_submission,
     "submission_action": can_take_submission_actions,
+    "change_author": can_change_submission_author,
     "can_view_submission_screening": can_view_submission_screening,
     "archive_alter": can_alter_archived_submissions,
     "co_applicant_invite": can_invite_co_applicants,

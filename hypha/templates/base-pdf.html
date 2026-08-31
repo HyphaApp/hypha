@@ -51,6 +51,22 @@
         {% endblock %}
     </head>
     <body>
+        {% if show_header %}
+            {% block header %}
+                <table valign="middle" style="margin-bottom: 10px;">
+                    <tr>
+                        <td align="left" style="margin: 0; padding: 0;">
+                            <img height="40" style="margin: 0; padding: 0;" src="{{ logo }}">
+                        </td>
+                        <td align="left" style="padding-left: 4px;">
+                            <h2 style="margin: 0; padding: 0;">{{ header_title }}</h2>
+                        </td>
+                        <td></td>
+                    </tr>
+                </table>
+                <hr style="margin-top:0;">
+            {% endblock %}
+        {% endif %}
         <div>
             {% block content %}{% endblock %}
         </div>
@@ -62,7 +78,7 @@
                         <tr>
                             <td>{% blocktrans %}Exported by {{ export_user }} on {{ export_date }}{% endblocktrans %}</td>
                             <td align="right">
-                                Page: <pdf:pagenumber />
+                                {% trans 'Page:' %} <pdf:pagenumber />
                             </td>
                         </tr>
                     </table>

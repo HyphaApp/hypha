@@ -1,20 +1,17 @@
 {% load i18n %}
-<div class="sidebar__inner">
-    <h5>{% trans "Determinations" %}</h5>
-    {% for determination in submission.determinations.submitted %}
-        <p>
-            <a
-                class="font-bold"
-                href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}"
-            >
-                {{ determination.get_outcome_display }}
-            </a>
-            <relative-time datetime={{ determination.updated_at|date:"c" }}>
-                {{ determination.updated_at|date:"SHORT_DATETIME_FORMAT" }}
-            </relative-time>
-            {% if not HIDE_STAFF_IDENTITY or request.user.is_org_faculty %} {% trans "by" %} {{ determination.author }}{% endif %}
-        </p>
-    {% empty %}
-        <p>{% trans "Awaiting determination" %}</p>
-    {% endfor %}
+<div class="card card-border bg-base-100 shadow-xs">
+    <div class="card-body">
+        <h2 class="card-title">{% trans "Determinations" %}</h2>
+        {% for determination in submission.determinations.submitted %}
+            <p>
+                <a class="font-bold" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">
+                    {{ determination.get_outcome_display }}
+                </a>
+                <relative-time datetime={{ determination.updated_at|date:"c" }}>{{ determination.updated_at|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
+                {% if not HIDE_STAFF_IDENTITY or request.user.is_org_faculty %} {% trans "by" %} {{ determination.author }}{% endif %}
+            </p>
+        {% empty %}
+            <p>{% trans "Awaiting determination" %}</p>
+        {% endfor %}
+    </div>
 </div>

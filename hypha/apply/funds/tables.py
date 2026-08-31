@@ -8,7 +8,6 @@ from django.contrib.auth import get_user_model
 from django.db.models import F, Q
 from django.urls import reverse
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_tables2.utils import A
@@ -16,30 +15,16 @@ from wagtail.models import Page
 
 from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import MetaTerm, Option
+from hypha.apply.funds.models.submissions import AnonymizedSubmission
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.review.models import Review
-from hypha.apply.utils.image import generate_image_tag
-from hypha.images.models import CustomImage
+from hypha.core.tables import RelativeTimeColumn
 
 from .models import ApplicationSubmission, Round, ScreeningStatus
 from .widgets import MultiCheckboxesWidget
-from .workflows import STATUSES, get_review_active_statuses
+from .workflows import STATUSES
 
 User = get_user_model()
-
-
-def review_filter_for_user(user):
-    review_states = set(get_review_active_statuses(user))
-    statuses = [name for name, status in STATUSES.items() if review_states & status]
-    return [slugify(status) for status in statuses]
-
-
-def make_row_class(record):
-    css_class = (
-        "submission-meta__row" if record.next else "all-submissions-table__parent"
-    )
-    css_class += "" if record.active else " is-inactive"
-    return css_class
 
 
 def render_actions(table, record):
@@ -70,14 +55,14 @@ class SubmissionsTable(tables.Table):
         orderable=True,
         attrs={
             "td": {
-                "class": "js-title",
+                "class": "max-w-sm",
             },
             "a": {
                 "data-tippy-content": lambda record: render_title(record),
                 "data-tippy-placement": "top",
                 # Use after:content-[''] after:block to hide the default browser tooltip on Safari
                 # https://stackoverflow.com/a/43915246
-                "class": "truncate inline-block w-[calc(100%-2rem)] after:content-[''] after:block",
+                "class": "link link-hover text-h4 font-semibold truncate inline-block w-[calc(100%-2rem)] after:content-[''] after:block",
             },
         },
     )
@@ -109,18 +94,17 @@ class SubmissionsTable(tables.Table):
         sequence = fields + ("comments",)
         template_name = "funds/tables/table.html"
         row_attrs = {
-            "class": make_row_class,
             "data-record-id": lambda record: record.id,
             "data-archived": lambda record: record.is_archive,
         }
-        attrs = {"class": "all-submissions-table"}
+        attrs = {"class": "table all-submissions-table"}
         empty_text = _("No submissions available")
 
     def render_user(self, value):
         return value.get_full_name()
 
     def render_phase(self, value):
-        return format_html("<span>{}</span>", value)
+        return format_html("<span class='badge badge-outline'>{}</span>", value)
 
     def order_last_update(self, qs, desc):
         update_order = getattr(F("last_update"), "desc" if desc else "asc")(
@@ -131,9 +115,7 @@ class SubmissionsTable(tables.Table):
         return qs, True
 
     def get_column_class_names(self, classes_set, bound_column):
-        classes_set = super(SubmissionsTable, self).get_column_class_names(
-            classes_set, bound_column
-        )
+        classes_set = super().get_column_class_names(classes_set, bound_column)
         classes_set.add(bound_column.name)
         return classes_set
 
@@ -161,118 +143,40 @@ class LabeledCheckboxColumn(tables.CheckBoxColumn):
         return self.wrap_with_label(checkbox, value)
 
 
-class BaseAdminSubmissionsTable(SubmissionsTable):
-    lead = tables.Column(order_by=("lead__full_name",))
-    reviews_stats = tables.TemplateColumn(
-        template_name="funds/tables/column_reviews.html",
-        verbose_name=mark_safe(
-            'Reviews<div>Comp. <span class="counts-separator">/</span> Assgn.</div>'
-        ),
-        orderable=False,
-    )
-    screening_status = tables.Column(
-        verbose_name=_("Screening"), accessor="screening_statuses"
-    )
-    organization_name = tables.Column()
-
-    class Meta(SubmissionsTable.Meta):
-        fields = (
-            "title",
-            "phase",
-            "stage",
-            "fund",
-            "round",
-            "lead",
-            "submit_time",
-            "last_update",
-            "screening_status",
-            "reviews_stats",
-            "organization_name",
-        )
-        sequence = fields + ("comments",)
-
-    def render_lead(self, value):
-        return format_html("<span>{}</span>", value)
-
-    def render_screening_status(self, value):
-        try:
-            status = value.get()
-            classname = "status-yes" if status.yes else "status-no text-red-500"
-            return format_html(
-                f"<span class='font-medium text-xs {classname}'>{'👍' if status.yes else '👎'} {status.title}</span>"
-            )
-        except ScreeningStatus.DoesNotExist:
-            return format_html(
-                "<span class='text-xs text-fg-muted'>{}</span>", "Awaiting"
-            )
-
-
-class SummarySubmissionsTable(BaseAdminSubmissionsTable):
-    class Meta(BaseAdminSubmissionsTable.Meta):
-        orderable = False
-
-
-class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
-    """Adds Role Assigned to the 'Waiting for My Review' table"""
-
-    role_icon = tables.Column(verbose_name=_("Role"))
-
-    class Meta(BaseAdminSubmissionsTable.Meta):
-        sequence = BaseAdminSubmissionsTable.Meta.fields + ("role_icon", "comments")
-        orderable = False
-
-    def render_role_icon(self, value):
-        if value:
-            image = CustomImage.objects.filter(id=value).first()
-            if image:
-                filter_spec = "fill-20x20"
-                return generate_image_tag(image, filter_spec)
-
-        return ""
-
-
 def get_used_rounds(request):
-    return Round.objects.filter(submissions__isnull=False).distinct()
-
-
-def get_used_rounds_from_dataset(dataset):
-    return Round.objects.filter(id__in=dataset.values("round")).distinct()
+    return Round.objects.filter(
+        Q(Q(submissions__isnull=False) | Q(anonymized_submissions__isnull=False))
+    ).distinct()
 
 
 def get_used_funds(request):
     # Use page to pick up on both Labs and Funds
-    return Page.objects.filter(applicationsubmission__isnull=False).distinct()
-
-
-def get_used_funds_from_dataset(dataset):
-    return Page.objects.filter(id__in=dataset.values("page")).distinct()
+    return Page.objects.filter(
+        Q(
+            Q(applicationsubmission__isnull=False)
+            | Q(anonymizedsubmission__isnull=False)
+        )
+    ).distinct()
 
 
 def get_round_leads(request):
     return User.objects.filter(submission_lead__isnull=False).distinct()
 
 
-def get_round_leads_from_dataset(dataset):
-    return User.objects.filter(id__in=dataset.values("lead")).distinct()
-
-
-def get_reviewers_from_dataset(dataset):
-    """All assigned reviewers, not including Staff and Admin because we want a list of reviewers only"""
-    return User.objects.filter(id__in=dataset.values("reviewers")).distinct()
-
-
 def get_screening_statuses(request):
-    return ScreeningStatus.objects.filter(
+    cache_attr = "_cache_screening_statuses"
+    if request is not None and hasattr(request, cache_attr):
+        return getattr(request, cache_attr)
+    sub_filter = Q(
         id__in=ApplicationSubmission.objects.all()
         .values("screening_statuses__id")
         .distinct("screening_statuses__id")
     )
-
-
-def get_screening_statuses_from_dataset(dataset):
-    return ScreeningStatus.objects.filter(
-        id__in=dataset.values("screening_statuses__id")
-    ).distinct()
+    anonymized_filter = Q(anonymized_submissions__isnull=False)
+    qs = ScreeningStatus.objects.filter(sub_filter | anonymized_filter)
+    if request is not None:
+        setattr(request, cache_attr, qs)
+    return qs
 
 
 def get_meta_terms(request):
@@ -282,12 +186,6 @@ def get_meta_terms(request):
         .values("meta_terms__id")
         .distinct("meta_terms__id"),
     )
-
-
-def get_meta_terms_from_dataset(dataset):
-    return MetaTerm.objects.filter(
-        filter_on_dashboard=True, id__in=dataset.values("meta_terms__id")
-    ).distinct()
 
 
 class MultiCheckboxesMixin(filters.Filter):
@@ -353,37 +251,13 @@ class SubmissionFilter(filters.FilterSet):
 
     class Meta:
         model = ApplicationSubmission
-        fields = ("status", "fund", "round")
+        fields = ("fund", "round")
 
     def __init__(self, *args, exclude=None, limit_statuses=None, **kwargs):
         if exclude is None:
             exclude = []
 
-        qs = kwargs.get("queryset")
-
-        archived = kwargs.pop("archived") if "archived" in kwargs.keys() else None
-        if archived is not None:
-            archived = int(archived) if archived else None
-
         super().__init__(*args, **kwargs)
-
-        reviewers_qs = get_reviewers_from_dataset(
-            dataset=qs.exclude(reviewers__isnull=True)
-        )
-        if archived is not None and archived == 0:
-            reviewers_qs = get_reviewers_from_dataset(
-                dataset=qs.filter(is_archive=archived).exclude(reviewers__isnull=True)
-            )
-            qs = qs.filter(is_archive=archived)
-
-        self.filters["fund"].queryset = get_used_funds_from_dataset(dataset=qs)
-        self.filters["round"].queryset = get_used_rounds_from_dataset(dataset=qs)
-        self.filters["lead"].queryset = get_round_leads_from_dataset(dataset=qs)
-        self.filters[
-            "screening_statuses"
-        ].queryset = get_screening_statuses_from_dataset(dataset=qs)
-        self.filters["reviewers"].queryset = reviewers_qs
-        self.filters["meta_terms"].queryset = get_meta_terms_from_dataset(dataset=qs)
 
         self.filters["status"] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
         self.filters["category_options"].extra["choices"] = [
@@ -398,35 +272,33 @@ class SubmissionFilter(filters.FilterSet):
 
     def filter_category_options(self, queryset, name, value):
         """
-        Filter submissions based on the category options selected.
+        Filter submissions whose answer to any category-question field includes
+        one of the selected options.
 
-        In order to do that we need to first get all the category fields used in the submission.
-
-        And then use those category fields to filter submissions with their form_data.
+        Only the form schemas (form_fields) are pulled into Python — to discover
+        which field IDs are CategoryQuestionBlocks. The form_data lookup itself
+        runs in the database via JSONB containment.
         """
+        if not value:
+            return queryset
+
         query = Q()
-        submission_data = queryset.values("form_fields", "form_data").distinct()
-        for submission in submission_data:
-            for field in submission["form_fields"]:
+        seen_field_ids = set()
+        for form_fields in queryset.values_list("form_fields", flat=True).distinct():
+            for field in form_fields:
+                if field.id in seen_field_ids:
+                    continue
                 if isinstance(field.block, CategoryQuestionBlock):
-                    try:
-                        category_options = category_ids = submission["form_data"][
-                            field.id
-                        ]
-                    except KeyError:
-                        include_in_filter = False
-                    else:
-                        if isinstance(category_options, str):
-                            category_options = [category_options]
-                        include_in_filter = set(category_options) & set(value)
-                    # Check if filter options has any value in category options
-                    # If yes then those submissions should be filtered in the list
-                    if include_in_filter:
-                        kwargs = {
-                            "{0}__{1}".format("form_data", field.id): category_ids
-                        }
-                        query |= Q(**kwargs)
-        return queryset.filter(query)
+                    seen_field_ids.add(field.id)
+                    for option_id in value:
+                        # Single-select stores the option id as a scalar string.
+                        query |= Q(form_data__contains={field.id: option_id})
+                        # Multi-select stores option ids as a JSON array.
+                        query |= Q(form_data__contains={field.id: [option_id]})
+
+        if not seen_field_ids:
+            return queryset.none()
+        return queryset.filter(query).distinct()
 
 
 class SubmissionFilterAndSearch(SubmissionFilter):
@@ -446,6 +318,52 @@ class SubmissionFilterAndSearch(SubmissionFilter):
             # if value is 0 or None
             queryset = queryset.exclude(is_archive=True)
         return queryset
+
+
+class AnonymizedSubmissionFilter(filters.FilterSet):
+    fund = ModelMultipleChoiceFilter(
+        field_name="page", queryset=get_used_funds, label=_("Funds")
+    )
+    round = ModelMultipleChoiceFilter(queryset=get_used_rounds, label=_("Rounds"))
+    screening_statuses = ModelMultipleChoiceFilter(
+        queryset=get_screening_statuses, label=_("Screening"), null_label=_("No Status")
+    )
+
+    category_options = MultipleChoiceFilter(
+        choices=[], label=_("Category"), method="filter_category_options"
+    )
+
+    class Meta:
+        model = AnonymizedSubmission
+        fields = ("fund", "round")
+
+    def __init__(self, *args, exclude=None, limit_statuses=None, **kwargs):
+        if exclude is None:
+            exclude = []
+
+        super().__init__(*args, **kwargs)
+
+        self.filters["status"] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
+        self.filters = {
+            field: filter
+            for field, filter in self.filters.items()
+            if field not in exclude
+        }
+
+    def filter_category_options(self, queryset, name, value):
+        """
+        Filter submissions based on the category options selected.
+
+        In order to do that we need to first get all the category fields used in the submission.
+
+        And then use those category fields to filter submissions with their form_data.
+        """
+        query = Q()
+        if value:
+            if isinstance(value, str):
+                value = [value]
+            query |= Q(selected_category_options__in=value)
+        return queryset.filter(query)
 
 
 class SubmissionDashboardFilter(filters.FilterSet):
@@ -474,21 +392,39 @@ class RoundsTable(tables.Table):
     title = tables.Column(
         linkify=lambda record: record.get_absolute_url(),
         orderable=True,
+        attrs={
+            "a": {"class": "link link-hover text-h4 font-semibold"},
+        },
     )
     fund = tables.Column(accessor=A("specific__fund"))
     lead = tables.Column()
     start_date = tables.Column()
     end_date = tables.Column()
-    progress = tables.Column(verbose_name=_("Determined"))
+    deterrmined = tables.Column(verbose_name=_("Determined"), accessor="progress")
+    start_date = RelativeTimeColumn(verbose_name=_("Start"))
+    end_date = RelativeTimeColumn(verbose_name=_("End"))
+
+    def __init__(self, *args, **kwargs):
+        self.prefix = kwargs.pop("prefix", "rounds")
+        super().__init__(*args, **kwargs)
 
     class Meta:
-        fields = ("title", "fund", "lead", "start_date", "end_date", "progress")
-        attrs = {"class": "responsive-table"}
+        fields = ("title", "fund", "lead", "start_date", "end_date", "deterrmined")
+        attrs = {"class": "table"}
+        row_attrs = {
+            "onclick": lambda record: (
+                f"window.location.href='{record.get_absolute_url()}'"
+            ),
+            "class": "table-row-link",
+            "role": "button",
+            "tabindex": "0",  # Accessibility
+        }
+        template_name = "funds/tables/table.html"
 
     def render_lead(self, value):
         return format_html("<span>{}</span>", value)
 
-    def render_progress(self, record):
+    def render_deterrmined(self, record):
         return f"{record.progress}%"
 
     def _field_order(self, field, desc):
@@ -507,9 +443,7 @@ class RoundsTable(tables.Table):
         return qs.order_by(self._field_order("progress", desc)), True
 
     def get_column_class_names(self, classes_set, bound_column):
-        classes_set = super(RoundsTable, self).get_column_class_names(
-            classes_set, bound_column
-        )
+        classes_set = super().get_column_class_names(classes_set, bound_column)
         classes_set.add(bound_column.name)
         return classes_set
 
@@ -519,7 +453,7 @@ class ActiveRoundFilter(MultipleChoiceFilter):
         super().__init__(
             self,
             *args,
-            choices=[("active", "Active"), ("inactive", "Inactive")],
+            choices=[("active", _("Active")), ("inactive", _("Inactive"))],
             **kwargs,
         )
 
@@ -539,7 +473,12 @@ class OpenRoundFilter(MultipleChoiceFilter):
         super().__init__(
             self,
             *args,
-            choices=[("open", "Open"), ("closed", "Closed"), ("new", "Not Started")],
+            choices=[
+                ("open", _("Open")),
+                ("closed", _("Closed")),
+                ("new", _("Not Started")),
+                ("unpublished", _("Unpublished")),
+            ],
             **kwargs,
         )
 
@@ -552,6 +491,8 @@ class OpenRoundFilter(MultipleChoiceFilter):
             return qs.closed()
         if value == "new":
             return qs.new()
+        if value == "unpublished":
+            return qs.not_live()
 
         return qs.open()
 
@@ -560,7 +501,7 @@ class RoundsFilter(filters.FilterSet):
     fund = ModelMultipleChoiceFilter(queryset=get_used_funds, label=_("Funds"))
     lead = ModelMultipleChoiceFilter(queryset=get_round_leads, label=_("Leads"))
     active = ActiveRoundFilter(label=_("Active"))
-    round_state = OpenRoundFilter(label=_("Open"))
+    round_state = OpenRoundFilter(label=_("State"))
 
 
 class ReviewerLeaderboardFilterForm(forms.ModelForm):
@@ -619,7 +560,10 @@ class ReviewerLeaderboardTable(tables.Table):
         args=[A("pk")],
         orderable=True,
         verbose_name=_("Reviewer"),
-        attrs={"td": {"class": "title"}},
+        attrs={
+            "a": {"class": "link link-hover text-h4 font-semibold"},
+            "td": {"class": "title"},
+        },
     )
 
     class Meta:
@@ -632,8 +576,16 @@ class ReviewerLeaderboardTable(tables.Table):
             "total",
         ]
         order_by = ("-ninety_days",)
-        attrs = {"class": "all-reviews-table"}
+        attrs = {"class": "table"}
         empty_text = _("No reviews available")
+        row_attrs = {
+            "onclick": lambda record: (
+                f"window.location.href='{record.get_absolute_url()}'"
+            ),
+            "class": "table-row-link",
+            "role": "button",
+            "tabindex": "0",  # Accessibility
+        }
 
 
 class ReviewerLeaderboardDetailTable(tables.Table):
@@ -644,15 +596,12 @@ class ReviewerLeaderboardDetailTable(tables.Table):
         orderable=True,
         verbose_name=_("Submission"),
         attrs={
-            "td": {
-                "class": "js-title",
-            },
             "a": {
                 "data-tippy-content": lambda record: render_title(record),
                 "data-tippy-placement": "top",
                 # Use after:content-[''] after:block to hide the default browser tooltip on Safari
                 # https://stackoverflow.com/a/43915246
-                "class": "truncate inline-block w-[calc(100%-2rem)] after:content-["
+                "class": "link link-hover text-h4 font-semibold truncate inline-block w-[calc(100%-2rem)] after:content-["
                 "] after:block",
             },
         },
@@ -666,7 +615,7 @@ class ReviewerLeaderboardDetailTable(tables.Table):
             "created_at",
         ]
         order_by = ("-created_at",)
-        attrs = {"class": "all-reviews-table"}
+        attrs = {"class": "table"}
         empty_text = _("No reviews available")
 
 
@@ -683,5 +632,13 @@ class StaffAssignmentsTable(tables.Table):
         fields = [
             "full_name",
         ]
-        attrs = {"class": "all-reviews-table"}
+        attrs = {"class": "table"}
         empty_text = _("No staff available")
+        row_attrs = {
+            "onclick": lambda record: (
+                f"window.location.href='{record.get_absolute_url()}'"
+            ),
+            "class": "table-row-link",
+            "role": "button",
+            "tabindex": "0",  # Accessibility
+        }

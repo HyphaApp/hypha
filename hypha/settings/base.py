@@ -30,8 +30,23 @@ DEFAULT_PER_PAGE = 20
 # DEFAULT_RATE_LIMIT is used by login, password, 2FA, etc
 DEFAULT_RATE_LIMIT = env.str("DEFAULT_RATE_LIMIT", "5/m")
 
-# IF Hypha should enforce 2FA for all users.
+# If Hypha should enforce 2FA for all users.
+# Users that login with passkeys are excluded since that is even more secure.
 ENFORCE_TWO_FACTOR = env.bool("ENFORCE_TWO_FACTOR", False)
+
+# WebAuthn / Passkey settings.
+# Passkeys are disabled in production unless WEBAUTHN_RP_ID is set. In local
+# development (DEBUG=True) they fall back to the request host so the feature
+# can be tried without extra configuration.
+#
+# WEBAUTHN_RP_ID: the relying party domain, e.g. "example.com" (no port, no scheme).
+# WEBAUTHN_ORIGIN: the full origin, e.g. "https://example.com".
+#   Defaults to the request origin if not set.
+# WEBAUTHN_RP_NAME: display name shown in the browser passkey UI.
+#   Defaults to ORG_LONG_NAME.
+WEBAUTHN_RP_ID = env.str("WEBAUTHN_RP_ID", None)
+WEBAUTHN_ORIGIN = env.str("WEBAUTHN_ORIGIN", None)
+WEBAUTHN_RP_NAME = env.str("WEBAUTHN_RP_NAME", None)
 
 # Set the allowed file extension for all uploads fields.
 FILE_ALLOWED_EXTENSIONS = [
@@ -49,6 +64,9 @@ FILE_ALLOWED_EXTENSIONS = [
     "xlsx",
 ]
 FILE_ACCEPT_ATTR_VALUE = ", ".join(["." + ext for ext in FILE_ALLOWED_EXTENSIONS])
+
+# Make it possible for staff to anonymise users and applications.
+SUBMISSION_ANONYMIZATION_ENABLED = env.bool("SUBMISSION_ANONYMIZATION_ENABLED", False)
 
 # Give staff lead permissions.
 # Only effects setting external reviewers for now.
@@ -93,12 +111,23 @@ PROJECTS_ENABLED = env.bool("PROJECTS_ENABLED", False)
 # Auto create projects for approved applications.
 PROJECTS_AUTO_CREATE = env.bool("PROJECTS_AUTO_CREATE", False)
 
+# Allow a submission to have multiple projects associated.
+PROJECTS_ALLOW_MULTIPLE = env.bool("PROJECTS_ALLOW_MULTIPLE", False)
+
 # Default status for projects, must be a string literal of "draft" (default), "contracting", "invoicing_and_reporting" or "closing"
 # Will be used for auto-create or be the default selection in the project creation form
 PROJECTS_DEFAULT_STATUS = env.str("PROJECTS_DEFAULT_STATUS", "draft")
 
 # When enabled, the project start date will be set and displayed after the contracting phase, if disabled it is set on project creation
 PROJECTS_START_AFTER_CONTRACTING = env.bool("PROJECTS_START_AFTER_CONTRACTING", True)
+
+# Columns/filters to exclude from the projects table.
+# Each value hides both the table column and its matching filter (where one exists).
+# Possible values are: status, lead, fund, reporting, last_payment_request, end_date
+# and contract_number
+PROJECTS_TABLE_EXCLUDED_FIELDS = env.list(
+    "PROJECTS_TABLE_EXCLUDED_FIELDS", ["contract_number"]
+)
 
 # Send out e-mail, slack messages etc. from Hypha. Set to true for production.
 SEND_MESSAGES = env.bool("SEND_MESSAGES", False)
@@ -127,10 +156,10 @@ ACTIVITY_DIGEST_RECIPIENT_EMAILS = env.list(
     "ACTIVITY_DIGEST_RECIPIENT_EMAILS", default=[]
 )
 
-# Staff e-mail domain. Used for OAUTH2 whitelist default value and staff account creation.
+# Staff e-mail domains. Used as the default value for the OAuth2 whitelists.
 STAFF_EMAIL_DOMAINS = env.list("STAFF_EMAIL_DOMAINS", [])
 
-# Should staff identities be obscured from Applicants & Partners (ie. comments will be ORG_LONG_NAME rather than John Doe).
+# Should staff identities be obscured from Applicants (ie. comments will be ORG_LONG_NAME rather than John Doe).
 HIDE_STAFF_IDENTITY = env.bool("HIDE_STAFF_IDENTITY", False)
 
 # Should Applicant identities be obscured from External Reviewers
@@ -221,11 +250,17 @@ else:
 # NOTE: Ensure the packages in `requirements/translate.txt` have been installed!
 APPLICATION_TRANSLATIONS_ENABLED = env.bool("APPLICATION_TRANSLATIONS_ENABLED", False)
 
-# Number of seconds that password reset and account activation links are valid (default 259200, 3 days).
-PASSWORD_RESET_TIMEOUT = env.int("PASSWORD_RESET_TIMEOUT", 259200)
+# Number of seconds that password reset are valid (default 900, 15 minutes).
+PASSWORD_RESET_TIMEOUT = env.int("PASSWORD_RESET_TIMEOUT", 900)
+
+# Number of seconds that account activation links are valid (default 900, 15 minutes).
+PASSWORD_ACTIVATION_TIMEOUT = env.int("PASSWORD_ACTIVATION_TIMEOUT", 900)
 
 # Timeout for passwordless login links (default 900, 15 minutes).
-PASSWORDLESS_LOGIN_TIMEOUT = env.int("PASSWORDLESS_LOGIN_TIMEOUT", 900)  # 15 minutes
+PASSWORDLESS_LOGIN_TIMEOUT = env.int("PASSWORDLESS_LOGIN_TIMEOUT", 900)
+
+# Timeout for passwordless signup links (default 900, 15 minutes).
+PASSWORDLESS_SIGNUP_TIMEOUT = env.int("PASSWORDLESS_SIGNUP_TIMEOUT", 900)
 
 # Enable users to create accounts without submitting an application.
 ENABLE_PUBLIC_SIGNUP = env.bool("ENABLE_PUBLIC_SIGNUP", True)
@@ -235,10 +270,7 @@ ENABLE_PUBLIC_SIGNUP = env.bool("ENABLE_PUBLIC_SIGNUP", True)
 # @deprecated: This setting is deprecated and will be removed in a future release.
 FORCE_LOGIN_FOR_APPLICATION = env.bool("FORCE_LOGIN_FOR_APPLICATION", True)
 
-# Timeout for passwordless signup links (default 900, 15 minutes).
-PASSWORDLESS_SIGNUP_TIMEOUT = env.int("PASSWORDLESS_SIGNUP_TIMEOUT", 900)  # 15 minutes
-
-# Seconds to enter password on password page while email change/2FA change (default 120).
+# Seconds to enter password on password page while email change/2FA change (default 120, 2 minutes).
 PASSWORD_PAGE_TIMEOUT = env.int("PASSWORD_PAGE_TIMEOUT", 120)
 
 #  Template engines and options to be used with Django.
@@ -250,8 +282,13 @@ TEMPLATES = [
             os.path.join(PROJECT_DIR, "templates"),
             os.path.join(PROJECT_DIR, "apply", "templates"),
         ],
-        "APP_DIRS": True,
+        # "APP_DIRS": True,
         "OPTIONS": {
+            "loaders": [
+                "django_cotton.cotton_loader.Loader",
+                "django.template.loaders.filesystem.Loader",
+                "django.template.loaders.app_directories.Loader",
+            ],
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -265,7 +302,7 @@ TEMPLATES = [
                 "hypha.core.context_processors.global_vars",
             ],
             "builtins": [
-                "django_web_components.templatetags.components",
+                "django_cotton.templatetags.cotton",
             ],
         },
     },
@@ -320,7 +357,14 @@ CACHES["django_file_form"] = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/stable/howto/static-files/
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, "static_compiled"),
@@ -340,9 +384,6 @@ WAGTAIL_FRONTEND_LOGIN_URL = "/auth/"
 WAGTAIL_SITE_NAME = "hypha"
 WAGTAILIMAGES_IMAGE_MODEL = "images.CustomImage"
 WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
-WAGTAIL_USER_EDIT_FORM = "hypha.apply.users.forms.CustomUserEditForm"
-WAGTAIL_USER_CREATION_FORM = "hypha.apply.users.forms.CustomUserCreationForm"
-WAGTAIL_USER_CUSTOM_FIELDS = ["full_name"]
 WAGTAIL_PASSWORD_MANAGEMENT_ENABLED = False
 WAGTAILUSERS_PASSWORD_ENABLED = False
 WAGTAILUSERS_PASSWORD_REQUIRED = False
@@ -399,6 +440,19 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = env.list(
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY", "")
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET", "")
+
+# Set the Okta OAuth2 credentials in ENV variables or local.py
+# Create an OIDC "Web" app in the Okta admin console and grant it the
+# openid, profile and email scopes.
+# SOCIAL_AUTH_OKTA_OAUTH2_API_URL should point at the Okta authorization
+# server, e.g. https://your-org.okta.com/oauth2/default
+SOCIAL_AUTH_OKTA_OAUTH2_WHITELISTED_DOMAINS = env.list(
+    "SOCIAL_AUTH_OKTA_OAUTH2_WHITELISTED_DOMAINS", STAFF_EMAIL_DOMAINS
+)
+
+SOCIAL_AUTH_OKTA_OAUTH2_KEY = env.str("SOCIAL_AUTH_OKTA_OAUTH2_KEY", "")
+SOCIAL_AUTH_OKTA_OAUTH2_SECRET = env.str("SOCIAL_AUTH_OKTA_OAUTH2_SECRET", "")
+SOCIAL_AUTH_OKTA_OAUTH2_API_URL = env.str("SOCIAL_AUTH_OKTA_OAUTH2_API_URL", "")
 
 SOCIAL_AUTH_URL_NAMESPACE = "social"
 SOCIAL_AUTH_LOGIN_ERROR_URL = "users:login"
@@ -481,7 +535,7 @@ NH3_STRIP_COMMENTS = True
 # TinyMCE settings
 
 TINYMCE_EXTRA_MEDIA = {
-    "js": ["js/tinymce-word-count.js"],
+    "js": ["js/tinymce-dark-mode.js", "js/tinymce-word-count.js"],
 }
 # COMPRESSOR setting does not work but would be good to have in place.
 # TINYMCE_JS_ROOT = os.path.join(STATIC_URL, "tinymce")
@@ -535,8 +589,13 @@ CELERY_REDIS_MAX_CONNECTIONS = env.int("CELERY_REDIS_MAX_CONNECTIONS", 20)
 # S3 settings
 
 if env.str("AWS_STORAGE_BUCKET_NAME", None):
-    DEFAULT_FILE_STORAGE = "hypha.storage_backends.PublicMediaStorage"
-    PRIVATE_FILE_STORAGE = "hypha.storage_backends.PrivateMediaStorage"
+    STORAGES["default"] = {
+        "BACKEND": "hypha.storage_backends.PublicMediaStorage",
+    }
+    STORAGES["private_media_storage"] = {
+        "BACKEND": "hypha.storage_backends.PrivateMediaStorage",
+    }
+
     AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
     AWS_PUBLIC_BUCKET_NAME = env.str("AWS_PUBLIC_BUCKET_NAME", AWS_STORAGE_BUCKET_NAME)
     AWS_PRIVATE_BUCKET_NAME = env.str(
@@ -548,10 +607,6 @@ if env.str("AWS_STORAGE_BUCKET_NAME", None):
     AWS_PUBLIC_CUSTOM_DOMAIN = env.str("AWS_PUBLIC_CUSTOM_DOMAIN", None)
     INSTALLED_APPS += ("storages",)
 
-# Settings to connect to the Bucket from which we are migrating data
-AWS_MIGRATION_BUCKET_NAME = env.str("AWS_MIGRATION_BUCKET_NAME", "")
-AWS_MIGRATION_ACCESS_KEY_ID = env.str("AWS_MIGRATION_ACCESS_KEY_ID", "")
-AWS_MIGRATION_SECRET_ACCESS_KEY = env.str("AWS_MIGRATION_SECRET_ACCESS_KEY", "")
 
 # Apply nav items settings
 
@@ -601,16 +656,12 @@ SECURE_REFERRER_POLICY = env.str(
     "SECURE_REFERRER_POLICY", "strict-origin-when-cross-origin"
 )
 
-if env.bool("COOKIE_SECURE", False):
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    ELEVATE_COOKIE_SECURE = True
 
 # Django Elevate settings
 # https://django-elevate.readthedocs.io/en/latest/config/index.html
 # ------------------------------------------------------------------------------
 # How long should Elevate mode be active for?
-ELEVATE_COOKIE_AGE = env.int("ELEVATE_COOKIE_AGE", 3600)  # 1 hours
+ELEVATE_COOKIE_AGE = env.int("ELEVATE_COOKIE_AGE", 900)  # 15 minutes
 
 # An extra salt to be added into the cookie signature.
 ELEVATE_COOKIE_SALT = env.str("ELEVATE_COOKIE_SALT", SECRET_KEY)
@@ -624,7 +675,7 @@ FILE_FORM_UPLOAD_DIR = "temp_uploads"
 os.makedirs(os.path.join(MEDIA_ROOT, FILE_FORM_UPLOAD_DIR), exist_ok=True)
 # Store temporary files on S3 too (files are still uploaded to local filesystem first)
 if env.str("AWS_STORAGE_BUCKET_NAME", None):
-    FILE_FORM_TEMP_STORAGE = PRIVATE_FILE_STORAGE
+    FILE_FORM_TEMP_STORAGE = "hypha.storage_backends.PrivateMediaStorage"
 
 
 # Misc settings

@@ -1,0 +1,53 @@
+{% load i18n heroicons project_tags %}
+{% comment %}
+Renders the "Project(s)" tab inside a submission/project tablist.
+
+Params:
+  submission       – the ApplicationSubmission
+  user             – the current user (for access filtering)
+  current_project  – the project being viewed, if any (for active item highlight)
+  active           – whether this tab is the active one
+{% endcomment %}
+{% accessible_projects submission user as projects %}
+{% if projects %}
+    {% if projects|length == 1 %}
+        <a
+            class="tab {% if active %}tab-active{% else %}[--color-base-content:var(--color-neutral-content)]{% endif %}"
+            href="{{ projects.0.get_absolute_url }}"
+        >
+            {% trans "Project" %}
+        </a>
+    {% else %}
+        <div class="relative tab {% if active %}tab-active{% endif %}" x-data="{ open: false }">
+            <button
+                type="button"
+                class="flex gap-1 items-center cursor-pointer {% if not active %}text-neutral-content/50 hover:text-neutral-content{% endif %}"
+                @click="open = ! open"
+                @click.away="open = false"
+                @keydown.escape="open = false"
+                :aria-expanded="open"
+            >
+                {% blocktrans count counter=projects|length %}Project{% plural %}Projects ({{ counter }}){% endblocktrans %}
+                {% heroicon_micro "chevron-down" aria_hidden="true" size=16 class="inline-block size-4" %}
+            </button>
+            <ul
+                x-show="open"
+                x-cloak
+                x-transition.origin.top
+                role="menu"
+                class="absolute top-full z-20 mt-1 min-w-max border shadow-lg start-0 menu bg-base-100 rounded-box border-base-300 text-base-content"
+            >
+                {% for project in projects %}
+                    <li>
+                        <a
+                            href="{{ project.get_absolute_url }}"
+                            {% if current_project and project.pk == current_project.pk %}class="menu-active"{% endif %}
+                        >
+                            {{ project.title }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endif %}

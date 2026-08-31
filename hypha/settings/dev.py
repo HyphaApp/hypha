@@ -113,8 +113,8 @@ if LOCAL_FILE_LOGGING:
     }
 
 
-# Debug Toolbar
-# https://django-debug-toolbar.readthedocs.io/en/latest/index.html
+# Add development apps like Debug Toolbar.
+# https://django-debug-toolbar.readthedocs.io/en/latest/
 if DEBUG:
     INSTALLED_APPS = [
         *INSTALLED_APPS,
@@ -142,6 +142,7 @@ if DEBUG:
 # can be easily toggled on in the UI.
 DEBUG_TOOLBAR_CONFIG = {
     "DISABLE_PANELS": {
+        "debug_toolbar.panels.history.HistoryPanel",
         "debug_toolbar.panels.versions.VersionsPanel",
         "debug_toolbar.panels.timer.TimerPanel",
         "debug_toolbar.panels.settings.SettingsPanel",
@@ -150,9 +151,10 @@ DEBUG_TOOLBAR_CONFIG = {
         "debug_toolbar.panels.sql.SQLPanel",
         "debug_toolbar.panels.staticfiles.StaticFilesPanel",
         "debug_toolbar.panels.templates.TemplatesPanel",
+        "debug_toolbar.panels.alerts.AlertsPanel",
         "debug_toolbar.panels.cache.CachePanel",
         "debug_toolbar.panels.signals.SignalsPanel",
-        "debug_toolbar.panels.logging.LoggingPanel",
+        "debug_toolbar.panels.community.CommunityPanel",
         "debug_toolbar.panels.redirects.RedirectsPanel",
         "debug_toolbar.panels.profiling.ProfilingPanel",
     },

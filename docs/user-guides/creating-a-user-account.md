@@ -28,7 +28,7 @@ The "Add User" form will request your email, name, and role within the platform.
 
 ![](../assets/manage_user-add-user.jpg)
 
-Selecting a role with enable to administrative access within the platform. Commonly used roles within the platform are **Staff**, **Partner**, and **Reviewer**.
+Selecting a role with enable to administrative access within the platform. Commonly used roles within the platform are **Staff** and **Reviewer**.
 
 ![](../assets/manage_user-update-group.jpg)
 

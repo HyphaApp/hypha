@@ -48,9 +48,15 @@ The corresponding locale dir is named: en, en_GB, en_US
 
 ----
 
-Number of seconds that password reset and account activation links are valid (default 259200, 3 days).
+Number of seconds that password reset links are valid (default 259200, 3 days).
 
     PASSWORD_RESET_TIMEOUT = env.int('PASSWORD_RESET_TIMEOUT', 259200)
+
+----
+
+Number of seconds that account activation links are valid (default 900, 15 minutes).
+
+    PASSWORD_ACTIVATION_TIMEOUT = env.int("PASSWORD_ACTIVATION_TIMEOUT", 900)
 
 ----
 
@@ -207,13 +213,30 @@ If automatic e-mails should be sent out to reviewers when submissions are ready 
 
 ----
 
-Staff e-mail domain. Used for OAUTH2 whitelist default value and staff account creation.
+Staff e-mail domains. Used as the default value for the OAuth2 whitelists.
 
     STAFF_EMAIL_DOMAINS = env.list('STAFF_EMAIL_DOMAINS', [])
 
 ----
 
-Should staff identities be obscured from Applicants & Partners (ie. comments will be ORG_LONG_NAME rather than "John Doe").
+Google OAuth2 credentials. Create them at <https://console.developers.google.com/apis/credentials>. When a key is set a "Log in with your email" button is shown on the login page. The whitelist defaults to `STAFF_EMAIL_DOMAINS`.
+
+    SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', '')
+    SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', '')
+    SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = env.list('SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS', STAFF_EMAIL_DOMAINS)
+
+----
+
+Okta OAuth2 credentials. Create an OIDC "Web" application in the Okta admin console and grant it the `openid`, `profile` and `email` scopes. `SOCIAL_AUTH_OKTA_OAUTH2_API_URL` must point at the Okta authorization server, e.g. `https://your-org.okta.com/oauth2/default`. When a key is set a "Log in with Okta" button is shown on the login page. The whitelist defaults to `STAFF_EMAIL_DOMAINS`.
+
+    SOCIAL_AUTH_OKTA_OAUTH2_KEY = env.str('SOCIAL_AUTH_OKTA_OAUTH2_KEY', '')
+    SOCIAL_AUTH_OKTA_OAUTH2_SECRET = env.str('SOCIAL_AUTH_OKTA_OAUTH2_SECRET', '')
+    SOCIAL_AUTH_OKTA_OAUTH2_API_URL = env.str('SOCIAL_AUTH_OKTA_OAUTH2_API_URL', '')
+    SOCIAL_AUTH_OKTA_OAUTH2_WHITELISTED_DOMAINS = env.list('SOCIAL_AUTH_OKTA_OAUTH2_WHITELISTED_DOMAINS', STAFF_EMAIL_DOMAINS)
+
+----
+
+Should staff identities be obscured from Applicants (ie. comments will be ORG_LONG_NAME rather than "John Doe").
 
    HIDE_STAFF_IDENTITY = env.bool('HIDE_STAFF_IDENTITY', False)
 
@@ -277,19 +300,17 @@ On Heroku, set to true if deploying to Heroku.
 
 ----
 
-Secure cookies
-
-Set this to enable Djangos settings for secure cookies.
-
-    COOKIE_SECURE = env.bool('COOKIE_SECURE', False)
-
-----
-
 Machine translation settings for applications
 
 See [here](machine-translations.md) for more information on setting up machine translations
 
     APPLICATION_TRANSLATIONS_ENABLED = env.bool("APPLICATION_TRANSLATIONS_ENABLED", False)
+
+----
+
+Should submission anonymization be enabled. Allows for both manual anonymization and utilization of cleanup commands to anonymize by time thresholds.
+
+    SUBMISSION_ANONYMIZATION_ENABLED = env.bool("SUBMISSION_ANONYMIZATION_ENABLED", False)
 
 ----
 

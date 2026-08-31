@@ -5,7 +5,6 @@ from operator import methodcaller
 
 import nh3
 from django import forms
-from django.db.models import Q
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.signal_handlers import disable_reference_index_auto_update
@@ -21,16 +20,16 @@ from .models import (
     Reminder,
     ReviewerRole,
 )
-from .models.co_applicants import COAPPLICANT_ROLE_CHOICES
+from .models.co_applicants import CoApplicantProjectPermission, CoApplicantRole
 from .permissions import can_change_external_reviewers
 from .utils import model_form_initial, render_icon
-from .widgets import MetaTermWidget, MultiCheckboxesWidget
+from .widgets import MultiCheckboxesWidget
 
 
 class ApplicationSubmissionModelForm(forms.ModelForm):
     """
     Application Submission model's save method performs several operations
-    which are not required in forms which update fields like status, partners etc.
+    which are not required in forms which update fields (ie. status).
     It also has a side effect of creating a new file uploads every time with long filenames (#1572).
     """
 
@@ -331,14 +330,11 @@ def make_role_reviewer_fields():
     return role_fields
 
 
-class UpdatePartnersForm(ApplicationSubmissionModelForm):
-    partner_reviewers = forms.ModelMultipleChoiceField(
-        queryset=User.objects.partners(),
-        label=_("Partners"),
-        required=False,
-    )
-    partner_reviewers.widget.attrs.update(
-        {"data-placeholder": _("Select..."), "data-js-choices": ""}
+class UpdateAuthorForm(ApplicationSubmissionModelForm):
+    author = forms.ModelChoiceField(
+        queryset=User.objects.applicants(),
+        label=_("Applicants"),
+        required=True,
     )
 
     class Meta:
@@ -348,26 +344,15 @@ class UpdatePartnersForm(ApplicationSubmissionModelForm):
     def __init__(self, *args, **kwargs):
         kwargs.pop("user")
         super().__init__(*args, **kwargs)
-        partners = self.instance.partners.all()
-        self.submitted_partners = User.objects.partners().filter(
-            id__in=self.instance.reviews.values("author")
+        self.fields["author"].queryset = User.objects.applicants().exclude(
+            id=self.instance.user.id
         )
-
-        partner_field = self.fields["partner_reviewers"]
-
-        # If applicant is also a partner, they should not be allowed to be a partner on their own application
-        partner_field.queryset = partner_field.queryset.exclude(
-            Q(id__in=self.submitted_partners) | Q(id=self.instance.user.id)
-        )
-        partner_field.initial = partners
+        self.fields["author"].widget.attrs.update({"data-js-choices": ""})
 
     def save(self, *args, **kwargs):
-        instance = super().save(*args, **kwargs)
-
-        instance.partners.set(
-            self.cleaned_data["partner_reviewers"] | self.submitted_partners
-        )
-        return instance
+        self.instance.user = self.cleaned_data["author"]
+        self.instance.save()
+        return self.instance
 
 
 class GroupedModelChoiceIterator(forms.models.ModelChoiceIterator):
@@ -397,19 +382,11 @@ class GroupedModelMultipleChoiceField(forms.ModelMultipleChoiceField):
         self.iterator = partial(GroupedModelChoiceIterator, groupby=choices_groupby)
         super().__init__(*args, **kwargs)
 
-    def label_from_instance(self, obj):
-        return {
-            "label": super().label_from_instance(obj),
-            "disabled": not obj.is_leaf(),
-        }
-
 
 class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
     meta_terms = GroupedModelMultipleChoiceField(
         queryset=None,  # updated in init method
-        widget=MetaTermWidget(
-            attrs={"data-placeholder": "Select...", "data-js-choices": ""}
-        ),
+        widget=MultiCheckboxesWidget(attrs={"data-placeholder": _("Select...")}),
         label=_("Tags"),
         choices_groupby="get_parent",
         required=False,
@@ -462,9 +439,18 @@ class CreateReminderForm(forms.ModelForm):
 
 
 class InviteCoApplicantForm(forms.ModelForm):
-    invited_user_email = forms.EmailField(required=True, label="Email")
+    invited_user_email = forms.EmailField(required=True, label=_("Email"))
     role = forms.ChoiceField(
-        choices=COAPPLICANT_ROLE_CHOICES, label="Role", required=False
+        choices=CoApplicantRole.choices, label=_("Role"), required=False
+    )
+    project_permission = forms.MultipleChoiceField(
+        choices=CoApplicantProjectPermission.choices,
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label=_("Project permissions"),
+        help_text=_(
+            "Enable same access level to these sections. Example: View role + Contracting = read-only contracting access."
+        ),
     )
 
     submission = forms.ModelChoiceField(
@@ -478,6 +464,8 @@ class InviteCoApplicantForm(forms.ModelForm):
 
         if submission:
             self.fields["submission"].initial = submission.id
+            if not submission.projects.exists():
+                self.fields.pop("project_permission", None)
 
     class Meta:
         model = CoApplicantInvite
@@ -486,12 +474,24 @@ class InviteCoApplicantForm(forms.ModelForm):
 
 class EditCoApplicantForm(forms.ModelForm):
     role = forms.ChoiceField(
-        choices=COAPPLICANT_ROLE_CHOICES, label="Role", required=False
+        choices=CoApplicantRole.choices, label=_("Role"), required=False
+    )
+    project_permission = forms.MultipleChoiceField(
+        choices=CoApplicantProjectPermission.choices,
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label=_("Project permissions"),
+        help_text=_(
+            "Enable same access level to these sections. Example: View role + Contracting = read-only contracting access."
+        ),
     )
 
-    def __int__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        instance = kwargs.get("instance", None)
+        if not instance.submission.projects.exists():
+            self.fields.pop("project_permission", None)
 
     class Meta:
         model = CoApplicant
-        fields = ("role",)
+        fields = ("role", "project_permission")

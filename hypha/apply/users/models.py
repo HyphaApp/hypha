@@ -1,3 +1,5 @@
+from django.apps import apps
+from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core import exceptions
@@ -8,6 +10,7 @@ from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import override
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseGenericSetting, register_setting
 from wagtail.fields import RichTextField
@@ -18,7 +21,6 @@ from .roles import (
     COMMUNITY_REVIEWER_GROUP_NAME,
     CONTRACTING_GROUP_NAME,
     FINANCE_GROUP_NAME,
-    PARTNER_GROUP_NAME,
     REVIEWER_GROUP_NAME,
     STAFF_GROUP_NAME,
     TEAMADMIN_GROUP_NAME,
@@ -44,9 +46,6 @@ class UserQuerySet(models.QuerySet):
     def reviewers(self):
         return self.filter(groups__name=REVIEWER_GROUP_NAME, is_active=True)
 
-    def partners(self):
-        return self.filter(groups__name=PARTNER_GROUP_NAME, is_active=True)
-
     def community_reviewers(self):
         return self.filter(groups__name=COMMUNITY_REVIEWER_GROUP_NAME, is_active=True)
 
@@ -62,8 +61,42 @@ class UserQuerySet(models.QuerySet):
     def contracting(self):
         return self.filter(groups__name=CONTRACTING_GROUP_NAME, is_active=True)
 
+    def delete(self, anonymize_submissions: bool = False):
+        """Handling the deletion of users
 
-class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
+        Deletes the user and deletes/anonymizes their submissions depending on the provided argument
+
+        NOTE: if global setting `SUBMISSION_ANONYMIZATION_ENABLED` is not enabled no submissions will be anonymized
+
+        Args:
+            anonymize_submissions: whether or not to anonymize all the user's submissions that aren't drafts.
+
+        """
+        submissions_to_anonymize = []
+        if anonymize_submissions and settings.SUBMISSION_ANONYMIZATION_ENABLED:
+            AnonymizedSubmission = apps.get_model("funds", "AnonymizedSubmission")
+            submissions_to_anonymize = list(
+                self.values(
+                    "applicationsubmission__form_data",
+                    "applicationsubmission__form_fields",
+                    "applicationsubmission__page_id",
+                    "applicationsubmission__round_id",
+                    "applicationsubmission__status",
+                    "applicationsubmission__submit_time",
+                    "applicationsubmission__screening_statuses",
+                )
+            )
+
+        delete_return = super().delete()
+
+        # Ensure account deletes successfully before anonymizing applications
+        for submission_dict in submissions_to_anonymize:
+            AnonymizedSubmission.from_dict(submission_dict)
+
+        return delete_return
+
+
+class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore[name-defined]
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
@@ -150,7 +183,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         if "redirect_url" in kwargs:
             redirect_url = kwargs.pop("redirect_url")
 
-        is_registered, _ = is_user_already_registered(email=email)
+        is_registered, _ = is_user_already_registered(email=email)  # type: ignore[arg-type]
 
         if is_registered:
             user = get_user_by_email(email=email)
@@ -185,13 +218,21 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         return user, _created
 
 
+# Some of the `is_XXX` properties on the User model compare database values
+# against lazily-translated strings, and this comparison must therefore be done
+# with the site's default language active, otherwise weird things can happen.
+# This `defaultlocale` can be used as a context manager or a decorator and will
+# activate the site's default language while inside the block/function.
+defaultlocale = override(language=settings.LANGUAGE_CODE)
+
+
 class User(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
     full_name = models.CharField(
-        verbose_name=_("Full name"), max_length=255, blank=True
+        verbose_name=_("full name"), max_length=255, blank=True
     )
     slack = models.CharField(
-        verbose_name=_("Slack name"),
+        verbose_name=_("slack name"),
         blank=True,
         help_text=_('This is the name we should "@mention" when sending notifications'),
         max_length=50,
@@ -244,34 +285,37 @@ class User(AbstractUser):
         return [g.name for g in self.groups.all()]
 
     @cached_property
+    @defaultlocale
     def is_apply_staff(self):
         return STAFF_GROUP_NAME in self.roles or self.is_superuser
 
     @cached_property
+    @defaultlocale
     def is_apply_staff_admin(self):
         return TEAMADMIN_GROUP_NAME in self.roles or self.is_superuser
 
     @cached_property
+    @defaultlocale
     def is_reviewer(self):
         return REVIEWER_GROUP_NAME in self.roles
 
     @cached_property
-    def is_partner(self):
-        return PARTNER_GROUP_NAME in self.roles
-
-    @cached_property
+    @defaultlocale
     def is_community_reviewer(self):
         return COMMUNITY_REVIEWER_GROUP_NAME in self.roles
 
     @cached_property
+    @defaultlocale
     def is_applicant(self):
         return APPLICANT_GROUP_NAME in self.roles
 
     @cached_property
+    @defaultlocale
     def is_approver(self):
         return APPROVER_GROUP_NAME in self.roles
 
     @cached_property
+    @defaultlocale
     def is_finance(self):
         return FINANCE_GROUP_NAME in self.roles
 
@@ -284,7 +328,6 @@ class User(AbstractUser):
         return (
             self.is_apply_staff
             or self.is_reviewer
-            or self.is_partner
             or self.is_community_reviewer
             or self.is_finance
             or self.is_contracting
@@ -292,6 +335,7 @@ class User(AbstractUser):
         )
 
     @cached_property
+    @defaultlocale
     def is_contracting(self):
         return CONTRACTING_GROUP_NAME in self.roles
 
@@ -307,8 +351,45 @@ class User(AbstractUser):
         """
         return reverse("wagtailusers_users:edit", args=[self.id])
 
+    def delete(  # type: ignore[override]
+        self, anonymize_submissions: bool = False, using=None, keep_parents=False
+    ):
+        """Handling the deletion of a user
+
+        Deletes the user and deletes/anonymizes their submissions depending on the provided argument
+
+        NOTE: if global setting `SUBMISSION_ANONYMIZATION_ENABLED` is not enabled no submissions will be anonymized
+
+        Args:
+            anonymize_submissions: whether or not to anonymize all the user's submissions that aren't drafts.
+
+        """
+        submissions_to_anonymize = []
+        if anonymize_submissions and settings.SUBMISSION_ANONYMIZATION_ENABLED:
+            AnonymizedSubmission = apps.get_model("funds", "AnonymizedSubmission")
+            submissions_to_anonymize = list(
+                self.applicationsubmission_set.values(
+                    "form_data",
+                    "form_fields",
+                    "page_id",
+                    "round_id",
+                    "status",
+                    "submit_time",
+                    "screening_statuses",
+                )
+            )
+
+        delete_return = super().delete(using, keep_parents)
+
+        for submission_dict in submissions_to_anonymize:
+            AnonymizedSubmission.from_dict(submission_dict)
+
+        return delete_return
+
     class Meta:
         ordering = ("full_name", "email")
+        verbose_name = _("user")
+        verbose_name_plural = _("users")
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self.full_name} ({self.email})>"
@@ -319,13 +400,13 @@ class AuthSettings(BaseGenericSetting):
     wagtail_reference_index_ignore = True
 
     class Meta:
-        verbose_name = "Auth Settings"
+        verbose_name = _("Auth Settings")
 
-    consent_show = models.BooleanField(_("Show consent checkbox?"), default=False)
-    consent_text = models.CharField(max_length=255, blank=True)
-    consent_help = RichTextField(blank=True)
+    consent_show = models.BooleanField(_("show consent checkbox?"), default=False)
+    consent_text = models.CharField(_("consent text"), max_length=255, blank=True)
+    consent_help = RichTextField(_("consent help"), blank=True)
     extra_text = RichTextField(
-        _("Login extra text"),
+        _("login extra text"),
         blank=True,
         help_text=_("Displayed along side login form"),
     )
@@ -368,7 +449,8 @@ class PendingSignup(models.Model):
 
     class Meta:
         ordering = ("created",)
-        verbose_name_plural = "Pending signups"
+        verbose_name = _("Pending signup")
+        verbose_name_plural = _("Pending signups")
 
 
 class ConfirmAccessToken(models.Model):
@@ -386,4 +468,34 @@ class ConfirmAccessToken(models.Model):
 
     class Meta:
         ordering = ("modified",)
-        verbose_name_plural = "Confirm Access Tokens"
+        verbose_name = _("Confirm Access Token")
+        verbose_name_plural = _("Confirm Access Tokens")
+
+
+class Passkey(models.Model):
+    """Stores a WebAuthn passkey credential for a user.
+
+    credential_id and public_key are stored as base64url-encoded strings,
+    matching the convention used by django-two-factor-auth's WebAuthn plugin.
+    """
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="passkeys",
+    )
+    name = models.CharField(max_length=255, blank=True)
+    # base64url-encoded credential id (unique per authenticator)
+    credential_id = models.CharField(max_length=2048, unique=True)
+    # base64url-encoded public key
+    public_key = models.CharField(max_length=2048)
+    sign_count = models.PositiveBigIntegerField(default=0)
+    transports = models.JSONField(default=list, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_used_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.name or f"Passkey {self.pk}"

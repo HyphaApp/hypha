@@ -5,177 +5,175 @@
 {% load humanize %}
 
 {% block title %}{% trans "Submissions" %}{% endblock %}
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'All Submissions' %}"
+            subtitle="{% trans 'Search and filter all submissions' %}"
+        >
+            <div class="self-end -mb-4">
+                <div class="tabs tabs-lift">
+                    <a
+                        class="tab {% if request.GET.format != "list" %}tab-active bg-base-100 text-base-content{% else %}bg-base-100/70 text-base-content/70{% endif %}"
+                        href="{% modify_query "page" format="table" %}"
+                        data-tippy-content="{% trans 'Table view' %}"
+                    >
+                        {% heroicon_solid "table-cells" aria_hidden="true" size=18 %}
+                        <span class="sr-only">{% trans "Table view" %}</span>
+                    </a>
+                    <a
+                        class="tab {% if request.GET.format == "list" %}tab-active bg-base-100 text-base-content{% else %}bg-base-100/70 text-base-content/70{% endif %}"
+                        href="{% modify_query "page" format="list" %}"
+                        data-tippy-content="{% trans 'List view' %}"
+                    >
+                        {% heroicon_solid "queue-list" aria_hidden="true" size=18 %}
+                        <span class="sr-only">{% trans "List view" %}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </c-hero.header>
+    </c-hero>
+{% endblock %}
+
 
 {% block content %}{% spaceless %}
-    {% adminbar %}
-        {% slot header %}
-            {% trans "All Submissions" %}<span class="submissions-count"> ({{ page.paginator.count }})</span>
-        {% endslot %}
+    <div class="flex gap-2 justify-between items-center mt-4 md:gap-4">
+        <span class="badge badge-info badge-soft badge-lg ms-3" title="{% trans 'Submission count' %}">{{ page.paginator.count }}</span>
+        <form
+            class="flex gap-2 justify-between items-center w-full md:gap-4"
+            hx-trigger="change"
+            hx-get="./"
+            hx-target="#main"
+            hx-push-url="true"
+            hx-swap="outerHTML transition:true"
+            name="querySubmissions"
+        >
 
-        {% slot sub_heading %}
-            {% trans "Search and filter all submissions" %}
-        {% endslot %}
-
-        {% slot buttons %}
-            {% if request.GET.format == 'list' %}
-                <a class="block pb-4 tab__item ms-auto"
-                   href="{% modify_query "page" format="table" %}"
-                >
-                    {% heroicon_mini "table-cells" aria_hidden="true" size=16 class="inline align-text-bottom" %}
-                    {% trans "Table view" %}
-                </a>
-            {% else %}
+            <c-dropdown-menu title="Filters" heading="Filter submissions">
                 <a
-                    class="block pb-4 tab__item ms-auto"
-                    href="{% modify_query "page" format="list" %}"
-                >
-                    {% heroicon_mini "queue-list" aria_hidden="true" size=16 class="inline align-text-bottom" %}
-                    {% trans "List View" %}
+                    href="{% url "apply:submissions:list" %}?query=is:open"
+                    hx-get="{% url "apply:submissions:list" %}?query=is:open"
+                    hx-push-url="true"
+                    hx-target="#main"
+                    hx-swap="outerHTML transition:true"
+                    class="flex {% if request.GET.query == "is:open" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
+                    {% if request.GET.query == "is:open" %}
+                        {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                    {% endif %}
+                    {% trans "Open submissions" %} {{ request.GET.lead }}
                 </a>
-            {% endif %}
-            </a>
-        {% endslot %}
-    {% endadminbar %}
+                <a
+                    href="{% url "apply:submissions:list" %}?query=lead:@me"
+                    hx-get="{% url "apply:submissions:list" %}?query=lead:@me"
+                    hx-push-url="true"
+                    hx-target="#main"
+                    hx-swap="outerHTML transition:true"
+                    class="flex {% if request.GET.query == "lead:@me" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
+                    {% if request.GET.query == "lead:@me" %}
+                        {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                    {% endif %}
+                    {% trans "Your assigned submissions (lead)" %} {{ request.GET.lead }}
+                </a>
+                <a
+                    href="{% url "apply:submissions:list" %}?query=flagged:@me"
+                    hx-get="{% url "apply:submissions:list" %}?query=flagged:@me"
+                    hx-push-url="true"
+                    hx-target="#main"
+                    hx-swap="outerHTML transition:true"
+                    class="flex {% if request.GET.query == "flagged:@me" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
+                    {% if request.GET.query == "flagged:@me" %}
+                        {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                    {% endif %}
+                    {% trans "Your flagged submissions" %}
+                </a>
+                <a
+                    href="{% url "apply:submissions:list" %}?query=flagged:@staff"
+                    hx-get="{% url "apply:submissions:list" %}?query=flagged:@staff"
+                    hx-push-url="true"
+                    hx-target="#main"
+                    hx-swap="outerHTML transition:true"
+                    class="flex {% if request.GET.query == "flagged:@staff" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
+                    {% if request.GET.query == "flagged:@staff" %}
+                        {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                    {% endif %}
+                    {% trans "Staff flagged submissions" %}
+                </a>
+                <a
+                    href="{% url "apply:submissions:list" %}?query=reviewer:@me"
+                    hx-get="{% url "apply:submissions:list" %}?query=reviewer:@me"
+                    hx-push-url="true"
+                    hx-target="#main"
+                    hx-swap="outerHTML transition:true"
+                    class="flex {% if request.GET.query == "reviewer:@me" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
+                    {% if request.GET.query == "reviewer:@me" %}
+                        {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                    {% endif %}
+                    {% trans "Awaiting your review" %}
+                </a>
+                <a
+                    href="{% url "apply:submissions:list" %}?query=reviewed-by:@me"
+                    hx-get="{% url "apply:submissions:list" %}?query=reviewed-by:@me"
+                    hx-push-url="true"
+                    hx-target="#main"
+                    hx-swap="outerHTML transition:true"
+                    class="flex {% if request.GET.query == "reviewed-by:@me" %}ps-2 font-medium bg-base-200{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
+                    {% if request.GET.query == "reviewed-by:@me" %}
+                        {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                    {% endif %}
+                    {% trans "Reviewed by you" %}
+                </a>
+            </c-dropdown-menu>
 
+            {% for key, value in request.GET.items %}
+                {% if key != 'page' and key != 'drafts' and key != 'query' and key != 'archived' %}
+                    <input type="hidden" name="{{ key }}" value="{{ value }}">
+                {% endif %}
+            {% endfor %}
 
-    <form
-        class="flex gap-2 justify-between items-center mt-3 md:gap-4"
-        hx-trigger="change"
-        hx-get="./"
-        hx-target="#main"
-        hx-push-url="true"
-        hx-swap="outerHTML transition:true"
-    >
+            <label class="inline-flex relative flex-auto items-center">
+                <span class="flex absolute inset-y-0 items-center pointer-events-none start-0 ps-3">
+                    {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" aria_hidden=true %}
+                </span>
+                <input
+                    type="text"
+                    id="search-navbar"
+                    class="w-full input"
+                    placeholder="{% trans 'Search…' %}"
+                    name="query"
+                    aria-label="{% trans 'Search submissions' %}"
+                    value="{{ search_query|default_if_none:'' }}" {% if search_query %}autofocus{% endif %}
+                >
+            </label>
 
-        {% dropdown_menu title="Filters" heading="Filter submissions" %}
-            <a
-                href="{% url "apply:submissions:list" %}?query=is:open"
-                hx-get="{% url "apply:submissions:list" %}?query=is:open"
-                hx-push-url="true"
-                hx-target="#main"
-                hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "is:open" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% if request.GET.query == "is:open" %}
-                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
-                {% endif %}
-                {% trans "Open submissions" %} {{ request.GET.lead }}
-            </a>
-            <a
-                href="{% url "apply:submissions:list" %}?query=lead:@me"
-                hx-get="{% url "apply:submissions:list" %}?query=lead:@me"
-                hx-push-url="true"
-                hx-target="#main"
-                hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "lead:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% if request.GET.query == "lead:@me" %}
-                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
-                {% endif %}
-                {% trans "Your assigned submissions (lead)" %} {{ request.GET.lead }}
-            </a>
-            <a
-                href="{% url "apply:submissions:list" %}?query=flagged:@me"
-                hx-get="{% url "apply:submissions:list" %}?query=flagged:@me"
-                hx-push-url="true"
-                hx-target="#main"
-                hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "flagged:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% if request.GET.query == "flagged:@me" %}
-                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
-                {% endif %}
-                {% trans "Your flagged submissions" %}
-            </a>
-            <a
-                href="{% url "apply:submissions:list" %}?query=flagged:@staff"
-                hx-get="{% url "apply:submissions:list" %}?query=flagged:@staff"
-                hx-push-url="true"
-                hx-target="#main"
-                hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "flagged:@staff" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% if request.GET.query == "flagged:@staff" %}
-                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
-                {% endif %}
-                {% trans "Staff flagged submissions" %}
-            </a>
-            <a
-                href="{% url "apply:submissions:list" %}?query=reviewer:@me"
-                hx-get="{% url "apply:submissions:list" %}?query=reviewer:@me"
-                hx-push-url="true"
-                hx-target="#main"
-                hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "reviewer:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% if request.GET.query == "reviewer:@me" %}
-                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
-                {% endif %}
-                {% trans "Awaiting your review" %}
-            </a>
-            <a
-                href="{% url "apply:submissions:list" %}?query=reviewed-by:@me"
-                hx-get="{% url "apply:submissions:list" %}?query=reviewed-by:@me"
-                hx-push-url="true"
-                hx-target="#main"
-                hx-swap="outerHTML transition:true"
-                class="flex {% if request.GET.query == "reviewed-by:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% if request.GET.query == "reviewed-by:@me" %}
-                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
-                {% endif %}
-                {% trans "Reviewed by you" %}
-            </a>
-        {% enddropdown_menu %}
-
-        {% for key, value in request.GET.items %}
-            {% if key != 'page' and key != 'drafts' and key != 'query' and key != 'archived' %}
-                <input type="hidden" name="{{ key }}" value="{{ value }}">
-            {% endif %}
-        {% endfor %}
-
-        <label class="inline-flex relative flex-auto items-center">
-            <span class="flex absolute inset-y-0 items-center pointer-events-none start-0 ps-3">
-                {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" aria_hidden=true %}
-            </span>
-            <input
-                type="text"
-                id="search-navbar"
-                class="block p-2 w-full text-sm text-gray-900 bg-gray-50 border border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-xs ps-10"
-                placeholder="{% trans 'Search…' %}"
-                name="query"
-                aria-label="{% trans 'Search submissions' %}"
-                value="{{ search_query|default_if_none:'' }}" {% if search_query %}autofocus{% endif %}
-            >
-        </label>
-
-        {% if can_view_archive %}
-            <span>
-                <label class="inline-flex relative items-center cursor-pointer">
-                    <input type="checkbox" {% if show_archived %}checked{% endif %}
-                           class="sr-only peer"
-                           name="archived"
+            {% if can_view_archive %}
+                <label class="label">
+                    <input
+                        type="checkbox"
+                        name="archived"
+                        {% if show_archived %}checked{% endif %}
+                        class="toggle toggle-sm toggle-primary"
                     >
-                    <div
-                        class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[ dark:peer-focus:ring-blue-800''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
-                    </div>
-                    <span class="text-sm font-medium text-gray-600 ms-3">{% trans "Archived" %}</span>
+                    {% trans "Archived" %}
                 </label>
-            </span>
-        {% endif %}
+            {% endif %}
 
-        {% if can_access_drafts %}
-            <span>
-                <label class="inline-flex relative items-center cursor-pointer">
-                    <input type="checkbox" {% if show_drafts %}checked{% endif %}
-                           class="sr-only peer"
-                           name="drafts"
+            {% if can_access_drafts %}
+                <label class="label">
+                    <input
+                        type="checkbox"
+                        name="drafts"
+                        {% if show_drafts %}checked{% endif %}
+                        class="toggle toggle-sm toggle-primary"
                     >
-                    <div
-                        class="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700 peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[ dark:peer-focus:ring-blue-800''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
-                    </div>
-                    <span class="text-sm font-medium text-gray-600 ms-3">{% trans "Drafts" %}</span>
+                    {% trans "Drafts" %}
                 </label>
-            </span>
-        {% endif %}
+            {% endif %}
+        </form>
 
         {% if can_export_submissions %}
-            <button
-                class="py-1.5 px-2 rounded-sm border transition-colors hover:bg-gray-100 shadow-xs"
+            <a
+                class="btn btn-square"
                 hx-get="{% url 'apply:submissions:submission-export-status' %}"
                 hx-swap="outerHTML"
                 hx-target="this"
@@ -183,14 +181,14 @@
                 hx-trigger="load"
             >
                 {% heroicon_mini "arrow-down-tray" %}
-            </button>
+            </a>
         {% endif %}
-    </form>
+    </div>
 
     {% if is_filtered %}
         {% comment %} Display option to clear all the filters {% endcomment %}
         <div
-            class="flex flex-wrap gap-1 mt-3"
+            class="flex flex-wrap gap-2 items-center mt-4"
             hx-target="#main"
             hx-push-url="true"
             hx-swap="outerHTML transition:true"
@@ -198,101 +196,61 @@
             <a
                 href="./"
                 hx-get="./"
-                class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2"
+                class="btn btn-ghost btn-sm btn-link link-hover"
             >
-                {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                {% trans "Clear current search query, filters and sorts" %}
+                {% trans "Clear current filters & sorts" %}
+                {% heroicon_micro "x-mark" aria_hidden="true" class="size-4" %}
             </a>
 
             {% if selected_statuses %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query "status" %}">
                     {% trans "Status:" %} {% for s in selected_statuses %}{{ s }}{% endfor %}
-                    <a href="{% remove_from_query "status" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove status filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endif %}
             {% for fund in selected_fund_objects %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query fund=fund.id %}">
                     {% trans "Fund:" %} {{ fund }}
-                    <a href="{% remove_from_query fund=fund.id %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove fund filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endfor %}
             {% for round in selected_round_objects %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query round=round.id %}">
                     {% trans "Round:" %} {{ round }}
-                    <a href="{% remove_from_query round=round.id %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove round filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endfor %}
             {% for s in selected_leads %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query lead=s %}">
                     {% trans "Lead:" %} {{ s|get_display_name_from_id }}
-                    <a href="{% remove_from_query lead=s %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove leads filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endfor %}
             {% if selected_applicants %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query "applicants" %}">
                     {% trans "Applicant:" %} {% for s in selected_applicants %}{{ s }}{% endfor %}
-                    <a href="{% remove_from_query "applicants" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove applicant filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endif %}
             {% for s in selected_reviewers %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query reviewers=s %}">
                     {% trans "Reviewer:" %} {{ s|get_display_name_from_id }}
-                    <a href="{% remove_from_query reviewers=s %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove reviewer filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endfor %}
             {% for s in selected_meta_terms %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query meta_terms=s %}">
                     {% trans "Tag:" %} {{ s|get_meta_term_from_id }}
-                    <a href="{% remove_from_query meta_terms=s %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove tag filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endfor %}
             {% for s in selected_category_options %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query category_options=s.id %}">
                     {% trans "Category:" %} {{ s.value }}
-                    <a href="{% remove_from_query category_options=s.id %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove category filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endfor %}
             {% for s in selected_screening_statuses_objects %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query screening_statuses=s.slug %}">
                     {% trans "Screening:" %} "{{ s.title }}"
-                    <a href="{% remove_from_query screening_statuses=s.slug %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove screening decisions filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endfor %}
             {% if selected_sort %}
-                <span class="inline-flex items-center py-1 px-2 text-xs font-medium text-blue-800 bg-blue-100 rounded-sm select-none me-2">
+                <c-badge.action btn_url="{% remove_from_query "sort" %}">
                     {% trans "Sort:" %} {{ selected_sort }}
-                    <a href="{% remove_from_query "sort" %}" role="button" class="inline-flex items-center p-0.5 text-xs text-blue-400 bg-transparent hover:text-blue-900 hover:bg-blue-200 rounded-xs ms-1 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">{% trans "Remove sort filter" %}</span>
-                    </a>
-                </span>
+                </c-badge.action>
             {% endif %}
         </div>
     {% endif %}
@@ -342,7 +300,7 @@
         <header
             hx-target="#main"
             hx-swap="outerHTML show:top"
-            class="flex sticky top-0 flex-wrap justify-between items-center py-2 px-3 mt-3 bg-gray-50 border-t border-gray-200 md:gap-5 md:text-sm md:font-medium z-5 border-x"
+            class="flex sticky top-0 flex-wrap justify-between items-center py-2 px-4 mt-3 border-t md:gap-5 md:text-sm md:font-medium bg-base-200 border-base-300 z-5 border-x rounded-t-box"
         >
             <span class="hidden items-center py-1 md:inline-flex">
                 {% if enable_selection %}
@@ -351,7 +309,7 @@
                         type="checkbox"
                         x-ref="checkboxSelectAll"
                         aria-label="{% trans 'Select all submissions' %}"
-                        class="w-4 h-4 text-blue-600 rounded-sm border-gray-300 focus:ring-2 focus:ring-blue-500"
+                        class="checkbox checkbox-sm"
                         @click="toggleAllCheckboxes()"
                     >
                     <label
@@ -362,23 +320,27 @@
                 {% endif %}
             </span>
 
-            <nav x-show="!showSelectedSubmissions"
-                 class="flex flex-wrap gap-2 items-center menu-filters"
+            <nav
+                x-show="!showSelectedSubmissions"
+                class="flex flex-wrap gap-2 items-center menu-filters"
             >
-                <div id="filtersubmitted" aria-label="Filter by Submitted" class="flex items-center" data-query="submitted">
-                    <button class="flex justify-between items-center py-1 w-full font-medium text-gray-600 border cursor-pointer md:p-0 md:border-none hover:bg-gray-50 ps-2 pe-2 md:pe-4 md:hover:bg-transparent md:hover:text-blue-700">
-                        {% trans "Submitted" %}
-                        {% heroicon_mini "chevron-down" aria_hidden="true" width=18 height=18 class="hidden md:inline-block" %}
-                    </button>
-                </div>
-                <div id="filterupdated" aria-label="Filter by Updated" class="flex items-center" data-query="updated">
-                    <button class="flex justify-between items-center py-1 w-full font-medium text-gray-600 border cursor-pointer md:p-0 md:border-none hover:bg-gray-50 ps-2 pe-2 md:pe-4 md:hover:bg-transparent md:hover:text-blue-700">
-                        {% trans "Updated" %}
-                        {% heroicon_mini "chevron-down" aria_hidden="true" width=18 height=18 class="hidden md:inline-block" %}
-                    </button>
-                </div>
+                <c-dropdown-menu title="{% trans 'Submitted' %}" heading="{% trans 'Filter by submitted date(s)' %}">
+                    <calendar-range class="mx-auto cally" {% if selected_submitted_date %}value="{{selected_submitted_date}}"{% endif %} onchange="setDateFromPicker(this.value, 'submitted')">
+                        {% heroicon_micro "chevron-left" aria_label="Previous" slot="previous" aria_hidden=true size=18 %}
+                        {% heroicon_micro "chevron-right" aria_label="Next" slot="next" aria_hidden=true size=18 %}
+                        <calendar-month></calendar-month>
+                    </calendar-range>
+                </c-dropdown-menu>
 
-                {% dropdown_menu title="Status" heading="Filter by current status" enable_search=True %}
+                <c-dropdown-menu title="{% trans 'Updated' %}" heading="{% trans 'Filter by updated date(s)' %}">
+                    <calendar-range class="mx-auto cally" {% if selected_updated_date %}value="{{selected_updated_date}}"{% endif %} onchange="setDateFromPicker(this.value, 'updated')">
+                        {% heroicon_micro "chevron-left" aria_label="Previous" slot="previous" aria_hidden=true size=18 %}
+                        {% heroicon_micro "chevron-right" aria_label="Next" slot="next" aria_hidden=true size=18 %}
+                        <calendar-month></calendar-month>
+                    </calendar-range>
+                </c-dropdown-menu>
+
+                <c-dropdown-menu title="{% trans 'Status' %}" heading="{% trans 'Filter by current status' %}" enable_search=True>
                     <ul
                         class="flex overflow-auto flex-col max-h-80 text-gray-700 divide-y"
                         data-filter-list>
@@ -386,7 +348,7 @@
                             <li>
                                 <a hx-get="{% remove_from_query "page" "status" %}"
                                    href="{% remove_from_query "page" "status" %}"
-                                   class="flex px-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
+                                   class="flex px-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200{% if s.selected %}bg-base-200{% endif %}">
                                     {% trans "All statuses" %}
                                 </a>
                             </li>
@@ -400,7 +362,7 @@
                                         href="{% modify_query "page" status=s.slug %}"
                                     {% endif %}
                                     role="menuitemradio" aria-checked="{{ s.selected }}"
-                                    class="flex {% if s.selected %}bg-gray-100 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
+                                    class="flex {% if s.selected %}bg-base-200 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200"
                                 >
                                     {% if s.selected %}
                                         {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-2" %}
@@ -414,9 +376,9 @@
                         {% endfor %}
                     </ul>
                     <p class="py-2 px-3 m-0 text-fg-muted" data-filter-empty-state hidden>{% trans "No statuses found. Sorry about that." %}</p>
-                {% enddropdown_menu %}
+                </c-dropdown-menu>
 
-                {% dropdown_menu title="Screening" heading="Filter by screening decision"  %}
+                <c-dropdown-menu title="{% trans 'Screening' %}" heading="{% trans 'Filter by screening decision' %}">
                     <ul
                         class="flex overflow-auto flex-col max-h-80 text-gray-700 divide-y"
                     >
@@ -429,7 +391,7 @@
                                         href="{% modify_query "page" screening_statuses=s.slug %}"
                                     {% endif %}
                                     role="menuitemradio" aria-checked="{{ s.selected }}"
-                                    class="flex {% if s.selected %}bg-gray-100 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
+                                    class="flex {% if s.selected %}bg-base-200 ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 items-center hover:bg-base-200 focus:bg-base-200"
                                 >
                                     {% if s.selected %}
                                         {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-2" %}
@@ -441,41 +403,42 @@
                             </li>
                         {% endfor %}
                     </ul>
-                {% enddropdown_menu %}
+                </c-dropdown-menu>
 
-                {% dropdown_menu title="Fund" heading="Filter by Fund &amp; Labs" enable_search=True %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-funds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
 
-                {% dropdown_menu title="Round" heading="Filter by Round" enable_search=True %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-rounds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
+                <c-dropdown-menu title="{% trans 'Fund' %}" heading="{% trans 'Filter by Fund & Labs' %}" enable_search=True>
+                    <c-slot name="url">{% url "apply:submissions:submenu-funds" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                </c-dropdown-menu>
+
+                <c-dropdown-menu title="{% trans 'Round' %}" heading="{% trans 'Filter by Round' %}" enable_search=True>
+                    <c-slot name="url">{% url "apply:submissions:submenu-rounds" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                </c-dropdown-menu>
 
                 {% if 'category_options' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                    {% dropdown_menu title="Category" heading="Filter by Category" enable_search=True %}
-                        {% slot "url" %}{% url "apply:submissions:submenu-category-options" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                    {% enddropdown_menu %}
+                    <c-dropdown-menu title="{% trans 'Category' %}" heading="{% trans 'Filter by Category' %}" enable_search=True>
+                        <c-slot name="url">{% url "apply:submissions:submenu-category-options" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                    </c-dropdown-menu>
                 {% endif %}
 
                 {% if "tags" not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                    {% dropdown_menu title="Tags" heading="Filter by tags" enable_search=True position="right" %}
-                        {% slot "url" %}{% url "apply:submissions:submenu-meta-terms" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                    {% enddropdown_menu %}
+                    <c-dropdown-menu title="{% trans 'Tags' %}" heading="{% trans 'Filter by tags' %}" enable_search=True position="right">
+                        <c-slot name="url">{% url "apply:submissions:submenu-meta-terms" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                    </c-dropdown-menu>
                 {% endif %}
 
                 {% if 'lead' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                    {% dropdown_menu title="Lead" heading="Filter by Lead" enable_search=True position="right" %}
-                        {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                    {% enddropdown_menu %}
+                    <c-dropdown-menu title="{% trans 'Lead' %}" heading="{% trans 'Filter by Lead' %}" enable_search=True position="right">
+                        <c-slot name="url">{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                    </c-dropdown-menu>
                 {% endif %}
 
                 {% if not request.user.is_reviewer %}
-                    {% dropdown_menu title="Reviewers" heading="Filter by Reviewer" enable_search=True position="right" %}
-                        {% slot "url" %}{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                    {% enddropdown_menu %}
+                    <c-dropdown-menu title="{% trans 'Reviewers' %}" heading="{% trans 'Filter by Reviewer' %}" enable_search=True position="right">
+                        <c-slot name="url">{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                    </c-dropdown-menu>
                 {% endif %}
 
-                {% dropdown_menu title="Sort" heading="Sort by" position="right" icon="arrows-up-down" %}
+                <c-dropdown-menu title="{% trans 'Sort' %}" heading="{% trans 'Sort by' %}" position="right" icon="arrows-up-down">
                     {% for sort_option in sort_options %}
                         <a
                             {% if sort_option.selected %}
@@ -487,7 +450,7 @@
                             {% endif %}
                             hx-push-url="true"
                             aria-selected="{% if sort_option.selected %}true{% else %}false{% endif %}"
-                            class="flex {% if sort_option.selected %}ps-3 font-bold{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                            class="flex {% if sort_option.selected %}ps-3 font-bold{% else %}ps-8{% endif %} pe-3 py-2 text-base-content/80 border-b items-center hover:bg-base-200 focus:bg-base-200">
                             {% if sort_option.selected %}
                                 {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                             {% endif %}
@@ -495,7 +458,7 @@
                             {{ sort_option.name }}
                         </a>
                     {% endfor %}
-                {% enddropdown_menu %}
+                </c-dropdown-menu>
             </nav>
 
             <section
@@ -503,40 +466,54 @@
                 x-show="showSelectedSubmissions"
                 class="flex flex-row flex-wrap gap-5 items-center selection-actions"
             >
-                {% dropdown_menu title="Status" heading="Update Status" enable_search=True %}
-                    {% slot "url" hx-include="[name='selectedSubmissionIds']" hx-trigger="mouseover, focus" %}{% url "apply:submissions:submenu-update-status" %}{% endslot %}
-                {% enddropdown_menu %}
+                <c-dropdown-menu title="{% trans 'Status' %}" heading="{% trans 'Update Status' %}" enable_search=True extra_include="[name='selectedSubmissionIds']" extra_trigger="mouseover, focus">
+                    <c-slot name="url">{% url "apply:submissions:submenu-update-status" %}</c-slot>
+                </c-dropdown-menu>
 
-                {% dropdown_menu title="Lead" heading="Assign Lead" enable_search=True position="right" %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-bulk-update-lead" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
+                <c-dropdown-menu title="{% trans 'Lead' %}" heading="{% trans 'Assign Lead' %}" enable_search=True position="right">
+                    <c-slot name="url">{% url "apply:submissions:submenu-bulk-update-lead" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                </c-dropdown-menu>
 
-                {% dropdown_menu title="Reviewers" heading="Assign Reviewer(s)" position="right" %}
-                    {% slot "url" hx-include="[name='selectedSubmissionIds']" hx-trigger="click" %}{% url "apply:submissions:submenu-bulk-update-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
+                <c-dropdown-menu title="{% trans 'Reviewers' %}" heading="{% trans 'Assign Reviewer(s)' %}" position="right"  extra_include="[name='selectedSubmissionIds']" extra_trigger="click">
+                    <c-slot name="url">{% url "apply:submissions:submenu-bulk-update-reviewers" %}{% remove_from_query "only_query_string" "page" %}</c-slot>
+                </c-dropdown-menu>
 
                 {% if can_bulk_archive %}
                     <button
-                        hx-post="{% url 'apply:submissions:bulk-archive' %}"
+                        hx-get="{% url 'apply:submissions:bulk-archive-confirm' %}"
                         hx-include="[name='selectedSubmissionIds']"
-                        hx-confirm="{% trans 'Are you sure you want to archive the selected submissions?' %}"
-                        class="flex items-center py-1 px-2 bg-gray-100 border hover:bg-gray-200"
+                        hx-target="#htmx-modal"
+                        hx-swap="innerHTML"
+                        class="btn btn-sm"
                     >
-                        {% heroicon_outline "lock-closed" aria_hidden="true" size=14 class="inline stroke-gray-600 me-1" %}
+                        {% heroicon_outline "lock-closed" aria_hidden="true" size=14 class="stroke-base-content/80" %}
                         {% trans "Archive" %}
                     </button>
                 {% endif %}
 
                 {% if can_bulk_delete %}
                     <button
-                        hx-post="{% url 'apply:submissions:bulk-delete' %}"
+                        hx-get="{% url 'apply:submissions:bulk-delete-confirm' %}"
                         hx-include="[name='selectedSubmissionIds']"
-                        hx-confirm="{% trans 'Are you sure you want to delete the selected submissions? This action cannot be undone.' %}"
-                        class="flex items-center py-1 px-2 bg-gray-100 border hover:bg-red-300"
+                        hx-target="#htmx-modal"
+                        hx-swap="innerHTML"
+                        class="btn btn-sm"
                     >
-                        {% heroicon_outline "trash" aria_hidden="true" size=14 class="inline stroke-gray-600 me-1" %}
+                        {% heroicon_outline "trash" aria_hidden="true" size=14 class="stroke-base-content/80" %}
                         {% trans "Delete" %}
                     </button>
+                    {% if SUBMISSION_ANONYMIZATION_ENABLED %}
+                        <button
+                            hx-get="{% url 'apply:submissions:bulk-anonymize-confirm' %}"
+                            hx-include="[name='selectedSubmissionIds']"
+                            hx-target="#htmx-modal"
+                            hx-swap="innerHTML"
+                            class="btn btn-sm"
+                        >
+                            {% heroicon_outline "user-minus" aria_hidden="true" size=14 class="stroke-base-content/80" %}
+                            {% trans "Anonymize" %}
+                        </button>
+                    {% endif %}
                 {% endif %}
             </section>
         </header>
@@ -545,97 +522,49 @@
         Load reviews using htmx multi-swap extension, the reviewers for all the submission
         on the page are fetched after the pages is loaded
         {% endcomment %}
-        <section class="w-full bg-white">
+        <section class="mb-4 w-full bg-base-100">
             {% if submissions %}
-                {% include "submissions/partials/submissions-inline.html" with submissions=submissions row_layout=request.GET.format enable_selection=enable_selection %}
+                <c-submission-list
+                    show_more_link="{% url 'apply:submissions:list' %}?query=reviewer:@me"
+                    :variant="request.GET.format"
+                    rounded-bottom
+                    :enable_selection="enable_selection"
+                    :submissions="submissions"
+                />
             {% else %}
-                <div class="flex flex-col justify-center items-center py-32 px-4 mb-8 border">
-                    <h2 class='text-2xl'>{% trans "No results matched your search" %}</h2>
-                    <p>{% trans "Try" %} <a href="./" hx-get="./" hx-target="#main" hx-push-url="true" hx-swap="outerHTML transition:true">{% trans "clearing" %}</a> {% trans "the current query and try again" %}.</p>
+                <div class="flex flex-col justify-center items-center py-32 px-4 mb-8 border rounded-b-box">
+                    <h2 class='mb-2 text-2xl card-title'>{% trans "No results matched your search" %}</h2>
+                    <p class="text-fg-muted">{% trans "Try" %} <a href="./" hx-get="./" hx-target="#main" hx-push-url="true" hx-swap="outerHTML transition:true">{% trans "clearing" %}</a> {% trans "the current query and try again" %}.</p>
                 </div>
             {% endif %}
         </section>
 
-        {% if page.paginator.count %}
-            <nav class="mt-5 mb-20" aria-label="Pagination">
-                <span class="flex gap-2 justify-center items-center step-links">
-                    {% if page.has_previous %}
-                        <a
-                            href="{% modify_query page=1 %}"
-                            class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                            aria-label="{% trans 'First Page' %}"
-                        >
-                            &laquo; {% trans "First" %}
-                        </a>
-                        <a
-                            href="{% modify_query page=page.previous_page_number %}"
-                            class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                            aria-label="{% trans 'Previous Page' %}"
-                        >
-                            {% trans "Previous" %}
-                        </a>
-                    {% endif %}
-
-                    <span class="current">
-                        {% blocktrans with page_number=page.number total=page.paginator.num_pages %}Page {{ page_number }} of {{ total }}.{% endblocktrans %}
-                    </span>
-
-                    {% if page.has_next %}
-                        <a
-                            href="{% modify_query page=page.next_page_number %}"
-                            class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                            aria-label="{% trans 'Next Page' %}"
-                        >
-                            {% trans "Next" %}
-                        </a>
-                        <a
-                            href="{% modify_query page=page.paginator.num_pages %}"
-                            class="py-1.5 px-3 font-semibold border hover:bg-slate-200"
-                            aria-label="{% trans 'Last Page' %}"
-                        >
-                            {% trans "Last" %} &raquo;
-                        </a>
-                    {% endif %}
-                </span>
-            </nav>
-        {% endif %}
+        <c-pagination
+            :page="page"
+            :url="./"
+            class="mb-8"
+        ></c-pagination>
 
     </section>
 {% endspaceless %}{% endblock content %}
 
 {% block extra_js %}
-    <!-- Datetime picker-->
-    <script src="{% static 'js/vendor/moment.min.js' %}"></script>
-    <script src="{% static 'js/vendor/daterangepicker.min.js' %}"></script>
     <script>
-        // Date Range Picker
-        // ---------------------------------------------
-        htmx.onLoad(function() {
-            var start = moment().subtract(29, 'days');
-            var end = moment();
+        /**
+         * Change the value of the query bar based on the provided date range and query param,
+         * then submit the query
+         *
+         * @param {string} dateRange - the date range in the format of `YYYY-MM-DD/YYYY-MM-DD`
+         * @param {string} query - the param to be used in the search bar. ie. `updated`
+         *
+         */
+        function setDateFromPicker(dateRange, query) {
+            const searchBar = document.getElementById("search-navbar");
+            let [startDate, endDate] = dateRange.split("/");
 
-            // Add the picker for all elements that need it
-            $.each(['#filterupdated', '#filtersubmitted'], (index, element) => {
-                $(element).daterangepicker({
-                    startDate: start,
-                    endDate: end,
-                    ranges: {
-                        '{% trans "Today" %}': [moment(), moment()],
-                        '{% trans "Yesterday" %}': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                        '{% trans "Last 7 Days" %}': [moment().subtract(6, 'days'), moment()],
-                        '{% trans "Last 30 Days" %}': [moment().subtract(29, 'days'), moment()],
-                        '{% trans "This Month" %}': [moment().startOf('month'), moment().endOf('month')],
-                        '{% trans "Last Month" %}': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                    }
-                });
-
-                var query = $(element).attr("data-query");
-
-                $(element).on('apply.daterangepicker', function(ev, picker) {
-                    $('#search-navbar').val(`${query}:>=${picker.startDate.format('YYYY-MM-DD')} ${query}:<=${picker.endDate.format('YYYY-MM-DD')}`);
-                    $('#search-navbar').closest('form').trigger('submit');
-                });
-            })
-        });
+            // Update searchbar value and submit the query
+            searchBar.value = `${query}:>=${startDate} ${query}:<=${endDate}`
+            document.querySubmissions.submit()
+        }
     </script>
 {% endblock %}

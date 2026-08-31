@@ -1,18 +1,18 @@
 {% load i18n flag_tags heroicons %}
-<form class="flex gap-4 wrapper wrapper--sidebar-buttons" id="submission-flags">
+<form class="flex gap-2" id="submission-flags">
     {% with submission|flagged_by:user as is_flagged %}
         <button
-            class="button button--secondary flex items-center gap-4 px-2! py-3! w-full"
+            class="flex-1 btn btn-outline btn-secondary"
             {% if submission.is_archive %}
-                disabled=true
+                disabled
             {% else %}
                 hx-post="{% url 'apply:submissions:flags:create_submission_flag' submission.id "user" %}"
                 hx-swap="outerHTML transition:true"
                 hx-target="#submission-flags"
                 {% if is_flagged %}
-                    data-tippy-content="Remove from your flagged submissions"
+                    data-tippy-content="{% trans 'Remove from your flagged submissions' %}"
                 {% else %}
-                    data-tippy-content="Add to your flagged submissions"
+                    data-tippy-content="{% trans 'Add to your flagged submissions' %}"
                 {% endif %}
             {% endif %}
         >
@@ -28,17 +28,17 @@
     {% if request.user.is_apply_staff %}
         {% with submission|flagged_staff as is_flagged %}
             <button
-                class="button button--secondary flex items-center gap-4 px-2! py-3! w-full whitespace-nowrap"
+                class="flex-1 whitespace-nowrap btn btn-outline btn-secondary"
                 {% if submission.is_archive %}
-                    disabled=true
+                    disabled
                 {% else %}
                     hx-post="{% url 'apply:submissions:flags:create_submission_flag' submission.id "staff" %}"
                     hx-swap="outerHTML transition:true"
                     hx-target="#submission-flags"
                     {% if is_flagged %}
-                        data-tippy-content="Remove staff flag"
+                        data-tippy-content="{% trans 'Remove staff flag' %}"
                     {% else %}
-                        data-tippy-content="Flag for staff review"
+                        data-tippy-content="{% trans 'Flag for staff review' %}"
                     {% endif %}
                 {% endif %}
             >

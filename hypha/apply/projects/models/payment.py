@@ -7,10 +7,21 @@ from django.db import models
 from django.db.models import Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django_fsm import FSMField, transition
+from viewflow.fsm import State
 
 from hypha.apply.utils.storage import PrivateStorage
+
+EXPORT_STATUS_ERROR = "error"
+EXPORT_STATUS_SUCCESS = "success"
+EXPORT_STATUS_GENERATING = "generating"
+
+EXPORT_STATUS_CHOICES = [
+    (EXPORT_STATUS_ERROR, _("Failed")),
+    (EXPORT_STATUS_SUCCESS, _("Success")),
+    (EXPORT_STATUS_GENERATING, _("In Progress")),
+]
 
 SUBMITTED = "submitted"
 RESUBMITTED = "resubmitted"
@@ -64,6 +75,18 @@ def invoice_path(instance, filename):
     return f"projects/{instance.project_id}/payment_invoices/{filename}"
 
 
+class InvoiceTag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        verbose_name = _("invoice tag")
+        verbose_name_plural = _("invoice tags")
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 class InvoiceQueryset(models.QuerySet):
     def in_progress(self):
         return self.exclude(status__in=[DECLINED, PAID])
@@ -106,41 +129,66 @@ class Invoice(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="invoices"
     )
     paid_value = models.DecimalField(
+        _("paid value"),
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(decimal.Decimal("0.01"))],
         null=True,
     )
-    document = models.FileField(upload_to=invoice_path, storage=PrivateStorage())
-    requested_at = models.DateTimeField(auto_now_add=True)
+    document = models.FileField(
+        _("document"), upload_to=invoice_path, storage=PrivateStorage()
+    )
     message_for_pm = models.TextField(
         blank=True,
-        verbose_name=_("Comment"),
-        help_text="This will be displayed as a comment in the conversations tab",
+        verbose_name=_("comment"),
+        help_text=_("This will be displayed as a comment in the comments tab"),
     )
-    comment = models.TextField(blank=True)
+    comment = models.TextField(_("comment"), blank=True)
     invoice_number = models.CharField(
-        max_length=50, null=True, verbose_name=_("Invoice number")
+        max_length=50, null=True, verbose_name=_("invoice number")
     )
     invoice_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(decimal.Decimal("0.01"))],
         null=True,
-        verbose_name=_("Invoice amount"),
+        verbose_name=_("invoice amount"),
     )
-    invoice_date = models.DateField(null=True, verbose_name=_("Invoice date"))
-    paid_date = models.DateField(null=True, verbose_name=_("Paid date"))
-    status = FSMField(default=SUBMITTED, choices=INVOICE_STATUS_CHOICES)
+    invoice_date = models.DateField(null=True, verbose_name=_("invoice date"))
+    paid_date = models.DateField(null=True, verbose_name=_("paid date"))
+    status = models.CharField(
+        _("status"), default=SUBMITTED, choices=INVOICE_STATUS_CHOICES, max_length=30
+    )
+    status_field = State(default=SUBMITTED, states=INVOICE_STATUS_CHOICES)
+    requested_at = models.DateTimeField(auto_now_add=True)
+    tags = models.ManyToManyField(
+        InvoiceTag,
+        blank=True,
+        related_name="invoices",
+        verbose_name=_("tags"),
+    )
     objects = InvoiceQueryset.as_manager()
 
     wagtail_reference_index_ignore = True
 
+    class Meta:
+        verbose_name = _("invoice")
+        verbose_name_plural = _("invoices")
+
     def __str__(self):
         return _("Invoice requested for {project}").format(project=self.project)
 
-    @transition(
-        field=status, source=INVOICE_TRANSITION_TO_RESUBMITTED, target=RESUBMITTED
+    @status_field.getter()
+    def _get_object_status(self):
+        return self.status
+
+    @status_field.setter()
+    def _get_object_status(self, value):  # type: ignore[no-redef]
+        self.status = value
+        return self.status
+
+    @status_field.transition(
+        source=INVOICE_TRANSITION_TO_RESUBMITTED, target=RESUBMITTED
     )
     def transition_invoice_to_resubmitted(self):
         """
@@ -158,20 +206,55 @@ class Invoice(models.Model):
         return self.get_status_display()
 
     def can_user_delete(self, user):
-        if user.is_applicant or user.is_apply_staff:
-            if self.status in (SUBMITTED):
+        from hypha.apply.funds.models.co_applicants import (
+            CoApplicantProjectPermission,
+            CoApplicantRole,
+        )
+
+        if self.status == SUBMITTED:
+            if user.is_apply_staff:
                 return True
+            if user.is_applicant:
+                if user == self.project.user:
+                    return True
+                co_applicant = self.project.submission.co_applicants.filter(
+                    user=user
+                ).first()
+                if (
+                    co_applicant
+                    and CoApplicantProjectPermission.INVOICES
+                    in co_applicant.project_permission
+                    and co_applicant.role == CoApplicantRole.EDIT
+                ):
+                    return True
 
         return False
 
     def can_user_edit(self, user):
+        from hypha.apply.funds.models.co_applicants import (
+            CoApplicantProjectPermission,
+            CoApplicantRole,
+        )
+
         """
         Check when an user can edit an invoice.
         Only applicant and staff have permission to edit invoice based on its current status.
         """
         if user.is_applicant:
             if self.status in {SUBMITTED, CHANGES_REQUESTED_BY_STAFF, RESUBMITTED}:
-                return True
+                if user == self.project.user:
+                    return True
+                co_applicant = self.project.submission.co_applicants.filter(
+                    user=user
+                ).first()
+                if (
+                    co_applicant
+                    and CoApplicantProjectPermission.INVOICES
+                    in co_applicant.project_permission
+                    and co_applicant.role == CoApplicantRole.EDIT
+                ):
+                    return True
+            return False
 
         if user.is_apply_staff:
             if self.status in {SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE}:
@@ -220,7 +303,7 @@ class Invoice(models.Model):
     def get_absolute_url(self):
         return reverse(
             "apply:projects:invoice-detail",
-            kwargs={"pk": self.project.submission.id, "invoice_pk": self.pk},
+            kwargs={"pk": self.project.pk, "invoice_pk": self.pk},
         )
 
     @property
@@ -232,13 +315,17 @@ class SupportingDocument(models.Model):
     wagtail_reference_index_ignore = True
 
     document = models.FileField(
-        upload_to="supporting_documents", storage=PrivateStorage()
+        _("document"), upload_to="supporting_documents", storage=PrivateStorage()
     )
     invoice = models.ForeignKey(
         Invoice,
         on_delete=models.CASCADE,
         related_name="supporting_documents",
     )
+
+    class Meta:
+        verbose_name = _("supporting document")
+        verbose_name_plural = _("supporting documents")
 
     def __str__(self):
         return "{invoice}".format(invoice=self.invoice) + " -> " + self.document.name
@@ -251,8 +338,38 @@ class SupportingDocument(models.Model):
         return reverse(
             "apply:projects:invoice-supporting-document",
             kwargs={
-                "pk": self.invoice.project.submission.id,
+                "pk": self.invoice.project.pk,
                 "invoice_pk": self.invoice.pk,
                 "file_pk": self.pk,
             },
         )
+
+
+class InvoiceExportManager(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    export_data = models.TextField()
+    created_time = models.DateTimeField(auto_now_add=True)
+    completed_time = models.DateTimeField(null=True)
+    status = models.CharField(
+        choices=EXPORT_STATUS_CHOICES, default=EXPORT_STATUS_GENERATING
+    )
+    total_export = models.IntegerField(null=True)
+
+    class Meta:
+        verbose_name = _("invoice export manager")
+        verbose_name_plural = _("invoice export managers")
+
+    def set_completed_and_save(self) -> None:
+        self.status = EXPORT_STATUS_SUCCESS
+        self.completed_time = timezone.now()
+        self.save()
+
+    def set_failed_and_save(self) -> None:
+        self.status = EXPORT_STATUS_ERROR
+        self.save()
+
+    def get_absolute_url(self) -> str:
+        return reverse("apply:projects:invoices")

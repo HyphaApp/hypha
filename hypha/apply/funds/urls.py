@@ -2,7 +2,7 @@ from django.urls import include, path
 from django.views.generic import RedirectView
 
 from hypha.apply.projects import urls as projects_urls
-from hypha.apply.projects.views import ProjectDetailView
+from hypha.apply.projects.views import ProjectDetailView, SubmissionProjectsView
 
 from .views import (
     RoundListView,
@@ -10,8 +10,12 @@ from .views import (
     submission_success,
 )
 from .views.all import (
+    bulk_anonymize_submissions,
+    bulk_anonymize_submissions_confirm,
     bulk_archive_submissions,
+    bulk_archive_submissions_confirm,
     bulk_delete_submissions,
+    bulk_delete_submissions_confirm,
     bulk_update_submissions_status,
     submissions_all,
 )
@@ -25,7 +29,6 @@ from .views.co_applicants import (
 )
 from .views.comments import comments_view
 from .views.partials import (
-    get_applications_status_counts,
     partial_meta_terms_card,
     partial_reviews_card,
     partial_reviews_decisions,
@@ -49,7 +52,7 @@ from .views.results import SubmissionResultView
 from .views.reviewer_leaderboard import ReviewerLeaderboard, ReviewerLeaderboardDetail
 from .views.revisions import RevisionCompareView, RevisionListView
 from .views.staff_assignments import StaffAssignments
-from .views.submission_delete import SubmissionDeleteView
+from .views.submission_delete import SubmissionAnonymizeView, SubmissionDeleteView
 from .views.submission_detail import (
     SubmissionDetailPDFView,
     SubmissionDetailView,
@@ -59,9 +62,9 @@ from .views.submission_edit import (
     CreateProjectView,
     ProgressSubmissionView,
     SubmissionEditView,
+    UpdateAuthorView,
     UpdateLeadView,
     UpdateMetaTermsView,
-    UpdatePartnersView,
     UpdateReviewersView,
     htmx_archive_unarchive_submission,
 )
@@ -99,12 +102,23 @@ submission_urls = (
         path("success/<int:pk>/", submission_success, name="success"),
         path("all/", submissions_all, name="list"),
         path(
-            "statuses/",
-            get_applications_status_counts,
-            name="applications_status_counts",
+            "all/bulk_archive_confirm/",
+            bulk_archive_submissions_confirm,
+            name="bulk-archive-confirm",
         ),
         path("all/bulk_archive/", bulk_archive_submissions, name="bulk-archive"),
+        path(
+            "all/bulk_delete_confirm/",
+            bulk_delete_submissions_confirm,
+            name="bulk-delete-confirm",
+        ),
         path("all/bulk_delete/", bulk_delete_submissions, name="bulk-delete"),
+        path(
+            "all/bulk_anonymize_confirm/",
+            bulk_anonymize_submissions_confirm,
+            name="bulk-anonymize-confirm",
+        ),
+        path("all/bulk_anonymize/", bulk_anonymize_submissions, name="bulk-anonymize"),
         path(
             "all/bulk_update_status/",
             bulk_update_submissions_status,
@@ -212,7 +226,16 @@ submission_urls = (
             include(
                 [
                     path("", SubmissionDetailView.as_view(), name="detail"),
-                    path("project/", ProjectDetailView.as_view(), name="project"),
+                    path(
+                        "project/",
+                        SubmissionProjectsView.as_view(),
+                        name="projects",
+                    ),
+                    path(
+                        "project/<int:project_pk>/",
+                        ProjectDetailView.as_view(),
+                        name="project",
+                    ),
                     path(
                         "partial/lead/",
                         partial_submission_lead,
@@ -257,6 +280,11 @@ submission_urls = (
                         name="create_reminder",
                     ),
                     path(
+                        "author/change/",
+                        UpdateAuthorView.as_view(),
+                        name="change_author",
+                    ),
+                    path(
                         "translate/",
                         TranslateSubmissionView.as_view(),
                         name="translate",
@@ -268,11 +296,6 @@ submission_urls = (
                         "reviewers/update/",
                         UpdateReviewersView.as_view(),
                         name="reviewers_update",
-                    ),
-                    path(
-                        "partners/update/",
-                        UpdatePartnersView.as_view(),
-                        name="partners_update",
                     ),
                     path(
                         "metaterms/update/",
@@ -300,6 +323,11 @@ submission_urls = (
                         "download/", SubmissionDetailPDFView.as_view(), name="download"
                     ),
                     path("delete/", SubmissionDeleteView.as_view(), name="delete"),
+                    path(
+                        "anonymize/",
+                        SubmissionAnonymizeView.as_view(),
+                        name="anonymize",
+                    ),
                     path(
                         "documents/<uuid:field_id>/<str:file_name>",
                         SubmissionPrivateMediaView.as_view(),

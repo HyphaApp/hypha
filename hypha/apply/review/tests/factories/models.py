@@ -20,6 +20,7 @@ class ReviewFormDataFactory(FormDataFactory):
 class ReviewFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Review
+        skip_postgeneration_save = True
 
     class Params:
         recommendation_yes = factory.Trait(recommendation=YES)
@@ -48,6 +49,7 @@ class ReviewFactory(factory.django.DjangoModelFactory):
 class ReviewOpinionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ReviewOpinion
+        skip_postgeneration_save = True
 
     class Params:
         opinion_agree = factory.Trait(opinion=AGREE)
@@ -65,6 +67,7 @@ class ReviewOpinionFactory(factory.django.DjangoModelFactory):
 class ReviewFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ReviewForm
+        skip_postgeneration_save = True
 
     name = factory.Faker("word")
     form_fields = blocks.ReviewFormFieldsFactory

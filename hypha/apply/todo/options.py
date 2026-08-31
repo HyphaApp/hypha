@@ -1,6 +1,6 @@
 import copy
 
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.activity.adapters.utils import link_to
 
@@ -25,29 +25,42 @@ REPORT_DUE = "report_due"
 COMMENT_TASK = "comment_task"
 DOWNLOAD_SUBMISSIONS_EXPORT = "download_submissions_export"
 FAILED_SUBMISSIONS_EXPORT = "failed_submission_export"
+DOWNLOAD_INVOICES_EXPORT = "download_invoices_export"
+FAILED_INVOICES_EXPORT = "failed_invoices_export"
 
 TASKS_CODE_CHOICES = (
-    (COMMENT_TASK, "Comment Task"),
-    (SUBMISSION_DRAFT, "Submission Draft"),
-    (DETERMINATION_DRAFT, "Determination draft"),
-    (REVIEW_DRAFT, "Review Draft"),
-    (PROJECT_WAITING_PF, "Project waiting project form"),
-    (PROJECT_WAITING_SOW, "Project waiting scope of work"),
-    (PROJECT_SUBMIT_PAF, "Project submit project form(s)"),
-    (PROJECT_SUBMIT_SOW, "Project submit scope of work"),
-    (PAF_REQUIRED_CHANGES, "Project form required changes"),
-    (PAF_WAITING_ASSIGNEE, "Project form waiting assignee"),
-    (PAF_WAITING_APPROVAL, "Project form waiting approval"),
-    (PROJECT_WAITING_CONTRACT, "Project waiting contract"),
-    (PROJECT_WAITING_CONTRACT_DOCUMENT, "Project waiting contract document"),
-    (PROJECT_WAITING_CONTRACT_REVIEW, "Project waiting contract review"),
-    (PROJECT_WAITING_INVOICE, "Project waiting invoice"),
-    (INVOICE_REQUIRED_CHANGES, "Invoice required changes"),
-    (INVOICE_WAITING_APPROVAL, "Invoice waiting approval"),
-    (INVOICE_WAITING_PAID, "Invoice waiting paid"),
-    (REPORT_DUE, "Report due"),
-    (DOWNLOAD_SUBMISSIONS_EXPORT, "Download exported submissions"),
-    (FAILED_SUBMISSIONS_EXPORT, "Failed to generate submissions export file"),
+    (COMMENT_TASK, _("Comment Task")),
+    (SUBMISSION_DRAFT, _("Submission Draft")),
+    (DETERMINATION_DRAFT, _("Determination draft")),
+    (REVIEW_DRAFT, _("Review Draft")),
+    (PROJECT_WAITING_PF, _("Project waiting project form")),
+    (PROJECT_WAITING_SOW, _("Project waiting scope of work")),
+    (PROJECT_SUBMIT_PAF, _("Project submit project form(s)")),
+    (PROJECT_SUBMIT_SOW, _("Project submit scope of work")),
+    (PAF_REQUIRED_CHANGES, _("Project form required changes")),
+    (PAF_WAITING_ASSIGNEE, _("Project form waiting assignee")),
+    (PAF_WAITING_APPROVAL, _("Project form waiting approval")),
+    (PROJECT_WAITING_CONTRACT, _("Project waiting contract")),
+    (
+        PROJECT_WAITING_CONTRACT_DOCUMENT,
+        _("Project waiting contract document"),
+    ),
+    (PROJECT_WAITING_CONTRACT_REVIEW, _("Project waiting contract review")),
+    (PROJECT_WAITING_INVOICE, _("Project waiting invoice")),
+    (INVOICE_REQUIRED_CHANGES, _("Invoice required changes")),
+    (INVOICE_WAITING_APPROVAL, _("Invoice waiting approval")),
+    (INVOICE_WAITING_PAID, _("Invoice waiting paid")),
+    (REPORT_DUE, _("Report due")),
+    (DOWNLOAD_SUBMISSIONS_EXPORT, _("Download exported submissions")),
+    (
+        FAILED_SUBMISSIONS_EXPORT,
+        _("Failed to generate submissions export file"),
+    ),
+    (DOWNLOAD_INVOICES_EXPORT, _("Download exported invoices")),
+    (
+        FAILED_INVOICES_EXPORT,
+        _("Failed to generate invoices export file"),
+    ),
 )
 
 
@@ -167,7 +180,7 @@ template_map = {
     # invoicing and reporting (vendor/staff/finance team action)
     PROJECT_WAITING_INVOICE: {
         "text": _(
-            '<span class="text-sm">{related.fund_name} #{related.application_id}</span><br>Project <span class="truncate inline-block max-w-32 align-bottom">"{related.title}"</span> is waiting for invoice'
+            '<span class="text-xs">{related.fund_name} #{related.application_id}</span><br>Project <span class="truncate inline-block max-w-32 align-bottom">"{related.title}"</span> is waiting for invoice'
         ),
         "icon": "document-currency-dollar",
         "url": "{link}",
@@ -215,6 +228,21 @@ template_map = {
     FAILED_SUBMISSIONS_EXPORT: {
         "text": _(
             "There was an issue generating your submission export file, please try again."
+        ),
+        "icon": "exclamation-circle",
+        "url": "{link}",
+        "type": _("export"),
+    },
+    # INVOICE EXPORT ACTIONS
+    DOWNLOAD_INVOICES_EXPORT: {
+        "text": _("Your generated invoice export file is ready for download"),
+        "icon": "arrow-down-tray",
+        "url": "{link}",
+        "type": _("export"),
+    },
+    FAILED_INVOICES_EXPORT: {
+        "text": _(
+            "There was an issue generating your invoice export file, please try again."
         ),
         "icon": "exclamation-circle",
         "url": "{link}",

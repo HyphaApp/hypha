@@ -8,13 +8,11 @@ from django.utils.safestring import mark_safe
 
 
 def wrap_deleted(text):
-    return format_html(
-        '<span class="bg-red-200 line-through">{}</span>', mark_safe(text)
-    )
+    return format_html("<del>{}</del>", mark_safe(text))
 
 
 def wrap_added(text):
-    return format_html('<span class="bg-green-200">{}</span>', mark_safe(text))
+    return format_html("<ins>{}</ins>", mark_safe(text))
 
 
 def compare(answer_a: str, answer_b: str, should_clean: bool = True) -> Tuple[str, str]:
@@ -35,8 +33,8 @@ def compare(answer_a: str, answer_b: str, should_clean: bool = True) -> Tuple[st
     if should_clean:
         answer_a = re.sub("(<li[^>]*>)", r"\1◦ ", answer_a)
         answer_b = re.sub("(<li[^>]*>)", r"\1◦ ", answer_b)
-        answer_a = nh3.clean(answer_a, tags={"h4"}, attributes={})
-        answer_b = nh3.clean(answer_b, tags={"h4"}, attributes={})
+        answer_a = nh3.clean(answer_a, tags=set(), attributes={})
+        answer_b = nh3.clean(answer_b, tags=set(), attributes={})
 
     diff = SequenceMatcher(None, answer_a, answer_b)
     from_diff = []
@@ -56,6 +54,7 @@ def compare(answer_a: str, answer_b: str, should_clean: bool = True) -> Tuple[st
             to_diff.append(wrap_added(diff.b[b0:b1]))
 
     from_display = "".join(from_diff)
+
     to_display = "".join(to_diff)
     from_display = re.sub("(\\.\n)", r"\1<br><br>", from_display)
     to_display = re.sub("(\\.\n)", r"\1<br><br>", to_display)

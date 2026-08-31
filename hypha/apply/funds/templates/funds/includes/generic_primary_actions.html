@@ -1,23 +1,25 @@
 {% load i18n primaryactions_tags %}
 
 {% if request.user|should_display_primary_actions_block:object %}
-    <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions" data-testid="sidebar-primary-actions">
-        <h5>{% trans "Actions to take" %}</h5>
+    <section class="card card-border shadow-xs sidebar__inner--actions" data-testid="sidebar-primary-actions">
+        <div class="card-body">
+            <h2 class="card-title">{% trans "Actions to take" %}</h2>
 
-        {% if object.in_internal_review_phase or object.in_external_review_phase %}
-            {% trans "Complete draft review" as review_draft %}
-            {% include 'review/includes/review_button.html' with submission=object class="button--full-width button--bottom-space" draft_text=review_draft %}
-        {% endif %}
+            {% if object.in_internal_review_phase or object.in_external_review_phase %}
+                {% trans "Complete draft review" as review_draft %}
+                {% include 'review/includes/review_button.html' with submission=object draft_text=review_draft %}
+            {% endif %}
 
-        {% if object.is_finished %}
-            {% with determination=object.determinations.last %}
-                {% if determination %}
-                    <a
-                        class="button button--primary button--full-width button--bottom-space"
-                        href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}"
-                    >{% trans "View determination" %}</a>
-                {% endif %}
-            {% endwith %}
-        {% endif %}
-    </div>
+            {% if object.is_finished %}
+                {% with determination=object.determinations.last %}
+                    {% if determination %}
+                        <a
+                            class="mb-2 btn btn-primary btn-block"
+                            href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}"
+                        >{% trans "View determination" %}</a>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
+        </div>
+    </section>
 {% endif %}

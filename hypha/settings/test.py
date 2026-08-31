@@ -17,7 +17,9 @@ PROJECTS_AUTO_CREATE = True
 TRANSITION_AFTER_REVIEWS = 2
 TRANSITION_AFTER_ASSIGNED = True
 
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+STORAGES["staticfiles"] = {
+    "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+}
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.MD5PasswordHasher",
@@ -32,6 +34,9 @@ TEMPLATES[0]["OPTIONS"]["debug"] = True
 ELEVATE_COOKIE_SALT = SECRET_KEY
 
 ENFORCE_TWO_FACTOR = False
+
+# Enable passkeys in tests so feature views are exercisable without DEBUG.
+WEBAUTHN_RP_ID = "testserver"
 
 SECURE_SSL_REDIRECT = False
 

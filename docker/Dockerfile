@@ -1,4 +1,4 @@
-FROM python:3.12.9-bookworm
+FROM python:3.12-bookworm
 
 # Add venv/bin to PATH.
 ENV PATH="/opt/app/.venv/bin:/usr/local/bin:$PATH"
@@ -10,11 +10,11 @@ ENV UV_LINK_MODE=copy
 WORKDIR /opt/app
 
 # Install node.
-COPY --from=node:24.1-slim /usr/local/bin /usr/local/bin
-COPY --from=node:24.1-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
+COPY --from=node:24-slim /usr/local/bin /usr/local/bin
+COPY --from=node:24-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
 
 # Install uv.
-COPY --from=ghcr.io/astral-sh/uv:0.5.13 /uv /uvx /usr/local/bin
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
 # Install node dependencies.
 COPY package*.json ./
@@ -30,7 +30,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 COPY ./ ./
 
 # Create directories.
-RUN mkdir -p ./hypha/static_compiled && mkdir -p ./hypha/media
+RUN mkdir -p ./hypha/static_compiled && mkdir -p ./media
 
 # Build front end.
 RUN npm run dev:build

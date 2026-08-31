@@ -17,6 +17,7 @@ def my_active_submissions(user):
         .annotate(
             is_active=Case(When(status__in=active_statuses, then=True), default=False)
         )
+        .current()
         .select_related("draft_revision")
         .order_by("-is_active", "-submit_time")
         .distinct()

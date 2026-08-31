@@ -1,0 +1,418 @@
+import base64
+import json
+import logging
+from functools import wraps
+
+from django.conf import settings
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.db import transaction
+from django.http import Http404, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, render, resolve_url
+from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.translation import gettext_lazy as _
+from django.views.decorators.http import require_GET, require_POST
+from django_ratelimit.decorators import ratelimit
+from webauthn import (
+    generate_authentication_options,
+    generate_registration_options,
+    options_to_json,
+    verify_authentication_response,
+    verify_registration_response,
+)
+from webauthn.helpers import base64url_to_bytes, bytes_to_base64url
+from webauthn.helpers.exceptions import InvalidAuthenticationResponse
+from webauthn.helpers.structs import (
+    AuthenticationCredential,
+    AuthenticatorAssertionResponse,
+    AuthenticatorAttestationResponse,
+    AuthenticatorSelectionCriteria,
+    AuthenticatorTransport,
+    PublicKeyCredentialDescriptor,
+    RegistrationCredential,
+    ResidentKeyRequirement,
+    UserVerificationRequirement,
+)
+
+from hypha.elevate.views import redirect_to_elevate
+
+from .models import Passkey
+from .services import send_passkey_notification
+from .utils import passkeys_enabled
+
+logger = logging.getLogger(__name__)
+
+SESSION_CHALLENGE_KEY_REGISTER = "webauthn_challenge_register"
+SESSION_CHALLENGE_KEY_AUTH = "webauthn_challenge_auth"
+
+
+def passkeys_required(view_func):
+    @wraps(view_func)
+    def _wrapped(request, *args, **kwargs):
+        if not passkeys_enabled():
+            raise Http404
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped
+
+
+def passkey_elevate_required(view_func):
+    """Require an elevated (recently re-authenticated) session for sensitive
+    passkey management actions — adding and removing passkeys.
+
+    This mirrors the elevation gate used for disabling 2FA and changing the
+    account email. All users must re-authenticate before the action is allowed:
+    users with a usable password confirm it again, while users without one
+    (e.g. OAuth logins) are routed to the same elevate page where they confirm
+    access via an emailed one-time code.
+
+    These endpoints are called via ``fetch`` (registration) and HTMX (delete),
+    so instead of returning a normal redirect we hand the client the elevate
+    URL: an ``HX-Redirect`` header for HTMX requests, otherwise a JSON body with
+    an ``elevate_url`` the JavaScript can navigate to.
+    """
+
+    @wraps(view_func)
+    def _wrapped(request, *args, **kwargs):
+        if not request.is_elevated():
+            elevate_url = redirect_to_elevate(resolve_url("users:account"))["Location"]
+            if request.headers.get("HX-Request"):
+                response = HttpResponse(status=204)
+                response["HX-Redirect"] = elevate_url
+                return response
+            return JsonResponse({"elevate_url": elevate_url}, status=403)
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped
+
+
+def _get_rp_id(request):
+    rp_id = getattr(settings, "WEBAUTHN_RP_ID", None)
+    if rp_id:
+        return rp_id
+    return request.get_host().split(":")[0]
+
+
+def _get_rp_name():
+    return getattr(settings, "WEBAUTHN_RP_NAME", None) or settings.ORG_LONG_NAME
+
+
+def _get_origin(request):
+    origin = getattr(settings, "WEBAUTHN_ORIGIN", None)
+    if origin:
+        return origin
+    scheme = "https" if request.is_secure() else "http"
+    return f"{scheme}://{request.get_host()}"
+
+
+# WebAuthn challenges are single-use, but they should also be short-lived.
+# Reject any challenge older than this to match spec guidance (a few minutes).
+CHALLENGE_TTL_SECONDS = 300
+
+
+def _store_challenge(request, challenge: bytes, key: str):
+    request.session[key] = {
+        "challenge": base64.b64encode(challenge).decode(),
+        "created": timezone.now().timestamp(),
+    }
+
+
+def _load_challenge(request, key: str) -> bytes:
+    stored = request.session.pop(key, None)
+    if not isinstance(stored, dict):
+        raise PermissionDenied("No active WebAuthn challenge.")
+    created = stored.get("created")
+    if created is None or timezone.now().timestamp() - created > CHALLENGE_TTL_SECONDS:
+        raise PermissionDenied("WebAuthn challenge expired.")
+    return base64.b64decode(stored["challenge"])
+
+
+_VALID_TRANSPORTS = {t.value for t in AuthenticatorTransport}
+
+
+def _clean_transports(raw) -> list[str]:
+    if not isinstance(raw, list):
+        return []
+    return [t for t in raw if isinstance(t, str) and t in _VALID_TRANSPORTS]
+
+
+# ---------------------------------------------------------------------------
+# Registration — requires an authenticated user
+# ---------------------------------------------------------------------------
+
+
+MAX_PASSKEYS_PER_USER = 10
+
+
+@passkeys_required
+@login_required
+@require_POST
+@passkey_elevate_required
+@ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
+def passkey_register_begin(request):
+    user = request.user
+    existing_passkeys = list(user.passkeys.all())
+    if len(existing_passkeys) >= MAX_PASSKEYS_PER_USER:
+        return JsonResponse(
+            {
+                "error": _("Maximum of {max} passkeys allowed").format(
+                    max=MAX_PASSKEYS_PER_USER
+                )
+            },
+            status=400,
+        )
+    existing = [
+        PublicKeyCredentialDescriptor(
+            id=base64url_to_bytes(pk.credential_id),
+        )
+        for pk in existing_passkeys
+    ]
+    options = generate_registration_options(
+        rp_id=_get_rp_id(request),
+        rp_name=_get_rp_name(),
+        user_id=str(user.pk).encode(),
+        user_name=user.email,
+        user_display_name=user.get_full_name() or user.email,
+        authenticator_selection=AuthenticatorSelectionCriteria(
+            resident_key=ResidentKeyRequirement.REQUIRED,
+            user_verification=UserVerificationRequirement.REQUIRED,
+        ),
+        exclude_credentials=existing,
+    )
+    _store_challenge(request, options.challenge, SESSION_CHALLENGE_KEY_REGISTER)
+    return JsonResponse(json.loads(options_to_json(options)))
+
+
+@passkeys_required
+@login_required
+@require_POST
+@passkey_elevate_required
+@ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
+def passkey_register_complete(request):
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({"error": _("Invalid JSON")}, status=400)
+
+    try:
+        challenge = _load_challenge(request, SESSION_CHALLENGE_KEY_REGISTER)
+    except PermissionDenied:
+        return JsonResponse({"error": _("No active WebAuthn challenge")}, status=400)
+
+    transports = _clean_transports(data.get("response", {}).get("transports"))
+    try:
+        credential = RegistrationCredential(
+            id=data["id"],
+            raw_id=base64url_to_bytes(data["rawId"]),
+            response=AuthenticatorAttestationResponse(
+                client_data_json=base64url_to_bytes(data["response"]["clientDataJSON"]),
+                attestation_object=base64url_to_bytes(
+                    data["response"]["attestationObject"]
+                ),
+                transports=transports,
+            ),
+        )
+        verification = verify_registration_response(
+            credential=credential,
+            expected_challenge=challenge,
+            expected_rp_id=_get_rp_id(request),
+            expected_origin=_get_origin(request),
+            require_user_verification=True,
+        )
+    except Exception:
+        logger.warning(
+            "Passkey registration verification failed for user %s",
+            request.user.pk,
+            exc_info=True,
+        )
+        return JsonResponse({"error": _("Verification failed")}, status=400)
+
+    name = (data.get("name") or "").strip()[:128] or timezone.now().strftime(
+        "Passkey %Y-%m-%d"
+    )
+    try:
+        Passkey.objects.create(
+            user=request.user,
+            name=name,
+            credential_id=bytes_to_base64url(verification.credential_id),
+            public_key=bytes_to_base64url(verification.credential_public_key),
+            sign_count=verification.sign_count,
+            transports=transports,
+        )
+    except Exception:
+        logger.warning(
+            "Failed to save passkey for user %s", request.user.pk, exc_info=True
+        )
+        return JsonResponse({"error": _("Could not save passkey")}, status=500)
+    logger.info("Passkey registered for user %s (name=%r)", request.user.pk, name)
+    send_passkey_notification(request, request.user, name, added=True)
+    return JsonResponse({"status": "ok"})
+
+
+# ---------------------------------------------------------------------------
+# Authentication — public (no session required)
+# ---------------------------------------------------------------------------
+
+
+@passkeys_required
+@require_POST
+@ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
+def passkey_auth_begin(request):
+    options = generate_authentication_options(
+        rp_id=_get_rp_id(request),
+        user_verification=UserVerificationRequirement.REQUIRED,
+    )
+    _store_challenge(request, options.challenge, SESSION_CHALLENGE_KEY_AUTH)
+    return JsonResponse(json.loads(options_to_json(options)))
+
+
+@passkeys_required
+@require_POST
+@ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST")
+def passkey_auth_complete(request):
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({"error": _("Invalid JSON")}, status=400)
+
+    try:
+        challenge = _load_challenge(request, SESSION_CHALLENGE_KEY_AUTH)
+    except PermissionDenied:
+        return JsonResponse({"error": _("No active WebAuthn challenge")}, status=400)
+
+    try:
+        credential_id_b64 = bytes_to_base64url(base64url_to_bytes(data["rawId"]))
+        raw_user_handle = data["response"].get("userHandle")
+        user_handle_bytes = (
+            base64url_to_bytes(raw_user_handle) if raw_user_handle else None
+        )
+    except Exception:
+        return JsonResponse({"error": _("Invalid credential")}, status=400)
+
+    try:
+        with transaction.atomic():
+            passkey = (
+                Passkey.objects.select_related("user")
+                .select_for_update()
+                .get(credential_id=credential_id_b64)
+            )
+
+            if user_handle_bytes is not None:
+                if user_handle_bytes != str(passkey.user.pk).encode():
+                    raise InvalidAuthenticationResponse("User handle mismatch")
+
+            credential = AuthenticationCredential(
+                id=data["id"],
+                raw_id=base64url_to_bytes(data["rawId"]),
+                response=AuthenticatorAssertionResponse(
+                    client_data_json=base64url_to_bytes(
+                        data["response"]["clientDataJSON"]
+                    ),
+                    authenticator_data=base64url_to_bytes(
+                        data["response"]["authenticatorData"]
+                    ),
+                    signature=base64url_to_bytes(data["response"]["signature"]),
+                    user_handle=user_handle_bytes,
+                ),
+            )
+            verification = verify_authentication_response(
+                credential=credential,
+                expected_challenge=challenge,
+                expected_rp_id=_get_rp_id(request),
+                expected_origin=_get_origin(request),
+                credential_public_key=base64url_to_bytes(passkey.public_key),
+                credential_current_sign_count=passkey.sign_count,
+                require_user_verification=True,
+            )
+
+            passkey.sign_count = verification.new_sign_count
+            passkey.last_used_at = timezone.now()
+            passkey.save(update_fields=["sign_count", "last_used_at"])
+
+            user = passkey.user
+    except Passkey.DoesNotExist:
+        return JsonResponse({"error": _("Unknown credential")}, status=400)
+    except InvalidAuthenticationResponse as exc:
+        if "sign count" in str(exc).lower():
+            logger.error(
+                "Passkey sign count regression — possible cloned authenticator"
+                " (credential=%s): %s",
+                credential_id_b64,
+                exc,
+            )
+        else:
+            logger.warning(
+                "Passkey authentication verification failed for credential %s: %s",
+                credential_id_b64,
+                exc,
+            )
+        return JsonResponse({"error": _("Verification failed")}, status=400)
+    except Exception:
+        logger.warning(
+            "Passkey authentication verification failed for credential %s",
+            credential_id_b64,
+            exc_info=True,
+        )
+        return JsonResponse({"error": _("Verification failed")}, status=400)
+    user.backend = settings.CUSTOM_AUTH_BACKEND
+    login(request, user)
+    request.session["passkey_authenticated"] = True
+
+    if data.get("remember_me"):
+        request.session.set_expiry(settings.SESSION_COOKIE_AGE_LONG)
+
+    next_url = data.get("next") or resolve_url(settings.LOGIN_REDIRECT_URL)
+    if not url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        next_url = resolve_url(settings.LOGIN_REDIRECT_URL)
+    return JsonResponse({"status": "ok", "redirect_url": next_url})
+
+
+# ---------------------------------------------------------------------------
+# Passkey management — account page
+# ---------------------------------------------------------------------------
+
+
+@passkeys_required
+@login_required
+@require_GET
+def passkey_list(request):
+    passkeys = request.user.passkeys.all()
+    return render(request, "users/partials/passkey-list.html", {"passkeys": passkeys})
+
+
+@passkeys_required
+@login_required
+@require_POST
+@passkey_elevate_required
+def passkey_delete(request, pk):
+    passkey = get_object_or_404(Passkey, pk=pk, user=request.user)
+    logger.info(
+        "Passkey deleted by user %s (passkey=%s, name=%r)",
+        request.user.pk,
+        pk,
+        passkey.name,
+    )
+    passkey_name = passkey.name
+    passkey.delete()
+    send_passkey_notification(request, request.user, passkey_name, added=False)
+    passkeys = request.user.passkeys.all()
+    return render(request, "users/partials/passkey-list.html", {"passkeys": passkeys})
+
+
+@passkeys_required
+@login_required
+@require_POST
+def passkey_rename(request, pk):
+    passkey = get_object_or_404(Passkey, pk=pk, user=request.user)
+    name = request.POST.get("name", "").strip()[:128]
+    if name:
+        passkey.name = name
+        passkey.save(update_fields=["name"])
+    passkeys = request.user.passkeys.all()
+    return render(request, "users/partials/passkey-list.html", {"passkeys": passkeys})

@@ -1,170 +1,145 @@
-/* eslint-disable max-nested-callbacks */
-(function ($) {
-  const $body = $("body");
-  const $checkbox = $(".js-batch-select");
-  const $allCheckboxInput = $(".js-batch-select-all");
-  const $batchButtons = $(".js-batch-button");
-  const $batchInvoiceProgress = $(".js-batch-invoice-progress");
-  const $batchTitlesList = $(".js-batch-titles");
-  const $batchTitleCount = $(".js-batch-title-count");
-  const $hiddenIDlist = $(".js-submissions-id");
-  const $hiddenInvoiceIDlist = $(".js-invoices-id");
-  const $toggleBatchList = $(".js-toggle-batch-list");
-  const activeClass = "batch-actions-enabled";
-  const closedClass = "is-closed";
+(function () {
+  "use strict";
 
-  $(window).on("load", function () {
-    toggleBatchActions();
+  const checkboxes = document.querySelectorAll(".js-batch-select");
+  const allCheckboxInputs = document.querySelectorAll(".js-batch-select-all");
+  const batchButtons = document.querySelectorAll("[data-js-batch-actions]");
+  const hiddenIDlists = document.querySelectorAll(".js-submissions-id");
+
+  window.addEventListener("load", function () {
+    updateActionBarVisibility();
     updateCount();
   });
 
-  $allCheckboxInput.change(function () {
-    if ($(this).is(":checked")) {
-      $checkbox.each(function () {
-        this.checked = true;
+  allCheckboxInputs.forEach(function (input) {
+    input.addEventListener("change", function () {
+      checkboxes.forEach(function (cb) {
+        cb.checked = input.checked;
       });
-    } else {
-      $checkbox.each(function () {
-        this.checked = false;
-      });
-    }
-
-    toggleBatchActions();
-    updateCount();
-    updateInvoiceProgressButton();
+      updateActionBarVisibility();
+      updateCount();
+      updateInvoiceProgressButton();
+    });
   });
 
-  $checkbox.change(function () {
-    // see how many checkboxes are :checked
-    toggleBatchActions();
+  checkboxes.forEach(function (cb) {
+    cb.addEventListener("change", function () {
+      updateActionBarVisibility();
+      updateCount();
 
-    // updates selected checkbox count
-    updateCount();
+      // Reset the check-all input if this one was unchecked
+      if (!cb.checked) {
+        allCheckboxInputs.forEach(function (all) {
+          all.checked = false;
+        });
+      }
 
-    // reset the check all input
-    if (!$(this).is(":checked") && $allCheckboxInput.is(":checked")) {
-      resetCheckAllInput();
-    }
-
-    updateInvoiceProgressButton();
+      updateInvoiceProgressButton();
+    });
   });
 
-  // append selected project titles to batch update reviewer modal
-  $batchButtons.each(function () {
-    $(this).click(function (e) {
-      let selectedIDs = [];
+  // Append selected project titles to batch update modal on button click
+  batchButtons.forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
       e.preventDefault();
-      selectedIDs = prepareBatchListing();
+      const selectedIDs = prepareBatchListing();
 
       if (selectedIDs.length > 0) {
-        // Get the base URL from the href attribute
-        const baseUrl = $(this).attr("href");
+        const baseUrl = btn.getAttribute("href");
         const url = new URL(baseUrl, window.location.origin);
-        selectedIDs.forEach((id) => {
+        selectedIDs.forEach(function (id) {
           url.searchParams.append("selected_ids", id);
         });
-        // Send the request using htmx.ajax
-        htmx.ajax("GET", url.toString(), {
-          target: "#htmx-modal", // Optional: set the target element
-        });
+        htmx.ajax("GET", url.toString(), { target: "#htmx-modal" });
       } else {
         alert("Please select at least one item.");
       }
     });
   });
 
-  $batchInvoiceProgress.click(function () {
-    updateInvoiceProgressButton();
-  });
-
-  // show/hide the list of actions
-  $toggleBatchList.click((e) => {
-    e.preventDefault();
-
-    if ($(".js-batch-titles").hasClass(closedClass)) {
-      $toggleBatchList.html("Hide");
-    } else {
-      $toggleBatchList.html("Show");
-    }
-
-    $batchTitlesList.toggleClass(closedClass);
-  });
-
   /**
-   * Prepare the batch listing.
+   * Build the list of selected IDs and update hidden inputs.
    * @returns {Array} selectedIDs
    */
   function prepareBatchListing() {
-    $batchTitlesList.html("");
-    $batchTitleCount.html("");
-    $batchTitlesList.addClass(closedClass);
-    $toggleBatchList.html("Show");
+    const selectedIDs = Array.from(checkboxes)
+      .filter(function (cb) {
+        return cb.checked;
+      })
+      .map(function (cb) {
+        return cb.closest("tr").dataset.recordId;
+      });
 
-    let selectedIDs = [];
-
-    $checkbox.filter(":checked").each(function () {
-      selectedIDs.push($(this).parents("tr").data("record-id"));
+    hiddenIDlists.forEach(function (el) {
+      el.value = selectedIDs.join(",");
     });
 
-    $batchTitleCount.append(`${selectedIDs.length} submissions selected`);
-    $hiddenIDlist.val(selectedIDs.join(","));
-    $hiddenInvoiceIDlist.val(selectedIDs.join(","));
     return selectedIDs;
   }
 
   /**
-   * Update the invoice progress button.
+   * Enable/disable the invoice progress button based on common actions
+   * across all selected rows.
    */
   function updateInvoiceProgressButton() {
     var actions;
-    $checkbox.filter(":checked").each(function () {
-      let newActions = $(this)
-        .parents("tr")
-        .find(".js-actions")
-        .data("actions");
-      // If actions is undefined (i.e., first iteration), initialize it with newActions
-      if (!actions) {
-        actions = newActions;
-      } else {
-        // Filter actions to keep only items also present in newActions
-        actions = actions.filter((action) => newActions.includes(action));
-      }
-    });
+    Array.from(checkboxes)
+      .filter(function (cb) {
+        return cb.checked;
+      })
+      .forEach(function (cb) {
+        const actionsEl = cb.closest("tr").querySelector(".js-actions");
+        if (!actionsEl) return;
+        let newActions;
+        try {
+          newActions = JSON.parse(actionsEl.dataset.actions);
+        } catch (e) {
+          newActions = [];
+        }
+        if (!actions) {
+          actions = newActions;
+        } else {
+          actions = actions.filter(function (a) {
+            return newActions.includes(a);
+          });
+        }
+      });
+
+    const btn = document.querySelector(
+      "[data-js-batch-actions='invoice-update-status']"
+    );
+    if (!btn) return;
 
     if (!actions || actions.length === 0) {
-      $batchInvoiceProgress.attr("disabled", "disabled");
-      $batchInvoiceProgress.attr(
-        "data-tooltip",
-        "Status changes can't be applied to Invoices with this combination of statuses"
-      );
+      btn.setAttribute("disabled", "disabled");
     } else {
-      $batchInvoiceProgress.removeAttr("disabled");
-      $batchInvoiceProgress.removeAttr("data-tooltip");
+      btn.removeAttribute("disabled");
     }
   }
 
   /**
-   * Toggle the batch actions.
+   * Show or hide the batch action bar depending on selection state.
    */
-  function toggleBatchActions() {
-    if ($(".js-batch-select:checked").length) {
-      $body.addClass(activeClass);
-    } else {
-      $body.removeClass(activeClass);
-    }
+  function updateActionBarVisibility() {
+    const bar = document.querySelector("[data-js-batch-actions-bar]");
+    if (!bar) return;
+    const anyChecked = Array.from(checkboxes).some(function (cb) {
+      return cb.checked;
+    });
+    bar.classList.toggle("hidden", !anyChecked);
   }
 
   /**
-   * Update the count of selected checkboxes.
+   * Update the selected item count display.
    */
   function updateCount() {
-    $(".js-total-actions").html($(".js-batch-select:checked").length);
+    const el = document.querySelector(
+      '[data-js-batch-actions="total-selections"]'
+    );
+    if (el) {
+      el.textContent = Array.from(checkboxes).filter(function (cb) {
+        return cb.checked;
+      }).length;
+    }
   }
-
-  /**
-   * Reset the check all input.
-   */
-  function resetCheckAllInput() {
-    $allCheckboxInput.prop("checked", false);
-  }
-})(jQuery);
+})();

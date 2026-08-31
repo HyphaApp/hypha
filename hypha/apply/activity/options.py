@@ -1,5 +1,5 @@
 from django.db.models import TextChoices
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 class MESSAGES(TextChoices):
@@ -21,8 +21,6 @@ class MESSAGES(TextChoices):
     INVITED_TO_PROPOSAL = "INVITED_TO_PROPOSAL", _("invited to proposal")
     REVIEWERS_UPDATED = "REVIEWERS_UPDATED", _("updated reviewers")
     BATCH_REVIEWERS_UPDATED = "BATCH_REVIEWERS_UPDATED", _("batch updated reviewers")
-    PARTNERS_UPDATED = "PARTNERS_UPDATED", _("updated partners")
-    PARTNERS_UPDATED_PARTNER = "PARTNERS_UPDATED_PARTNER", _("partners updated partner")
     READY_FOR_REVIEW = "READY_FOR_REVIEW", _("marked ready for review")
     BATCH_READY_FOR_REVIEW = (
         "BATCH_READY_FOR_REVIEW",
@@ -34,11 +32,16 @@ class MESSAGES(TextChoices):
     OPENED_SEALED = "OPENED_SEALED", _("opened sealed submission")
     REVIEW_OPINION = "REVIEW_OPINION", _("reviewed opinion")
     DELETE_SUBMISSION = "DELETE_SUBMISSION", _("deleted submission")
+    ANONYMIZE_SUBMISSION = "ANONYMIZE_SUBMISSION", _("anonymized submission")
     DELETE_REVIEW = "DELETE_REVIEW", _("deleted review")
     DELETE_REVIEW_OPINION = "DELETE_REVIEW_OPINION", _("deleted review opinion")
     CREATED_PROJECT = "CREATED_PROJECT", _("created project")
     UPDATE_PROJECT_LEAD = "UPDATE_PROJECT_LEAD", _("updated project lead")
     UPDATE_PROJECT_TITLE = "UPDATE_PROJECT_TITLE", _("updated project title")
+    UPDATE_PROJECT_CONTRACT_NUMBER = (
+        "UPDATE_PROJECT_CONTRACT_NUMBER",
+        _("updated project contract number"),
+    )
     EDIT_REVIEW = "EDIT_REVIEW", _("edited review")
     SEND_FOR_APPROVAL = "SEND_FOR_APPROVAL", _("sent for approval")
     APPROVE_PROJECT = "APPROVE_PROJECT", _("approved project")
@@ -60,12 +63,17 @@ class MESSAGES(TextChoices):
     SENT_TO_COMPLIANCE = "SENT_TO_COMPLIANCE", _("sent project to compliance")
     UPDATE_INVOICE = "UPDATE_INVOICE", _("updated invoice")
     SUBMIT_REPORT = "SUBMIT_REPORT", _("submitted report")
+    DELETE_REPORT = "DELETE_REPORT", _("deleted report")
     SKIPPED_REPORT = "SKIPPED_REPORT", _("skipped report")
     REPORT_FREQUENCY_CHANGED = "REPORT_FREQUENCY_CHANGED", _("changed report frequency")
     DISABLED_REPORTING = "DISABLED_REPORTING", _("disabled reporting")
     REPORT_NOTIFY = "REPORT_NOTIFY", _("notified report")
     REVIEW_REMINDER = "REVIEW_REMINDER", _("reminder to review")
     BATCH_DELETE_SUBMISSION = "BATCH_DELETE_SUBMISSION", _("batch deleted submissions")
+    BATCH_ANONYMIZE_SUBMISSION = (
+        "BATCH_ANONYMIZE_SUBMISSION",
+        _("batch anonymized submissions"),
+    )
     BATCH_ARCHIVE_SUBMISSION = (
         "BATCH_ARCHIVE_SUBMISSION",
         _("batch archive submissions"),
@@ -80,3 +88,5 @@ class MESSAGES(TextChoices):
     UNARCHIVE_SUBMISSION = "UNARCHIVE_SUBMISSION", _("unarchived submission")
     REMOVE_TASK = "REMOVE_TASK", _("remove task")
     INVITE_COAPPLICANT = "INVITE_COAPPLICANT", _("invite co-applicant")
+    UPDATE_AUTHOR = "UPDATE_AUTHOR", _("updated author")
+    COMMENT_ASSIGNED = "COMMENT_ASSIGNED", _("comment assigned")

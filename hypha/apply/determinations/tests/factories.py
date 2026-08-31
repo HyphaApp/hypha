@@ -17,6 +17,11 @@ from ..views import get_form_for_stage
 
 
 class DeterminationDataFactory(factory.DictFactory):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
+
     @classmethod
     def _build(cls, model_class, *args, **kwargs):
         submission = kwargs.pop("submission")
@@ -39,6 +44,7 @@ class DeterminationDataFactory(factory.DictFactory):
 class DeterminationFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Determination
+        skip_postgeneration_save = True
 
     class Params:
         accepted = factory.Trait(outcome=ACCEPTED)
@@ -94,6 +100,7 @@ DeterminationFormFieldsFactory = StreamFieldUUIDFactory(
 class DeterminationFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = DeterminationForm
+        skip_postgeneration_save = True
 
     name = factory.Faker("word")
     form_fields = DeterminationFormFieldsFactory

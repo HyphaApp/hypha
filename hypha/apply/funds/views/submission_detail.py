@@ -1,15 +1,18 @@
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import (
-    FileResponse,
     Http404,
     HttpRequest,
     HttpResponse,
     HttpResponseRedirect,
 )
 from django.shortcuts import redirect
+from django.templatetags.static import static
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.text import slugify
+from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic import (
     DetailView,
@@ -19,18 +22,17 @@ from django.views.generic.detail import SingleObjectMixin
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.views import ActivityContextMixin
 from hypha.apply.users.decorators import (
-    staff_or_finance_required,
     staff_required,
 )
 from hypha.apply.utils.models import PDFPageSettings
-from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
+from hypha.apply.utils.pdfs import render_as_pdf
 from hypha.apply.utils.views import (
     ViewDispatcher,
 )
+from hypha.core.models import SystemSettings
 
 from ..models import (
     ApplicationSubmission,
-    ReviewerSettings,
 )
 from ..permissions import (
     can_alter_archived_submissions,
@@ -50,6 +52,11 @@ if settings.APPLICATION_TRANSLATIONS_ENABLED:
 class AdminSubmissionDetailView(ActivityContextMixin, DetailView):
     template_name_suffix = "_admin_detail"
     model = ApplicationSubmission
+
+    def get_object(self, queryset=None):
+        if not hasattr(self, "_object_cache"):
+            self._object_cache = super().get_object(queryset)
+        return self._object_cache
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
@@ -112,11 +119,20 @@ class ReviewerSubmissionDetailView(ActivityContextMixin, DetailView):
     template_name_suffix = "_reviewer_detail"
     model = ApplicationSubmission
 
+    def get_object(self, queryset=None):
+        if not hasattr(self, "_object_cache"):
+            self._object_cache = super().get_object(queryset)
+        return self._object_cache
+
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
         # If the requesting user submitted the application, return the Applicant view.
         # Reviewers may sometimes be applicants as well.
-        if submission.user == request.user:
+        # or if requesting user is a co-applicant to application, return the Applicant view.
+        if (
+            submission.user == request.user
+            or submission.co_applicants.filter(user=request.user).exists()
+        ):
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
         if submission.status == DRAFT_STATE:
             raise Http404
@@ -125,39 +141,6 @@ class ReviewerSubmissionDetailView(ActivityContextMixin, DetailView):
             "submission_view", request.user, object=submission, raise_exception=True
         )
 
-        reviewer_settings = ReviewerSettings.for_request(request)
-        if reviewer_settings.use_settings:
-            queryset = ApplicationSubmission.objects.for_reviewer_settings(
-                request.user, reviewer_settings
-            )
-            # Reviewer can't view submission which is not listed in ReviewerSubmissionsTable
-            if not queryset.filter(id=submission.id).exists():
-                raise PermissionDenied
-
-        return super().dispatch(request, *args, **kwargs)
-
-
-class PartnerSubmissionDetailView(ActivityContextMixin, DetailView):
-    model = ApplicationSubmission
-
-    def get_object(self):
-        return super().get_object().from_draft()
-
-    def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
-        permission, _ = has_permission(
-            "submission_view", request.user, object=submission, raise_exception=True
-        )
-        # If the requesting user submitted the application, return the Applicant view.
-        # Partners may sometimes be applicants as well.
-        if submission.user == request.user:
-            return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
-        # Only allow partners in the submission they are added as partners
-        partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
-        if not partner_has_access:
-            raise PermissionDenied
-        if submission.status == DRAFT_STATE:
-            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -165,6 +148,11 @@ class CommunitySubmissionDetailView(ActivityContextMixin, DetailView):
     template_name_suffix = "_community_detail"
     model = ApplicationSubmission
 
+    def get_object(self, queryset=None):
+        if not hasattr(self, "_object_cache"):
+            self._object_cache = super().get_object(queryset)
+        return self._object_cache
+
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
         permission, _ = has_permission(
@@ -172,7 +160,11 @@ class CommunitySubmissionDetailView(ActivityContextMixin, DetailView):
         )
         # If the requesting user submitted the application, return the Applicant view.
         # Reviewers may sometimes be applicants as well.
-        if submission.user == request.user:
+        # or if requesting user is a co-applicant to application, return the Applicant view.
+        if (
+            submission.user == request.user
+            or submission.co_applicants.filter(user=request.user).exists()
+        ):
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
         # Only allow community reviewers in submission with a community review state.
         if not submission.community_review:
@@ -186,7 +178,9 @@ class ApplicantSubmissionDetailView(ActivityContextMixin, DetailView):
     model = ApplicationSubmission
 
     def get_object(self):
-        return super().get_object().from_draft()
+        if not hasattr(self, "_object_cache"):
+            self._object_cache = super().get_object().from_draft()
+        return self._object_cache
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
@@ -205,7 +199,6 @@ class ApplicantSubmissionDetailView(ActivityContextMixin, DetailView):
 class SubmissionDetailView(ViewDispatcher):
     admin_view = AdminSubmissionDetailView
     reviewer_view = ReviewerSubmissionDetailView
-    partner_view = PartnerSubmissionDetailView
     community_view = CommunitySubmissionDetailView
     applicant_view = ApplicantSubmissionDetailView
 
@@ -272,40 +265,44 @@ class SubmissionSealedView(DetailView):
             )
 
 
-@method_decorator(staff_or_finance_required, name="dispatch")
+@method_decorator(staff_required, "dispatch")
 class SubmissionDetailPDFView(SingleObjectMixin, View):
     model = ApplicationSubmission
 
-    def get_object(self, queryset=None):
-        obj = super().get_object(queryset)
-
-        if not hasattr(obj, "project"):
-            raise Http404
-
-        return obj
+    def get_slugified_file_name(self, export_type):
+        return f"{timezone.localdate().strftime('%Y%m%d')}-{slugify(self.object.title)}.{export_type}"
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         pdf_page_settings = PDFPageSettings.load(request_or_site=request)
-        content = draw_submission_content(self.object.output_text_answers())
-        pdf = make_pdf(
-            title=self.object.title,
-            sections=[
-                {
-                    "content": content,
-                    "title": "Submission",
-                    "meta": [
-                        self.object.stage,
-                        self.object.page,
-                        self.object.round,
-                        f"Lead: {self.object.lead}",
-                    ],
-                },
-            ],
-            pagesize=pdf_page_settings.download_page_size,
+        context = {}
+        context["pagesize"] = pdf_page_settings.download_page_size
+        context["show_footer"] = True
+        site_settings = SystemSettings.objects.first()
+        if site_settings:
+            if site_settings.site_logo_default:
+                context["logo"] = request.build_absolute_uri(
+                    site_settings.site_logo_default.file.url
+                )
+            else:
+                context["logo"] = request.build_absolute_uri(static("images/logo.png"))
+
+        context["link"] = self.request.build_absolute_uri(
+            self.object.get_absolute_url()
         )
-        return FileResponse(
-            pdf,
-            as_attachment=True,
-            filename=self.object.title + ".pdf",
+        context["id"] = self.object.application_id
+        context["data"] = self.object.get_text_questions_answers_as_dict()
+        context["title"] = self.object.title
+        context["stage"] = self.object.stage
+        context["fund"] = self.object.page
+        context["round"] = self.object.round
+        context["lead"] = self.object.lead
+        context["show_header"] = True
+        context["header_title"] = _("Submission details")
+        template_path = "funds/submission-pdf.html"
+        return render_as_pdf(
+            request=request,
+            template_name=template_path,
+            context=context,
+            filename=self.get_slugified_file_name("pdf"),
         )

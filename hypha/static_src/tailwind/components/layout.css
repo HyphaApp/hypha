@@ -1,0 +1,84 @@
+.layout {
+  --layout-gutter: 1rem;
+  --layout-sidebar-width: 18.5rem;
+
+  @apply grid grid-flow-col gap-[var(--layout-gutter)];
+  grid-template-columns:
+    auto 0
+    minmax(0, calc(100% - var(--layout-sidebar-width) - var(--layout-gutter)));
+}
+
+@media (min-width: 32rem) {
+  .layout {
+    --layout-sidebar-width: 13.5rem;
+  }
+}
+
+@media (min-width: 48rem) {
+  .layout {
+    --layout-sidebar-width: 16rem;
+  }
+}
+
+@media (min-width: 72rem) {
+  .layout {
+    --layout-gutter: calc(var(--spacing) * 6);
+    --layout-sidebar-width: 18.5rem;
+  }
+}
+
+.layout-main {
+  grid-column: 2 / span 2;
+  min-width: 0;
+}
+
+.layout-sidebar {
+  grid-column: 1;
+  width: var(--layout-sidebar-width);
+}
+
+.layout-sidebar-end {
+  grid-template-columns:
+    minmax(0, calc(100% - var(--layout-sidebar-width) - var(--layout-gutter)))
+    0 auto;
+
+  .layout-main {
+    grid-column: 1;
+  }
+  .layout-sidebar {
+    grid-column: 2 / span 2;
+  }
+}
+
+@media (max-width: 48rem) {
+  .layout.layout-flowrow-until-md {
+    @apply grid-flow-row grid-cols-[1fr_!important];
+
+    &.layout-sidebar-flowrow-start {
+      .layout-sidebar {
+        grid-row: 1;
+      }
+      .layout-main {
+        grid-row: 2 / span 2;
+      }
+    }
+
+    &.layout-sidebar-flowrow-end {
+      .layout-sidebar {
+        grid-row: 2 / span 2;
+      }
+      .layout-main {
+        grid-row: 1;
+      }
+    }
+
+    .layout-sidebar {
+      grid-column: 1;
+      width: 100%;
+    }
+    .layout-main {
+      grid-column: 1;
+      width: 100%;
+    }
+  }
+}

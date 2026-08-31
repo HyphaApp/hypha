@@ -37,6 +37,33 @@ def edit_comment(activity: Activity, message: str) -> Activity:
     return activity
 
 
+def delete_comment(activity: Activity) -> Activity:
+    """
+    Soft delete a comment by creating a clone of the original comment with a delete message.
+
+    Args:
+        activity (Activity): The original comment activity to be soft deleted.
+
+    Returns:
+        Activity: The soft deleted comment activitye.
+    """
+
+    # Create a clone of the comment to soft delete
+    previous = Activity.objects.get(pk=activity.pk)
+    previous.pk = None
+    previous.current = False
+    previous.save()
+
+    activity.previous = previous
+    activity.deleted = timezone.now()
+    activity.edited = None
+    activity.message = ""
+    activity.current = True
+    activity.save()
+
+    return activity
+
+
 def get_related_activities_for_user(obj, user):
     """Return comments/communications related to an object, esp. useful with
     ApplicationSubmission and Project.
@@ -48,8 +75,13 @@ def get_related_activities_for_user(obj, user):
     Returns:
         [`Activity`][hypha.apply.activity.models.Activity] queryset
     """
-    if hasattr(obj, "project") and obj.project:
-        source_filter = Q(submission=obj) | Q(project=obj.project)
+    if hasattr(obj, "projects"):
+        # obj is an ApplicationSubmission, which may have several projects.
+        co_applicant = obj.co_applicants.filter(user=user).first()
+        if co_applicant and not co_applicant.project_permission:
+            source_filter = Q(submission=obj)
+        else:
+            source_filter = Q(submission=obj) | Q(project__in=obj.projects.all())
     elif hasattr(obj, "submission") and obj.submission:
         source_filter = Q(submission=obj.submission) | Q(project=obj)
     else:

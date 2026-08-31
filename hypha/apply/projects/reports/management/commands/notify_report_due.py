@@ -25,7 +25,8 @@ class Command(BaseCommand):
         request = HttpRequest()
         request.META["SERVER_NAME"] = site.hostname
         request.META["SERVER_PORT"] = site.port
-        request.META[settings.SECURE_PROXY_SSL_HEADER] = "https"
+        proxy_ssl_header, proxy_ssl_value = settings.SECURE_PROXY_SSL_HEADER
+        request.META[proxy_ssl_header] = proxy_ssl_value
         request.session = {}
         request._messages = FallbackStorage(request)
 
@@ -45,8 +46,11 @@ class Command(BaseCommand):
             delta = frequency.reminder_days * multiplier
 
             due_date = today + relativedelta(days=delta)
-            for project in Project.objects.in_progress():
-                next_report = project.report_config.current_due_report()
+            # Make sure that project has report_config.
+            for project in Project.objects.in_progress().filter(
+                report_config__isnull=False
+            ):
+                next_report = project.report_config.ensure_due_report()
                 if not next_report:
                     continue
 

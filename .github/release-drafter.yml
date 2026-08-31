@@ -15,6 +15,10 @@ version-resolver:
       - "patch"
   default: patch
 categories:
+  - title: "🔒 Security"
+    labels:
+      - "Type: Security"
+      - "security"
   - title: "🚀 Features"
     labels:
       - "Type: Feature"

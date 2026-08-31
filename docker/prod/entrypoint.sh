@@ -6,7 +6,4 @@ python manage.py migrate --noinput
 python manage.py clear_cache --cache=default
 python manage.py sync_roles
 
-# Start gunicorn server.
-gunicorn hypha.wsgi:application --env DJANGO_SETTINGS_MODULE=hypha.settings.production --threads 3 --reload  --bind 0.0.0.0:9001
-
 exec "$@"

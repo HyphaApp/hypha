@@ -18,22 +18,18 @@ from wagtail.models import Page
 
 @method_decorator(login_required, name="dispatch")
 class ViewDispatcher(View):
-    admin_view: View = None
-    reviewer_view: View = None
-    partner_view: View = None
-    community_view: View = None
-    applicant_view: View = None
-    finance_view: View = None
-    contracting_view: View = None
+    admin_view: View | None = None
+    reviewer_view: View | None = None
+    community_view: View | None = None
+    applicant_view: View | None = None
+    finance_view: View | None = None
+    contracting_view: View | None = None
 
     def admin_check(self, request):
         return request.user.is_apply_staff
 
     def reviewer_check(self, request):
         return request.user.is_reviewer
-
-    def partner_check(self, request):
-        return request.user.is_partner
 
     def community_check(self, request):
         return request.user.is_community_reviewer
@@ -54,8 +50,6 @@ class ViewDispatcher(View):
             view = self.admin_view
         elif self.reviewer_check(request):
             view = self.reviewer_view
-        elif self.partner_check(request):
-            view = self.partner_view
         elif self.community_check(request):
             view = self.community_view
         elif settings.PROJECTS_ENABLED and self.finance_check(request):
@@ -143,13 +137,6 @@ class DelegateableListView(DelegatableBase):
 
 class DelegatedViewMixin(View):
     """For use on create views accepting forms from another view"""
-
-    # TODO: REMOVE IN DJANGO 2.2
-    def setup(self, request, *args, **kwargs):
-        """Initialize attributes shared by all view methods."""
-        self.request = request
-        self.args = args
-        self.kwargs = kwargs
 
     def get_object(self):
         # Make sure the form instance, bound at the parent class level,  is the same as the

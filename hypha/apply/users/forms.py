@@ -36,6 +36,8 @@ class CustomAuthenticationForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
         self.user_settings = AuthSettings.load(request_or_site=self.request)
         self.extra_text = self.user_settings.extra_text
+        # Enable passkey autofill (conditional mediation) on the username field
+        self.fields["username"].widget.attrs["autocomplete"] = "username webauthn"
         if self.user_settings.consent_show:
             self.fields["consent"] = forms.BooleanField(
                 label=self.user_settings.consent_text,
@@ -55,7 +57,9 @@ class PasswordlessAuthForm(forms.Form):
         label=_("Email address"),
         required=True,
         max_length=254,
-        widget=forms.EmailInput(attrs={"autofocus": True, "autocomplete": "email"}),
+        widget=forms.EmailInput(
+            attrs={"autofocus": True, "autocomplete": "username webauthn"}
+        ),
     )
 
     if settings.SESSION_COOKIE_AGE <= settings.SESSION_COOKIE_AGE_LONG:
@@ -91,12 +95,20 @@ class CustomUserAdminFormBase:
         super().__init__(*args, **kwargs)
 
         # HACK: Wagtail admin doesn't work with custom User models that do not have first/last name.
+        self.fields["first_name"].label = ""
+        self.fields["first_name"].required = False
         self.fields["first_name"].widget = forms.HiddenInput(
             attrs={"value": "Not used - see full_name"}
         )
+        self.fields["last_name"].label = ""
+        self.fields["last_name"].required = False
         self.fields["last_name"].widget = forms.HiddenInput(
             attrs={"value": "Not used - see full_name"}
         )
+
+        for field_name in ("password1", "password2"):
+            if field_name in self.fields:
+                self.fields[field_name].widget.attrs["data_plain"] = True
 
 
 class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
@@ -130,13 +142,12 @@ class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
         )
         if help_text:
             return mark_safe(
-                f'{group_obj.name}<p class="group-help-text">{help_text}</p>'
+                f'<div><div>{group_obj.name}</div><div class="help">{help_text}</div></div>'
             )
         return group_obj.name
 
 
 class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
-    #    pass
     """
     A custom UserEditForm used to provide custom fields (ie. custom group fields)
     """
@@ -148,6 +159,9 @@ class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
         self.fields["groups"] = GroupsModelMultipleChoiceField.get_group_mmcf(
             self.fields["groups"]
         )
+
+    class Meta(UserEditForm.Meta):
+        fields = UserEditForm.Meta.fields | {"full_name", "slack"}
 
 
 class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
@@ -167,6 +181,9 @@ class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
         self.fields["groups"] = GroupsModelMultipleChoiceField.get_group_mmcf(
             self.fields["groups"]
         )
+
+    class Meta(UserCreationForm.Meta):
+        fields = UserCreationForm.Meta.fields | {"full_name", "slack"}
 
 
 class ProfileForm(forms.ModelForm):
@@ -196,7 +213,7 @@ class ProfileForm(forms.ModelForm):
         if slack:
             slack = slack.strip()
             if " " in slack:
-                raise forms.ValidationError("Slack names must not include spaces")
+                raise forms.ValidationError(_("Slack names must not include spaces"))
 
             if not slack.startswith("@"):
                 slack = "@" + slack

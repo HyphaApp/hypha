@@ -1,5 +1,6 @@
 from django.conf import settings
 
+from hypha.apply.users.utils import passkeys_enabled
 from hypha.home.models import ApplyHomePage
 
 
@@ -14,7 +15,9 @@ def global_vars(request):
         "HIDE_STAFF_IDENTITY": settings.HIDE_STAFF_IDENTITY,
         "HIDE_IDENTITY_FROM_REVIEWERS": settings.HIDE_IDENTITY_FROM_REVIEWERS,
         "GOOGLE_OAUTH2": settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY,
+        "OKTA_OAUTH2": settings.SOCIAL_AUTH_OKTA_OAUTH2_KEY,
         "ENABLE_PUBLIC_SIGNUP": settings.ENABLE_PUBLIC_SIGNUP,
+        "PASSKEYS_ENABLED": passkeys_enabled(),
         "SENTRY_TRACES_SAMPLE_RATE": settings.SENTRY_TRACES_SAMPLE_RATE,
         "SENTRY_ENVIRONMENT": settings.SENTRY_ENVIRONMENT,
         "SENTRY_DENY_URLS": settings.SENTRY_DENY_URLS,
@@ -23,4 +26,5 @@ def global_vars(request):
         "SUBMISSIONS_TABLE_EXCLUDED_FIELDS": settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS,
         "HIJACK_ENABLE": settings.HIJACK_ENABLE,
         "LANGUAGE_SWITCHER": settings.LANGUAGE_SWITCHER,
+        "SUBMISSION_ANONYMIZATION_ENABLED": settings.SUBMISSION_ANONYMIZATION_ENABLED,
     }

@@ -12,7 +12,13 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from hypha.apply.funds.blocks import EmailBlock, FullNameBlock
-from hypha.apply.funds.models import ApplicationSubmission, AssignedReviewers, Reminder
+from hypha.apply.funds.models import (
+    AnonymizedSubmission,
+    ApplicationSubmission,
+    AssignedReviewers,
+    Reminder,
+)
+from hypha.apply.funds.tests.factories.models import ScreeningStatusFactory
 from hypha.apply.funds.workflows.constants import DRAFT_STATE
 from hypha.apply.funds.workflows.registry import Request
 from hypha.apply.review.options import AGREE, MAYBE, NO
@@ -450,7 +456,9 @@ class TestApplicationSubmission(TestCase):
 
     def test_file_gets_uploaded(self):
         filename = "test_image.png"
-        submission = self.make_submission(form_data__image__filename=filename)
+        submission = self.make_submission(
+            with_files=True, form_data__image__filename=filename
+        )
         path = os.path.join(settings.MEDIA_ROOT, "submission", str(submission.id))
 
         # Check we created the top level folder
@@ -464,7 +472,7 @@ class TestApplicationSubmission(TestCase):
         self.assertIn(filename, found_files)
 
     def test_correct_file_path_generated(self):
-        submission = ApplicationSubmissionFactory()
+        submission = ApplicationSubmissionFactory(with_files=True)
 
         def check_generated_file_path(file_to_test, file_id):
             file_path_generated = file_to_test.generate_filename()
@@ -542,6 +550,174 @@ class TestApplicationSubmission(TestCase):
         self.assertTrue(submission.in_final_stage)
 
 
+class TestAnonymizedSubmission(TestCase):
+    def test_create_from_submission_no_user(self):
+        screening_outcome = ScreeningStatusFactory()
+        screening_outcome.yes = True
+        screening_outcome.default = True
+        screening_outcome.save()
+
+        submission = ApplicationSubmissionFactory()
+        submission.screening_statuses.add(screening_outcome)
+        submission.save()
+
+        anonymized = AnonymizedSubmission.from_submission(submission)
+        submission_values_dict = {
+            "value": submission.form_data["value"],
+            "page": submission.page.id,
+            "status": submission.status,
+            "round": submission.round.id,
+            "submit_time": submission.submit_time,
+            "screening_status": submission.get_current_screening_status(),
+        }
+        anonymized_values_dict = {
+            "value": anonymized.value,
+            "page": anonymized.page.id,
+            "status": anonymized.status,
+            "round": anonymized.round.id,
+            "submit_time": anonymized.submit_time,
+            "screening_status": anonymized.screening_status,
+        }
+        self.assertDictEqual(submission_values_dict, anonymized_values_dict)
+        self.assertIsNone(anonymized.user)
+
+    def test_create_from_submission_with_user(self):
+        screening_outcome = ScreeningStatusFactory()
+        screening_outcome.yes = True
+        screening_outcome.default = True
+        screening_outcome.save()
+
+        submission = ApplicationSubmissionFactory()
+        submission.screening_statuses.add(screening_outcome)
+        submission.save()
+
+        anonymized = AnonymizedSubmission.from_submission(submission, save_user=True)
+        submission_values_dict = {
+            "value": submission.form_data["value"],
+            "page": submission.page.id,
+            "status": submission.status,
+            "round": submission.round.id,
+            "submit_time": submission.submit_time,
+            "screening_status": submission.get_current_screening_status(),
+            "user": submission.user,
+        }
+        anonymized_values_dict = {
+            "value": anonymized.value,
+            "page": anonymized.page.id,
+            "status": anonymized.status,
+            "round": anonymized.round.id,
+            "submit_time": anonymized.submit_time,
+            "screening_status": anonymized.screening_status,
+            "user": anonymized.user,
+        }
+        self.assertDictEqual(submission_values_dict, anonymized_values_dict)
+
+    def test_create_from_dict_no_user(self):
+        screening_outcome = ScreeningStatusFactory()
+        screening_outcome.yes = True
+        screening_outcome.default = True
+        screening_outcome.save()
+
+        submission = ApplicationSubmissionFactory()
+        submission.screening_statuses.add(screening_outcome)
+        submission.save()
+
+        submission_dict = dict(
+            ApplicationSubmission.objects.filter(id=submission.id)
+            .values(
+                "form_data",
+                "page_id",
+                "round_id",
+                "status",
+                "submit_time",
+                "screening_statuses",
+                "user_id",
+            )
+            .first()
+        )
+
+        anonymized = AnonymizedSubmission.from_dict(submission_dict, save_user=False)
+        submission_values_dict = {
+            "value": submission.form_data["value"],
+            "page": submission.page.id,
+            "status": submission.status,
+            "round": submission.round.id,
+            "submit_time": submission.submit_time,
+            "screening_status": submission.get_current_screening_status(),
+        }
+        anonymized_values_dict = {
+            "value": anonymized.value,
+            "page": anonymized.page.id,
+            "status": anonymized.status,
+            "round": anonymized.round.id,
+            "submit_time": anonymized.submit_time,
+            "screening_status": anonymized.screening_status,
+        }
+        self.assertDictEqual(submission_values_dict, anonymized_values_dict)
+        self.assertIsNone(anonymized.user)
+
+    def test_create_from_dict_with_user(self):
+        screening_outcome = ScreeningStatusFactory()
+        screening_outcome.yes = True
+        screening_outcome.default = True
+        screening_outcome.save()
+
+        submission = ApplicationSubmissionFactory()
+        submission.screening_statuses.add(screening_outcome)
+        submission.save()
+
+        submission_dict = dict(
+            ApplicationSubmission.objects.filter(id=submission.id)
+            .values(
+                "form_data",
+                "page_id",
+                "round_id",
+                "status",
+                "submit_time",
+                "screening_statuses",
+                "user_id",
+            )
+            .first()
+        )
+
+        anonymized = AnonymizedSubmission.from_dict(submission_dict, save_user=True)
+        submission_values_dict = {
+            "value": submission.form_data["value"],
+            "page": submission.page.id,
+            "status": submission.status,
+            "round": submission.round.id,
+            "submit_time": submission.submit_time,
+            "screening_status": submission.get_current_screening_status(),
+            "user": submission.user,
+        }
+        anonymized_values_dict = {
+            "value": anonymized.value,
+            "page": anonymized.page.id,
+            "status": anonymized.status,
+            "round": anonymized.round.id,
+            "submit_time": anonymized.submit_time,
+            "screening_status": anonymized.screening_status,
+            "user": anonymized.user,
+        }
+        self.assertDictEqual(submission_values_dict, anonymized_values_dict)
+
+    def test_create_from_dict_all_none_returns_none(self):
+        result = AnonymizedSubmission.from_dict(
+            {
+                "form_data": None,
+                "page_id": None,
+                "round_id": None,
+                "status": None,
+                "submit_time": None,
+                "user_id": None,
+                "screening_statuses": None,
+            },
+            save_user=False,
+        )
+        self.assertIsNone(result)
+        self.assertEqual(AnonymizedSubmission.objects.count(), 0)
+
+
 class TestSubmissionRenderMethods(TestCase):
     def test_named_blocks_not_included_in_answers(self):
         submission = ApplicationSubmissionFactory()
@@ -583,7 +759,7 @@ class TestSubmissionRenderMethods(TestCase):
         self.assertIsNone(submission.value)
 
     def test_file_private_url_included(self):
-        submission = ApplicationSubmissionFactory()
+        submission = ApplicationSubmissionFactory(with_files=True)
         answers = submission.output_answers()
 
         def file_url_in_answers(file_to_test, file_id):
@@ -748,6 +924,45 @@ class TestReminderModel(TestCase):
             reminder.action_message,
             Reminder.ACTION_MESSAGE[f"{reminder.action}-{reminder.medium}"],
         )
+
+
+class TestAsJsonMixin(TestCase):
+    def setUp(self):
+        self.fund = FundTypeFactory(parent=None, description="A test fund description.")
+
+    def test_as_json_returns_expected_keys(self):
+        result = self.fund.as_json
+        self.assertIn("title", result)
+        self.assertIn("description", result)
+        self.assertIn("image", result)
+        self.assertIn("weight", result)
+        self.assertIn("next_deadline", result)
+        self.assertIn("url", result)
+
+    def test_as_json_no_deadline_without_open_round(self):
+        result = self.fund.as_json
+        self.assertEqual(result["next_deadline"], "")
+
+    def test_as_json_deadline_hidden_when_show_deadline_false(self):
+        self.fund.show_deadline = False
+        self.fund.save()
+        # Invalidate cached_property
+        if "as_json" in self.fund.__dict__:
+            del self.fund.__dict__["as_json"]
+        result = self.fund.as_json
+        self.assertEqual(result["next_deadline"], "")
+
+    def test_as_json_deadline_shown_when_open_round_exists(self):
+        open_round = TodayRoundFactory(parent=self.fund)
+        # Invalidate cached_property
+        if "as_json" in self.fund.__dict__:
+            del self.fund.__dict__["as_json"]
+        result = self.fund.as_json
+        self.assertEqual(result["next_deadline"], open_round.end_date.isoformat())
+
+    def test_as_json_image_empty_string_when_no_image(self):
+        result = self.fund.as_json
+        self.assertEqual(result["image"], "")
 
 
 class TestAssignedReviewersQuerySet(TestCase):

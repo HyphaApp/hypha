@@ -21,13 +21,17 @@ from .models.project import (
 User = get_user_model()
 
 REPORTING_CHOICES = (
-    (0, "Up to date"),
-    (1, "Behind schedule"),
+    (0, _("Up to date")),
+    (1, _("Behind schedule")),
 )
 
 
 def get_project_leads(request):
     return User.objects.filter(lead_projects__isnull=False).distinct()
+
+
+def get_project_contractors(request):
+    return User.objects.filter(owned_projects__isnull=False).distinct()
 
 
 class InvoiceListFilter(filters.FilterSet):
@@ -53,6 +57,9 @@ class ProjectListFilter(filters.FilterSet):
     project_lead = ModelMultipleChoiceFilter(
         field_name="lead", label=_("Lead"), queryset=get_project_leads
     )
+    project_contractor = ModelMultipleChoiceFilter(
+        field_name="user", label=_("Contractor"), queryset=get_project_contractors
+    )
     project_status = MultipleChoiceFilter(
         field_name="status", label=_("Status"), choices=PROJECT_STATUS_CHOICES
     )
@@ -63,12 +70,42 @@ class ProjectListFilter(filters.FilterSet):
         choices=REPORTING_CHOICES,
         method="filter_reporting",
         field_name="reporting",
-        label="Reporting",
+        label=_("Reporting"),
     )
 
+    # Maps the public exclude keys (which match the table column names) to this
+    # filterset's field names, so a single key in PROJECTS_TABLE_EXCLUDED_FIELDS
+    # hides both the table column and its matching filter. Keys without a filter
+    # (e.g. "end_date") simply have no effect here.
+    COLUMN_TO_FILTER = {
+        "fund": "project_fund",
+        "lead": "project_lead",
+        "status": "project_status",
+        "contractor": "project_contractor",
+    }
+
     class Meta:
-        fields = ["project_status", "project_lead", "project_fund"]
+        fields = [
+            "project_status",
+            "project_lead",
+            "project_contractor",
+            "project_fund",
+        ]
         model = Project
+
+    def __init__(self, *args, exclude=None, **kwargs):
+        if exclude is None:
+            exclude = []
+
+        super().__init__(*args, **kwargs)
+
+        exclude = {self.COLUMN_TO_FILTER.get(field, field) for field in exclude}
+
+        self.filters = {
+            field: filter
+            for field, filter in self.filters.items()
+            if field not in exclude
+        }
 
     def filter_reporting(self, queryset, name, value):
         if value == "1":

@@ -1,4 +1,4 @@
-.sidebar form[role="search"],
-.sidebar-page-explorer-item {
-  display: none;
+/* Make title column in wagtail admin listing views have a min-width. */
+.listing .field-title {
+  min-width: 20vw;
 }

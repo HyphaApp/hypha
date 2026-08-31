@@ -1,0 +1,104 @@
+{% load i18n heroicons hooks_tags %}
+
+{% if request.user.is_authenticated %}
+    <div x-data="{ show: false }" x-on:keydown.escape="show = false" class="flex relative">
+        <button
+            x-on:click="show = ! show"
+            class="md:w-auto btn btn-square group md:px-[var(--btn-p)] md:btn-outline"
+            type="button"
+            :class="show ? 'btn-active' : 'btn-soft'"
+        >
+            {% heroicon_micro "user-circle" class="w-6 h-6 align-text-bottom transition-transform group-hover:scale-110" aria_hidden=true %}
+            <span class="hidden md:inline-block truncate max-w-36">{{ request.user }}</span>
+        </button>
+
+        <!-- panel -->
+        <div
+            x-cloak
+            x-show="show"
+            x-trap.noautofocus="show"
+            x-transition
+            x-transition.origin.top
+            @click.outside="show = false"
+            class="block absolute top-10 shadow-xl bg-base-100 rounded-xs min-w-48 z-100000 border-y end-0"
+        >
+            <a
+                href="{% url 'users:account' %}"
+                title="{% trans 'Goto your account' %}"
+                class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
+            >
+                {% heroicon_outline "user" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
+                {% trans 'My account' %}
+            </a>
+            {% if request.user.is_apply_staff %}
+                <a
+                    href="{% url 'activity:notifications' %}"
+                    title="{% trans 'Check latest notifications' %}"
+                    class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
+                >
+                    {% heroicon_outline "bolt" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
+                    {% trans "Activity feed" %}
+                </a>
+                <a
+                    href="{% url "apply:submissions:list" %}?query=flagged:@me"
+                    title="{% trans 'Goto your flagged submissions' %}"
+                    class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
+                >
+                    {% heroicon_outline "flag" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
+                    {% trans "My flagged" %}
+                </a>
+                {% if perms.wagtailadmin.access_admin %}
+                    <a
+                        href="{% url 'wagtailadmin_home' %}"
+                        title="{% trans 'Goto wagtail admin' %}"
+                        class="flex gap-2 items-center py-2 px-3 transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
+                    >
+                        {% heroicon_outline "cog-6-tooth" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
+                        {% trans "Administration" %}
+                    </a>
+                {% endif %}
+            {% endif %}
+            {% if HIJACK_ENABLE and not user.is_hijacked and user.is_superuser %}
+                <a
+                    class="flex gap-2 items-center py-2 px-3 transition-colors cursor-pointer hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
+                    hx-get="{% url 'users:hijack' %}?next={{ request.path }}"
+                    hx-target="#htmx-modal"
+                    x-on:click="show = false"
+                >
+                    {% heroicon_outline "arrows-right-left" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
+                    {% trans "Switch User" %}
+                </a>
+            {% endif %}
+            {% if user.is_hijacked %}
+                <form action="{% url 'hijack:release' %}"
+                      method="POST"
+                >
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+
+                    <button
+                        type="submit"
+                        class="flex gap-2 items-center py-2 px-3 w-full transition-colors hover:font-semibold text-base-content border-x group hover:bg-base-200 hover:text-primary focus-visible:outline-dashed"
+                    >
+                        {% heroicon_outline "user-minus" size=18 class="inline transition-transform group-hover:scale-110 group-hover:stroke-2 stroke-gray-500 group-hover:stroke-primary" aria_hidden=true %}
+                        {% translate 'Release User' %}
+                    </button>
+                </form>
+            {% endif %}
+            {% hook "user_menu" %}
+            <hr />
+            <form id="logout-form" method="post" action="{% url 'users:logout' %}">
+                {% csrf_token %}
+                <button class="block py-2 px-3 w-full font-semibold text-center transition-all cursor-pointer hover:font-semibold text-error border-x hover:bg-error/10 focus-visible:outline-dashed" title="{% trans 'Log out' %}" type="submit">{% trans "Log out" %}</button>
+            </form>
+        </div>
+    </div>
+{% else %}
+    <a
+        class="btn btn-outline btn-secondary"
+        href="{% url 'users:passwordless_login_signup' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
+    >
+        {% heroicon_micro "user" class="inline align-text-bottom size-4 me-1" aria_hidden=true %}
+        {% trans "Log in" %} {% if ENABLE_PUBLIC_SIGNUP %} {% trans " or Sign up" %} {% endif %}
+    </a>
+{% endif %}

@@ -7,12 +7,12 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Case, Q, QuerySet, Value, When
+from django.db.models import Case, Q, Value, When
 from django.db.models.functions import Concat
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import get_valid_filename
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.utils.storage import PrivateStorage
 
@@ -26,24 +26,17 @@ ACTIVITY_TYPES = {
     ACTION: _("Action"),
 }
 
-# Visibility strings. Used to determine visibility states but are also
-# sometimes shown to users.
-# (ie. hypha.apply.activity.templatetags.activity_tags.py)
-APPLICANT = _("applicant")
-TEAM = _("team")
-REVIEWER = _("reviewers")
-PARTNER = _("partners")
-ALL = _("all")
-APPLICANT_PARTNERS = f"{APPLICANT} {PARTNER}"
+APPLICANT = "applicant"
+TEAM = "team"
+REVIEWER = "reviewers"
+ALL = "all"
 
 # Visibility choice strings
 VISIBILITY = {
     APPLICANT: _("Applicants"),
     TEAM: _("Staff only"),
     REVIEWER: _("Reviewers"),
-    PARTNER: _("Partners"),
     ALL: _("All"),
-    APPLICANT_PARTNERS: _("Applicants & Partners"),
 }
 
 
@@ -67,16 +60,12 @@ class BaseActivityQuerySet(models.QuerySet):
 
         user_qs = Q(user=user)
 
-        # There are scenarios where users will have activities in which they
-        # wouldn't have visibility just using Activity.visibility_for. Thus,
-        # the queryset should include activity in which they author via
-        # `user_qs` (ie. A comment made only to staff from a partner).
         if user.is_applicant:
-            # Handle the edge case where a partner or reviewer is also an
+            # Handle the edge case where a reviewer is also an
             # applicant. Ensures that any applications/projects the user
             # authored will have comment visibility of applicant while others
             # will get the appropriate role.
-            if user.is_partner or user.is_reviewer:
+            if user.is_reviewer:
                 ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
                 Project = apps.get_model("application_projects", "Project")
 
@@ -183,6 +172,10 @@ class ActivityAttachment(models.Model):
         upload_to=get_attachment_upload_path, storage=PrivateStorage()
     )
 
+    class Meta:
+        verbose_name = _("activity attachment")
+        verbose_name_plural = _("activity attachments")
+
     @property
     def filename(self):
         return os.path.basename(self.file.name)
@@ -197,7 +190,7 @@ class ActivityAttachment(models.Model):
 class Activity(models.Model):
     timestamp = models.DateTimeField()
     type = models.CharField(choices=ACTIVITY_TYPES.items(), max_length=30)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     source_content_type = models.ForeignKey(
         ContentType,
@@ -209,13 +202,17 @@ class Activity(models.Model):
     source_object_id = models.PositiveIntegerField(blank=True, null=True, db_index=True)
     source = GenericForeignKey("source_content_type", "source_object_id")
 
-    message = models.TextField()
+    message = models.TextField(_("message"))
     visibility = models.CharField(
-        choices=list(VISIBILITY.items()), default=APPLICANT, max_length=30
+        _("visibility"),
+        choices=list(VISIBILITY.items()),
+        default=APPLICANT,
+        max_length=30,
     )
 
     # Fields for handling versioning of the comment activity models
     edited = models.DateTimeField(default=None, null=True)
+    deleted = models.DateTimeField(default=None, null=True)
     current = models.BooleanField(default=True)
     previous = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
 
@@ -239,11 +236,13 @@ class Activity(models.Model):
     class Meta:
         ordering = ["-timestamp"]
         base_manager_name = "objects"
+        verbose_name = _("activity")
+        verbose_name_plural = _("activities")
 
     def get_absolute_url(self):
         # coverup for both submission and project as source.
         submission_id = (
-            self.source.submission.id
+            self.source.submission_id
             if hasattr(self.source, "submission")
             else self.source.id
         )
@@ -252,7 +251,7 @@ class Activity(models.Model):
     @property
     def privileged(self):
         # Not visible to applicant
-        return self.visibility not in [APPLICANT, PARTNER, APPLICANT_PARTNERS, ALL]
+        return self.visibility not in [APPLICANT, ALL]
 
     @property
     def private(self):
@@ -269,11 +268,7 @@ class Activity(models.Model):
         """Gets activity visibility for a specified user
 
         Takes an optional boolean that is used to determine the visibility of
-        an application comment. This was mainly implemented to allow partners
-        also holding the role of applicant to have a proper visibility.
-
-        ie. Prevent someone with the role of partner & applicant looking at
-        comments on their own application and seeing partner visibility
+        an application comment.
 
         Args:
             user:
@@ -284,76 +279,42 @@ class Activity(models.Model):
         Returns:
             A list of visibility strings
         """
-        if user.is_apply_staff:
-            return [TEAM, APPLICANT, REVIEWER, APPLICANT_PARTNERS, PARTNER, ALL]
+        if user.is_apply_staff or user.is_finance or user.is_contracting:
+            return [TEAM, APPLICANT, REVIEWER, ALL]
         if user.is_reviewer and not is_submission_author:
             return [REVIEWER, ALL]
-        if user.is_finance or user.is_contracting:
-            # for project part
-            return [TEAM, APPLICANT, REVIEWER, PARTNER, ALL]
-        if user.is_partner and not is_submission_author:
-            return [PARTNER, ALL, APPLICANT_PARTNERS]
         if user.is_applicant:
-            return [APPLICANT, ALL, APPLICANT_PARTNERS]
+            return [APPLICANT, ALL]
 
         return [ALL]
 
     @classmethod
     def visibility_choices_for(
-        cls, user, submission_partner_list: Optional[QuerySet] = None
+        cls, user, has_coapplicants=False
     ) -> List[Tuple[str, str]]:
         """Gets activity visibility choices for the specified user
 
-        Uses the given user (and partner query set if provided) to give
-        the specified user activity visibility choices.
-
         Args:
-            user:
-                The [`User`][hypha.apply.users.models.User] being given
-                visibility choices
-            submission_has_partner:
-                An optional QuerySet of partners
-                ([`Users`][hypha.apply.users.models.User])
+            user: The [`User`][hypha.apply.users.models.User] being given visibility choices
+
         Returns:
             A list of tuples in the format of:
             [(<visibility string>, <visibility display string>), ...]
         """
-        has_partner = submission_partner_list and len(submission_partner_list) > 0
 
         if user.is_apply_staff:
-            if not has_partner:
-                choices = [
-                    (TEAM, VISIBILITY[TEAM]),
-                    (APPLICANT, VISIBILITY[APPLICANT]),
-                    (REVIEWER, VISIBILITY[REVIEWER]),
-                    (ALL, VISIBILITY[ALL]),
-                ]
-            else:
-                choices = [
-                    (TEAM, VISIBILITY[TEAM]),
-                    (APPLICANT, VISIBILITY[APPLICANT]),
-                    (PARTNER, VISIBILITY[PARTNER]),
-                    (APPLICANT_PARTNERS, VISIBILITY[APPLICANT_PARTNERS]),
-                    (REVIEWER, VISIBILITY[REVIEWER]),
-                    (ALL, VISIBILITY[ALL]),
-                ]
-            return choices
-
-        if user.is_partner and has_partner and submission_partner_list.contains(user):
             return [
-                (APPLICANT_PARTNERS, VISIBILITY[APPLICANT_PARTNERS]),
-                (PARTNER, VISIBILITY[PARTNER]),
                 (TEAM, VISIBILITY[TEAM]),
-            ]
-
-        if user.is_applicant and has_partner:
-            return [
-                (APPLICANT_PARTNERS, VISIBILITY[PARTNER]),
-                (APPLICANT, VISIBILITY[TEAM]),
+                (APPLICANT, VISIBILITY[APPLICANT]),
+                (REVIEWER, VISIBILITY[REVIEWER]),
+                (ALL, VISIBILITY[ALL]),
             ]
 
         if user.is_applicant:
-            return [(APPLICANT, VISIBILITY[APPLICANT])]
+            applicant_choices = [(APPLICANT, VISIBILITY[APPLICANT])]
+            if has_coapplicants:
+                applicant_choices.append((TEAM, VISIBILITY[TEAM]))
+            return applicant_choices
 
         if user.is_reviewer:
             return [(REVIEWER, VISIBILITY[REVIEWER])]
@@ -372,13 +333,17 @@ class Event(models.Model):
     when = models.DateTimeField(auto_now_add=True)
     type = models.CharField(_("verb"), choices=MESSAGES.choices, max_length=50)
     by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True
     )
     content_type = models.ForeignKey(
         ContentType, blank=True, null=True, on_delete=models.CASCADE
     )
     object_id = models.PositiveIntegerField(blank=True, null=True)
     source = GenericForeignKey("content_type", "object_id")
+
+    class Meta:
+        verbose_name = _("event")
+        verbose_name_plural = _("events")
 
     def __str__(self):
         if self.source and hasattr(self.source, "title"):
@@ -414,6 +379,10 @@ class Message(models.Model):
     )  # Stores the id of the object from an external system
     sent_in_email_digest = models.BooleanField(default=False)
     objects = MessagesQueryset.as_manager()
+
+    class Meta:
+        verbose_name = _("message")
+        verbose_name_plural = _("messages")
 
     def __str__(self):
         return f"[{self.type}][{self.status}] {self.content}"

@@ -1,14 +1,15 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
 from rolepermissions.checkers import has_object_permission
 
 from hypha.apply.funds.models.submissions import ApplicationSubmission
-from hypha.apply.users.decorators import staff_required
+from hypha.apply.users.decorators import is_apply_staff, staff_required
 from hypha.apply.utils.storage import PrivateMediaView
 
 from . import services
@@ -41,7 +42,7 @@ def partial_comments(request, pk: int):
     editable = not submission.is_archive
 
     qs = services.get_related_activities_for_user(submission, request.user)
-    page = Paginator(qs, per_page=10, orphans=5).page(request.GET.get("page", 1))
+    page = Paginator(qs, per_page=10, orphans=5).page(request.GET.get("page", 1))  # type: ignore[var-annotated]
 
     ctx = {
         "page": page,
@@ -57,7 +58,10 @@ def edit_comment(request, pk):
     activity = get_object_or_404(Activity, id=pk)
 
     if activity.type != COMMENT or activity.user != request.user:
-        raise PermissionError("You can only edit your own comments")
+        raise PermissionDenied(_("You can only edit your own comments"))
+
+    if activity.deleted:
+        raise PermissionDenied(_("You can not edit a deleted comment"))
 
     if request.GET.get("action") == "cancel":
         return render(
@@ -76,6 +80,34 @@ def edit_comment(request, pk):
         )
 
     return render(request, "activity/ui/edit_comment_form.html", {"activity": activity})
+
+
+@login_required
+@user_passes_test(is_apply_staff)
+def delete_comment(request, pk):
+    """Soft delete a comment."""
+    activity = get_object_or_404(Activity, id=pk)
+
+    if activity.type != COMMENT or activity.user != request.user:
+        raise PermissionDenied(_("You can only delete your own comments"))
+
+    if activity.deleted:
+        raise PermissionDenied(_("You can not delete a deleted comment"))
+
+    if request.method == "DELETE":
+        activity = services.delete_comment(activity)
+
+        return render(
+            request,
+            "activity/ui/activity-comment-item.html",
+            {"activity": activity, "success": True},
+        )
+
+    return render(
+        request,
+        "activity/ui/activity-comment-item.html",
+        {"activity": activity},
+    )
 
 
 class ActivityContextMixin:
@@ -102,7 +134,9 @@ class AttachmentView(PrivateMediaView):
     def dispatch(self, *args, **kwargs):
         file_pk = kwargs.get("file_pk")
         self.instance = get_object_or_404(ActivityAttachment, uuid=file_pk)
-
+        activity = self.instance.activity
+        if activity.visibility not in Activity.visibility_for(self.request.user):
+            raise PermissionDenied
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):

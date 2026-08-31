@@ -66,8 +66,5 @@
 **Approver**
 :   an individual, usually member of staff, who can authorize a contract or payment request
 
-**Partner**
-:   For OTF, in the application phase, "partner" could view the application but is unable to submit a review and could submit payment requests. This role can see, edit, and communicate about a specific application.
-
 **Finance**
 :   role for staff with finance related functions. In Hypha they have dashboard to enable approval of invoices.

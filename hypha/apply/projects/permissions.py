@@ -1,10 +1,15 @@
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.utils.translation import gettext as _
 from rolepermissions.permissions import register_object_checker
 
 from hypha.apply.activity.adapters.utils import get_users_for_groups
+from hypha.apply.funds.models.co_applicants import (
+    CoApplicantProjectPermission,
+    CoApplicantRole,
+)
 from hypha.apply.users.models import User
-from hypha.apply.users.roles import Staff
+from hypha.apply.users.roles import Applicant, Staff
 
 from .models.project import (
     CLOSING,
@@ -30,67 +35,107 @@ def has_permission(action, user, object=None, raise_exception=True, **kwargs):
 
 def can_approve_contract(user, project, **kwargs):
     if project.status != CONTRACTING:
-        return False, "Project is not in Contracting State"
+        return False, _("Project is not in Contracting State")
 
     if not project.submitted_contract_documents:
-        return False, "No contract documents submission yet"
+        return False, _("No contract documents submission yet")
 
     if not user.is_authenticated:
-        return False, "Login Required"
+        return False, _("Login Required")
 
     if user.is_apply_staff and not user.is_applicant:
-        return True, "Only Staff can approve the contract"
+        return True, _("Only Staff can approve the contract")
 
-    return False, "Forbidden Error"
+    return False, _("Forbidden Error")
 
 
 def can_upload_contract(user, project, **kwargs):
     if project.status != CONTRACTING:
-        return False, "Project is not in Contracting State"
+        return False, _("Project is not in Contracting State")
 
     if not user.is_authenticated:
-        return False, "Login Required"
+        return False, _("Login Required")
 
-    if user == project.user and project.contracts.exists():
-        return True, "Project Owner can only re-upload contract with countersigned"
+    if user.is_applicant and project.contracts.exists():
+        if user == project.user:
+            return True, _(
+                "Project Owner can only re-upload contract with countersigned"
+            )
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.CONTRACTING_DOCUMENT
+            in co_applicant.project_permission
+            and co_applicant.role == CoApplicantRole.EDIT
+        ):
+            return (
+                True,
+                _(
+                    "Co-applicant with edit permission for project's contracting document can upload contract"
+                ),
+            )
+        return False, _("Forbidden Error")
 
     if user.is_contracting:
-        return True, "Contracting team can upload the contract"
+        return True, _("Contracting team can upload the contract")
 
     if user.is_apply_staff and settings.STAFF_UPLOAD_CONTRACT:
-        return True, "Staff can upload contract as set in settings"
+        return True, _("Staff can upload contract as set in settings")
 
-    return False, "Forbidden Error"
+    return False, _("Forbidden Error")
 
 
 def can_submit_contract_documents(user, project, **kwargs):
     if project.status != CONTRACTING:
-        return False, "Project is not in Contracting State"
-    if user != project.user:
-        return False, "Only Vendor can submit contracting documents"
-    if not kwargs.get("contract", None):
-        return False, "Can not submit without contract"
-    if not project.submitted_contract_documents:
-        return True, "Vendor can submit contracting documents"
+        return False, _("Project is not in Contracting State")
 
-    return False, "Forbidden Error"
+    if not user.is_applicant:
+        return False, _("Only Applicants can submit contracting documents")
+    if not kwargs.get("contract", None):
+        return False, _("Can not submit without contract")
+    if not project.submitted_contract_documents:
+        if user == project.user:
+            return True, _("Vendor can submit contracting documents")
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.CONTRACTING_DOCUMENT
+            in co_applicant.project_permission
+            and co_applicant.role == CoApplicantRole.EDIT
+        ):
+            return (
+                True,
+                _(
+                    "Co-applicant with edit permission for project's contracting document can submit contracting documents"
+                ),
+            )
+        return (
+            False,
+            _(
+                "Only applicant and co-applicant with appropriate permission can submit docs"
+            ),
+        )
+
+    return False, _("Forbidden Error")
 
 
 def can_update_paf_approvers(user, project, **kwargs):
     if not user.is_authenticated:
-        return False, "Login Required"
+        return False, _("Login Required")
 
     if project.status != INTERNAL_APPROVAL:
         return (
             False,
-            "Project form approvers can be updated only in Internal approval state",
+            _("Project form approvers can be updated only in Internal approval state"),
         )
     if user == project.lead:
-        return True, "Lead can update approvers in approval state"
+        return True, _("Lead can update approvers in approval state")
     if not project.paf_approvals.exists():
         return (
             False,
-            "No user can update approvers without project form approval, except lead (lead can add project form approvals)",
+            _(
+                "No user can update approvers without project form approval, except lead (lead can add project form approvals)"
+            ),
         )
 
     request = kwargs.get("request")
@@ -104,9 +149,11 @@ def can_update_paf_approvers(user, project, **kwargs):
             ):
                 return (
                     True,
-                    "Project form reviewer-roles users can update next approval approvers if any approvers assigned",
+                    _(
+                        "Project form reviewer-roles users can update next approval approvers if any approvers assigned"
+                    ),
                 )
-        return False, "Forbidden Error"
+        return False, _("Forbidden Error")
     else:
         approvers_ids = []
         for approval in project.paf_approvals.filter(
@@ -119,8 +166,8 @@ def can_update_paf_approvers(user, project, **kwargs):
                 )
             )
         if user.id in approvers_ids:
-            return True, "Project form reviewer-roles users can update approvers"
-    return False, "Forbidden Error"
+            return True, _("Project form reviewer-roles users can update approvers")
+    return False, _("Forbidden Error")
 
 
 def can_update_assigned_paf_approvers(user, project, **kwargs):
@@ -129,14 +176,14 @@ def can_update_assigned_paf_approvers(user, project, **kwargs):
     UpdateAssignApproversView will be used by only approvers teams members.
     """
     if not user.is_authenticated:
-        return False, "Login Required"
+        return False, _("Login Required")
     if project.status != INTERNAL_APPROVAL:
         return (
             False,
-            "Project form approvers can be assigned only in Internal approval state",
+            _("Project form approvers can be assigned only in Internal approval state"),
         )
     if not project.paf_approvals.exists():
-        return False, "No user can assign approvers with paf_approvals"
+        return False, _("No user can assign approvers with paf_approvals")
 
     request = kwargs.get("request")
     project_settings = ProjectSettings.for_request(request)
@@ -147,9 +194,9 @@ def can_update_assigned_paf_approvers(user, project, **kwargs):
                 list(next_paf_approval.paf_reviewer_role.user_roles.all()),
                 exact_match=True,
             ):
-                return True, "Project form reviewer-roles users can assign approvers"
-            return False, "Forbidden Error"
-        return False, "Forbidden Error"
+                return True, _("Project form reviewer-roles users can assign approvers")
+            return False, _("Forbidden Error")
+        return False, _("Forbidden Error")
     else:
         assigners_ids = []
         for approval in project.paf_approvals.filter(approved=False):
@@ -160,21 +207,21 @@ def can_update_assigned_paf_approvers(user, project, **kwargs):
                 )
             )
         if user.id in assigners_ids:
-            return True, "Project form reviewer-roles users can assign approvers"
-    return False, "Forbidden Error"
+            return True, _("Project form reviewer-roles users can assign approvers")
+    return False, _("Forbidden Error")
 
 
 def can_assign_paf_approvers(user, project, **kwargs):
     if not user.is_authenticated:
-        return False, "Login Required"
+        return False, _("Login Required")
 
     if project.status != INTERNAL_APPROVAL:
         return (
             False,
-            "Project form approvers can be assigned only in Internal approval state",
+            _("Project form approvers can be assigned only in Internal approval state"),
         )
     if not project.paf_approvals.exists():
-        return False, "No user can assign approvers with project form approvals"
+        return False, _("No user can assign approvers with project form approvals")
 
     request = kwargs.get("request")
     project_settings = ProjectSettings.for_request(request)
@@ -182,7 +229,7 @@ def can_assign_paf_approvers(user, project, **kwargs):
         next_paf_approval = project.paf_approvals.filter(approved=False).first()
         if next_paf_approval:
             if next_paf_approval.user:
-                return False, "User already assigned"
+                return False, _("User already assigned")
             else:
                 if user in get_users_for_groups(
                     list(next_paf_approval.paf_reviewer_role.user_roles.all()),
@@ -190,10 +237,10 @@ def can_assign_paf_approvers(user, project, **kwargs):
                 ):
                     return (
                         True,
-                        "Project form reviewer-roles users can assign approvers",
+                        _("Project form reviewer-roles users can assign approvers"),
                     )
-            return False, "Forbidden Error"
-        return False, "Forbidden Error"
+            return False, _("Forbidden Error")
+        return False, _("Forbidden Error")
     else:
         assigners_ids = []
         for approval in project.paf_approvals.filter(approved=False, user__isnull=True):
@@ -205,19 +252,19 @@ def can_assign_paf_approvers(user, project, **kwargs):
             )
 
         if user.id in assigners_ids:
-            return True, "Project form reviewer-roles users can assign approvers"
-    return False, "Forbidden Error"
+            return True, _("Project form reviewer-roles users can assign approvers")
+    return False, _("Forbidden Error")
 
 
 def can_update_paf_status(user, project, **kwargs):
     if not user.is_authenticated:
-        return False, "Login Required"
+        return False, _("Login Required")
 
     if not project.paf_approvals.filter(approved=False).exists():
-        return False, "No project form approvals exists"
+        return False, _("No project form approvals exists")
 
     if project.status != INTERNAL_APPROVAL:
-        return False, "Incorrect project status to approve project form"
+        return False, _("Incorrect project status to approve project form")
 
     request = kwargs.get("request")
     if request:
@@ -233,11 +280,15 @@ def can_update_paf_status(user, project, **kwargs):
             if user.id in possible_approvers_ids:
                 return (
                     True,
-                    "Next approval group users can approve project form (for sequential approvals)",
+                    _(
+                        "Next approval group users can approve project form (for sequential approvals)"
+                    ),
                 )
             return (
                 False,
-                "Only Next approval group can approve project form (for sequential approvals)",
+                _(
+                    "Only Next approval group can approve project form (for sequential approvals)"
+                ),
             )
         else:
             possible_approvers_ids = []
@@ -254,47 +305,64 @@ def can_update_paf_status(user, project, **kwargs):
             if user.id in possible_approvers_ids:
                 return (
                     True,
-                    "All approval group users can approve project form (for parallel approvals)",
+                    _(
+                        "All approval group users can approve project form (for parallel approvals)"
+                    ),
                 )
             return (
                 False,
-                "Only approval group users can approve project form (for parallel approvals)",
+                _(
+                    "Only approval group users can approve project form (for parallel approvals)"
+                ),
             )
 
-    return False, "Forbidden Error"
+    return False, _("Forbidden Error")
 
 
 def can_update_project_status(user, project, **kwargs):
     if project.status not in [DRAFT, COMPLETE, CLOSING, INVOICING_AND_REPORTING]:
-        return False, "Forbidden Error"
+        return False, _("Forbidden Error")
 
     if not user.is_authenticated:
-        return False, "Login Required"
+        return False, _("Login Required")
 
     if user.is_apply_staff or user.is_apply_staff_admin:
         if project.status == DRAFT:
             if no_pafreviewer_role():
                 return (
                     True,
-                    "Staff and Staff Admin can skip the project form approval process",
+                    _(
+                        "Staff and Staff Admin can skip the project form approval process"
+                    ),
                 )
         else:
-            return True, "Staff and Staff Admin can update status"
+            return True, _("Staff and Staff Admin can update status")
 
-    return False, "Forbidden Error"
+    return False, _("Forbidden Error")
 
 
 def can_access_project(user, project):
     if not user.is_authenticated:
-        return False, "Login Required"
+        return False, _("Login Required")
 
     if user.is_apply_staff or user.is_finance or user.is_contracting:
         # Staff, Finance and Contracting are internal and trusted peoples,
         # Their action are limited, but they can view all projects.
-        return True, "Staff, Finance and Contracting can view project in all statuses"
+        return True, _(
+            "Staff, Finance and Contracting can view project in all statuses"
+        )
 
     if user.is_applicant and user == project.user:
-        return True, "Vendor(project user) can view project in all statuses"
+        return True, _("Vendor(project user) can view project in all statuses")
+
+    if (
+        user.is_applicant
+        and project.submission.co_applicants.filter(user=user).exists()
+    ):
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if co_applicant.project_permission:
+            return True, _("Co-applicant with project permission can access project")
+        return False, _("Co-applicant without project permission can't access project")
 
     if (
         project.status in [DRAFT, INTERNAL_APPROVAL, CONTRACTING]
@@ -314,42 +382,113 @@ def can_access_project(user, project):
         if user.id in paf_reviewer_roles_users_ids:
             return (
                 True,
-                "Project form approvers can access the project in Draft, Approval state and after approval state",
+                _(
+                    "Project form approvers can access the project in Draft, Approval state and after approval state"
+                ),
             )
 
-    return False, "Forbidden Error"
+    return False, _("Forbidden Error")
 
 
 def can_view_contract_category_documents(user, project, **kwargs):
     if user.is_superuser:
-        return True, "Superuser can view all documents"
+        return True, _("Superuser can view all documents")
     if user == project.user:
-        return True, "Vendor can view all documents"
+        return True, _("Vendor can view all documents")
+    if user.is_applicant:
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.CONTRACTING_DOCUMENT
+            in co_applicant.project_permission
+        ):
+            return True, _(
+                "Co-applicant with permissions can view contracting documents"
+            )
 
     contract_category = kwargs.get("contract_category")
     if not contract_category:
-        return False, "Contract Category is required"
+        return False, _("Contract Category is required")
     allowed_group_users = User.objects.filter(
         groups__name__in=list(contract_category.document_access_view.all())
     )
     if allowed_group_users and user in allowed_group_users:
-        return True, "Access allowed"
+        return True, _("Access allowed")
 
-    return False, "Forbidden Error"
+    return False, _("Forbidden Error")
+
+
+def can_skip_pafapproval_process(user, project, **kwargs):
+    if not user.is_authenticated:
+        return False, _("Login Required")
+
+    if project.status != DRAFT:
+        return False, _("Project is not in Draft state")
+
+    if not (user.is_apply_staff or user.is_apply_staff_admin):
+        return False, _("Only Staff can skip the PAF approval process")
+
+    if no_pafreviewer_role():
+        return True, _(
+            "Staff can skip PAF approval when no reviewer roles are configured"
+        )
+
+    return False, _("PAF reviewer roles are configured, cannot skip approval process")
 
 
 def can_edit_paf(user, project):
+    if not user.is_authenticated:
+        return False, _("Login Required")
+
     if no_pafreviewer_role() and project.status != COMPLETE:
-        return True, "Project form is editable for active projects if no reviewer roles"
+        return True, _(
+            "Project form is editable for active projects if no reviewer roles"
+        )
     if project.editable_by(user):
-        return True, "Project form is editable in Draft by this user"
-    return False, "You are not allowed to edit the project at this time"
+        return True, _("Project form is editable in Draft by this user")
+    return False, _("You are not allowed to edit the project at this time")
 
 
 @register_object_checker()
 def upload_project_documents(role, user, project) -> bool:
     if role == Staff:
         return True
+    return False
+
+
+@register_object_checker()
+def update_contracting_documents(role, user, project) -> bool:
+    if role == Applicant:
+        if user == project.user:  # owner
+            return True
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.CONTRACTING_DOCUMENT
+            in co_applicant.project_permission
+            and co_applicant.role == CoApplicantRole.EDIT
+        ):  # co-applicant with permission
+            return True
+
+    return False
+
+
+@register_object_checker()
+def add_invoice(role, user, project) -> bool:
+    if project.status == INVOICING_AND_REPORTING:
+        if role == Staff:
+            return True
+        if role == Applicant:
+            if user == project.user:
+                return True
+            co_applicant = project.submission.co_applicants.filter(user=user).first()
+            if (
+                co_applicant
+                and CoApplicantProjectPermission.INVOICES
+                in co_applicant.project_permission
+                and co_applicant.role == CoApplicantRole.EDIT
+            ):
+                return True
     return False
 
 
@@ -364,5 +503,6 @@ permissions_map = {
     "submit_contract_documents": can_submit_contract_documents,
     "project_access": can_access_project,
     "paf_edit": can_edit_paf,
+    "skip_pafapproval_process": can_skip_pafapproval_process,
     "view_contract_documents": can_view_contract_category_documents,
 }

@@ -45,11 +45,8 @@ class SlackAdapter(AdapterBase):
         ),
         MESSAGES.REVIEWERS_UPDATED: "reviewers_updated",
         MESSAGES.BATCH_REVIEWERS_UPDATED: "handle_batch_reviewers",
-        MESSAGES.PARTNERS_UPDATED: _(
-            "{user} has updated the partners on <{link}|{source.title_text_display}>"
-        ),
         MESSAGES.TRANSITION: _(
-            "{user} has updated the status of <{link}|{source.title_text_display}>: {old_phase.display_name} → {source.phase}"
+            "{user} has updated the status of <{link}|{source.title_text_display}>: {old_phase.display_name} → {source.phase.display_name}"
         ),
         MESSAGES.BATCH_TRANSITION: "handle_batch_transition",
         MESSAGES.DETERMINATION_OUTCOME: "handle_determination",
@@ -72,6 +69,9 @@ class SlackAdapter(AdapterBase):
         ),
         MESSAGES.BATCH_READY_FOR_REVIEW: "batch_notify_reviewers",
         MESSAGES.DELETE_SUBMISSION: _("{user} has deleted {source.title_text_display}"),
+        MESSAGES.ANONYMIZE_SUBMISSION: _(
+            "{user} has anonymized {source.title_text_display}"
+        ),
         MESSAGES.DELETE_REVIEW: _(
             "{user} has deleted {review.author} review for <{link}|{source.title_text_display}>"
         ),
@@ -86,6 +86,9 @@ class SlackAdapter(AdapterBase):
         ),
         MESSAGES.UPDATE_PROJECT_TITLE: _(
             "The project title has been updated from <{link}|{old_title}> to <{link}|{source.title}> by {user}"
+        ),
+        MESSAGES.UPDATE_PROJECT_CONTRACT_NUMBER: _(
+            "The contract number of project <{link}|{source.title}> has been updated to {source.contract_number} by {user}"
         ),
         MESSAGES.EDIT_REVIEW: _(
             "{user} has edited {review.author} review for <{link}|{source.title_text_display}>"
@@ -123,7 +126,11 @@ class SlackAdapter(AdapterBase):
         MESSAGES.SUBMIT_REPORT: _(
             "{user} has submitted a report for <{link}|{source.title}>"
         ),
+        MESSAGES.DELETE_REPORT: _(
+            "{user} has deleted a report for <{link}|{source.title}>"
+        ),
         MESSAGES.BATCH_DELETE_SUBMISSION: "handle_batch_delete_submission",
+        MESSAGES.BATCH_ANONYMIZE_SUBMISSION: "handle_batch_anonymize_submission",
         MESSAGES.STAFF_ACCOUNT_CREATED: _(
             "{user} has created a new account for <{link}|{source}>"
         ),
@@ -136,6 +143,12 @@ class SlackAdapter(AdapterBase):
         ),
         MESSAGES.UNARCHIVE_SUBMISSION: _(
             "{user} has unarchived the submission: {source.title_text_display}"
+        ),
+        MESSAGES.UPDATE_AUTHOR: _(
+            "{user} has updated author from {old_author} to {source.user} for submission <{link}|{source}>"
+        ),
+        MESSAGES.COMMENT_ASSIGNED: _(
+            "A new comment has been assigned to {assignee} by {user} on submission <{link}|{source}>"
         ),
     }
 
@@ -179,6 +192,10 @@ class SlackAdapter(AdapterBase):
                 for user in User.objects.approvers()
                 if self.slack_id(user)
             ]
+
+        if message_type == MESSAGES.COMMENT_ASSIGNED:
+            assignee = kwargs.get("assignee")
+            return [self.slack_id(assignee)]
 
         recipients = [self.slack_id(source.lead)]
         # Notify second reviewer when first reviewer is done.
@@ -333,6 +350,15 @@ class SlackAdapter(AdapterBase):
             [submission.title_text_display for submission in submissions]
         )
         return _("{user} has deleted submissions: {title}").format(
+            user=user, title=submissions_text
+        )
+
+    def handle_batch_anonymize_submission(self, sources, links, user, **kwargs):
+        submissions = sources
+        submissions_text = ", ".join(
+            [submission.title_text_display for submission in submissions]
+        )
+        return _("{user} has anonymized submissions: {title}").format(
             user=user, title=submissions_text
         )
 

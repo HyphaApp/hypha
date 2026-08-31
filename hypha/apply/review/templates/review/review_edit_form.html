@@ -7,17 +7,18 @@
     <script defer src="{% static 'js/behaviours/review-score.js' %}"></script>
 {% endblock %}
 
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{{ title }}"
+            subtitle="{% trans 'For' %} <a class='link link-hover' href='{% url 'funds:submissions:detail' submission.id %}'>{{ submission.title }}</a>"
+        />
+    </c-hero>
+{% endblock %}
+
+
 {% block content %}
-
-    {% adminbar %}
-        {% slot header %}{{ title }}{% endslot %}
-        {% slot sub_heading %}
-            {% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a>
-        {% endslot %}
-    {% endadminbar %}
-
     {% include "forms/includes/form_errors.html" with form=form %}
-
     <div class="relative my-8" x-data="reviewScore">
         <!-- Review score sticky display -->
         <div class="absolute top-0 right-0 h-full lg:block">
@@ -30,7 +31,7 @@
             </div>
         </div>
 
-        <form id="review-form-edit" class="max-w-3xl form form--scoreable" action="" method="post" novalidate>
+        <form id="review-form-edit" class="max-w-3xl form" action="" method="post" novalidate>
             {% csrf_token %}
             {% for hidden in form.hidden_fields %}
                 {{ hidden }}
@@ -50,14 +51,16 @@
                     {% include "forms/includes/field.html" %}
                 {% else %}
                     <div class="max-w-none field-block prose">
-                        {{ field }}
+                        <div>
+                            {{ field }}
+                        </div>
                     </div>
                 {% endif %}
             {% endfor %}
-            <div class="flex flex-wrap gap-4 items-center">
+            <div class="flex flex-wrap gap-2 items-center mt-4">
 
                 <button
-                    class="button button--primary min-w-48"
+                    class="btn btn-primary"
                     type="submit"
                     name="submit"
                 >
@@ -65,7 +68,7 @@
                 </button>
 
                 {% if not object.id or object.is_draft %}
-                    <button class="button button--white"
+                    <button class="btn btn-secondary btn-outline"
                             type="submit"
                             name="{{ form.draft_button_name }}"
                     >

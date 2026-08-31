@@ -43,7 +43,7 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 
 ### 👳 Request with same time review
 
-This workflow is a single stage process with an advisory council review or external review stage -- includes functionalties for external reviewers like advisory board members to access applications and submit reviews.
+This workflow is a single stage process with an advisory council review or external review stage -- includes functionalities for external reviewers like advisory board members to access applications and submit reviews.
 
 It is very similar to the "Request with external review" workflow, see below, but the internal and external review step happens at the same step.
 
@@ -62,7 +62,7 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 
 ### 👳 Request with external review
 
-This workflow is a single stage process with an advisory council review or external review stage -- includes functionalties for external reviewers like advisory board members to access applications and submit reviews.
+This workflow is a single stage process with an advisory council review or external review stage -- includes functionalities for external reviewers like advisory board members to access applications and submit reviews.
 
 Proposal Persona: This funding organization relies on external partners for evaluations. Proposals submitted to this workflow are reviewed by staff members and an advisory board that is made up of trusted community members.
 
@@ -86,7 +86,7 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 
 ### 👪 Request with community review
 
-This workflow is a single stage application process with functionalties for external reviewers, including applicants to carry out peer review of each other applications.
+This workflow is a single stage application process with functionalities for external reviewers, including applicants to carry out peer review of each other applications.
 
 **Proposal Persona:** 
 

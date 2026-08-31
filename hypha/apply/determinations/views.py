@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DetailView, UpdateView
 from wagtail.models import Site
@@ -50,6 +51,10 @@ from .utils import (
 
 
 def get_form_for_stages(submissions):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
     forms = [get_form_for_stage(submission, batch=True) for submission in submissions]
     if len(set(forms)) != 1:
         raise ValueError("Submissions expect different forms - please contact admin")
@@ -58,6 +63,10 @@ def get_form_for_stages(submissions):
 
 
 def get_form_for_stage(submission, batch=False, edit=False):
+    """
+    TODO: Remove when no one are using them anymore.
+    This is part of the old hardcoded determinations forms.
+    """
     if batch:
         forms = [BatchConceptDeterminationForm, BatchProposalDeterminationForm]
     else:
@@ -197,7 +206,7 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
         submissions = self.get_submissions()
         response = super().form_valid(form)
         determinations = {
-            determination.submission.id: determination
+            determination.submission_id: determination
             for determination in form.instances
         }
         sources = submissions.filter(id__in=list(determinations))
@@ -253,10 +262,14 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
         return response
 
     def get_success_url(self):
-        try:
-            return self.request.GET["next"]
-        except KeyError:
-            return reverse_lazy("apply:submissions:list")
+        next_url = self.request.GET.get("next")
+        if next_url and url_has_allowed_host_and_scheme(
+            next_url,
+            allowed_hosts={self.request.get_host()},
+            require_https=self.request.is_secure(),
+        ):
+            return next_url
+        return reverse_lazy("apply:submissions:list")
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -359,6 +372,10 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                     form_fields[field_block.id].initial = TRANSITION_DETERMINATION[
                         action
                     ]
+            # Make capitalization consistent
+            form_fields[field_block.id].label = form_fields[
+                field_block.id
+            ].label.title()
         form_fields = self.add_proposal_form_field(form_fields, action)
         return type("WagtailStreamForm", (self.submission_form_class,), form_fields)
 
@@ -389,7 +406,11 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                     help_text=proposal_form_help_text,
                     required=True if action == "invited_to_proposal" else False,
                 )
+                # Move proposal form the be the second field as it's disabled until the first (determination) is input
                 fields.move_to_end("proposal_form", last=False)
+                fields.move_to_end(
+                    list(fields.keys())[1], last=False
+                )  # `last=False` moves the item to the start
         return fields
 
     def get_success_url(self):
@@ -438,7 +459,11 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                 proposal_form=proposal_form,
             )
 
-            if self.submission.accepted_for_funding and settings.PROJECTS_AUTO_CREATE:
+            if (
+                self.submission.accepted_for_funding
+                and settings.PROJECTS_AUTO_CREATE
+                and not self.submission.projects.exists()
+            ):
                 Project.create_from_submission(self.submission)
                 messages.success(
                     self.request, _("A project was automatically created.")
@@ -554,31 +579,6 @@ class ReviewerDeterminationDetailView(DetailView):
 
 
 @method_decorator(login_required, name="dispatch")
-class PartnerDeterminationDetailView(DetailView):
-    model = Determination
-
-    def get_queryset(self):
-        return super().get_queryset().filter(submission=self.submission)
-
-    def dispatch(self, request, *args, **kwargs):
-        self.submission = get_object_or_404(
-            ApplicationSubmission, pk=self.kwargs["submission_pk"]
-        )
-
-        if self.submission.user == request.user:
-            return ApplicantDeterminationDetailView.as_view()(request, *args, **kwargs)
-
-        # Only allow partners in the submission they are added as partners
-        partner_has_access = self.submission.partners.filter(
-            pk=request.user.pk
-        ).exists()
-        if not partner_has_access:
-            raise PermissionDenied
-
-        return super().dispatch(request, *args, **kwargs)
-
-
-@method_decorator(login_required, name="dispatch")
 class CommunityDeterminationDetailView(DetailView):
     model = Determination
 
@@ -635,7 +635,6 @@ class ApplicantDeterminationDetailView(DetailView):
 class DeterminationDetailView(ViewDispatcher):
     admin_view = AdminDeterminationDetailView
     reviewer_view = ReviewerDeterminationDetailView
-    partner_view = PartnerDeterminationDetailView
     community_view = CommunityDeterminationDetailView
     applicant_view = ApplicantDeterminationDetailView
 

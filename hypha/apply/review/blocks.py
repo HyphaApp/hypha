@@ -85,9 +85,12 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
         return kwargs
 
     def render(self, value, context=None):
-        data = int(context["data"])
-        choices = dict(self.get_choices(RATE_CHOICES))
-        context["data"] = choices[data]
+        data = context.get("data", None)
+        if data:
+            choices = dict(self.get_choices(RATE_CHOICES))
+            context["data"] = choices[int(data)]
+        else:
+            context["data"] = ""
 
         return super().render(value, context)
 
@@ -97,7 +100,7 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
         """
         rate_choices = list(choices)
         rate_choices.pop(-1)
-        rate_choices.append(("", "n/a - choose not to answer"))
+        rate_choices.append(("", _("n/a - choose not to answer")))
         return tuple(rate_choices)
 
 
@@ -107,7 +110,7 @@ class ReviewMustIncludeFieldBlock(MustIncludeFieldBlock):
 
 class RecommendationBlock(ReviewMustIncludeFieldBlock):
     name = "recommendation"
-    description = "Overall recommendation"
+    description = _("Overall recommendation")
     field_class = forms.ChoiceField
 
     class Meta:
@@ -128,7 +131,7 @@ class RecommendationBlock(ReviewMustIncludeFieldBlock):
 
 class RecommendationCommentsBlock(ReviewMustIncludeFieldBlock):
     name = "comments"
-    description = "Recommendation comments"
+    description = _("Recommendation comments")
     widget = RICH_TEXT_WIDGET_SHORT
 
     class Meta:
@@ -143,7 +146,7 @@ class RecommendationCommentsBlock(ReviewMustIncludeFieldBlock):
 
 class VisibilityBlock(ReviewMustIncludeFieldBlock):
     name = "visibility"
-    description = "Visibility"
+    description = _("Visibility")
     field_class = forms.ChoiceField
     widget = forms.RadioSelect()
 
@@ -151,7 +154,7 @@ class VisibilityBlock(ReviewMustIncludeFieldBlock):
         icon = "radio-empty"
 
     def get_field_kwargs(self, struct_value):
-        kwargs = super(VisibilityBlock, self).get_field_kwargs(struct_value)
+        kwargs = super().get_field_kwargs(struct_value)
         kwargs["choices"] = VISIBILITY.items()
         kwargs["initial"] = settings.REVIEW_VISIBILITY_DEFAULT
         kwargs["help_text"] = mark_safe(

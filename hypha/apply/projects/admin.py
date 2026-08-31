@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy as _
 from wagtail_modeladmin.options import ModelAdmin, ModelAdminGroup
 
 from hypha.apply.utils.admin import AdminIcon, ListRelatedMixin
@@ -14,6 +15,7 @@ from .admin_views import (
 from .models import (
     ContractDocumentCategory,
     DocumentCategory,
+    InvoiceTag,
     ProjectForm,
     ProjectReportForm,
     ProjectSettings,
@@ -41,7 +43,7 @@ class ContractDocumentCategoryAdmin(ModelAdmin):
 
 class ProjectFormAdmin(ListRelatedMixin, ModelAdmin):
     model = ProjectForm
-    menu_label = "Project Forms"
+    menu_label = _("Project Forms")
     menu_icon = str(AdminIcon.PROJECT_FORM)
     list_display = (
         "name",
@@ -58,7 +60,7 @@ class ProjectFormAdmin(ListRelatedMixin, ModelAdmin):
 
 class ProjectSOWFormAdmin(ListRelatedMixin, ModelAdmin):
     model = ProjectSOWForm
-    menu_label = "SOW Forms"
+    menu_label = _("SOW Forms")
     menu_icon = str(AdminIcon.PROJECT_SOW_FORM)
     list_display = (
         "name",
@@ -75,7 +77,7 @@ class ProjectSOWFormAdmin(ListRelatedMixin, ModelAdmin):
 
 class ProjectReportFormAdmin(ListRelatedMixin, ModelAdmin):
     model = ProjectReportForm
-    menu_label = "Report Forms"
+    menu_label = _("Report Forms")
     menu_icon = str(AdminIcon.PROJECT_REPORT_FORM)
     list_display = (
         "name",
@@ -94,12 +96,20 @@ class ProjectSettingsAdmin(SettingModelAdmin):
     model = ProjectSettings
 
 
+class InvoiceTagAdmin(ModelAdmin):
+    model = InvoiceTag
+    menu_label = _("Invoice Tags")
+    menu_icon = "tag"
+    list_display = ("name",)
+
+
 class ProjectAdminGroup(ModelAdminGroup):
-    menu_label = "Projects"
+    menu_label = _("Projects")
     menu_icon = str(AdminIcon.PROJECT)
     items = (
         ContractDocumentCategoryAdmin,
         DocumentCategoryAdmin,
+        InvoiceTagAdmin,
         ProjectFormAdmin,
         ProjectReportFormAdmin,
         ProjectSOWFormAdmin,

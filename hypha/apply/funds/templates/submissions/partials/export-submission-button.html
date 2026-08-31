@@ -4,21 +4,22 @@
 {% if not_async %}
     {% comment %} For sync uses: no polling, just a download after pressing the button {% endcomment %}
     <a
-        class="relative py-1.5 px-2 rounded-sm border transition-colors hover:bg-gray-100 shadow-xs"
+        class="btn btn-square"
         aria-label="{% trans 'Submissions: Export as CSV' %}"
         href="{{ start_export_url }}"
         data-tippy-content="{% trans 'Export as CSV' %}"
         onclick="return confirm('{% blocktrans %}Are you sure you want to export the submissions as a CSV file? This file may contain sensitive information, so please handle it carefully.{% endblocktrans %}')"
     >
-        {% heroicon_mini "arrow-down-tray" %}
+        {% heroicon_mini "arrow-down-tray" aria_hidden=true %}
     </a>
 {% else %}
     {% if generating %}
         {% comment %} Disabled button used to indicate generation of the CSV is in progress {% endcomment %}
-        <button
-            class="py-1.5 px-2 rounded-sm border transition-colors animate-pulse shadow-xs"
+        <span
+            class="btn btn-square btn-outline"
             aria-label="{% trans 'Submissions: Generating downloadable CSV' %}"
             title="{% trans 'Generating downloadable CSV...' %}"
+            data-tippy-content="{% trans 'Generating downloadable CSV...' %}"
             disabled
             hx-get="{% url 'apply:submissions:submission-export-status' %}"
             hx-swap="outerHTML"
@@ -27,12 +28,12 @@
             hx-push-url="false"
             hx-noprog
         >
-            {% heroicon_mini "clock" %}
-        </button>
+            <span class="loading loading-spinner text-info"></span>
+        </span>
     {% elif success %}
         {% comment %} The final download link for the generated CSV {% endcomment %}
         <a
-            class="relative py-1.5 px-2 rounded-sm border transition-colors hover:bg-gray-100 shadow-xs"
+            class="btn btn-square btn-primary btn-outline"
             aria-label="{% trans 'Submissions: Download generated CSV' %}"
             href="{% url 'apply:submissions:submission-export-download' %}"
             data-tippy-content="{% trans 'Download generated CSV' %}"
@@ -47,13 +48,13 @@
                 <span class="inline-flex absolute w-full h-full bg-green-400 rounded-full opacity-75 animate-ping"></span>
                 <span class="inline-flex relative bg-green-500 rounded-full size-3"></span>
             </span>
-            {% heroicon_mini "arrow-down-tray" %}
+            {% heroicon_mini "arrow-down-tray" aria_hidden=true %}
         </a>
 
     {% else %}
         {% comment %} Button that will begin the generation of the CSV, used to start a generation or retry a failed one {% endcomment %}
         <button
-            class="relative py-1.5 px-2 rounded-sm border transition-colors cursor-pointer hover:bg-gray-100 shadow-xs"
+            class="btn btn-square"
             aria-label="{% trans 'Submissions: Generate downloadable CSV' %}"
             {% if failed %}
                 data-tippy-content="{% trans 'Generation failed, click to retry generating downloadable CSV' %}"
@@ -67,13 +68,13 @@
             hx-confirm="{% trans 'Are you sure you want to export the submissions as a CSV file? This file may contain sensitive information, so please handle it carefully.' %}"
         >
             {% if not failed %}
-                {% heroicon_mini "arrow-down-tray" %}
+                {% heroicon_mini "arrow-down-tray" aria_hidden=true %}
             {% else %}
                 <span class="flex absolute top-0 right-0 -mt-1 -mr-1 size-3">
                     <span class="inline-flex absolute w-full h-full bg-red-400 rounded-full opacity-75 animate-ping"></span>
                     <span class="inline-flex relative bg-red-500 rounded-full size-3"></span>
                 </span>
-                {% heroicon_mini "exclamation-circle" %}
+                {% heroicon_mini "exclamation-circle" aria_hidden=true %}
             {% endif %}
         </button>
     {% endif %}

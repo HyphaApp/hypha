@@ -57,7 +57,7 @@ class ReminderCreateView(View):
         if not permission:
             messages.warning(self.request, reason)
             return HttpResponseRedirect(self.submission.get_absolute_url())
-        return super(ReminderCreateView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         reminder_form = CreateReminderForm(instance=self.submission)

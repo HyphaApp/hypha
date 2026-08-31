@@ -110,7 +110,7 @@ class AccessFormData:
                 new_file_upload = False
                 for file_data in uploads_data:
                     # id can be a path or a uuid, where path can exist only for existing files so uuid means a new file
-                    if self._is_valid_uuid(file_data["id"]):
+                    if self._is_valid_uuid(file_data.get("id", None)):
                         new_file_upload = True  # if any new file is uploaded we have to process and save the files
 
                 # get existing files from instance
@@ -153,7 +153,7 @@ class AccessFormData:
         try:
             uuid.UUID(value)
             return True
-        except ValueError:
+        except (ValueError, TypeError):
             return False
 
     def extract_files(self):
@@ -161,7 +161,6 @@ class AccessFormData:
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
                 files[field.id] = self.data(field.id) or []
-                self.form_data.pop(field.id, None)
         return files
 
     @classmethod
@@ -227,11 +226,9 @@ class AccessFormData:
 
     @property
     def question_text_field_ids(self):
-        file_fields = list(self.file_field_ids)
+        file_fields = set(self.file_field_ids)
         for field_id, field in self.fields.items():
-            if field_id in file_fields:
-                pass
-            elif isinstance(field.block, FormFieldBlock):
+            if field_id not in file_fields and isinstance(field.block, FormFieldBlock):
                 yield field_id
 
     @property
@@ -321,7 +318,10 @@ class AccessFormData:
             )
             for i, answer in enumerate(filter(None, answers))
         ]
-        return "".join(render_data).replace("</section>", "") + "</section>"
+        joined = "".join(render_data).replace("</section>", "")
+        if include_question and render_data:
+            return joined + "</section>"
+        return joined
 
     def render_answer(self, field_id, include_question=False):
         try:
@@ -385,3 +385,20 @@ class AccessFormData:
                     if answer and not answer == "N":
                         return answer
         return None
+
+    def get_text_questions_answers_as_dict(self):
+        data_dict = {}
+        for field_id in self.question_text_field_ids:
+            if field_id not in self.named_blocks:
+                question_field = self.serialize(field_id)
+                if isinstance(question_field["answer"], str):
+                    answer = question_field["answer"]
+                else:
+                    answer = ",".join(question_field["answer"])
+                if answer and not answer == "None":
+                    data_dict[question_field["question"]] = answer
+                elif question_field["type"] == "checkbox":
+                    data_dict[question_field["question"]] = False
+                else:
+                    data_dict[question_field["question"]] = "-"
+        return data_dict

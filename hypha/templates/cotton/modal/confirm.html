@@ -1,0 +1,50 @@
+{% load i18n heroicons %}
+
+<form
+    class="px-4 pt-5 pb-4 sm:p-6"
+    action="{% if action %}{{ action }}{% else %}{{ request.path }}{% endif %}"
+    method="post"
+    x-data="{userConfirmationInput: '', delConfirmText: `{% trans 'delete' %}`, anonConfirmText: `{% trans 'anonymize' %}`, mode: '{{ initial_mode|default:'delete' }}'}"
+>
+    {% csrf_token %}
+
+    <div class="sm:flex sm:items-start">
+        <div class="flex justify-center items-center mx-auto w-12 h-12 rounded-full sm:mx-0 sm:w-10 sm:h-10 bg-error/10 shrink-0">
+            {% heroicon_outline "exclamation-triangle" class="w-6 h-6 text-error" stroke_width="1.5" aria_hidden="true" %}
+        </div>
+        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <h3 class="text-base font-semibold leading-6 text-base-content" id="modal-title">
+                {{ title }}
+            </h3>
+            <div class="mt-2">
+                {{ slot }}
+            </div>
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">
+                    <span x-show="mode == 'delete'">{% blocktrans %}Type <pre class="badge badge-soft badge-neutral">delete</pre> below to confirm{% endblocktrans %}</span>
+                    <span x-show="mode == 'anonymize'">{% blocktrans %}Type <pre class="badge badge-soft badge-neutral">anonymize</pre> below to confirm{% endblocktrans %}</span>
+                </legend>
+                <input
+                    type="text"
+                    autocomplete="off"
+                    x-model='userConfirmationInput'
+                    class="italic input"
+                    id="delete-confirmation"
+                >
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="mt-5 sm:flex-row-reverse sm:mt-4 card-actions">
+        <button
+            type="submit"
+            x-bind:disabled="mode == 'delete' ? userConfirmationInput !== delConfirmText : userConfirmationInput !== anonConfirmText"
+            class="w-full sm:w-auto btn btn-error"
+        >{% trans "Confirm" %}</button>
+        <button
+            type="button"
+            class="w-full sm:w-auto btn btn-secondary btn-soft"
+            @click="show = false"
+        >{% trans "Cancel" %}</button>
+    </div>
+</form>

@@ -1,0 +1,11 @@
+{% load i18n %}
+
+<c-modal.confirm title="{% trans 'Anonymize application' %}" initial_mode="anonymize">
+    <p class="text-sm text-fg-muted">
+        {% blocktranslate trimmed %}
+            Are you sure you want to anonymize this application? Personal data will be
+            removed and the application will only be accessible via statistics in the
+            Results view. This action cannot be undone.
+        {% endblocktranslate %}
+    </p>
+</c-modal.confirm>

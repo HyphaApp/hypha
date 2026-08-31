@@ -19,6 +19,7 @@ from hypha.apply.users.tests.factories import (
 )
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 
+from ..models import Report
 from .factories import (
     ReportConfigFactory,
     ReportFactory,
@@ -515,7 +516,7 @@ class TestApplicantReportDetail(BaseViewTestCase):
 
     base_view_name = "detail"
     url_name = "funds:projects:reports:{}"
-    user_factory = StaffFactory
+    user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
         return {
@@ -558,7 +559,7 @@ class TestApplicantReportDetail(BaseViewTestCase):
             project__status=INVOICING_AND_REPORTING, is_submitted=True
         )
         response = self.get_page(report)
-        assert response.status_code == 200
+        assert response.status_code == 403
 
     def test_cant_access_other_draft_report(self):
         """Tests applicants cannot access other users' draft reports"""
@@ -678,7 +679,7 @@ class TestReportFrequencyUpdate(BaseViewTestCase):
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
-        return {"pk": instance.submission.id}
+        return {"pk": instance.pk}
 
     def test_staff_can_access(self):
         project = ProjectFactory(status=INVOICING_AND_REPORTING)
@@ -692,7 +693,129 @@ class TestReportFrequencyUpdate(BaseViewTestCase):
         self.client.force_login(ApplicantFactory())
         url = reverse(
             "funds:projects:report_frequency_update",
-            kwargs={"pk": project.submission.id},
+            kwargs={"pk": project.pk},
         )
+        response = self.client.get(url)
+        assert response.status_code == 403
+
+
+class TestReportDateAddView(BaseViewTestCase):
+    base_view_name = "report_add"
+    url_name = "funds:projects:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.pk}
+
+    def test_staff_can_get_form(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ReportConfigFactory(project=project)
+        response = self.get_page(project)
+        assert response.status_code == 200
+
+    def test_staff_can_add_report(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ReportConfigFactory(project=project)
+        new_date = timezone.now().date() + relativedelta(months=1)
+        response = self.post_page(project, {"end_date": new_date.isoformat()})
+        assert response.status_code == 200
+        assert project.reports.filter(end_date=new_date).exists()
+
+    def test_duplicate_date_rejected(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ReportConfigFactory(project=project)
+        existing_date = timezone.now().date()
+        ReportFactory(project=project, end_date=existing_date)
+        response = self.post_page(project, {"end_date": existing_date.isoformat()})
+        assert response.status_code == 200
+        assert project.reports.filter(end_date=existing_date).count() == 1
+
+    def test_applicant_cannot_access(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        self.client.force_login(ApplicantFactory())
+        url = reverse("funds:projects:report_add", kwargs={"pk": project.pk})
+        response = self.client.get(url)
+        assert response.status_code == 403
+
+
+class TestReportEditDueDateView(BaseViewTestCase):
+    base_view_name = "edit_due_date"
+    url_name = "funds:projects:reports:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.pk}
+
+    def test_staff_can_get_form(self):
+        report = ReportFactory(project__status=INVOICING_AND_REPORTING)
+        response = self.get_page(report)
+        assert response.status_code == 200
+
+    def test_staff_can_edit_due_date(self):
+        report = ReportFactory(project__status=INVOICING_AND_REPORTING)
+        new_date = timezone.now().date() + relativedelta(days=7)
+        response = self.post_page(report, {"end_date": new_date.isoformat()})
+        assert response.status_code == 200
+        report.refresh_from_db()
+        assert report.end_date == new_date
+
+    def test_duplicate_date_rejected(self):
+        today = timezone.now().date()
+        report_a = ReportFactory(
+            project__status=INVOICING_AND_REPORTING, end_date=today
+        )
+        report_b = ReportFactory(
+            project=report_a.project, end_date=today + relativedelta(days=7)
+        )
+        response = self.post_page(report_a, {"end_date": report_b.end_date.isoformat()})
+        assert response.status_code == 200
+        report_a.refresh_from_db()
+        assert report_a.end_date == today
+
+    def test_submitted_report_cannot_be_edited(self):
+        today = timezone.now().date()
+        report = ReportFactory(
+            project__status=INVOICING_AND_REPORTING,
+            is_submitted=True,
+            end_date=today,
+        )
+        response = self.post_page(
+            report, {"end_date": (today + relativedelta(days=7)).isoformat()}
+        )
+        assert response.status_code == 404
+        report.refresh_from_db()
+        assert report.end_date == today
+
+    def test_applicant_cannot_access(self):
+        report = ReportFactory(project__status=INVOICING_AND_REPORTING)
+        self.client.force_login(ApplicantFactory())
+        url = reverse("funds:projects:reports:edit_due_date", kwargs={"pk": report.pk})
+        response = self.client.get(url)
+        assert response.status_code == 403
+
+
+class TestReportDeleteView(BaseViewTestCase):
+    base_view_name = "delete"
+    url_name = "funds:projects:reports:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.pk}
+
+    def test_staff_can_get_confirm(self):
+        report = ReportFactory(project__status=INVOICING_AND_REPORTING)
+        response = self.get_page(report)
+        assert response.status_code == 200
+
+    def test_staff_can_delete_report(self):
+        report = ReportFactory(project__status=INVOICING_AND_REPORTING)
+        report_pk = report.pk
+        self.post_page(report)
+        assert not Report.objects.filter(pk=report_pk).exists()
+
+    def test_applicant_cannot_access(self):
+        report = ReportFactory(project__status=INVOICING_AND_REPORTING)
+        self.client.force_login(ApplicantFactory())
+        url = reverse("funds:projects:reports:delete", kwargs={"pk": report.pk})
         response = self.client.get(url)
         assert response.status_code == 403

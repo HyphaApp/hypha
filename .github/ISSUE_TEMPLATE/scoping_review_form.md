@@ -38,7 +38,6 @@ Add any other context or screenshots about the feature request here.
 - Staff
 - Applicants
 - Reviewers
-- Partners
 - Developers
 - General public
 

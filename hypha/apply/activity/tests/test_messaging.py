@@ -17,7 +17,6 @@ from hypha.apply.projects.tests.factories import InvoiceFactory, ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
-    PartnerFactory,
     ReviewerFactory,
     StaffFactory,
     UserFactory,
@@ -30,8 +29,6 @@ from ..messaging import MessengerBackend
 from ..models import (
     ALL,
     APPLICANT,
-    APPLICANT_PARTNERS,
-    PARTNER,
     TEAM,
     Activity,
     Event,
@@ -317,17 +314,28 @@ class TestActivityAdapter(TestCase):
         self.assertIn(submission.phase.public_name, message[ALL])
         self.assertIn(old_phase.public_name, message[ALL])
 
-    def test_handle_transition_to_private_to_public(self):
+    def test_handle_transition_private_to_public(self):
         submission = ApplicationSubmissionFactory(status="more_info")
-        old_phase = submission.workflow.phases_for()[1]
+        # Leaving a phase the applicant cannot see: the applicant message must
+        # report the last phase they *could* see, not the hidden one.
+        private_phase = next(
+            phase
+            for phase in submission.workflow.phases_for()
+            if not phase.permissions.can_view(submission.user)
+        )
+        visible_phase = submission.workflow.previous_visible(
+            private_phase, submission.user
+        )
 
-        message = self.adapter.handle_transition(old_phase, submission)
+        message = self.adapter.handle_transition(private_phase, submission)
         message = json.loads(message)
 
         self.assertIn(submission.phase.display_name, message[TEAM])
-        self.assertIn(old_phase.display_name, message[TEAM])
+        self.assertIn(private_phase.display_name, message[TEAM])
+
         self.assertIn(submission.phase.public_name, message[ALL])
-        self.assertIn(old_phase.public_name, message[ALL])
+        self.assertIn(visible_phase.public_name, message[ALL])
+        self.assertNotIn(private_phase.public_name, message[ALL])
 
     def test_handle_transition_to_public_to_private(self):
         submission = ApplicationSubmissionFactory(status="internal_review")
@@ -576,64 +584,6 @@ class TestEmailAdapter(AdapterMixin, TestCase):
             ANY, ANY, ANY, [project.user.email], logs=ANY
         )
 
-    def test_email_partner_for_submission_comments(self):
-        partners = PartnerFactory.create_batch(2)
-        submission = ApplicationSubmissionFactory()
-        submission.partners.set(partners)
-        comment = CommentFactory(
-            user=submission.user, source=submission, visibility=PARTNER
-        )
-
-        self.adapter_process(
-            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
-        )
-
-        partner_emails = [partner.email for partner in partners]
-
-        calls = [call(ANY, ANY, ANY, [email], logs=ANY) for email in partner_emails]
-
-        self.mock_send_email.assert_has_calls(calls, any_order=True)
-
-    def test_email_applicant_partners_for_submission_comments(self):
-        staff_commenter = StaffFactory()
-        partners = PartnerFactory.create_batch(2)
-        submission = ApplicationSubmissionFactory()
-        submission.partners.set(partners)
-        comment = CommentFactory(
-            user=staff_commenter, source=submission, visibility=APPLICANT_PARTNERS
-        )
-
-        self.adapter_process(
-            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
-        )
-
-        applicant_partner_emails = [partner.email for partner in partners] + [
-            submission.user.email
-        ]
-
-        calls = [
-            call(ANY, ANY, ANY, [email], logs=ANY) for email in applicant_partner_emails
-        ]
-
-        self.mock_send_email.assert_has_calls(calls, any_order=True)
-
-    def test_email_applicant_for_submission_comments(self):
-        staff_commenter = StaffFactory()
-        partners = PartnerFactory.create_batch(2)
-        submission = ApplicationSubmissionFactory()
-        submission.partners.set(partners)
-        comment = CommentFactory(
-            user=staff_commenter, source=submission, visibility=APPLICANT
-        )
-
-        self.adapter_process(
-            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
-        )
-
-        self.mock_send_email.assert_called_once_with(
-            ANY, ANY, ANY, [submission.user.email], logs=ANY
-        )
-
     def test_reviewers_email(self):
         reviewers = ReviewerFactory.create_batch(4)
         submission = ApplicationSubmissionFactory(
@@ -699,6 +649,26 @@ class TestEmailAdapter(AdapterMixin, TestCase):
             ANY, Contains(str(staff_commenter)), ANY, [submission.user.email], logs=ANY
         )
 
+    def test_notify_assigned_comment_user_in_email(self):
+        staff_commenter = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+        assignee = StaffFactory()
+        comment = CommentFactory(
+            user=staff_commenter, source=submission, visibility=TEAM
+        )
+
+        self.adapter_process(
+            MESSAGES.COMMENT_ASSIGNED,
+            related=comment,
+            user=comment.user,
+            source=comment.source,
+            assignee=assignee,
+        )
+
+        self.mock_send_email.assert_called_once_with(
+            ANY, Contains("assigned to a comment"), ANY, [assignee.email], logs=ANY
+        )
+
 
 @override_settings(
     SEND_MESSAGES=True,
@@ -726,14 +696,6 @@ class TestAnyMailBehaviour(AdapterMixin, TestCase):
         ).hexdigest()
 
         return data
-
-    def test_email_new_submission(self):
-        submission = ApplicationSubmissionFactory()
-        self.adapter_process(MESSAGES.NEW_SUBMISSION, source=submission)
-
-        self.mock_send_email.assert_called_once_with(
-            ANY, ANY, ANY, [submission.user.email], logs=ANY
-        )
 
     @override_settings(ANYMAIL_MAILGUN_API_KEY=TEST_API_KEY)
     def test_webhook_updates_status(self):
@@ -807,7 +769,7 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
         )
         self.assertEqual(Activity.objects.count(), 1)
         activity = Activity.objects.first()
-        self.assertIn(str("Unassigned"), activity.message)
+        self.assertIn("Unassigned", activity.message)
         self.assertIn(str(project.lead), activity.message)
 
     def test_activity_created(self):

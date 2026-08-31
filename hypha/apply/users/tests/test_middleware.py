@@ -41,5 +41,11 @@ class TestTwoFactorAuthenticationMiddleware(TestCase):
             if "success" in path:
                 submission = ApplicationSubmissionFactory()
                 path = str(path) + f"{submission.id}/"
-            response = self.client.get(path, follow=True)
-            self.assertEqual(response.status_code, 200)
+                response = self.client.get(path, follow=True)
+            elif "upload" in path:
+                response = self.client.post(path, headers={"tus-resumable": "1.0.0"})
+            elif "logout" in path:
+                response = self.client.post(path, follow=True)
+            else:
+                response = self.client.get(path, follow=True)
+            self.assertIn(response.status_code, [200, 201])

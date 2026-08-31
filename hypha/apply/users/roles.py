@@ -6,7 +6,6 @@ APPLICANT_GROUP_NAME = _("Applicant")
 STAFF_GROUP_NAME = _("Staff")
 REVIEWER_GROUP_NAME = _("Reviewer")
 TEAMADMIN_GROUP_NAME = _("Staff Admin")
-PARTNER_GROUP_NAME = _("Partner")
 COMMUNITY_REVIEWER_GROUP_NAME = _("Community reviewer")
 APPROVER_GROUP_NAME = _("Approver")
 FINANCE_GROUP_NAME = _("Finance")
@@ -54,15 +53,6 @@ class Reviewer(AbstractUserRole):
 class StaffAdmin(AbstractUserRole):
     role_name = TEAMADMIN_GROUP_NAME
     help_text = _("Can view application message log. Must also be in group Staff.")
-
-    available_permissions = {}
-
-
-class Partner(AbstractUserRole):
-    role_name = PARTNER_GROUP_NAME
-    help_text = _(
-        "Can view, edit, and comment on a specific application they are assigned to."
-    )
 
     available_permissions = {}
 

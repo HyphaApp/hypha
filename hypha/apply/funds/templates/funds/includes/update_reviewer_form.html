@@ -1,5 +1,5 @@
 {% load i18n static %}
-{% modal_title %}{% trans "Update reviewers" %}{% endmodal_title %}
+<c-modal.header>{% trans "Update reviewers" %}</c-modal.header>
 
 <form
     class="px-4 pb-4 form"
@@ -33,7 +33,7 @@
             {% comment %} skip for external reviewer if not allowed {% endcomment %}
             {% else %}
                 <fieldset class="mt-3">
-                    <label for="{{ field.id_for_label }}" class="font-semibold">
+                    <label for="{{ field.id_for_label }}" class="flex gap-2 font-semibold">
                         {{ field.label }}
                     </label>
                     <div class="mt-2">
@@ -44,16 +44,16 @@
         {% endfor %}
     </div>
 
-    <div class="mt-5 sm:flex sm:flex-row-reverse sm:gap-4 sm:mt-4">
+    <div class="mt-4 sm:flex-row-reverse card-actions">
         <button
-            class="w-full sm:w-auto button button--primary"
+            class="w-full sm:w-auto btn btn-primary"
             type="submit">
             {% trans "Update" %}
         </button>
 
         <button
             type="button"
-            class="inline-flex justify-center items-center py-2 px-3 mt-3 w-full text-sm font-semibold text-gray-900 bg-white ring-1 ring-inset ring-gray-300 sm:mt-0 sm:w-auto hover:bg-gray-50 rounded-xs shadow-xs"
+            class="w-full sm:w-auto btn btn-secondary btn-outline btn-soft"
             @click="show = false"
         >{% trans "Cancel" %}</button>
     </div>

@@ -1,4 +1,5 @@
 from django.contrib.admin.utils import quote
+from django.utils.translation import gettext as _
 from wagtail_modeladmin.helpers import ButtonHelper
 
 
@@ -33,9 +34,12 @@ class MetaTermButtonHelper(ButtonHelper):
         )
         return {
             "classname": classname,
-            "label": "Add %s %s" % (child_verbose_name, self.verbose_name),
-            "title": "Add %s %s under this one"
-            % (child_verbose_name, self.verbose_name),
+            "label": _("Add {child_verbose_name} {verbose_name}").format(
+                child_verbose_name=child_verbose_name, verbose_name=self.verbose_name
+            ),
+            "title": _("Add {child_verbose_name} {verbose_name} under this one").format(
+                child_verbose_name=child_verbose_name, verbose_name=self.verbose_name
+            ),
             "url": self.url_helper.get_action_url("add_child", quote(pk)),
         }
 

@@ -20,7 +20,6 @@ from hypha.apply.todo.options import SUBMISSION_DRAFT
 from hypha.apply.todo.views import add_task_to_user
 from hypha.apply.users.roles import (
     COMMUNITY_REVIEWER_GROUP_NAME,
-    PARTNER_GROUP_NAME,
     REVIEWER_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
@@ -34,7 +33,6 @@ REVIEW_GROUPS = [
 ]
 LIMIT_TO_STAFF = {"groups__name": STAFF_GROUP_NAME, "is_active": True}
 LIMIT_TO_REVIEWERS = {"groups__name": REVIEWER_GROUP_NAME, "is_active": True}
-LIMIT_TO_PARTNERS = {"groups__name": PARTNER_GROUP_NAME, "is_active": True}
 LIMIT_TO_COMMUNITY_REVIEWERS = {
     "groups__name": COMMUNITY_REVIEWER_GROUP_NAME,
     "is_active": True,
@@ -60,7 +58,7 @@ class WorkflowHelpers(models.Model):
         choices=WORKFLOW_CHOICES.items(),
         max_length=100,
         default="single",
-        verbose_name=_("Workflow"),
+        verbose_name=_("workflow"),
     )
 
     @property
@@ -115,7 +113,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
             stage_num = 1
         else:
             stage_num = self.workflow.stages.index(stage) + 1
-        return self.forms.filter(stage=stage_num)[form_index].fields
+        return list(self.forms.filter(stage=stage_num))[form_index].fields
 
     def render_landing_page(self, request, form_submission=None, *args, **kwargs):
         # We only reach this page after creation of a new submission
@@ -151,7 +149,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
             "external_review_forms",
             label=_("External Review Forms"),
             max_num=1,
-            help_text="Add a form to be used by external reviewers.",
+            help_text=_("Add a form to be used by external reviewers."),
         ),
         InlinePanel("determination_forms", label=_("Determination Forms")),
     ]
@@ -232,6 +230,10 @@ class SubmissionExportManager(models.Model):
     status = models.CharField(choices=STATUS_CHOICES, default=STATUS_GENERATING)
 
     total_export = models.IntegerField(null=True)
+
+    class Meta:
+        verbose_name = _("submission export manager")
+        verbose_name_plural = _("submission export managers")
 
     def set_completed_and_save(self) -> None:
         """Sets the status to completed and saves the object"""

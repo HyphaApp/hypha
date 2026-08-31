@@ -40,11 +40,15 @@ class BaseViewTestCase(TestCase):
     user_factory = None
     user = None
 
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        if cls.user_factory:
+            cls.user = cls.user_factory()
+
     def setUp(self):
         self.factory = RequestFactory()
-        if self.user_factory:
-            self.user = self.user_factory()
-        else:
+        if not self.user_factory:
             self.user = AnonymousUser()
 
         if not self.user.is_anonymous:

@@ -108,5 +108,5 @@ class CoApplicantInviteTokenGenerator(PasswordlessLoginTokenGenerator):
         attempts using the reset token, provided the secret isn't compromised.
         """
         return (
-            f"{invite.pk}{invite.submission.pk}{timestamp}{invite.invited_user_email}"
+            f"{invite.pk}{invite.submission_id}{timestamp}{invite.invited_user_email}"
         )

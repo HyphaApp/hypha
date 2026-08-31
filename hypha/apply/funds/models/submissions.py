@@ -1,6 +1,6 @@
 import operator
 from functools import partialmethod, reduce
-from typing import Optional, Self
+from typing import Any, Dict, Optional, Self
 
 from django.apps import apps
 from django.conf import settings
@@ -24,20 +24,19 @@ from django.db.models import (
 from django.db.models.expressions import OrderBy, RawSQL
 from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Cast
-from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.html import strip_tags
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from django_fsm import RETURN_VALUE, FSMField, can_proceed, transition
-from django_fsm.signals import post_transition
+from viewflow.fsm import State
 from wagtail.contrib.forms.models import AbstractFormSubmission
 from wagtail.fields import StreamField
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.categories.models import MetaTerm
+from hypha.apply.categories.blocks import CategoryQuestionBlock
+from hypha.apply.categories.models import MetaTerm, Option
 from hypha.apply.determinations.models import Determination
 from hypha.apply.flags.models import Flag
 from hypha.apply.funds.services import (
@@ -75,7 +74,6 @@ from ..workflows.constants import (
 from .mixins import AccessFormData
 from .reviewer_role import ReviewerRole
 from .utils import (
-    LIMIT_TO_PARTNERS,
     LIMIT_TO_STAFF,
     WorkflowHelpers,
 )
@@ -179,9 +177,6 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def flagged_staff(self):
         return self.filter(flags__type=Flag.STAFF)
 
-    def partner_for(self, user):
-        return self.filter(partners=user)
-
     def awaiting_determination_for(self, user):
         return self.filter(status__in=DETERMINATION_RESPONSE_PHASES).filter(lead=user)
 
@@ -253,6 +248,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 "previous__lead",
             )
             .prefetch_related("screening_statuses")
+            .defer("search_data", "search_document")
         )
 
 
@@ -273,7 +269,7 @@ def make_permission_check(users):
 
 def wrap_method(func):
     def wrapped(*args, **kwargs):
-        # Provides a new function that can be wrapped with the django_fsm method
+        # Provides a new function that can be wrapped with the viewflow-fsm method
         # Without this using the same method for multiple transitions fails as
         # the fsm wrapping is overwritten
         return func(*args, **kwargs)
@@ -286,8 +282,18 @@ def transition_id(target, phase):
     return "__".join([transition_prefix, phase.stage.name.lower(), phase.name, target])
 
 
+def get_all_possible_states():
+    all_states = set()
+    for workflow in WORKFLOWS.values():
+        for phase_name, data in workflow.items():
+            all_states.add((phase_name, data.display_name))
+    return sorted(all_states, key=lambda x: x[0])
+
+
 class AddTransitions(models.base.ModelBase):
     def __new__(cls, name, bases, attrs, **kwargs):
+        status_field = attrs.get("status_field")
+
         for workflow in WORKFLOWS.values():
             for phase_name, data in workflow.items():
                 for transition_name, action in data.transitions.items():
@@ -296,43 +302,55 @@ class AddTransitions(models.base.ModelBase):
                     permission_func = make_permission_check(action["permissions"])
 
                     # Get the method defined on the parent or default to a NOOP
-                    transition_state = wrap_method(
-                        attrs.get(action.get("method"), lambda *args, **kwargs: None)
-                    )
+                    method = action.get("method")
+
+                    if method in attrs:
+                        transition_m = attrs[method]
+                    elif method and hasattr(cls, method):
+                        transition_m = getattr(cls, method)
+                    else:
+                        # Create a bound noop method that updates status
+                        def make_noop(target_state):
+                            def noop_method(instance, *args, **kwargs):
+                                return True
+
+                            return noop_method
+
+                        transition_m = make_noop(transition_name)
+
+                    transition_state = wrap_method(transition_m)
                     # Provide a neat name for graph viz display
-                    transition_state.__name__ = slugify(action["display"])
+                    transition_state.__name__ = str(slugify(action["display"]))
 
                     conditions = [
                         attrs[condition] for condition in action.get("conditions", [])
                     ]
-                    # Wrap with transition decorator
-                    transition_func = transition(
-                        attrs["status"],
+
+                    # Create the transition
+                    transition_func = status_field.transition(
                         source=phase_name,
                         target=transition_name,
                         permission=permission_func,
                         conditions=conditions,
                         custom=action.get("custom", {}),
-                    )(transition_state)
+                    )
 
-                    # Attach to new class
-                    attrs[method_name] = transition_func
+                    # Bind the transition method
+                    attrs[method_name] = transition_func(transition_state)
                     attrs[permission_name] = permission_func
 
         def get_transition(self, transition):
             try:
                 return getattr(self, transition_id(transition, self.phase))
-            except TypeError:
-                # Defined on the class
-                return None
-            except AttributeError:
-                # For the other workflow
+            except (TypeError, AttributeError):
                 return None
 
         attrs["get_transition"] = get_transition
 
         def get_actions_for_user(self, user):
-            transitions = self.get_available_user_status_transitions(user)
+            transitions = type(self).status_field.get_available_transitions(
+                self, self.status, user
+            )
             actions = [
                 (
                     transition.target,
@@ -346,16 +364,16 @@ class AddTransitions(models.base.ModelBase):
         attrs["get_actions_for_user"] = get_actions_for_user
 
         def perform_transition(self, action, user, request=None, **kwargs):
-            transition = self.get_transition(action)
-            if not transition:
+            transition_method = self.get_transition(action)
+            if not transition_method:
                 raise PermissionDenied(f'Invalid "{action}" transition')
-            if not can_proceed(transition):
+
+            if not transition_method.can_proceed():
                 action = self.phase.transitions[action]
                 raise PermissionDenied(f'You do not have permission to "{action}"')
 
-            transition(by=user, request=request, **kwargs)
-            self.save(update_fields=["status"])
-
+            # Execute the transition
+            transition_method(by=user, request=request, **kwargs)
             self.progress_stage_when_possible(user, request, **kwargs)
 
         attrs["perform_transition"] = perform_transition
@@ -415,11 +433,11 @@ class ApplicationSubmission(
     metaclass=ApplicationSubmissionMetaclass,
 ):
     form_data = models.JSONField(encoder=StreamFieldDataEncoder)
-    form_fields = StreamField(ApplicationCustomFormFieldsBlock(), use_json_field=True)
+    form_fields = StreamField(ApplicationCustomFormFieldsBlock())
     public_id = models.CharField(
         max_length=255, null=True, blank=True, unique=True, db_index=True
     )
-    summary = models.TextField(default="", null=True, blank=True)
+    summary = models.TextField(_("summary"), default="", null=True, blank=True)
     page = models.ForeignKey("wagtailcore.Page", on_delete=models.PROTECT)
     round = models.ForeignKey(
         "wagtailcore.Page",
@@ -442,12 +460,6 @@ class ApplicationSubmission(
         blank=True,
         through="AssignedReviewers",
     )
-    partners = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        related_name="submissions_partner",
-        limit_choices_to=LIMIT_TO_PARTNERS,
-        blank=True,
-    )
     meta_terms = models.ManyToManyField(
         MetaTerm,
         related_name="submissions",
@@ -466,13 +478,22 @@ class ApplicationSubmission(
         related_query_name="submission",
     )
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True
     )
     search_data = models.TextField()
     search_document = SearchVectorField(null=True)
 
     # Workflow inherited from WorkflowHelpers
-    status = FSMField(default=INITIAL_STATE, protected=True)
+    status = models.CharField(
+        _("status"),
+        max_length=100,
+        choices=get_all_possible_states(),
+        default=INITIAL_STATE,
+    )
+    status_field = State(
+        default=INITIAL_STATE,
+        states=get_all_possible_states(),
+    )
 
     screening_statuses = models.ManyToManyField(
         "funds.ScreeningStatus", related_name="submissions", blank=True
@@ -508,10 +529,16 @@ class ApplicationSubmission(
         indexes = [
             GinIndex(fields=["search_document"]),
         ]
+        verbose_name = _("application submission")
+        verbose_name_plural = _("application submissions")
 
     @property
     def is_draft(self):
         return self.status == DRAFT_STATE
+
+    @status_field.getter()
+    def _get_object_status(self):
+        return self.status
 
     @property
     def title_text_display(self):
@@ -532,10 +559,9 @@ class ApplicationSubmission(
     def not_progressed(self):
         return not self.next
 
-    @transition(
-        status,
+    @status_field.transition(
         source="*",
-        target=RETURN_VALUE(INITIAL_STATE, "draft_proposal", "invited_to_proposal"),
+        target=[INITIAL_STATE, "draft_proposal", "invited_to_proposal"],
         permission=make_permission_check({UserPermissions.ADMIN}),
     )
     def restart_stage(self, **kwargs):
@@ -636,8 +662,8 @@ class ApplicationSubmission(
     def progress_application(self, **kwargs):
         target = None
         for phase in STAGE_CHANGE_ACTIONS:
-            transition = self.get_transition(phase)
-            if can_proceed(transition):
+            transition_method = self.get_transition(phase)
+            if transition_method and transition_method.can_proceed():
                 # We convert to dict as not concerned about transitions from the first phase
                 # See note in workflow.py
                 target = dict(PHASES)[phase].stage
@@ -662,6 +688,7 @@ class ApplicationSubmission(
 
         submission_in_db.next = self
         submission_in_db.save()
+        return True
 
     def from_draft(self) -> Self:
         """Sets current `form_data` to the `form_data` from the draft revision.
@@ -745,8 +772,7 @@ class ApplicationSubmission(
                 self.save(skip_custom=True)
 
                 return revision
-
-        return None
+            return True
 
     def clean_submission(self):
         self.process_form_data()
@@ -1000,48 +1026,202 @@ class ApplicationSubmission(
     def get_no_screening_status(self):
         return self.screening_statuses.filter(yes=False).first()
 
+    @status_field.on_success()
+    def log_status_update(self, descriptor, source, target, **kwargs):
+        instance = self
+        old_phase = instance.workflow[source]
 
-@receiver(post_transition, sender=ApplicationSubmission)
-def log_status_update(sender, **kwargs):
-    instance = kwargs["instance"]
-    old_phase = instance.workflow[kwargs["source"]]
+        # Update status on instance.
+        instance.status = target
+        instance.save(update_fields=["status"])
 
-    by = kwargs["method_kwargs"]["by"]
-    request = kwargs["method_kwargs"]["request"]
-    notify = kwargs["method_kwargs"].get("notify", True)
+        by = kwargs["by"]
+        request = kwargs["request"]
+        notify = kwargs.get("notify", True)
 
-    if request and notify:
-        if kwargs["source"] == DRAFT_STATE:
-            # remove task from applicant dashboard for this instance
-            remove_tasks_for_user(code=SUBMISSION_DRAFT, user=by, related_obj=instance)
-            # notify for a new submission
+        if request and notify:
+            if source == DRAFT_STATE:
+                # remove task from applicant dashboard for this instance
+                remove_tasks_for_user(
+                    code=SUBMISSION_DRAFT, user=by, related_obj=instance
+                )
+                # notify for a new submission
+                messenger(
+                    MESSAGES.NEW_SUBMISSION,
+                    request=request,
+                    user=by,
+                    source=instance,
+                )
+            else:
+                messenger(
+                    MESSAGES.TRANSITION,
+                    user=by,
+                    request=request,
+                    source=instance,
+                    related=old_phase,
+                )
+
+            if instance.status in review_statuses:
+                messenger(
+                    MESSAGES.READY_FOR_REVIEW,
+                    user=by,
+                    request=request,
+                    source=instance,
+                )
+
+        if instance.status in STAGE_CHANGE_ACTIONS:
             messenger(
-                MESSAGES.NEW_SUBMISSION,
+                MESSAGES.INVITED_TO_PROPOSAL,
                 request=request,
                 user=by,
                 source=instance,
             )
-        else:
-            messenger(
-                MESSAGES.TRANSITION,
-                user=by,
-                request=request,
-                source=instance,
-                related=old_phase,
+
+
+class AnonymizedSubmissionQueryset(models.QuerySet):
+    def value(self):
+        return self.aggregate(Count("value"), Avg("value"), Sum("value"))
+
+
+class AnonymizedSubmission(models.Model):
+    """The class to be used for stripping PII from an application and making it minimal"""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True
+    )
+
+    value = models.FloatField(null=True)
+
+    status = models.CharField(
+        max_length=100,
+        choices=get_all_possible_states(),
+        default=INITIAL_STATE,
+    )
+
+    selected_category_options = models.ManyToManyField(Option)  # type: ignore[var-annotated]
+
+    page = models.ForeignKey("wagtailcore.Page", on_delete=models.PROTECT)
+    round = models.ForeignKey(
+        "wagtailcore.Page",
+        on_delete=models.PROTECT,
+        related_name="anonymized_submissions",
+        null=True,
+    )
+
+    submit_time = models.DateTimeField(
+        verbose_name=_("submit time"), auto_now_add=False
+    )
+
+    screening_status = models.ForeignKey(
+        "funds.ScreeningStatus",
+        related_name="anonymized_submissions",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
+    objects = AnonymizedSubmissionQueryset.as_manager()
+
+    @classmethod
+    def from_dict(
+        cls, dict_submission: Dict[str, Any], save_user: bool = False
+    ) -> Self | None:
+        """Creates an AnonymizedSubmission from a given dictionary
+
+        Attempts to pull values from keys of `form_data`, `page_id`, `round_id`, `status`, `submit_time`, `form_fields` (for categories) and optionally (save_user=True) `user_id`.
+
+        For convenience, it if values of previous keys are none will also try prepending `applicationsubmission__`.
+        ie. if `dict_submission.get("page_id") = None`, `dict_submission.get("applicationsubmission__page_id")` will be tried
+
+        Args:
+            dict_submission: The dictionary containing the expected keys to create an AnonymizedSubmission from
+            save_user: bool to save the provided user ID in `dict_submission` to the AnonymizedSubmission
+
+        Returns: Populated AnonymizedSubmission if successful, None if not
+        """
+        # If all values of the application dictionary are none, don't create a new anonymized submission
+        if all(x is None for x in dict_submission.values()):
+            return None
+
+        # For convenience function to try both keys
+        def get_from_sub_dict(key):
+            return dict_submission.get(key) or dict_submission.get(
+                f"applicationsubmission__{key}"
             )
 
-        if instance.status in review_statuses:
-            messenger(
-                MESSAGES.READY_FOR_REVIEW,
-                user=by,
-                request=request,
-                source=instance,
-            )
+        user = None
+        if save_user:
+            user = get_from_sub_dict("user_id")
 
-    if instance.status in STAGE_CHANGE_ACTIONS:
-        messenger(
-            MESSAGES.INVITED_TO_PROPOSAL,
-            request=request,
-            user=by,
-            source=instance,
+        value = None
+        category_option_ids = []
+        if form_data := get_from_sub_dict("form_data"):
+            # Handling getting the value field
+            value = form_data.get("value")
+
+            # Handle getting the category options field
+            if form_fields := get_from_sub_dict("form_fields"):
+                for field in form_fields:
+                    if isinstance(field.block, CategoryQuestionBlock):
+                        category_options = form_data.get(field.id)
+                        if category_options and isinstance(category_options, str):
+                            category_option_ids.append(category_options)
+                        elif category_options:
+                            category_option_ids += category_options
+
+        anonymized = AnonymizedSubmission.objects.create(
+            user_id=user,
+            page_id=get_from_sub_dict("page_id"),
+            round_id=get_from_sub_dict("round_id"),
+            value=value,
+            status=get_from_sub_dict("status"),
+            submit_time=get_from_sub_dict("submit_time"),
+            screening_status_id=get_from_sub_dict("screening_statuses"),
         )
+
+        anonymized.selected_category_options.set(category_option_ids)
+        anonymized.save()
+
+        return anonymized
+
+    @classmethod
+    def from_submission(
+        cls, submission: ApplicationSubmission, save_user: bool = False
+    ) -> Self:
+        """Creates an AnonymizedSubmission from a given ApplicationSubmission object
+
+        Note that this will NOT delete the provided ApplicationSubmission, just creates an AnonymizedSubmission.
+
+        Args:
+            submission: The ApplicationSubmission to create an AnonymizedSubmission from
+            save_user: bool to save the user associated on the ApplicationSubmission to the AnonymizedSubmission
+
+        Returns: Populated AnonymizedSubmission
+        """
+
+        user = None
+        if save_user:
+            user = submission.user
+
+        anonymized = AnonymizedSubmission.objects.create(
+            user=user,
+            page=submission.page,
+            round=submission.round,
+            value=submission.form_data.get("value"),
+            status=submission.status,
+            submit_time=submission.submit_time,
+            screening_status=submission.get_current_screening_status(),
+        )
+
+        # Get the category options and add them to the anonymized submission
+        for field in submission.form_fields:
+            if isinstance(field.block, CategoryQuestionBlock) and (
+                category_option_ids := submission.form_data.get(field.id)
+            ):
+                anonymized.selected_category_options.add(
+                    *Option.objects.filter(id__in=category_option_ids)
+                )
+
+        anonymized.save()
+
+        return anonymized

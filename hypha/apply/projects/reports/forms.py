@@ -1,6 +1,7 @@
 from django import forms
 from django.db import transaction
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.review.forms import MixedMetaClass
 from hypha.apply.stream_forms.forms import StreamBaseForm
@@ -57,7 +58,12 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
             if field.split("_")[0] in instance.question_field_ids
         }
         # In case there are stream form file fields, process those here.
-        instance.process_file_data(self.cleaned_data["form_data"])
+        instance.process_file_data(
+            self.cleaned_data["form_data"],
+            latest_existing_data=instance.current.form_data
+            if instance.current
+            else None,
+        )
 
         is_draft = "save" in self.data
         version = ReportVersion.objects.create(
@@ -68,7 +74,12 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
             draft=is_draft,
             author=self.user,
         )
-        version.process_file_data(self.cleaned_data["form_data"])
+        version.process_file_data(
+            self.cleaned_data["form_data"],
+            latest_existing_data=instance.current.form_data
+            if instance.current
+            else None,
+        )
         version.save()
 
         if is_draft:
@@ -77,6 +88,7 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
             # If this is the first submission of the report we track that as the
             # submitted date of the report
             if not instance.submitted:
+                instance.author = self.user
                 instance.submitted = version.submitted
             instance.current = version
             instance.draft = None
@@ -84,8 +96,44 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
         return instance
 
 
+class ReportAddDateForm(forms.Form):
+    end_date = forms.DateField(
+        label=_("Report due date"),
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+
+    def __init__(self, *args, project=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.project = project
+
+    def clean_end_date(self):
+        end_date = self.cleaned_data["end_date"]
+        if self.project and self.project.reports.filter(end_date=end_date).exists():
+            raise forms.ValidationError(_("A report for this date already exists."))
+        return end_date
+
+
+class ReportEditDueDateForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        fields = ["end_date"]
+        labels = {"end_date": _("Report due date")}
+        widgets = {"end_date": forms.DateInput(attrs={"type": "date"})}
+
+    def clean_end_date(self):
+        end_date = self.cleaned_data["end_date"]
+        if (
+            self.instance.pk
+            and self.instance.project.reports.filter(end_date=end_date)
+            .exclude(pk=self.instance.pk)
+            .exists()
+        ):
+            raise forms.ValidationError(_("A report for this date already exists."))
+        return end_date
+
+
 class ReportFrequencyForm(forms.ModelForm):
-    start = forms.DateField(label="Report on:", required=False)
+    start = forms.DateField(label=_("Report on:"), required=False)
 
     class Meta:
         model = ReportConfig

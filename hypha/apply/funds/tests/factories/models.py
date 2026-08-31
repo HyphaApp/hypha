@@ -77,6 +77,7 @@ def workflow_for_stages(stages):
 class AbstractApplicationFactory(wagtail_factories.PageFactory):
     class Meta:
         abstract = True
+        skip_postgeneration_save = True
 
     class Params:
         workflow_stages = 1
@@ -103,6 +104,7 @@ class AbstractApplicationFactory(wagtail_factories.PageFactory):
                     application=self,
                     **kwargs,
                 )
+            self.save()
 
 
 class FundTypeFactory(AbstractApplicationFactory):
@@ -118,6 +120,7 @@ class RequestForPartnersFactory(AbstractApplicationFactory):
 class AbstractRelatedFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         abstract = True
+        skip_postgeneration_save = True
 
     form = factory.SubFactory(
         "hypha.apply.funds.tests.factories.ApplicationFormFactory"
@@ -134,6 +137,7 @@ class ApplicationBaseFormFactory(AbstractRelatedFormFactory):
 class ApplicationFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ApplicationForm
+        skip_postgeneration_save = True
 
     name = factory.Faker("word")
     form_fields = blocks.CustomFormFieldsFactory
@@ -142,6 +146,7 @@ class ApplicationFormFactory(factory.django.DjangoModelFactory):
 class RoundFactory(wagtail_factories.PageFactory):
     class Meta:
         model = Round
+        skip_postgeneration_save = True
 
     class Params:
         now = factory.Trait(
@@ -183,6 +188,7 @@ class RoundFactory(wagtail_factories.PageFactory):
                     round=self,
                     **kwargs,
                 )
+            self.save()
 
 
 class SealedRoundFactory(RoundFactory):
@@ -224,6 +230,7 @@ class LabFactory(AbstractApplicationFactory):
                     lab=self,
                     **kwargs,
                 )
+            self.save()
 
 
 class LabBaseFormFactory(AbstractRelatedFormFactory):
@@ -237,18 +244,30 @@ class ApplicationFormDataFactory(FormDataFactory):
     field_factory = blocks.CustomFormFieldsFactory
 
 
+class NonFileApplicationFormDataFactory(FormDataFactory):
+    field_factory = blocks.NonFileCustomFormFieldsFactory
+
+
 class ApplicationSubmissionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ApplicationSubmission
+        skip_postgeneration_save = True
 
     class Params:
         workflow_stages = 1
         rejected = factory.Trait(status="rejected")
         with_external_review = False
+        with_files = factory.Trait(
+            form_fields=blocks.CustomFormFieldsFactory,
+            form_data=factory.SubFactory(
+                ApplicationFormDataFactory,
+                form_fields=factory.SelfAttribute("..form_fields"),
+            ),
+        )
 
-    form_fields = blocks.CustomFormFieldsFactory
+    form_fields = blocks.NonFileCustomFormFieldsFactory
     form_data = factory.SubFactory(
-        ApplicationFormDataFactory,
+        NonFileApplicationFormDataFactory,
         form_fields=factory.SelfAttribute("..form_fields"),
     )
     page = factory.SelfAttribute(".round.fund")
@@ -277,11 +296,13 @@ class ApplicationSubmissionFactory(factory.django.DjangoModelFactory):
                     reviewer=reviewer,
                     submission=self,
                 )
+            self.save()
 
 
 class ReviewerRoleFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ReviewerRole
+        skip_postgeneration_save = True
 
     name = factory.Faker("word")
     order = factory.Sequence(lambda n: n)
@@ -290,6 +311,7 @@ class ReviewerRoleFactory(factory.django.DjangoModelFactory):
 class AssignedReviewersFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = AssignedReviewers
+        skip_postgeneration_save = True
         django_get_or_create = ("submission", "reviewer")
 
     class Params:
@@ -342,21 +364,28 @@ class LabSubmissionFactory(ApplicationSubmissionFactory):
 class ApplicationRevisionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ApplicationRevision
+        skip_postgeneration_save = True
 
     submission = factory.SubFactory(
         "hypha.apply.funds.tests.factories.ApplicationSubmissionFactory"
     )
     form_data = factory.SubFactory(
-        ApplicationFormDataFactory,
+        NonFileApplicationFormDataFactory,
         form_fields=factory.SelfAttribute("..submission.form_fields"),
         for_factory=ApplicationSubmissionFactory,
         clean=True,
     )
 
+    @factory.post_generation
+    def post(instance: ApplicationRevision, create: bool, extracted, **kwargs):
+        if create:
+            instance.save()
+
 
 class AbstractReviewFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         abstract = True
+        skip_postgeneration_save = True
 
     form = factory.SubFactory("hypha.apply.review.tests.factories.ReviewFormFactory")
 
@@ -385,6 +414,7 @@ class LabBaseReviewFormFactory(AbstractReviewFormFactory):
 class ScreeningStatusFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ScreeningStatus
+        skip_postgeneration_save = True
 
     title = factory.Iterator(["Bad", "Good"])
     yes = factory.Iterator([True, False])
@@ -393,6 +423,7 @@ class ScreeningStatusFactory(factory.django.DjangoModelFactory):
 class ReminderFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Reminder
+        skip_postgeneration_save = True
 
     submission = factory.SubFactory(
         "hypha.apply.funds.tests.factories.ApplicationSubmissionFactory"

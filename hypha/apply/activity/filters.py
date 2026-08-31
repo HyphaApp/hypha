@@ -54,4 +54,4 @@ class NotificationFilter(django_filters.FilterSet):
 
     class Meta:
         model = Activity
-        fields = {}
+        fields: dict = {}

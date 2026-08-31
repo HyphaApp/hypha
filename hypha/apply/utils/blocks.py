@@ -6,7 +6,7 @@ from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin import messages
-from wagtail.blocks import ListBlock, StaticBlock, StreamBlock, StreamValue
+from wagtail.blocks import ListBlock, StaticBlock, StreamBlock
 
 from hypha.apply.stream_forms.blocks import (
     FormFieldBlock,
@@ -91,9 +91,9 @@ class CustomFormFieldsBlock(StreamBlock):
 
         super().__init__(child_blocks, *args, **kwargs)
 
-    def clean(self, value):
+    def clean(self, value, ignore_required_constraints=False):
         try:
-            value = super().clean(value)
+            value = super().clean(value, ignore_required_constraints)
         except ValidationError as e:
             error_dict = e.params or {}
         else:
@@ -111,28 +111,28 @@ class CustomFormFieldsBlock(StreamBlock):
         all_errors = []
         if missing:
             all_errors.append(
-                "You are missing the following required fields: {}".format(
+                _("You are missing the following required fields: {}").format(
                     ", ".join(prettify_names(missing))
                 )
             )
 
         if duplicates:
             all_errors.append(
-                "The following fields must be included only once: {}".format(
+                _("The following fields must be included only once: {}").format(
                     ", ".join(prettify_names(duplicates))
                 )
             )
             for i, block_name in enumerate(block_types):
                 if block_name in duplicates:
-                    self.add_error_to_child(error_dict, i, "info", "Duplicate field")
+                    self.add_error_to_child(error_dict, i, "info", _("Duplicate field"))
 
         for block in value:
             if hasattr(block.block, "child_blocks"):
                 for child_block_name, child_block in block.block.child_blocks.items():
                     if child_block.required and not block.value[child_block_name]:
                         all_errors.append(
-                            "{} cannot be empty for {}".format(
-                                child_block.label, block.block.label
+                            _("{child} cannot be empty for {parent}").format(
+                                child=child_block.label, parent=block.block.label
                             )
                         )
                     if (
@@ -142,8 +142,9 @@ class CustomFormFieldsBlock(StreamBlock):
                         for child_value in block.value[child_block_name]:
                             if not child_value:
                                 all_errors.append(
-                                    "{} cannot be empty for {}".format(
-                                        child_block.label, block.block.label
+                                    _("{child} cannot be empty for {parent}").format(
+                                        child=child_block.label,
+                                        parent=block.block.label,
                                     )
                                 )
 
@@ -162,17 +163,19 @@ class CustomFormFieldsBlock(StreamBlock):
                 [ValidationError("Error", params={field: new_error})]
             )
 
-    def to_python(self, value):
-        """
-        This allows historic data to still be accessible even
-        if a custom field type is removed from the code in the future.
-        """
-        # If the data type is missing, fallback to a CharField
-        for child_data in value:
-            if child_data["type"] not in self.child_blocks:
-                child_data["type"] = "char"
+    # TODO: This result in a TypeError: 'StreamChild' object is not subscriptable.
+    # Do we need it or can we fallback on the default function in BaseStreamBlock Class.
+    # def to_python(self, value):
+    #     """
+    #     This allows historic data to still be accessible even
+    #     if a custom field type is removed from the code in the future.
+    #     """
+    #     # If the data type is missing, fallback to a CharField
+    #     for child_data in value:
+    #         if child_data["type"] not in self.child_blocks:
+    #             child_data["type"] = "char"
 
-        return StreamValue(self, value, is_lazy=True)
+    #     return StreamValue(self, value, is_lazy=True)
 
 
 class SingleIncludeStatic(StaticBlock):
@@ -185,7 +188,7 @@ class SingleIncludeStatic(StaticBlock):
         super().__init__(*args, **kwargs)
 
     class Meta:
-        admin_text = "Must be included in the form only once."
+        admin_text = _("Must be included in the form only once.")
 
     def render_form(self, *args, **kwargs):
         errors = kwargs.pop("errors")
@@ -209,10 +212,8 @@ class SingleIncludeStatic(StaticBlock):
 
 class SingleIncludeMixin:
     def __init__(self, *args, **kwargs):
-        info_name = (
-            f"{self._meta_class.label} Field"
-            if self._meta_class.label
-            else f"{self.name.title()} Field"
+        info_name = _("{} Field").format(
+            self._meta_class.label if self._meta_class.label else self.name.title()
         )
         child_blocks = [
             ("info", SingleIncludeStatic(label=info_name, description=self.description))

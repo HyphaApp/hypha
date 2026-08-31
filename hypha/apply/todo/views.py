@@ -4,6 +4,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from django.views.generic import ListView, View
 from django_htmx.http import trigger_client_event
 
@@ -38,7 +39,7 @@ class TaskRemovalView(View):
             request.user.groups.all()
         ):
             return super().dispatch(request, *args, **kwargs)
-        raise PermissionDenied("You can remove the tasks that are assigned to you.")
+        raise PermissionDenied(_("You can remove the tasks that are assigned to you."))
 
     def delete(self, *args, **kwargs):
         source = self.task.related_object
@@ -147,7 +148,7 @@ def remove_tasks_for_user_group(code, user_group, related_obj):
     )
     user_group_matching_tasks = matching_tasks.annotate(
         group_count=Count("user_group")
-    ).filter(group_count=len(user_group.all()))
+    ).filter(group_count=user_group.count())
     for group in user_group.all():
         user_group_matching_tasks = user_group_matching_tasks.filter(
             user_group__id=group.id
@@ -190,7 +191,7 @@ def get_tasks_for_user(user):
         group_count=Count("user_group")
     )
     user_group_tasks = Task.objects.annotate(group_count=Count("user_group")).filter(
-        group_count=len(user.groups.all())
+        group_count=user.groups.count()
     )
     for group in user.groups.all():
         user_group_tasks = user_group_tasks.filter(user_group__id=group.id)

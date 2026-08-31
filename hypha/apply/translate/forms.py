@@ -1,12 +1,13 @@
 from django import forms
+from django.utils.translation import gettext as _
 
 from hypha.apply.translate.fields import LanguageChoiceField
 from hypha.apply.translate.utils import get_available_translations
 
+available_packages = get_available_translations()
+
 
 class TranslateSubmissionForm(forms.Form):
-    available_packages = get_available_translations()
-
     from_lang = LanguageChoiceField("from", available_packages)
     to_lang = LanguageChoiceField("to", available_packages)
 
@@ -21,10 +22,10 @@ class TranslateSubmissionForm(forms.Form):
             if to_code not in [package.to_code for package in to_packages]:
                 self.add_error(
                     "to_lang",
-                    "The specified language is either invalid or not installed",
+                    _("The specified language is either invalid or not installed"),
                 )
 
             return form_data
         except KeyError as err:
             # If one of the fields could not be parsed, there is likely bad input being given
-            raise forms.ValidationError("Invalid input selected") from err
+            raise forms.ValidationError(_("Invalid input selected")) from err

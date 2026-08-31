@@ -22,6 +22,7 @@ from ..forms.payment import (
 )
 from ..forms.project import (
     ChangePAFStatusForm,
+    ProjectCreateForm,
     StaffUploadContractForm,
     UploadContractForm,
 )
@@ -43,6 +44,33 @@ from .factories import (
     ProjectFactory,
     SupportingDocumentFactory,
 )
+
+
+class TestProjectCreateForm(TestCase):
+    def test_allows_submission_that_already_has_a_project(self):
+        from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+
+        from ..forms.utils import get_project_default_status
+
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+        ProjectFactory(submission=submission)
+
+        form = ProjectCreateForm(
+            instance=submission,
+            data={
+                "submission": submission.id,
+                "title": "Second bucket",
+                "project_lead": staff.id,
+                "project_initial_status": get_project_default_status()[0],
+                "project_end": datetime.date.today(),
+            },
+        )
+
+        self.assertTrue(form.is_valid(), form.errors)
+        project = form.save()
+        self.assertEqual(project.title, "Second bucket")
+        self.assertEqual(submission.projects.count(), 2)
 
 
 class TestChangeInvoiceStatusFormForm(TestCase):
@@ -195,19 +223,13 @@ class TestChangePAFStatusForm(TestCase):
 
     def test_paf_status_is_required(self):
         project = ProjectFactory(in_approval=True)
-        user = StaffFactory()
-        form = ChangePAFStatusForm(
-            data={"comment": "comment"}, instance=project, user=user
-        )
+        form = ChangePAFStatusForm(data={"comment": "comment"}, instance=project)
         self.assertFalse(form.is_valid())
         self.assertIn("paf_status", form.errors.keys())
 
     def test_comment_is_not_required(self):
         project = ProjectFactory(in_approval=True)
-        user = StaffFactory()
-        form = ChangePAFStatusForm(
-            data={"paf_status": APPROVE}, instance=project, user=user
-        )
+        form = ChangePAFStatusForm(data={"paf_status": APPROVE}, instance=project)
         self.assertTrue(form.is_valid())
         self.assertEqual(form.errors, {})
 
@@ -348,7 +370,7 @@ class TestEditInvoiceForm(TestCase):
 class TestSelectDocumentForm(TestCase):
     def test_copying_files(self):
         category = DocumentCategoryFactory()
-        project = ProjectFactory()
+        project = ProjectFactory(submission__with_files=True)
 
         self.assertEqual(project.packet_files.count(), 0)
 

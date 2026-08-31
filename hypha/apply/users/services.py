@@ -7,15 +7,58 @@ from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from django.utils.translation import gettext as _
 from wagtail.models import Site
 
 from hypha.core.mail import MarkdownMail
 
 from .models import PendingSignup
 from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGenerator
-from .utils import get_redirect_url, get_user_by_email
+from .utils import get_redirect_url, get_user_by_email, local_event_time
 
 User = get_user_model()
+
+
+def send_passkey_notification(request, user, passkey_name, *, added):
+    """Notify the user by email that a passkey was added to or removed from
+    their account. Mirrors the login notification so the two feel consistent.
+
+    Args:
+        request: The current request (used for timezone and site resolution).
+        user: The user whose account changed.
+        passkey_name: Display name of the affected passkey.
+        added: True if the passkey was added, False if it was removed.
+    """
+    if not settings.SEND_MESSAGES or not user.email:
+        return
+
+    if added:
+        subject = _("A passkey was added to your %(org)s account") % {
+            "org": settings.ORG_LONG_NAME
+        }
+        template = "users/emails/passkey_added_notification.md"
+    else:
+        subject = _("A passkey was removed from your %(org)s account") % {
+            "org": settings.ORG_LONG_NAME
+        }
+        template = "users/emails/passkey_removed_notification.md"
+
+    if settings.EMAIL_SUBJECT_PREFIX:
+        subject = str(settings.EMAIL_SUBJECT_PREFIX) + str(subject)
+
+    email = MarkdownMail(template)
+    email.send(
+        to=user.email,
+        subject=subject,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        context={
+            "user": user,
+            "passkey_name": passkey_name,
+            "event_time": local_event_time(request),
+            "site": Site.find_for_request(request) if request else None,
+            "ORG_EMAIL": settings.ORG_EMAIL,
+        },
+    )
 
 
 class PasswordlessAuthService:
@@ -40,7 +83,7 @@ class PasswordlessAuthService:
             extended_session: Include the `remember-me` param in the magic link, defaults to False.
         """
         self.redirect_field_name = redirect_field_name
-        self.next_url = get_redirect_url(request, self.redirect_field_name)
+        self.next_url = get_redirect_url(request, self.redirect_field_name)  # type: ignore[arg-type]
         self.extended_session = extended_session
         self.request = request
         self.site = Site.find_for_request(request)
@@ -92,45 +135,23 @@ class PasswordlessAuthService:
 
         return None
 
-    def get_email_context(self) -> dict:
-        return {
-            "org_long_name": settings.ORG_LONG_NAME,
-            "org_email": settings.ORG_EMAIL,
-            "org_short_name": settings.ORG_SHORT_NAME,
-            "site": self.site,
-        }
-
-    def send_email_no_account_found(self, to):
-        context = self.get_email_context()
-        subject = "Log in attempt at {org_long_name}".format(**context)
-        # Force subject to a single line to avoid header-injection issues.
-        subject = "".join(subject.splitlines())
-
-        email = MarkdownMail("users/emails/passwordless_login_no_account_found.md")
-        email.send(
-            to=to,
-            subject=subject,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            context=context,
-        )
-
     def send_login_email(self, user):
         login_path = self._get_login_path(user)
         timeout_minutes = self.login_token_generator_class().TIMEOUT // 60
 
-        context = self.get_email_context()
-        context.update(
-            {
-                "user": user,
-                "is_active": user.is_active,
-                "name": user.get_full_name(),
-                "username": user.get_username(),
-                "login_path": login_path,
-                "timeout_minutes": timeout_minutes,
-            }
-        )
+        context = {
+            "user": user,
+            "is_active": user.is_active,
+            "name": user.get_full_name(),
+            "username": user.get_username(),
+            "login_path": login_path,
+            "timeout_minutes": timeout_minutes,
+            "site": self.site,
+        }
 
-        subject = "Log in to {username} at {org_long_name}".format(**context)
+        subject = _("Log in to {user} at {ORG_LONG_NAME}").format(
+            user=user.get_username(), ORG_LONG_NAME=settings.ORG_LONG_NAME
+        )
         # Force subject to a single line to avoid header-injection issues.
         subject = "".join(subject.splitlines())
 
@@ -146,15 +167,15 @@ class PasswordlessAuthService:
         signup_path = self._get_signup_path(signup_obj)
         timeout_minutes = self.login_token_generator_class().TIMEOUT // 60
 
-        context = self.get_email_context()
-        context.update(
-            {
-                "signup_path": signup_path,
-                "timeout_minutes": timeout_minutes,
-            }
-        )
+        context = {
+            "signup_path": signup_path,
+            "timeout_minutes": timeout_minutes,
+            "site": self.site,
+        }
 
-        subject = "Welcome to {org_long_name}".format(**context)
+        subject = _("Welcome to {ORG_LONG_NAME}").format(
+            ORG_LONG_NAME=settings.ORG_LONG_NAME
+        )
         # Force subject to a single line to avoid header-injection issues.
         subject = "".join(subject.splitlines())
 
@@ -182,9 +203,8 @@ class PasswordlessAuthService:
             self.send_login_email(user)
             return
 
-        # No account found
+        # No account found and no public signup, do nothing.
         if not settings.ENABLE_PUBLIC_SIGNUP:
-            self.send_email_no_account_found(email)
             return
 
         # Self registration is enabled
@@ -195,5 +215,3 @@ class PasswordlessAuthService:
             },
         )
         self.send_new_account_login_email(signup_obj)
-
-        return True

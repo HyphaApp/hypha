@@ -3,9 +3,9 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
-    <div class="mt-8 max-w-2xl wrapper">
+    <div class="mx-auto mt-8 max-w-2xl prose">
         {% if form_submission.status == 'draft' %}
-            <h3>{% trans "Your application is saved as a draft." %}</h3>
+            <h1>{% trans "Your application is saved as a draft." %}</h1>
 
             <p>{% trans "Please note that your application is not submitted for review." %}</p>
 
@@ -16,12 +16,16 @@
             {% endif %}
 
         {% else %}
-            <h3>{% blocktrans %}Thank you for your submission to the {{ ORG_LONG_NAME }}.{% endblocktrans %}</h3>
+            <h1>
+                {% blocktrans trimmed %}
+                    Thank you for your submission to the {{ ORG_LONG_NAME }}.
+                {% endblocktrans %}
+            </h1>
 
             <p>{% trans "An e-mail with more information has been sent to the address you entered." %}</p>
 
             <p>
-                {% blocktrans with email=ORG_EMAIL|urlize %}
+                {% blocktrans with email=ORG_EMAIL|urlize trimmed %}
                     If you do not receive an e-mail within 15 minutes
                     please check your spam folder and contact {{ email }}
                     for further assistance.
@@ -47,39 +51,31 @@
             {% endif %}
 
         {% endif %}
-
-        <div class="mt-4 space-x-2">
-            {% if request.user.is_authenticated and request.user.can_access_dashboard%}
+    </div>
+    <div class="mx-auto mt-8 max-w-2xl card-actions">
+        {% if request.user.is_authenticated and request.user.can_access_dashboard%}
+            <a class="btn btn-primary" href="{% url 'dashboard:dashboard' %}">
+                {% trans "Go to your dashboard" %}
+            </a>
+            {% if form_submission.status == 'draft' %}
                 <a
-                    class="button button--primary"
-                    href="{% url 'dashboard:dashboard' %}"
+                    class="btn btn-secondary btn-outline"
+                    href="{% url 'apply:submissions:edit' form_submission.id %}"
                 >
-                    {% trans "Go to your dashboard" %}
+                    {% trans "Continue editing" %}
                 </a>
-                {% if form_submission.status == 'draft' %}
-                    <a
-                        class="button button--secondary"
-                        href="{% url 'apply:submissions:edit' form_submission.id %}"
-                    >
-                        {% trans "Continue editing" %}
-                    </a>
-                {% else %}
-                    <a
-                        class="button button--secondary"
-                        href="{% url 'apply:submissions:detail' form_submission.id %}"
-                    >
-                        {% trans "View your submission" %}
-                    </a>
-                {% endif %}
             {% else %}
                 <a
-                    class="button button--primary"
-                    href="{% url 'users:login' %}"
+                    class="btn btn-secondary btn-outline"
+                    href="{% url 'apply:submissions:detail' form_submission.id %}"
                 >
-                    {% trans "Log in" %}
+                    {% trans "View your submission" %}
                 </a>
             {% endif %}
-        </div>
-
+        {% else %}
+            <a class="btn btn-primary" href="{% url 'users:login' %}">
+                {% trans "Log in" %}
+            </a>
+        {% endif %}
     </div>
 {% endblock %}

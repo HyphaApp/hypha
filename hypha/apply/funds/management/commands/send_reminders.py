@@ -20,11 +20,14 @@ class Command(BaseCommand):
         request = HttpRequest()
         request.META["SERVER_NAME"] = site.hostname
         request.META["SERVER_PORT"] = site.port
-        request.META[settings.SECURE_PROXY_SSL_HEADER] = "https"
+        proxy_ssl_header, proxy_ssl_value = settings.SECURE_PROXY_SSL_HEADER
+        request.META[proxy_ssl_header] = proxy_ssl_value
         request.session = {}
         request._messages = FallbackStorage(request)
 
-        for reminder in Reminder.objects.filter(sent=False, time__lte=timezone.now()):
+        for reminder in Reminder.objects.filter(
+            sent=False, time__lte=timezone.now()
+        ).select_related("submission"):
             messenger(
                 reminder.action_message,
                 request=request,

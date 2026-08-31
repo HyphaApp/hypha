@@ -5,19 +5,24 @@ Update the number input to validate and display feedback if input is not a valid
 It upgrades default '<input type=number>' that doesn't allow user to enter any value if it's not a number.
 With this user can enter any text and get a feedback why it's wrong.
 {% endcomment %}
-<span x-data="{
-              value: '{% if widget.value != None %}{{ widget.value|stringformat:'s' }}{% endif %}',
-              get error() {
-              return this.value !== '' && isNaN(this.value) ? '{% trans "This must be a number" %}': ''
-              }
-              }">
-    <input x-model='value'
-           :class="error ? 'invalid': ''"
-           type="text"
-           inputmode="numeric"
-           pattern="[0-9.]*"  {% comment %} Allow for digit with a decimal{% endcomment %}
-           name="{{ widget.name }}"
-           {% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}
-           {% include "django/forms/widgets/attrs.html" %}>
-    <span x-cloak x-show="error" x-text="error" class="form__error-text"></span>
-</span>
+<div {# fmt:off #}
+     x-data="{
+        value: '{% if widget.value != None %}{{ widget.value|stringformat:'s' }}{% endif %}',
+        get error() {
+            return this.value !== '' && isNaN(this.value) ? '{% trans "* This must be a number" %}': ''
+        }
+    }"{# fmt:on #}
+>
+    <input
+        class="input {{ widget.attrs.class|default:'' }}"
+        x-model='value'
+        :class="error ? 'invalid': ''"
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9.]*"  {% comment %} Allow for digit with a decimal{% endcomment %}
+        name="{{ widget.name }}"
+        {% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}
+        {% include "django/forms/widgets/attrs.html" with skip_class_attr=True %}
+    >
+    <p x-cloak x-show="error" x-text="error" class="mt-2 text-error"></p>
+</div>

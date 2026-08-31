@@ -30,26 +30,23 @@ class CommentForm(FileFormMixin, forms.ModelForm):
             "assign_to",
         )
         labels = {
-            "visibility": "Visible to",
-            "message": "Message",
+            "visibility": _("Visible to"),
+            "message": _("Message"),
         }
         help_texts = {
-            "visibility": "Select a relevant user role. Staff can view every comment."
+            "visibility": _(
+                "Select a relevant user role. Staff can view every comment."
+            )
         }
         widgets = {
             "visibility": forms.RadioSelect(),
             "message": PagedownWidget(),
         }
 
-    def __init__(self, *args, user=None, **kwargs):
-        # Get `submission_partner_list` kwarg and remove it before initializing parent.
-        submission_partner_list = None
-        if "submission_partner_list" in kwargs:
-            submission_partner_list = kwargs.pop("submission_partner_list")
-
+    def __init__(self, *args, user=None, has_coapplicants=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.visibility_choices = self._meta.model.visibility_choices_for(
-            user, submission_partner_list
+            user, has_coapplicants
         )
         visibility = self.fields["visibility"]
         # Set default visibility to "Applicant" for staff and staff can view everything.

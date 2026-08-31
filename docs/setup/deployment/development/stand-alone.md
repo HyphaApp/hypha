@@ -100,6 +100,9 @@ If you want other commands to use it you need to run this command to activate it
 source .venv/bin/activate
 ```
 
+!!! info
+    While not recommended, pip can still be used to setup your Hypha environment. Just run ```python3 -m pip install -r requirements/<environment>.txt```
+
 ### Installing Node Version Manager
 
 NodeJS versions have potential to change. To allow for ease of upgrading, it is recommended to use [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm).
@@ -107,7 +110,7 @@ NodeJS versions have potential to change. To allow for ease of upgrading, it is 
 The following commands will install nvm and proceed to setup Node based off of the content of `.nvmrc`.
 
 ```shell
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 ```
 
 See [Installing and Updating Node Version Manager](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating)

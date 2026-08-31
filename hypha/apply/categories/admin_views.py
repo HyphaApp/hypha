@@ -1,5 +1,6 @@
 from django.contrib.admin.utils import unquote
 from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext as _
 from wagtail_modeladmin.views import CreateView
 
 
@@ -18,11 +19,11 @@ class AddChildMetaTermViewClass(CreateView):
 
     def get_page_title(self):
         """Generate a title that explains you are adding a child."""
-        title = super().get_page_title()
-        return title + " %s %s for %s" % (
-            self.model.node_child_verbose_name,
-            self.opts.verbose_name,
-            self.parent_instance,
+        return _("{title} {child_verbose_name} {verbose_name} for {parent}").format(
+            title=super().get_page_title(),
+            child_verbose_name=self.model.node_child_verbose_name,
+            verbose_name=self.opts.verbose_name,
+            parent=self.parent_instance,
         )
 
     def get_initial(self):

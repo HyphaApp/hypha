@@ -6,7 +6,6 @@ from django.utils.translation import gettext_lazy as _
 
 # Application definition
 INSTALLED_APPS = [
-    "scout_apm.django",
     "hypha.cookieconsent",
     "hypha.images",
     "hypha.core.apps.CoreAppConfig",
@@ -16,7 +15,7 @@ INSTALLED_APPS = [
     "hypha.apply.dashboard",
     "hypha.apply.flags",
     "hypha.home",
-    "hypha.apply.users",
+    "hypha.apply.users.apps.UsersConfig",
     "hypha.apply.review",
     "hypha.apply.determinations",
     "hypha.apply.stream_forms",
@@ -25,17 +24,17 @@ INSTALLED_APPS = [
     "hypha.apply.utils.apps.UtilsConfig",
     "hypha.apply.projects.apps.ProjectsConfig",
     "hypha.apply.projects.reports.apps.ReportsConfig",
+    "hypha.apply.apps.CustomUsersAppConfig",
     "social_django",
     "django_htmx",
     "heroicons",
-    "django_web_components",
+    "django_cotton.apps.SimpleAppConfig",
     "wagtail_modeladmin",
     "wagtail.contrib.settings",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
     "wagtail.sites",
-    "wagtail.users",
     "wagtail.snippets",
     "wagtail.documents",
     "wagtail.images",
@@ -45,13 +44,13 @@ INSTALLED_APPS = [
     "anymail",
     "modelcluster",
     "taggit",
-    "django_extensions",
     "tinymce",
     "django_tables2",
     "django_filters",
+    "django_extensions",
     "hypha.addressfield",
     "django_nh3",
-    "django_fsm",
+    "viewflow",
     "django_slack",
     "django_otp",
     "django_otp.plugins.otp_totp",
@@ -60,7 +59,7 @@ INSTALLED_APPS = [
     "django_file_form",
     "rolepermissions",
     "hijack",
-    "elevate",  # https://django-elevate.readthedocs.io/
+    "hypha.elevate",
     "pagedown",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -81,7 +80,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "elevate.middleware.ElevateMiddleware",
+    "hypha.elevate.middleware.ElevateMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -180,7 +179,7 @@ USE_TZ = True
 DATE_FORMAT = "N j, Y"
 DATETIME_FORMAT = "N j, Y, H:i"
 SHORT_DATE_FORMAT = "Y-m-d"
-SHORT_DATETIME_FORMAT = "Y-m-d H:i"
+SHORT_DATETIME_FORMAT = "Y-m-d H:i e"
 LANGUAGE_COOKIE_NAME = "hypha_language"
 
 DATETIME_INPUT_FORMATS = [
@@ -204,6 +203,9 @@ AUTH_USER_MODEL = "users.User"
 LOGIN_URL = "users:passwordless_login_signup"
 LOGIN_REDIRECT_URL = "dashboard:dashboard"
 
+# Keeps complaining about "social:complete" and "two_factor:setup_complete".
+SILENCED_SYSTEM_CHECKS = ["urls.W003"]
+
 # https://django-elevate.readthedocs.io/en/latest/config/index.html#configuration
 ELEVATE_URL = "users:elevate"
 ELEVATE_REDIRECT_URL = LOGIN_REDIRECT_URL
@@ -212,6 +214,7 @@ CUSTOM_AUTH_BACKEND = "hypha.apply.users.backends.CustomModelBackend"
 
 AUTHENTICATION_BACKENDS = (
     "social_core.backends.google.GoogleOAuth2",
+    "social_core.backends.okta.OktaOAuth2",
     CUSTOM_AUTH_BACKEND,
 )
 

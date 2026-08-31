@@ -15,8 +15,6 @@ from hypha.apply.funds.permissions import can_export_submissions
 from hypha.apply.funds.tables import (
     ReviewerSubmissionsTable,
     SubmissionsTable,
-    SummarySubmissionsTableWithRole,
-    review_filter_for_user,
 )
 from hypha.apply.projects.filters import ProjectListFilter
 from hypha.apply.projects.models import Invoice, Project, ProjectSettings
@@ -41,31 +39,6 @@ def get_preview_context(queryset, limit=5):
     }
 
 
-class MySubmissionContextMixin:
-    def get_context_data(self, **kwargs):
-        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
-        my_submissions = (
-            submissions.filter(user=self.request.user)
-            .active()
-            .current()
-            .select_related("draft_revision")
-        )
-        my_submissions = [submission.from_draft() for submission in my_submissions]
-
-        my_inactive_submissions = (
-            submissions.filter(user=self.request.user).inactive().current()
-        )
-        my_inactive_submissions_table = ReviewerSubmissionsTable(
-            my_inactive_submissions, prefix="my-submissions-"
-        )
-
-        return super().get_context_data(
-            my_submissions=my_submissions,
-            my_inactive_submissions=my_inactive_submissions_table,
-            **kwargs,
-        )
-
-
 class MyFlaggedMixin:
     def my_flagged(self, submissions):
         return get_preview_context(
@@ -73,8 +46,44 @@ class MyFlaggedMixin:
         )
 
 
-class AdminDashboardView(MyFlaggedMixin, TemplateView):
+class PAFReviewMixin:
+    paf_reviewer_role = None  # set to a user attribute e.g. "is_apply_staff"
+
+    def paf_for_review(self):
+        if not getattr(self.request.user, self.paf_reviewer_role, False):
+            return {"count": None, "table": None}
+        project_settings = ProjectSettings.for_request(self.request)
+        paf_approvals = get_paf_for_review(
+            user=self.request.user,
+            is_paf_approval_sequential=project_settings.paf_approval_sequential,
+        ).select_related("project__submission__page", "paf_reviewer_role", "user")
+        paf_table = PAFForReviewDashboardTable(
+            paf_approvals, prefix="paf-review-", order_by="-date_requested"
+        )
+        RequestConfig(self.request, paginate=False).configure(paf_table)
+        return {
+            "count": paf_approvals.count(),
+            "table": paf_table,
+        }
+
+
+class HistoricalSubmissionMixin:
+    def historical_submission_data(self):
+        qs = (
+            ApplicationSubmission.objects.filter(user=self.request.user)
+            .inactive()
+            .current()
+            .for_table(self.request.user)
+        )
+        return {
+            "count": qs.count(),
+            "table": SubmissionsTable(data=qs),
+        }
+
+
+class AdminDashboardView(PAFReviewMixin, MyFlaggedMixin, TemplateView):
     template_name = "dashboard/staff_dashboard.html"
+    paf_reviewer_role = "is_apply_staff"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -99,25 +108,6 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
 
         return context
 
-    def paf_for_review(self):
-        if not self.request.user.is_apply_staff:
-            return {"count": None, "table": None}
-        project_settings = ProjectSettings.for_request(self.request)
-
-        paf_approvals = get_paf_for_review(
-            user=self.request.user,
-            is_paf_approval_sequential=project_settings.paf_approval_sequential,
-        )
-        paf_table = PAFForReviewDashboardTable(
-            paf_approvals, prefix="paf-review-", order_by="-date_requested"
-        )
-        RequestConfig(self.request, paginate=False).configure(paf_table)
-
-        return {
-            "count": paf_approvals.count(),
-            "table": paf_table,
-        }
-
     def my_tasks(self):
         tasks = render_task_templates_for_user(self.request, self.request.user)
         return {
@@ -126,48 +116,44 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
         }
 
     def awaiting_reviews(self, submissions):
+        limit = 5
         submissions = submissions.in_review_for(self.request.user).order_by(
             "-submit_time"
         )
         count = submissions.count()
 
-        limit = 5
         return {
-            "active_statuses_filter": "".join(
-                f"&status={status}"
-                for status in review_filter_for_user(self.request.user)
-            ),
             "count": count,
             "display_more": count > limit,
-            "table": SummarySubmissionsTableWithRole(
-                submissions[:limit], prefix="my-review-"
-            ),
+            "submissions": submissions[:limit],
         }
 
     def active_invoices(self):
-        invoices = Invoice.objects.filter(
-            project__lead=self.request.user,
-        ).in_progress()
-
+        qs = (
+            Invoice.objects.filter(
+                project__lead=self.request.user,
+            )
+            .in_progress()
+            .select_related("project")
+        )
         return {
-            "count": invoices.count(),
-            "table": InvoiceDashboardTable(invoices),
+            "count": qs.count(),
+            "table": InvoiceDashboardTable(qs),
         }
 
     def projects(self):
+        limit = 10
         projects = Project.objects.filter(lead=self.request.user).for_table()
-
         filterset = ProjectListFilter(
             data=self.request.GET or None, request=self.request, queryset=projects
         )
-
-        limit = 10
+        count = projects.count()
 
         return {
-            "count": projects.count(),
+            "count": count,
             "filterset": filterset,
             "table": ProjectsDashboardTable(data=projects[:limit], prefix="project-"),
-            "display_more": projects.count() > limit,
+            "display_more": count > limit,
             "url": reverse("apply:projects:all"),
         }
 
@@ -186,8 +172,9 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
         }
 
 
-class FinanceDashboardView(MyFlaggedMixin, TemplateView):
+class FinanceDashboardView(PAFReviewMixin, MyFlaggedMixin, TemplateView):
     template_name = "dashboard/finance_dashboard.html"
+    paf_reviewer_role = "is_finance"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -204,25 +191,6 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
 
         return context
 
-    def paf_for_review(self):
-        if not self.request.user.is_finance:
-            return {"count": None, "table": None}
-        project_settings = ProjectSettings.for_request(self.request)
-
-        paf_approvals = get_paf_for_review(
-            user=self.request.user,
-            is_paf_approval_sequential=project_settings.paf_approval_sequential,
-        )
-        paf_table = PAFForReviewDashboardTable(
-            paf_approvals, prefix="paf-review-", order_by="-date_requested"
-        )
-        RequestConfig(self.request, paginate=False).configure(paf_table)
-
-        return {
-            "count": paf_approvals.count(),
-            "table": paf_table,
-        }
-
     def my_tasks(self):
         tasks = render_task_templates_for_user(self.request, self.request.user)
         return {
@@ -231,27 +199,25 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         }
 
     def active_invoices(self):
-        invoices = Invoice.objects.for_finance_1()
-
+        qs = Invoice.objects.for_finance_1().select_related("project")
         return {
-            "count": invoices.count(),
-            "table": InvoiceDashboardTable(invoices),
+            "count": qs.count(),
+            "table": InvoiceDashboardTable(qs),
         }
 
     def invoices_for_approval(self):
-        invoices = Invoice.objects.approved_by_staff()
-
-        return {"count": invoices.count(), "table": InvoiceDashboardTable(invoices)}
+        qs = Invoice.objects.approved_by_staff().select_related("project")
+        return {"count": qs.count(), "table": InvoiceDashboardTable(qs)}
 
     def invoices_to_convert(self):
-        invoices = Invoice.objects.waiting_to_convert()
+        qs = Invoice.objects.waiting_to_convert().select_related("project")
         return {
-            "count": invoices.count(),
-            "table": InvoiceDashboardTable(invoices),
+            "count": qs.count(),
+            "table": InvoiceDashboardTable(qs),
         }
 
 
-class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateView):
+class ReviewerDashboardView(HistoricalSubmissionMixin, MyFlaggedMixin, TemplateView):
     template_name = "dashboard/reviewer_dashboard.html"
 
     def get(self, request, *args, **kwargs):
@@ -286,6 +252,10 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
 
         context.update(
             {
+                "my_submissions_exists": ApplicationSubmission.objects.filter(
+                    Q(user=self.request.user) | Q(co_applicants__user=self.request.user)
+                ).exists(),
+                "historical_submissions": self.historical_submission_data(),
                 "awaiting_reviews": self.awaiting_reviews(submissions),
                 "my_reviewed": get_preview_context(
                     submissions.reviewed_by(self.request.user).order_by("-submit_time")
@@ -297,55 +267,22 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
         return context
 
     def awaiting_reviews(self, submissions):
+        limit = 5
         submissions = submissions.in_review_for(self.request.user).order_by(
             "-submit_time"
         )
         count = submissions.count()
 
-        limit = 5
         return {
-            "active_statuses_filter": "".join(
-                f"&status={status}"
-                for status in review_filter_for_user(self.request.user)
-            ),
             "count": count,
             "display_more": count > limit,
-            "table": ReviewerSubmissionsTable(submissions[:limit], prefix="my-review-"),
+            "submissions": submissions[:limit],
         }
 
 
-class PartnerDashboardView(MySubmissionContextMixin, TemplateView):
-    template_name = "dashboard/partner_dashboard.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
-
-        # Submissions in which user added as partner
-        partner_submissions, partner_submissions_table = self.partner_submissions(
-            self.request.user, submissions
-        )
-
-        context.update(
-            {
-                "partner_submissions": partner_submissions_table,
-                "partner_submissions_count": partner_submissions.count(),
-            }
-        )
-
-        return context
-
-    def partner_submissions(self, user, submissions):
-        partner_submissions = submissions.partner_for(user).order_by("-submit_time")
-        partner_submissions_table = SubmissionsTable(
-            partner_submissions, prefix="my-partnered-"
-        )
-
-        return partner_submissions, partner_submissions_table
-
-
-class ContractingDashboardView(MyFlaggedMixin, TemplateView):
+class ContractingDashboardView(PAFReviewMixin, MyFlaggedMixin, TemplateView):
     template_name = "dashboard/contracting_dashboard.html"
+    paf_reviewer_role = "is_contracting"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -358,25 +295,6 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
         )
 
         return context
-
-    def paf_for_review(self):
-        if not self.request.user.is_contracting:
-            return {"count": None, "table": None}
-        project_settings = ProjectSettings.for_request(self.request)
-
-        paf_approvals = get_paf_for_review(
-            user=self.request.user,
-            is_paf_approval_sequential=project_settings.paf_approval_sequential,
-        )
-        paf_table = PAFForReviewDashboardTable(
-            paf_approvals, prefix="paf-review-", order_by="-date_requested"
-        )
-        RequestConfig(self.request, paginate=False).configure(paf_table)
-
-        return {
-            "count": paf_approvals.count(),
-            "table": paf_table,
-        }
 
     def my_tasks(self):
         tasks = render_task_templates_for_user(self.request, self.request.user)
@@ -405,16 +323,18 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
         waiting_for_contract_approval = projects_in_contracting.filter(
             contracts__isnull=False
         ).for_table()
+        wfc_count = waiting_for_contract.count()
+        wfca_count = waiting_for_contract_approval.count()
         return {
-            "count": projects_in_contracting.count(),
+            "count": wfc_count + wfca_count,
             "waiting_for_contract": {
-                "count": waiting_for_contract.count(),
+                "count": wfc_count,
                 "table": ProjectsDashboardTable(
                     data=waiting_for_contract, prefix="project-waiting-contract-"
                 ),
             },
             "waiting_for_contract_approval": {
-                "count": waiting_for_contract_approval.count(),
+                "count": wfca_count,
                 "table": ProjectsDashboardTable(
                     data=waiting_for_contract_approval,
                     prefix="project-waiting-approval-",
@@ -423,7 +343,7 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
         }
 
 
-class CommunityDashboardView(MySubmissionContextMixin, TemplateView):
+class CommunityDashboardView(HistoricalSubmissionMixin, TemplateView):
     template_name = "dashboard/community_dashboard.html"
 
     def get_context_data(self, **kwargs):
@@ -431,13 +351,17 @@ class CommunityDashboardView(MySubmissionContextMixin, TemplateView):
         submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         # Submissions in community review phase
-        my_community_review, my_community_review = self.my_community_review(
+        my_community_review_qs, my_community_review_table = self.my_community_review(
             self.request.user, submissions
         )
         context.update(
             {
-                "my_community_review": my_community_review,
-                "my_community_review_count": my_community_review.count(),
+                "my_submissions_exists": ApplicationSubmission.objects.filter(
+                    Q(user=self.request.user) | Q(co_applicants__user=self.request.user)
+                ).exists(),
+                "historical_submissions": self.historical_submission_data(),
+                "my_community_review": my_community_review_table,
+                "my_community_review_count": my_community_review_qs.count(),
                 "my_reviewed": get_preview_context(
                     submissions.reviewed_by(self.request.user).order_by("-submit_time")
                 ),
@@ -457,7 +381,7 @@ class CommunityDashboardView(MySubmissionContextMixin, TemplateView):
         return my_community_review, my_community_review_table
 
 
-class ApplicantDashboardView(TemplateView):
+class ApplicantDashboardView(HistoricalSubmissionMixin, TemplateView):
     template_name = "dashboard/applicant_dashboard.html"
 
     def get_context_data(self, **kwargs):
@@ -486,43 +410,24 @@ class ApplicantDashboardView(TemplateView):
         }
 
     def active_invoices(self):
-        active_invoices = (
+        qs = (
             Invoice.objects.filter(project__user=self.request.user)
             .exclude(status__in=[PAID, DECLINED])
             .order_by("-requested_at")
         )
-        return {"count": active_invoices.count(), "data": active_invoices}
+        return {"count": qs.count(), "data": qs}
 
     def historical_project_data(self):
-        historical_projects = (
-            Project.objects.filter(user=self.request.user).complete().for_table()
-        )
+        qs = Project.objects.filter(user=self.request.user).complete().for_table()
         return {
-            "count": historical_projects.count(),
-            "table": ProjectsDashboardTable(
-                data=historical_projects, prefix="past-project-"
-            ),
-        }
-
-    def historical_submission_data(self):
-        historical_submissions = (
-            ApplicationSubmission.objects.filter(
-                user=self.request.user,
-            )
-            .inactive()
-            .current()
-            .for_table(self.request.user)
-        )
-        return {
-            "count": historical_submissions.count(),
-            "table": SubmissionsTable(data=historical_submissions),
+            "count": qs.count(),
+            "table": ProjectsDashboardTable(data=qs, prefix="past-project-"),
         }
 
 
 class DashboardView(ViewDispatcher):
     admin_view = AdminDashboardView
     reviewer_view = ReviewerDashboardView
-    partner_view = PartnerDashboardView
     community_view = CommunityDashboardView
     applicant_view = ApplicantDashboardView
     finance_view = FinanceDashboardView

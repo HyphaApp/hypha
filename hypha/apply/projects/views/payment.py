@@ -1,12 +1,15 @@
 import json
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.http import HttpResponse
+from django.db.models import Q
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -26,13 +29,17 @@ from django_htmx.http import (
     HttpResponseClientRefresh,
 )
 from django_tables2 import SingleTableMixin
+from rolepermissions.checkers import has_object_permission
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import APPLICANT, COMMENT, Activity
+from hypha.apply.funds.models.co_applicants import CoApplicantProjectPermission
+from hypha.apply.funds.utils import get_export_polling_time
 from hypha.apply.projects.templatetags.invoice_tools import (
     display_invoice_status_for_user,
 )
 from hypha.apply.todo.options import (
+    DOWNLOAD_INVOICES_EXPORT,
     INVOICE_REQUIRED_CHANGES,
     INVOICE_WAITING_APPROVAL,
     PROJECT_WAITING_INVOICE,
@@ -41,6 +48,7 @@ from hypha.apply.todo.views import (
     add_task_to_user,
     remove_tasks_for_user,
     remove_tasks_of_related_obj,
+    remove_tasks_of_related_obj_for_specific_code,
 )
 from hypha.apply.users.decorators import staff_or_finance_required
 from hypha.apply.utils.pdfs import html_to_pdf, merge_pdf
@@ -58,6 +66,7 @@ from ..forms import (
     ChangeInvoiceStatusForm,
     CreateInvoiceForm,
     EditInvoiceForm,
+    InvoiceTagsForm,
 )
 from ..models.payment import (
     APPROVED_BY_FINANCE,
@@ -65,10 +74,14 @@ from ..models.payment import (
     CHANGES_REQUESTED_BY_FINANCE,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
+    EXPORT_STATUS_ERROR,
+    EXPORT_STATUS_GENERATING,
+    EXPORT_STATUS_SUCCESS,
     INVOICE_TRANSITION_TO_RESUBMITTED,
     PAID,
     PAYMENT_FAILED,
     Invoice,
+    InvoiceExportManager,
 )
 from ..models.project import Project
 from ..service_utils import batch_update_invoices_status, handle_tasks_on_invoice_update
@@ -80,7 +93,7 @@ class InvoiceAccessMixin(UserPassesTestMixin):
     model = Invoice
 
     def get_object(self):
-        project = get_object_or_404(Project, submission__pk=self.kwargs["pk"])
+        project = get_object_or_404(Project, pk=self.kwargs["pk"])
         return get_object_or_404(project.invoices.all(), pk=self.kwargs["invoice_pk"])
 
     def test_func(self):
@@ -92,6 +105,19 @@ class InvoiceAccessMixin(UserPassesTestMixin):
 
         if self.request.user == self.get_object().project.user:
             return True
+
+        if self.request.user.is_applicant:
+            co_applicant = (
+                self.get_object()
+                .project.submission.co_applicants.filter(user=self.request.user)
+                .first()
+            )
+            if (
+                co_applicant
+                and CoApplicantProjectPermission.INVOICES
+                in co_applicant.project_permission
+            ):
+                return True
 
         return False
 
@@ -205,9 +231,10 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
 
 class DeleteInvoiceView(DeleteView):
     model = Invoice
+    template_name = "application_projects/modals/invoice_confirm_delete.html"
 
     def get_object(self):
-        project = get_object_or_404(Project, submission__pk=self.kwargs["pk"])
+        project = get_object_or_404(Project, pk=self.kwargs["pk"])
         return get_object_or_404(project.invoices.all(), pk=self.kwargs["invoice_pk"])
 
     def dispatch(self, request, *args, **kwargs):
@@ -239,11 +266,11 @@ class DeleteInvoiceView(DeleteView):
 
 
 class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
-    form_views = []
+    form_views: list = []
 
 
 class InvoiceApplicantView(InvoiceAccessMixin, DelegateableView, DetailView):
-    form_views = []
+    form_views: list = []
 
 
 class InvoiceView(ViewDispatcher):
@@ -258,13 +285,14 @@ class CreateInvoiceView(SuccessMessageMixin, CreateView):
     success_message = _("Invoice added")
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, submission__id=kwargs["pk"])
-        if not request.user.is_apply_staff and not self.project.user == request.user:
+        self.project = get_object_or_404(Project, pk=kwargs["pk"])
+        permission = has_object_permission("add_invoice", request.user, self.project)
+        if not permission:
             return redirect(self.project)
         return super().dispatch(request, *args, **kwargs)
 
     def buttons(self):
-        yield ("submit", "primary", _("Save"))
+        yield ("submit", "btn-primary", _("Save"))
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(
@@ -302,7 +330,7 @@ class CreateInvoiceView(SuccessMessageMixin, CreateView):
             related=self.object,
         )
 
-        if len(self.project.invoices.all()) == 1:
+        if self.project.invoices.count() == 1:
             # remove Project waiting invoices task for applicant on first invoice
             remove_tasks_for_user(
                 code=PROJECT_WAITING_INVOICE,
@@ -333,9 +361,9 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def buttons(self):
-        yield ("submit", "primary", _("Save"))
+        yield ("submit", "btn-primary", _("Update"))
         if self.object.can_user_delete(self.request.user):
-            yield ("delete", "warning", _("Delete"))
+            yield ("delete", "btn-error", _("Delete"))
 
     def get_initial(self):
         initial = super().get_initial()
@@ -355,7 +383,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         if "delete" in form.data:
             return redirect(
                 "apply:projects:invoice-delete",
-                pk=self.object.project.submission.id,
+                pk=self.object.project.pk,
                 invoice_pk=self.object.id,
             )
         if form.is_valid():
@@ -445,7 +473,7 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
 
     def dispatch(self, *args, **kwargs):
         invoice_pk = self.kwargs["invoice_pk"]
-        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
+        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
         self.invoice = get_object_or_404(self.project.invoices.all(), pk=invoice_pk)
 
         return super().dispatch(*args, **kwargs)
@@ -464,9 +492,10 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
             PAYMENT_FAILED,
         ] and self.invoice.document.file.name.endswith(".pdf"):
             if activities := Activity.actions.filter(
+                Q(message__contains=APPROVED_BY_STAFF)
+                | Q(message__contains=APPROVED_BY_FINANCE),
                 related_content_type__model="invoice",
                 related_object_id=self.invoice.id,
-                message__icontains="Approved by",
             ).visible_to(self.request.user):
                 approval_pdf_page = html_to_pdf(
                     render_to_string(
@@ -492,6 +521,17 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
 
         if self.request.user == self.invoice.project.user:
             return True
+
+        if self.request.user.is_applicant:
+            co_applicant = self.invoice.project.submission.co_applicants.filter(
+                user=self.request.user
+            ).first()
+            if (
+                co_applicant
+                and CoApplicantProjectPermission.INVOICES
+                in co_applicant.project_permission
+            ):
+                return True
 
         return False
 
@@ -547,6 +587,57 @@ class BatchUpdateInvoiceStatusView(DelegatedViewMixin, FormView):
         return HttpResponseClientRefresh()
 
 
+@login_required
+def invoice_export_status(request: HttpResponse) -> HttpResponse:
+    """Partial view returning the current state of the invoice CSV export button."""
+    ctx = {}
+    status = None
+
+    if not settings.CELERY_TASK_ALWAYS_EAGER:
+        if export_manager := InvoiceExportManager.objects.filter(
+            user=request.user
+        ).first():
+            status = export_manager.status
+            if status == EXPORT_STATUS_GENERATING:
+                ctx["poll_time"] = get_export_polling_time(export_manager.total_export)
+    else:
+        ctx["not_async"] = True
+
+    if status is None or status == EXPORT_STATUS_ERROR:
+        all_url = urlparse(request.headers.get("Hx-Current-Url"))
+        url_list = list(all_url)
+        url_list[4] = urlencode(
+            {**parse_qs(all_url.query), "format": "csv"},
+            doseq=True,
+        )
+        ctx["start_export_url"] = urlunparse(url_list)
+
+    ctx["generating"] = status == EXPORT_STATUS_GENERATING
+    ctx["failed"] = status == EXPORT_STATUS_ERROR
+    ctx["success"] = status == EXPORT_STATUS_SUCCESS
+
+    return render(
+        request, "application_projects/partials/export-invoice-button.html", ctx
+    )
+
+
+@login_required
+def invoice_export_download(request: HttpResponse) -> HttpResponse:
+    export_manager = get_object_or_404(InvoiceExportManager, user=request.user)
+    if export_manager.status == EXPORT_STATUS_SUCCESS:
+        response = HttpResponse(export_manager.export_data, content_type="text/csv")
+        response["Content-Disposition"] = "attachment; filename=invoices.csv"
+
+        remove_tasks_of_related_obj_for_specific_code(
+            code=DOWNLOAD_INVOICES_EXPORT, related_obj=export_manager
+        )
+        export_manager.delete()
+
+        return response
+
+    raise Http404()
+
+
 @method_decorator(staff_or_finance_required, name="dispatch")
 class InvoiceListView(SingleTableMixin, FilterView, DelegateableListView):
     form_views = [
@@ -557,7 +648,86 @@ class InvoiceListView(SingleTableMixin, FilterView, DelegateableListView):
     table_class = AdminInvoiceListTable
     template_name = "application_projects/invoice_list.html"
 
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("project", "project__user")
+            .prefetch_related("tags")
+        )
+
     def get_table_class(self):
         if self.request.user.is_finance:
             return FinanceInvoiceTable
         return super().get_table_class()
+
+    def get(self, request, *args, **kwargs):
+        if request.GET.get("format") == "csv":
+            from hypha.apply.projects.tasks import generate_invoice_csv
+
+            filterset = self.filterset_class(request.GET, queryset=self.get_queryset())
+            qs_ids = list(filterset.qs.values_list("id", flat=True))
+            generate_invoice_csv.delay(qs_ids, request.user.id)
+
+            if not settings.CELERY_TASK_ALWAYS_EAGER:
+                response = render(
+                    request,
+                    "application_projects/partials/export-invoice-button.html",
+                    {
+                        "generating": True,
+                        "poll_time": get_export_polling_time(len(qs_ids)),
+                    },
+                )
+                response["HX-Trigger"] = json.dumps(
+                    {"showMessage": _("Started CSV generation.")}
+                )
+                return response
+            else:
+                return invoice_export_download(request)
+
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["can_export_invoices"] = True
+        return ctx
+
+
+@method_decorator(staff_or_finance_required, name="dispatch")
+class TagInvoiceView(InvoiceAccessMixin, View):
+    form_class = InvoiceTagsForm
+    template_name = "application_projects/modals/invoice_tag.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(Invoice, id=kwargs.get("invoice_pk"))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        form = self.form_class(instance=self.object)
+        return render(
+            self.request,
+            self.template_name,
+            {"form": form, "object": self.object},
+        )
+
+    def post(self, *args, **kwargs):
+        form = self.form_class(self.request.POST, instance=self.object)
+        if form.is_valid():
+            form.save()
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "invoicesUpdated": None,
+                            "showMessage": _("Invoice tags updated."),
+                        }
+                    )
+                },
+            )
+        return render(
+            self.request,
+            self.template_name,
+            {"form": form, "object": self.object},
+            status=400,
+        )

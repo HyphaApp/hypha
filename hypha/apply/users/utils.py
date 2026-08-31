@@ -1,4 +1,5 @@
 import string
+import zoneinfo
 
 import nh3
 from django.conf import settings
@@ -7,10 +8,12 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import formats, timezone
 from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_encode
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as _
+from django_ratelimit.core import _get_ip
 
 
 def get_user_by_email(email):
@@ -28,7 +31,7 @@ def get_user_by_email(email):
     return user
 
 
-def is_user_already_registered(email: str) -> (bool, str):
+def is_user_already_registered(email: str) -> tuple[bool, str]:
     """
     Checks if a specified user is already registered.
     Returns a tuple containing a boolean value that indicates if the user exists
@@ -50,7 +53,11 @@ def can_use_oauth_check(user):
     """
     try:
         domain = user.email.split("@")[-1]
-        return domain in settings.SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS
+        whitelisted_domains = {
+            *settings.SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS,
+            *settings.SOCIAL_AUTH_OKTA_OAUTH2_WHITELISTED_DOMAINS,
+        }
+        return domain in whitelisted_domains
     except AttributeError:
         # Anonymous user or setting not defined
         pass
@@ -77,16 +84,16 @@ def send_activation_email(
     if redirect_url:
         activation_path = f"{activation_path}?next={redirect_url}"
 
-    timeout_days = settings.PASSWORD_RESET_TIMEOUT // (24 * 3600)
+    timeout_minutes = settings.PASSWORD_ACTIVATION_TIMEOUT // 60
 
     context = {
         "user": user,
         "name": user.get_full_name(),
         "username": user.get_username(),
         "activation_path": activation_path,
-        "timeout_days": timeout_days,
-        "org_long_name": settings.ORG_LONG_NAME,
-        "org_short_name": settings.ORG_SHORT_NAME,
+        "timeout_minutes": timeout_minutes,
+        "ORG_LONG_NAME": settings.ORG_LONG_NAME,
+        "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
     }
 
     if site:
@@ -111,7 +118,7 @@ def send_confirmation_email(user, token, updated_email=None, site=None):
         "users:confirm_email", kwargs={"uidb64": uid, "token": token}
     )
 
-    timeout_days = settings.PASSWORD_RESET_TIMEOUT // (24 * 3600)
+    timeout_minutes = settings.PASSWORD_RESET_TIMEOUT // 60
 
     context = {
         "user": user,
@@ -119,15 +126,15 @@ def send_confirmation_email(user, token, updated_email=None, site=None):
         "username": user.get_username(),
         "unverified_email": updated_email,
         "activation_path": activation_path,
-        "timeout_days": timeout_days,
-        "org_long_name": settings.ORG_LONG_NAME,
-        "org_short_name": settings.ORG_SHORT_NAME,
+        "timeout_minutes": timeout_minutes,
+        "ORG_LONG_NAME": settings.ORG_LONG_NAME,
+        "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
     }
 
     if site:
         context.update(site=site)
 
-    subject = "Confirmation email for {unverified_email} at {org_long_name}".format(
+    subject = _("Confirmation email for {unverified_email} at {ORG_LONG_NAME}").format(
         **context
     )
     # Force subject to a single line to avoid header-injection issues.
@@ -177,6 +184,22 @@ def generate_numeric_token(length=6):
     return get_random_string(length, allowed_chars=string.digits)
 
 
+def login_ratelimit_key(group, request):
+    """Per-account rate-limit key for the two-factor login wizard.
+
+    The wizard prefixes its fields, so the account identifier arrives as
+    `auth-username`, not `email`. The later steps (OTP, backup token) post no
+    username at all, and neither do the passwordless views that share this
+    decorated `dispatch` — those fall back to the client IP.
+
+    Never return a constant for the missing-field case: django-ratelimit hashes
+    whatever it is given, so every such request would land in a single bucket
+    and any one client could exhaust login for everybody.
+    """
+    username = request.POST.get("auth-username", "").strip().lower()
+    return username or f"ip:{_get_ip(request)}"
+
+
 def update_is_staff(request, user):
     """Determine if the user should have `is_staff`
 
@@ -194,6 +217,41 @@ def update_is_staff(request, user):
     elif user.is_staff and not user.is_apply_staff_admin:
         user.is_staff = False
         user.save()
+
+
+def get_zoneinfo(tz_name):
+    """Return a ZoneInfo for tz_name, or None if invalid/empty."""
+    if not tz_name:
+        return None
+    try:
+        return zoneinfo.ZoneInfo(tz_name)
+    except (zoneinfo.ZoneInfoNotFoundError, KeyError):
+        return None
+
+
+def local_event_time(request):
+    """Return a human-readable "now", localised to the user's timezone.
+
+    Shared by the account-security notification emails (login, passkey
+    added/removed) so the timestamp line reads the same across them.
+    """
+    tz_name = (
+        getattr(request, "session", {}).get("user_timezone", "") if request else ""
+    )
+    user_tz = get_zoneinfo(tz_name)
+    return "{} ({})".format(
+        formats.date_format(
+            timezone.localtime(timezone=user_tz), "SHORT_DATETIME_FORMAT"
+        ),
+        tz_name or timezone.get_current_timezone_name(),
+    )
+
+
+def passkeys_enabled() -> bool:
+    """Passkeys require WEBAUTHN_RP_ID in production. In DEBUG (local/dev)
+    we fall back to the request host so the feature can be exercised locally.
+    """
+    return bool(getattr(settings, "WEBAUTHN_RP_ID", None)) or settings.DEBUG
 
 
 def strip_html_and_nerf_urls(value: str):

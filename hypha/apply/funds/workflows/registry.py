@@ -14,6 +14,8 @@ import itertools
 from collections import defaultdict
 from typing import List
 
+from django.utils.translation import gettext_lazy as _
+
 from .definitions.double_stage import DoubleStageDefinition
 from .definitions.single_stage import SingleStageDefinition
 from .definitions.single_stage_community import SingleStageCommunityDefinition
@@ -61,28 +63,28 @@ def phase_data(phases: List[dict]) -> dict[str, Phase]:
     }
 
 
-Request = Workflow("Request", "single", **phase_data(SingleStageDefinition))
+Request = Workflow(_("Request"), "single", **phase_data(SingleStageDefinition))
 
 RequestSameTime = Workflow(
-    "Request with same time review",
+    _("Request with same time review"),
     "single_same",
     **phase_data(SingleStageSameDefinition),
 )
 
 RequestExternal = Workflow(
-    "Request with external review",
+    _("Request with external review"),
     "single_ext",
     **phase_data(SingleStageExternalDefinition),
 )
 
 RequestCommunity = Workflow(
-    "Request with community review",
+    _("Request with community review"),
     "single_com",
     **phase_data(SingleStageCommunityDefinition),
 )
 
 ConceptProposal = Workflow(
-    "Concept & Proposal", "double", **phase_data(DoubleStageDefinition)
+    _("Concept & Proposal"), "double", **phase_data(DoubleStageDefinition)
 )
 
 WORKFLOWS = {

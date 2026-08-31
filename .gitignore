@@ -9,8 +9,8 @@
 __pycache__
 db.sqlite3
 media/
-static/
 tmp/
+/static/
 
 # Node
 node_modules/
@@ -97,6 +97,7 @@ coverage.xml
 *.cover
 .hypothesis/
 __coverage__/
+coverage.json
 
 # macOS
 .DS_Store
@@ -156,3 +157,7 @@ GitHub.sublime-settings
 
 # Zed
 .zed/
+
+# Keys and certs
+*.key
+*.crt

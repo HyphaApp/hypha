@@ -15,13 +15,20 @@
 
         <div class="nice-padding">
             <h2>{% blocktrans %}Choose a Fund{% endblocktrans %}</h2>
-            <p>{% blocktrans %}Rounds must be associated with a Fund or RFP. What are you creating a new Round for?{% endblocktrans %}</p>
+            <p>
+                {% blocktrans trimmed %}
+                    Rounds must be associated with a Fund or RFP.
+                    What are you creating a new Round for?
+                {% endblocktrans %}
+            </p>
 
             <form action="" method="post" novalidate>
                 {% csrf_token %}
 
                 <ul class="fields">
-                    {% include "wagtailadmin/shared/field_as_li.html" with field=form.parent_page %}
+                    <li>
+                        {% include "wagtailadmin/shared/field.html" with field=form.parent_page %}
+                    </li>
                     <li>
                         <button type="submit" class="button">{% trans 'Continue' %}</button>
                     </li>

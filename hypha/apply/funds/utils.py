@@ -1,23 +1,22 @@
 import csv
+import os
 import re
-from datetime import datetime
-from functools import reduce
 from io import StringIO
 from itertools import chain
-from operator import iconcat
 from typing import Iterable
 
-import django_filters as filters
+from django.core.files.storage import default_storage
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.html import strip_tags
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
 
 # from django.contrib.sites.models import Site
 from hypha.apply.funds.models.submissions import ApplicationSubmission
 from hypha.apply.users.tokens import CoApplicantInviteTokenGenerator
-from hypha.apply.utils.image import generate_image_tag
 
 from .models.screening import ScreeningStatus
 
@@ -25,8 +24,8 @@ from .models.screening import ScreeningStatus
 def render_icon(image):
     if not image:
         return ""
-    filter_spec = "fill-20x20"
-    return generate_image_tag(image, filter_spec, html_class="icon mr-2 align-middle")
+    rendition = image.get_rendition("fill-20x20")
+    return f'<img alt="{rendition.alt}" class="size-4" src="{rendition.url}">'
 
 
 def get_or_create_default_screening_statuses(
@@ -115,69 +114,37 @@ def export_submissions_to_csv(
     submissions_list: Iterable[ApplicationSubmission], base_uri: str
 ):
     csv_stream = StringIO()
-    header_row = ["Application #", "URL"]
+    header_row = [gettext_lazy("Application #"), gettext_lazy("URL")]
+    header_set = set(header_row)
     index = 2
     data_list = []
 
     for submission in submissions_list:
-        values = {}
-        values["Application #"] = submission.id
-        values["URL"] = f"{base_uri}{submission.get_absolute_url().lstrip('/')}"
+        values = {
+            _("Application #"): submission.id,
+            _("URL"): f"{base_uri}{submission.get_absolute_url().lstrip('/')}",
+        }
+        named = submission.named_blocks
         for field_id in submission.question_text_field_ids:
             question_field = submission.serialize(field_id)
             field_name = question_field["question"]
             field_value = question_field["answer"]
             if field_id == "address" and isinstance(field_value, dict):
-                address = []
-                for key, value in field_value.items():
-                    address.append(f"{key}: {value}")
-                field_value = "\n".join(address)
-            if field_name not in header_row:
-                if field_id not in submission.named_blocks:
+                field_value = "\n".join(f"{k}: {v}" for k, v in field_value.items())
+            if field_name not in header_set:
+                header_set.add(field_name)
+                if field_id not in named:
                     header_row.append(field_name)
                 else:
                     header_row.insert(index, field_name)
-                    index = index + 1
+                    index += 1
             values[field_name] = strip_tags(field_value)
         data_list.append(values)
     writer = csv.DictWriter(csv_stream, fieldnames=header_row, restval="")
     writer.writeheader()
     for data in data_list:
-        writer.writerow(data)
-    csv_stream.seek(0)
-    return csv_stream
-
-
-def format_submission_sum_value(submission_value: dict) -> str | None:
-    """Formats a submission value dict that contains a key of `value__sum`
-
-    Args:
-        submission_value: the dict containing the `value_sum`
-
-    Returns:
-        either a string of the formatted sum value or `None` if invalid
-    """
-
-    value_sum = submission_value.get("value__sum")
-
-    return value_sum if value_sum else None
-
-
-def is_filter_empty(filter: filters.FilterSet) -> bool:
-    """Determines if a given FilterSet has valid query params or if they're empty
-
-    Args:
-        filter: the FilterSet to evaluate
-
-    Returns:
-        bool: True if filter has valid params, False if empty
-    """
-
-    if not (query := filter.data):
-        return False
-
-    # Flatten the QueryDict values in filter.data to a single list, check for validity with any()
-    return any(reduce(iconcat, [param[1] for param in query.lists()], []))
+        writer.writerow(data)  # type: ignore[arg-type]
+    return csv_stream.getvalue()
 
 
 def get_copied_form_name(original_form_name: str) -> str:
@@ -195,7 +162,7 @@ def get_copied_form_name(original_form_name: str) -> str:
         str: name of the copied form
     """
     copy_str = _("Copied on {copy_time}")
-    copy_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-4]
+    copy_time = timezone.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-4]
     date_reg = r"(\d{2,4}-?){3} (\d{2}(:|.)?){4}"  # match the strftime pattern of %Y-%m-%d %H:%M:%S.%f
 
     # Escape the `copy_str` to allow for translations to be matched & replace the
@@ -267,3 +234,28 @@ def generate_invite_path(invite):
         kwargs={"uidb64": uid, "token": token},
     )
     return login_path
+
+
+def delete_directory(directory_path):
+    """Delete a full directory (empty or not)
+
+    Used in attachment cleanup when deleting submissions/revisions
+    """
+
+    directories, files = default_storage.listdir(directory_path)
+
+    for item in directories:
+        item_path = os.path.join(directory_path, item)
+        if default_storage.exists(item_path):
+            # Recursively delete subdirectories
+            delete_directory(item_path)
+
+    for item in files:
+        item_path = os.path.join(directory_path, item)
+        if default_storage.exists(item_path):
+            # Delete files
+            default_storage.delete(item_path)
+
+    if default_storage.exists(directory_path):
+        # Delete the empty directory
+        default_storage.delete(directory_path)

@@ -64,9 +64,10 @@ We are grateful to organizations that have chosen to implement Hypha and appreci
 
 ## These organizations are already using Hypha
 
-- [Amateur Radio Digital Communications](https://www.ampr.org/)
+- [Amateur Radio Digital Communications](https://www.ardc.net/)
 - [Digital Defenders Partnership](https://www.digitaldefenders.org/)
 - [Digital Freedom Fund](https://digitalfreedomfund.org/)
+- [DigitalHub.SH](https://digitalhub.sh/)
 - [Lever for Change](https://www.leverforchange.org/)
 - [Open Technology Fund](https://www.opentech.fund/)
 - [Prototype Fund](https://www.prototypefund.de/en/)

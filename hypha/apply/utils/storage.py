@@ -1,11 +1,13 @@
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.files.storage import get_storage_class
+from django.core.files.storage import storages as get_storage_class
 from django.http import FileResponse
 from django.views.generic import View
 
-private_file_storage = getattr(settings, "PRIVATE_FILE_STORAGE", None)
-PrivateStorage = get_storage_class(private_file_storage)
+if "private_media_storage" in settings.STORAGES:
+    PrivateStorage = get_storage_class["private_media_storage"].__class__
+else:
+    PrivateStorage = get_storage_class["default"].__class__
 
 
 class PrivateMediaView(LoginRequiredMixin, View):

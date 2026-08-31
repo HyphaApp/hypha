@@ -1,6 +1,13 @@
 {% extends "messages/email/base.html" %}
 
 {% load i18n %}
+
+{# fmt:off #}
+{% block pre_salutation %}{% for co_applicant in source.co_applicants.all %}{% if recipient == co_applicant.user.email %}
+({% trans "You are receiving this e-mail because you are an co-applicant on this submission." %})
+{% endif %}{% endfor %}{% endblock %}
+{# fmt:on #}
+
 {% block salutation %}{% blocktrans with name=source.user.get_full_name|default:"applicant" %}Dear {{ name }},{% endblocktrans %}{% endblock %}
 
 {# fmt:off #}

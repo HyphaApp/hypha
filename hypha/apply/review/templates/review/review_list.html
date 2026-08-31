@@ -3,32 +3,34 @@
 
 {% block title %}{% trans "Reviews" %}{% endblock %}
 
-{% block body_class %}reviews-list__body{% endblock %}
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'Reviews' %}"
+            subtitle="{% trans 'For' %} <a class='link link-hover' href='{% url 'funds:submissions:detail' submission.id %}'>{{ submission.title_text_display }}</a>"
+        >
+            {% if request.user|has_review_perm:submission %}
+                {% if request.user|has_draft:submission or request.user|can_review:submission %}
+                    {% include 'review/includes/review_button.html' with submission=submission %}
+                {% endif %}
+            {% endif %}
+        </c-hero.header>
+    </c-hero>
+{% endblock %}
 
 {% block content %}
-    {% adminbar %}
-        {% slot header %}{% trans "Reviews" %}{% endslot %}
-        {% slot sub_heading %}{% trans "For" %} <a class="text-blue-200" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>{% endslot %}
-
-        {% if request.user|has_review_perm:submission %}
-            {% if request.user|has_draft:submission or request.user|can_review:submission %}
-                {% include 'review/includes/review_button.html' with submission=submission %}
-            {% endif %}
-        {% endif %}
-    {% endadminbar %}
-
-    <div class="wrapper">
-        <table class="reviews-list">
+    <div class="overflow-x-auto my-4">
+        <table class="table table-pin-cols">
             {% for answers in review_data.values %}
-                <tr class="reviews-list__tr">
-                    <th class="reviews-list__th">{{ answers.question }}</th>
+                <tr>
+                    <th class="w-40 bg-base-200">{{ answers.question }}</th>
                     {% for answer in answers.answers %}
                         {% if forloop.parentloop.first %}
-                            <th class="reviews-list__th reviews-list__th--author">{{ answer|safe }}</th>
-                        {% elif answers.question == "Opinions"%}
-                            <td class="reviews-list__td">{{ answer }}</td>
+                            <th class="static bg-base-200">{{ answer|safe }}</th>
+                        {% elif answers.question == _("Opinions") %}
+                            <td class="min-w-60">{{ answer }}</td>
                         {% else %}
-                            <td class="reviews-list__td">{{ answer|nh3 }}</td>
+                            <td class="min-w-60">{{ answer|nh3 }}</td>
                         {% endif %}
                     {% endfor %}
                 </tr>

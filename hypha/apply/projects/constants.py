@@ -32,23 +32,13 @@ INT_REQUEST_FOR_CHANGE = _("Request for change")
 # INVOICE_TABLE_PUBLIC_STATUSES = [INT_ORG_PENDING, INT_REQUEST_FOR_CHANGE,
 #                                  INT_DECLINED, INT_PAID, INT_PAYMENT_FAILED]
 
-
-INVOICE_STATUS_BG_COLORS = {
-    INT_ORG_PENDING: "bg-yellow-200",
-    INT_PAID: "bg-green-200",
-    INT_REQUEST_FOR_CHANGE: "bg-blue-200",
-    INT_PAYMENT_FAILED: "bg-red-200",
-    INT_DECLINED: "bg-pink-200",
+INVOICE_STATUS_CLASSNAME_MAP = {
+    INT_ORG_PENDING: "badge badge-warning",
+    INT_PAID: "badge badge-success",
+    INT_REQUEST_FOR_CHANGE: "badge badge-info",
+    INT_PAYMENT_FAILED: "badge badge-error",
+    INT_DECLINED: "badge badge-error",
 }
-
-INVOICE_STATUS_FG_COLORS = {
-    INT_ORG_PENDING: "text-yellow-800",
-    INT_PAID: "text-green-800",
-    INT_REQUEST_FOR_CHANGE: "text-blue-800",
-    INT_PAYMENT_FAILED: "text-red-800",
-    INT_DECLINED: "text-pink-800",
-}
-
 
 statuses_and_table_statuses_mapping = {
     INT_FINANCE_PENDING: [APPROVED_BY_STAFF, APPROVED_BY_FINANCE],

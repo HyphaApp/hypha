@@ -9,8 +9,10 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
 from hypha.apply.activity import tasks
-from hypha.apply.activity.models import ALL, APPLICANT_PARTNERS, PARTNER
-from hypha.apply.funds.models.co_applicants import COMMENT, EDIT
+from hypha.apply.funds.models.co_applicants import (
+    CoApplicantProjectPermission,
+    CoApplicantRole,
+)
 from hypha.apply.projects.models.payment import (
     APPROVED_BY_FINANCE,
     CHANGES_REQUESTED_BY_FINANCE,
@@ -62,8 +64,6 @@ class EmailAdapter(AdapterBase):
         MESSAGES.READY_FOR_REVIEW: "handle_ready_for_review",
         MESSAGES.REVIEWERS_UPDATED: "handle_ready_for_review",
         MESSAGES.BATCH_REVIEWERS_UPDATED: "handle_batch_ready_for_review",
-        MESSAGES.PARTNERS_UPDATED: "partners_updated_applicant",
-        MESSAGES.PARTNERS_UPDATED_PARTNER: "partners_updated_partner",
         MESSAGES.UPLOAD_CONTRACT: "messages/email/contract_uploaded.html",
         MESSAGES.SUBMIT_CONTRACT_DOCUMENTS: "messages/email/submit_contract_documents.html",
         MESSAGES.CREATED_PROJECT: "messages/email/project_created.html",
@@ -81,6 +81,8 @@ class EmailAdapter(AdapterBase):
         MESSAGES.REPORT_NOTIFY: "messages/email/report_notify.html",
         MESSAGES.REVIEW_REMINDER: "messages/email/ready_to_review.html",
         MESSAGES.PROJECT_TRANSITION: "handle_project_transition",
+        MESSAGES.UPDATE_AUTHOR: "messages/email/author_updated.html",
+        MESSAGES.COMMENT_ASSIGNED: "messages/email/comment_assigned.html",
     }
 
     def get_subject(self, message_type, source):
@@ -147,11 +149,11 @@ class EmailAdapter(AdapterBase):
             else:
                 try:
                     subject = source.page.specific.subject or _(
-                        "Your application to {org_long_name}: {source.title_text_display}"
-                    ).format(org_long_name=settings.ORG_LONG_NAME, source=source)
+                        "Your application to {ORG_LONG_NAME}: {source.title_text_display}"
+                    ).format(ORG_LONG_NAME=settings.ORG_LONG_NAME, source=source)
                 except AttributeError:
-                    subject = _("Your {org_long_name} Project: {source.title}").format(
-                        org_long_name=settings.ORG_LONG_NAME, source=source
+                    subject = _("Your {ORG_LONG_NAME} Project: {source.title}").format(
+                        ORG_LONG_NAME=settings.ORG_LONG_NAME, source=source
                     )
             return subject
 
@@ -164,16 +166,19 @@ class EmailAdapter(AdapterBase):
         from hypha.apply.funds.workflows import PHASES
 
         submission = source
+
         # Retrieve status index to see if we are going forward or backward.
         old_index = list(dict(PHASES).keys()).index(old_phase.name)
         target_index = list(dict(PHASES).keys()).index(submission.status)
         is_forward = old_index < target_index
 
+        kwargs["old_phase"] = old_phase.public_name
+        kwargs["new_phase"] = submission.phase.public_name
+
         if is_forward:
             return self.render_message(
                 "messages/email/transition.html",
                 source=submission,
-                old_phase=old_phase,
                 **kwargs,
             )
 
@@ -318,13 +323,13 @@ class EmailAdapter(AdapterBase):
             if not source.phase.permissions.can_view(source.user):
                 return []
 
+        if message_type == MESSAGES.COMMENT_ASSIGNED:
+            assignee = kwargs.get("assignee")
+            return [assignee.email]
+
         if message_type == MESSAGES.INVITE_COAPPLICANT:
             related = kwargs.get("related", None)
             return [related.invited_user_email]
-
-        if message_type == MESSAGES.PARTNERS_UPDATED_PARTNER:
-            partners = kwargs["added"]
-            return [partner.email for partner in partners]
 
         if message_type == MESSAGES.APPROVE_PAF:
             from hypha.apply.projects.models.project import ProjectSettings
@@ -418,7 +423,13 @@ class EmailAdapter(AdapterBase):
                     APPROVED_BY_FINANCE,
                     PAYMENT_FAILED,
                 }:
-                    return [source.user.email]
+                    co_applicants = source.submission.co_applicants.filter(
+                        project_permission__contains=[
+                            CoApplicantProjectPermission.INVOICES
+                        ],
+                        role__in=[CoApplicantRole.EDIT],
+                    ).values_list("user__email", flat=True)
+                    return [source.user.email, *co_applicants]
                 elif status in {CHANGES_REQUESTED_BY_FINANCE, RESUBMITTED}:
                     return [source.lead.email]
             return []
@@ -436,7 +447,13 @@ class EmailAdapter(AdapterBase):
                     )
                 return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME])
             if source.status == INVOICING_AND_REPORTING:
-                return [source.user.email]
+                co_applicants = source.submission.co_applicants.filter(
+                    project_permission__contains=[
+                        CoApplicantProjectPermission.INVOICES
+                    ],
+                    role__in=[CoApplicantRole.EDIT],
+                ).values_list("user__email", flat=True)
+                return [source.user.email, *co_applicants]
 
         if message_type == MESSAGES.APPROVE_INVOICE:
             if user.is_apply_staff:
@@ -447,7 +464,13 @@ class EmailAdapter(AdapterBase):
             if user == source.user:
                 return [source.lead.email]
             else:
-                return [source.user.email]
+                co_applicants = source.submission.co_applicants.filter(
+                    project_permission__contains=[
+                        CoApplicantProjectPermission.INVOICES
+                    ],
+                    role__in=[CoApplicantRole.EDIT],
+                ).values_list("user__email", flat=True)
+                return [source.user.email, *co_applicants]
 
         if isinstance(source, get_user_model()):
             return user.email
@@ -456,35 +479,44 @@ class EmailAdapter(AdapterBase):
         Project = apps.get_model("application_projects", "Project")
         if message_type == MESSAGES.COMMENT:
             # Comment handling for Submissions
+            comment = kwargs["related"]
             if isinstance(source, ApplicationSubmission):
                 # add co-applicants with Comment or edit access
                 co_applicants = source.co_applicants.filter(
-                    role__in=[COMMENT, EDIT]
+                    role__in=[CoApplicantRole.COMMENT, CoApplicantRole.EDIT]
                 ).values_list("user__email", flat=True)
                 recipients: List[str] = [source.user.email, *co_applicants]
 
-                comment = kwargs["related"]
-                if partners := list(source.partners.values_list("email", flat=True)):
-                    if comment.visibility == PARTNER:
-                        recipients = partners
-                    elif comment.visibility in [APPLICANT_PARTNERS, ALL]:
-                        recipients += partners
-
-                try:
-                    recipients.remove(comment.user.email)
-                except ValueError:
-                    pass
-
-                return recipients
-
             # Comment handling for Projects
-            if isinstance(source, Project) and user == source.user:
-                return []
+            elif isinstance(source, Project):
+                # co_applciants with Comment permission
+                co_applicants = (
+                    source.submission.co_applicants.filter(
+                        role__in=[CoApplicantRole.COMMENT, CoApplicantRole.EDIT]
+                    )
+                    .exclude(project_permission=[])
+                    .values_list("user__email", flat=True)
+                )
+                recipients = [source.user.email, *co_applicants]
+            try:
+                recipients.remove(comment.user.email)
+            except ValueError:
+                pass
+
+            return recipients
 
         if isinstance(source, ApplicationSubmission):
             # co-applicants edit/full-access access
-            co_applicants = source.co_applicants.filter(role__in=[EDIT]).values_list(
-                "user__email", flat=True
+            co_applicants = source.co_applicants.filter(
+                role__in=[CoApplicantRole.EDIT]
+            ).values_list("user__email", flat=True)
+            return [source.user.email, *co_applicants]
+        elif isinstance(source, Project):
+            # co-applicants edit access
+            co_applicants = (
+                source.submission.co_applicants.exclude(project_permission=[])
+                .filter(role__in=[CoApplicantRole.EDIT])
+                .values_list("user__email", flat=True)
             )
             return [source.user.email, *co_applicants]
         return [source.user.email]
@@ -517,23 +549,6 @@ class EmailAdapter(AdapterBase):
             if source.phase.permissions.can_review(reviewer)
             and not reviewer.is_apply_staff
         ]
-
-    def partners_updated_applicant(self, added, removed, **kwargs):
-        if added:
-            return self.render_message(
-                "messages/email/partners_update_applicant.html", added=added, **kwargs
-            )
-
-    def partners_updated_partner(self, added, removed, **kwargs):
-        if added:
-            recipient = kwargs["recipient"]
-            # Pass the user object to render_message rather than the email string
-            recipient_obj = User.objects.get(email__exact=recipient)
-            kwargs["recipient"] = recipient_obj
-
-            return self.render_message(
-                "messages/email/partners_update_partner.html", **kwargs
-            )
 
     def render_message(self, template, **kwargs):
         with language(settings.LANGUAGE_CODE):

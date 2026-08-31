@@ -11,7 +11,6 @@ from ..roles import (
     COMMUNITY_REVIEWER_GROUP_NAME,
     CONTRACTING_GROUP_NAME,
     FINANCE_GROUP_NAME,
-    PARTNER_GROUP_NAME,
     REVIEWER_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
@@ -20,6 +19,7 @@ from ..roles import (
 class GroupFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Group
+        skip_postgeneration_save = True
         django_get_or_create = ("name",)
 
     name = factory.Sequence("group name {}".format)
@@ -28,6 +28,7 @@ class GroupFactory(factory.django.DjangoModelFactory):
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = get_user_model()
+        skip_postgeneration_save = True
 
     email = factory.LazyAttribute(
         lambda o: "{}+{}@email.com".format(slugify(o.full_name), uuid.uuid4())
@@ -44,10 +45,16 @@ class UserFactory(factory.django.DjangoModelFactory):
                 groups = extracted
 
             self.groups.add(groups)
+            self.save()
 
 
 class OAuthUserFactory(UserFactory):
     password = factory.PostGenerationMethodCall("set_unusable_password")
+
+    @factory.post_generation
+    def post(self, create, extracted, **kwargs):
+        if create:
+            self.save()
 
 
 class AdminFactory(UserFactory):
@@ -69,6 +76,7 @@ class StaffFactory(OAuthUserFactory):
     def groups(self, create, extracted, **kwargs):
         if create:
             self.groups.add(GroupFactory(name=STAFF_GROUP_NAME))
+            self.save()
 
 
 def get_wagtail_admin_access_permission():
@@ -85,6 +93,7 @@ class StaffWithWagtailAdminAccessFactory(StaffFactory):
             wagtail_admin_access_permission = get_wagtail_admin_access_permission()
             modifiedStaffGroup.permissions.add(wagtail_admin_access_permission)
             self.groups.add(modifiedStaffGroup)
+            self.save()
 
 
 class StaffWithoutWagtailAdminAccessFactory(StaffFactory):
@@ -95,6 +104,7 @@ class StaffWithoutWagtailAdminAccessFactory(StaffFactory):
             wagtail_admin_access_permission = get_wagtail_admin_access_permission()
             modifiedStaffGroup.permissions.remove(wagtail_admin_access_permission)
             self.groups.add(modifiedStaffGroup)
+            self.save()
 
 
 class FinanceFactory(OAuthUserFactory):
@@ -112,6 +122,7 @@ class FinanceFactory(OAuthUserFactory):
     def groups(self, create, extracted, **kwargs):
         if create:
             self.groups.add(GroupFactory(name=FINANCE_GROUP_NAME))
+            self.save()
 
 
 class ApproverFactory(StaffFactory):
@@ -122,6 +133,7 @@ class ApproverFactory(StaffFactory):
                 GroupFactory(name=STAFF_GROUP_NAME),
                 GroupFactory(name=APPROVER_GROUP_NAME),
             )
+            self.save()
 
 
 class ContractingFactory(UserFactory):
@@ -131,6 +143,7 @@ class ContractingFactory(UserFactory):
             self.groups.add(
                 GroupFactory(name=CONTRACTING_GROUP_NAME),
             )
+            self.save()
 
 
 class ContractingApproverFactory(UserFactory):
@@ -141,6 +154,7 @@ class ContractingApproverFactory(UserFactory):
                 GroupFactory(name=CONTRACTING_GROUP_NAME),
                 GroupFactory(name=APPROVER_GROUP_NAME),
             )
+            self.save()
 
 
 class SuperUserFactory(StaffFactory):
@@ -152,6 +166,7 @@ class ReviewerFactory(UserFactory):
     def groups(self, create, extracted, **kwargs):
         if create:
             self.groups.add(GroupFactory(name=REVIEWER_GROUP_NAME))
+            self.save()
 
 
 class ApplicantFactory(UserFactory):
@@ -159,6 +174,7 @@ class ApplicantFactory(UserFactory):
     def groups(self, create, extracted, **kwargs):
         if create:
             self.groups.add(GroupFactory(name=APPLICANT_GROUP_NAME))
+            self.save()
 
 
 class CommunityReviewerFactory(UserFactory):
@@ -166,10 +182,4 @@ class CommunityReviewerFactory(UserFactory):
     def groups(self, create, extracted, **kwargs):
         if create:
             self.groups.add(GroupFactory(name=COMMUNITY_REVIEWER_GROUP_NAME))
-
-
-class PartnerFactory(UserFactory):
-    @factory.post_generation
-    def groups(self, create, extracted, **kwargs):
-        if create:
-            self.groups.add(GroupFactory(name=PARTNER_GROUP_NAME))
+            self.save()

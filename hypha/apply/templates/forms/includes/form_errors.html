@@ -1,9 +1,9 @@
 {% load i18n heroicons %}
 
 {% if form.errors or form.non_field_errors %}
-    <div class="wrapper wrapper--medium wrapper--error">
-        {% heroicon_solid "exclamation-triangle" class="inline me-1 fill-red-500" aria_hidden=true %}
-        <h5 class="heading heading--no-margin heading--regular">{% trans "There were some errors with your form. Please amend the fields highlighted below." %}</h5>
+    <div class="alert alert-error" role="alert">
+        {% heroicon_solid "exclamation-triangle" aria_hidden=true class="opacity-80 size-5" %}
+        <span>{% trans "There were some errors with your form. Please amend the fields highlighted below." %}</span>
         {% if form.non_field_errors %}
             <ul>
                 {% for error in form.non_field_errors %}

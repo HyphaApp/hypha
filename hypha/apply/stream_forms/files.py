@@ -7,7 +7,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 class StreamFieldDataEncoder(DjangoJSONEncoder):
     def default(self, o):
-        if isinstance(o, StreamFieldFile):
+        if isinstance(o, File):
             return {
                 "name": o.name,
                 "filename": o.filename,
@@ -78,19 +78,34 @@ class StreamFieldFile(File):
 
     @property
     def size(self):
+        if not self.exists:
+            # Prevent an error for when a file doesn't exist
+            return 0
         if not self._committed:
             return self.file.size
         return self.storage.size(self.name)
 
+    def _check_exists(self):
+        """Fetch modification time once; caches both existence and the date."""
+        if not hasattr(self, "_exists_cache"):
+            try:
+                self._modification_time_cache = self.storage.get_modified_time(
+                    self.name
+                ).date()
+                self._exists_cache = True
+            except Exception:
+                self._modification_time_cache = "–"
+                self._exists_cache = False
+
+    @property
+    def exists(self):
+        self._check_exists()
+        return self._exists_cache
+
     @property
     def modification_time(self):
-        # Wrap in a try for local developments where files might not always exist.
-        try:
-            modified_time = self.storage.get_modified_time(self.name).date()
-        except FileNotFoundError:
-            modified_time = "–"
-
-        return modified_time
+        self._check_exists()
+        return self._modification_time_cache
 
     def serialize(self):
         return {

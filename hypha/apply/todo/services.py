@@ -23,7 +23,7 @@ def validate_user_uniqueness(code, user, related_obj):
         # if same task is already assigned to user's user_group
         user_group_matching_tasks = matching_tasks.annotate(
             group_count=Count("user_group")
-        ).filter(group_count=len(user.groups.all()))
+        ).filter(group_count=user.groups.count())
         for group in user.groups.all():
             user_group_matching_tasks = user_group_matching_tasks.filter(
                 user_group__id=group.id
@@ -45,7 +45,7 @@ def validate_user_groups_uniqueness(code, user_groups, related_obj):
     )
     user_group_matching_tasks = matching_tasks.annotate(
         group_count=Count("user_group")
-    ).filter(group_count=len(user_groups))
+    ).filter(group_count=user_groups.count())
     for group in user_groups:
         user_group_matching_tasks = user_group_matching_tasks.filter(
             user_group__id=group.id

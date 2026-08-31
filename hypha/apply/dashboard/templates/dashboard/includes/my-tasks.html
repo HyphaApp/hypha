@@ -1,8 +1,10 @@
 {% load i18n %}
 
-<section class="mx-auto mb-10 max-w-4xl" id="task-list" hx-swap-oob="true">
+<section class="mx-auto w-full max-w-4xl" id="task-list" hx-swap-oob="true">
     {% if my_tasks.data %}
-        <h2 class="font-light text-center">{% trans "My tasks" %}</h2>
+        <h2 class="text-center section-header">
+            {% trans "My tasks" %}
+        </h2>
 
         <div class="border divide-y shadow-xs task--list">
             {% for task in my_tasks.data %}

@@ -3,7 +3,8 @@
 =   For the select component rendered with choices.js
 =============================== */
 .choices {
-  @apply relative mb-6 overflow-hidden text-base focus:outline-hidden;
+  width: clamp(3rem, 20rem, 100%);
+  @apply relative overflow-hidden text-base focus:outline-hidden;
 }
 
 .choices:last-child {
@@ -16,9 +17,7 @@
 
 .choices.is-disabled .choices__inner,
 .choices.is-disabled .choices__input {
-  background-color: #eaeaea;
-
-  @apply cursor-not-allowed select-none;
+  @apply cursor-not-allowed select-none bg-base-200;
 }
 
 .choices.is-disabled .choices__item {
@@ -38,7 +37,7 @@
 }
 
 .choices[data-type*="select-one"] .choices__input {
-  @apply block w-full p-2 m-0 bg-white border-b border-gray-400;
+  @apply block w-full p-2 m-0 bg-base-100 border-b border-gray-400;
 }
 
 .choices[data-type*="select-one"] .choices__button {
@@ -107,11 +106,11 @@
 .choices__inner {
   min-height: 40px;
 
-  @apply inline-block w-full p-1 overflow-hidden text-sm text-gray-900 align-top border border-gray-300 rounded-xs;
+  @apply inline-block w-full p-1 overflow-hidden text-sm text-base-content align-top border border-base-content/20 rounded-field;
 }
 
 .is-focused .choices__inner {
-  @apply border-2 border-blue-500;
+  @apply border-2 border-primary;
 }
 
 .is-open .choices__inner {
@@ -119,7 +118,7 @@
 }
 
 .is-open .choices__inner {
-  @apply rounded-xs;
+  @apply rounded-field;
 }
 
 .is-flipped.is-open .choices__inner {
@@ -151,7 +150,7 @@
 .choices__list--multiple .choices__item {
   box-sizing: border-box;
 
-  @apply rounded-full break-all inline-block align-middle me-1 px-2 mb-1 pt-0.5 pb-1 md:text-sm font-medium text-white bg-blue-600;
+  @apply rounded-full break-all inline-block align-middle me-1 px-2 mb-1 pt-0.5 pb-1 md:text-sm font-medium text-white bg-primary;
 }
 
 .choices__list--multiple .choices__item[data-deletable] {
@@ -163,7 +162,7 @@
 }
 
 .choices__list--multiple .choices__item.is-highlighted {
-  @apply bg-blue-500;
+  @apply bg-primary;
 }
 
 .is-disabled .choices__list--multiple .choices__item {
@@ -177,7 +176,7 @@
   border-bottom-right-radius: 2.5px;
   will-change: visibility;
 
-  @apply absolute z-10 invisible w-full mt-1 overflow-hidden break-all bg-white border shadow-md top-full;
+  @apply absolute z-10 invisible w-full mt-1 overflow-hidden break-all bg-base-100 border shadow-md top-full;
 }
 
 .is-active.choices__list--dropdown,
@@ -241,7 +240,7 @@
 
 .choices__list--dropdown .choices__item--selectable.is-highlighted,
 .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
-  @apply bg-gray-100;
+  @apply bg-base-200;
 }
 
 .choices__list--dropdown .choices__item--selectable.is-highlighted::after,
@@ -262,7 +261,7 @@
 }
 
 .choices__heading {
-  @apply py-2 text-sm font-semibold text-gray-600 border-b border-gray-300;
+  @apply py-2 text-sm font-semibold text-base-content/80 border-b border-gray-300;
 }
 
 .choices__button {
@@ -274,7 +273,7 @@
 .choices__input {
   padding: 4px 0 4px 2px;
 
-  @apply inline-block w-full max-w-full text-sm text-gray-700 placeholder-gray-400 align-middle bg-transparent border-none rounded-none;
+  @apply inline-block w-full max-w-full text-sm bg-base-200 text-base-content placeholder-gray-400 align-middle border-none rounded-none;
 }
 
 .choices__input::-webkit-search-decoration,
@@ -290,8 +289,7 @@
 }
 
 .choices__input--cloned {
-  color: #000; /* Darker placeholder */
-  font-weight: 600; /* Semibold text */
+  @apply text-base-content font-semibold;
 }
 
 [dir="rtl"] .choices__input {

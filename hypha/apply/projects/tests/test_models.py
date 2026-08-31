@@ -35,6 +35,22 @@ class TestProjectModel(TestCase):
         self.assertEqual(project.title, submission.title)
         self.assertEqual(project.user, submission.user)
 
+    def test_create_from_submission_with_title(self):
+        submission = ApplicationSubmissionFactory()
+        project = Project.create_from_submission(submission, title="Hardware")
+        self.assertEqual(project.title, "Hardware")
+
+    def test_submission_can_have_multiple_projects(self):
+        submission = ApplicationSubmissionFactory()
+        first = Project.create_from_submission(submission, title="Hardware")
+        second = Project.create_from_submission(submission, title="Travel")
+
+        self.assertNotEqual(first.pk, second.pk)
+        self.assertEqual(
+            list(submission.projects.order_by("pk")),
+            [first, second],
+        )
+
 
 class TestInvoiceModel(TestCase):
     def test_invoice_status_user_choices(self):
@@ -76,8 +92,8 @@ class TestInvoiceModel(TestCase):
         self.assertFalse(invoice.can_user_delete(staff))
 
     def test_can_user_delete_from_submitted(self):
-        invoice = InvoiceFactory(status=SUBMITTED)
         user = ApplicantFactory()
+        invoice = InvoiceFactory(status=SUBMITTED, project__user=user)
         self.assertTrue(invoice.can_user_delete(user))
 
     def test_user_cant_delete_from_resubmitted(self):
@@ -136,7 +152,7 @@ class TestInvoiceModel(TestCase):
         statuses = [CHANGES_REQUESTED_BY_STAFF, RESUBMITTED, SUBMITTED]
         user = ApplicantFactory()
         for status in statuses:
-            invoice = InvoiceFactory(status=status)
+            invoice = InvoiceFactory(status=status, project__user=user)
             self.assertTrue(invoice.can_user_edit(user))
 
     def test_applicant_cant_edit_invoice(self):

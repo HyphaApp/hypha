@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from ..constants import DRAFT_STATE, INITIAL_STATE, UserPermissions
 from ..models.stage import RequestCom
@@ -81,8 +81,8 @@ SingleStageCommunityDefinition = [
                 "com_rejected": _("Dismiss"),
             },
             "display": _("Internal Review"),
-            "public": _("{org_short_name} Review").format(
-                org_short_name=settings.ORG_SHORT_NAME
+            "public": _("{ORG_SHORT_NAME} Review").format(
+                ORG_SHORT_NAME=settings.ORG_SHORT_NAME
             ),
             "stage": RequestCom,
             "permissions": default_permissions,
@@ -94,8 +94,8 @@ SingleStageCommunityDefinition = [
                 "com_rejected": _("Dismiss"),
             },
             "display": _("Community Review"),
-            "public": _("{org_short_name} Review").format(
-                org_short_name=settings.ORG_SHORT_NAME
+            "public": _("{ORG_SHORT_NAME} Review").format(
+                ORG_SHORT_NAME=settings.ORG_SHORT_NAME
             ),
             "stage": RequestCom,
             "permissions": community_review_permissions,

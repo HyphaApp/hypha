@@ -1,6 +1,7 @@
 from datetime import date
 from typing import Optional
 
+import nh3
 from django import forms
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
@@ -27,6 +28,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
+from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django_ratelimit.decorators import ratelimit
@@ -73,10 +75,41 @@ class ApplicationBaseManager(PageQuerySet):
         return qs.order_by("end_date")
 
 
+class AsJsonMixin:
+    @cached_property
+    def as_json(self):
+        # Clean the strings in title and description.
+        title = nh3.clean(self.title, tags=set())
+        description = nh3.clean(self.description, tags=set())
+        # If image exist scale it down and convert to webp.
+        image = (
+            self.image.get_rendition("max-1200x1200|format-webp|webpquality-60").url
+            if self.image
+            else ""
+        )
+        # Make sure weight is an int.
+        weight = int(self.weight)
+        # If next deadline exist and is set to show, format it as standard iso date.
+        try:
+            next_deadline = (
+                self.next_deadline().isoformat() if self.show_deadline else ""
+            )
+        except AttributeError:
+            next_deadline = ""
+        return {
+            "title": title,
+            "description": description,
+            "image": image,
+            "weight": weight,
+            "next_deadline": next_deadline,
+            "url": self.get_url(),
+        }
+
+
 @method_decorator(
     ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"), name="serve"
 )
-class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
+class ApplicationBase(EmailForm, WorkflowStreamForm, AsJsonMixin):  # type: ignore
     is_creatable = False
 
     # Adds validation around forms & workflows. Isn't on Workflow class due to not displaying workflow field on Round
@@ -97,7 +130,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         related_name="+",
     )
 
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(_("description"), null=True, blank=True)
 
     # higher the weight means top priority, 100th will be on top.
     weight = models.PositiveIntegerField(
@@ -105,7 +138,10 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     )
 
     guide_link = models.URLField(
-        blank=True, max_length=255, help_text=_("Link to the apply guide.")
+        _("guide link"),
+        blank=True,
+        max_length=255,
+        help_text=_("Link to the apply guide."),
     )
 
     slack_channel = models.CharField(
@@ -125,16 +161,24 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     )
 
     list_on_front_page = models.BooleanField(
-        default=True, help_text=_("Should the fund be listed on the front page.")
+        _("list on front page"),
+        default=True,
+        help_text=_("Should the fund be listed on the front page."),
     )
 
     show_deadline = models.BooleanField(
-        default=True, help_text=_("Should the deadline date be visible for users.")
+        _("show deadline"),
+        default=True,
+        help_text=_("Should the deadline date be visible for users."),
     )
 
     objects = PageManager.from_queryset(ApplicationBaseManager)()
 
     parent_page_types = ["apply_home.ApplyHomePage"]
+
+    class Meta:
+        verbose_name = _("application base")
+        verbose_name_plural = _("application bases")
 
     def get_template(self, request, *args, **kwargs):
         # We want to force children to use our base template
@@ -156,7 +200,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         # Manually do what the login_required decorator does so that we can check settings
         if not request.user.is_authenticated and settings.FORCE_LOGIN_FOR_APPLICATION:
             return redirect(
-                "%s?next=%s" % (settings.WAGTAIL_FRONTEND_LOGIN_URL, request.path)
+                "{}?next={}".format(settings.WAGTAIL_FRONTEND_LOGIN_URL, request.path)
             )
 
         if hasattr(request, "is_preview") or not self.open_round:
@@ -188,6 +232,11 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
 
 
 class RoundBaseManager(PageQuerySet):
+    def new(self):
+        rounds = self.live().public().specific()
+        rounds = rounds.filter(start_date__gt=date.today())
+        return rounds
+
     def open(self):
         rounds = self.live().public().specific()
         rounds = rounds.filter(
@@ -236,8 +285,11 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         limit_choices_to=LIMIT_TO_REVIEWERS,
         blank=True,
     )
-    start_date = models.DateField(null=True, blank=True, default=date.today)
+    start_date = models.DateField(
+        _("start date"), null=True, blank=True, default=date.today
+    )
     end_date = models.DateField(
+        _("end date"),
         blank=True,
         null=True,
         default=date.today,
@@ -245,7 +297,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             "When no end date is provided the round will remain open indefinitely."
         ),
     )
-    sealed = models.BooleanField(default=False)
+    sealed = models.BooleanField(_("sealed"), default=False)
 
     def get_url(self, request: Optional[WSGIRequest] = None) -> Optional[str]:
         """Generates the live url, primarily used in the wagtail admin for the "view live" button.
@@ -312,6 +364,10 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             ObjectList(SubmittableStreamForm.promote_panels, heading=_("Promote")),
         ]
     )
+
+    class Meta:
+        verbose_name = _("round base")
+        verbose_name_plural = _("round bases")
 
     def get_template(self, request, *args, **kwargs):
         # Make sure all children use the shared template
@@ -392,7 +448,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         if self.start_date and self.end_date and self.start_date > self.end_date:
             raise ValidationError(
                 {
-                    "end_date": "End date must come after the start date",
+                    "end_date": _("End date must come after the start date"),
                 }
             )
 
@@ -421,15 +477,21 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             conflicting_rounds = base_query.filter(conflict_query).exclude(id=self.id)
 
             if conflicting_rounds.exists():
-                error_message = mark_safe(
-                    "Overlaps with the following rounds:<br> {}".format(
-                        "<br>".join(
-                            [
-                                f'<a href="{admin_url(round)}">{round.title}</a>: {round.start_date} - {round.end_date}'
-                                for round in conflicting_rounds
-                            ]
-                        )
-                    )
+                error_message = format_html(
+                    _("Overlaps with the following rounds:<br> {}"),
+                    format_html_join(
+                        sep=mark_safe("<br>"),
+                        format_string='<a href="{}">{}</a>: {} - {}',
+                        args_generator=(
+                            (
+                                admin_url(round),
+                                round.title,
+                                round.start_date,
+                                round.end_date,
+                            )
+                            for round in conflicting_rounds
+                        ),
+                    ),
                 )
                 error = {
                     "start_date": error_message,
@@ -452,7 +514,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 title_block_id = submission.named_blocks.get("title")
                 if title_block_id:
                     field_data = submission.data(title_block_id)
-                    initial_values[title_block_id] = field_data + " (please edit)"
+                    initial_values[title_block_id] = field_data + _(" (please edit)")
 
                 for field_id in submission.first_group_normal_text_blocks:
                     field_data = submission.data(field_id)
@@ -555,7 +617,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 @method_decorator(
     ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"), name="serve"
 )
-class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
+class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm, AsJsonMixin):  # type: ignore
     is_creatable = False
     submission_class = ApplicationSubmission
 
@@ -593,7 +655,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         related_name="+",
     )
 
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(_("description"), null=True, blank=True)
 
     # higher the weight means top priority, 100th will be on top.
     weight = models.PositiveIntegerField(
@@ -601,7 +663,10 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     )
 
     guide_link = models.URLField(
-        blank=True, max_length=255, help_text=_("Link to the apply guide.")
+        _("guide link"),
+        blank=True,
+        max_length=255,
+        help_text=_("Link to the apply guide."),
     )
 
     slack_channel = models.CharField(
@@ -618,7 +683,9 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     )
 
     list_on_front_page = models.BooleanField(
-        default=True, help_text=_("Should the lab be listed on the front page.")
+        _("list on front page"),
+        default=True,
+        help_text=_("Should the lab be listed on the front page."),
     )
 
     parent_page_types = ["apply_home.ApplyHomePage"]
@@ -645,6 +712,10 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         ]
     )
 
+    class Meta:
+        verbose_name = _("lab base")
+        verbose_name_plural = _("lab bases")
+
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
             page=self,
@@ -668,7 +739,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         # Manually do what the login_required decorator does so that we can check settings
         if not request.user.is_authenticated and settings.FORCE_LOGIN_FOR_APPLICATION:
             return redirect(
-                "%s?next=%s" % (settings.WAGTAIL_FRONTEND_LOGIN_URL, request.path)
+                "{}?next={}".format(settings.WAGTAIL_FRONTEND_LOGIN_URL, request.path)
             )
 
         if request.method == "POST":
@@ -819,6 +890,8 @@ class RoundsAndLabs(Page):
 
     class Meta:
         proxy = True
+        verbose_name = _("round and lab")
+        verbose_name_plural = _("rounds and labs")
 
     def __eq__(self, other):
         # This is one way equality RoundAndLab == Round/Lab
@@ -850,7 +923,7 @@ class ApplicationSettings(BaseSiteSetting):
     wagtail_reference_index_ignore = True
 
     class Meta:
-        verbose_name = "application settings"
+        verbose_name = _("application settings")
 
     extra_text_round = RichTextField(blank=True)
     extra_text_lab = RichTextField(blank=True)
@@ -861,6 +934,6 @@ class ApplicationSettings(BaseSiteSetting):
                 FieldPanel("extra_text_round"),
                 FieldPanel("extra_text_lab"),
             ],
-            "extra text on application landing page",
+            _("extra text on application landing page"),
         ),
     ]

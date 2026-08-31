@@ -1,23 +1,13 @@
-from django.urls import re_path
+from django.apps import apps
+from django.conf import settings
 from wagtail import hooks
 from wagtail.models import Site
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.users.models import User
 
-from .admin_views import CustomGroupViewSet, CustomUserIndexView
+from .roles import SUPERADMIN
 from .utils import send_activation_email, update_is_staff
-
-
-@hooks.register("register_admin_urls")
-def register_admin_urls():
-    return [
-        re_path(r"^users/$", CustomUserIndexView.as_view(), name="index"),
-    ]
-
-
-@hooks.register("register_admin_viewset")
-def register_viewset():
-    return CustomGroupViewSet("groups", url_prefix="groups")
 
 
 @hooks.register("after_create_user")
@@ -37,7 +27,7 @@ def notify_after_create_user(request, user):
 def notify_after_edit_user(request, user):
     roles = list(user.groups.values_list("name", flat=True))
     if user.is_superuser:
-        roles.append("Administrator")
+        roles.append(str(SUPERADMIN))
     if roles:
         roles = ", ".join(roles)
         messenger(
@@ -47,6 +37,65 @@ def notify_after_edit_user(request, user):
             source=user,
             roles=roles,
         )
+
+
+@hooks.register("before_delete_user")
+def anonymize_delete_user_submissions(request, user):
+    if (
+        settings.SUBMISSION_ANONYMIZATION_ENABLED
+        and request.method == "POST"
+        and request.POST.get("handle_submissions") == "anonymize"
+    ):
+        AnonymizedSubmission = apps.get_model("funds", "AnonymizedSubmission")
+
+        submissions_to_anonymize = list(
+            user.applicationsubmission_set.exclude_draft().values(
+                "form_data",
+                "form_fields",
+                "page_id",
+                "round_id",
+                "status",
+                "submit_time",
+                "screening_statuses",
+            )
+        )
+
+        for submission_dict in submissions_to_anonymize:
+            AnonymizedSubmission.from_dict(submission_dict)
+
+
+@hooks.register("before_bulk_action")
+def bulk_anonymize_delete_user_submissions(
+    request, action_type, objects, action_class_instance
+):
+    # Handling for bulk deletion of users when anonymization is selected
+    if (
+        settings.SUBMISSION_ANONYMIZATION_ENABLED
+        and action_type == "delete"
+        and request.method == "POST"
+        and request.POST.get("handle_submissions") == "anonymize"
+        and all(isinstance(x, User) for x in objects)
+    ):
+        ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
+
+        AnonymizedSubmission = apps.get_model("funds", "AnonymizedSubmission")
+
+        submissions_to_anonymize = list(
+            ApplicationSubmission.objects.filter(user__in=objects)
+            .exclude_draft()
+            .values(
+                "form_data",
+                "form_fields",
+                "page_id",
+                "round_id",
+                "status",
+                "submit_time",
+                "screening_statuses",
+            )
+        )
+
+        for submission_dict in submissions_to_anonymize:
+            AnonymizedSubmission.from_dict(submission_dict)
 
 
 # Handle setting of `is_staff` after updating a user

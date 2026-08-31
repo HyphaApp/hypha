@@ -17,10 +17,14 @@ from hypha.apply.users.views import become, oauth_complete
 from hypha.apply.utils.views import custom_wagtail_page_delete
 from hypha.home.views import home
 
+from .api import urls as api_urls
+from .health import health
+
 urlpatterns = [
     path("", home, name="home"),
     path("apply/", include("hypha.apply.funds.urls", "apply")),
     path("activity/", include("hypha.apply.activity.urls", "activity")),
+    path("api/", include(api_urls)),
     path("todo/", include("hypha.apply.todo.urls", "todo")),
     path("django-admin/", admin.site.urls),
     path(
@@ -43,6 +47,7 @@ urlpatterns = [
     path("", include(tf_urls, "two_factor")),
     path("", include((user_urls, "users"))),
     path("tinymce/", include("tinymce.urls")),
+    path("health/", health, name="health"),
 ]
 
 if settings.LANGUAGE_SWITCHER:
@@ -103,12 +108,13 @@ urlpatterns += [
     ),
 ]
 
+# Load urls from any djp plugins.
+urlpatterns += djp.urlpatterns()
+
+# Need to be last.
 urlpatterns += [
     path("", include(wagtail_urls)),
 ]
-
-# Load urls from any djp plugins.
-urlpatterns += djp.urlpatterns()
 
 if settings.DEBUG:
     import debug_toolbar

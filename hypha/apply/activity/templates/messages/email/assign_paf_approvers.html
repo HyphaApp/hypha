@@ -7,7 +7,7 @@
 {% trans "Project documents are ready to be assigned for approval." %}
 
 {% trans "Title" %}: {{ source.title_text_display }}
-{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:approval' pk=source.submission.pk %}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:approval' pk=source.pk %}
 
 {% blocktrans with lead=source.lead email=source.lead.email %}Please contact {{ lead }} - {{ email }} if you have any questions.{% endblocktrans %}
 {% endblock %}{# fmt:on #}

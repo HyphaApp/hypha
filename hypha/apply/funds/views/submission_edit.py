@@ -51,14 +51,12 @@ from hypha.apply.utils.views import (
 from .. import services
 from ..forms import (
     ProgressSubmissionForm,
+    UpdateAuthorForm,
     UpdateMetaTermsForm,
-    UpdatePartnersForm,
     UpdateReviewersForm,
     UpdateSubmissionLeadForm,
 )
-from ..models import (
-    ApplicationSubmission,
-)
+from ..models import ApplicationSubmission
 from ..permissions import (
     has_permission,
 )
@@ -100,6 +98,13 @@ class BaseSubmissionEditView(UpdateView):
         context = self.get_context_data()
         return render(request, "funds/application_preview.html", context)
 
+    def get_object(self, queryset=None):
+        # Cache the object to avoid repeated DB queries + JSON deserialization
+        # (get_object is called in dispatch, subclass dispatch, and UpdateView.get/post)
+        if not hasattr(self, "_object_cache"):
+            self._object_cache = super().get_object(queryset)
+        return self._object_cache
+
     def dispatch(self, request, *args, **kwargs):
         permission, _ = has_permission(
             "submission_edit",
@@ -109,7 +114,7 @@ class BaseSubmissionEditView(UpdateView):
         )
         return super().dispatch(request, *args, **kwargs)
 
-    def buttons(
+    def buttons(  # type: ignore[return]
         self,
     ) -> Generator[Tuple[str, str, str], Tuple[str, str, str], Tuple[str, str, str]]:
         """The buttons to be presented to the in the EditView
@@ -119,12 +124,12 @@ class BaseSubmissionEditView(UpdateView):
             (<button type>, <button styling>, <button label>)
         """
         if settings.SUBMISSION_PREVIEW_REQUIRED:
-            yield ("preview", "primary", _("Preview and submit"))
-            yield ("save", "white", _("Save draft"))
+            yield ("preview", "btn-primary", _("Preview and submit"))
+            yield ("save", "btn-secondary btn-outline", _("Save draft"))
         else:
-            yield ("submit", "primary", _("Submit"))
-            yield ("save", "white", _("Save draft"))
-            yield ("preview", "white", _("Preview"))
+            yield ("submit", "btn-primary", _("Submit"))
+            yield ("save", "btn-secondary btn-outline", _("Save draft"))
+            yield ("preview", "btn-secondary btn-outline", _("Preview"))
 
     def get_object_fund_current_round(self):
         assigned_fund = self.object.round.get_parent().specific
@@ -145,7 +150,9 @@ class BaseSubmissionEditView(UpdateView):
         return next(
             (
                 t
-                for t in self.object.get_available_user_status_transitions(user)
+                for t in type(self.object).status_field.get_available_transitions(
+                    self.object, self.object.status, user
+                )
                 if t.custom.get("trigger_on_submit", False)
             ),
             None,
@@ -236,22 +243,31 @@ class BaseSubmissionEditView(UpdateView):
         instance = kwargs.pop("instance").from_draft()
         initial = instance.raw_data
         for field_id in instance.file_field_ids:
+            original_value = initial.get(field_id)
             initial.pop(field_id + "-uploads", False)
-            initial[field_id] = self.get_placeholder_file(
-                instance.raw_data.get(field_id)
-            )
+            initial[field_id] = self.get_placeholder_file(original_value)
         kwargs["initial"] = initial
         return kwargs
 
     def get_placeholder_file(self, initial_file):
         if not isinstance(initial_file, list):
             return PlaceholderUploadedFile(
-                initial_file.filename, size=initial_file.size, file_id=initial_file.name
+                initial_file.filename,
+                size=self._safe_file_size(initial_file),
+                file_id=initial_file.name,
             )
         return [
-            PlaceholderUploadedFile(f.filename, size=f.size, file_id=f.name)
+            PlaceholderUploadedFile(
+                f.filename, size=self._safe_file_size(f), file_id=f.name
+            )
             for f in initial_file
         ]
+
+    def _safe_file_size(self, stream_file):
+        try:
+            return stream_file.storage.size(stream_file.name)
+        except Exception:
+            return 0
 
     def save_draft_and_refresh_page(self, form) -> HttpResponseRedirect:
         self.object.create_revision(draft=True, by=self.request.user)
@@ -288,7 +304,7 @@ class BaseSubmissionEditView(UpdateView):
 
 @method_decorator(staff_required, name="dispatch")
 class AdminSubmissionEditView(BaseSubmissionEditView):
-    def buttons(
+    def buttons(  # type: ignore[return]
         self,
     ) -> Generator[Tuple[str, str, str], Tuple[str, str, str], Tuple[str, str, str]]:
         """The buttons to be presented in the `AdminSubmissionEditView`
@@ -299,9 +315,9 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
             A generator returning a tuple strings in the format of:
             (<button type>, <button styling>, <button label>)
         """
-        yield ("submit", "primary", _("Submit"))
-        yield ("save", "white", _("Save draft"))
-        yield ("preview", "white", _("Preview"))
+        yield ("submit", "btn-primary", _("Submit"))
+        yield ("save", "btn-secondary btn-outline", _("Save draft"))
+        yield ("preview", "btn-secondary btn-outline", _("Preview"))
 
 
 @method_decorator(login_required, name="dispatch")
@@ -316,25 +332,10 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
         return super().dispatch(request, *args, **kwargs)
 
 
-@method_decorator(login_required, name="dispatch")
-class PartnerSubmissionEditView(ApplicantSubmissionEditView):
-    def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
-        # If the requesting user submitted the application, return the Applicant view.
-        # Partners may sometimes be applicants as well.
-        partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
-        if not partner_has_access and submission.user != request.user:
-            raise PermissionDenied
-        return super(ApplicantSubmissionEditView, self).dispatch(
-            request, *args, **kwargs
-        )
-
-
 class SubmissionEditView(ViewDispatcher):
     admin_view = AdminSubmissionEditView
     applicant_view = ApplicantSubmissionEditView
     reviewer_view = ApplicantSubmissionEditView
-    partner_view = PartnerSubmissionEditView
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -350,7 +351,7 @@ class ProgressSubmissionView(View):
         if not permission:
             messages.warning(self.request, reason)
             return HttpResponseRedirect(self.submission.get_absolute_url())
-        return super(ProgressSubmissionView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         project_creation_form = ProgressSubmissionForm(
@@ -405,7 +406,10 @@ class CreateProjectView(View):
         if not permission:
             messages.warning(self.request, reason)
             return HttpResponseRedirect(self.submission.get_absolute_url())
-        return super(CreateProjectView, self).dispatch(request, *args, **kwargs)
+        if not settings.PROJECTS_ALLOW_MULTIPLE and self.submission.projects.exists():
+            messages.warning(self.request, _("This submission already has a project."))
+            return HttpResponseRedirect(self.submission.get_absolute_url())
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         project_creation_form = ProjectCreateForm(instance=self.submission)
@@ -510,7 +514,6 @@ def htmx_archive_unarchive_submission(request, pk):
 class UpdateLeadView(View):
     model = ApplicationSubmission
     form_class = UpdateSubmissionLeadForm
-    context_name = "lead_form"
     template = "funds/modals/update_lead_form.html"
 
     def dispatch(self, request, *args, **kwargs):
@@ -579,7 +582,7 @@ class UpdateReviewersView(View):
         if not permission:
             messages.warning(self.request, reason)
             return HttpResponseRedirect(self.submission.get_absolute_url())
-        return super(UpdateReviewersView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         reviewer_form = UpdateReviewersForm(
@@ -639,16 +642,15 @@ class UpdateReviewersView(View):
 
 
 @method_decorator(staff_required, name="dispatch")
-class UpdatePartnersView(View):
+class UpdateAuthorView(View):
     model = ApplicationSubmission
-    form_class = UpdatePartnersForm
-    context_name = "partner_form"
-    template = "funds/modals/update_partner_form.html"
+    form_class = UpdateAuthorForm
+    template = "funds/modals/update_author_form.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_action",
+            "change_author",
             request.user,
             object=self.submission,
             raise_exception=False,
@@ -656,62 +658,37 @@ class UpdatePartnersView(View):
         if not permission:
             messages.warning(self.request, reason)
             return HttpResponseRedirect(self.submission.get_absolute_url())
-        return super(UpdatePartnersView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
-        partner_form = UpdatePartnersForm(
-            user=self.request.user, instance=self.submission
-        )
+        author_form = self.form_class(user=self.request.user, instance=self.submission)
         return render(
             self.request,
             self.template,
             context={
-                "form": partner_form,
+                "form": author_form,
                 "value": _("Update"),
                 "object": self.submission,
             },
         )
 
     def post(self, *args, **kwargs):
-        form = UpdatePartnersForm(
+        form = self.form_class(
             self.request.POST, user=self.request.user, instance=self.submission
         )
-        old_partners = set(self.submission.partners.all())
+        old_author = self.submission.user
         if form.is_valid():
             form.save()
-            new_partners = set(form.instance.partners.all())
-
-            added = new_partners - old_partners
-            removed = old_partners - new_partners
             messenger(
-                MESSAGES.PARTNERS_UPDATED,
+                MESSAGES.UPDATE_AUTHOR,
                 request=self.request,
                 user=self.request.user,
                 source=self.submission,
-                added=added,
-                removed=removed,
+                related=old_author,
             )
 
-            messenger(
-                MESSAGES.PARTNERS_UPDATED_PARTNER,
-                request=self.request,
-                user=self.request.user,
-                source=self.submission,
-                added=added,
-                removed=removed,
-            )
-
-            return HttpResponse(
-                status=204,
-                headers={
-                    "HX-Trigger": json.dumps(
-                        {
-                            "partnerUpdated": None,
-                            "showMessage": _("Partners updated successfully."),
-                        }
-                    ),
-                },
-            )
+            messages.success(self.request, "Author updated successfully")
+            return HttpResponseClientRefresh()
 
         return render(
             self.request,
@@ -721,7 +698,6 @@ class UpdatePartnersView(View):
         )
 
 
-@method_decorator(staff_required, name="dispatch")
 class UpdateMetaTermsView(View):
     template = "funds/modals/update_meta_terms_form.html"
 
@@ -736,7 +712,7 @@ class UpdateMetaTermsView(View):
         if not permission:
             messages.warning(self.request, reason)
             return HttpResponseRedirect(self.submission.get_absolute_url())
-        return super(UpdateMetaTermsView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         metaterms_form = UpdateMetaTermsForm(
@@ -765,7 +741,7 @@ class UpdateMetaTermsView(View):
                     "HX-Trigger": json.dumps(
                         {
                             "metaTermsUpdated": None,
-                            "showMessage": _("Meta terms updated successfully."),
+                            "showMessage": _("Tags updated successfully."),
                         }
                     ),
                 },

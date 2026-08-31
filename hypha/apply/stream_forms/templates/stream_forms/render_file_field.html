@@ -1,8 +1,13 @@
 {% extends "stream_forms/render_field.html" %}
 {% block data_display %}
     {% if data.name %}
-        <div class="wrapper">
-            {% include "stream_forms/includes/file_field.html" with file=data %}
+        <div class="w-full">
+            <c-card-attachment
+                href="{{ data.url }}"
+                :filename="data.filename"
+                :exists="data.exists"
+                :modification_time="data.modification_time"
+            />
         </div>
     {% else %}
         {{ block.super }}

@@ -51,7 +51,9 @@ py-test: .cache/py-packages  ## Run Python tests with pytest, including coverage
 
 	@echo "Removing test files generated during test"
 	@find media/ -iname 'test_*.pdf' -delete
+	@find media/ -iname 'test_*.png' -delete
 	@find media/ -iname '*.dat' -delete
+	@find media/ -name '.DS_Store' -delete
 	@find media/ -type d -empty -delete
 	@rm -rf media/temp_uploads/*
 
@@ -71,9 +73,10 @@ endif
 .PHONY: download-esm-modules
 download-esm-modules:  ## Download ECMAScript modules for the project
 	$(PIP) install download-esm
-	download-esm @github/relative-time-element $(JS_ESM_DIR)
-	download-esm @github/filter-input-element $(JS_ESM_DIR)
-	download-esm choices.js $(JS_ESM_DIR)
+	${UV_RUN}download-esm @github/relative-time-element $(JS_ESM_DIR)
+	${UV_RUN}download-esm @github/filter-input-element $(JS_ESM_DIR)
+	${UV_RUN}download-esm choices.js $(JS_ESM_DIR)
+	${UV_RUN}download-esm cally $(JS_ESM_DIR)
 
 
 .cache/tandem:  ## Install tandem, a tool for running multiple commands in parallel
@@ -97,9 +100,7 @@ download-esm-modules:  ## Download ECMAScript modules for the project
 	@mkdir -p $$(dirname $@)
 	NODE_ENV=development npm install
 	cp node_modules/htmx.org/dist/htmx.min.js $(JS_VENDOR_DIR)/htmx.min.js
-	cp node_modules/htmx.org/dist/ext/multi-swap.js $(JS_VENDOR_DIR)/htmx-ext-multi-swap.min.js
+	cp node_modules/htmx-ext-multi-swap/dist/multi-swap.min.js $(JS_VENDOR_DIR)/htmx-ext-multi-swap.min.js
 	cp node_modules/alpinejs/dist/cdn.min.js $(JS_VENDOR_DIR)/alpine.min.js
 	cp node_modules/@alpinejs/focus/dist/cdn.min.js $(JS_VENDOR_DIR)/alpine-focus.min.js
-	cp node_modules/daterangepicker/moment.min.js $(JS_VENDOR_DIR)/moment.min.js
-	cp node_modules/daterangepicker/daterangepicker.js $(JS_VENDOR_DIR)/daterangepicker.min.js
 	@touch $@

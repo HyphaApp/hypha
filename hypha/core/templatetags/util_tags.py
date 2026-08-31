@@ -1,3 +1,5 @@
+import uuid
+
 from django import template
 from wagtail.coreutils import camelcase_to_underscore
 
@@ -20,3 +22,8 @@ def field_type(bound_field):
 def verbose_name(instance) -> str:
     """Get the verbose name of a wagtail page (in lowercase)"""
     return instance.specific._meta.verbose_name.title().lower()
+
+
+@register.simple_tag
+def generate_uuid() -> str:
+    return str(uuid.uuid4())

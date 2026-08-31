@@ -5,13 +5,14 @@ from dateutil.relativedelta import relativedelta
 from django.apps import apps
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import ordinal
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Case, ExpressionWrapper, F, OuterRef, Q, Subquery, When
 from django.db.models.functions import Cast
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 from wagtail.fields import StreamField
 
 from hypha.apply.funds.models.mixins import AccessFormData
@@ -86,10 +87,15 @@ class Report(BaseStreamForm, AccessFormData, models.Model):
     project = models.ForeignKey(
         "application_projects.Project", on_delete=models.CASCADE, related_name="reports"
     )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="owned_reports",
+    )
     form_fields = StreamField(
         # Re-use the Project Custom Form class. The original fields (used at the time of response) should be required.
         ProjectFormCustomFormFieldsBlock(),
-        use_json_field=True,
         null=True,
     )
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
@@ -115,6 +121,8 @@ class Report(BaseStreamForm, AccessFormData, models.Model):
     class Meta:
         ordering = ("-end_date",)
         db_table = "application_projects_report"
+        verbose_name = pgettext_lazy("project report (noun)", "report")
+        verbose_name_plural = pgettext_lazy("project report (noun)", "reports")
 
     def get_absolute_url(self):
         return reverse("apply:projects:reports:detail", kwargs={"pk": self.pk})
@@ -193,6 +201,8 @@ class ReportVersion(BaseStreamForm, AccessFormData, models.Model):
 
     class Meta:
         db_table = "application_projects_reportversion"
+        verbose_name = _("report version")
+        verbose_name_plural = _("report versions")
 
     @property
     def form_fields(self):
@@ -207,6 +217,8 @@ class ReportPrivateFiles(models.Model):
 
     class Meta:
         db_table = "application_projects_reportprivatefiles"
+        verbose_name = _("report private file")
+        verbose_name_plural = _("report private files")
 
     @property
     def filename(self):
@@ -247,10 +259,12 @@ class ReportConfig(models.Model):
 
     class Meta:
         db_table = "application_projects_reportconfig"
+        verbose_name = _("report config")
+        verbose_name_plural = _("report configs")
 
     def get_frequency_display(self):
         if self.disable_reporting:
-            return _("Reporting Disabled")
+            return _("Disabled")
         if self.does_not_repeat:
             last_report = self.last_report()
             if last_report:
@@ -266,13 +280,24 @@ class ReportConfig(models.Model):
             )
         next_report = self.current_due_report()
 
+        # current_due_report() only returns an existing pending report row and
+        # can be None (e.g. the project hasn't started yet, or the next report
+        # row hasn't been created). Fall back to the schedule anchor date, which
+        # is what a report's end_date derives from, so the displayed schedule is
+        # still correct.
+        reference_date = (
+            next_report.end_date
+            if next_report
+            else (self.schedule_start or self.project.proposed_start)
+        )
+
         if self.frequency == self.YEAR:
             if self.schedule_start and self.schedule_start.day == 31:
                 day_of_month = _("last day")
                 month = self.schedule_start.strftime("%B")
             else:
-                day_of_month = ordinal(next_report.end_date.day)
-                month = next_report.end_date.strftime("%B")
+                day_of_month = ordinal(reference_date.day)
+                month = reference_date.strftime("%B")
             if self.occurrence == 1:
                 return _("Once a year on {month} {day}").format(
                     day=day_of_month, month=month
@@ -285,14 +310,14 @@ class ReportConfig(models.Model):
             if self.schedule_start and self.schedule_start.day == 31:
                 day_of_month = _("last day")
             else:
-                day_of_month = ordinal(next_report.end_date.day)
+                day_of_month = ordinal(reference_date.day)
             if self.occurrence == 1:
                 return _("Once a month on the {day}").format(day=day_of_month)
             return _("Every {occurrence} months on the {day}").format(
                 occurrence=self.occurrence, day=day_of_month
             )
 
-        weekday = next_report.end_date.strftime("%A")
+        weekday = reference_date.strftime("%A")
 
         if self.occurrence == 1:
             return _("Once a week on {weekday}").format(weekday=weekday)
@@ -312,6 +337,14 @@ class ReportConfig(models.Model):
     def past_due_reports(self):
         return self.project.reports.to_do()
 
+    def future_due_reports(self):
+        today = timezone.now().date()
+        return self.project.reports.filter(
+            current__isnull=True,
+            skipped=False,
+            end_date__gte=today,
+        ).order_by("end_date")
+
     def last_report(self):
         today = timezone.now().date()
         # Get the most recent report that was either:
@@ -322,7 +355,15 @@ class ReportConfig(models.Model):
             Q(end_date__lt=today) | Q(skipped=True) | Q(submitted__isnull=False)
         ).first()
 
-    def current_due_report(self):
+    def ensure_due_report(self):
+        """Create the next scheduled report row if none exists yet.
+
+        Computes what date the next report should be due based on the reporting
+        schedule, then finds or creates a pending report for that date. Safe to
+        call concurrently — uses SELECT FOR UPDATE to prevent duplicate creation.
+
+        Returns the pending report, or None if no report is required.
+        """
         if self.disable_reporting:
             return None
 
@@ -363,14 +404,48 @@ class ReportConfig(models.Model):
                         today,
                     )
 
-        report, _ = self.project.reports.update_or_create(
-            project=self.project,
-            current__isnull=True,
-            skipped=False,
-            end_date__gte=today,
-            defaults={"end_date": next_due_date},
-        )
+        with transaction.atomic():
+            # Lock this ReportConfig row so concurrent calls wait rather than
+            # both finding no report and each creating one.
+            ReportConfig.objects.select_for_update().get(pk=self.pk)
+
+            due_reports = self.project.reports.filter(
+                current__isnull=True,
+                skipped=False,
+                end_date__gte=today,
+            )
+
+            report = due_reports.order_by("end_date").first()
+            if report is None:
+                report = self.project.reports.create(
+                    project=self.project,
+                    end_date=next_due_date,
+                )
+
         return report
+
+    def current_due_report(self):
+        """Return the earliest pending future report without creating one.
+
+        Use ensure_due_report() when the scheduled report row must exist
+        (e.g. on page load or in the notification command).
+        """
+        if self.disable_reporting:
+            return None
+
+        if not self.project.proposed_start:
+            return None
+
+        today = timezone.now().date()
+        return (
+            self.project.reports.filter(
+                current__isnull=True,
+                skipped=False,
+                end_date__gte=today,
+            )
+            .order_by("end_date")
+            .first()
+        )
 
     def current_report(self):
         """This is different from current_due_report as it will return a completed report

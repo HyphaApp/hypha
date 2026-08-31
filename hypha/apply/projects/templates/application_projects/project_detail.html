@@ -1,120 +1,120 @@
 {% extends "base-apply.html" %}
 
-{% load i18n static wagtailcore_tags approval_tools invoice_tools project_tags %}
+{% load i18n static wagtailcore_tags approval_tools invoice_tools project_tags primaryactions_tags %}
 {% load heroicons %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
-{% block body_class %}{% endblock %}
+{% block hero %}
+    <c-hero padding="pt-4">
+        {% include "application_projects/includes/project_header.html" %}
+
+        <div role="tablist" class="font-medium tabs tabs-lg tabs-lift text-base-content print-hidden">
+            <a
+                class="tab [--color-base-content:var(--color-neutral-content)]"
+                href="{{ project.submission.get_absolute_url }}"
+            >
+                {% trans "Application" %}
+            </a>
+
+            {% include "funds/includes/projects_tab.html" with submission=object.submission user=user current_project=object active=True %}
+
+            <a
+                class="tab [--color-base-content:var(--color-neutral-content)]"
+                href="{% url 'funds:submissions:comments' pk=object.submission.id %}"
+            >
+                {% trans "Comments" %} ({{ comments_count }})
+            </a>
+        </div>
+    </c-hero>
+{% endblock %}
+
 
 {% block content %}
-    <div class="pt-4 pb-0 admin-bar">
-        <div class="admin-bar__inner">
-
-            {% include "application_projects/includes/project_header.html" %}
-
-            <div class="tabs">
-                <div class="tabs__container">
-                    <a
-                        class="tab__item"
-                        href="{{ project.submission.get_absolute_url }}"
-                    >
-                        {% trans "Application" %}
-                    </a>
-
-                    <a
-                        class="tab__item tab__item--active"
-                        href="{% url 'funds:submissions:project' pk=object.submission.id %}"
-                    >
-                        {% trans "Project" %}
-                    </a>
-
-                    <a
-                        class="tab__item"
-                        href="{% url 'funds:submissions:comments' pk=object.submission.id %}"
-                    >
-                        {% trans "Conversation" %} ({{ comments_count }})
-                    </a>
-
+    <div class="my-4 mx-auto layout layout-sidebar-end layout-flowrow-until-md layout-sidebar-flowrow-end md:[--layout-sidebar-width:20.5rem]">
+        <div class="layout-main">
+            {% show_closing_banner object as show_banner %}
+            {% if show_banner %}
+                <div class="mb-4 alert alert-warning">
+                    {% display_project_status object request.user as project_status %}
+                    {% blocktrans with status=project_status trimmed %}
+                        This project is in {{ status }} state.
+                    {% endblocktrans %}
                 </div>
-            </div>
-        </div>
-    </div>
+            {% endif %}
 
-    {% show_closing_banner object as show_banner %}
-    {% if show_banner %}
-        <div class="p-2 font-semibold text-center text-white bg-red-500">
-            {% display_project_status object request.user as project_status %}
-            {% blocktrans with status=project_status %} This project is in {{ status }} state. {% endblocktrans %}
-        </div>
-    {% endif %}
+            <article class="grow @container flex flex-col gap-8">
+                <header>
+                    <h2 class="pb-2 mb-2 font-semibold border-b text-h3">
+                        {% trans "Project Information" %}
+                    </h2>
 
-    <div class="wrapper wrapper--large wrapper--tabs">
+                    <dl
+                        class="grid grid-cols-1 @md:grid-cols-2 gap-2"
+                        hx-get='{% url "apply:projects:project_information" object.pk %}'
+                        hx-trigger="informationUpdated from:body"
+                    >
+                        {% include "application_projects/partials/project_information.html" %}
+                    </dl>
+                </header>
 
-        {% block notifications %}{% endblock %}
-
-        <div class="wrapper wrapper--sidebar">
-            <article class="wrapper--sidebar--inner">
-                <h3>{% trans "Project Information" %}</h3>
-                <div
-                    class="hypha-grid hypha-grid--proposal-info"
-                    hx-get='{% url "apply:projects:project_information" object.submission.id %}'
-                    hx-trigger="load, informationUpdated from:body"
-                >
-                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-14"></span>
-                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-14"></span>
-                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-12"></span>
-                    <span class="inline-block bg-gray-200 rounded-md animate-pulse min-h-12"></span>
-                </div>
-
-                {% user_can_view_invoices object user as can_view_invoices %}
-                {% if can_view_invoices %}
-                    <div class="wrapper wrapper--outer-space-large">
-                        {% include "application_projects/includes/invoices.html" %}
-                    </div>
-                {% endif %}
-
-                {% project_show_reports_section object as show_reports_section %}
-                {% if show_reports_section %}
-                    <div class="wrapper wrapper--outer-space-large">
-                        {% include "reports/includes/reports.html" %}
-                    </div>
+                {% user_can_view_project_documents object user as can_view_project_documents %}
+                {% if can_view_project_documents %}
+                    {% include "application_projects/includes/project_documents.html" %}
                 {% endif %}
 
                 {% project_can_have_contracting_section object as can_have_contracting_section %}
-                {% if can_have_contracting_section %}
+                {% user_can_view_contracting_documents object user as can_view_contracting_documents %}
+                {% if can_have_contracting_section and can_view_contracting_documents %}
                     {% include "application_projects/includes/contracting_documents.html" %}
                 {% endif %}
 
-                {% include "application_projects/includes/project_documents.html" %}
+                {% project_can_have_invoices object as can_have_invoices %}
+                {% user_can_view_invoices object user as can_view_invoices %}
+                {% if can_have_invoices and can_view_invoices %}
+                    {% include "application_projects/includes/invoices.html" %}
+                {% endif %}
+
+                {% project_show_reports_section object as show_reports_section %}
+                {% user_can_view_reports object user as can_view_reports %}
+                {% if show_reports_section and can_view_reports %}
+                    {% include "reports/includes/reports.html" %}
+                {% endif %}
             </article>
+        </div>
 
-            {% block sidebar %}
-                <aside class="sidebar">
-                    {% user_next_step_on_project object user request=request as next_step %}
-                    {% if next_step %}
-                        <div class="py-3 px-5 mb-8 bg-yellow-200 shadow-sm sidebar__inner--actions">
-                            <h5 class="flex pb-2 border-b border-b-orange-200">
-                                {% heroicon_solid "sparkles" class="align-text-top me-1 fill-orange-500" aria_hidden=true %}
-                                <span>{{ next_step.heading }}</span>
-                            </h5>
-                            <p class="">{{ next_step.text }}</p>
-                            {% user_next_step_instructions object user as instructions %}
-                            {% if instructions %}
-                                <div class="sidebar__inner--actions--instructions">
-                                    {% for instruction in instructions %}
-                                        <p>{{forloop.counter}}. {{ instruction }}</p>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
+        <aside class="flex flex-col gap-4 layout-sidebar">
+            {% user_next_step_on_project object user request=request as next_step %}
+            {% if next_step %}
+                <div class="card [--card-fs:1rem] bg-warning text-warning-content shadow-xs">
+                    <div class="card-body">
+                        <h2 class="card-title">
+                            {% heroicon_solid "sparkles" class="align-text-top" aria_hidden=true %}
+                            <span>{{ next_step.heading }}</span>
+                        </h2>
 
-                        </div>
-                    {% endif %}
-                    {% if object.paf_approvals.exists and not user.is_applicant %}
-                        <div class="sidebar__inner sidebar__inner--actions">
+                        <p>{{ next_step.text }}</p>
 
-                            <h5>{% trans "Project form approvals" %}</h5>
+                        {% user_next_step_instructions object user as instructions %}
+                        {% if instructions %}
+                            <div class="sidebar__inner--actions--instructions">
+                                {% for instruction in instructions %}
+                                    <p>{{forloop.counter}}. {{ instruction }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
 
+            {% if object.paf_approvals.exists and not user.is_applicant %}
+                <div class="card card-border shadow-xs">
+                    <div class="card-body">
+                        <h2 class="card-title">
+                            {% trans "Project form approvals" %}
+                        </h2>
+
+                        <div>
                             {% for paf_approval in object.paf_approvals.all %}
 
                                 {% if not paf_approval.approved %}
@@ -136,8 +136,10 @@
 
                                         </div>
                                     {% else %}
-                                        <p class="flex gap-2 items-center m-0 mb-2 text-red-600">
-                                            <span>{% heroicon_micro "clock" class="inline-block w-4 h-4 align-middle" aria_hidden=true %}</span>
+                                        <p class="flex gap-2 items-center m-0 mb-2 text-error">
+                                            <span>
+                                                {% heroicon_micro "clock" class="inline-block align-middle size-4" aria_hidden=true %}
+                                            </span>
                                             <span>
                                                 {% trans "Pending approval from " %}
                                                 {% if paf_approval.user %}
@@ -160,25 +162,30 @@
                                         </span>
                                     </p>
                                 {% endif %}
-
                             {% endfor %}
-
                         </div>
-                    {% endif %}
+                    </div>
+                </div>
+            {% endif %}
 
-                    {% if request.user.is_apply_staff %}
-                        {% block admin_assignments %}{% endblock %}
-                    {% endif %}
+            {% if request.user.is_apply_staff %}
+                {% block admin_assignments %}{% endblock %}
+            {% endif %}
 
-                </aside>
-            {% endblock sidebar %}
-        </div>
-
+            {% display_coapplicant_section user object as coapplicant_section %}
+            {% if coapplicant_section %}
+                {% block co_applicant %}
+                    <div
+                        hx-trigger="revealed, coApplicantUpdated from:body"
+                        hx-get="{% url 'funds:submissions:partial_coapplicant_invites' object.submission.id %}"
+                    ></div>
+                {% endblock %}
+            {% endif %}
+        </aside>
     </div>
 {% endblock content %}
 
 
 {% block extra_js %}
-    <script src="{% static 'js/past-reports-pagination.js' %}"></script>
     <script src="{% static 'js/report-calculator.js' %}"></script>
 {% endblock %}
