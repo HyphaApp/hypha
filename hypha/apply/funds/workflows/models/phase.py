@@ -33,12 +33,13 @@ class Phase:
 
         self.public_name = str(public) if public else self.display_name
         self.future_name_staff = str(future) if future else self.display_name
-        # Derive the slug and the colour from the untranslated source string:
-        # PHASE_BG_COLORS is keyed by the English msgids, and the slug is used
-        # as a filter value in URLs, so it must not vary with the active
-        # language.
+        # Derive the slug, the colour and the source name from the untranslated
+        # string: PHASE_BG_COLORS is keyed by the English msgids, the slug is
+        # used as a filter value in URLs, and the registry matches phases by
+        # their source name, so none of them must vary with the active language.
         with override(None):
             source_display = str(display)
+        self.display_name_source = source_display
         self.display_slug = slugify(source_display)
         self.bg_color = PHASE_BG_COLORS.get(source_display, "bg-gray-200")
         self.future_name_public = str(future) if future else self.public_name

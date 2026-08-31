@@ -180,7 +180,7 @@ def get_ext_or_higher_statuses():
 def get_accepted_statuses():
     accepted_statuses = set()
     for phase_name, phase in PHASES:
-        if phase.display_name == "Accepted":
+        if phase.display_name_source == "Accepted":
             accepted_statuses.add(phase_name)
     return accepted_statuses
 
@@ -188,7 +188,7 @@ def get_accepted_statuses():
 def get_dismissed_statuses():
     dismissed_statuses = set()
     for phase_name, phase in PHASES:
-        if phase.display_name == "Dismissed":
+        if phase.display_name_source == "Dismissed":
             dismissed_statuses.add(phase_name)
     return dismissed_statuses
 

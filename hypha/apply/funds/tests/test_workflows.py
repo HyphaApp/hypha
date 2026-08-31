@@ -4,6 +4,7 @@ from types import SimpleNamespace
 
 import pytest
 from django.test import SimpleTestCase
+from django.utils.translation import gettext_lazy, override
 
 from hypha.apply.users.tests.factories import StaffFactory
 
@@ -11,10 +12,15 @@ from ..workflows import (
     DETERMINATION_OUTCOMES,
     INITIAL_STATE,
     WORKFLOWS,
+    accepted_statuses,
+    dismissed_statuses,
     ext_or_higher_statuses,
     ext_review_statuses,
+    review_statuses,
 )
 from ..workflows.constants import DETERMINATION_RESPONSE_PHASES
+from ..workflows.models.phase import Phase
+from ..workflows.permissions import staff_edit_permissions
 from .factories import ApplicationSubmissionFactory
 
 WORKFLOW_NAME = "single_ext_int"
@@ -36,7 +42,7 @@ class TestRequestExternalInternalWorkflow(SimpleTestCase):
             "draft": 0,
             "in_discussion": 1,
             "ext_int_more_info": 1,
-            "ext_int_ready_for_review": 2,
+            "ext_int_screened": 2,
             "ext_int_external_review": 3,
             "ext_int_post_external_review_discussion": 4,
             "ext_int_post_external_review_more_info": 4,
@@ -54,16 +60,14 @@ class TestRequestExternalInternalWorkflow(SimpleTestCase):
 
     def test_ready_for_review_comes_before_external_review(self):
         self.assertLess(
-            self.workflow["ext_int_ready_for_review"].step,
+            self.workflow["ext_int_screened"].step,
             self.workflow["ext_int_external_review"].step,
         )
         # Screening can only reach the external review through the new phase.
         self.assertNotIn(
             "ext_int_external_review", self.workflow[INITIAL_STATE].transitions
         )
-        self.assertIn(
-            "ext_int_ready_for_review", self.workflow[INITIAL_STATE].transitions
-        )
+        self.assertIn("ext_int_screened", self.workflow[INITIAL_STATE].transitions)
 
     def test_ready_for_review_is_hidden_from_the_applicant(self):
         applicant = SimpleNamespace(
@@ -72,7 +76,7 @@ class TestRequestExternalInternalWorkflow(SimpleTestCase):
         reviewer = SimpleNamespace(
             is_apply_staff=False, is_applicant=False, is_reviewer=True
         )
-        phase = self.workflow["ext_int_ready_for_review"]
+        phase = self.workflow["ext_int_screened"]
         self.assertEqual(phase.display_name, "Ready for Review")
         self.assertFalse(phase.permissions.can_view(applicant))
         self.assertTrue(phase.permissions.can_view(reviewer))
@@ -121,9 +125,25 @@ class TestRequestExternalInternalWorkflow(SimpleTestCase):
 
     def test_picked_up_by_derived_status_sets(self):
         self.assertIn("ext_int_external_review", ext_review_statuses)
-        self.assertNotIn("ext_int_ready_for_review", ext_review_statuses)
-        self.assertNotIn("ext_int_ready_for_review", ext_or_higher_statuses)
+        self.assertNotIn("ext_int_screened", ext_review_statuses)
+        self.assertNotIn("ext_int_screened", ext_or_higher_statuses)
         self.assertIn("ext_int_internal_review", ext_or_higher_statuses)
+        self.assertIn("ext_int_accepted", accepted_statuses)
+        self.assertIn("ext_int_rejected", dismissed_statuses)
+
+    def test_ready_for_review_is_not_a_review_status(self):
+        # Reviewers are notified for everything in review_statuses, and they
+        # can not review while the application is only screened.
+        self.assertNotIn("ext_int_screened", review_statuses)
+        self.assertIn("ext_int_external_review", review_statuses)
+        self.assertIn("ext_int_internal_review", review_statuses)
+
+    def test_both_discussions_expect_a_determination(self):
+        # An application can be decided straight after the external review,
+        # without opening the internal one.
+        self.assertIn(
+            "ext_int_post_external_review_discussion", DETERMINATION_RESPONSE_PHASES
+        )
         self.assertIn("ext_int_post_review_discussion", DETERMINATION_RESPONSE_PHASES)
 
 
@@ -135,7 +155,7 @@ def test_walk_the_whole_workflow():
     assert submission.status == "in_discussion"
 
     chain = [
-        "ext_int_ready_for_review",
+        "ext_int_screened",
         "ext_int_external_review",
         "ext_int_post_external_review_discussion",
         "ext_int_internal_review",
@@ -150,3 +170,31 @@ def test_walk_the_whole_workflow():
         assert submission.status == target
 
     assert submission.phase.display_name == "Accepted"
+
+
+class TestPhaseSourceNames(SimpleTestCase):
+    """The names the code matches on must not follow the active language."""
+
+    def phase(self, display):
+        return Phase(
+            "a_phase",
+            display,
+            stage=None,
+            permissions=staff_edit_permissions,
+            step=0,
+        )
+
+    def test_source_name_slug_and_colour_ignore_the_active_language(self):
+        with override("cs"):
+            accepted = self.phase(gettext_lazy("Accepted"))
+            discussion = self.phase(gettext_lazy("Ready for Discussion"))
+
+        # Sanity check that "cs" really does translate these.
+        self.assertNotEqual(accepted.display_name, "Accepted")
+
+        self.assertEqual(accepted.display_name_source, "Accepted")
+        self.assertEqual(accepted.display_slug, "accepted")
+        self.assertEqual(accepted.bg_color, "bg-green-200")
+        self.assertEqual(discussion.display_name_source, "Ready for Discussion")
+        self.assertEqual(discussion.display_slug, "ready-for-discussion")
+        self.assertEqual(discussion.bg_color, "bg-blue-100")

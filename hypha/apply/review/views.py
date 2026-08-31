@@ -250,13 +250,6 @@ def review_workflow_actions(request, submission):
     ):
         # Automatically transition the proposal to "Ready for discussion".
         action = "post_external_review_discussion"
-    elif (
-        transition_after
-        and submission.status == "ext_int_internal_review"
-        and submission.reviews.count() >= transition_after
-    ):
-        # Automatically transition the application to "Ready for discussion".
-        action = "ext_int_post_review_discussion"
 
     # If action is set run perform_transition().
     if action:

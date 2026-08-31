@@ -31,7 +31,7 @@ SingleStageExtIntDefinition = [
         INITIAL_STATE: {
             "transitions": {
                 "ext_int_more_info": _("Request More Information"),
-                "ext_int_ready_for_review": _("Ready for Review"),
+                "ext_int_screened": _("Ready for Review"),
                 "ext_int_determination": _("Ready for Determination"),
                 "ext_int_rejected": _("Dismiss"),
             },
@@ -60,7 +60,7 @@ SingleStageExtIntDefinition = [
         },
     },
     {
-        "ext_int_ready_for_review": {
+        "ext_int_screened": {
             "transitions": {
                 "ext_int_external_review": _("Open External Review"),
                 "ext_int_determination": _("Ready for Determination"),
@@ -76,7 +76,7 @@ SingleStageExtIntDefinition = [
         "ext_int_external_review": {
             "transitions": {
                 "ext_int_post_external_review_discussion": _("Close Review"),
-                "ext_int_ready_for_review": _("Ready for Review (revert)"),
+                "ext_int_screened": _("Ready for Review (revert)"),
             },
             "display": _("External Review"),
             "public": _("Application Review"),

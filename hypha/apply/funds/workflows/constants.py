@@ -44,6 +44,7 @@ DETERMINATION_RESPONSE_PHASES = [
     "post_external_review_discussion",
     "ext_post_external_review_discussion",
     "com_post_external_review_discussion",
+    "ext_int_post_external_review_discussion",
     "ext_int_post_review_discussion",
 ]
 
