@@ -31,10 +31,11 @@
                 {% endif %}
 
                 {% can_delete invoice user as user_can_delete_request %}
-                {% if not user.is_applicant and not user_can_delete_request %}
+                {% if user_can_delete_request %}
                     <a
                         class="btn btn-sm btn-outline btn-error btn-square"
-                        href="{% url 'apply:projects:invoice-delete' pk=invoice.pk %}"
+                        hx-get="{% url 'apply:projects:invoice-delete' pk=invoice.pk %}"
+                        hx-target="#htmx-modal"
                     >
                         {% heroicon_micro "trash" aria_hidden=true %}
                         <span class="sr-only">{% trans "Delete" %}</span>

@@ -464,7 +464,6 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
 
     def dispatch(self, *args, **kwargs):
         self.invoice = get_object_or_404(Invoice, pk=self.kwargs["pk"])
-        self.project = self.invoice.project
 
         return super().dispatch(*args, **kwargs)
 
