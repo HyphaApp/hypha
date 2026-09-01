@@ -7,7 +7,7 @@ from hypha.apply.users.tests.factories import (
     StaffFactory,
 )
 
-from ..models.payment import (
+from ..models.invoice import (
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     PAID,

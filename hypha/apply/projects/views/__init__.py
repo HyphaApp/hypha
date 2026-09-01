@@ -1,4 +1,4 @@
-from .payment import (
+from .invoice import (
     BatchUpdateInvoiceStatusView,
     ChangeInvoiceStatusView,
     CreateInvoiceView,

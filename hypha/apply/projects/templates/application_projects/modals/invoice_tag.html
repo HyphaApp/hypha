@@ -3,7 +3,7 @@
 
 <div class="p-4">
     <form
-        hx-post="{% url 'apply:projects:invoice-tags' pk=object.project.pk invoice_pk=object.pk %}"
+        hx-post="{% url 'apply:projects:invoice-tags' pk=object.pk %}"
         hx-swap="innerHTML"
     >
         {% csrf_token %}

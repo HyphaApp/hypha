@@ -9,7 +9,7 @@ from hypha.apply.activity.templatetags.activity_tags import display_for
 from hypha.apply.projects.constants import (
     INVOICE_STATUS_CLASSNAME_MAP,
 )
-from hypha.apply.projects.models.payment import PAID
+from hypha.apply.projects.models.invoice import PAID
 from hypha.apply.projects.models.project import (
     CLOSING,
     COMPLETE,
@@ -70,7 +70,7 @@ def project_can_have_invoices(project):
 
 @register.simple_tag
 def get_invoice_form(invoice, user):
-    from hypha.apply.projects.views.payment import ChangeInvoiceStatusForm
+    from hypha.apply.projects.views.invoice import ChangeInvoiceStatusForm
 
     form = ChangeInvoiceStatusForm(instance=invoice, user=user)
     if form:

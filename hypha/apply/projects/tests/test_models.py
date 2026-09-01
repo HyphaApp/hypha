@@ -9,7 +9,7 @@ from hypha.apply.users.tests.factories import (
     StaffFactory,
 )
 
-from ..models.payment import (
+from ..models.invoice import (
     APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,

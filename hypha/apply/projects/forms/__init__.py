@@ -1,4 +1,4 @@
-from .payment import (
+from .invoice import (
     BatchUpdateInvoiceStatusForm,
     ChangeInvoiceStatusForm,
     CreateInvoiceForm,

@@ -13,7 +13,7 @@ from hypha.apply.users.roles import APPROVER_GROUP_NAME, STAFF_GROUP_NAME
 from hypha.apply.users.tests.factories import GroupFactory, StaffFactory, UserFactory
 from hypha.home.factories import ApplySiteFactory
 
-from ..models.payment import Invoice, SupportingDocument
+from ..models.invoice import Invoice, SupportingDocument
 from ..models.project import (
     COMPLETE,
     INVOICING_AND_REPORTING,

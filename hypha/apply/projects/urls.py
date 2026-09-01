@@ -75,6 +75,51 @@ urlpatterns = [
         name="invoice-export-download",
     ),
     path(
+        "invoices/<int:pk>/",
+        include(
+            [
+                path("", InvoiceView.as_view(), name="invoice-detail"),
+                path("edit/", EditInvoiceView.as_view(), name="invoice-edit"),
+                path(
+                    "update/",
+                    ChangeInvoiceStatusView.as_view(),
+                    name="invoice-update",
+                ),
+                path(
+                    "delete/",
+                    DeleteInvoiceView.as_view(),
+                    name="invoice-delete",
+                ),
+                path(
+                    "partial/status/",
+                    partial_get_invoice_status,
+                    name="partial-invoice-status",
+                ),
+                path(
+                    "actions/",
+                    partial_get_invoice_detail_actions,
+                    name="partial-invoice-detail-actions",
+                ),
+                path("tags/", TagInvoiceView.as_view(), name="invoice-tags"),
+                path(
+                    "partial/tags/",
+                    partial_get_invoice_tags,
+                    name="partial-invoice-tags",
+                ),
+                path(
+                    "documents/invoice/",
+                    InvoicePrivateMedia.as_view(),
+                    name="invoice-document",
+                ),
+                path(
+                    "documents/supporting/<int:file_pk>/",
+                    InvoicePrivateMedia.as_view(),
+                    name="invoice-supporting-document",
+                ),
+            ]
+        ),
+    ),
+    path(
         "all/bulk_invoice_status_update/",
         BatchUpdateInvoiceStatusView.as_view(),
         name="bulk_invoice_status_update",
@@ -246,57 +291,6 @@ urlpatterns = [
                     partial_get_invoice_status_table,
                     {"rejected": True},
                     name="partial-rejected-invoices-status",
-                ),
-                path(
-                    "invoices/<int:invoice_pk>/",
-                    include(
-                        [
-                            path("", InvoiceView.as_view(), name="invoice-detail"),
-                            path(
-                                "edit/", EditInvoiceView.as_view(), name="invoice-edit"
-                            ),
-                            path(
-                                "update/",
-                                ChangeInvoiceStatusView.as_view(),
-                                name="invoice-update",
-                            ),
-                            path(
-                                "delete/",
-                                DeleteInvoiceView.as_view(),
-                                name="invoice-delete",
-                            ),
-                            path(
-                                "partial/status/",
-                                partial_get_invoice_status,
-                                name="partial-invoice-status",
-                            ),
-                            path(
-                                "actions/",
-                                partial_get_invoice_detail_actions,
-                                name="partial-invoice-detail-actions",
-                            ),
-                            path(
-                                "tags/",
-                                TagInvoiceView.as_view(),
-                                name="invoice-tags",
-                            ),
-                            path(
-                                "partial/tags/",
-                                partial_get_invoice_tags,
-                                name="partial-invoice-tags",
-                            ),
-                            path(
-                                "documents/invoice/",
-                                InvoicePrivateMedia.as_view(),
-                                name="invoice-document",
-                            ),
-                            path(
-                                "documents/supporting/<int:file_pk>/",
-                                InvoicePrivateMedia.as_view(),
-                                name="invoice-supporting-document",
-                            ),
-                        ]
-                    ),
                 ),
             ]
         ),
