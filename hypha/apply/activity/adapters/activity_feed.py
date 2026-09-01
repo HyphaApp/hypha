@@ -6,7 +6,6 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity.models import ALL, APPLICANT, TEAM
 from hypha.apply.activity.options import MESSAGES
-from hypha.apply.funds.workflows.constants import PHASE_BG_COLORS
 from hypha.apply.projects.utils import (
     get_invoice_public_status,
     get_invoice_status_display_value,
@@ -227,9 +226,8 @@ class ActivityAdapter(AdapterBase):
         )
 
     def handle_transition(self, old_phase, source, **kwargs):
-        def wrap_in_color_class(text):
-            color_class = PHASE_BG_COLORS.get(text, "")
-            return f'<span class="rounded-full inline-block px-2 py-0.5 font-medium text-gray-800 {color_class}">{text}</span>'
+        def wrap_in_color_class(phase, text):
+            return f'<span class="rounded-full inline-block px-2 py-0.5 font-medium text-gray-800 {phase.bg_color}">{text}</span>'
 
         submission = source
         base_message = _("Progressed from {old_display} to {new_display}")
@@ -237,8 +235,8 @@ class ActivityAdapter(AdapterBase):
         new_phase = submission.phase
 
         staff_message = base_message.format(
-            old_display=wrap_in_color_class(old_phase.display_name),
-            new_display=wrap_in_color_class(new_phase.display_name),
+            old_display=wrap_in_color_class(old_phase, old_phase.display_name),
+            new_display=wrap_in_color_class(new_phase, new_phase.display_name),
         )
 
         if new_phase.permissions.can_view(submission.user):
@@ -249,8 +247,8 @@ class ActivityAdapter(AdapterBase):
                 )
 
             applicant_message = base_message.format(
-                old_display=wrap_in_color_class(old_phase.public_name),
-                new_display=wrap_in_color_class(new_phase.public_name),
+                old_display=wrap_in_color_class(old_phase, old_phase.public_name),
+                new_display=wrap_in_color_class(new_phase, new_phase.public_name),
             )
 
             return json.dumps(
