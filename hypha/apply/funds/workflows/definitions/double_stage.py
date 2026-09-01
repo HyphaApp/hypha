@@ -33,7 +33,7 @@ DoubleStageDefinition = [
             "transitions": {
                 "concept_more_info": _("Request More Information"),
                 "concept_internal_review": _("Open Review"),
-                "concept_determination": _("Ready For Preliminary Determination"),
+                "concept_determination": _("Ready for Preliminary Determination"),
                 "invited_to_proposal": _("Invite to Proposal"),
                 "concept_rejected": _("Dismiss"),
             },
@@ -57,7 +57,7 @@ DoubleStageDefinition = [
                 },
                 "concept_rejected": _("Dismiss"),
                 "invited_to_proposal": _("Invite to Proposal"),
-                "concept_determination": _("Ready For Preliminary Determination"),
+                "concept_determination": _("Ready for Preliminary Determination"),
             },
             "display": _("More information required"),
             "stage": Concept,
@@ -83,12 +83,12 @@ DoubleStageDefinition = [
         "concept_review_discussion": {
             "transitions": {
                 "concept_review_more_info": _("Request More Information"),
-                "concept_determination": _("Ready For Preliminary Determination"),
+                "concept_determination": _("Ready for Preliminary Determination"),
                 "concept_internal_review": _("Open Review (revert)"),
                 "invited_to_proposal": _("Invite to Proposal"),
                 "concept_rejected": _("Dismiss"),
             },
-            "display": _("Ready For Discussion"),
+            "display": _("Ready for Discussion"),
             "stage": Concept,
             "permissions": hidden_from_applicant_permissions,
         },
@@ -115,7 +115,7 @@ DoubleStageDefinition = [
     {
         "concept_determination": {
             "transitions": {
-                "concept_review_discussion": _("Ready For Discussion (revert)"),
+                "concept_review_discussion": _("Ready for Discussion (revert)"),
                 "invited_to_proposal": _("Invite to Proposal"),
                 "concept_rejected": _("Dismiss"),
             },
@@ -159,7 +159,7 @@ DoubleStageDefinition = [
                     "custom": {"trigger_on_submit": True},
                 },
                 "external_review": _("Open External Review"),
-                "proposal_determination": _("Ready For Final Determination"),
+                "proposal_determination": _("Ready for Final Determination"),
                 "proposal_rejected": _("Dismiss"),
             },
             "display": _("Invited for Proposal"),
@@ -173,7 +173,7 @@ DoubleStageDefinition = [
                 "proposal_more_info": _("Request More Information"),
                 "proposal_internal_review": _("Open Review"),
                 "external_review": _("Open External Review"),
-                "proposal_determination": _("Ready For Final Determination"),
+                "proposal_determination": _("Ready for Final Determination"),
                 "proposal_rejected": _("Dismiss"),
             },
             "display": _("Proposal Received"),
@@ -194,7 +194,7 @@ DoubleStageDefinition = [
                     "custom": {"trigger_on_submit": True},
                 },
                 "external_review": _("Open External Review"),
-                "proposal_determination": _("Ready For Final Determination"),
+                "proposal_determination": _("Ready for Final Determination"),
                 "proposal_rejected": _("Dismiss"),
             },
             "display": _("More information required"),
@@ -221,11 +221,11 @@ DoubleStageDefinition = [
             "transitions": {
                 "post_proposal_review_more_info": _("Request More Information"),
                 "external_review": _("Open External Review"),
-                "proposal_determination": _("Ready For Final Determination"),
+                "proposal_determination": _("Ready for Final Determination"),
                 "proposal_internal_review": _("Open Internal Review (revert)"),
                 "proposal_rejected": _("Dismiss"),
             },
-            "display": _("Ready For Discussion"),
+            "display": _("Ready for Discussion"),
             "stage": Proposal,
             "permissions": hidden_from_applicant_permissions,
         },
@@ -253,7 +253,7 @@ DoubleStageDefinition = [
         "external_review": {
             "transitions": {
                 "post_external_review_discussion": _("Close Review"),
-                "post_proposal_review_discussion": _("Ready For Discussion (revert)"),
+                "post_proposal_review_discussion": _("Ready for Discussion (revert)"),
             },
             "display": _("External Review"),
             "stage": Proposal,
@@ -264,13 +264,13 @@ DoubleStageDefinition = [
         "post_external_review_discussion": {
             "transitions": {
                 "post_external_review_more_info": _("Request More Information"),
-                "proposal_determination": _("Ready For Final Determination"),
+                "proposal_determination": _("Ready for Final Determination"),
                 "external_review": _("Open External Review (revert)"),
                 "proposal_almost": _("Accept but additional info required"),
                 "proposal_accepted": _("Accept"),
                 "proposal_rejected": _("Dismiss"),
             },
-            "display": _("Ready For Discussion"),
+            "display": _("Ready for Discussion"),
             "stage": Proposal,
             "permissions": hidden_from_applicant_permissions,
         },
@@ -296,7 +296,7 @@ DoubleStageDefinition = [
     {
         "proposal_determination": {
             "transitions": {
-                "post_external_review_discussion": _("Ready For Discussion (revert)"),
+                "post_external_review_discussion": _("Ready for Discussion (revert)"),
                 "proposal_almost": _("Accept but additional info required"),
                 "proposal_accepted": _("Accept"),
                 "proposal_rejected": _("Dismiss"),
@@ -316,7 +316,7 @@ DoubleStageDefinition = [
         "proposal_almost": {
             "transitions": {
                 "proposal_accepted": _("Accept"),
-                "post_external_review_discussion": _("Ready For Discussion (revert)"),
+                "post_external_review_discussion": _("Ready for Discussion (revert)"),
             },
             "display": _("Accepted but additional info required"),
             "stage": Proposal,

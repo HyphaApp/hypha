@@ -29,7 +29,7 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 from hypha.home.factories import ApplySiteFactory
 
 from ..forms import SetPendingForm
-from ..models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED, SUBMITTED
+from ..models.invoice import CHANGES_REQUESTED_BY_STAFF, DECLINED, SUBMITTED
 from ..models.project import (
     APPROVE,
     CONTRACTING,
@@ -870,14 +870,11 @@ class TestStaffDetailInvoiceStatus(BaseViewTestCase):
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
-        return {
-            "pk": instance.project.pk,
-            "invoice_pk": instance.pk,
-        }
+        return {"pk": instance.pk}
 
     def test_can(self):
         invoice = InvoiceFactory()
-        response = self.get_page(invoice, url_kwargs={"pk": invoice.project.pk})
+        response = self.get_page(invoice)
         self.assertEqual(response.status_code, 200)
 
     def test_wrong_project_cant(self):
@@ -914,42 +911,12 @@ class TestFinanceDetailInvoiceStatus(BaseViewTestCase):
     user_factory = FinanceFactory
 
     def get_kwargs(self, instance):
-        return {
-            "pk": instance.project.pk,
-            "invoice_pk": instance.pk,
-        }
+        return {"pk": instance.pk}
 
     def test_can(self):
         invoice = InvoiceFactory()
-        response = self.get_page(invoice, url_kwargs={"pk": invoice.project.pk})
+        response = self.get_page(invoice)
         self.assertEqual(response.status_code, 200)
-
-    def test_wrong_project_cant(self):
-        other_project = ProjectFactory()
-        invoice = InvoiceFactory()
-        response = self.get_page(invoice, url_kwargs={"pk": other_project.pk})
-        self.assertEqual(response.status_code, 404)
-
-    def test_activity_renders(self):
-        invoice = InvoiceFactory()
-        vendor = ApplicantFactory()
-        invoice_added_msg = ActivityAdapter.messages[MESSAGES.CREATE_INVOICE].lower()
-        ActivityFactory(
-            message=invoice_added_msg,
-            source=invoice.project.submission,
-            related_object=invoice,
-            user=vendor,
-        )
-        response = self.client.get(
-            reverse(
-                "apply:projects:partial-invoice-status",
-                kwargs={"pk": invoice.project.pk, "invoice_pk": invoice.pk},
-            ),
-            secure=True,
-            follow=True,
-        )
-
-        self.assertContains(response, invoice_added_msg)
 
 
 class TestApplicantDetailInvoiceStatus(BaseViewTestCase):
@@ -958,10 +925,7 @@ class TestApplicantDetailInvoiceStatus(BaseViewTestCase):
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
-        return {
-            "pk": instance.project.pk,
-            "invoice_pk": instance.pk,
-        }
+        return {"pk": instance.pk}
 
     def test_can(self):
         invoice = InvoiceFactory(project__user=self.user)
@@ -1000,10 +964,7 @@ class TestApplicantEditInvoiceView(BaseViewTestCase):
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
-        return {
-            "pk": instance.project.pk,
-            "invoice_pk": instance.pk,
-        }
+        return {"pk": instance.pk}
 
     def test_editing_invoice_remove_supporting_document(self):
         invoice = InvoiceFactory(project__user=self.user)
@@ -1068,10 +1029,7 @@ class TestStaffEditInvoiceView(BaseViewTestCase):
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
-        return {
-            "pk": instance.project.pk,
-            "invoice_pk": instance.pk,
-        }
+        return {"pk": instance.pk}
 
     def test_editing_invoice_remove_supporting_document(self):
         invoice = InvoiceFactory()
@@ -1138,10 +1096,7 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
-        return {
-            "pk": instance.project.pk,
-            "invoice_pk": instance.pk,
-        }
+        return {"pk": instance.pk}
 
     def test_can(self):
         invoice = InvoiceFactory()
@@ -1226,7 +1181,7 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.client.get(
             reverse(
                 "apply:projects:partial-invoice-status",
-                kwargs={"pk": project.pk, "invoice_pk": invoice.pk},
+                kwargs={"pk": invoice.pk},
             ),
             secure=True,
             follow=True,
@@ -1248,7 +1203,7 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.client.get(
             reverse(
                 "apply:projects:partial-invoice-status",
-                kwargs={"pk": project.pk, "invoice_pk": invoice.pk},
+                kwargs={"pk": invoice.pk},
             ),
             secure=True,
             follow=True,
@@ -1264,7 +1219,7 @@ class TestApplicantChangeInvoiceStatus(BaseViewTestCase):
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
-        return {"pk": instance.project.pk, "invoice_pk": instance.pk}
+        return {"pk": instance.pk}
 
     def test_can(self):
         invoice = InvoiceFactory(project__user=self.user)
@@ -1299,18 +1254,12 @@ class TestStaffInvoiceDocumentPrivateMedia(BaseViewTestCase):
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
-        return {"pk": instance.project.pk, "invoice_pk": instance.pk}
+        return {"pk": instance.pk}
 
     def test_can_access(self):
         invoice = InvoiceFactory()
-        response = self.get_page(invoice, url_kwargs={"pk": invoice.project.pk})
+        response = self.get_page(invoice)
         self.assertContains(response, invoice.document.read())
-
-    def test_cant_access_if_project_wrong(self):
-        other_project = ProjectFactory()
-        invoice = InvoiceFactory()
-        response = self.get_page(invoice, url_kwargs={"pk": other_project.pk})
-        self.assertEqual(response.status_code, 404)
 
 
 class TestApplicantInvoiceDocumentPrivateMedia(BaseViewTestCase):
@@ -1319,7 +1268,7 @@ class TestApplicantInvoiceDocumentPrivateMedia(BaseViewTestCase):
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
-        return {"pk": instance.project.pk, "invoice_pk": instance.pk}
+        return {"pk": instance.pk}
 
     def test_can_access_own(self):
         invoice = InvoiceFactory(project__user=self.user)
@@ -1338,11 +1287,7 @@ class TestStaffInvoiceSupportingDocumentPrivateMedia(BaseViewTestCase):
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
-        return {
-            "pk": instance.invoice.project.pk,
-            "invoice_pk": instance.invoice.pk,
-            "file_pk": instance.pk,
-        }
+        return {"pk": instance.invoice.pk, "file_pk": instance.pk}
 
     def test_can_access(self):
         supporting_document = SupportingDocumentFactory()
@@ -1356,11 +1301,7 @@ class TestApplicantSupportingDocumentPrivateMedia(BaseViewTestCase):
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
-        return {
-            "pk": instance.invoice.project.pk,
-            "invoice_pk": instance.invoice.pk,
-            "file_pk": instance.pk,
-        }
+        return {"pk": instance.invoice.pk, "file_pk": instance.pk}
 
     def test_can_access_own(self):
         supporting_document = SupportingDocumentFactory(

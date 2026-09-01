@@ -26,6 +26,7 @@ from .constants import (
 from .models.stage import Stage
 from .registry import (
     PHASES,
+    STATUS_SLUGS,
     STATUSES,
     WORKFLOWS,
     accepted_statuses,
@@ -46,6 +47,7 @@ __all__ = [
     "INITIAL_STATE",
     "PHASES",
     "STAGE_CHANGE_ACTIONS",
+    "STATUS_SLUGS",
     "STATUSES",
     "Stage",
     "UserPermissions",

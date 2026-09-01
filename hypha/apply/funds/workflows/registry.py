@@ -19,6 +19,7 @@ from django.utils.translation import gettext_lazy as _
 from .definitions.double_stage import DoubleStageDefinition
 from .definitions.single_stage import SingleStageDefinition
 from .definitions.single_stage_community import SingleStageCommunityDefinition
+from .definitions.single_stage_ext_int import SingleStageExtIntDefinition
 from .definitions.single_stage_external import SingleStageExternalDefinition
 from .definitions.single_stage_same import SingleStageSameDefinition
 from .models.phase import Phase
@@ -83,6 +84,12 @@ RequestCommunity = Workflow(
     **phase_data(SingleStageCommunityDefinition),
 )
 
+RequestExternalInternal = Workflow(
+    _("Request external then internal review"),
+    "single_ext_int",
+    **phase_data(SingleStageExtIntDefinition),
+)
+
 ConceptProposal = Workflow(
     _("Concept & Proposal"), "double", **phase_data(DoubleStageDefinition)
 )
@@ -92,6 +99,7 @@ WORKFLOWS = {
     RequestSameTime.admin_name: RequestSameTime,
     RequestExternal.admin_name: RequestExternal,
     RequestCommunity.admin_name: RequestCommunity,
+    RequestExternalInternal.admin_name: RequestExternalInternal,
     ConceptProposal.admin_name: ConceptProposal,
 }
 
@@ -103,6 +111,10 @@ STATUSES = defaultdict(set)
 
 for key, value in PHASES:
     STATUSES[value.display_name].add(key)
+
+# Stable, language-independent slug for each display name. Filter values are
+# built from these so that a filtered URL keeps working across languages.
+STATUS_SLUGS = {value.display_name: value.display_slug for _, value in PHASES}
 
 active_statuses = [
     status
@@ -168,7 +180,7 @@ def get_ext_or_higher_statuses():
 def get_accepted_statuses():
     accepted_statuses = set()
     for phase_name, phase in PHASES:
-        if phase.display_name == "Accepted":
+        if phase.display_name_source == "Accepted":
             accepted_statuses.add(phase_name)
     return accepted_statuses
 
@@ -176,7 +188,7 @@ def get_accepted_statuses():
 def get_dismissed_statuses():
     dismissed_statuses = set()
     for phase_name, phase in PHASES:
-        if phase.display_name == "Dismissed":
+        if phase.display_name_source == "Dismissed":
             dismissed_statuses.add(phase_name)
     return dismissed_statuses
 

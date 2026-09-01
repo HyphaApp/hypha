@@ -13,7 +13,7 @@ from hypha.apply.funds.models.co_applicants import (
     CoApplicantProjectPermission,
     CoApplicantRole,
 )
-from hypha.apply.projects.models.payment import (
+from hypha.apply.projects.models.invoice import (
     APPROVED_BY_FINANCE,
     CHANGES_REQUESTED_BY_FINANCE,
     CHANGES_REQUESTED_BY_STAFF,

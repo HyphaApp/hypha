@@ -22,7 +22,7 @@ from hypha.core.tables import RelativeTimeColumn
 
 from .models import ApplicationSubmission, Round, ScreeningStatus
 from .widgets import MultiCheckboxesWidget
-from .workflows import STATUSES
+from .workflows import STATUS_SLUGS, STATUSES
 
 User = get_user_model()
 
@@ -210,12 +210,12 @@ class ModelMultipleChoiceFilter(
 class StatusMultipleChoiceFilter(MultipleChoiceFilter):
     def __init__(self, limit_to, *args, **kwargs):
         choices = [
-            (slugify(name), name)
+            (STATUS_SLUGS[name], name)
             for name, statuses in STATUSES.items()
             if not limit_to or self.has_any(statuses, limit_to)
         ]
         self.status_map = {
-            slugify(name): list(status) for name, status in STATUSES.items()
+            STATUS_SLUGS[name]: list(status) for name, status in STATUSES.items()
         }
         super().__init__(
             *args,

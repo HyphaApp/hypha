@@ -3,7 +3,7 @@
 import datetime
 import django.core.files.storage
 import django.core.validators
-import hypha.apply.projects.models.payment
+import hypha.apply.projects.models.invoice
 import hypha.apply.projects.models.project
 from decimal import Decimal
 from django.db import migrations, models
@@ -235,7 +235,7 @@ class Migration(migrations.Migration):
             name="document",
             field=models.FileField(
                 storage=django.core.files.storage.FileSystemStorage(),
-                upload_to=hypha.apply.projects.models.payment.invoice_path,
+                upload_to=hypha.apply.projects.models.invoice.invoice_path,
                 verbose_name="document",
             ),
         ),

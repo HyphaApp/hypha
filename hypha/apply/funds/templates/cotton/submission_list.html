@@ -13,14 +13,14 @@
         <div class="overflow-x-auto bg-base-100 border {% if rounded_top %} rounded-t-box{% endif %}{% if rounded_bottom %} rounded-b-box{% endif %}{% if show_more_link and not show_more %} rounded-b-box{% endif %}">
             <table class="table [&_th]:p-2">
                 <thead class="bg-base-200">
-                    <tr>
+                    <tr class="font-semibold text-center">
                         {% if enable_selection %}<th class="hidden md:table-cell"></th>{% endif %}
                         <th></th>
-                        <th class="font-semibold min-w-48">
+                        <th class="min-w-48">
                             {% trans 'Title' %}
                         </th>
-                        <th class="font-semibold">{% trans 'Status' %}</th>
-                        <th class="font-semibold">
+                        <th>{% trans 'Status' %}</th>
+                        <th>
                             {% trans 'Applicant' %}
                             {% if 'organization_name' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
                                 <span class="text-xs text-fg-muted"> / {% trans 'Organization' %}</span>
@@ -28,13 +28,13 @@
                         </th>
 
                         {% if "round" not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                            <th class="font-semibold min-w-36">{% trans 'Round' %}</th>
+                            <th class="min-w-36">{% trans 'Round' %}</th>
                         {% endif %}
 
                         {% if 'lead' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
-                            <th class="font-semibold">{% trans 'Lead' %}</th>
+                            <th>{% trans 'Lead' %}</th>
                         {% endif %}
-                        <th class="text-sm font-semibold">
+                        <th class="text-sm">
                             {% if 'reviews' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}{% trans 'Reviews' %} /{% endif %} <br /> {% trans 'Comments' %}
                         </th>
                     </tr>

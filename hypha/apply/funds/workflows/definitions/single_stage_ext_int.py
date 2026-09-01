@@ -1,8 +1,7 @@
-from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from ..constants import DRAFT_STATE, INITIAL_STATE, UserPermissions
-from ..models.stage import RequestExt
+from ..models.stage import RequestExtInt
 from ..permissions import (
     applicant_edit_permissions,
     default_permissions,
@@ -12,7 +11,7 @@ from ..permissions import (
     staff_edit_permissions,
 )
 
-SingleStageExternalDefinition = [
+SingleStageExtIntDefinition = [
     {
         DRAFT_STATE: {
             "transitions": {
@@ -24,24 +23,24 @@ SingleStageExternalDefinition = [
                 },
             },
             "display": _("Draft"),
-            "stage": RequestExt,
+            "stage": RequestExtInt,
             "permissions": applicant_edit_permissions,
         }
     },
     {
         INITIAL_STATE: {
             "transitions": {
-                "ext_more_info": _("Request More Information"),
-                "ext_internal_review": _("Open Review"),
-                "ext_determination": _("Ready for Determination"),
-                "ext_rejected": _("Dismiss"),
+                "ext_int_more_info": _("Request More Information"),
+                "ext_int_screened": _("Ready for Review"),
+                "ext_int_determination": _("Ready for Determination"),
+                "ext_int_rejected": _("Dismiss"),
             },
             "display": _("Need screening"),
             "public": _("Application Received"),
-            "stage": RequestExt,
+            "stage": RequestExtInt,
             "permissions": default_permissions,
         },
-        "ext_more_info": {
+        "ext_int_more_info": {
             "transitions": {
                 INITIAL_STATE: {
                     "display": _("Submit"),
@@ -56,84 +55,53 @@ SingleStageExternalDefinition = [
                 },
             },
             "display": _("More information required"),
-            "stage": RequestExt,
+            "stage": RequestExtInt,
             "permissions": applicant_edit_permissions,
         },
     },
     {
-        "ext_internal_review": {
+        "ext_int_screened": {
             "transitions": {
-                "ext_post_review_discussion": _("Close Review"),
+                "ext_int_external_review": _("Open External Review"),
+                "ext_int_determination": _("Ready for Determination"),
+                "ext_int_rejected": _("Dismiss"),
                 INITIAL_STATE: _("Need screening (revert)"),
             },
-            "display": _("Internal Review"),
-            "public": _("{ORG_SHORT_NAME} Review").format(
-                ORG_SHORT_NAME=settings.ORG_SHORT_NAME
-            ),
-            "stage": RequestExt,
-            "permissions": default_permissions,
-        },
-    },
-    {
-        "ext_post_review_discussion": {
-            "transitions": {
-                "ext_post_review_more_info": _("Request More Information"),
-                "ext_external_review": _("Open External Review"),
-                "ext_determination": _("Ready for Determination"),
-                "ext_internal_review": _("Open Internal Review (revert)"),
-                "ext_rejected": _("Dismiss"),
-            },
-            "display": _("Ready for Discussion"),
-            "stage": RequestExt,
+            "display": _("Ready for Review"),
+            "stage": RequestExtInt,
             "permissions": hidden_from_applicant_permissions,
         },
-        "ext_post_review_more_info": {
-            "transitions": {
-                "ext_post_review_discussion": {
-                    "display": _("Submit"),
-                    "permissions": {
-                        UserPermissions.APPLICANT,
-                        UserPermissions.STAFF,
-                        UserPermissions.LEAD,
-                        UserPermissions.ADMIN,
-                    },
-                    "method": "create_revision",
-                    "custom": {"trigger_on_submit": True},
-                },
-            },
-            "display": _("More information required"),
-            "stage": RequestExt,
-            "permissions": applicant_edit_permissions,
-        },
     },
     {
-        "ext_external_review": {
+        "ext_int_external_review": {
             "transitions": {
-                "ext_post_external_review_discussion": _("Close Review"),
-                "ext_post_review_discussion": _("Ready for Discussion (revert)"),
+                "ext_int_post_external_review_discussion": _("Close Review"),
+                "ext_int_screened": _("Ready for Review (revert)"),
             },
             "display": _("External Review"),
-            "stage": RequestExt,
+            "public": _("Application Review"),
+            "stage": RequestExtInt,
             "permissions": reviewer_review_permissions,
         },
     },
     {
-        "ext_post_external_review_discussion": {
+        "ext_int_post_external_review_discussion": {
             "transitions": {
-                "ext_post_external_review_more_info": _("Request More Information"),
-                "ext_determination": _("Ready for Determination"),
-                "ext_external_review": _("Open External Review (revert)"),
-                "ext_almost": _("Accept but additional info required"),
-                "ext_accepted": _("Accept"),
-                "ext_rejected": _("Dismiss"),
+                "ext_int_post_external_review_more_info": _("Request More Information"),
+                "ext_int_internal_review": _("Open Internal Review"),
+                "ext_int_determination": _("Ready for Determination"),
+                "ext_int_external_review": _("Open External Review (revert)"),
+                "ext_int_accepted": _("Accept"),
+                "ext_int_waitlisted": _("Waitlist"),
+                "ext_int_rejected": _("Dismiss"),
             },
             "display": _("Ready for Discussion"),
-            "stage": RequestExt,
+            "stage": RequestExtInt,
             "permissions": hidden_from_applicant_permissions,
         },
-        "ext_post_external_review_more_info": {
+        "ext_int_post_external_review_more_info": {
             "transitions": {
-                "ext_post_external_review_discussion": {
+                "ext_int_post_external_review_discussion": {
                     "display": _("Submit"),
                     "permissions": {
                         UserPermissions.APPLICANT,
@@ -146,46 +114,90 @@ SingleStageExternalDefinition = [
                 },
             },
             "display": _("More information required"),
-            "stage": RequestExt,
+            "stage": RequestExtInt,
             "permissions": applicant_edit_permissions,
         },
     },
     {
-        "ext_determination": {
+        "ext_int_internal_review": {
             "transitions": {
-                "ext_post_external_review_discussion": _(
+                "ext_int_post_review_discussion": _("Close Review"),
+                "ext_int_post_external_review_discussion": _(
                     "Ready for Discussion (revert)"
                 ),
-                "ext_almost": _("Accept but additional info required"),
-                "ext_accepted": _("Accept"),
-                "ext_rejected": _("Dismiss"),
+            },
+            "display": _("Internal Review"),
+            "stage": RequestExtInt,
+            "permissions": hidden_from_applicant_permissions,
+        },
+    },
+    {
+        "ext_int_post_review_discussion": {
+            "transitions": {
+                "ext_int_post_review_more_info": _("Request More Information"),
+                "ext_int_determination": _("Ready for Determination"),
+                "ext_int_internal_review": _("Open Internal Review (revert)"),
+                "ext_int_accepted": _("Accept"),
+                "ext_int_waitlisted": _("Waitlist"),
+                "ext_int_rejected": _("Dismiss"),
+            },
+            "display": _("Ready for Discussion"),
+            "stage": RequestExtInt,
+            "permissions": hidden_from_applicant_permissions,
+        },
+        "ext_int_post_review_more_info": {
+            "transitions": {
+                "ext_int_post_review_discussion": {
+                    "display": _("Submit"),
+                    "permissions": {
+                        UserPermissions.APPLICANT,
+                        UserPermissions.STAFF,
+                        UserPermissions.LEAD,
+                        UserPermissions.ADMIN,
+                    },
+                    "method": "create_revision",
+                    "custom": {"trigger_on_submit": True},
+                },
+            },
+            "display": _("More information required"),
+            "stage": RequestExtInt,
+            "permissions": applicant_edit_permissions,
+        },
+    },
+    {
+        "ext_int_determination": {
+            "transitions": {
+                "ext_int_post_review_discussion": _("Ready for Discussion (revert)"),
+                "ext_int_accepted": _("Accept"),
+                "ext_int_waitlisted": _("Waitlist"),
+                "ext_int_rejected": _("Dismiss"),
             },
             "display": _("Ready for Determination"),
             "permissions": hidden_from_applicant_permissions,
-            "stage": RequestExt,
+            "stage": RequestExtInt,
         },
     },
     {
-        "ext_accepted": {
+        "ext_int_accepted": {
             "display": _("Accepted"),
             "future": _("Application Outcome"),
-            "stage": RequestExt,
+            "stage": RequestExtInt,
             "permissions": staff_edit_permissions,
         },
-        "ext_almost": {
+        "ext_int_waitlisted": {
             "transitions": {
-                "ext_accepted": _("Accept"),
-                "ext_post_external_review_discussion": _(
-                    "Ready for Discussion (revert)"
-                ),
+                "ext_int_accepted": _("Accept"),
+                "ext_int_rejected": _("Dismiss"),
+                "ext_int_determination": _("Ready for Determination (revert)"),
             },
-            "display": _("Accepted but additional info required"),
-            "stage": RequestExt,
-            "permissions": applicant_edit_permissions,
+            "display": _("Waitlisted"),
+            "stage": RequestExtInt,
+            "permissions": staff_edit_permissions,
         },
-        "ext_rejected": {
+        "ext_int_rejected": {
             "display": _("Dismissed"),
-            "stage": RequestExt,
+            "public": _("Not Accepted"),
+            "stage": RequestExtInt,
             "permissions": no_permissions,
         },
     },

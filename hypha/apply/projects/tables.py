@@ -13,7 +13,7 @@ from heroicons.templatetags.heroicons import heroicon_outline
 from hypha.apply.funds.tables import LabeledCheckboxColumn
 from hypha.core.tables import RelativeTimeColumn
 
-from .forms.payment import get_invoice_possible_transition_for_user
+from .forms.invoice import get_invoice_possible_transition_for_user
 from .models import Invoice, PAFApprovals, Project
 from .utils import get_project_title
 
