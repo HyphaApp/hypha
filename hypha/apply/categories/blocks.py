@@ -1,4 +1,5 @@
 from django import forms
+from django.db.models import BLANK_CHOICE_DASH
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.blocks import (
@@ -9,7 +10,12 @@ from wagtail.blocks import (
 )
 from wagtail.coreutils import resolve_model_string
 
+from hypha.apply.funds.widgets import ChoicesSelectMultipleWidget, ChoicesSelectWidget
 from hypha.apply.stream_forms.blocks import OptionalFormFieldBlock
+
+# Above this many options a radio/checkbox list stops being usable, so fall back
+# to a searchable Choices.js select.
+SEARCHABLE_SELECT_THRESHOLD = 32
 
 
 class ModelChooserBlock(ChoiceBlock):
@@ -65,23 +71,24 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
         kwargs = super().get_field_kwargs(struct_value)
         category = self.get_instance(id=struct_value["category"])
         kwargs = self.use_defaults_from_category(kwargs, category)
-        choices = category.options.values_list("id", "value")
+        choices = list(category.options.values_list("id", "value"))
+        if not struct_value["multi"] and len(choices) >= SEARCHABLE_SELECT_THRESHOLD:
+            # A <select> auto-selects its first option, so offer an empty one.
+            choices.insert(0, BLANK_CHOICE_DASH[0])
         kwargs.update({"choices": choices})
         return kwargs
 
     def get_widget(self, struct_value):
+        category = self.get_instance(id=struct_value["category"])
+        # Pick widget according to number of options to maintain good usability.
+        many_options = category.options.count() >= SEARCHABLE_SELECT_THRESHOLD
         if struct_value["multi"]:
-            category = self.get_instance(id=struct_value["category"])
-            category_size = category.options.count()
-            # Pick widget according to number of options to maintain good usability.
-            if category_size < 32:
-                return forms.CheckboxSelectMultiple
-            else:
-                from hypha.apply.funds.tables import MultiCheckboxesWidget
-
-                return MultiCheckboxesWidget
-        else:
-            return forms.RadioSelect
+            return (
+                ChoicesSelectMultipleWidget
+                if many_options
+                else forms.CheckboxSelectMultiple
+            )
+        return ChoicesSelectWidget if many_options else forms.RadioSelect
 
     def prepare_data(self, value, data, serialize):
         if not data:
