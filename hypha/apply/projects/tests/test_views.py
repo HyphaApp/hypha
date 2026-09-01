@@ -1181,7 +1181,7 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.client.get(
             reverse(
                 "apply:projects:partial-invoice-status",
-                kwargs={"pk": invoice.pk},
+                kwargs={"pk": project.pk, "invoice_pk": invoice.pk},
             ),
             secure=True,
             follow=True,
@@ -1203,7 +1203,7 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.client.get(
             reverse(
                 "apply:projects:partial-invoice-status",
-                kwargs={"pk": invoice.pk},
+                kwargs={"pk": project.pk, "invoice_pk": invoice.pk},
             ),
             secure=True,
             follow=True,
