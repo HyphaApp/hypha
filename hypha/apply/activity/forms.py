@@ -1,5 +1,6 @@
 from django import forms
 from django.db import transaction
+from django.forms.widgets import Textarea
 from django.utils.translation import gettext_lazy as _
 from django_file_form.forms import FileFormMixin
 
@@ -24,11 +25,16 @@ class CommentForm(FileFormMixin, forms.ModelForm):
 
     class Meta:
         model = Activity
-        fields = (
-            "message",
-            "visibility",
-            "assign_to",
+
+        # Fields that should only be included when the mini comment form is used
+        # as the mini form can be put anywhere and associated to any object.
+        mini_fields = (
+            "related_content_type",
+            "related_object_id",
+            "source_content_type",
+            "source_object_id",
         )
+        fields = ("message", "visibility", "assign_to", *mini_fields)
         labels = {
             "visibility": _("Visible to"),
             "message": _("Message"),
@@ -41,9 +47,10 @@ class CommentForm(FileFormMixin, forms.ModelForm):
         widgets = {
             "visibility": forms.RadioSelect(),
             "message": PagedownWidget(),
+            **{field: forms.HiddenInput() for field in mini_fields},
         }
 
-    def __init__(self, *args, user=None, has_coapplicants=False, **kwargs):
+    def __init__(self, *args, user=None, has_coapplicants=False, mini=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.visibility_choices = self._meta.model.visibility_choices_for(
             user, has_coapplicants
@@ -60,6 +67,15 @@ class CommentForm(FileFormMixin, forms.ModelForm):
             visibility.widget = forms.HiddenInput()
         if not user.is_apply_staff:
             self.fields["assign_to"].widget = forms.HiddenInput()
+
+        if mini:
+            self.fields["message"].widget = Textarea(
+                attrs={"rows": 2, "placeholder": _("Write a comment...")}
+            )
+        else:
+            # If not mini, remove the unneeded fields from the form.
+            for key in self.Meta.mini_fields:
+                del self.fields[key]
 
     @transaction.atomic
     def save(self, commit=True):

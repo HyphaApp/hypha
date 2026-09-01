@@ -1,7 +1,16 @@
+{% comment %}
+Renders a line item of activity including the message attached to the activity & an icon based on the message.
+
+Params:
+  activity              – an Activity object to render into a timeline
+  no_timeline           - bool of should the line item be styled as a piece of a larger timeline
+  mini                  - bool that will force including only essential elements of the action item 
+{% endcomment %}
+
 {% load i18n activity_tags heroicons %}
 
 {% with activity|display_for:request.user as activity_text %}
-    <div class="relative h-timeline-item" id="communications#{{ activity.id }}">
+    <div class="{% if not no_timeline %}relative h-timeline-item{% endif %}" id="communications#{{ activity.id }}">
         <div
             class="flex items-center py-2 -ml-3 before:block before:absolute before:top-0 before:bottom-0 before:left-0 before:w-(--border) before:bg-base-300"
         >
@@ -22,6 +31,12 @@
                             {% heroicon_micro "lock-closed" class="inline" aria_hidden=true size=14 %}
                         {% elif 'lead' in activity_text.lower or 'author' in activity_text.lower %}
                             {% heroicon_micro "users" class="inline" aria_hidden=true size=14 %}
+                        {% elif 'approved by' in activity_text.lower %}
+                            {% heroicon_micro "check-circle" class="inline" aria_hidden=true size=14 %}
+                        {% elif 'changes requested' in activity_text.lower %}
+                            {% heroicon_micro "exclamation-circle" class="inline" aria_hidden=true size=14 %}
+                        {% elif 'created' in activity_text.lower %}
+                            {% heroicon_micro "folder-plus" class="inline" aria_hidden=true size=14 %}
                         {% else %}
                             {% heroicon_micro "eye" class="inline" aria_hidden=true size=15 %}
                         {% endif %}
@@ -39,7 +54,7 @@
                         {{ activity.timestamp|date:'SHORT_DATETIME_FORMAT' }}
                     </relative-time>
                 </span>
-                {% if not submission_title and activity|user_can_see_related:request.user %}
+                {% if not submission_title and activity|user_can_see_related:request.user and not mini %}
                     {% with url=activity.related_object.get_absolute_url %}
                         {% if url %}
                             <a href="{{ url }}" class="link">

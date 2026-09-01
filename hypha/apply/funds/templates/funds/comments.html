@@ -43,7 +43,7 @@
         {% if form %}
             {% if not object.is_archive or object.projects.exists %}
                 <h2 class="sr-only">{% trans "Add communication" %}</h2>
-                <div class="pb-6 mb-4 w-full border-b border-base-300">
+                <div class="pb-6 w-full border-b border-base-300">
                     <form
                         class="form form__comments"
                         method="POST"
@@ -57,7 +57,7 @@
                         {% endfor %}
 
                         <div class="flex flex-wrap gap-2 lg:flex-nowrap lg:gap-4">
-                            <div class="w-full lg:flex-1 max-w-[60rem]">
+                            <div class="w-full lg:flex-1 max-w-240">
                                 {% include "forms/includes/field.html" with field=form.message label_classes="sr-only" %}
 
                                 <div class="hidden mt-4 text-right lg:block">

@@ -176,7 +176,11 @@ class Invoice(models.Model):
         verbose_name_plural = _("invoices")
 
     def __str__(self):
-        return _("Invoice requested for {project}").format(project=self.project)
+        if not self.invoice_number:
+            return _("Invoice for {project}").format(project=self.project)
+        return _("Invoice {number} for {project}").format(
+            number=self.invoice_number, project=self.project
+        )
 
     @status_field.getter()
     def _get_object_status(self):

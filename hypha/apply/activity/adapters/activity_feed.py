@@ -49,6 +49,10 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.CREATED_PROJECT: _(
             'Created project with initial status of "{status}"'
         ),
+        MESSAGES.CREATED_SOW: _('Created SOW for project "{related.project}"'),
+        MESSAGES.EDITED_SOW: _('Edited SOW for project "{related.project}"'),
+        MESSAGES.CREATED_PF: _('Created project form for project "{related.project}"'),
+        MESSAGES.EDITED_PF: _('Edited project form for project "{related.project}"'),
         MESSAGES.PROJECT_TRANSITION: "handle_project_transition",
         MESSAGES.UPDATE_PROJECT_TITLE: _(
             "updated the project title from {old_title} to {source.title}"
@@ -93,6 +97,10 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.DELETE_REVIEW_OPINION,
             MESSAGES.BATCH_REVIEWERS_UPDATED,
             MESSAGES.APPROVE_PROJECT,
+            MESSAGES.CREATED_SOW,
+            MESSAGES.EDITED_SOW,
+            MESSAGES.CREATED_PF,
+            MESSAGES.EDITED_PF,
             MESSAGES.REQUEST_PROJECT_CHANGE,
             MESSAGES.SEND_FOR_APPROVAL,
             MESSAGES.APPROVE_PAF,

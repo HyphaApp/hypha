@@ -36,6 +36,10 @@ class MESSAGES(TextChoices):
     DELETE_REVIEW = "DELETE_REVIEW", _("deleted review")
     DELETE_REVIEW_OPINION = "DELETE_REVIEW_OPINION", _("deleted review opinion")
     CREATED_PROJECT = "CREATED_PROJECT", _("created project")
+    CREATED_SOW = "CREATED_SOW", _("created a project SOW")
+    EDITED_SOW = "EDITED_SOW", _("edited a project SOW")
+    CREATED_PF = "CREATED_PF", _("created a project form")
+    EDITED_PF = "EDITED_PF", _("edited a project form")
     UPDATE_PROJECT_LEAD = "UPDATE_PROJECT_LEAD", _("updated project lead")
     UPDATE_PROJECT_TITLE = "UPDATE_PROJECT_TITLE", _("updated project title")
     UPDATE_PROJECT_CONTRACT_NUMBER = (

@@ -48,6 +48,9 @@ from .views import (
     partial_get_invoice_status,
     partial_get_invoice_status_table,
     partial_get_invoice_tags,
+    partial_get_pf_status,
+    partial_get_report_status,
+    partial_get_sow_status,
     partial_project_information,
     partial_project_lead,
     partial_project_title,
@@ -291,6 +294,93 @@ urlpatterns = [
                     partial_get_invoice_status_table,
                     {"rejected": True},
                     name="partial-rejected-invoices-status",
+                ),
+                path(
+                    "reports/<int:report_pk>/",
+                    include(
+                        [
+                            path(
+                                "partial/status/",
+                                partial_get_report_status,
+                                name="partial-report-status",
+                            )
+                        ]
+                    ),
+                ),
+                path(
+                    "project-sow/<int:sow_pk>/",
+                    include(
+                        [
+                            path(
+                                "partial/status/",
+                                partial_get_sow_status,
+                                name="partial-sow-status",
+                            )
+                        ]
+                    ),
+                ),
+                path(
+                    "project-form/<int:pfp_pk>/",
+                    include(
+                        [
+                            path(
+                                "partial/status/",
+                                partial_get_pf_status,
+                                name="partial-pf-status",
+                            )
+                        ]
+                    ),
+                ),
+                path(
+                    "invoices/<int:invoice_pk>/",
+                    include(
+                        [
+                            path("", InvoiceView.as_view(), name="invoice-detail"),
+                            path(
+                                "edit/", EditInvoiceView.as_view(), name="invoice-edit"
+                            ),
+                            path(
+                                "update/",
+                                ChangeInvoiceStatusView.as_view(),
+                                name="invoice-update",
+                            ),
+                            path(
+                                "delete/",
+                                DeleteInvoiceView.as_view(),
+                                name="invoice-delete",
+                            ),
+                            path(
+                                "partial/status/",
+                                partial_get_invoice_status,
+                                name="partial-invoice-status",
+                            ),
+                            path(
+                                "actions/",
+                                partial_get_invoice_detail_actions,
+                                name="partial-invoice-detail-actions",
+                            ),
+                            path(
+                                "tags/",
+                                TagInvoiceView.as_view(),
+                                name="invoice-tags",
+                            ),
+                            path(
+                                "partial/tags/",
+                                partial_get_invoice_tags,
+                                name="partial-invoice-tags",
+                            ),
+                            path(
+                                "documents/invoice/",
+                                InvoicePrivateMedia.as_view(),
+                                name="invoice-document",
+                            ),
+                            path(
+                                "documents/supporting/<int:file_pk>/",
+                                InvoicePrivateMedia.as_view(),
+                                name="invoice-supporting-document",
+                            ),
+                        ]
+                    ),
                 ),
             ]
         ),

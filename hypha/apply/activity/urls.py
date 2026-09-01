@@ -6,6 +6,7 @@ from .views import (
     delete_comment,
     edit_comment,
     partial_comments,
+    post_comment,
 )
 
 app_name = "activity"
@@ -17,6 +18,7 @@ urlpatterns = [
     path("comments/<int:pk>/", partial_comments, name="partial-comments"),
     path("<pk>/edit-comment/", edit_comment, name="edit-comment"),
     path("<pk>/delete-comment/", delete_comment, name="delete-comment"),
+    path("post-comment/", post_comment, name="post-comment"),
     path(
         "activities/attachment/<uuid:file_pk>/download/",
         AttachmentView.as_view(),

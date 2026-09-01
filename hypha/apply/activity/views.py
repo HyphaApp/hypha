@@ -1,13 +1,21 @@
+import json
+
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.core.exceptions import PermissionDenied
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
 from rolepermissions.checkers import has_object_permission
 
+from hypha.apply.activity.forms import CommentForm
+from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.funds.models.submissions import ApplicationSubmission
 from hypha.apply.users.decorators import is_apply_staff, staff_required
 from hypha.apply.utils.storage import PrivateMediaView
@@ -15,6 +23,36 @@ from hypha.apply.utils.storage import PrivateMediaView
 from . import services
 from .filters import NotificationFilter
 from .models import COMMENT, Activity, ActivityAttachment
+
+
+def _get_object_for_content_type(content_type_id, object_id):
+    """Resolve a content type id & object id pair into a model instance.
+
+    Both ids come straight from user input, so anything that doesn't resolve to
+    an existing object - missing, non-numeric or dangling ids, or a stale
+    ContentType row whose model no longer exists - returns None rather than
+    raising.
+
+    Args:
+        content_type_id: the pk of the ContentType of the object
+        object_id: the pk of the object itself
+
+    Returns:
+        The model instance, or None if it could not be resolved
+    """
+    try:
+        content_type = ContentType.objects.get_for_id(int(content_type_id))
+    except (TypeError, ValueError, ContentType.DoesNotExist):
+        return None
+
+    model_class = content_type.model_class()
+    if model_class is None:
+        return None
+
+    try:
+        return model_class._default_manager.filter(pk=object_id).first()
+    except (TypeError, ValueError, ValidationError):
+        return None
 
 
 @login_required
@@ -108,6 +146,69 @@ def delete_comment(request, pk):
         "activity/ui/activity-comment-item.html",
         {"activity": activity},
     )
+
+
+@login_required
+@require_http_methods(["POST", "GET"])
+@user_passes_test(is_apply_staff)
+def post_comment(request: HttpRequest):
+    if request.method == "POST":
+        form = CommentForm(user=request.user, data=request.POST or None, mini=True)
+        source = _get_object_for_content_type(
+            request.POST.get("source_content_type"),
+            request.POST.get("source_object_id"),
+        )
+        if source is None:
+            raise Http404
+
+        form.instance.user = request.user
+        form.instance.source = source
+        form.instance.type = COMMENT
+        form.instance.timestamp = timezone.now()
+        if form.is_valid():
+            obj = form.save()
+            messenger(
+                MESSAGES.COMMENT,
+                request=request,
+                user=request.user,
+                source=source,
+                related=obj,
+            )
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "commentAdded": obj.pk,
+                            "showMessage": mark_safe(_("Comment added!")),
+                        }
+                    ),
+                },
+            )
+        return render(request, "activity/partials/comment_form.html", {"form": form})
+    else:
+        form = CommentForm(user=request.user, mini=True)
+        params = request.GET.dict()
+
+        # Ensure the provided source content type & object actually exist
+        source_content_type = params.get("source_content_type")
+        source_object_id = params.get("source_object_id")
+        if _get_object_for_content_type(source_content_type, source_object_id) is None:
+            raise Http404
+
+        form.fields["source_content_type"].initial = source_content_type
+        form.fields["source_object_id"].initial = source_object_id
+
+        related_content_type = params.get("related_content_type")
+        related_object_id = params.get("related_object_id")
+        if (
+            _get_object_for_content_type(related_content_type, related_object_id)
+            is not None
+        ):
+            form.fields["related_content_type"].initial = related_content_type
+            form.fields["related_object_id"].initial = related_object_id
+
+        return render(request, "activity/partials/comment_form.html", {"form": form})
 
 
 class ActivityContextMixin:

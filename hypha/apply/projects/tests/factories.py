@@ -24,6 +24,7 @@ from ..models.project import (
     PAFReviewersRole,
     Project,
     ProjectForm,
+    ProjectFormPointer,
     ProjectReportForm,
     ProjectSettings,
     ProjectSOWForm,
@@ -129,6 +130,14 @@ class ProjectFactory(factory.django.DjangoModelFactory):
         is_complete = factory.Trait(
             status=COMPLETE,
         )
+
+
+class ProjectFormPointerFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ProjectFormPointer
+        skip_postgeneration_save = True
+
+    project = factory.SubFactory(ProjectFactory)
 
 
 class ProjectSettingsFactory(factory.django.DjangoModelFactory):

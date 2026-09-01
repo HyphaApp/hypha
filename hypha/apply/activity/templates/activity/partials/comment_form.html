@@ -1,0 +1,37 @@
+{% comment %}
+Renders the sidebar comments form.
+
+Params:
+  form             – the CommentForm form
+{% endcomment %}
+
+{% load i18n static heroicons %}
+
+{# On error the view re-renders this whole form, so swap outerHTML on self to avoid nesting a form inside itself. A successful post returns 204 and is not swapped. #}
+<form  hx-post="{% url 'activity:post-comment' %}" hx-target="this" hx-swap="outerHTML" class="flex flex-col gap-2 p-2 card-body" hx-on::after-request="if(event.detail.xhr.status === 204) this.reset()">
+    <h2 class="card-title">{% trans "Comment" %}</h2>
+    {% csrf_token %}
+
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    <div>
+        {% include "forms/includes/field.html" with field=form.message label_classes="sr-only" %}
+    </div>
+
+    <details class="mb-1 collapse bg-base-100 group">
+        <summary class="flex gap-1.5 items-center text-sm collapse-title"><span>{% trans 'Additional options' %}</span>{% heroicon_mini 'chevron-down' class="size-5 group-open:-rotate-180" %}</summary>
+        {# Some small modifications to django-file-form to make it fit better with the smaller modal #}
+        <div class="collapse-content [&_.dff-uploader]:hidden [&_.btn-upload]:w-full">
+            {% include "forms/includes/field.html" with field=form.visibility %}
+            {% include "forms/includes/field.html" with field=form.assign_to %}
+            {% include "forms/includes/field.html" with field=form.attachments %}
+        </div>
+    </details>
+    <button
+        class="btn btn-primary"
+        type="submit"
+    >
+        {% trans "Add Comment" %}
+    </button>
+</form>
