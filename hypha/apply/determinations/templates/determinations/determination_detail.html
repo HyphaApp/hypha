@@ -49,28 +49,30 @@
             </div>
         </section>
 
-        {% for group in determination.detailed_data.values %}
-            <section>
-                {% if group.title %}
-                    <h2 class="section-header">{{ group.title|nh3 }}</h2>
-                {% endif %}
-
-                {% for question, answer in group.questions %}
-                    <h3 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300 question">{{ question }}</h3>
-                    {% if answer %}
-                        {% if answer == True or answer == False %}
-                            {{ answer|yesno:_("Agree,Disagree") }}
-                        {% else %}
-                            <div class="max-w-none prose">
-                                {{ answer|nh3 }}
-                            </div>
-                        {% endif %}
-                    {% else %}
-                        -
-                    {% endif %}
-                {% endfor %}
+        {% if show_detailed_data %}
+            {% for group in determination.detailed_data.values %}
                 <section>
-        {% endfor %}
+                    {% if group.title %}
+                        <h2 class="section-header">{{ group.title|nh3 }}</h2>
+                    {% endif %}
+
+                    {% for question, answer in group.questions %}
+                        <h3 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300 question">{{ question }}</h3>
+                        {% if answer %}
+                            {% if answer == True or answer == False %}
+                                {{ answer|yesno:_("Agree,Disagree") }}
+                            {% else %}
+                                <div class="max-w-none prose">
+                                    {{ answer|nh3 }}
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    {% endfor %}
+                    <section>
+            {% endfor %}
+        {% endif %}
 
     </div>
 {% endblock %}
