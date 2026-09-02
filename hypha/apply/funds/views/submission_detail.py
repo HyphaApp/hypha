@@ -38,6 +38,7 @@ from ..permissions import (
     can_alter_archived_submissions,
     get_archive_view_groups,
     has_permission,
+    is_submission_applicant,
 )
 from ..workflows import DRAFT_STATE
 
@@ -129,10 +130,7 @@ class ReviewerSubmissionDetailView(ActivityContextMixin, DetailView):
         # If the requesting user submitted the application, return the Applicant view.
         # Reviewers may sometimes be applicants as well.
         # or if requesting user is a co-applicant to application, return the Applicant view.
-        if (
-            submission.user == request.user
-            or submission.co_applicants.filter(user=request.user).exists()
-        ):
+        if is_submission_applicant(request.user, submission):
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
         if submission.status == DRAFT_STATE:
             raise Http404
@@ -161,10 +159,7 @@ class CommunitySubmissionDetailView(ActivityContextMixin, DetailView):
         # If the requesting user submitted the application, return the Applicant view.
         # Reviewers may sometimes be applicants as well.
         # or if requesting user is a co-applicant to application, return the Applicant view.
-        if (
-            submission.user == request.user
-            or submission.co_applicants.filter(user=request.user).exists()
-        ):
+        if is_submission_applicant(request.user, submission):
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
         # Only allow community reviewers in submission with a community review state.
         if not submission.community_review:
@@ -188,10 +183,7 @@ class ApplicantSubmissionDetailView(ActivityContextMixin, DetailView):
             "submission_view", request.user, object=submission, raise_exception=True
         )
         # This view is only for applicants and co-applicants.
-        if (
-            submission.user != request.user
-            and not submission.co_applicants.filter(user=request.user).exists()
-        ):
+        if not is_submission_applicant(request.user, submission):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 

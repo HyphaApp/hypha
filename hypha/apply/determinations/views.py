@@ -17,6 +17,7 @@ from wagtail.models import Site
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity
 from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.funds.permissions import is_submission_applicant
 from hypha.apply.funds.workflows import DETERMINATION_OUTCOMES
 from hypha.apply.funds.workflows.models.stage import Concept
 from hypha.apply.projects.models import Project
@@ -525,13 +526,6 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                 + "?action="
                 + action
             )
-
-
-def is_submission_applicant(user, submission) -> bool:
-    """Is the user the applicant, or a co-applicant, on this submission."""
-    return (
-        user == submission.user or submission.co_applicants.filter(user=user).exists()
-    )
 
 
 class DeterminationDetailedDataMixin:
