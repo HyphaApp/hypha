@@ -26,9 +26,9 @@ One maintainer owns the report until the advisory is published. If that cannot b
 10. **Tell people.** Announce the release in the community channels and anywhere else deployers look. State the affected versions, the fixed version, and anything they need to do beyond upgrading (rotating secrets, checking logs, and so on).
 11. **Look back.** Once things are calm, check whether the same mistake exists elsewhere in the codebase, note anything worth adding to the tests or docs, and update this checklist if it did not match what actually happened.
 
-## Password Storage
+## Password storage
 
-This application relies upon [Django's good use](https://docs.djangoproject.com/en/5.2/topics/auth/passwords/) of the PBKDF2 algorithm to encrypt salted passwords. This algorithm is blessed by NIST. Security experts on the web [tend to agree that PBKDF2 is a secure choice](http://security.stackexchange.com/questions/4781/do-any-security-experts-recommend-bcrypt-for-password-storage).
+This application use Django's default hasher (PBKDF2) and inherit its upgrades. For more information see [Password management in Django](https://docs.djangoproject.com/en/5.2/topics/auth/passwords/).
 
 ## Security in Django
 
