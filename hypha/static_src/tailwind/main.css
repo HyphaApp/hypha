@@ -22,6 +22,21 @@
 }
 @import "./base/themes.css";
 
+/* Tailwind's stock `dark:` variant keys off prefers-color-scheme, which ignores
+   the theme toggle. Follow the daisyUI themes instead: an explicit
+   data-theme="dark", or auto mode (no data-theme at all) on a dark OS. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &:where(html:not([data-theme]), html:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
+
 @theme {
   --default-border-width: var(--border);
 
