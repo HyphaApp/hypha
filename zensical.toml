@@ -42,7 +42,7 @@ repo = "fontawesome/brands/github"
 admonition = {}
 def_list = {}
 toc.permalink = true
-"zensical.extensions.macros".module_name = "docs/scripts/doc_macros"
+"zensical.extensions.macros".module_name = "docs_scripts/macros"
 "pymdownx.betterem".smart_enable = "all"
 "pymdownx.highlight".guess_lang = false
 "pymdownx.highlight".linenums = false
@@ -73,7 +73,7 @@ link = "https://github.com/HyphaApp/"
 name = "GitHub Org"
 
 # Python and Node versions are filled in automatically by
-# docs/scripts/doc_macros.py, which reads ".python-version" and ".nvmrc".
+# scripts/doc_macros.py, which reads ".python-version" and ".nvmrc".
 # Setting them here overrides the automatic versioning.
 [project.extra.versions]
 python.version = ""
