@@ -642,10 +642,7 @@ class ApplicantDeterminationDetailView(DeterminationDetailedDataMixin, DetailVie
 
         if determination.is_draft:
             return HttpResponseRedirect(
-                reverse_lazy(
-                    "apply:submissions:determinations:detail",
-                    args=(self.submission.id,),
-                )
+                reverse_lazy("apply:submissions:detail", args=(self.submission.id,))
             )
 
         return super().dispatch(request, *args, **kwargs)
