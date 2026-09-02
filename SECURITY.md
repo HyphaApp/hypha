@@ -4,9 +4,51 @@ We take security very seriously. We welcome any peer review of our 100% open sou
 
 ## Where should I report security issues?
 
-In order to give the community time to respond and upgrade we strongly urge you report all security issues privately. Only the latest minor release is supported so upgrade before reporting. Please e-mail disclosure@opentech.fund with details and reproduction steps. Security issues *always* take precedence over bug fixes and feature work. We can and do mark releases as "urgent" if they contain serious security fixes.
+In order to give the community time to respond and upgrade we strongly urge you report all security issues privately. Only the latest minor release is supported so upgrade before reporting.
+
+Please e-mail disclosure@opentech.fund with details and reproduction steps. Expect an response within a few working days. Security issues *always* take precedence over bug fixes and feature work. We can and do mark releases as "urgent" if they contain serious security fixes.
 
 For a list of recent security commits, check [our GitHub commits prefixed with SECURITY](https://github.com/HyphaApp/hypha/search?utf8=%E2%9C%93&q=SECURITY&type=Commits).
+
+## What counts as a security issue
+
+Hypha is software that other organisations install and run themselves. Some things that look like vulnerabilities in a live site are settings on that site rather than faults in the code, and those we cannot fix for you.
+
+In scope is anything in this repository that lets someone:
+
+* see submissions, reviews, determinations, projects or personal data they have no role-based right to see;
+* act as another user, or gain a role they were not granted;
+* bypass authentication, two-factor authentication, or the password reset flow;
+* inject script or markup that runs in another user's session — particularly where a lower-privileged user can reach a staff or admin one;
+* read or write files on the server, or upload content that is served back in a dangerous way;
+* get more out of the API, search or export routes than their role allows.
+
+Out of scope, and better raised elsewhere:
+
+* the configuration of a particular deployment — TLS versions and ciphers, HTTP security headers, a weak or shared `SECRET_KEY`, `DEBUG` left on, storage buckets left open. Raise these with whoever runs that site; our [deployment documentation](https://docs.hypha.app/setup/deployment/production/stand-alone/) covers what needs setting.
+* known vulnerabilities in our dependencies with no demonstrated effect on Hypha. Report those upstream. If you can show the flaw is reachable through Hypha, that is in scope and we want to hear about it.
+* findings produced by pointing a scanner at a site, with nothing behind them to show an attacker could do anything.
+
+Two things sit in between. Staff and administrators can write HTML in several places by design, so script injection that only a privileged user can set off is a real bug we will fix, but a low-severity one rather than an urgent release. Missing rate limits and similar hardening gaps are worth telling us about too — we would usually handle them as normal issues in the open rather than as an advisory.
+
+If you are unsure which side of the line something falls on, e-mail us anyway and say so. We would far rather read a report that turns out to be out of scope than miss one that was not.
+
+## Testing safely
+
+Please test against your own installation. The [development setup guide](https://docs.hypha.app/setup/deployment/development/stand-alone/) will get you a local copy with test data.
+
+Do not test against a deployment you do not run yourself. Hypha is used by organisations whose applicants are often in difficult and sometimes dangerous circumstances, and a live instance holds their real names, contact details and unpublished applications. Probing someone else's site risks exposing the people this software exists to protect, and the operator has no way of telling your testing apart from an attack. If a flaw can only be demonstrated against a live site, say so in your report and we will arrange something with the operator rather than have you go ahead.
+
+On any deployment that is not yours, do not:
+
+* access, download or retain data that is not your own;
+* modify or delete data, or degrade the service for its users — no load testing, no automated scanning, no brute forcing;
+* attempt social engineering, phishing or physical access against staff or applicants;
+* keep access once you have shown the point, or share what you found with anyone before the advisory is published.
+
+We will not pursue or support legal action against anyone who reports a vulnerability to us in good faith, stays within the boundaries above, and gives us reasonable time to fix the problem before saying anything publicly. If someone else takes action over research that followed these rules, we will say plainly and publicly that the work was done in good faith.
+
+We cannot extend that assurance to other people's deployments, as they are not ours to speak for. This is not a paid bug bounty programme, but we will credit you in the advisory if you would like us to.
 
 ## What we do when a serious security issue is found
 
