@@ -2,9 +2,15 @@
 
 We take security very seriously. We welcome any peer review of our 100% open source code to ensure the information submitted through this platform or other who rely upon it is not compromised or that hacked.
 
+## Supported versions
+
+Security fixes are made on `main` and released from there. We do not backport them, so only the latest minor release is supported. Anything older is fixed by upgrading.
+
+If you are running an older version, please upgrade before reporting — the problem may already be fixed. Deployers who want to hear about security releases as they happen should watch [releases](https://github.com/HyphaApp/hypha/releases) on GitHub.
+
 ## Where should I report security issues?
 
-In order to give the community time to respond and upgrade we strongly urge you report all security issues privately. Only the latest minor release is supported so upgrade before reporting.
+In order to give the community time to respond and upgrade we strongly urge you report all security issues privately.
 
 Please e-mail disclosure@opentech.fund with details and reproduction steps. Expect an response within a few working days. Security issues *always* take precedence over bug fixes and feature work. We can and do mark releases as "urgent" if they contain serious security fixes.
 
