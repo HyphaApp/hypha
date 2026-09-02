@@ -21,7 +21,7 @@ from hypha.apply.review.models import Review
 from hypha.core.tables import RelativeTimeColumn
 
 from .models import ApplicationSubmission, Round, ScreeningStatus
-from .widgets import MultiCheckboxesWidget
+from .widgets import ChoicesSelectMultipleWidget
 from .workflows import STATUS_SLUGS, STATUSES
 
 User = get_user_model()
@@ -192,7 +192,7 @@ class MultiCheckboxesMixin(filters.Filter):
     def __init__(self, *args, **kwargs):
         label = kwargs.get("label")
         kwargs.setdefault(
-            "widget", MultiCheckboxesWidget(attrs={"data-placeholder": label})
+            "widget", ChoicesSelectMultipleWidget(attrs={"data-placeholder": label})
         )
         super().__init__(*args, **kwargs)
 
