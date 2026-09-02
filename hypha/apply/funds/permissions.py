@@ -22,6 +22,13 @@ def has_permission(action, user, object=None, raise_exception=True):
     return value, reason
 
 
+def is_submission_applicant(user, submission) -> bool:
+    """Is the user the applicant, or a co-applicant, on this submission."""
+    return (
+        user == submission.user or submission.co_applicants.filter(user=user).exists()
+    )
+
+
 def can_take_submission_actions(user, submission):
     if not user.is_authenticated:
         return False, _("Login Required")
@@ -214,11 +221,7 @@ def can_view_submission(user, submission):
     if submission.is_archive and not can_view_archived_submissions(user):
         return False, _("Archived Submission")
 
-    if (
-        user.is_apply_staff
-        or submission.user == user
-        or submission.co_applicants.filter(user=user).exists()
-    ):
+    if user.is_apply_staff or is_submission_applicant(user, submission):
         return True, ""
 
     # By default, reviewers can see all submissions. This can be configured in Wagtail Admin > Apply > Reviewer Settings
