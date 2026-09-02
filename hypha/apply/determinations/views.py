@@ -617,7 +617,7 @@ class ApplicantDeterminationDetailView(DetailView):
 
         if (
             request.user != self.submission.user
-            and not self.submission.co_applicants.filter(user=request.user).exists
+            and not self.submission.co_applicants.filter(user=request.user).exists()
         ):
             raise PermissionDenied
 
