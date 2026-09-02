@@ -1,16 +1,58 @@
 let prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
+/**
+ * Read the stored theme preference.
+ *
+ * Storage can be unavailable (blocked cookies, some private browsing modes)
+ * and then throws. This script runs blocking in <head>, so an uncaught error
+ * would leave the page with no theme applied at all.
+ *
+ * @returns {string|null} "light", "dark", "auto", or null if nothing is stored.
+ */
+function getStoredTheme() {
+  try {
+    return localStorage.getItem("theme");
+  } catch (_e) {
+    return null;
+  }
+}
+
+/**
+ * Persist the theme preference, ignoring unavailable storage.
+ *
+ * @param {string} mode - "light", "dark" or "auto".
+ * @returns {boolean} Whether the preference could be stored.
+ */
+function storeTheme(mode) {
+  try {
+    localStorage.setItem("theme", mode);
+    return true;
+  } catch (_e) {
+    return false;
+  }
+}
+
 function setTheme(mode) {
   if (mode !== "light" && mode !== "dark" && mode !== "auto") {
     console.error(`Got invalid theme mode: ${mode}. Resetting to auto.`);
     mode = "auto";
   }
-  document.documentElement.dataset.theme = mode;
-  localStorage.setItem("theme", mode);
+
+  // daisyUI applies the dark theme through `:root:not([data-theme])` inside a
+  // prefers-color-scheme media query, so auto mode has to leave the attribute
+  // off entirely. Setting data-theme="auto" matches no theme and silently
+  // falls back to light.
+  if (mode === "auto") {
+    delete document.documentElement.dataset.theme;
+  } else {
+    document.documentElement.dataset.theme = mode;
+  }
+
+  storeTheme(mode);
 }
 
 function cycleTheme() {
-  const currentTheme = localStorage.getItem("theme") || "auto";
+  const currentTheme = getStoredTheme() || "auto";
 
   if (prefersDark) {
     // Auto (dark) -> Light -> Dark
@@ -35,7 +77,7 @@ function cycleTheme() {
 
 function initTheme() {
   // set theme defined in localStorage if there is one, or fallback to auto mode
-  const currentTheme = localStorage.getItem("theme");
+  const currentTheme = getStoredTheme();
   currentTheme ? setTheme(currentTheme) : setTheme("auto");
 }
 
