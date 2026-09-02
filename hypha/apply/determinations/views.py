@@ -527,8 +527,23 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
             )
 
 
+class DeterminationDetailedDataMixin:
+    """Controls whether the determination's detailed answers are rendered.
+
+    The determination message is always shown, the answers to the individual
+    determination form questions are opt-out for applicants.
+    """
+
+    show_detailed_data = True
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            show_detailed_data=self.show_detailed_data, **kwargs
+        )
+
+
 @method_decorator(staff_required, name="dispatch")
-class AdminDeterminationDetailView(DetailView):
+class AdminDeterminationDetailView(DeterminationDetailedDataMixin, DetailView):
     model = Determination
 
     def get_object(self, queryset=None):
@@ -556,7 +571,7 @@ class AdminDeterminationDetailView(DetailView):
 
 
 @method_decorator(login_required, name="dispatch")
-class ReviewerDeterminationDetailView(DetailView):
+class ReviewerDeterminationDetailView(DeterminationDetailedDataMixin, DetailView):
     model = Determination
 
     def get_object(self, queryset=None):
@@ -579,7 +594,7 @@ class ReviewerDeterminationDetailView(DetailView):
 
 
 @method_decorator(login_required, name="dispatch")
-class CommunityDeterminationDetailView(DetailView):
+class CommunityDeterminationDetailView(DeterminationDetailedDataMixin, DetailView):
     model = Determination
 
     def get_queryset(self):
@@ -601,8 +616,12 @@ class CommunityDeterminationDetailView(DetailView):
 
 
 @method_decorator(login_required, name="dispatch")
-class ApplicantDeterminationDetailView(DetailView):
+class ApplicantDeterminationDetailView(DeterminationDetailedDataMixin, DetailView):
     model = Determination
+
+    @property
+    def show_detailed_data(self):
+        return settings.DETERMINATION_DETAILS_ACCESS_APPLICANT
 
     def get_object(self, queryset=None):
         return get_object_or_404(
