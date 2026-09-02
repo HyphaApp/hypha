@@ -10,7 +10,11 @@ from hypha.apply.determinations.options import ACCEPTED, NEEDS_MORE_INFO, REJECT
 from hypha.apply.determinations.views import BatchDeterminationCreateView
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.projects.models.project import CONTRACTING, DRAFT
-from hypha.apply.users.tests.factories import StaffFactory, UserFactory
+from hypha.apply.users.tests.factories import (
+    ApplicantFactory,
+    StaffFactory,
+    UserFactory,
+)
 from hypha.apply.utils.testing import BaseViewTestCase
 
 from .factories import DeterminationFactory
@@ -33,6 +37,16 @@ class StaffDeterminationsTestCase(BaseViewTestCase):
         self.assertContains(response, determination.submission.title)
         self.assertContains(response, self.user.full_name)
         self.assertContains(response, submission.get_absolute_url())
+
+    @override_settings(DETERMINATION_DETAILS_ACCESS_APPLICANT=False)
+    def test_can_see_detailed_data_when_hidden_from_applicants(self):
+        submission = ApplicationSubmissionFactory(status="in_discussion")
+        determination = DeterminationFactory(
+            submission=submission, author=self.user, submitted=True
+        )
+        response = self.get_page(determination)
+        self.assertTrue(response.context["show_detailed_data"])
+        self.assertContains(response, "Goals and principles")
 
     def test_lead_can_access_determination(self):
         submission = ApplicationSubmissionFactory(
@@ -560,6 +574,36 @@ class BatchDeterminationTestCase(BaseViewTestCase):
         # 5 base - 1 x django messages, 1 x activity feed, 1 x email, 1 x slack
         # plus 1 extra for unable to determine
         self.assertEqual(len(response.context["messages"]), 5)
+
+
+class ApplicantDeterminationDetailTestCase(BaseViewTestCase):
+    user_factory = ApplicantFactory
+    url_name = "funds:submissions:determinations:{}"
+    base_view_name = "detail"
+
+    def get_kwargs(self, instance):
+        return {"submission_pk": instance.submission.id, "pk": instance.pk}
+
+    def determination_for_user(self):
+        submission = ApplicationSubmissionFactory(
+            status="in_discussion", user=self.user
+        )
+        return DeterminationFactory(submission=submission, submitted=True)
+
+    def test_can_see_detailed_data_by_default(self):
+        determination = self.determination_for_user()
+        response = self.get_page(determination)
+        self.assertTrue(response.context["show_detailed_data"])
+        self.assertContains(response, "Goals and principles")
+
+    @override_settings(DETERMINATION_DETAILS_ACCESS_APPLICANT=False)
+    def test_cant_see_detailed_data_when_disabled(self):
+        determination = self.determination_for_user()
+        response = self.get_page(determination)
+        self.assertFalse(response.context["show_detailed_data"])
+        self.assertNotContains(response, "Goals and principles")
+        # The determination message is always shown to the applicant.
+        self.assertContains(response, determination.message)
 
 
 class UserDeterminationFormTestCase(BaseViewTestCase):
