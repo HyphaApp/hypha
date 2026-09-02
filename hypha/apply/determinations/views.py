@@ -527,6 +527,13 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
             )
 
 
+def is_submission_applicant(user, submission) -> bool:
+    """Is the user the applicant, or a co-applicant, on this submission."""
+    return (
+        user == submission.user or submission.co_applicants.filter(user=user).exists()
+    )
+
+
 class DeterminationDetailedDataMixin:
     """Controls whether the determination's detailed answers are rendered.
 
@@ -573,6 +580,15 @@ class AdminDeterminationDetailView(DeterminationDetailedDataMixin, DetailView):
 @method_decorator(login_required, name="dispatch")
 class ReviewerDeterminationDetailView(DeterminationDetailedDataMixin, DetailView):
     model = Determination
+
+    @property
+    def show_detailed_data(self):
+        # Reviewers are routed here ahead of the applicant view, so a reviewer
+        # looking at a determination on their own application is still subject
+        # to the applicant setting.
+        if is_submission_applicant(self.request.user, self.submission):
+            return settings.DETERMINATION_DETAILS_ACCESS_APPLICANT
+        return True
 
     def get_object(self, queryset=None):
         return get_object_or_404(
@@ -634,10 +650,7 @@ class ApplicantDeterminationDetailView(DeterminationDetailedDataMixin, DetailVie
         )
         determination = self.get_object()
 
-        if (
-            request.user != self.submission.user
-            and not self.submission.co_applicants.filter(user=request.user).exists()
-        ):
+        if not is_submission_applicant(request.user, self.submission):
             raise PermissionDenied
 
         if determination.is_draft:

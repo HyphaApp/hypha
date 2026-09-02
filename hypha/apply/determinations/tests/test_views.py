@@ -8,16 +8,34 @@ from django.urls import reverse_lazy
 from hypha.apply.activity.models import Activity
 from hypha.apply.determinations.options import ACCEPTED, NEEDS_MORE_INFO, REJECTED
 from hypha.apply.determinations.views import BatchDeterminationCreateView
+from hypha.apply.funds.models.co_applicants import (
+    CoApplicant,
+    CoApplicantInvite,
+    CoApplicantInviteStatus,
+)
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.projects.models.project import CONTRACTING, DRAFT
+from hypha.apply.users.roles import APPLICANT_GROUP_NAME
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
+    GroupFactory,
+    ReviewerFactory,
     StaffFactory,
     UserFactory,
 )
 from hypha.apply.utils.testing import BaseViewTestCase
 
 from .factories import DeterminationFactory
+
+
+def make_co_applicant(submission, user):
+    """Create a CoApplicant on the submission."""
+    invite = CoApplicantInvite.objects.create(
+        submission=submission,
+        invited_user_email=user.email,
+        status=CoApplicantInviteStatus.ACCEPTED,
+    )
+    return CoApplicant.objects.create(submission=submission, user=user, invite=invite)
 
 
 class StaffDeterminationsTestCase(BaseViewTestCase):
@@ -604,6 +622,57 @@ class ApplicantDeterminationDetailTestCase(BaseViewTestCase):
         self.assertNotContains(response, "Goals and principles")
         # The determination message is always shown to the applicant.
         self.assertContains(response, determination.message)
+
+
+class ReviewerDeterminationDetailTestCase(BaseViewTestCase):
+    user_factory = ReviewerFactory
+    url_name = "funds:submissions:determinations:{}"
+    base_view_name = "detail"
+
+    def get_kwargs(self, instance):
+        return {"submission_pk": instance.submission.id, "pk": instance.pk}
+
+    def determination_for_user(self):
+        """A determination on the reviewer's own application.
+
+        Users can hold both roles; ViewDispatcher routes them to the reviewer
+        view because it checks `is_reviewer` before `is_applicant`.
+        """
+        self.user.groups.add(GroupFactory(name=APPLICANT_GROUP_NAME))
+        submission = ApplicationSubmissionFactory(
+            status="in_discussion", user=self.user
+        )
+        return DeterminationFactory(submission=submission, submitted=True)
+
+    def test_can_see_detailed_data_on_other_submissions(self):
+        determination = DeterminationFactory(
+            submission=ApplicationSubmissionFactory(status="in_discussion"),
+            submitted=True,
+        )
+        response = self.get_page(determination)
+        self.assertTrue(response.context["show_detailed_data"])
+
+    def test_can_see_detailed_data_on_own_submission_by_default(self):
+        determination = self.determination_for_user()
+        response = self.get_page(determination)
+        self.assertTrue(response.context["show_detailed_data"])
+
+    @override_settings(DETERMINATION_DETAILS_ACCESS_APPLICANT=False)
+    def test_cant_see_detailed_data_on_own_submission_when_disabled(self):
+        determination = self.determination_for_user()
+        response = self.get_page(determination)
+        self.assertFalse(response.context["show_detailed_data"])
+        self.assertNotContains(response, "Goals and principles")
+        # The determination message is always shown to the applicant.
+        self.assertContains(response, determination.message)
+
+    @override_settings(DETERMINATION_DETAILS_ACCESS_APPLICANT=False)
+    def test_cant_see_detailed_data_as_co_applicant_when_disabled(self):
+        submission = ApplicationSubmissionFactory(status="in_discussion")
+        make_co_applicant(submission, self.user)
+        determination = DeterminationFactory(submission=submission, submitted=True)
+        response = self.get_page(determination)
+        self.assertFalse(response.context["show_detailed_data"])
 
 
 class UserDeterminationFormTestCase(BaseViewTestCase):
