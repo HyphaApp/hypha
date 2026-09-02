@@ -12,7 +12,7 @@ For information on configuring email notifications for Hypha, see the [E-mail se
 
 ### Slack
 
-For information on configuring Slack notifications for Hypha, see the [Slack section](configuration.md/#slack-settings) of the configuration reference.
+For information on configuring Slack notifications for Hypha, see the [Slack section](configuration.md#slack-settings) of the configuration reference.
 
 ## Project report reminders
 

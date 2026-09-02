@@ -22,27 +22,25 @@ class VersionFileNotFoundError(FileNotFoundError):
 
 def define_env(env):
     """
-    Where mkdocs-macros are defined. For more info, see:
-    https://mkdocs-macros-plugin.readthedocs.io/en/latest/macros/
+    Where the documentation macros are defined. For more info, see:
+    https://zensical.org/docs/setup/extensions/macros/
     """
 
-    # If python & node versions are left blank in mkdocs.yml, attempt to automatically populate them
+    # Zensical's macros extension merges the `extra` block into the template
+    # variables only after this function has run, so `env.variables` is still
+    # empty here - fall back to reading it straight off the config.
+    versions = env.variables.get("versions") or env.conf["extra"]["versions"]
 
-    if env.variables.versions["python"]["version"] is None:
-        py_ver = get_python_version()
-        # Remove the patch number from the docs versioning
-        env.variables.versions["python"]["version"] = ".".join(py_ver.split(".")[:-1])
+    # If python & node versions are left blank in zensical.toml, attempt to
+    # automatically populate them. A blank value is read as an empty string.
 
-        if env.variables.versions["python"]["packages"]["macos"] is None:
-            env.variables.versions["python"]["packages"]["macos"] = (
-                f"python@{'.'.join(py_ver.split('.')[:-1])}"
-            )
+    if not versions["python"]["version"]:
+        versions["python"]["version"] = get_python_version()
 
-    if env.variables.versions["node"]["version"] is None:
-        node_ver = get_node_version()
+    if not versions["node"]["version"]:
+        versions["node"]["version"] = get_node_version()
 
-        # Remove the patch number from the docs versioning
-        env.variables.versions["node"]["version"] = ".".join(node_ver.split(".")[:-1])
+    env.variables["versions"] = versions
 
 
 def get_python_version() -> str:
@@ -53,7 +51,7 @@ def get_python_version() -> str:
 
     try:
         with open(PYTHON_VERSION_FILE) as py_ver:
-            version = py_ver.read()
+            version = py_ver.read().strip()
 
         if not valid_semver(version):
             raise InvalidVersionException(
@@ -75,7 +73,7 @@ def get_node_version() -> str:
 
     try:
         with open(NVM_VERSION_FILE) as nvm_ver:
-            version = nvm_ver.read()
+            version = nvm_ver.read().strip()
 
         # Node version is usually in the format of "vX.X.X"
         if version.startswith("v"):

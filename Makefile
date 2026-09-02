@@ -27,7 +27,7 @@ serve: .cache/tandem .cache/py-packages .cache/dev-build-fe  ## Run Django serve
 	@.cache/tandem \
 		'${UV_RUN}python manage.py runserver_plus --settings=$(DJANGO_SETTINGS_MODULE)' \
 		'npm:watch:*' \
-		'${UV_RUN}mkdocs serve'
+		'${UV_RUN}zensical serve'
 
 .PHONY: test
 test: lint py-test cov-html  ## Run all tests (linting, Python tests) and generate coverage report
