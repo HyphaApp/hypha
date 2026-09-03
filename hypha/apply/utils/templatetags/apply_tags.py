@@ -40,6 +40,12 @@ def instance_verbose_name(instance):
 
 
 @register.filter
+def is_determination(instance):
+    Determination = apps.get_model("determinations", "Determination")
+    return isinstance(instance, Determination)
+
+
+@register.filter
 def format_number_as_currency(amount: float | decimal.Decimal | str | None):
     """Formats a number as currency"""
     if amount is None:
