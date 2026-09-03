@@ -270,8 +270,8 @@ ENABLE_PUBLIC_SIGNUP = env.bool("ENABLE_PUBLIC_SIGNUP", True)
 # @deprecated: This setting is deprecated and will be removed in a future release.
 FORCE_LOGIN_FOR_APPLICATION = env.bool("FORCE_LOGIN_FOR_APPLICATION", True)
 
-# Seconds to enter password on password page while email change/2FA change (default 120, 2 minutes).
-PASSWORD_PAGE_TIMEOUT = env.int("PASSWORD_PAGE_TIMEOUT", 120)
+# Seconds to enter password on password page while email change/2FA change (default 300, 5 minutes).
+PASSWORD_PAGE_TIMEOUT = env.int("PASSWORD_PAGE_TIMEOUT", 300)
 
 #  Template engines and options to be used with Django.
 TEMPLATES = [
