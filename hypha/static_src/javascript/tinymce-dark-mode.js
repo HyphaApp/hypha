@@ -58,9 +58,11 @@
     });
   });
 
-  // The theme toggle sets data-theme on <html>. It also re-sets the attribute
-  // when the OS preference changes while in "auto" mode, so this covers both.
-  new MutationObserver(function () {
+  /**
+   * Point every editor, current and future, at the stylesheet for the theme
+   * that is now in effect.
+   */
+  function syncContentCss() {
     const name = contentCss();
 
     // Editors created from here on, e.g. by HTMX swapping in a new form.
@@ -69,8 +71,19 @@
     for (const editor of tinymce.get() ?? []) {
       swapContentCss(editor, name);
     }
-  }).observe(document.documentElement, {
+  }
+
+  // The theme toggle sets data-theme on <html> for the light and dark modes,
+  // and removes it again for auto mode. Attribute removal is an attribute
+  // mutation too, so both directions are covered.
+  new MutationObserver(syncContentCss).observe(document.documentElement, {
     attributes: true,
     attributeFilter: ["data-theme"],
   });
+
+  // In auto mode there is no data-theme attribute, so an OS preference change
+  // repaints the page without mutating anything the observer above watches.
+  window
+    .matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener("change", syncContentCss);
 })();
