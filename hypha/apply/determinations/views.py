@@ -17,6 +17,7 @@ from wagtail.models import Site
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity
 from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.funds.permissions import is_submission_applicant
 from hypha.apply.funds.workflows import DETERMINATION_OUTCOMES
 from hypha.apply.funds.workflows.models.stage import Concept
 from hypha.apply.projects.models import Project
@@ -527,8 +528,23 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
             )
 
 
+class DeterminationDetailedDataMixin:
+    """Controls whether the determination's detailed answers are rendered.
+
+    The determination message is always shown, the answers to the individual
+    determination form questions are opt-out for applicants.
+    """
+
+    show_detailed_data = True
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            show_detailed_data=self.show_detailed_data, **kwargs
+        )
+
+
 @method_decorator(staff_required, name="dispatch")
-class AdminDeterminationDetailView(DetailView):
+class AdminDeterminationDetailView(DeterminationDetailedDataMixin, DetailView):
     model = Determination
 
     def get_object(self, queryset=None):
@@ -556,8 +572,17 @@ class AdminDeterminationDetailView(DetailView):
 
 
 @method_decorator(login_required, name="dispatch")
-class ReviewerDeterminationDetailView(DetailView):
+class ReviewerDeterminationDetailView(DeterminationDetailedDataMixin, DetailView):
     model = Determination
+
+    @property
+    def show_detailed_data(self):
+        # Reviewers are routed here ahead of the applicant view, so a reviewer
+        # looking at a determination on their own application is still subject
+        # to the applicant setting.
+        if is_submission_applicant(self.request.user, self.submission):
+            return settings.DETERMINATION_DETAILS_ACCESS_APPLICANT
+        return True
 
     def get_object(self, queryset=None):
         return get_object_or_404(
@@ -579,7 +604,7 @@ class ReviewerDeterminationDetailView(DetailView):
 
 
 @method_decorator(login_required, name="dispatch")
-class CommunityDeterminationDetailView(DetailView):
+class CommunityDeterminationDetailView(DeterminationDetailedDataMixin, DetailView):
     model = Determination
 
     def get_queryset(self):
@@ -601,8 +626,12 @@ class CommunityDeterminationDetailView(DetailView):
 
 
 @method_decorator(login_required, name="dispatch")
-class ApplicantDeterminationDetailView(DetailView):
+class ApplicantDeterminationDetailView(DeterminationDetailedDataMixin, DetailView):
     model = Determination
+
+    @property
+    def show_detailed_data(self):
+        return settings.DETERMINATION_DETAILS_ACCESS_APPLICANT
 
     def get_object(self, queryset=None):
         return get_object_or_404(
@@ -615,18 +644,12 @@ class ApplicantDeterminationDetailView(DetailView):
         )
         determination = self.get_object()
 
-        if (
-            request.user != self.submission.user
-            and not self.submission.co_applicants.filter(user=request.user).exists
-        ):
+        if not is_submission_applicant(request.user, self.submission):
             raise PermissionDenied
 
         if determination.is_draft:
             return HttpResponseRedirect(
-                reverse_lazy(
-                    "apply:submissions:determinations:detail",
-                    args=(self.submission.id,),
-                )
+                reverse_lazy("apply:submissions:detail", args=(self.submission.id,))
             )
 
         return super().dispatch(request, *args, **kwargs)
