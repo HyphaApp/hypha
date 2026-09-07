@@ -18,17 +18,28 @@ function getStoredTheme() {
 }
 
 /**
+ * Read the theme currently applied to the document.
+ *
+ * The DOM is authoritative here rather than localStorage, which can be
+ * unavailable and would then report "auto" on every click, leaving the toggle
+ * stuck on a single theme.
+ *
+ * @returns {string} "light", "dark" or "auto".
+ */
+function getCurrentTheme() {
+  return document.documentElement.dataset.theme || "auto";
+}
+
+/**
  * Persist the theme preference, ignoring unavailable storage.
  *
  * @param {string} mode - "light", "dark" or "auto".
- * @returns {boolean} Whether the preference could be stored.
  */
 function storeTheme(mode) {
   try {
     localStorage.setItem("theme", mode);
-    return true;
   } catch (_e) {
-    return false;
+    // Nothing to do: the theme still applies for this page view.
   }
 }
 
@@ -52,7 +63,7 @@ function setTheme(mode) {
 }
 
 function cycleTheme() {
-  const currentTheme = getStoredTheme() || "auto";
+  const currentTheme = getCurrentTheme();
 
   if (prefersDark) {
     // Auto (dark) -> Light -> Dark
@@ -95,10 +106,11 @@ document.addEventListener("DOMContentLoaded", function () {
   setupTheme();
 });
 
-// reset theme and release image if auto mode activated and os preferences have changed
+// Auto mode carries no data-theme attribute, so the CSS follows the OS on its
+// own and nothing needs re-applying when the OS preference changes. Only the
+// order the toggle cycles through depends on it.
 window
   .matchMedia("(prefers-color-scheme: dark)")
   .addEventListener("change", function (e) {
     prefersDark = e.matches;
-    initTheme();
   });
