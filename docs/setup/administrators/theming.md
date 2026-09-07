@@ -9,7 +9,7 @@ A handful of overridden values is enough to make Hypha look like it belongs next
 organisation's other web properties, without touching a single Hypha template.
 
 Two themes are defined, `light` and `dark`, and visitors switch between them (or follow their
-operating system) with the theme toggle in the footer. Whatever you change, change it in both.
+operating system) with the theme toggle in the header. Whatever you change, change it in both.
 
 ## How the colours are organised
 
@@ -74,9 +74,16 @@ overriding that one value re-colours both themes at once.
 Create the file `hypha/templates_custom/includes/head_end.html`.
 
 This template is included at the very end of `<head>`, after Hypha's own stylesheets, and exists
-precisely for additions like this. Anything you declare there wins over the defaults, because it
-comes later in the cascade. Nothing needs to be recompiled and no `collectstatic` run is
-needed — the change takes effect as soon as the file is in place.
+precisely for additions like this. Anything you declare there wins over the defaults, for one of
+two reasons: the daisyUI theme values are emitted inside a `@layer base` cascade layer, and
+unlayered styles beat layered ones whatever their specificity or order; the brand ramp
+(`--color-brand` and its shades) is emitted unlayered in `:root`, and your `:root` rule wins on
+source order because it comes later in the document.
+
+Both routes depend on your CSS staying **unlayered**, so do not wrap it in a cascade layer of
+your own — `@layer custom { :root { --color-brand: … } }` would lose to the unlayered brand ramp
+and be silently ignored. Nothing needs to be recompiled and no `collectstatic` run is needed —
+the change takes effect as soon as the file is in place.
 
 Everything below goes inside that file.
 
@@ -120,11 +127,15 @@ lower it towards `0` for more neutral ones.
 
 To go further than the brand colour, override the daisyUI variables directly. These are set
 *per theme*, so you must override them per theme too — otherwise your light-mode value leaks into
-dark mode:
+dark mode.
+
+There are three cases to cover, not two. A visitor who has never touched the theme toggle is in
+auto mode, and auto mode sets no `data-theme` attribute at all — it lets the operating system
+decide, through a `prefers-color-scheme` media query:
 
 ```html
 <style>
-    /* Light theme */
+    /* Light theme, and auto mode on a light OS */
     :root,
     [data-theme="light"] {
         --color-primary: oklch(48% 0.11 162.8);
@@ -138,6 +149,15 @@ dark mode:
         --color-primary-content: oklch(18% 0.02 162.8);
         --color-secondary: oklch(64% 0.03 229);
     }
+
+    /* Auto mode on a dark OS */
+    @media (prefers-color-scheme: dark) {
+        :root:not([data-theme]) {
+            --color-primary: oklch(70% 0.13 162.8);
+            --color-primary-content: oklch(18% 0.02 162.8);
+            --color-secondary: oklch(64% 0.03 229);
+        }
+    }
 </style>
 ```
 
@@ -146,26 +166,45 @@ glare against the dark background.
 
 !!! warning
 
-    Setting a per-theme variable on `:root` alone applies it to *both* themes. Hypha's own dark
-    theme rule has the same specificity but comes earlier in the stylesheet, so your later
-    declaration wins even when dark mode is active. `--color-brand` is the exception — it is not
-    part of either theme, so `:root` is the correct place for it.
+    Setting a per-theme variable on `:root` alone applies it to *every* case. Your declarations
+    are unlayered and Hypha's theme rules sit in `@layer base`, so yours win even where Hypha's
+    selector is the more specific one — a bare `:root` overrides the dark theme too.
+
+    Auto mode is the easiest of the three to miss, because `[data-theme="dark"]` cannot match a
+    visitor who has no `data-theme` attribute — but your `:root` block can. Leave the third block
+    out and an auto-mode visitor on a dark operating system gets Hypha's dark backgrounds with
+    your *light* colours on top. That is why the `@media (prefers-color-scheme: dark)` block above
+    repeats the dark values: both blocks are yours, and `:root:not([data-theme])` is more specific
+    than `:root`, so the dark values win in auto mode whichever order you write them in.
+
+    `--color-brand` is the exception — it is not part of either theme, so `:root` is the correct
+    place for it and it never needs repeating.
 
 A softer, warmer set of backgrounds is a common second change. It tints every panel, table and
-card in the application:
+card in the application. This one changes the light theme only, so target light explicitly rather
+than using `:root` — `:root` would carry the pale backgrounds into dark mode as well:
 
 ```html
 <style>
-    :root,
     [data-theme="light"] {
         --color-base-100: oklch(99% 0.004 85);  /* off-white page background */
         --color-base-200: oklch(97% 0.006 85);  /* panels and table headers */
         --color-base-300: oklch(93% 0.008 85);  /* borders and dividers */
     }
+
+    /* Auto mode on a light OS */
+    @media (prefers-color-scheme: light) {
+        :root:not([data-theme]) {
+            --color-base-100: oklch(99% 0.004 85);
+            --color-base-200: oklch(97% 0.006 85);
+            --color-base-300: oklch(93% 0.008 85);
+        }
+    }
 </style>
 ```
 
-Squarer or rounder corners are a one-liner, and apply to both themes:
+Squarer or rounder corners are a one-liner. These are meant to apply everywhere, so here `:root`
+is exactly what you want — it covers auto mode on both kinds of operating system:
 
 ```html
 <style>
@@ -244,7 +283,7 @@ other template — see [Overriding templates](overriding-templates.md).
 
 ## Before you go live
 
-- **Check both themes.** Use the theme toggle in the footer, and check it in a browser set to
+- **Check both themes.** Use the theme toggle in the header, and check it in a browser set to
   dark mode as well.
 - **Check the contrast.** Most colours have a matching `--color-*-content` for text drawn on top
   of them, and the `base-*` backgrounds share `--color-base-content`. If you darken
