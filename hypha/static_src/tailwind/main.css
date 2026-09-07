@@ -24,14 +24,16 @@
 
 /* Tailwind's stock `dark:` variant keys off prefers-color-scheme, which ignores
    the theme toggle. Follow the daisyUI themes instead: an explicit
-   data-theme="dark", or auto mode (no data-theme at all) on a dark OS. */
+   data-theme="dark", or auto mode (no data-theme at all) on a dark OS. The auto
+   branch stops at any subtree that sets its own data-theme, so a scoped
+   <div data-theme="light"> is not painted as dark. */
 @custom-variant dark {
   &:where([data-theme="dark"], [data-theme="dark"] *) {
     @slot;
   }
 
   @media (prefers-color-scheme: dark) {
-    &:where(html:not([data-theme]), html:not([data-theme]) *) {
+    &:where(html:not([data-theme]) :not([data-theme]):not([data-theme] *)) {
       @slot;
     }
   }
