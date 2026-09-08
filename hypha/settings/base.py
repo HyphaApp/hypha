@@ -135,6 +135,9 @@ SEND_MESSAGES = env.bool("SEND_MESSAGES", False)
 # If automatic e-mails should be sent out to reviewers when submissions are ready for review.
 SEND_READY_FOR_REVIEW = env.bool("SEND_READY_FOR_REVIEW", True)
 
+# If automatic e-mails should be sent out to applicants when their submission changes status.
+SEND_TRANSITION_EMAIL = env.bool("SEND_TRANSITION_EMAIL", True)
+
 # Staff can upload the contract
 STAFF_UPLOAD_CONTRACT = env.bool("STAFF_UPLOAD_CONTRACT", False)
 

@@ -163,6 +163,9 @@ class EmailAdapter(AdapterBase):
         }
 
     def handle_transition(self, old_phase, source, **kwargs):
+        if not settings.SEND_TRANSITION_EMAIL:
+            return
+
         from hypha.apply.funds.workflows import PHASES
 
         submission = source
