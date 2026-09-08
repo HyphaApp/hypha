@@ -92,18 +92,14 @@ function initTheme() {
   currentTheme ? setTheme(currentTheme) : setTheme("auto");
 }
 
-function setupTheme() {
-  // Attach event handlers for toggling themes
-  let buttons = document.getElementsByClassName("theme-toggle");
-  for (var i = 0; i < buttons.length; i++) {
-    buttons[i].addEventListener("click", cycleTheme);
-  }
-}
-
 initTheme();
 
-document.addEventListener("DOMContentLoaded", function () {
-  setupTheme();
+// Delegated so the toggle keeps working after htmx swaps the header out, which
+// hx-boost links without an hx-target do by replacing the whole <body>.
+document.addEventListener("click", function (e) {
+  if (e.target.closest(".theme-toggle")) {
+    cycleTheme();
+  }
 });
 
 // Auto mode carries no data-theme attribute, so the CSS follows the OS on its
