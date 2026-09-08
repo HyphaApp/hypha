@@ -44,7 +44,11 @@ Params:
                             <a href="#communications--{{activity.id}}" class="flex gap-1 hover:underline">
                                 <span class="text-fg-muted">
                                     {% if not submission_title and activity|user_can_see_related:request.user %}
-                                        {% blocktrans with related_name=activity.related_object|model_verbose_name|with_indefinite_article %}commented on {{ related_name }}{% endblocktrans %}
+                                        {% if activity.related_object|is_determination %}
+                                            {% trans "message from determination" %}
+                                        {% else %}
+                                            {% blocktrans with related_name=activity.related_object|model_verbose_name|with_indefinite_article %}commented on {{ related_name }}{% endblocktrans %}
+                                        {% endif %}
                                     {% else %}
                                         {% trans "commented" %}
                                     {% endif %}
