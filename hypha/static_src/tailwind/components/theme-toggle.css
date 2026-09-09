@@ -2,7 +2,7 @@
   display: none;
 }
 
-html[data-theme="auto"] .theme-toggle svg.theme-icon-when-auto {
+html:not([data-theme]) .theme-toggle svg.theme-icon-when-auto {
   display: block;
 }
 
@@ -18,7 +18,7 @@ html[data-theme="light"] .theme-toggle svg.theme-icon-when-light {
   display: none;
 }
 
-html[data-theme="auto"] .theme-toggle .theme-label-when-auto {
+html:not([data-theme]) .theme-toggle .theme-label-when-auto {
   display: block;
 }
 

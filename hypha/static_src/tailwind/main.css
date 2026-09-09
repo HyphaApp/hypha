@@ -22,6 +22,27 @@
 }
 @import "./base/themes.css";
 
+/* Tailwind's stock `dark:` variant keys off prefers-color-scheme, which ignores
+   the theme toggle. Follow the daisyUI themes instead: an explicit
+   data-theme="dark", or auto mode (no data-theme anywhere above the element) on
+   a dark OS. In auto mode a scoped subtree that sets its own data-theme drops
+   out of the second branch, so <div data-theme="light"> is not painted as dark.
+   Under an explicit data-theme root the variant follows that root and does not
+   track nested overrides — "nearest data-theme ancestor wins" needs :has(), so
+   scoped themes inside an explicitly themed page are out of scope. Hypha only
+   ever sets data-theme on <html>. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &:where(:not([data-theme]):not([data-theme] *)) {
+      @slot;
+    }
+  }
+}
+
 @theme {
   --default-border-width: var(--border);
 

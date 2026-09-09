@@ -23,16 +23,12 @@
         {% block user_menu %}
             <div class="flex gap-2 print-hidden">
 
-                <button class="theme-toggle btn btn-circle btn-soft btn-secondary" data-tippy-content="{% trans 'Toggle color theme' %}">
+                <button type="button" class="theme-toggle btn btn-circle btn-soft btn-secondary" data-tippy-content="{% trans 'Toggle color theme' %}">
                     <div class="sr-only theme-label-when-auto">{% trans "Toggle theme" %} ({% trans "current theme" %}: auto)</div>
                     <div class="sr-only theme-label-when-light">{% trans "Toggle theme" %} ({% trans "current theme" %}: light)</div>
                     <div class="sr-only theme-label-when-dark">{% trans "Toggle theme" %} ({% trans "current theme" %}: dark)</div>
 
-
-                    <div class="sr-only">{% trans "Toggle Light / Dark / Auto color theme" %}</div>
-
                     <svg aria-hidden="true" class="w-5 h-5 theme-icon-when-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <!-- <path d="M0 0h24v24H0z" fill="currentColor"></path> -->
                         <path fill="currentColor" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2V4a8 8 0 1 0 0 16z"></path>
                     </svg>
                     {% heroicon_solid "moon" class="w-5 h-5 theme-icon-when-dark" aria_hidden="true" %}
