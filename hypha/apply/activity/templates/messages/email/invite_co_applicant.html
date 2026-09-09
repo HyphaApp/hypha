@@ -1,5 +1,5 @@
 {% extends "messages/email/base.html" %}
-{% load i18n activity_tags %}
+{% load i18n activity_tags util_tags %}
 
 {% block salutation %}{% if invited_user %}{% blocktrans with name=invited_user.get_display_name %}Dear {{ name }},{% endblocktrans %}{% else %}{% blocktrans with name=related.invited_user_email|email_name %}Dear {{ name }},{% endblocktrans %}{% endif %}{% endblock %}
 
@@ -10,6 +10,6 @@
 {% else %}
 {% blocktrans %}Click on link if you want to accept it.{% endblocktrans %}
 
-{% trans "Link" %}: {{ BASE_URL }}{{ accept_link }}
+{% trans "Link" %}: {% base_url %}{{ accept_link }}
 {% endif %}
 {% endblock %}{# fmt:on #}

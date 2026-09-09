@@ -1,6 +1,6 @@
 {% extends "messages/email/base.html" %}
 
-{% load i18n %}
+{% load i18n util_tags %}
 
 {% block salutation %}{% trans "Hey there," %}{% endblock %}
 
@@ -9,5 +9,5 @@
 {% endblock %}
 
 {% block more_info %}
-{% trans "View it here" %}: {{ BASE_URL }}{{ comment.get_absolute_url }}
+{% trans "View it here" %}: {% base_url %}{{ comment.get_absolute_url }}
 {% endblock %}

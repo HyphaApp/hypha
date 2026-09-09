@@ -1,9 +1,9 @@
 {% extends "messages/email/applicant_base.html" %}
 
-{% load i18n invoice_tools %}
+{% load i18n invoice_tools util_tags %}
 {% block content %}{# fmt:off #}
 
 {% blocktrans with title=source.title_text_display %}An {{ ORG_SHORT_NAME }} staff member has updated an invoice on your project "{{ title }}".{% endblocktrans %}
 
-{% trans "View the invoice here:" %}: {{ BASE_URL }}{{ source.get_absolute_url }}
+{% trans "View the invoice here:" %}: {% base_url %}{{ source.get_absolute_url }}
 {% endblock %}{# fmt:on #}

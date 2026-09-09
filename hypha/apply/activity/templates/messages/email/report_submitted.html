@@ -1,9 +1,9 @@
 {% extends "messages/email/applicant_base.html" %}
 
-{% load i18n %}
+{% load i18n util_tags %}
 
 {% block content %}{# fmt:off #}
 {% blocktrans with title=source.title_text_display start_date=report.start_date end_date=report.end_date %}An {{ ORG_SHORT_NAME }} staff member has submitted a report for your project "{{ title }}" for period {{ start_date }} to {{ end_date }}.{% endblocktrans %}
 
-{% trans "You can review the report here" %}: {{ BASE_URL }}{{ report.get_absolute_url }}
+{% trans "You can review the report here" %}: {% base_url %}{{ report.get_absolute_url }}
 {% endblock %}{# fmt:on #}
