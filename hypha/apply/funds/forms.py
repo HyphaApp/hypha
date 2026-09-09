@@ -23,7 +23,7 @@ from .models import (
 from .models.co_applicants import CoApplicantProjectPermission, CoApplicantRole
 from .permissions import can_change_external_reviewers
 from .utils import model_form_initial, render_icon
-from .widgets import MultiCheckboxesWidget
+from .widgets import ChoicesSelectMultipleWidget
 
 
 class ApplicationSubmissionModelForm(forms.ModelForm):
@@ -239,7 +239,7 @@ class BatchUpdateReviewersForm(forms.Form):
     )
     external_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().only("pk", "full_name"),
-        widget=MultiCheckboxesWidget(attrs={"data-placeholder": _("Select...")}),
+        widget=ChoicesSelectMultipleWidget(attrs={"data-placeholder": _("Select...")}),
         label=_("External Reviewers"),
         required=False,
     )
@@ -386,7 +386,7 @@ class GroupedModelMultipleChoiceField(forms.ModelMultipleChoiceField):
 class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
     meta_terms = GroupedModelMultipleChoiceField(
         queryset=None,  # updated in init method
-        widget=MultiCheckboxesWidget(attrs={"data-placeholder": _("Select...")}),
+        widget=ChoicesSelectMultipleWidget(attrs={"data-placeholder": _("Select...")}),
         label=_("Tags"),
         choices_groupby="get_parent",
         required=False,
