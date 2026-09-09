@@ -1,8 +1,7 @@
 from dateutil.relativedelta import relativedelta
-from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.management.base import BaseCommand
-from django.http import HttpRequest
 from django.utils import timezone
+from wagtail.coreutils import get_dummy_request
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.projects.models import (
@@ -19,11 +18,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         site = ApplyHomePage.objects.first().get_site()
 
-        # Mock a HTTPRequest as the messenger expects one. Links in the
-        # notifications are built from `get_base_url()`, not from the request.
-        request = HttpRequest()
-        request.session = {}
-        request._messages = FallbackStorage(request)
+        # The messenger expects a request. Links in the notifications are built
+        # from `get_base_url()`, not from the request.
+        request = get_dummy_request(site=site)
 
         today = timezone.now().date()
 

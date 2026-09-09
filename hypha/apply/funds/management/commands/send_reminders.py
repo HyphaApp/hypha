@@ -1,7 +1,7 @@
-from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.management.base import BaseCommand
-from django.http import HttpRequest
 from django.utils import timezone
+from wagtail.coreutils import get_dummy_request
+from wagtail.models import Site
 
 from hypha.apply.activity.messaging import messenger
 from hypha.apply.funds.models import Reminder
@@ -11,11 +11,11 @@ class Command(BaseCommand):
     help = "Send reminders"
 
     def handle(self, *args, **options):
-        # Mock a HTTPRequest as the messenger expects one. Links in the
-        # notifications are built from `get_base_url()`, not from the request.
-        request = HttpRequest()
-        request.session = {}
-        request._messages = FallbackStorage(request)
+        # The messenger expects a request. Links in the notifications are built
+        # from `get_base_url()`, not from the request.
+        request = get_dummy_request(
+            site=Site.objects.filter(is_default_site=True).first()
+        )
 
         for reminder in Reminder.objects.filter(
             sent=False, time__lte=timezone.now()
