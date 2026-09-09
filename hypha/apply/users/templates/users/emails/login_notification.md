@@ -1,4 +1,4 @@
-{% load i18n wagtailadmin_tags %}{% base_url_setting as base_url %}
+{% load i18n util_tags %}
 {% blocktrans %}Dear {{ user }},{% endblocktrans %}
 
 {% blocktrans %}This is to notify you that your account was successfully logged in to {{ ORG_LONG_NAME }}.{% endblocktrans %}
@@ -16,4 +16,4 @@ The {{ ORG_SHORT_NAME }} Team{% endblocktrans %}
 
 --
 {{ ORG_LONG_NAME }}
-{% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}
+{% base_url %}

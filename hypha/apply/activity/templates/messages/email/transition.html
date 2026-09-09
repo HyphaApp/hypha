@@ -1,9 +1,9 @@
 {% extends "messages/email/applicant_base.html" %}
 
-{% load i18n %}
+{% load i18n util_tags %}
 
 {% block content %}{# fmt:off #}
 {% blocktrans %}Your application is now in "{{ new_phase }}" status (progressed from "{{ old_phase }}").{% endblocktrans %}
 
-{% trans "Please submit any questions related to your application here" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'funds:submissions:comments' pk=source.pk %}
+{% trans "Please submit any questions related to your application here" %}: {% base_url %}{% url 'funds:submissions:comments' pk=source.pk %}
 {% endblock %}{# fmt:on #}

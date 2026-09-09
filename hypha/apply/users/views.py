@@ -49,7 +49,6 @@ from two_factor.views import DisableView as TwoFactorDisableView
 from two_factor.views import LoginView as TwoFactorLoginView
 from two_factor.views import SetupView as TwoFactorSetupView
 from wagtail.admin.views.account import password_management_enabled
-from wagtail.models import Site
 from wagtail.users.views.users import change_user_perm
 
 from hypha.core.mail import MarkdownMail
@@ -208,7 +207,6 @@ def account_email_change(request):
                 dumps({"updated_email": value["updated_email"], "id": request.user.id})
             ),
             updated_email=value["updated_email"],
-            site=Site.find_for_request(request),
         )
 
     # alert email
@@ -426,7 +424,6 @@ class PasswordResetView(DjPasswordResetView):
         return {
             "timeout_minutes": settings.PASSWORD_RESET_TIMEOUT // 60,
             "redirect_url": get_redirect_url(self.request, self.redirect_field_name),
-            "site": Site.find_for_request(self.request),
             "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
             "ORG_LONG_NAME": settings.ORG_LONG_NAME,
         }
@@ -817,7 +814,6 @@ def send_confirm_access_email_view(request):
     email_context = {
         "token": token_obj.token,
         "username": request.user.email,
-        "site": Site.find_for_request(request),
         "user": request.user,
         "timeout_minutes": settings.PASSWORDLESS_LOGIN_TIMEOUT // 60,
     }
@@ -873,12 +869,9 @@ def set_password_view(request):
 
     This will the case when the user signed up using passwordless signup or using oauth.
     """
-    site = Site.find_for_request(request)
-
     if not request.user.has_usable_password():
         send_activation_email(
             user=request.user,
-            site=site,
             email_template="users/emails/set_password.txt",
             email_subject_template="users/emails/set_password_subject.txt",
         )

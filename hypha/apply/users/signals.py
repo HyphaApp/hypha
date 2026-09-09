@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
-from wagtail.models import Site
 
 from hypha.core.mail import MarkdownMail
 
@@ -40,7 +39,6 @@ def send_login_notification(sender, request, user, **kwargs):
         context={
             "user": user,
             "login_time": local_event_time(request),
-            "site": Site.find_for_request(request) if request else None,
             "ORG_EMAIL": settings.ORG_EMAIL,
         },
     )

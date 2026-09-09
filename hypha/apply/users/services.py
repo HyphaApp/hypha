@@ -8,7 +8,6 @@ from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext as _
-from wagtail.models import Site
 
 from hypha.core.mail import MarkdownMail
 
@@ -55,7 +54,6 @@ def send_passkey_notification(request, user, passkey_name, *, added):
             "user": user,
             "passkey_name": passkey_name,
             "event_time": local_event_time(request),
-            "site": Site.find_for_request(request) if request else None,
             "ORG_EMAIL": settings.ORG_EMAIL,
         },
     )
@@ -86,7 +84,6 @@ class PasswordlessAuthService:
         self.next_url = get_redirect_url(request, self.redirect_field_name)  # type: ignore[arg-type]
         self.extended_session = extended_session
         self.request = request
-        self.site = Site.find_for_request(request)
 
     def _get_login_path(self, user):
         token = self.login_token_generator_class().make_token(user)
@@ -146,7 +143,6 @@ class PasswordlessAuthService:
             "username": user.get_username(),
             "login_path": login_path,
             "timeout_minutes": timeout_minutes,
-            "site": self.site,
         }
 
         subject = _("Log in to {user} at {ORG_LONG_NAME}").format(
@@ -170,7 +166,6 @@ class PasswordlessAuthService:
         context = {
             "signup_path": signup_path,
             "timeout_minutes": timeout_minutes,
-            "site": self.site,
         }
 
         subject = _("Welcome to {ORG_LONG_NAME}").format(

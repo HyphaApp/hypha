@@ -1,14 +1,14 @@
 {% extends "messages/email/applicant_base.html" %}
 
-{% load i18n %}
+{% load i18n util_tags %}
 
 {% block content %}{# fmt:off #}
 {% blocktrans with title=source.title %}You have been assigned as an Applicant to submission "{{ title }}".{% endblocktrans %}
 {% endblock %}
 
 {% block more_info %}
-{% trans "Link to your submission" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
+{% trans "Link to your submission" %}: {% base_url %}{{ source.get_absolute_url }}
+{% trans "If you have any questions, please submit them here" %}: {% base_url %}{{ source.get_absolute_url }}#communications
 
 {% trans "See our guide for more information" %}: {{ ORG_GUIDE_URL }}
 

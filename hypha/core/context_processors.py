@@ -1,12 +1,14 @@
 from django.conf import settings
 
 from hypha.apply.users.utils import passkeys_enabled
+from hypha.core.utils import get_base_url
 from hypha.home.models import ApplyHomePage
 
 
 def global_vars(request):
     return {
         "APPLY_SITE": ApplyHomePage.objects.first().get_site(),
+        "BASE_URL": get_base_url(),
         "ORG_LONG_NAME": settings.ORG_LONG_NAME,
         "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
         "ORG_EMAIL": settings.ORG_EMAIL,

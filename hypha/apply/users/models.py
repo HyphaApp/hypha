@@ -157,14 +157,11 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore[
             )
         return params
 
-    def get_or_create_and_notify(
-        self, defaults: dict | None = None, site=None, **kwargs
-    ):
+    def get_or_create_and_notify(self, defaults: dict | None = None, **kwargs):
         """Create or get an account for applicant and send activation email to applicant.
 
         Args:
             defaults: Dict containing user attributes for user creation. Defaults to dict().
-            site: current site for sending activation email. Defaults to None.
 
         Raises:
             IntegrityError: if multiple account exist with same email
@@ -212,7 +209,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore[
             except IntegrityError:
                 raise
 
-            send_activation_email(user, site, redirect_url=redirect_url)
+            send_activation_email(user, redirect_url=redirect_url)
             _created = True
 
         return user, _created

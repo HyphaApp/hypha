@@ -1,13 +1,13 @@
 {% extends "messages/email/base.html" %}
 
-{% load i18n %}
+{% load i18n util_tags %}
 {% block salutation %}{% endblock %}
 
 {% block content %}{# fmt:off #}
 {% trans "Project documents are ready to be assigned for approval." %}
 
 {% trans "Title" %}: {{ source.title_text_display }}
-{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:approval' pk=source.pk %}
+{% trans "Link" %}: {% base_url %}{% url 'apply:projects:approval' pk=source.pk %}
 
 {% blocktrans with lead=source.lead email=source.lead.email %}Please contact {{ lead }} - {{ email }} if you have any questions.{% endblocktrans %}
 {% endblock %}{# fmt:on #}

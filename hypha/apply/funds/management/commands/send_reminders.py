@@ -1,29 +1,21 @@
-from django.conf import settings
-from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.management.base import BaseCommand
-from django.http import HttpRequest
 from django.utils import timezone
+from wagtail.coreutils import get_dummy_request
+from wagtail.models import Site
 
 from hypha.apply.activity.messaging import messenger
 from hypha.apply.funds.models import Reminder
-from hypha.home.models import ApplyHomePage
 
 
 class Command(BaseCommand):
     help = "Send reminders"
 
     def handle(self, *args, **options):
-        site = ApplyHomePage.objects.first().get_site()
-
-        # Mock a HTTPRequest in order to pass the site settings into the
-        # templates
-        request = HttpRequest()
-        request.META["SERVER_NAME"] = site.hostname
-        request.META["SERVER_PORT"] = site.port
-        proxy_ssl_header, proxy_ssl_value = settings.SECURE_PROXY_SSL_HEADER
-        request.META[proxy_ssl_header] = proxy_ssl_value
-        request.session = {}
-        request._messages = FallbackStorage(request)
+        # The messenger expects a request. Links in the notifications are built
+        # from `get_base_url()`, not from the request.
+        request = get_dummy_request(
+            site=Site.objects.filter(is_default_site=True).first()
+        )
 
         for reminder in Reminder.objects.filter(
             sent=False, time__lte=timezone.now()
