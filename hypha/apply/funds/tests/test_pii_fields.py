@@ -9,6 +9,8 @@ from django.template import Context, Template
 from django.test import TestCase, override_settings
 
 from hypha.apply.categories.tests.factories import CategoryFactory, OptionFactory
+from hypha.apply.determinations.blocks import DeterminationCustomFormFieldsBlock
+from hypha.apply.funds.blocks import ApplicationCustomFormFieldsBlock
 from hypha.apply.funds.models import ApplicationForm, ApplicationSubmission
 from hypha.apply.funds.models.co_applicants import (
     CoApplicant,
@@ -19,6 +21,8 @@ from hypha.apply.funds.models.co_applicants import (
 from hypha.apply.funds.models.reviewer_role import ReviewerSettings
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.funds.wagtail_hooks import hide_pii_field_checkbox
+from hypha.apply.projects.blocks import ProjectFormCustomFormFieldsBlock
+from hypha.apply.review.blocks import ReviewCustomFormFieldsBlock
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     CommunityReviewerFactory,
@@ -298,7 +302,9 @@ class TestLegacyFormFields(TestCase):
             submission.output_answers(redact_pii=True),
         )
 
-        # The backfill from migration 0138.
+        # There is no data migration: re-saving through the current block
+        # definition is what writes the explicit default, whenever that next
+        # happens to occur.
         list(submission.form_fields)
         submission.save(update_fields=["form_fields"])
         submission.refresh_from_db()
@@ -471,3 +477,62 @@ class TestApplicantPreview(TestCase):
 
         rendered = self.render(submission, reviewer, preview=False)
         self.assertNotIn(answer, rendered)
+
+
+class TestPIICheckboxIsApplicationFormsOnly(TestCase):
+    """Only application form answers are redacted, so only they get the
+    checkbox. See `NoPIIMarkingMixin`.
+    """
+
+    def field_blocks_with_checkbox(self, block_class):
+        return sorted(
+            name
+            for name, block in block_class().child_blocks.items()
+            if "is_pii" in getattr(block, "child_blocks", {})
+        )
+
+    def test_application_form_fields_have_the_checkbox(self):
+        self.assertIn(
+            "char", self.field_blocks_with_checkbox(ApplicationCustomFormFieldsBlock)
+        )
+
+    def test_other_forms_do_not_have_the_checkbox(self):
+        for block_class in (
+            ReviewCustomFormFieldsBlock,
+            DeterminationCustomFormFieldsBlock,
+            ProjectFormCustomFormFieldsBlock,
+        ):
+            with self.subTest(block=block_class.__name__):
+                self.assertEqual(self.field_blocks_with_checkbox(block_class), [])
+
+    def test_removing_it_elsewhere_leaves_application_forms_alone(self):
+        # The field blocks are declared as class attributes, so a careless
+        # removal would strip the checkbox from every form at once.
+        ReviewCustomFormFieldsBlock()
+        ProjectFormCustomFormFieldsBlock()
+
+        self.assertIn(
+            "char", self.field_blocks_with_checkbox(ApplicationCustomFormFieldsBlock)
+        )
+
+
+class TestCategoryQuestionLabelIsNotPersisted(TestCase):
+    def test_rendering_does_not_write_the_fallback_label_back(self):
+        submission = ApplicationSubmissionFactory()
+        field_id, category, __ = add_category_field(submission, label="")
+
+        submission.output_answers(redact_pii=True)
+        submission.output_answers(redact_pii=False)
+
+        block = next(
+            block
+            for block in submission.form_fields.raw_data
+            if block["id"] == field_id
+        )
+        self.assertEqual(block["value"]["field_label"], "")
+
+        field = submission.field(field_id)
+        self.assertEqual(field.value["field_label"], "")
+        self.assertEqual(
+            field.block.get_display_value(field.value)["field_label"], category.name
+        )

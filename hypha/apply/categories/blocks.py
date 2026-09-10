@@ -100,16 +100,29 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
         return data
 
     def get_display_value(self, value):
-        # Overwriting field_label and help_text with default for empty values
+        # Fall back on the category's own name and help text for empty values.
         category_fields = {"field_label": "name", "help_text": "help_text"}
 
-        for field in category_fields.keys():
+        defaults = {}
+        for field, category_field in category_fields.items():
             if not value.get(field):
                 category = value["category"]
                 if isinstance(category, int) or isinstance(category, str):
                     category = self.get_instance(id=category)
-                value[field] = getattr(category, category_fields[field])
-        return value
+                defaults[field] = getattr(category, category_field)
+
+        if not defaults:
+            return value
+
+        # Return a copy, so that the fallbacks are never written back to the
+        # stored form definition.
+        block = getattr(value, "block", None)
+        if block is None:
+            display_value = dict(value)
+        else:
+            display_value = value.__class__(block, value.items())
+        display_value.update(defaults)
+        return display_value
 
     def render(self, value, context):
         return super().render(self.get_display_value(value), context)

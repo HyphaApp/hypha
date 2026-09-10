@@ -70,6 +70,29 @@ class MarkdownTextFieldBlock(TextFieldBlock):
         return "<p>-</p>"
 
 
+class NoPIIMarkingMixin:
+    """Removes the "Personal information" checkbox from a form's field blocks.
+
+    Only the answers of an application form are ever redacted (see
+    `AccessFormData.render_answer()`), so offering the checkbox on any other
+    form would promise a protection that is never applied.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, block in self.child_blocks.items():
+            if "is_pii" not in getattr(block, "child_blocks", {}):
+                continue
+            # Field blocks are declared as class attributes and therefore
+            # shared with the other forms' stream blocks. Rebuild this one so
+            # that dropping the child block only affects this form.
+            block_args, block_kwargs = block._constructor_args
+            block = type(block)(*block_args, **block_kwargs)
+            block.set_name(name)
+            block.child_blocks.pop("is_pii")
+            self.child_blocks[name] = block
+
+
 class CustomFormFieldsBlock(StreamBlock):
     rich_text = RichTextFieldBlock(group=_("Fields"))
     markdown_text = MarkdownTextFieldBlock(group=_("Fields"))
@@ -219,8 +242,10 @@ class SingleIncludeMixin:
             ("info", SingleIncludeStatic(label=info_name, description=self.description))
         ]
         super().__init__(child_blocks, *args, **kwargs)
-        # The built-in fields are covered by HIDE_IDENTITY_FROM_REVIEWERS, so
-        # they are not marked as PII individually.
+        # The built-in fields are rendered on their own, outside of
+        # `AccessFormData.render_answers()`, so marking one would have no
+        # effect. Applicant identity in them is instead controlled by
+        # HIDE_IDENTITY_FROM_REVIEWERS.
         self.child_blocks.pop("is_pii", None)
 
 

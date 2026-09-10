@@ -35,9 +35,16 @@ co-applicants do not see the marker.
 ## Built-in fields
 
 The built-in required fields (Title, Full name, E-mail, Address, Organization
-name, Requested funding and Duration) do not have the checkbox. Applicant
-identity in those fields is controlled separately by
+name, Requested funding and Duration) do not have the checkbox, because they are
+rendered separately from the rest of the answers and so are never redacted.
+Applicant identity in those fields is controlled separately by
 [`HIDE_IDENTITY_FROM_REVIEWERS`](configuration.md).
+
+## Other forms
+
+The checkbox appears on application forms only. Review, determination, project
+(PAF and SOW) and report forms do not have it, since their answers are not
+redacted.
 
 ## Turning the feature off again
 

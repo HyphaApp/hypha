@@ -5,20 +5,6 @@ import wagtail.fields
 from django.db import migrations
 
 
-def add_is_pii_to_form_fields(apps, schema_editor):
-    """Store an explicit `is_pii: false` on every existing form field.
-
-    Instantiating the stream value and saving re-serialises it through the new
-    block definition, which fills in the default for the newly added `is_pii`
-    child block.
-    """
-    for model_name in ("ApplicationForm", "ApplicationSubmission"):
-        model = apps.get_model("funds", model_name)
-        for obj in model.objects.iterator(chunk_size=200):
-            list(obj.form_fields)
-            obj.save(update_fields=["form_fields"])
-
-
 class Migration(migrations.Migration):
     dependencies = [
         ("funds", "0137_alter_anonymizedsubmission_status_and_more"),
@@ -933,5 +919,4 @@ class Migration(migrations.Migration):
                 },
             ),
         ),
-        migrations.RunPython(add_is_pii_to_form_fields, migrations.RunPython.noop),
     ]

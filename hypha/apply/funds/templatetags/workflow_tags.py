@@ -46,13 +46,16 @@ def render_submission_answers(
         preview: whether this is the applicant previewing their own application.
             Applications can be made anonymously when
             `FORCE_LOGIN_FOR_APPLICATION` is off, in which case the applicant
-            cannot be recognised as the author of what they just filled in.
+            cannot be recognised as the author of what they just filled in, so
+            an anonymous submission is not redacted while being previewed.
 
     Returns:
         str: the rendered answers
     """
+    is_anonymous_preview = preview and submission.user_id is None
     return submission.output_answers(
-        redact_pii=not preview and not can_view_submission_pii(user, submission),
+        redact_pii=not is_anonymous_preview
+        and not can_view_submission_pii(user, submission),
         mark_pii=getattr(user, "is_apply_staff", False),
     )
 
