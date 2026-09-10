@@ -320,6 +320,14 @@ Should submission anonymization be enabled. Allows for both manual anonymization
 
 ----
 
+Should form authors be able to mark application form fields as containing personally identifiable information (PII). Answers to marked fields are only shown to the applicant, their co-applicants and staff.
+
+See [here](pii-fields.md) for more information.
+
+    PII_FIELD_MARKING_ENABLED = env.bool("PII_FIELD_MARKING_ENABLED", False)
+
+----
+
 ## Slack settings
 
     SLACK_TOKEN = env.str('SLACK_TOKEN', None)

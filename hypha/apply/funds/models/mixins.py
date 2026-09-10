@@ -2,6 +2,7 @@ import json
 import uuid
 
 from django.core.files import File
+from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django_file_form.models import PlaceholderUploadedFile
 
@@ -323,11 +324,25 @@ class AccessFormData:
             return joined + "</section>"
         return joined
 
-    def render_answer(self, field_id, include_question=False):
+    @staticmethod
+    def field_is_pii(field) -> bool:
+        """Has this field been marked as containing personal information?"""
+        try:
+            return bool(field.value.get("is_pii"))
+        except AttributeError:
+            # Blocks such as text_markup hold a scalar rather than a StructValue.
+            return False
+
+    def render_answer(self, field_id, include_question=False, redact_pii=False):
         try:
             field = self.field(field_id)
         except UnusedFieldException:
             return "-"
+        if redact_pii and self.field_is_pii(field):
+            return render_to_string(
+                "stream_forms/render_redacted_field.html",
+                {"value": field.value, "include_question": include_question},
+            )
         if isinstance(field.block, MultiInputCharFieldBlock):
             render_data = self.get_multi_inputs_answer(field, include_question)
             return render_data
@@ -342,10 +357,10 @@ class AccessFormData:
             context={"data": data, "include_question": include_question}
         )
 
-    def render_answers(self):
+    def render_answers(self, redact_pii=False):
         # Returns a list of the rendered answers
         return [
-            self.render_answer(field_id, include_question=True)
+            self.render_answer(field_id, include_question=True, redact_pii=redact_pii)
             for field_id in self.normal_blocks
         ]
 
@@ -363,9 +378,9 @@ class AccessFormData:
             if field_id not in self.named_blocks
         ]
 
-    def output_answers(self):
+    def output_answers(self, redact_pii=False):
         # Returns a safe string of the rendered answers
-        return mark_safe("".join(self.render_answers()))
+        return mark_safe("".join(self.render_answers(redact_pii=redact_pii)))
 
     def output_text_answers(self):
         return mark_safe("".join(self.render_text_blocks_answers()))

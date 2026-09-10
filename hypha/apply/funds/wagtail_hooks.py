@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.utils.safestring import mark_safe
 from wagtail import hooks
 from wagtail_modeladmin.options import modeladmin_register
 
@@ -47,3 +49,15 @@ def hide_forms_menu_item(request, menu_items):
     """
     menu_items[:] = [item for item in menu_items if item.name != "forms"]
     return menu_items
+
+
+@hooks.register("insert_global_admin_css")
+def hide_pii_field_checkbox():
+    """Hide the "Personal information" checkbox on form field blocks.
+
+    The checkbox is only shown when the feature is turned on. Hiding it does not
+    stop already marked fields from being redacted.
+    """
+    if settings.PII_FIELD_MARKING_ENABLED:
+        return ""
+    return mark_safe('<style>[data-contentpath="is_pii"]{display:none}</style>')

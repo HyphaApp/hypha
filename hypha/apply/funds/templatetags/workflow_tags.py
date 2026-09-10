@@ -5,7 +5,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.funds.models.submissions import ApplicationSubmission
-from hypha.apply.funds.permissions import has_permission
+from hypha.apply.funds.permissions import can_view_submission_pii, has_permission
 from hypha.apply.users.models import User
 
 register = template.Library()
@@ -29,6 +29,22 @@ def has_edit_perm(user, submission):
 @register.filter
 def has_review_perm(user, submission):
     return check_permission(user, "review", submission)
+
+
+@register.simple_tag
+def render_submission_answers(submission: ApplicationSubmission, user: User) -> str:
+    """Render a submission's answers, redacting any marked as personal information.
+
+    Args:
+        submission: the submission to render the answers of
+        user: the user viewing the submission
+
+    Returns:
+        str: the rendered answers
+    """
+    return submission.output_answers(
+        redact_pii=not can_view_submission_pii(user, submission)
+    )
 
 
 @register.filter

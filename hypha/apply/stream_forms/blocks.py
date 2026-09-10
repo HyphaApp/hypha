@@ -112,6 +112,18 @@ class FormFieldBlock(StructBlock):
 
 class OptionalFormFieldBlock(FormFieldBlock):
     required = BooleanBlock(label=_("Required"), required=False)
+    is_pii = BooleanBlock(
+        label=_("Personal information"),
+        required=False,
+        default=False,
+        help_text=_(
+            "Tick this if the answer will contain personally identifiable "
+            "information, such as a name, address, phone number or date of "
+            "birth. Only the applicant, their co-applicants and staff will be "
+            "able to see the answer. Reviewers and other users will see that "
+            "the question was asked, but not the answer."
+        ),
+    )
 
 
 CHARFIELD_FORMATS = [

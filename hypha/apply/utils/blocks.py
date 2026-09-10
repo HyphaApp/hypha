@@ -219,6 +219,9 @@ class SingleIncludeMixin:
             ("info", SingleIncludeStatic(label=info_name, description=self.description))
         ]
         super().__init__(child_blocks, *args, **kwargs)
+        # The built-in fields are covered by HIDE_IDENTITY_FROM_REVIEWERS, so
+        # they are not marked as PII individually.
+        self.child_blocks.pop("is_pii", None)
 
 
 class SingleIncludeBlock(SingleIncludeMixin, OptionalFormFieldBlock):

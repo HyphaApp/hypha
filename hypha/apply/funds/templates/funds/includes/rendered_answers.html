@@ -77,7 +77,7 @@
     </dl>
 
     <div class="flex flex-col gap-8 rich-text h-rendered-answers">
-        {{ object.output_answers }}
+        {% render_submission_answers object request.user %}
     </div>
 
 </section>
