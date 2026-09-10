@@ -121,6 +121,23 @@ class FormFieldBlock(StructBlock):
 
 class OptionalFormFieldBlock(FormFieldBlock):
     required = BooleanBlock(label=_("Required"), required=False)
+
+
+class PIIFieldMixin(StructBlock):
+    """Adds a "Personal information" checkbox to a form field block.
+
+    Mix it in *before* the field block it extends, so that the checkbox is
+    added after the block's own children::
+
+        class PIICharFieldBlock(PIIFieldMixin, CharFieldBlock):
+            pass
+
+    Answers to marked fields are only rendered for those allowed to see them,
+    see `AccessFormData.render_answer()`. Nothing redacts the answers of a
+    review, determination or project form, so only the application form field
+    blocks (`hypha.apply.funds.pii_blocks`) mix this in.
+    """
+
     is_pii = BooleanBlock(
         label=_("Personal information"),
         required=False,

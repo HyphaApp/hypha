@@ -23,11 +23,7 @@ from hypha.apply.stream_forms.blocks import (
     OptionalFormFieldBlock,
     TextFieldBlock,
 )
-from hypha.apply.utils.blocks import (
-    CustomFormFieldsBlock,
-    MustIncludeFieldBlock,
-    NoPIIMarkingMixin,
-)
+from hypha.apply.utils.blocks import CustomFormFieldsBlock, MustIncludeFieldBlock
 from hypha.apply.utils.options import RICH_TEXT_WIDGET_SHORT
 
 
@@ -172,7 +168,7 @@ class VisibilityBlock(ReviewMustIncludeFieldBlock):
         return kwargs
 
 
-class ReviewCustomFormFieldsBlock(NoPIIMarkingMixin, CustomFormFieldsBlock):
+class ReviewCustomFormFieldsBlock(CustomFormFieldsBlock):
     char = CharFieldBlock(group=_("Fields"))
     text = TextFieldBlock(group=_("Fields"))
     text_markup = RichTextBlock(group=_("Fields"), label=_("Paragraph"))

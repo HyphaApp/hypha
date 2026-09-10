@@ -8,13 +8,30 @@ from django.utils.translation import ngettext_lazy
 from wagtail import blocks
 
 from hypha.addressfield.fields import ADDRESS_FIELDS_ORDER, AddressField
-from hypha.apply.categories.blocks import CategoryQuestionBlock
+from hypha.apply.funds.pii_blocks import (
+    PIICategoryQuestionBlock,
+    PIICharFieldBlock,
+    PIICheckboxesFieldBlock,
+    PIICheckboxFieldBlock,
+    PIIDateFieldBlock,
+    PIIDateTimeFieldBlock,
+    PIIDropdownFieldBlock,
+    PIIFileFieldBlock,
+    PIIImageFieldBlock,
+    PIIMarkdownTextFieldBlock,
+    PIIMultiFileFieldBlock,
+    PIIMultiInputCharFieldBlock,
+    PIINumberFieldBlock,
+    PIIRadioButtonsFieldBlock,
+    PIIRichTextFieldBlock,
+    PIITextFieldBlock,
+    PIITimeFieldBlock,
+)
 from hypha.apply.stream_forms.blocks import FormFieldsBlock
 from hypha.apply.users.models import User
 from hypha.apply.utils.blocks import (
     CustomFormFieldsBlock,
     MustIncludeFieldBlock,
-    RichTextFieldBlock,
     SingleIncludeBlock,
 )
 from hypha.apply.utils.templatetags.apply_tags import format_number_as_currency
@@ -272,8 +289,31 @@ class DurationBlock(ApplicationSingleIncludeFieldBlock):
 
 
 class ApplicationCustomFormFieldsBlock(CustomFormFieldsBlock, FormFieldsBlock):
-    category = CategoryQuestionBlock(group=_("Custom"))
-    rich_text = RichTextFieldBlock(group=_("Fields"))
+    """The form fields available when building an application form.
+
+    Every field that holds an answer is overridden with the variant that can be
+    marked as personal information, see `hypha.apply.funds.pii_blocks`. The
+    built-in fields (title, email, ...) are left out: they are rendered on their
+    own rather than as part of the answers, so marking one would have no effect.
+    """
+
+    char = PIICharFieldBlock(group=_("Fields"))
+    multi_inputs_char = PIIMultiInputCharFieldBlock(group=_("Fields"))
+    text = PIITextFieldBlock(group=_("Fields"))
+    number = PIINumberFieldBlock(group=_("Fields"))
+    checkbox = PIICheckboxFieldBlock(group=_("Fields"))
+    radios = PIIRadioButtonsFieldBlock(group=_("Fields"))
+    dropdown = PIIDropdownFieldBlock(group=_("Fields"))
+    checkboxes = PIICheckboxesFieldBlock(group=_("Fields"))
+    date = PIIDateFieldBlock(group=_("Fields"))
+    time = PIITimeFieldBlock(group=_("Fields"))
+    datetime = PIIDateTimeFieldBlock(group=_("Fields"))
+    image = PIIImageFieldBlock(group=_("Fields"))
+    file = PIIFileFieldBlock(group=_("Fields"))
+    multi_file = PIIMultiFileFieldBlock(group=_("Fields"))
+    rich_text = PIIRichTextFieldBlock(group=_("Fields"))
+    markdown_text = PIIMarkdownTextFieldBlock(group=_("Fields"))
+    category = PIICategoryQuestionBlock(group=_("Custom"))
     required_blocks = ApplicationMustIncludeFieldBlock.__subclasses__()
     single_blocks = ApplicationSingleIncludeFieldBlock.__subclasses__()
 

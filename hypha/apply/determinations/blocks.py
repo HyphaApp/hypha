@@ -8,11 +8,7 @@ from hypha.apply.stream_forms.blocks import (
     DropdownFieldBlock,
     TextFieldBlock,
 )
-from hypha.apply.utils.blocks import (
-    CustomFormFieldsBlock,
-    MustIncludeFieldBlock,
-    NoPIIMarkingMixin,
-)
+from hypha.apply.utils.blocks import CustomFormFieldsBlock, MustIncludeFieldBlock
 from hypha.apply.utils.options import RICH_TEXT_WIDGET
 
 from .options import DETERMINATION_CHOICES
@@ -76,7 +72,7 @@ class SendNoticeBlock(DeterminationMustIncludeFieldBlock):
         return False
 
 
-class DeterminationCustomFormFieldsBlock(NoPIIMarkingMixin, CustomFormFieldsBlock):
+class DeterminationCustomFormFieldsBlock(CustomFormFieldsBlock):
     char = CharFieldBlock(group=_("Fields"))
     text = TextFieldBlock(group=_("Fields"))
     text_markup = RichTextBlock(group=_("Fields"), label=_("Paragraph"))

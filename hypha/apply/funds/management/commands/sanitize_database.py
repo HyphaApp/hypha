@@ -18,6 +18,7 @@ from hypha.apply.funds.models import (
     ApplicationRevision,
     ApplicationSubmission,
 )
+from hypha.apply.funds.pii_blocks import unmarked_block_class
 from hypha.apply.review.blocks import (
     RecommendationBlock,
     RecommendationCommentsBlock,
@@ -86,13 +87,17 @@ class Command(BaseCommand):
                 else:
                     update_data(self.f.text(len(data)))  # noqa: B023
 
+            # Application form fields are the PII-markable subclasses of the
+            # blocks below, so compare against the block each one extends.
+            block_class = unmarked_block_class(form_field.block)
+
             if form_field.value["field_label"].lower() == "organization name":
                 update_data(self.f.company())
             elif form_field.value["field_label"].lower() == "contact phone number":
                 update_data(self.f.phone_number())
             elif (
                 form_field.value["field_label"].lower() == "organization address"
-                or type(form_field.block) is AddressFieldBlock
+                or block_class is AddressFieldBlock
             ):
                 try:
                     address = json.loads(data)
@@ -124,27 +129,27 @@ class Command(BaseCommand):
                 update_data(self.f.ssn())
             elif form_field.value["field_label"].lower() == "additional contact email":
                 update_data(self.f.email())
-            elif type(form_field.block) is FullNameBlock:
+            elif block_class is FullNameBlock:
                 update_data(self.f.name())
-            elif type(form_field.block) is EmailBlock:
+            elif block_class is EmailBlock:
                 update_data(self.f.email())
-            elif type(form_field.block) is TitleBlock:
+            elif block_class is TitleBlock:
                 update_data(self.f.sentence(5))
-            elif type(form_field.block) is MultiFileFieldBlock:
+            elif block_class is MultiFileFieldBlock:
                 update_data([])
-            elif type(form_field.block) is RecommendationBlock:
+            elif block_class is RecommendationBlock:
                 update_data(random.choice(RECOMMENDATION_CHOICES)[0])
-            elif type(form_field.block) is ScoreFieldBlock:
+            elif block_class is ScoreFieldBlock:
                 update_data(random.choice(RATE_CHOICES)[0])
-            elif type(form_field.block) is ScoreFieldWithoutTextBlock:
+            elif block_class is ScoreFieldWithoutTextBlock:
                 update_data(
                     random.randint(form_field.value["min"], form_field.value["max"])
                 )
-            elif type(form_field.block) is DropdownFieldBlock:
+            elif block_class is DropdownFieldBlock:
                 update_data(random.choice(form_field.value["choices"][1]))
-            elif type(form_field.block) is ValueBlock:
+            elif block_class is ValueBlock:
                 update_data(random.randint(0, 10000000))
-            elif type(form_field.block) in [
+            elif block_class in [
                 TextFieldBlock,
                 CharFieldBlock,
                 RichTextFieldBlock,  # This may need to be updated sometime in the future
@@ -152,7 +157,7 @@ class Command(BaseCommand):
             ]:
                 update_text_data()
             elif (
-                type(form_field.block)
+                block_class
                 in [
                     RadioButtonsFieldBlock,  # If it's a radio button, then it doesn't really need to be randomized
                     CheckboxFieldBlock,  # Similar to above
@@ -166,9 +171,7 @@ class Command(BaseCommand):
                 print(form_holder.id)
                 print(form_field.value["field_label"])
                 print(data)
-                raise Exception(
-                    "Don't know how to handle " + str(type(form_field.block))
-                )
+                raise Exception("Don't know how to handle " + str(block_class))
         form_holder.save()
 
     def handle(self, *args, **options):

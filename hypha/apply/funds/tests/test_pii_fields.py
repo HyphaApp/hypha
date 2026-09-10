@@ -8,6 +8,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.template import Context, Template
 from django.test import TestCase, override_settings
 
+from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.tests.factories import CategoryFactory, OptionFactory
 from hypha.apply.determinations.blocks import DeterminationCustomFormFieldsBlock
 from hypha.apply.funds.blocks import ApplicationCustomFormFieldsBlock
@@ -19,10 +20,16 @@ from hypha.apply.funds.models.co_applicants import (
     CoApplicantRole,
 )
 from hypha.apply.funds.models.reviewer_role import ReviewerSettings
+from hypha.apply.funds.pii_blocks import unmarked_block_class
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.funds.wagtail_hooks import hide_pii_field_checkbox
 from hypha.apply.projects.blocks import ProjectFormCustomFormFieldsBlock
 from hypha.apply.review.blocks import ReviewCustomFormFieldsBlock
+from hypha.apply.stream_forms.blocks import (
+    CharFieldBlock,
+    FormFieldsBlock,
+    TextFieldBlock,
+)
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     CommunityReviewerFactory,
@@ -481,7 +488,7 @@ class TestApplicantPreview(TestCase):
 
 class TestPIICheckboxIsApplicationFormsOnly(TestCase):
     """Only application form answers are redacted, so only they get the
-    checkbox. See `NoPIIMarkingMixin`.
+    checkbox. See `hypha.apply.funds.pii_blocks`.
     """
 
     def field_blocks_with_checkbox(self, block_class):
@@ -491,9 +498,30 @@ class TestPIICheckboxIsApplicationFormsOnly(TestCase):
             if "is_pii" in getattr(block, "child_blocks", {})
         )
 
-    def test_application_form_fields_have_the_checkbox(self):
-        self.assertIn(
-            "char", self.field_blocks_with_checkbox(ApplicationCustomFormFieldsBlock)
+    def test_every_application_answer_field_has_the_checkbox(self):
+        self.assertEqual(
+            self.field_blocks_with_checkbox(ApplicationCustomFormFieldsBlock),
+            sorted(
+                [
+                    "category",
+                    "char",
+                    "checkbox",
+                    "checkboxes",
+                    "date",
+                    "datetime",
+                    "dropdown",
+                    "file",
+                    "image",
+                    "markdown_text",
+                    "multi_file",
+                    "multi_inputs_char",
+                    "number",
+                    "radios",
+                    "rich_text",
+                    "text",
+                    "time",
+                ]
+            ),
         )
 
     def test_other_forms_do_not_have_the_checkbox(self):
@@ -505,15 +533,45 @@ class TestPIICheckboxIsApplicationFormsOnly(TestCase):
             with self.subTest(block=block_class.__name__):
                 self.assertEqual(self.field_blocks_with_checkbox(block_class), [])
 
-    def test_removing_it_elsewhere_leaves_application_forms_alone(self):
-        # The field blocks are declared as class attributes, so a careless
-        # removal would strip the checkbox from every form at once.
-        ReviewCustomFormFieldsBlock()
-        ProjectFormCustomFormFieldsBlock()
+    def test_the_shared_field_blocks_are_left_alone(self):
+        # The application form uses subclasses of the shared field blocks, so
+        # the blocks themselves must not gain the checkbox.
+        for block_class in (CharFieldBlock, TextFieldBlock, CategoryQuestionBlock):
+            with self.subTest(block=block_class.__name__):
+                self.assertNotIn("is_pii", block_class().child_blocks)
 
-        self.assertIn(
-            "char", self.field_blocks_with_checkbox(ApplicationCustomFormFieldsBlock)
-        )
+    def test_marked_blocks_keep_the_settings_of_the_block_they_extend(self):
+        application = ApplicationCustomFormFieldsBlock()
+        plain = FormFieldsBlock()
+
+        for name, block in plain.child_blocks.items():
+            with self.subTest(block=name):
+                marked = application.child_blocks[name]
+                self.assertIsInstance(marked, type(block))
+                self.assertEqual(marked.meta.icon, block.meta.icon)
+                self.assertEqual(marked.meta.label, block.meta.label)
+                self.assertEqual(
+                    getattr(marked.meta, "template", None),
+                    getattr(block.meta, "template", None),
+                )
+
+
+class TestUnmarkedBlockClass(TestCase):
+    """`sanitize_database` dispatches on the exact class of every form field,
+    so it needs to see through the PII-markable subclasses.
+    """
+
+    def test_a_plain_block_resolves_to_itself(self):
+        self.assertIs(unmarked_block_class(CharFieldBlock()), CharFieldBlock)
+
+    def test_a_marked_block_resolves_to_the_block_it_extends(self):
+        application = ApplicationCustomFormFieldsBlock()
+
+        for name, block in FormFieldsBlock().child_blocks.items():
+            with self.subTest(block=name):
+                self.assertIs(
+                    unmarked_block_class(application.child_blocks[name]), type(block)
+                )
 
 
 class TestCategoryQuestionLabelIsNotPersisted(TestCase):
