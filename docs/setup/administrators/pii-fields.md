@@ -28,6 +28,10 @@ Everyone else — including reviewers, external reviewers and community reviewer
 information." Keeping the question visible means reviewers can still tell what
 was asked and that an answer exists.
 
+Staff also see a small "(PII)" marker after the label of each marked question,
+so they can tell at a glance which answers are restricted. Applicants and
+co-applicants do not see the marker.
+
 ## Built-in fields
 
 The built-in required fields (Title, Full name, E-mail, Address, Organization

@@ -32,18 +32,28 @@ def has_review_perm(user, submission):
 
 
 @register.simple_tag
-def render_submission_answers(submission: ApplicationSubmission, user: User) -> str:
+def render_submission_answers(
+    submission: ApplicationSubmission, user: User, preview: bool = False
+) -> str:
     """Render a submission's answers, redacting any marked as personal information.
+
+    Staff also get a "(PII)" marker next to the label of each marked question, so
+    they can see which answers are restricted.
 
     Args:
         submission: the submission to render the answers of
         user: the user viewing the submission
+        preview: whether this is the applicant previewing their own application.
+            Applications can be made anonymously when
+            `FORCE_LOGIN_FOR_APPLICATION` is off, in which case the applicant
+            cannot be recognised as the author of what they just filled in.
 
     Returns:
         str: the rendered answers
     """
     return submission.output_answers(
-        redact_pii=not can_view_submission_pii(user, submission)
+        redact_pii=not preview and not can_view_submission_pii(user, submission),
+        mark_pii=getattr(user, "is_apply_staff", False),
     )
 
 

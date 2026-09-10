@@ -306,7 +306,9 @@ class AccessFormData:
             }
         )
 
-    def get_multi_inputs_answer(self, field, include_question=False):
+    def get_multi_inputs_answer(
+        self, field, include_question=False, show_pii_marker=False
+    ):
         number_of_inputs = field.value.get("number_of_inputs")
         answers = [self.data(field.id + "_" + str(i)) for i in range(number_of_inputs)]
 
@@ -315,6 +317,7 @@ class AccessFormData:
                 context={
                     "data": answer,
                     "include_question": include_question if i == 0 else False,
+                    "show_pii_marker": show_pii_marker,
                 }
             )
             for i, answer in enumerate(filter(None, answers))
@@ -333,12 +336,15 @@ class AccessFormData:
             # Blocks such as text_markup hold a scalar rather than a StructValue.
             return False
 
-    def render_answer(self, field_id, include_question=False, redact_pii=False):
+    def render_answer(
+        self, field_id, include_question=False, redact_pii=False, mark_pii=False
+    ):
         try:
             field = self.field(field_id)
         except UnusedFieldException:
             return "-"
-        if redact_pii and self.field_is_pii(field):
+        is_pii = self.field_is_pii(field)
+        if redact_pii and is_pii:
             return render_to_string(
                 "stream_forms/render_redacted_field.html",
                 {
@@ -346,24 +352,40 @@ class AccessFormData:
                     "include_question": include_question,
                 },
             )
+        show_pii_marker = mark_pii and is_pii
         if isinstance(field.block, MultiInputCharFieldBlock):
-            render_data = self.get_multi_inputs_answer(field, include_question)
+            render_data = self.get_multi_inputs_answer(
+                field, include_question, show_pii_marker
+            )
             return render_data
         else:
             data = self.data(field_id)
         # Some migrated content have empty address.
         if not data:
             return field.render(
-                context={"data": "", "include_question": include_question}
+                context={
+                    "data": "",
+                    "include_question": include_question,
+                    "show_pii_marker": show_pii_marker,
+                }
             )
         return field.render(
-            context={"data": data, "include_question": include_question}
+            context={
+                "data": data,
+                "include_question": include_question,
+                "show_pii_marker": show_pii_marker,
+            }
         )
 
-    def render_answers(self, redact_pii=False):
+    def render_answers(self, redact_pii=False, mark_pii=False):
         # Returns a list of the rendered answers
         return [
-            self.render_answer(field_id, include_question=True, redact_pii=redact_pii)
+            self.render_answer(
+                field_id,
+                include_question=True,
+                redact_pii=redact_pii,
+                mark_pii=mark_pii,
+            )
             for field_id in self.normal_blocks
         ]
 
@@ -381,9 +403,11 @@ class AccessFormData:
             if field_id not in self.named_blocks
         ]
 
-    def output_answers(self, redact_pii=False):
+    def output_answers(self, redact_pii=False, mark_pii=False):
         # Returns a safe string of the rendered answers
-        return mark_safe("".join(self.render_answers(redact_pii=redact_pii)))
+        return mark_safe(
+            "".join(self.render_answers(redact_pii=redact_pii, mark_pii=mark_pii))
+        )
 
     def output_text_answers(self):
         return mark_safe("".join(self.render_text_blocks_answers()))

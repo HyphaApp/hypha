@@ -1,13 +1,15 @@
 """Tests for marking form fields as containing personal information."""
 
 import json
+import re
 import uuid
 
+from django.contrib.auth.models import AnonymousUser
 from django.template import Context, Template
 from django.test import TestCase, override_settings
 
 from hypha.apply.categories.tests.factories import CategoryFactory, OptionFactory
-from hypha.apply.funds.models import ApplicationForm
+from hypha.apply.funds.models import ApplicationForm, ApplicationSubmission
 from hypha.apply.funds.models.co_applicants import (
     CoApplicant,
     CoApplicantInvite,
@@ -43,9 +45,13 @@ def mark_field_as_pii(submission, block_type="char"):
 
 
 def add_category_field(submission, *, label="", is_pii=True):
-    """Append a category question, mirroring how the form builder stores one."""
-    category = CategoryFactory()
-    option = OptionFactory(category=category)
+    """Append a category question, mirroring how the form builder stores one.
+
+    The category name and option value are distinctive rather than Faker words,
+    because the tests assert on their absence from a page full of Faker text.
+    """
+    category = CategoryFactory(name="Category-name-xyzzy")
+    option = OptionFactory(category=category, value="Option-value-xyzzy")
     field_id = str(uuid.uuid4())
 
     raw = list(submission.form_fields.raw_data)
@@ -183,11 +189,14 @@ class TestRedactedAnswers(TestCase):
 
 class TestRenderSubmissionAnswersTag(TestCase):
     template = Template(
-        "{% load workflow_tags %}{% render_submission_answers submission user %}"
+        "{% load workflow_tags %}"
+        "{% render_submission_answers submission user preview=preview %}"
     )
 
-    def render(self, submission, user):
-        return self.template.render(Context({"submission": submission, "user": user}))
+    def render(self, submission, user, preview=False):
+        return self.template.render(
+            Context({"submission": submission, "user": user, "preview": preview})
+        )
 
     def test_staff_sees_the_answer(self):
         submission = ApplicationSubmissionFactory()
@@ -360,3 +369,105 @@ class TestCategoryQuestionLabel(TestCase):
         self.assertIn("Your date of birth", rendered)
         self.assertNotIn(category.name, rendered)
         self.assertNotIn(option.value, rendered)
+
+
+class TestPIIMarker(TestCase):
+    """Staff get a "(PII)" marker so they can see which answers are restricted."""
+
+    template = Template(
+        "{% load workflow_tags %}{% render_submission_answers submission user %}"
+    )
+
+    def render(self, submission, user):
+        return self.template.render(Context({"submission": submission, "user": user}))
+
+    def test_staff_see_the_marker(self):
+        submission = ApplicationSubmissionFactory()
+        field_id, answer = mark_field_as_pii(submission)
+        label = submission.field(field_id).value["field_label"]
+
+        rendered = self.render(submission, StaffFactory())
+        self.assertIn(answer, rendered)
+        self.assertIn("(PII)", rendered)
+        self.assertIn("Contains personal information.", rendered)
+        # The marker sits after the label, inside the question heading.
+        self.assertRegex(rendered, rf"{re.escape(label)}\s*<span[^>]*>\(PII\)</span>")
+
+    def test_marker_is_not_shown_on_unmarked_fields(self):
+        submission = ApplicationSubmissionFactory()
+        self.assertNotIn("(PII)", self.render(submission, StaffFactory()))
+
+    def test_applicant_does_not_see_the_marker(self):
+        applicant = ApplicantFactory()
+        submission = ApplicationSubmissionFactory(user=applicant)
+        __, answer = mark_field_as_pii(submission)
+
+        rendered = self.render(submission, applicant)
+        self.assertIn(answer, rendered)
+        self.assertNotIn("(PII)", rendered)
+
+    def test_co_applicant_does_not_see_the_marker(self):
+        co_user = ApplicantFactory()
+        submission = ApplicationSubmissionFactory()
+        add_co_applicant(submission, co_user)
+        mark_field_as_pii(submission)
+
+        self.assertNotIn("(PII)", self.render(submission, co_user))
+
+    def test_reviewer_does_not_see_the_marker(self):
+        reviewer = ReviewerFactory()
+        submission = ApplicationSubmissionFactory(reviewers=[reviewer])
+        mark_field_as_pii(submission)
+
+        rendered = self.render(submission, reviewer)
+        self.assertNotIn("(PII)", rendered)
+        self.assertIn(REDACTED, rendered)
+
+
+class TestApplicantPreview(TestCase):
+    """An application can be filled in anonymously when
+    FORCE_LOGIN_FOR_APPLICATION is off, so the previewing applicant cannot be
+    recognised as the author of what they just wrote.
+    """
+
+    template = Template(
+        "{% load workflow_tags %}"
+        "{% render_submission_answers submission user preview=preview %}"
+    )
+
+    def render(self, submission, user, preview):
+        return self.template.render(
+            Context({"submission": submission, "user": user, "preview": preview})
+        )
+
+    def test_anonymous_applicant_sees_own_answers_in_preview(self):
+        submission = ApplicationSubmissionFactory()
+        __, answer = mark_field_as_pii(submission)
+        # process_form_submission stores no user for an anonymous application.
+        ApplicationSubmission.objects.filter(pk=submission.pk).update(user=None)
+        submission.refresh_from_db()
+
+        rendered = self.render(submission, AnonymousUser(), preview=True)
+        self.assertIn(answer, rendered)
+        self.assertNotIn(REDACTED, rendered)
+        self.assertNotIn("(PII)", rendered)
+
+    def test_anonymous_user_is_still_redacted_outside_a_preview(self):
+        submission = ApplicationSubmissionFactory()
+        __, answer = mark_field_as_pii(submission)
+        ApplicationSubmission.objects.filter(pk=submission.pk).update(user=None)
+        submission.refresh_from_db()
+
+        rendered = self.render(submission, AnonymousUser(), preview=False)
+        self.assertNotIn(answer, rendered)
+        self.assertIn(REDACTED, rendered)
+
+    def test_reviewer_preview_flag_does_not_leak_via_the_detail_page(self):
+        # The detail page never sets `preview`, so the flag cannot be reached
+        # by anyone browsing an existing submission.
+        reviewer = ReviewerFactory()
+        submission = ApplicationSubmissionFactory(reviewers=[reviewer])
+        __, answer = mark_field_as_pii(submission)
+
+        rendered = self.render(submission, reviewer, preview=False)
+        self.assertNotIn(answer, rendered)
