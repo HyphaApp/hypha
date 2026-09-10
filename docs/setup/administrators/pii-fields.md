@@ -8,9 +8,11 @@ Set `PII_FIELD_MARKING_ENABLED=True` to turn the feature on.
 
 ## Marking a field
 
-With the setting enabled, every question block in the form builder (Wagtail
-Admin → "Apply" → "Forms") gains a **"Personal information"** checkbox. Tick it
+With the setting enabled, the question blocks in the form builder (Wagtail
+Admin → "Apply" → "Forms") gain a **"Personal information"** checkbox. Tick it
 on any question whose answer will contain personally identifiable information.
+A few blocks do not have the checkbox, see
+[Questions without the checkbox](#questions-without-the-checkbox) below.
 
 The checkbox is empty by default, so no existing question changes behaviour when
 you turn the feature on.
@@ -32,13 +34,20 @@ Staff also see a small "(PII)" marker after the label of each marked question,
 so they can tell at a glance which answers are restricted. Applicants and
 co-applicants do not see the marker.
 
-## Built-in fields
+## Questions without the checkbox
 
 The built-in required fields (Title, Full name, E-mail, Address, Organization
 name, Requested funding and Duration) do not have the checkbox, because they are
 rendered separately from the rest of the answers and so are never redacted.
 Applicant identity in those fields is controlled separately by
 [`HIDE_IDENTITY_FROM_REVIEWERS`](configuration.md).
+
+The **"Group fields"** block — the question that reveals or hides a group of
+other questions — does not have the checkbox either, so the choice made on it is
+always shown to reviewers. Marking it would achieve little on its own: the
+toggle decides whether the questions inside the group are answered at all, so an
+empty group tells the reader which way it was set. Mark the questions *inside*
+the group instead, which is where the personal information is given.
 
 ## Other forms
 
@@ -66,6 +75,13 @@ results themselves only show submission titles, never the matched answer.
 
 Redaction applies to the submission page and everywhere the answers are shown on
 it, including the answers panel embedded in the review and determination forms.
+
+Redacting a file or image answer removes the attachment, and with it the
+download link, from the page. It does not revoke access to the file itself: a
+link to it obtained some other way — pasted into a comment, or kept from before
+the question was marked — still works for anyone who can view the submission.
+The link contains the internal id of the question, which is never shown for a
+redacted answer, so it cannot be guessed.
 
 The other places answers appear are restricted to staff already, so nothing is
 redacted there: the submission PDF download, the revision comparison view, and

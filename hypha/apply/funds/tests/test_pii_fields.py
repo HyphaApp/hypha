@@ -499,6 +499,8 @@ class TestPIICheckboxIsApplicationFormsOnly(TestCase):
         )
 
     def test_every_application_answer_field_has_the_checkbox(self):
+        # `group_toggle` is deliberately absent: its answer is always shown, see
+        # the `ApplicationCustomFormFieldsBlock` docstring.
         self.assertEqual(
             self.field_blocks_with_checkbox(ApplicationCustomFormFieldsBlock),
             sorted(

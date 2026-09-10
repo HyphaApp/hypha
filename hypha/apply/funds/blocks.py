@@ -291,10 +291,13 @@ class DurationBlock(ApplicationSingleIncludeFieldBlock):
 class ApplicationCustomFormFieldsBlock(CustomFormFieldsBlock, FormFieldsBlock):
     """The form fields available when building an application form.
 
-    Every field that holds an answer is overridden with the variant that can be
-    marked as personal information, see `hypha.apply.funds.pii_blocks`. The
-    built-in fields (title, email, ...) are left out: they are rendered on their
-    own rather than as part of the answers, so marking one would have no effect.
+    The fields that hold an answer are overridden with the variant that can be
+    marked as personal information, see `hypha.apply.funds.pii_blocks`. Two
+    kinds of field are left out. The built-in fields (title, email, ...) are
+    rendered on their own rather than as part of the answers, so marking one
+    would have no effect. The group toggle keeps the plain block because the
+    questions it reveals give away the choice made on it either way; the answers
+    worth marking are the ones inside the group.
     """
 
     char = PIICharFieldBlock(group=_("Fields"))
