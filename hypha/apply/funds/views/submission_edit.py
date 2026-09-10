@@ -59,6 +59,7 @@ from ..forms import (
 from ..models import ApplicationSubmission
 from ..permissions import (
     has_permission,
+    is_submission_applicant,
 )
 from ..workflows.constants import (
     DRAFT_STATE,
@@ -324,10 +325,7 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
 class ApplicantSubmissionEditView(BaseSubmissionEditView):
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
-        if (
-            request.user != submission.user
-            and not submission.co_applicants.filter(user=request.user).exists()
-        ):
+        if not is_submission_applicant(request.user, submission):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
