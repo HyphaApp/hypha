@@ -68,6 +68,15 @@ class FormFieldBlock(StructBlock):
         field_kwargs = self.get_field_kwargs(struct_value)
         return self.get_field_class(struct_value)(**field_kwargs)
 
+    def get_display_value(self, value):
+        """The value to display the question with.
+
+        Blocks that derive parts of the question, such as a label taken from a
+        linked object, apply those defaults here so that every way of rendering
+        the field gets them.
+        """
+        return value
+
     def decode(self, value):
         """Convert JSON representation into actual python objects"""
         return value

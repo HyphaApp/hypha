@@ -341,7 +341,10 @@ class AccessFormData:
         if redact_pii and self.field_is_pii(field):
             return render_to_string(
                 "stream_forms/render_redacted_field.html",
-                {"value": field.value, "include_question": include_question},
+                {
+                    "value": field.block.get_display_value(field.value),
+                    "include_question": include_question,
+                },
             )
         if isinstance(field.block, MultiInputCharFieldBlock):
             render_data = self.get_multi_inputs_answer(field, include_question)

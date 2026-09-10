@@ -1,10 +1,12 @@
 """Tests for marking form fields as containing personal information."""
 
 import json
+import uuid
 
 from django.template import Context, Template
 from django.test import TestCase, override_settings
 
+from hypha.apply.categories.tests.factories import CategoryFactory, OptionFactory
 from hypha.apply.funds.models import ApplicationForm
 from hypha.apply.funds.models.co_applicants import (
     CoApplicant,
@@ -38,6 +40,34 @@ def mark_field_as_pii(submission, block_type="char"):
             submission.refresh_from_db()
             return field.id, submission.data(field.id)
     raise AssertionError(f"No {block_type} field on the submission")
+
+
+def add_category_field(submission, *, label="", is_pii=True):
+    """Append a category question, mirroring how the form builder stores one."""
+    category = CategoryFactory()
+    option = OptionFactory(category=category)
+    field_id = str(uuid.uuid4())
+
+    raw = list(submission.form_fields.raw_data)
+    raw.append(
+        {
+            "id": field_id,
+            "type": "category",
+            "value": {
+                "field_label": label,
+                "help_text": "",
+                "required": False,
+                "is_pii": is_pii,
+                "category": str(category.id),
+                "multi": False,
+            },
+        }
+    )
+    submission.form_fields = json.dumps(raw)
+    submission.form_data[field_id] = [str(option.id)]
+    submission.save()
+    submission.refresh_from_db()
+    return field_id, category, option
 
 
 def add_co_applicant(submission, user, role=CoApplicantRole.VIEW):
@@ -300,3 +330,33 @@ class TestFormBuilderAdmin(TestCase):
         content = response.content.decode()
         self.assertIn("is_pii", content)
         self.assertIn('[data-contentpath="is_pii"]{display:none}', content)
+
+
+class TestCategoryQuestionLabel(TestCase):
+    """A category question may leave its label blank to use the category's own."""
+
+    def test_blank_label_falls_back_to_category_name_when_visible(self):
+        submission = ApplicationSubmissionFactory()
+        __, category, __ = add_category_field(submission, is_pii=False)
+
+        self.assertIn(category.name, submission.output_answers(redact_pii=False))
+
+    def test_blank_label_falls_back_to_category_name_when_redacted(self):
+        submission = ApplicationSubmissionFactory()
+        __, category, option = add_category_field(submission, is_pii=True)
+
+        rendered = submission.output_answers(redact_pii=True)
+        self.assertNotIn(option.value, rendered)
+        self.assertIn(category.name, rendered)
+        self.assertIn(REDACTED, rendered)
+
+    def test_explicit_label_is_kept_when_redacted(self):
+        submission = ApplicationSubmissionFactory()
+        __, category, option = add_category_field(
+            submission, label="Your date of birth", is_pii=True
+        )
+
+        rendered = submission.output_answers(redact_pii=True)
+        self.assertIn("Your date of birth", rendered)
+        self.assertNotIn(category.name, rendered)
+        self.assertNotIn(option.value, rendered)
