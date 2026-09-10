@@ -51,7 +51,7 @@
 
         {% if show_detailed_data %}
             {% for group in determination.detailed_data.values %}
-                <section>
+                <section class="space-y-8">
                     {% if group.title %}
                         <h2 class="section-header">{{ group.title|nh3 }}</h2>
                     {% endif %}
