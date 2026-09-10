@@ -50,28 +50,41 @@
         </section>
 
         {% if show_detailed_data %}
-            {% for group in determination.detailed_data.values %}
-                <section class="space-y-8">
-                    {% if group.title %}
-                        <h2 class="section-header">{{ group.title|nh3 }}</h2>
-                    {% endif %}
+            <fieldset class="{% if detailed_data_staff_only %}py-2 px-4 rounded-box border border-base-300{% endif %}">
+                {% if detailed_data_staff_only %}
+                    <legend class="px-2 fieldset-legend">
+                        {% heroicon_mini "eye-slash" size=16 aria_hidden=true class="opacity-80" %}
+                        {% trans "Not visible for applicant" %}
+                    </legend>
+                {% endif %}
 
-                    {% for question, answer in group.questions %}
-                        <h3 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300 question">{{ question }}</h3>
-                        {% if answer %}
-                            {% if answer == True or answer == False %}
-                                {{ answer|yesno:_("Agree,Disagree") }}
-                            {% else %}
-                                <div class="max-w-none prose">
-                                    {{ answer|nh3 }}
-                                </div>
+                <div class="flex flex-col gap-8">
+                    {% for group in determination.detailed_data.values %}
+                        <section class="space-y-8">
+                            {% if group.title %}
+                                <h2 class="section-header">{{ group.title|nh3 }}</h2>
                             {% endif %}
-                        {% else %}
-                            -
-                        {% endif %}
+
+                            {% for question, answer in group.questions %}
+                                <div>
+                                    <h3 class="pb-1 mb-2 font-medium border-b text-h3 border-base-300 question">{{ question }}</h3>
+                                    {% if answer %}
+                                        {% if answer == True or answer == False %}
+                                            {{ answer|yesno:_("Agree,Disagree") }}
+                                        {% else %}
+                                            <div class="max-w-none prose">
+                                                {{ answer|nh3 }}
+                                            </div>
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </section>
                     {% endfor %}
-                </section>
-            {% endfor %}
+                </div>
+            </fieldset>
         {% endif %}
 
     </div>

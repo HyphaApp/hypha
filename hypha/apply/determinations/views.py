@@ -538,8 +538,15 @@ class DeterminationDetailedDataMixin:
     show_detailed_data = True
 
     def get_context_data(self, **kwargs):
+        # Let staff know when the answers they see are withheld from applicants.
+        detailed_data_staff_only = (
+            not settings.DETERMINATION_DETAILS_ACCESS_APPLICANT
+            and self.request.user.is_apply_staff
+        )
         return super().get_context_data(
-            show_detailed_data=self.show_detailed_data, **kwargs
+            show_detailed_data=self.show_detailed_data,
+            detailed_data_staff_only=detailed_data_staff_only,
+            **kwargs,
         )
 
 
