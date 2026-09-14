@@ -213,6 +213,12 @@ If automatic e-mails should be sent out to reviewers when submissions are ready 
 
 ----
 
+If automatic e-mails should be sent out to applicants when their submission changes status. Determination e-mails are not affected by this setting.
+
+    SEND_TRANSITION_EMAIL = env.bool('SEND_TRANSITION_EMAIL', True)
+
+----
+
 Staff e-mail domains. Used as the default value for the OAuth2 whitelists.
 
     STAFF_EMAIL_DOMAINS = env.list('STAFF_EMAIL_DOMAINS', [])

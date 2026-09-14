@@ -531,6 +531,26 @@ class TestEmailAdapter(AdapterMixin, TestCase):
             ANY, ANY, ANY, [submission.user.email], logs=ANY
         )
 
+    @override_settings(SEND_TRANSITION_EMAIL=True)
+    def test_email_transition(self):
+        submission = ApplicationSubmissionFactory(status="internal_review")
+        old_phase = submission.workflow.phases_for()[0]
+
+        self.adapter_process(MESSAGES.TRANSITION, source=submission, related=old_phase)
+
+        self.mock_send_email.assert_called_once_with(
+            ANY, ANY, ANY, [submission.user.email], logs=ANY
+        )
+
+    @override_settings(SEND_TRANSITION_EMAIL=False)
+    def test_no_email_transition_when_disabled(self):
+        submission = ApplicationSubmissionFactory(status="internal_review")
+        old_phase = submission.workflow.phases_for()[0]
+
+        self.adapter_process(MESSAGES.TRANSITION, source=submission, related=old_phase)
+
+        self.mock_send_email.assert_not_called()
+
     def test_no_email_private_comment(self):
         comment = CommentFactory(internal=True)
 
