@@ -294,6 +294,11 @@ class AccessFormData:
         return data
 
     def serialize(self, field_id):
+        """Serialize a single answer.
+
+        Never redacted: unlike `render_answer()` this does not consult `is_pii`,
+        so everything reached through it is for staff-only views and exports.
+        """
         field = self.field(field_id)
         if isinstance(field.block, MultiInputCharFieldBlock):
             data = self.get_serialize_multi_inputs_answer(field)
@@ -390,13 +395,23 @@ class AccessFormData:
         ]
 
     def render_first_group_text_answers(self):
+        """Render the text answers of the first group, never redacted.
+
+        Answers marked as personal information are rendered in the clear, so
+        only use this where the view is already restricted to staff.
+        """
         return [
             self.render_answer(field_id, include_question=True)
             for field_id in self.first_group_normal_text_blocks
         ]
 
     def render_text_blocks_answers(self):
-        # Returns a list of the rendered answers of type text
+        """Render the answers of type text, never redacted.
+
+        Answers marked as personal information are rendered in the clear, so
+        only use this where the view is already restricted to staff. Its one
+        caller is the revision comparison view, which is `staff_required`.
+        """
         return [
             self.render_answer(field_id, include_question=True)
             for field_id in self.question_text_field_ids
@@ -429,6 +444,12 @@ class AccessFormData:
         return None
 
     def get_text_questions_answers_as_dict(self):
+        """Map each text question to its answer, never redacted.
+
+        Goes through `serialize()`, which ignores `is_pii`, so answers marked as
+        personal information are included in the clear. Its one caller is the
+        submission PDF download, which is `staff_required`.
+        """
         data_dict = {}
         for field_id in self.question_text_field_ids:
             if field_id not in self.named_blocks:

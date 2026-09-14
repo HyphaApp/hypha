@@ -105,7 +105,9 @@ def unmarked_block_class(block):
     Lets code that switches on the exact block class keep working for the
     application form, where the blocks are the subclasses above.
     """
+    # `object` ends every MRO and is never a `PIIFieldMixin`, so this always
+    # returns: the block's own class for a plain block, the block it extends
+    # for one of the subclasses above.
     for block_class in type(block).__mro__:
         if not issubclass(block_class, PIIFieldMixin):
             return block_class
-    return type(block)

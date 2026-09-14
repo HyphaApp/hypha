@@ -67,6 +67,11 @@ Note that changing a form only affects submissions made from then on. Each
 submission stores its own copy of the form it was filled in with, so existing
 submissions keep the marks they were submitted with.
 
+For the same reason, a form definition copied or imported from an instance
+where the feature was on arrives with its marks intact, and answers to those
+questions are redacted even though the checkbox is not on offer. Turn the
+setting on if you need to see or change which questions are marked.
+
 ## Limitations
 
 Answers are indexed for search regardless of whether they are marked, so a

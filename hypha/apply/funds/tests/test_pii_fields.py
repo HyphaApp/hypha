@@ -383,6 +383,27 @@ class TestCategoryQuestionLabel(TestCase):
         self.assertNotIn(category.name, rendered)
         self.assertNotIn(option.value, rendered)
 
+    def test_the_category_is_looked_up_once_for_both_fallbacks(self):
+        # Both the label and the help text fall back on the category, which is
+        # one lookup between them rather than one each.
+        submission = ApplicationSubmissionFactory()
+        field_id, __, __ = add_category_field(submission, is_pii=False)
+        field = submission.field(field_id)
+
+        with self.assertNumQueries(1):
+            field.block.get_display_value(field.value)
+
+    def test_no_lookup_when_nothing_falls_back(self):
+        submission = ApplicationSubmissionFactory()
+        field_id, __, __ = add_category_field(
+            submission, label="Your date of birth", is_pii=False
+        )
+        field = submission.field(field_id)
+        field.value["help_text"] = "Day, month and year."
+
+        with self.assertNumQueries(0):
+            field.block.get_display_value(field.value)
+
 
 class TestPIIMarker(TestCase):
     """Staff get a "(PII)" marker so they can see which answers are restricted."""
@@ -484,6 +505,19 @@ class TestApplicantPreview(TestCase):
 
         rendered = self.render(submission, reviewer, preview=False)
         self.assertNotIn(answer, rendered)
+
+    def test_signed_in_user_is_redacted_when_previewing_an_authorless_submission(self):
+        # Only whoever filled the form in has no session, so anyone signed in
+        # previewing an authorless submission is someone else.
+        reviewer = ReviewerFactory()
+        submission = ApplicationSubmissionFactory(reviewers=[reviewer])
+        __, answer = mark_field_as_pii(submission)
+        ApplicationSubmission.objects.filter(pk=submission.pk).update(user=None)
+        submission.refresh_from_db()
+
+        rendered = self.render(submission, reviewer, preview=True)
+        self.assertNotIn(answer, rendered)
+        self.assertIn(REDACTED, rendered)
 
 
 class TestPIICheckboxIsApplicationFormsOnly(TestCase):

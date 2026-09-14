@@ -52,10 +52,17 @@ def render_submission_answers(
     Returns:
         str: the rendered answers
     """
-    is_anonymous_preview = preview and submission.user_id is None
+    # A submission has no author exactly when whoever filled it in had no
+    # session, see `SubmittableStreamForm.process_form_submission()`, so the
+    # preview bypass asks for the same of the viewer. Anyone signed in is
+    # someone other than the applicant and gets the redacted answers.
+    is_anonymous_preview = (
+        preview and submission.user_id is None and not user.is_authenticated
+    )
     return submission.output_answers(
         redact_pii=not is_anonymous_preview
         and not can_view_submission_pii(user, submission),
+        # `AnonymousUser` has no `is_apply_staff`.
         mark_pii=getattr(user, "is_apply_staff", False),
     )
 

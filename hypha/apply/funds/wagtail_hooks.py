@@ -55,8 +55,15 @@ def hide_forms_menu_item(request, menu_items):
 def hide_pii_field_checkbox():
     """Hide the "Personal information" checkbox on form field blocks.
 
-    The checkbox is only shown when the feature is turned on. Hiding it does not
-    stop already marked fields from being redacted.
+    `PII_FIELD_MARKING_ENABLED` decides whether form authors are offered the
+    checkbox, nothing more. It is not an access control: redaction is never
+    gated on it, so a field that carries the mark already keeps being redacted
+    whatever the setting is. That is deliberate, see
+    `docs/setup/administrators/pii-fields.md`, since turning the setting off
+    should never expose an answer someone marked as personal.
+
+    The rule is global admin CSS, so it hides any `is_pii` field in the Wagtail
+    admin. Only the application form field blocks have one.
     """
     if settings.PII_FIELD_MARKING_ENABLED:
         return ""

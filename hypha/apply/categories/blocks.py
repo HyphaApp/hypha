@@ -103,16 +103,18 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
         # Fall back on the category's own name and help text for empty values.
         category_fields = {"field_label": "name", "help_text": "help_text"}
 
-        defaults = {}
-        for field, category_field in category_fields.items():
-            if not value.get(field):
-                category = value["category"]
-                if isinstance(category, int) or isinstance(category, str):
-                    category = self.get_instance(id=category)
-                defaults[field] = getattr(category, category_field)
-
-        if not defaults:
+        missing = [field for field in category_fields if not value.get(field)]
+        if not missing:
             return value
+
+        # Look the category up once, however many fields fall back on it.
+        category = value["category"]
+        if isinstance(category, int) or isinstance(category, str):
+            category = self.get_instance(id=category)
+
+        defaults = {
+            field: getattr(category, category_fields[field]) for field in missing
+        }
 
         # Return a copy, so that the fallbacks are never written back to the
         # stored form definition.
