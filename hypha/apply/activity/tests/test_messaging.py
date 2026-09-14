@@ -531,6 +531,7 @@ class TestEmailAdapter(AdapterMixin, TestCase):
             ANY, ANY, ANY, [submission.user.email], logs=ANY
         )
 
+    @override_settings(SEND_TRANSITION_EMAIL=True)
     def test_email_transition(self):
         submission = ApplicationSubmissionFactory(status="internal_review")
         old_phase = submission.workflow.phases_for()[0]
