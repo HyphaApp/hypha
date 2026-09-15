@@ -110,8 +110,24 @@ def outcome_choices_for_phase(submission, user):
     return available_choices
 
 
+class DeterminationFormViewMixin:
+    """Lets staff know when the answers they give are withheld from applicants.
+
+    Only the determination message is shown to the applicant when
+    DETERMINATION_DETAILS_ACCESS_APPLICANT is turned off.
+    """
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            detailed_data_staff_only=not settings.DETERMINATION_DETAILS_ACCESS_APPLICANT,
+            **kwargs,
+        )
+
+
 @method_decorator(staff_required, name="dispatch")
-class BatchDeterminationCreateView(BaseStreamForm, CreateView):
+class BatchDeterminationCreateView(
+    DeterminationFormViewMixin, BaseStreamForm, CreateView
+):
     submission_form_class = BatchDeterminationForm
     template_name = "determinations/batch_determination_form.html"
 
@@ -274,7 +290,9 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
+class DeterminationCreateOrUpdateView(
+    DeterminationFormViewMixin, BaseStreamForm, CreateOrUpdateView
+):
     submission_form_class = DeterminationModelForm
     model = Determination
     template_name = "determinations/determination_form.html"
@@ -670,7 +688,7 @@ class DeterminationDetailView(ViewDispatcher):
 
 
 @method_decorator(staff_required, name="dispatch")
-class DeterminationEditView(BaseStreamForm, UpdateView):
+class DeterminationEditView(DeterminationFormViewMixin, BaseStreamForm, UpdateView):
     submission_form_class = DeterminationModelForm
     model = Determination
     template_name = "determinations/determination_form.html"
