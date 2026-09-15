@@ -179,7 +179,7 @@ def hijack_view(request):
 
 @login_required
 def account_email_change(request):
-    if request.user.has_usable_password() and not request.is_elevated():
+    if not request.is_elevated():
         return redirect_to_elevate(request.get_full_path())
 
     signer = TimestampSigner()
@@ -195,7 +195,7 @@ def account_email_change(request):
         return redirect("users:account")
     value = loads(unsigned_value)
 
-    if slack := value["slack"] is not None:
+    if slack := value["slack"]:
         request.user.slack = slack
 
     request.user.full_name = value["name"]
