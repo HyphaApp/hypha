@@ -66,7 +66,6 @@ def can_use_oauth_check(user):
 
 def send_activation_email(
     user,
-    site=None,
     email_template="users/activation/email.txt",
     email_subject_template="users/activation/email_subject.txt",
     redirect_url="",
@@ -96,9 +95,6 @@ def send_activation_email(
         "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
     }
 
-    if site:
-        context.update(site=site)
-
     subject = render_to_string(email_subject_template, context)
     # Force subject to a single line to avoid header-injection issues.
     subject = "".join(subject.splitlines())
@@ -106,7 +102,7 @@ def send_activation_email(
     user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
 
 
-def send_confirmation_email(user, token, updated_email=None, site=None):
+def send_confirmation_email(user, token, updated_email=None):
     """
     Send the confirmation email. The confirmation token is the update email,
     signed using TimestampSigner.
@@ -130,9 +126,6 @@ def send_confirmation_email(user, token, updated_email=None, site=None):
         "ORG_LONG_NAME": settings.ORG_LONG_NAME,
         "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
     }
-
-    if site:
-        context.update(site=site)
 
     subject = _("Confirmation email for {unverified_email} at {ORG_LONG_NAME}").format(
         **context

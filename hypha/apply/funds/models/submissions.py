@@ -621,7 +621,6 @@ class ApplicationSubmission(
             else:
                 self.user, _ = User.objects.get_or_create_and_notify(
                     email=email,
-                    site=self.page.get_site(),
                     defaults={"full_name": full_name},
                 )
 

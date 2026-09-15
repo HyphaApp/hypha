@@ -1,7 +1,6 @@
 from django.apps import apps
 from django.conf import settings
 from wagtail import hooks
-from wagtail.models import Site
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.users.models import User
@@ -19,8 +18,7 @@ def notify_after_create_user(request, user):
         source=user,
     )
 
-    site = Site.find_for_request(request)
-    send_activation_email(user, site)
+    send_activation_email(user)
 
 
 @hooks.register("after_edit_user")

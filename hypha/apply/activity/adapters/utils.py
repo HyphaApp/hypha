@@ -20,11 +20,12 @@ from hypha.apply.users.roles import (
     FINANCE_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
+from hypha.core.utils import get_base_url
 
 
-def link_to(target, request):
+def link_to(target):
     if target and hasattr(target, "get_absolute_url"):
-        return request.scheme + "://" + request.get_host() + target.get_absolute_url()
+        return get_base_url() + target.get_absolute_url()
 
 
 def group_reviewers(reviewers):

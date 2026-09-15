@@ -162,7 +162,7 @@ Hypha supports configuration via either a `local.py` or a `.env` file:
 
     ```bash title="./.env"
     ALLOWED_HOSTS=hypha.test
-    BASE_URL=http://hypha.test
+    WAGTAILADMIN_BASE_URL=http://hypha.test
     SECRET_KEY=<put-in-long-random-string>
     DATABASE_URL=postgres://localhost/hypha
     ```

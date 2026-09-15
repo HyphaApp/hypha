@@ -1,12 +1,12 @@
 {% extends "messages/email/base.html" %}
 
-{% load i18n %}
+{% load i18n util_tags %}
 {% block salutation %}{% endblock %}
 
 {% block content %}{# fmt:off #}
 {% blocktrans with title=source.title_text_display%}The project "{{ title }}" is waiting for contract.{% endblocktrans %}
 
-{% trans "View the project here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "View the project here" %}: {% base_url %}{{ source.get_absolute_url }}
 
 {% blocktrans with lead=source.lead email=source.lead.email %}Please contact {{ lead }} - {{ email }} if you have any questions.{% endblocktrans %}
 {% endblock %}{# fmt:on #}

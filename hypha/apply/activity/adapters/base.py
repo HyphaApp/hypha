@@ -207,7 +207,11 @@ class AdapterBase:
                     debug_message = _("{adapter}: {message}").format(
                         adapter=self.adapter_type, message=message
                     )
-                messages.add_message(request, messages.DEBUG, debug_message)
+                # Fails silently as notifications sent outside the
+                # request cycle have no message storage to write to.
+                messages.add_message(
+                    request, messages.DEBUG, debug_message, fail_silently=True
+                )
 
     def create_logs(self, message, recipient, *events):
         from ..models import Message

@@ -1,9 +1,9 @@
-{% load i18n wagtailadmin_tags %}{% base_url_setting as base_url %}
+{% load i18n util_tags %}
 {% blocktrans %}Dear,{% endblocktrans %}
 
 {% blocktrans %}Welcome to {{ ORG_LONG_NAME }} web site. Create your account by clicking this link or copying and pasting it to your browser:{% endblocktrans %}
 
-{% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ signup_path }}
+{% base_url %}{{ signup_path }}
 
 {% blocktrans %}This link will be valid for {{ timeout_minutes }} minutes and can be used only once.{% endblocktrans %}
 
@@ -18,4 +18,4 @@ The {{ ORG_SHORT_NAME }} Team{% endblocktrans %}
 
 --
 {{ ORG_LONG_NAME }}
-{% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}
+{% base_url %}

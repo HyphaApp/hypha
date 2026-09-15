@@ -175,7 +175,7 @@ Here is a list of settings that can be set as environment variables or in a `hyp
 ```text
 SECRET_KEY:                                    [KEY]
 DJANGO_SETTINGS_MODULE:                        hypha.settings.production
-PRIMARY_HOST:                                  www.example.org
+WAGTAILADMIN_BASE_URL:                         https://apply.example.org
 EMAIL_HOST:                                    example.org
 ORG_EMAIL:                                     hello@example.org
 ORG_GUIDE_URL:                                 https://guide.example.org/

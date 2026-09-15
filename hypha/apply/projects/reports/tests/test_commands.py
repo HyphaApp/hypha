@@ -1,8 +1,9 @@
 from io import StringIO
 
 from dateutil.relativedelta import relativedelta
+from django.core import mail
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from hypha.apply.projects.models.project import (
@@ -11,7 +12,6 @@ from hypha.apply.projects.models.project import (
 )
 from hypha.apply.projects.tests.factories import ProjectFactory
 from hypha.home.factories import ApplySiteFactory
-from hypha.home.models import ApplyHomePage
 
 from .factories import ReportConfigFactory, ReportFactory
 
@@ -40,10 +40,7 @@ class TestNotifyReportDue(TestCase):
         )
         out = StringIO()
 
-        with self.settings(
-            ALLOWED_HOSTS=[ApplyHomePage.objects.first().get_site().hostname]
-        ):
-            call_command("notify_report_due", stdout=out)
+        call_command("notify_report_due", stdout=out)
         assert "Notified project" in out.getvalue()
 
     def test_dont_notify_report_due_in_7_days_already_submitted(self):
@@ -57,10 +54,7 @@ class TestNotifyReportDue(TestCase):
             end_date=config.schedule_start,
         )
         out = StringIO()
-        with self.settings(
-            ALLOWED_HOSTS=[ApplyHomePage.objects.first().get_site().hostname]
-        ):
-            call_command("notify_report_due", stdout=out)
+        call_command("notify_report_due", stdout=out)
         assert "Notified project" not in out.getvalue()
 
     def test_dont_notify_already_notified(self):
@@ -88,3 +82,21 @@ class TestNotifyReportDue(TestCase):
         out = StringIO()
         call_command("notify_report_due", stdout=out)
         assert "Notified project" not in out.getvalue()
+
+    @override_settings(
+        WAGTAILADMIN_BASE_URL="https://apply.example.org", SEND_MESSAGES=True
+    )
+    def test_notification_links_use_the_configured_base_url(self):
+        """The default Wagtail site record uses port 80, which used to leak into
+        the links as `https://host:80/...`."""
+        in_a_week = timezone.now() + relativedelta(days=7)
+        ReportConfigFactory(
+            disable_reporting=False, schedule_start=in_a_week, project__in_progress=True
+        )
+
+        call_command("notify_report_due", stdout=StringIO())
+
+        assert len(mail.outbox) > 0
+        body = mail.outbox[0].body
+        assert "https://apply.example.org/" in body
+        assert ":80/" not in body

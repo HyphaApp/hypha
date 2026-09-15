@@ -1,4 +1,4 @@
-{% load invoice_tools i18n tz %}
+{% load invoice_tools i18n tz util_tags %}
 
 <html>
     <body>
@@ -19,7 +19,7 @@
 
         <p style="border-top: 1px solid #ccc; margin-top: 1.5em; padding-top: 0.5em; color: #656d76;">
             <small>
-                {% trans "Generated" %}: {{ generated_at|date:"c" }} &middot; {{ request.scheme }}://{{ request.get_host }}{{ invoice.get_absolute_url}}
+                {% trans "Generated" %}: {{ generated_at|date:"c" }} &middot; {% base_url %}{{ invoice.get_absolute_url}}
             </small>
         </p>
     </body>

@@ -81,7 +81,8 @@ class TestPasswordReset(BaseViewTestCase):
         self.assertRedirects(response, self.url(None, view_name="password_reset_done"))
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(
-            "https://testserver/account/password/reset/confirm", mail.outbox[0].body
+            "https://primary-test-host.org/account/password/reset/confirm",
+            mail.outbox[0].body,
         )
 
 

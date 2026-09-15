@@ -213,6 +213,6 @@ def render_task_templates_for_user(request, user):
             ]
     """
     tasks = get_tasks_for_user(user)
-    templates = [get_task_template(request, task=task) for task in tasks]
+    templates = [get_task_template(task=task) for task in tasks]
 
     return list(filter(None, templates))

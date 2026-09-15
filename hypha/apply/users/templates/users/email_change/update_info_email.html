@@ -1,4 +1,4 @@
-{% load i18n wagtailadmin_tags %}{% base_url_setting as base_url %}{% firstof name username as user %}
+{% load i18n util_tags %}{% firstof name username as user %}
 {% blocktrans %}Dear {{ user }},{% endblocktrans %}
 
 {% blocktrans %}There has been an attempt to change email of your account on the {{ ORG_LONG_NAME }} web site. If this action wasn't made by you, please contact support at {{ ORG_EMAIL }} {% endblocktrans %}
@@ -9,4 +9,4 @@ The {{ ORG_SHORT_NAME }} Team{% endblocktrans %}
 
 --
 {{ ORG_LONG_NAME }}
-{% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{# fmt:on #}
+{% base_url %}{# fmt:on #}
