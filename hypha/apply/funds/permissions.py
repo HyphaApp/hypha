@@ -239,6 +239,19 @@ def can_view_submission(user, submission):
     return False, ""
 
 
+def can_view_submission_pii(user, submission) -> bool:
+    """Answers to fields marked as personal information are only visible to the
+    applicant that created the submission, their co-applicants and staff.
+    """
+    if not user.is_authenticated:
+        return False
+
+    if user.is_apply_staff or submission.user_id == user.pk:
+        return True
+
+    return submission.co_applicants.filter(user=user).exists()
+
+
 def can_view_submission_screening(user, submission):
     # __ to avoid shadowing the gettext alias
     submission_view, __ = can_view_submission(user, submission)

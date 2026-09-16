@@ -5,7 +5,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.funds.models.submissions import ApplicationSubmission
-from hypha.apply.funds.permissions import has_permission
+from hypha.apply.funds.permissions import can_view_submission_pii, has_permission
 from hypha.apply.users.models import User
 
 register = template.Library()
@@ -29,6 +29,42 @@ def has_edit_perm(user, submission):
 @register.filter
 def has_review_perm(user, submission):
     return check_permission(user, "review", submission)
+
+
+@register.simple_tag
+def render_submission_answers(
+    submission: ApplicationSubmission, user: User, preview: bool = False
+) -> str:
+    """Render a submission's answers, redacting any marked as personal information.
+
+    Staff also get a "(PII)" marker next to the label of each marked question, so
+    they can see which answers are restricted.
+
+    Args:
+        submission: the submission to render the answers of
+        user: the user viewing the submission
+        preview: whether this is the applicant previewing their own application.
+            Applications can be made anonymously when
+            `FORCE_LOGIN_FOR_APPLICATION` is off, in which case the applicant
+            cannot be recognised as the author of what they just filled in, so
+            an anonymous submission is not redacted while being previewed.
+
+    Returns:
+        str: the rendered answers
+    """
+    # A submission has no author exactly when whoever filled it in had no
+    # session, see `SubmittableStreamForm.process_form_submission()`, so the
+    # preview bypass asks for the same of the viewer. Anyone signed in is
+    # someone other than the applicant and gets the redacted answers.
+    is_anonymous_preview = (
+        preview and submission.user_id is None and not user.is_authenticated
+    )
+    return submission.output_answers(
+        redact_pii=not is_anonymous_preview
+        and not can_view_submission_pii(user, submission),
+        # `AnonymousUser` has no `is_apply_staff`.
+        mark_pii=getattr(user, "is_apply_staff", False),
+    )
 
 
 @register.filter

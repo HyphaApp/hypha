@@ -168,6 +168,11 @@ HIDE_STAFF_IDENTITY = env.bool("HIDE_STAFF_IDENTITY", False)
 # Should Applicant identities be obscured from External Reviewers
 HIDE_IDENTITY_FROM_REVIEWERS = env.bool("HIDE_IDENTITY_FROM_REVIEWERS", False)
 
+# Should form authors be able to mark application form fields as containing
+# personally identifiable information. Answers to marked fields are only shown
+# to the applicant, their co-applicants and staff.
+PII_FIELD_MARKING_ENABLED = env.bool("PII_FIELD_MARKING_ENABLED", False)
+
 # Should staff be able to access/see draft submissions.
 SUBMISSIONS_DRAFT_ACCESS_STAFF = env.bool("SUBMISSIONS_DRAFT_ACCESS_STAFF", False)
 

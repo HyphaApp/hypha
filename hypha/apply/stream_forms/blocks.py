@@ -68,6 +68,15 @@ class FormFieldBlock(StructBlock):
         field_kwargs = self.get_field_kwargs(struct_value)
         return self.get_field_class(struct_value)(**field_kwargs)
 
+    def get_display_value(self, value):
+        """The value to display the question with.
+
+        Blocks that derive parts of the question, such as a label taken from a
+        linked object, apply those defaults here so that every way of rendering
+        the field gets them.
+        """
+        return value
+
     def decode(self, value):
         """Convert JSON representation into actual python objects"""
         return value
@@ -112,6 +121,35 @@ class FormFieldBlock(StructBlock):
 
 class OptionalFormFieldBlock(FormFieldBlock):
     required = BooleanBlock(label=_("Required"), required=False)
+
+
+class PIIFieldMixin(StructBlock):
+    """Adds a "Personal information" checkbox to a form field block.
+
+    Mix it in *before* the field block it extends, so that the checkbox is
+    added after the block's own children::
+
+        class PIICharFieldBlock(PIIFieldMixin, CharFieldBlock):
+            pass
+
+    Answers to marked fields are only rendered for those allowed to see them,
+    see `AccessFormData.render_answer()`. Nothing redacts the answers of a
+    review, determination or project form, so only the application form field
+    blocks (`hypha.apply.funds.pii_blocks`) mix this in.
+    """
+
+    is_pii = BooleanBlock(
+        label=_("Personal information"),
+        required=False,
+        default=False,
+        help_text=_(
+            "Tick this if the answer will contain personally identifiable "
+            "information, such as a name, address, phone number or date of "
+            "birth. Only the applicant, their co-applicants and staff will be "
+            "able to see the answer. Reviewers and other users will see that "
+            "the question was asked, but not the answer."
+        ),
+    )
 
 
 CHARFIELD_FORMATS = [

@@ -99,17 +99,35 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
         data = category.options.filter(id__in=data).values_list("value", flat=True)
         return data
 
-    def render(self, value, context):
-        # Overwriting field_label and help_text with default for empty values
+    def get_display_value(self, value):
+        # Fall back on the category's own name and help text for empty values.
         category_fields = {"field_label": "name", "help_text": "help_text"}
 
-        for field in category_fields.keys():
-            if not value.get(field):
-                category = value["category"]
-                if isinstance(category, int) or isinstance(category, str):
-                    category = self.get_instance(id=category)
-                value[field] = getattr(category, category_fields[field])
-        return super().render(value, context)
+        missing = [field for field in category_fields if not value.get(field)]
+        if not missing:
+            return value
+
+        # Look the category up once, however many fields fall back on it.
+        category = value["category"]
+        if isinstance(category, int) or isinstance(category, str):
+            category = self.get_instance(id=category)
+
+        defaults = {
+            field: getattr(category, category_fields[field]) for field in missing
+        }
+
+        # Return a copy, so that the fallbacks are never written back to the
+        # stored form definition.
+        block = getattr(value, "block", None)
+        if block is None:
+            display_value = dict(value)
+        else:
+            display_value = value.__class__(block, value.items())
+        display_value.update(defaults)
+        return display_value
+
+    def render(self, value, context):
+        return super().render(self.get_display_value(value), context)
 
     def get_searchable_content(self, value, data):
         return None

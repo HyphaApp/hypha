@@ -2,6 +2,7 @@ import json
 import uuid
 
 from django.core.files import File
+from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django_file_form.models import PlaceholderUploadedFile
 
@@ -293,6 +294,11 @@ class AccessFormData:
         return data
 
     def serialize(self, field_id):
+        """Serialize a single answer.
+
+        Never redacted: unlike `render_answer()` this does not consult `is_pii`,
+        so everything reached through it is for staff-only views and exports.
+        """
         field = self.field(field_id)
         if isinstance(field.block, MultiInputCharFieldBlock):
             data = self.get_serialize_multi_inputs_answer(field)
@@ -305,7 +311,9 @@ class AccessFormData:
             }
         )
 
-    def get_multi_inputs_answer(self, field, include_question=False):
+    def get_multi_inputs_answer(
+        self, field, include_question=False, show_pii_marker=False
+    ):
         number_of_inputs = field.value.get("number_of_inputs")
         answers = [self.data(field.id + "_" + str(i)) for i in range(number_of_inputs)]
 
@@ -314,6 +322,7 @@ class AccessFormData:
                 context={
                     "data": answer,
                     "include_question": include_question if i == 0 else False,
+                    "show_pii_marker": show_pii_marker,
                 }
             )
             for i, answer in enumerate(filter(None, answers))
@@ -323,49 +332,97 @@ class AccessFormData:
             return joined + "</section>"
         return joined
 
-    def render_answer(self, field_id, include_question=False):
+    @staticmethod
+    def field_is_pii(field) -> bool:
+        """Has this field been marked as containing personal information?"""
+        try:
+            return bool(field.value.get("is_pii"))
+        except AttributeError:
+            # Blocks such as text_markup hold a scalar rather than a StructValue.
+            return False
+
+    def render_answer(
+        self, field_id, include_question=False, redact_pii=False, mark_pii=False
+    ):
         try:
             field = self.field(field_id)
         except UnusedFieldException:
             return "-"
+        is_pii = self.field_is_pii(field)
+        if redact_pii and is_pii:
+            return render_to_string(
+                "stream_forms/render_redacted_field.html",
+                {
+                    "value": field.block.get_display_value(field.value),
+                    "include_question": include_question,
+                },
+            )
+        show_pii_marker = mark_pii and is_pii
         if isinstance(field.block, MultiInputCharFieldBlock):
-            render_data = self.get_multi_inputs_answer(field, include_question)
+            render_data = self.get_multi_inputs_answer(
+                field, include_question, show_pii_marker
+            )
             return render_data
         else:
             data = self.data(field_id)
         # Some migrated content have empty address.
         if not data:
             return field.render(
-                context={"data": "", "include_question": include_question}
+                context={
+                    "data": "",
+                    "include_question": include_question,
+                    "show_pii_marker": show_pii_marker,
+                }
             )
         return field.render(
-            context={"data": data, "include_question": include_question}
+            context={
+                "data": data,
+                "include_question": include_question,
+                "show_pii_marker": show_pii_marker,
+            }
         )
 
-    def render_answers(self):
+    def render_answers(self, redact_pii=False, mark_pii=False):
         # Returns a list of the rendered answers
         return [
-            self.render_answer(field_id, include_question=True)
+            self.render_answer(
+                field_id,
+                include_question=True,
+                redact_pii=redact_pii,
+                mark_pii=mark_pii,
+            )
             for field_id in self.normal_blocks
         ]
 
     def render_first_group_text_answers(self):
+        """Render the text answers of the first group, never redacted.
+
+        Answers marked as personal information are rendered in the clear, so
+        only use this where the view is already restricted to staff.
+        """
         return [
             self.render_answer(field_id, include_question=True)
             for field_id in self.first_group_normal_text_blocks
         ]
 
     def render_text_blocks_answers(self):
-        # Returns a list of the rendered answers of type text
+        """Render the answers of type text, never redacted.
+
+        Answers marked as personal information are rendered in the clear, so
+        only use this where the view is already restricted to staff. Its one
+        caller is the revision comparison view, which is `staff_required`.
+        """
         return [
             self.render_answer(field_id, include_question=True)
             for field_id in self.question_text_field_ids
             if field_id not in self.named_blocks
         ]
 
-    def output_answers(self):
+    def output_answers(self, redact_pii=False, mark_pii=False):
         # Returns a safe string of the rendered answers
-        return mark_safe("".join(self.render_answers()))
+        return mark_safe(
+            "".join(self.render_answers(redact_pii=redact_pii, mark_pii=mark_pii))
+        )
 
     def output_text_answers(self):
         return mark_safe("".join(self.render_text_blocks_answers()))
@@ -387,6 +444,12 @@ class AccessFormData:
         return None
 
     def get_text_questions_answers_as_dict(self):
+        """Map each text question to its answer, never redacted.
+
+        Goes through `serialize()`, which ignores `is_pii`, so answers marked as
+        personal information are included in the clear. Its one caller is the
+        submission PDF download, which is `staff_required`.
+        """
         data_dict = {}
         for field_id in self.question_text_field_ids:
             if field_id not in self.named_blocks:

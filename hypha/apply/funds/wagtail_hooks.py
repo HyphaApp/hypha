@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.utils.safestring import mark_safe
 from wagtail import hooks
 from wagtail_modeladmin.options import modeladmin_register
 
@@ -47,3 +49,22 @@ def hide_forms_menu_item(request, menu_items):
     """
     menu_items[:] = [item for item in menu_items if item.name != "forms"]
     return menu_items
+
+
+@hooks.register("insert_global_admin_css")
+def hide_pii_field_checkbox():
+    """Hide the "Personal information" checkbox on form field blocks.
+
+    `PII_FIELD_MARKING_ENABLED` decides whether form authors are offered the
+    checkbox, nothing more. It is not an access control: redaction is never
+    gated on it, so a field that carries the mark already keeps being redacted
+    whatever the setting is. That is deliberate, see
+    `docs/setup/administrators/pii-fields.md`, since turning the setting off
+    should never expose an answer someone marked as personal.
+
+    The rule is global admin CSS, so it hides any `is_pii` field in the Wagtail
+    admin. Only the application form field blocks have one.
+    """
+    if settings.PII_FIELD_MARKING_ENABLED:
+        return ""
+    return mark_safe('<style>[data-contentpath="is_pii"]{display:none}</style>')
