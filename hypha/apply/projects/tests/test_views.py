@@ -1,3 +1,4 @@
+import decimal
 import json
 from io import BytesIO
 
@@ -42,6 +43,7 @@ from ..models.project import (
 from ..views.project import ContractsMixin, ProjectDetailApprovalView
 from .factories import (
     ContractFactory,
+    DisbursementFactory,
     DocumentCategoryFactory,
     InvoiceFactory,
     PacketFileFactory,
@@ -1393,4 +1395,593 @@ class ApplicantStaffProjectDetailDownloadView(BaseViewTestCase):
     def test_cant_access_docx(self):
         project = ProjectFactory()
         response = self.get_page(project, url_kwargs={"export_type": "docx"})
+        self.assertEqual(response.status_code, 403)
+
+
+class TestStaffCreateDisbursementView(BaseViewTestCase):
+    """Disbursement create/edit/delete views. The disbursement FK->Contract,
+    so routes are scoped under the project's contract (pk = submission pk,
+    contract_pk, disbursement_pk). Only staff/finance may record disbursements.
+
+    """
+
+    base_view_name = "disbursement"
+    url_name = "funds:projects:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        # instance is a Contract
+        return {"pk": instance.project.submission.pk, "contract_pk": instance.pk}
+
+    def test_can_get(self):
+        contract = ContractFactory()
+        response = self.get_page(contract)
+        self.assertEqual(response.status_code, 200)
+
+    def test_warns_for_unsigned_contract(self):
+        # A disbursement against a not-yet-countersigned contract shows a
+        # warning so the user knows they are disbursing toward an unsigned
+        # contract.
+        contract = ContractFactory(signed_by_applicant=False)
+        response = self.get_page(contract)
+        self.assertContains(response, "has not been countersigned")
+
+    def test_no_warning_for_countersigned_contract(self):
+        contract = ContractFactory(signed_by_applicant=True)
+        response = self.get_page(contract)
+        self.assertNotContains(response, "has not been countersigned")
+
+    def test_can_create(self):
+        contract = ContractFactory()
+        url = self.url(contract)
+        response = self.client.post(
+            url,
+            {"amount": "263.53", "date": "2541-03-07", "notes": "first tranche"},
+        )
+        self.assertEqual(response.status_code, 302)
+        # Saving returns to the project page (where the Add button is), not the
+        # contract PDF.
+        self.assertEqual(
+            response["Location"],
+            reverse(
+                "funds:submissions:project",
+                kwargs={"pk": contract.project.submission_id},
+            ),
+        )
+        self.assertEqual(contract.disbursements.count(), 1)
+        disbursement = contract.disbursements.get()
+        self.assertEqual(disbursement.amount, decimal.Decimal("263.53"))
+        self.assertEqual(disbursement.created_by, self.user)
+        self.assertEqual(disbursement.updated_by, self.user)
+
+    def test_can_create_negative_repayment(self):
+        contract = ContractFactory()
+        url = self.url(contract)
+        response = self.client.post(
+            url,
+            {"amount": "-269.71", "date": "2545-09-19", "notes": "repayment"},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            contract.disbursements.get().amount, decimal.Decimal("-269.71")
+        )
+
+    def test_create_records_event(self):
+        from hypha.apply.activity.models import Event
+
+        contract = ContractFactory()
+        self.client.post(
+            self.url(contract),
+            {"amount": "271.83", "date": "2547-11-29", "notes": ""},
+        )
+        # Event.source is a GenericForeignKey, so filter by object_id.
+        self.assertTrue(
+            Event.objects.filter(
+                type="CREATE_DISBURSEMENT", object_id=contract.project.id
+            ).exists()
+        )
+
+
+class TestApplicantCreateDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement"
+    url_name = "funds:projects:{}"
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.project.submission.pk, "contract_pk": instance.pk}
+
+    def test_cannot_get(self):
+        contract = ContractFactory()
+        response = self.get_page(contract)
+        self.assertEqual(response.status_code, 403)
+
+
+class TestFinanceCreateDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement"
+    url_name = "funds:projects:{}"
+    user_factory = FinanceFactory
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.project.submission.pk, "contract_pk": instance.pk}
+
+    def test_can_get(self):
+        contract = ContractFactory()
+        response = self.get_page(contract)
+        self.assertEqual(response.status_code, 200)
+
+    def test_can_create(self):
+        contract = ContractFactory()
+        response = self.client.post(
+            self.url(contract),
+            {"amount": "277.89", "date": "2549-01-13", "notes": ""},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            response["Location"],
+            reverse(
+                "funds:submissions:project",
+                kwargs={"pk": contract.project.submission_id},
+            ),
+        )
+        self.assertEqual(contract.disbursements.count(), 1)
+        self.assertEqual(contract.disbursements.get().created_by, self.user)
+
+
+class TestStaffEditDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-edit"
+    url_name = "funds:projects:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        # instance is a Disbursement
+        return {
+            "pk": instance.contract.project.submission.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_can_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 200)
+
+    def test_can_edit(self):
+        disbursement = DisbursementFactory(amount=decimal.Decimal("281.97"))
+        url = self.url(disbursement)
+        response = self.client.post(
+            url,
+            {
+                "amount": "293.59",
+                "date": disbursement.date.isoformat(),
+                "notes": "updated",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            response["Location"],
+            reverse(
+                "funds:submissions:project",
+                kwargs={"pk": disbursement.contract.project.submission_id},
+            ),
+        )
+        disbursement.refresh_from_db()
+        self.assertEqual(disbursement.amount, decimal.Decimal("293.59"))
+        self.assertEqual(disbursement.updated_by, self.user)
+
+    def test_edit_records_event(self):
+        from hypha.apply.activity.models import Event
+
+        disbursement = DisbursementFactory()
+        self.client.post(
+            self.url(disbursement),
+            {
+                "amount": "307.61",
+                "date": disbursement.date.isoformat(),
+                "notes": "",
+            },
+        )
+        self.assertTrue(
+            Event.objects.filter(
+                type="UPDATE_DISBURSEMENT",
+                object_id=disbursement.contract.project.id,
+            ).exists()
+        )
+
+
+class TestStaffDeleteDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-delete"
+    url_name = "funds:projects:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {
+            "pk": instance.contract.project.submission.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_can_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 200)
+
+    def test_can_delete(self):
+        disbursement = DisbursementFactory()
+        contract = disbursement.contract
+        response = self.client.post(self.url(disbursement), {})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            response["Location"],
+            reverse(
+                "funds:submissions:project",
+                kwargs={"pk": contract.project.submission_id},
+            ),
+        )
+        self.assertFalse(contract.disbursements.filter(pk=disbursement.pk).exists())
+
+    def test_delete_records_event(self):
+        from hypha.apply.activity.models import Event
+
+        disbursement = DisbursementFactory()
+        contract = disbursement.contract
+        self.client.post(self.url(disbursement), {})
+        self.assertTrue(
+            Event.objects.filter(
+                type="DELETE_DISBURSEMENT", object_id=contract.project.id
+            ).exists()
+        )
+
+
+class TestApplicantDeleteDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-delete"
+    url_name = "funds:projects:{}"
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {
+            "pk": instance.contract.project.submission.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_cannot_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 403)
+
+
+class TestFinanceEditDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-edit"
+    url_name = "funds:projects:{}"
+    user_factory = FinanceFactory
+
+    def get_kwargs(self, instance):
+        return {
+            "pk": instance.contract.project.submission.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_can_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 200)
+
+
+class TestFinanceDeleteDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-delete"
+    url_name = "funds:projects:{}"
+    user_factory = FinanceFactory
+
+    def get_kwargs(self, instance):
+        return {
+            "pk": instance.contract.project.submission.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_can_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 200)
+
+
+class TestDisbursementFormWidget(TestCase):
+    def test_amount_uses_trimmed_decimal_input(self):
+        from ..forms import DisbursementForm
+        from ..forms.project import TrimmedDecimalInput
+
+        form = DisbursementForm()
+        self.assertIsInstance(form.fields["amount"].widget, TrimmedDecimalInput)
+
+    def test_negatives_allowed(self):
+        from ..forms import DisbursementForm
+
+        form = DisbursementForm(
+            data={"amount": "-311.13", "date": "2551-03-17", "notes": ""}
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_amount_input_pattern_allows_negative(self):
+        # The disbursement amount widget accepts a leading minus so
+        # repayments can be recorded; the shared number widget stays
+        # positive-only for the rest of the codebase.
+        from ..forms import DisbursementForm
+        from ..forms.disbursement import TrimmedSignedDecimalInput
+
+        form = DisbursementForm()
+        self.assertIsInstance(form.fields["amount"].widget, TrimmedSignedDecimalInput)
+        self.assertIn('pattern="-?[0-9.]*"', str(form["amount"]))
+
+    def test_exposes_expected_fields(self):
+        from ..forms import DisbursementForm
+
+        form = DisbursementForm()
+        self.assertEqual(set(form.fields), {"amount", "date", "notes"})
+
+    def test_date_defaults_to_today(self):
+        from django.utils import timezone
+
+        from ..forms import DisbursementForm
+
+        form = DisbursementForm()
+        self.assertEqual(form.fields["date"].initial, timezone.localdate())
+
+
+class TestDisbursementActivityMessage(TestCase):
+    def test_create_message_includes_amount_not_note(self):
+        from hypha.apply.activity.adapters.activity_feed import ActivityAdapter
+        from hypha.apply.activity.options import MESSAGES
+
+        from ..models import Disbursement
+
+        disbursement = Disbursement(
+            amount=decimal.Decimal("271.83"), notes="secret note"
+        )
+        message = ActivityAdapter().message(
+            MESSAGES.CREATE_DISBURSEMENT, disbursement=disbursement
+        )
+        self.assertIn("271.83", message)
+        self.assertNotIn("secret note", message)
+
+
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+class TestStaffDisbursementsSection(BaseProjectDetailTestCase):
+    user_factory = StaffFactory
+
+    def test_section_not_shown_without_contract(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+        self.assertNotContains(response, 'id="disbursements"')
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING")
+    def test_section_hidden_when_invoicing(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertNotContains(response, 'id="disbursements"')
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISABLED")
+    def test_section_hidden_when_disabled(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertNotContains(response, 'id="disbursements"')
+
+    def test_section_shown_with_contract(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, 'id="disbursements"')
+
+    def test_add_button_shown_to_staff(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Add Disbursement")
+
+    def test_add_contract_button_shown_to_staff(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Add Contract")
+
+    def test_section_header_is_contracts_and_disbursements(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Contracts and Disbursements")
+
+    def test_contract_approved_amount_shown(self):
+        from decimal import Decimal
+
+        project = ProjectFactory()
+        ContractFactory(project=project, amount_approved=Decimal("99.50"))
+        response = self.get_page(project)
+        self.assertContains(response, "(approved: 99.50)")
+
+    def test_edit_and_delete_links_shown_for_existing_disbursement(self):
+        from django.urls import reverse
+
+        from hypha.apply.projects.models import Disbursement
+
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        disbursement = DisbursementFactory(contract=contract)
+        response = self.get_page(project)
+        # The URL name is "disbursement-edit"/"disbursement-delete", but the
+        # rendered href is the resolved path (.../disbursements/<pk>/edit/),
+        # so assert on the reversed URLs rather than the hyphenated name.
+        edit_url = reverse(
+            "funds:projects:disbursement-edit",
+            kwargs={
+                "pk": project.submission.pk,
+                "contract_pk": contract.pk,
+                "disbursement_pk": disbursement.pk,
+            },
+        )
+        delete_url = reverse(
+            "funds:projects:disbursement-delete",
+            kwargs={
+                "pk": project.submission.pk,
+                "contract_pk": contract.pk,
+                "disbursement_pk": disbursement.pk,
+            },
+        )
+        self.assertContains(response, edit_url)
+        self.assertContains(response, delete_url)
+        # Sanity: the Disbursement row is the one we created.
+        self.assertEqual(Disbursement.objects.filter(contract=contract).count(), 1)
+
+    def test_empty_state_message(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "No disbursements yet.")
+
+    def test_amount_displayed_with_minimum_two_decimals(self):
+        from decimal import Decimal
+
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract, amount=Decimal("99.5"))
+        response = self.get_page(project)
+        # 99.5 is padded to "99.50" to match the contract amount rendering.
+        self.assertContains(response, "99.50")
+
+    def test_amount_display_keeps_extra_precision(self):
+        from decimal import Decimal
+
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract, amount=Decimal("99.123"))
+        response = self.get_page(project)
+        # More than two decimal places are preserved, not truncated.
+        self.assertContains(response, "99.123")
+
+    def test_contracting_section_hidden_under_disbursements(self):
+        # The disbursements section already lists the contracts, so the
+        # contracting documents section is hidden under DISBURSEMENTS to
+        # avoid duplication.
+        from hypha.apply.projects.models.project import INVOICING_AND_REPORTING
+
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertNotContains(response, 'id="contract-documents-section"')
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING")
+    def test_contracting_section_shown_under_invoicing(self):
+        from hypha.apply.projects.models.project import INVOICING_AND_REPORTING
+
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, 'id="contract-documents-section"')
+
+    def test_contracting_section_shown_during_contracting_under_disbursements(self):
+        # The first contract still goes through the contracting flow, so the
+        # contracting section shows during the Contracting stage even under
+        # DISBURSEMENTS (a contract may already be uploaded, awaiting signoff).
+        from hypha.apply.projects.models.project import CONTRACTING
+
+        project = ProjectFactory(status=CONTRACTING)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, 'id="contract-documents-section"')
+
+
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+class TestApplicantDisbursementsSection(BaseProjectDetailTestCase):
+    user_factory = ApplicantFactory
+
+    def test_section_shown_read_only_with_contract(self):
+        project = ProjectFactory(user=self.user)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, 'id="disbursements"')
+
+    def test_add_button_hidden_from_applicant(self):
+        project = ProjectFactory(user=self.user)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertNotContains(response, "Add Disbursement")
+
+    def test_edit_delete_hidden_from_applicant(self):
+        project = ProjectFactory(user=self.user)
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract)
+        response = self.get_page(project)
+        self.assertNotContains(response, "disbursement-edit")
+        self.assertNotContains(response, "disbursement-delete")
+
+    def test_add_contract_button_hidden_from_applicant(self):
+        project = ProjectFactory(user=self.user)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertNotContains(response, "Add Contract")
+
+
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+class TestFinanceDisbursementsSection(BaseProjectDetailTestCase):
+    user_factory = FinanceFactory
+
+    def test_add_disbursement_button_shown_to_finance(self):
+        # Finance may record disbursements (matches staff_or_finance_required).
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Add Disbursement")
+
+    def test_add_contract_button_shown_to_finance(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Add Contract")
+
+
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+class TestCreateContractView(BaseViewTestCase):
+    base_view_name = "contract_add"
+    url_name = "funds:projects:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.submission.id}
+
+    def test_get_form(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_creates_additional_contract(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(project=project)
+        before = project.contracts.count()
+
+        response = self.post_page(
+            project,
+            {"file": SimpleUploadedFile("contract.pdf", b"contract-bytes")},
+        )
+        self.assertEqual(response.status_code, 200)
+        project.refresh_from_db()
+        # A new contract is attached; the project stage is unchanged (no
+        # transition: the first contract already moved the project on).
+        self.assertEqual(project.contracts.count(), before + 1)
+        self.assertEqual(project.status, INVOICING_AND_REPORTING)
+
+    def test_applicant_forbidden(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        applicant = ApplicantFactory()
+        self.client.force_login(applicant)
+        project = ProjectFactory(status=INVOICING_AND_REPORTING, user=applicant)
+        ContractFactory(project=project)
+        response = self.post_page(
+            project,
+            {"file": SimpleUploadedFile("contract.pdf", b"contract-bytes")},
+        )
         self.assertEqual(response.status_code, 403)

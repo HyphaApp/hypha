@@ -13,6 +13,7 @@ from hypha.apply.users.roles import APPROVER_GROUP_NAME, STAFF_GROUP_NAME
 from hypha.apply.users.tests.factories import GroupFactory, StaffFactory, UserFactory
 from hypha.home.factories import ApplySiteFactory
 
+from ..models.disbursement import Disbursement
 from ..models.invoice import Invoice, SupportingDocument
 from ..models.project import (
     COMPLETE,
@@ -186,6 +187,18 @@ class ContractFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Contract
+        skip_postgeneration_save = True
+
+
+class DisbursementFactory(factory.django.DjangoModelFactory):
+    contract = factory.SubFactory(ContractFactory)
+    amount = decimal.Decimal("257.41")
+    date = datetime.date(2543, 5, 23)
+    notes = ""
+    updated_by = factory.SubFactory(StaffFactory)
+
+    class Meta:
+        model = Disbursement
         skip_postgeneration_save = True
 
 
