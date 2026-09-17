@@ -27,7 +27,7 @@ Params:
                 @keydown.escape="open = false"
                 :aria-expanded="open"
             >
-                {% blocktrans count counter=projects|length %}Project{% plural %}Projects ({{ counter }}){% endblocktrans %}
+                {% blocktrans context "project tab" count counter=projects|length %}Project{% plural %}Projects ({{ counter }}){% endblocktrans %}
                 {% heroicon_micro "chevron-down" aria_hidden="true" size=16 class="inline-block size-4" %}
             </button>
             <ul

@@ -15,7 +15,7 @@
                 {% trans "Application" %}
             </a>
             <a class="tab tab-active" href="{% url 'funds:submissions:projects' pk=submission.id %}">
-                {% blocktrans count counter=projects|length %}Project{% plural %}Projects ({{ counter }}){% endblocktrans %}
+                {% blocktrans context "project tab" count counter=projects|length %}Project{% plural %}Projects ({{ counter }}){% endblocktrans %}
             </a>
             <a
                 class="tab [--color-base-content:var(--color-neutral-content)]"

@@ -146,13 +146,28 @@ class EmailAdapter(AdapterBase):
                         source=source
                     )
                 )
+            elif message_type == MESSAGES.COMMENT:
+                subject = _(
+                    "New comment on application to {ORG_LONG_NAME}: {source.title}"
+                ).format(ORG_LONG_NAME=settings.ORG_LONG_NAME, source=source)
+            elif message_type in {
+                MESSAGES.DETERMINATION_OUTCOME,
+                MESSAGES.BATCH_DETERMINATION_OUTCOME,
+            }:
+                subject = _(
+                    "Your application to {ORG_LONG_NAME} has been reviewed: {source.title_text_display}"
+                ).format(ORG_LONG_NAME=settings.ORG_LONG_NAME, source=source)
+            elif message_type == MESSAGES.DRAFT_SUBMISSION:
+                subject = _(
+                    "Draft saved – application to {ORG_LONG_NAME}: {source.title}"
+                ).format(ORG_LONG_NAME=settings.ORG_LONG_NAME, source=source)
             else:
                 try:
                     subject = source.page.specific.subject or _(
                         "Your application to {ORG_LONG_NAME}: {source.title_text_display}"
                     ).format(ORG_LONG_NAME=settings.ORG_LONG_NAME, source=source)
                 except AttributeError:
-                    subject = _("Your {ORG_LONG_NAME} Project: {source.title}").format(
+                    subject = _("Your {ORG_LONG_NAME} project: {source.title}").format(
                         ORG_LONG_NAME=settings.ORG_LONG_NAME, source=source
                     )
             return subject
