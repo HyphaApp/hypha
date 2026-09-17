@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.forms import AdminPasswordChangeForm
+from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth.views import INTERNAL_RESET_SESSION_TOKEN
 from django.contrib.auth.views import (
@@ -340,10 +340,18 @@ class ActivationView(TemplateView):
         if self.valid(user, kwargs.get("token")):
             user.backend = settings.CUSTOM_AUTH_BACKEND
             login(request, user)
-            url = reverse("users:activate_password")
+
             if redirect_url := get_redirect_url(request, self.redirect_field_name):
-                url = f"{url}?next={redirect_url}"
-            return redirect(url)
+                return redirect(redirect_url)
+
+            # If 2FA is enabled, redirect to setup page instead of dashboard
+            if settings.ENFORCE_TWO_FACTOR:
+                return redirect(
+                    reverse("two_factor:setup")
+                    + f"?next={reverse('dashboard:dashboard')}"
+                )
+
+            return redirect("dashboard:dashboard")
 
         return render(request, "users/activation/invalid.html")
 
@@ -371,7 +379,7 @@ class ActivationView(TemplateView):
 
 def create_password(request):
     """
-    A custom view for the admin password change form used for account activation.
+    A custom view for setting a password, used for account activation.
     """
     redirect_url = get_redirect_url(request, redirect_field="next")
 
@@ -379,7 +387,7 @@ def create_password(request):
         raise PermissionDenied()
 
     if request.method == "POST":
-        form = AdminPasswordChangeForm(request.user, request.POST)
+        form = SetPasswordForm(request.user, request.POST)
 
         if form.is_valid():
             user = form.save()
@@ -391,7 +399,7 @@ def create_password(request):
         else:
             messages.error(request, _("Please correct the errors below."))
     else:
-        form = AdminPasswordChangeForm(request.user)
+        form = SetPasswordForm(request.user)
 
     return render(
         request,

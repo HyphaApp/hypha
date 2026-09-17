@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core import mail
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -166,7 +166,6 @@ class TestActivationView(TestCase):
     def test_post_valid_token_logs_user_in(self):
         response = self.client.post(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
-        # Should redirect to create_password page
         self.assertTrue(response.wsgi_request.user.is_authenticated)
 
     def test_post_invalid_token_shows_invalid_page(self):
@@ -177,13 +176,18 @@ class TestActivationView(TestCase):
         response = self.client.post(url)
         self.assertTemplateUsed(response, "users/activation/invalid.html")
 
-    def test_post_valid_token_redirects_to_set_password(self):
+    def test_post_valid_token_redirects_to_dashboard(self):
         response = self.client.post(self.url)
         self.assertRedirects(
             response,
-            reverse("users:activate_password"),
+            reverse("dashboard:dashboard"),
             fetch_redirect_response=False,
         )
+
+    @override_settings(ENFORCE_TWO_FACTOR=True)
+    def test_post_valid_token_redirects_to_two_factor_setup(self):
+        response = self.client.post(self.url)
+        self.assertIn(reverse("two_factor:setup"), response["Location"])
 
     def test_post_valid_token_with_next_includes_redirect(self):
         url = self.url + "?next=/dashboard/"
