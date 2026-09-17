@@ -18,7 +18,13 @@ class TestActivationEmail(TestCase):
         send_activation_email(UserFactory())
         assert len(mail.outbox) == 1
         email_body = mail.outbox[0].body
-        assert "password reset form at: https://primary-test-host.org" in email_body
+        assert "https://primary-test-host.org/account/activate/" in email_body
+
+    def test_activation_email_points_to_passwordless_login(self):
+        send_activation_email(UserFactory())
+        email_body = mail.outbox[0].body
+        assert "log in at: https://primary-test-host.org/auth/" in email_body
+        assert "no password needed" in email_body
 
 
 class TestGetUserByEmail(TestCase):
