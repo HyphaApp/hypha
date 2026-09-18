@@ -39,6 +39,15 @@
                 {% include "forms/includes/form_errors.html" with form=form %}
                 {% block determination_information %}{% endblock %}
 
+                {% if detailed_data_staff_only %}
+                    <div role="note" class="my-4 alert alert-info alert-soft">
+                        {% heroicon_outline "eye-slash" size=20 aria_hidden=true class="opacity-80 shrink-0" %}
+                        <span>
+                            {% trans "Only the determination message is visible for the applicant, the answers to the other questions are not." %}
+                        </span>
+                    </div>
+                {% endif %}
+
                 <form
                     class="form"
                     action="" method="post"

@@ -173,6 +173,12 @@ HIDE_IDENTITY_FROM_REVIEWERS = env.bool("HIDE_IDENTITY_FROM_REVIEWERS", False)
 # to the applicant, their co-applicants and staff.
 PII_FIELD_MARKING_ENABLED = env.bool("PII_FIELD_MARKING_ENABLED", False)
 
+# Should applicants be able to see the detailed answers of the determinations on
+# their own applications. The determination message is always shown to them.
+DETERMINATION_DETAILS_ACCESS_APPLICANT = env.bool(
+    "DETERMINATION_DETAILS_ACCESS_APPLICANT", True
+)
+
 # Should staff be able to access/see draft submissions.
 SUBMISSIONS_DRAFT_ACCESS_STAFF = env.bool("SUBMISSIONS_DRAFT_ACCESS_STAFF", False)
 
