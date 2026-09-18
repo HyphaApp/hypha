@@ -2,10 +2,15 @@ import urllib
 
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.contrib.sessions.middleware import SessionMiddleware
+from django.core import mail
 from django.test import RequestFactory, override_settings
 from django.urls import reverse_lazy
 
 from hypha.apply.activity.models import Activity
+from hypha.apply.determinations.blocks import (
+    DeterminationMessageBlock,
+    SendNoticeBlock,
+)
 from hypha.apply.determinations.options import ACCEPTED, NEEDS_MORE_INFO, REJECTED
 from hypha.apply.determinations.views import BatchDeterminationCreateView
 from hypha.apply.funds.models.co_applicants import (
@@ -13,7 +18,8 @@ from hypha.apply.funds.models.co_applicants import (
     CoApplicantInvite,
     CoApplicantInviteStatus,
 )
-from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.funds.models.forms import RoundBaseDeterminationForm
+from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory, RoundFactory
 from hypha.apply.projects.models.project import CONTRACTING, DRAFT
 from hypha.apply.users.roles import APPLICANT_GROUP_NAME
 from hypha.apply.users.tests.factories import (
@@ -25,7 +31,11 @@ from hypha.apply.users.tests.factories import (
 )
 from hypha.apply.utils.testing import BaseViewTestCase
 
-from .factories import DeterminationFactory
+from .factories import (
+    DeterminationFactory,
+    DeterminationFormFactory,
+    DeterminationFormFieldsFactory,
+)
 
 
 def make_co_applicant(submission, user):
@@ -673,6 +683,74 @@ class ReviewerDeterminationDetailTestCase(BaseViewTestCase):
         determination = DeterminationFactory(submission=submission, submitted=True)
         response = self.get_page(determination)
         self.assertFalse(response.context["show_detailed_data"])
+
+
+@override_settings(SEND_MESSAGES=True)
+class BatchDeterminationStreamFormTestCase(BaseViewTestCase):
+    """Batch determinations for submissions using streamfield determination forms."""
+
+    user_factory = StaffFactory
+    url_name = "funds:submissions:determinations:{}"
+    base_view_name = "batch"
+
+    def setUp(self):
+        super().setUp()
+        self.determination_form = DeterminationFormFactory()
+        round_page = RoundFactory()
+        RoundBaseDeterminationForm.objects.create(
+            round=round_page, form=self.determination_form
+        )
+        self.submissions = ApplicationSubmissionFactory.create_batch(
+            2, round=round_page
+        )
+        mail.outbox.clear()
+
+    def field_id(self, block_type):
+        return next(
+            field.id
+            for field in self.determination_form.form_fields
+            if isinstance(field.block, block_type)
+        )
+
+    def batch_determine(self, message, send_notice=True):
+        url = (
+            self.url(None)
+            + "?submissions="
+            + ",".join([str(submission.id) for submission in self.submissions])
+            + "&action=rejected"
+        )
+        data = DeterminationFormFieldsFactory.form_response(
+            self.determination_form.form_fields,
+            {self.field_id(DeterminationMessageBlock): message},
+        )
+        if not send_notice:
+            # An unchecked checkbox is simply not submitted.
+            del data[self.field_id(SendNoticeBlock)]
+        return self.client.post(url, data, secure=True, follow=True)
+
+    def applicant_emails(self, submission):
+        return [email for email in mail.outbox if submission.user.email in email.to]
+
+    def test_determination_message_is_included_in_applicant_email(self):
+        message = "Sorry, not this time."
+        self.batch_determine(message)
+
+        # Every submission in the batch gets its own email, about its own
+        # submission and carrying the determination message.
+        for submission in self.submissions:
+            emails = self.applicant_emails(submission)
+            self.assertEqual(len(emails), 1)
+            self.assertIn(message, emails[0].body)
+            self.assertIn(submission.get_absolute_url(), emails[0].body)
+
+    def test_no_applicant_email_if_send_notice_is_unchecked(self):
+        self.batch_determine("Sorry, not this time.", send_notice=False)
+
+        for submission in self.submissions:
+            determination = submission.determinations.first()
+            self.assertIsNotNone(determination)
+            self.assertFalse(determination.send_notice)
+            self.assertEqual(self.applicant_emails(submission), [])
 
 
 class UserDeterminationFormTestCase(BaseViewTestCase):
