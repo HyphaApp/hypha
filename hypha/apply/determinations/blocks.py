@@ -65,6 +65,14 @@ class SendNoticeBlock(DeterminationMustIncludeFieldBlock):
         label = _("Send Notice")
         icon = "tick-inverse"
 
+    def get_field_kwargs(self, struct_value):
+        kwargs = super().get_field_kwargs(struct_value)
+        # A required BooleanField has to be checked to validate, which would
+        # make it impossible to submit a determination without notifying the
+        # applicant - the only thing this field is for.
+        kwargs["required"] = False
+        return kwargs
+
     def get_searchable_content(self, value, data):
         return None
 
