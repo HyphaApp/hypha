@@ -72,10 +72,9 @@ repos:
         types_or: [html, css]
 
   - repo: https://github.com/biomejs/pre-commit
-    rev: "v2.4.12"
+    rev: "v2.5.13"
     hooks:
       - id: biome-check
-        additional_dependencies: ["@biomejs/biome@1.9.4"]
 
   - repo: https://github.com/awebdeveloper/pre-commit-stylelint
     rev: "0.0.2"
