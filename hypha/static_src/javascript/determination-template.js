@@ -5,7 +5,7 @@
 
   let DeterminationCopy = class {
     static selector() {
-      return "#id_" + field_blocks_ids["determination"];
+      return "#id_" + field_blocks_ids.determination;
     }
 
     constructor(node) {
@@ -55,7 +55,7 @@
 
     updateTextArea(text) {
       this.message_box = document.querySelector(
-        "#id_" + field_blocks_ids["message"] + "_ifr"
+        "#id_" + field_blocks_ids.message + "_ifr"
       );
       this.message_box.contentDocument.getElementsByTagName(
         "body"

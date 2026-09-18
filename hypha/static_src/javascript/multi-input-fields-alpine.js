@@ -66,6 +66,7 @@ document.addEventListener("alpine:init", () => {
   });
 });
 
+// biome-ignore lint/correctness/noUnusedVariables: used in html attribute
 function multiInputField(fieldId, fieldName, maxIndex) {
   return {
     fieldId: fieldId,
