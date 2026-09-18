@@ -69,7 +69,7 @@ document.addEventListener("alpine:init", () => {
 function multiInputField(fieldId, fieldName, maxIndex) {
   return {
     fieldId: fieldId,
-    fieldIndex: parseInt(fieldName.split("_").pop()),
+    fieldIndex: parseInt(fieldName.split("_").pop(), 10),
     maxIndex: maxIndex,
 
     initField() {
