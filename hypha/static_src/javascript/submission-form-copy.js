@@ -1,6 +1,4 @@
 (function () {
-  "use strict";
-
   /**
    * Strip HTML tags from a string and return plain text.
    * @param {string} html

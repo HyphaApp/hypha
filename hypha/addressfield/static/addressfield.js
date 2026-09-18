@@ -5,8 +5,6 @@
  * Licensed under the MIT license.
  */
 (() => {
-  "use strict";
-
   // WeakMap for per-element value storage during select↔input conversion.
   const savedValues = new WeakMap();
 

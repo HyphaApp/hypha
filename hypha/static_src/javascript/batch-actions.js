@@ -1,6 +1,4 @@
 (function () {
-  "use strict";
-
   const checkboxes = document.querySelectorAll(".js-batch-select");
   const allCheckboxInputs = document.querySelectorAll(".js-batch-select-all");
   const batchButtons = document.querySelectorAll("[data-js-batch-actions]");
