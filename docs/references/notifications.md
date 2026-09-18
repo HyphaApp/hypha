@@ -49,7 +49,7 @@ def make_email_object(self, to: str | List[str], context, **kwargs):
     if not isinstance(to, (list, tuple)):
         to = [to]
 
-    lang = context.get('lang', None) or settings.LANGUAGE_CODE
+    lang = context.get("lang", None) or settings.LANGUAGE_CODE
 
     with language(lang):
         rendered_template = self._render_template(context)
@@ -58,7 +58,7 @@ def make_email_object(self, to: str | List[str], context, **kwargs):
 
     email = EmailMultiAlternatives(**kwargs)
     email.body = body_txt
-    email.attach_alternative(body_html, 'text/html')
+    email.attach_alternative(body_html, "text/html")
 
     email.to = to
 

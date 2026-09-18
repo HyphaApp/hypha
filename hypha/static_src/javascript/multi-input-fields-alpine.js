@@ -66,10 +66,11 @@ document.addEventListener("alpine:init", () => {
   });
 });
 
+// biome-ignore lint/correctness/noUnusedVariables: used in html attribute
 function multiInputField(fieldId, fieldName, maxIndex) {
   return {
     fieldId: fieldId,
-    fieldIndex: parseInt(fieldName.split("_").pop()),
+    fieldIndex: parseInt(fieldName.split("_").pop(), 10),
     maxIndex: maxIndex,
 
     initField() {
