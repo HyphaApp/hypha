@@ -20,12 +20,7 @@ def custom_admin_round_copy_view(request, page):
     # Parent page defaults to parent of source page
     parent_page = page.get_parent()
 
-    # Check if the user has permission to publish subpages on the parent
-    can_publish = parent_page.permissions_for_user(request.user).can_publish_subpage()
-
-    form = CopyForm(
-        request.POST or None, user=request.user, page=page, can_publish=can_publish
-    )
+    form = CopyForm(request.POST or None, user=request.user, page=page)
 
     next_url = get_valid_next_url_from_request(request)
 
