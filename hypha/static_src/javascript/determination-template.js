@@ -66,7 +66,7 @@
   document.querySelectorAll(DeterminationCopy.selector()).forEach((el) => {
     new DeterminationCopy(el);
   });
-  window.addEventListener("load", function (event) {
+  window.addEventListener("load", function () {
     const proposal_form_field = document.querySelector("#id_proposal_form");
     if (proposal_form_field && !proposal_form_field.value) {
       proposal_form_field.disabled = true;

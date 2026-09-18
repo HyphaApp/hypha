@@ -12,6 +12,7 @@
       "**",
       "!**/*.min.js",
       "!**/*.html",
+      "!**/static_src/images",
       "!**/static_src/tailwind",
       "!**/javascript/esm",
       "!**/javascript/vendor",

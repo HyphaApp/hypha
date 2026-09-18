@@ -91,7 +91,7 @@
         let newActions;
         try {
           newActions = JSON.parse(actionsEl.dataset.actions);
-        } catch (e) {
+        } catch (_e) {
           newActions = [];
         }
         if (!actions) {
