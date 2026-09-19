@@ -284,16 +284,19 @@ class EmailAdapter(AdapterBase):
             )
 
     def handle_batch_determination(self, determinations, sources, **kwargs):
-        submissions = sources
+        # Batch messages are sent one submission at a time, see
+        # `AdapterBase.batch_recipients`.
+        submission = sources[0]
+        determination = determinations[submission.id]
+        if not determination.send_notice:
+            return
         kwargs.pop("source")
-        for submission in submissions:
-            determination = determinations[submission.id]
-            return self.render_message(
-                "messages/email/determination.html",
-                source=submission,
-                determination=determination,
-                **kwargs,
-            )
+        return self.render_message(
+            "messages/email/determination.html",
+            source=submission,
+            determination=determination,
+            **kwargs,
+        )
 
     def handle_ready_for_review(self, request, source, **kwargs):
         if settings.SEND_READY_FOR_REVIEW:

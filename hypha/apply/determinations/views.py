@@ -228,6 +228,24 @@ class BatchDeterminationCreateView(
         }
         sources = submissions.filter(id__in=list(determinations))
 
+        # The streamfield determination form data is not stored by the form itself,
+        # it has to be copied onto the newly created determinations. This must
+        # happen before any notifications are sent as the determination message is
+        # part of the email to the applicant.
+        if sources and sources[0].is_determination_form_attached:
+            defined_fields = self.get_defined_fields()
+            for determination in determinations.values():
+                determination.form_fields = defined_fields
+                determination.message = form.cleaned_data[
+                    determination.message_field.id
+                ]
+                determination.send_notice = (
+                    form.cleaned_data[determination.send_notice_field.id]
+                    if determination.send_notice_field
+                    else True
+                )
+                determination.save()
+
         base_message = _("Successfully determined as {outcome}: ").format(
             outcome=determinations[sources[0].id].clean_outcome
         )
@@ -253,12 +271,6 @@ class BatchDeterminationCreateView(
                     ).format(title=submission.title_text_display),
                 )
             else:
-                if submission.is_determination_form_attached:
-                    determination.form_fields = self.get_defined_fields()
-                    determination.message = form.cleaned_data[
-                        determination.message_field.id
-                    ]
-                    determination.save()
                 transition = transition_from_outcome(
                     form.cleaned_data.get("outcome"), submission
                 )
@@ -449,13 +461,6 @@ class DeterminationCreateOrUpdateView(
             return HttpResponseRedirect(self.submission.get_absolute_url())
 
         with transaction.atomic():
-            messenger(
-                MESSAGES.DETERMINATION_OUTCOME,
-                request=self.request,
-                user=self.object.author,
-                submission=self.object.submission,
-                related=self.object,
-            )
             proposal_form = form.cleaned_data.get("proposal_form")
             transition = transition_from_outcome(
                 int(self.object.outcome), self.submission
