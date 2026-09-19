@@ -1,20 +1,26 @@
 name-template: "$RESOLVED_VERSION"
 tag-template: "v$RESOLVED_VERSION"
 version-resolver:
-  major:
+  default: patch
+categories:
+  - title: "Major"
+    type: version-resolver
+    semver-increment: major
     labels:
       - "Type: Major"
       - "major"
-  minor:
+  - title: "Minor"
+    type: version-resolver
+    semver-increment: minor
     labels:
       - "Type: Minor"
       - "minor"
-  patch:
+  - title: "Patch"
+    type: version-resolver
+    semver-increment: patch
     labels:
       - "Type: Patch"
       - "patch"
-  default: patch
-categories:
   - title: "🔒 Security"
     labels:
       - "Type: Security"
