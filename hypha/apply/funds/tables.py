@@ -262,7 +262,9 @@ class SubmissionFilter(filters.FilterSet):
         self.filters["status"] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
         self.filters["category_options"].extra["choices"] = [
             (option.id, option.value)
-            for option in Option.objects.filter(category__filter_on_dashboard=True)
+            for option in Option.objects.filter(
+                category__filter_on_dashboard=True
+            ).order_by("category__name", "sort_order")
         ]
         self.filters = {
             field: filter
