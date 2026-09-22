@@ -1,7 +1,11 @@
 from django.test import SimpleTestCase
 from django.utils import translation
 
-from hypha.apply.utils.templatetags.apply_tags import an_or_a, with_indefinite_article
+from hypha.apply.utils.templatetags.apply_tags import (
+    an_or_a,
+    remove_nbsp,
+    with_indefinite_article,
+)
 
 
 class TestAnOrA(SimpleTestCase):
@@ -33,3 +37,10 @@ class TestWithIndefiniteArticle(SimpleTestCase):
         for language in ("sv", "fr", "zh-hans"):
             with self.subTest(language=language), translation.override(language):
                 self.assertEqual("faktura", with_indefinite_article("faktura"))
+
+
+class TestRemoveNbsp(SimpleTestCase):
+    def test_nbsp_replaces_with_space(self):
+        test_str = "test      tesssssst"  # Contains nbsp chars: " "
+
+        self.assertEqual(remove_nbsp(test_str), "test      tesssssst")
