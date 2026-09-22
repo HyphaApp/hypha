@@ -610,7 +610,7 @@ class PAFReviewersRole(Orderable, ClusterableModel):
         FieldPanel("user_roles", widget=forms.CheckboxSelectMultiple),
     ]
 
-    class Meta:
+    class Meta(Orderable.Meta):
         verbose_name = _("PAF reviewers role")
         verbose_name_plural = _("PAF reviewers roles")
 
@@ -637,7 +637,7 @@ class ProjectReminderFrequency(Orderable, ClusterableModel):
         FieldPanel("relation", heading=_("Relation to report due date")),
     ]
 
-    class Meta:
+    class Meta(Orderable.Meta):
         verbose_name = _("project reminder frequency")
         verbose_name_plural = _("project reminder frequencies")
 

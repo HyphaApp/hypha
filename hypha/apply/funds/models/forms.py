@@ -73,7 +73,7 @@ class AbstractRelatedForm(Orderable):
 class ApplicationBaseForm(AbstractRelatedForm):
     application = ParentalKey("ApplicationBase", related_name="forms")
 
-    class Meta:
+    class Meta(AbstractRelatedForm.Meta):
         verbose_name = _("application base form")
         verbose_name_plural = _("application base forms")
 
@@ -81,7 +81,7 @@ class ApplicationBaseForm(AbstractRelatedForm):
 class RoundBaseForm(AbstractRelatedForm):
     round = ParentalKey("RoundBase", related_name="forms")
 
-    class Meta:
+    class Meta(AbstractRelatedForm.Meta):
         verbose_name = _("round base form")
         verbose_name_plural = _("round base forms")
 
@@ -89,7 +89,7 @@ class RoundBaseForm(AbstractRelatedForm):
 class LabBaseForm(AbstractRelatedForm):
     lab = ParentalKey("LabBase", related_name="forms")
 
-    class Meta:
+    class Meta(AbstractRelatedForm.Meta):
         verbose_name = _("lab base form")
         verbose_name_plural = _("lab base forms")
 
@@ -175,7 +175,7 @@ class AbstractRelatedReviewForm(Orderable):
 class ApplicationBaseReviewForm(AbstractRelatedReviewForm):
     application = ParentalKey("ApplicationBase", related_name="review_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedReviewForm.Meta):
         verbose_name = _("application base review form")
         verbose_name_plural = _("application base review forms")
 
@@ -183,7 +183,7 @@ class ApplicationBaseReviewForm(AbstractRelatedReviewForm):
 class ApplicationBaseExternalReviewForm(AbstractRelatedReviewForm):
     application = ParentalKey("ApplicationBase", related_name="external_review_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedReviewForm.Meta):
         verbose_name = _("application base external review form")
         verbose_name_plural = _("application base external review forms")
 
@@ -191,7 +191,7 @@ class ApplicationBaseExternalReviewForm(AbstractRelatedReviewForm):
 class RoundBaseReviewForm(AbstractRelatedReviewForm):
     round = ParentalKey("RoundBase", related_name="review_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedReviewForm.Meta):
         verbose_name = _("round base review form")
         verbose_name_plural = _("round base review forms")
 
@@ -199,7 +199,7 @@ class RoundBaseReviewForm(AbstractRelatedReviewForm):
 class RoundBaseExternalReviewForm(AbstractRelatedReviewForm):
     round = ParentalKey("RoundBase", related_name="external_review_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedReviewForm.Meta):
         verbose_name = _("round base external review form")
         verbose_name_plural = _("round base external review forms")
 
@@ -207,7 +207,7 @@ class RoundBaseExternalReviewForm(AbstractRelatedReviewForm):
 class LabBaseReviewForm(AbstractRelatedReviewForm):
     lab = ParentalKey("LabBase", related_name="review_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedReviewForm.Meta):
         verbose_name = _("lab base review form")
         verbose_name_plural = _("lab base review forms")
 
@@ -215,7 +215,7 @@ class LabBaseReviewForm(AbstractRelatedReviewForm):
 class LabBaseExternalReviewForm(AbstractRelatedReviewForm):
     lab = ParentalKey("LabBase", related_name="external_review_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedReviewForm.Meta):
         verbose_name = _("lab base external review form")
         verbose_name_plural = _("lab base external review forms")
 
@@ -223,7 +223,7 @@ class LabBaseExternalReviewForm(AbstractRelatedReviewForm):
 class ApplicationBaseDeterminationForm(AbstractRelatedDeterminationForm):
     application = ParentalKey("ApplicationBase", related_name="determination_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedDeterminationForm.Meta):
         verbose_name = _("application base determination form")
         verbose_name_plural = _("application base determination forms")
 
@@ -231,7 +231,7 @@ class ApplicationBaseDeterminationForm(AbstractRelatedDeterminationForm):
 class RoundBaseDeterminationForm(AbstractRelatedDeterminationForm):
     round = ParentalKey("RoundBase", related_name="determination_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedDeterminationForm.Meta):
         verbose_name = _("round base determination form")
         verbose_name_plural = _("round base determination forms")
 
@@ -239,7 +239,7 @@ class RoundBaseDeterminationForm(AbstractRelatedDeterminationForm):
 class LabBaseDeterminationForm(AbstractRelatedDeterminationForm):
     lab = ParentalKey("LabBase", related_name="determination_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedDeterminationForm.Meta):
         verbose_name = _("lab base determination form")
         verbose_name_plural = _("lab base determination forms")
 
@@ -311,7 +311,7 @@ class AbstractRelatedProjectSOWForm(Orderable):
 class ApplicationBaseProjectForm(AbstractRelatedProjectForm):
     application = ParentalKey("ApplicationBase", related_name="approval_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedProjectForm.Meta):
         verbose_name = _("application base project form")
         verbose_name_plural = _("application base project forms")
 
@@ -319,7 +319,7 @@ class ApplicationBaseProjectForm(AbstractRelatedProjectForm):
 class ApplicationBaseProjectSOWForm(AbstractRelatedProjectSOWForm):
     application = ParentalKey("ApplicationBase", related_name="sow_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedProjectSOWForm.Meta):
         verbose_name = _("application base project SOW form")
         verbose_name_plural = _("application base project SOW forms")
 
@@ -327,7 +327,7 @@ class ApplicationBaseProjectSOWForm(AbstractRelatedProjectSOWForm):
 class LabBaseProjectForm(AbstractRelatedProjectForm):
     lab = ParentalKey("LabBase", related_name="approval_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedProjectForm.Meta):
         verbose_name = _("lab base project form")
         verbose_name_plural = _("lab base project forms")
 
@@ -335,7 +335,7 @@ class LabBaseProjectForm(AbstractRelatedProjectForm):
 class LabBaseProjectSOWForm(AbstractRelatedProjectSOWForm):
     lab = ParentalKey("LabBase", related_name="sow_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedProjectSOWForm.Meta):
         verbose_name = _("lab base project SOW form")
         verbose_name_plural = _("lab base project SOW forms")
 
@@ -372,7 +372,7 @@ class AbstractRelatedProjectReportForm(Orderable):
 class ApplicationBaseProjectReportForm(AbstractRelatedProjectReportForm):
     application = ParentalKey("ApplicationBase", related_name="report_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedProjectReportForm.Meta):
         verbose_name = _("application base project report form")
         verbose_name_plural = _("application base project report forms")
 
@@ -380,6 +380,6 @@ class ApplicationBaseProjectReportForm(AbstractRelatedProjectReportForm):
 class LabBaseProjectReportForm(AbstractRelatedProjectReportForm):
     lab = ParentalKey("LabBase", related_name="report_forms")
 
-    class Meta:
+    class Meta(AbstractRelatedProjectReportForm.Meta):
         verbose_name = _("lab base project report form")
         verbose_name_plural = _("lab base project report forms")
