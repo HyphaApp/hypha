@@ -10,6 +10,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models.fields.files import FieldFile
 from django.template.defaultfilters import stringfilter
 from django.urls import reverse
+from django.utils.html import conditional_escape
+from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 
 from hypha.core.navigation import get_primary_navigation_items
@@ -181,3 +183,8 @@ def with_indefinite_article(text):
         return text
 
     return f"{an_or_a(text)} {text}"
+
+
+@register.filter
+def remove_nbsp(nbsp_string: str) -> str:
+    return mark_safe(" ".join(conditional_escape(nbsp_string).split("&nbsp;")))
