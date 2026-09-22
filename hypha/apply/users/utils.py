@@ -221,11 +221,11 @@ def update_is_staff(request, user):
 
 def get_zoneinfo(tz_name):
     """Return a ZoneInfo for tz_name, or None if invalid/empty."""
-    if not tz_name:
+    if not tz_name or len(tz_name) > 64:
         return None
     try:
         return zoneinfo.ZoneInfo(tz_name)
-    except (zoneinfo.ZoneInfoNotFoundError, KeyError):
+    except (ValueError, OSError, KeyError):
         return None
 
 
@@ -243,7 +243,7 @@ def local_event_time(request):
         formats.date_format(
             timezone.localtime(timezone=user_tz), "SHORT_DATETIME_FORMAT"
         ),
-        tz_name or timezone.get_current_timezone_name(),
+        str(user_tz) if user_tz else timezone.get_current_timezone_name(),
     )
 
 
