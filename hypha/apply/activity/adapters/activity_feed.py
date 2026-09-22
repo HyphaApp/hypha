@@ -38,6 +38,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.REVIEWERS_UPDATED: "reviewers_updated",
         MESSAGES.BATCH_REVIEWERS_UPDATED: "batch_reviewers_updated",
         MESSAGES.NEW_REVIEW: _("Submitted a review"),
+        MESSAGES.EDIT_REVIEW: "handle_edit_review",
         MESSAGES.OPENED_SEALED: _("Opened the submission while still sealed"),
         MESSAGES.SCREENING: "handle_screening_statuses",
         MESSAGES.REVIEW_OPINION: _(
@@ -105,6 +106,7 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.SEND_FOR_APPROVAL,
             MESSAGES.APPROVE_PAF,
             MESSAGES.NEW_REVIEW,
+            MESSAGES.EDIT_REVIEW,
             MESSAGES.UPDATE_PROJECT_LEAD,
             MESSAGES.UPDATE_LEAD,
             MESSAGES.BATCH_UPDATE_LEAD,
@@ -163,6 +165,11 @@ class ActivityAdapter(AdapterBase):
             ]
         )
         return " ".join(base)
+
+    def handle_edit_review(self, review, user, **kwargs):
+        if review.author.reviewer == user:
+            return _("Edited their review")
+        return _("Edited the review by {author}").format(author=review.author)
 
     def batch_determination(self, sources, determinations, **kwargs):
         submission = sources[0]
