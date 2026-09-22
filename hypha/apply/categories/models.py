@@ -18,7 +18,7 @@ class Option(Orderable):
     value = models.CharField(max_length=255)
     category = ParentalKey("Category", related_name="options")
 
-    class Meta:
+    class Meta(Orderable.Meta):
         verbose_name = _("option")
         verbose_name_plural = _("options")
 

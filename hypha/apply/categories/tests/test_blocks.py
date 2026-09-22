@@ -59,6 +59,23 @@ class TestCategoryQuestionBlock(TestCase):
             [(option.id, option.value) for option in self.category.options.all()],
         )
 
+    def test_choices_follow_option_sort_order(self):
+        # Options are Orderable, so the order set in the admin decides the
+        # order the choices are offered in.
+        options = [
+            OptionFactory(category=self.category, value=value, sort_order=sort_order)
+            for value, sort_order in [("last", 2), ("first", 0), ("middle", 1)]
+        ]
+        field = self.get_field()
+        self.assertEqual(
+            [value for _, value in field.choices],
+            ["first", "middle", "last"],
+        )
+        self.assertEqual(
+            [pk for pk, _ in field.choices],
+            [options[1].id, options[2].id, options[0].id],
+        )
+
     def test_can_render_if_no_response(self):
         display = self.block.render({"category": self.category}, {"data": None})
         self.assertIn(self.block.no_response()[0], display)
