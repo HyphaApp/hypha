@@ -13,6 +13,7 @@ from hypha.apply.projects.models.project import (
     INTERNAL_APPROVAL,
     INVOICING_AND_REPORTING,
 )
+from hypha.apply.projects.payments import PaymentsFlow
 from hypha.apply.projects.permissions import has_permission
 from hypha.apply.projects.utils import get_project_public_status, no_pafreviewer_role
 
@@ -69,6 +70,16 @@ def user_can_view_project_documents(project, user):
 
 @register.simple_tag
 def user_can_view_contracting_documents(project, user):
+    if project.status == CONTRACTING and not user.is_apply_staff:
+        return False
+    if (
+        user.is_reviewer
+        and not user.is_apply_staff
+        and not user.is_staff
+        and not user.is_contracting
+        and not user.is_applicant
+    ):
+        return False
     if project.submission.co_applicants.filter(user=user).exists():
         co_applicant = project.submission.co_applicants.filter(user=user).first()
         if (
@@ -328,7 +339,55 @@ def user_next_step_instructions(project, user):
 def project_can_have_contracting_section(project):
     if project.status in [DRAFT, INTERNAL_APPROVAL]:
         return False
+    # Under DISBURSEMENTS the "Contracts and Disbursements" section lists the
+    # contracts, so hide the contracting documents section once a contract
+    # exists and the project is past the contracting stage (the first
+    # contract still goes through the contracting flow, which transitions the
+    # project).
+    if (
+        settings.PROJECTS_PAYMENTS_FLOW == PaymentsFlow.DISBURSEMENTS
+        and project.status != CONTRACTING
+        and project.contracts.exists()
+    ):
+        return False
     return True
+
+
+@register.simple_tag
+def project_can_have_invoices_section(project, user):
+    """Show the invoices section only under the INVOICING payments flow, and
+    only for users who may view invoices on a project that can have them.
+    Folds the payments-flow check in with the existing visibility rules so
+    the template stays terse.
+    """
+    if settings.PROJECTS_PAYMENTS_FLOW != PaymentsFlow.INVOICING:
+        return False
+    # project_can_have_invoices: invoices are visible once the project has
+    # moved past the contracting/internal-approval phases.
+    if project.status not in [
+        INVOICING_AND_REPORTING,
+        CLOSING,
+        COMPLETE,
+    ]:
+        return False
+    # user_can_view_invoices: co-applicants may be restricted from invoices.
+    if project.submission.co_applicants.filter(user=user).exists():
+        co_applicant = project.submission.co_applicants.filter(user=user).first()
+        if (
+            co_applicant
+            and CoApplicantProjectPermission.INVOICES
+            not in co_applicant.project_permission
+        ):
+            return False
+    return True
+
+
+@register.simple_tag
+def project_can_have_disbursements_section(project):
+    """Show the disbursements section only under the DISBURSEMENTS payments
+    flow. The include itself only renders once the project has a contract.
+    """
+    return settings.PROJECTS_PAYMENTS_FLOW == PaymentsFlow.DISBURSEMENTS
 
 
 @register.simple_tag
@@ -424,3 +483,14 @@ def show_start_date(project) -> bool:
         CLOSING,
         COMPLETE,
     ]
+
+
+@register.filter
+def trimmed_decimal(value):
+    """Format a decimal with a minimum of 2 decimal places, preserving any
+    extra precision, so the disbursements table matches the amount input.
+
+    """
+    from hypha.apply.projects.forms.project import TrimmedDecimalInput
+
+    return TrimmedDecimalInput().format_value(value)
