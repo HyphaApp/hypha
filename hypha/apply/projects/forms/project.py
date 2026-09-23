@@ -101,6 +101,7 @@ class CurrencyCodeField(forms.CharField):
         kwargs["max_length"] = CURRENCY_MAX_LENGTH
         kwargs["required"] = False
         kwargs["empty_value"] = None
+        kwargs["initial"] = settings.CURRENCY_CODE
         super().__init__(*args, **kwargs)
 
         self.widget = CurrencyDatalistWidget(
