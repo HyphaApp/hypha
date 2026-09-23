@@ -1783,7 +1783,7 @@ class TestStaffDisbursementsSection(BaseProjectDetailTestCase):
         project = ProjectFactory()
         ContractFactory(project=project, amount_approved=Decimal("99.50"))
         response = self.get_page(project)
-        self.assertContains(response, "(approved: 99.50)")
+        self.assertContains(response, "Approved: 99.50")
 
     def test_edit_and_delete_links_shown_for_existing_disbursement(self):
         from django.urls import reverse
