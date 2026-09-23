@@ -55,6 +55,7 @@ TOP_CURRENCY_CODES = [
     "MXN",
     "NGN",
 ]
+CURRENCY_MAX_LENGTH = 3
 
 
 def filter_request_choices(choices):
@@ -97,17 +98,20 @@ class CurrencyDatalistWidget(forms.TextInput):
 
 class CurrencyCodeField(forms.CharField):
     def __init__(self, *args, **kwargs):
-        kwargs["max_length"] = 3
+        kwargs["max_length"] = CURRENCY_MAX_LENGTH
         kwargs["required"] = False
         kwargs["empty_value"] = None
         super().__init__(*args, **kwargs)
 
-        self.widget = CurrencyDatalistWidget(choices=TOP_CURRENCY_CODES)
+        self.widget = CurrencyDatalistWidget(
+            choices=TOP_CURRENCY_CODES,
+            attrs={"maxLength": CURRENCY_MAX_LENGTH, "style": "width:4rem;"},
+        )
 
         self.validators.append(
             RegexValidator(
                 regex=CURRENCY_CODE_REGEX,
-                message="Currency must be exactly 3 uppercase letters.",
+                message="Currency (when specified) must be exactly 3 uppercase letters.",
                 code="invalid",
             )
         )
