@@ -42,9 +42,7 @@ Loops contracts so it is correct in the 1:many Project:Contract world too.
                             <a class="link link-hover" href="{{ contract.get_absolute_url }}">#{{ contract.pk }}</a>
                             {% if contract.amount_approved is not None %}
                                 <span class="text-fg-muted/80">
-                                    {% blocktrans with amount=contract.amount_approved|trimmed_decimal %}
-                                        (approved: {{ amount }})
-                                    {% endblocktrans %}
+                                    ({% trans "Approved:" %} {{ contract.amount_approved|trimmed_decimal }} {{ contract.currency }})
                                 </span>
                             {% endif %}
                         </h3>
@@ -65,7 +63,11 @@ Loops contracts so it is correct in the 1:many Project:Contract world too.
                             <thead>
                                 <tr>
                                     <th>{% trans "Date" %}</th>
-                                    <th>{% trans "Amount" %}</th>
+                                    {% if contract.currency is not None %}
+                                        <th>{% trans "Amount" %} ({{ contract.currency }})</th>
+                                    {% else %}
+                                        <th>{% trans "Amount" %}</th>
+                                    {% endif %}
                                     {% if can_add_disbursement %}<th>
                                         <span>{% trans "Notes" %} ({% trans "visible to staff and finance only" %})</span>
                                     </th>{% endif %}
