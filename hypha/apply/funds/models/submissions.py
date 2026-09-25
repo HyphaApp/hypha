@@ -14,6 +14,7 @@ from django.db import models
 from django.db.models import (
     Avg,
     Count,
+    Exists,
     FloatField,
     OuterRef,
     Q,
@@ -172,10 +173,18 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.filter(reviews__author__reviewer=user)
 
     def flagged_by(self, user):
-        return self.filter(flags__user=user, flags__type=Flag.USER)
+        return self.filter(
+            Exists(
+                Flag.objects.filter(
+                    submission=OuterRef("pk"), user=user, type=Flag.USER
+                )
+            )
+        )
 
     def flagged_staff(self):
-        return self.filter(flags__type=Flag.STAFF)
+        return self.filter(
+            Exists(Flag.objects.filter(submission=OuterRef("pk"), type=Flag.STAFF))
+        )
 
     def awaiting_determination_for(self, user):
         return self.filter(status__in=DETERMINATION_RESPONSE_PHASES).filter(lead=user)
