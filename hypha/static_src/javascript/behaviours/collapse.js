@@ -20,7 +20,7 @@
     // Read the max height from the data-js-collapse attribute
     // If the attribute is not set, use the default value
     const content_max_height =
-      parseInt(el.getAttribute("data-js-collapse-height")) || 320;
+      parseInt(el.getAttribute("data-js-collapse-height"), 10) || 320;
 
     // If the content height is less than or equal to the max height, do nothing
     if (content_height <= content_max_height) {

@@ -1,6 +1,4 @@
 (function () {
-  "use strict";
-
   /**
    * Wrap all elements matching a selector into a single wrapper div.
    * Similar to jQuery's wrapAll.
