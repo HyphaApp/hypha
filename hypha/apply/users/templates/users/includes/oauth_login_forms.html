@@ -1,0 +1,20 @@
+{# POST targets for the OAuth login buttons. `social:begin` only accepts POST #}
+{# since social-auth-app-django 6.0, and these forms can not be nested inside #}
+{# the login form, so they live outside it and the buttons point at them with #}
+{# the `form` attribute. #}
+{% if GOOGLE_OAUTH2 %}
+    <form id="google-oauth2-login-form" method="post" action="{% url "social:begin" "google-oauth2" %}">
+        {% csrf_token %}
+        {% if redirect_url %}
+            <input type="hidden" name="next" value="{{ redirect_url }}">
+        {% endif %}
+    </form>
+{% endif %}
+{% if OKTA_OAUTH2 %}
+    <form id="okta-oauth2-login-form" method="post" action="{% url "social:begin" "okta-oauth2" %}">
+        {% csrf_token %}
+        {% if redirect_url %}
+            <input type="hidden" name="next" value="{{ redirect_url }}">
+        {% endif %}
+    </form>
+{% endif %}
