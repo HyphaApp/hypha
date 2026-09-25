@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
-from django.http import HttpResponseNotAllowed
-from django.shortcuts import render
+from django.http import HttpResponseBadRequest, HttpResponseForbidden
+from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 from django.views import View
 
@@ -16,26 +16,42 @@ class FlagSubmissionCreateView(UserPassesTestMixin, View):
     model = Flag
 
     def post(self, request, type, submission_pk):
-        # Only staff can create staff flags.
-        if type == self.model.STAFF and not self.request.user.is_apply_staff:
-            return HttpResponseNotAllowed()
+        if type not in self.model.FLAG_TYPES:
+            return HttpResponseBadRequest()
 
-        submission = ApplicationSubmission.objects.get(pk=submission_pk)
+        # Only staff can create staff flags.
+        if type == self.model.STAFF and not request.user.is_apply_staff:
+            return HttpResponseForbidden()
+
+        submission = get_object_or_404(ApplicationSubmission, pk=submission_pk)
+        if submission.is_archive:
+            return HttpResponseForbidden()
+
         submission_type = ContentType.objects.get_for_model(ApplicationSubmission)
-        # Trying to get a flag from the table, or create a new one
-        flag, created = self.model.objects.get_or_create(
-            user=request.user,
-            target_object_id=submission_pk,
+        flags = self.model.objects.filter(
+            target_object_id=submission.pk,
             target_content_type=submission_type,
             type=type,
         )
-        # If no new flag has been created,
-        # Then we believe that the request was to delete the flag.
-        if not created:
-            flag.delete()
+        if type == self.model.USER:
+            # User flags are personal bookmarks, scoped to the acting user.
+            flags = flags.filter(user=request.user)
+
+        # Staff flags are shared, any staff member can clear one, whoever set it.
+        if flags.exists():
+            flags.delete()
+        else:
+            self.model.objects.create(
+                user=request.user,
+                target_object_id=submission.pk,
+                target_content_type=submission_type,
+                type=type,
+            )
 
         return render(
-            request, "flags/flags.html", {"flag": flag, "submission": submission}
+            request,
+            "flags/flags.html",
+            {"submission": submission, "user": request.user},
         )
 
     def test_func(self):
