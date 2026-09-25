@@ -30,9 +30,12 @@
             <ul>
                 {% for backend in backends.not_associated %}
                     <li>
-                        <a id="{{ name }}-button" class="col-md-2 btn btn-default" name="{{ backend }}" href="{% url 'social:begin' backend=backend %}">
-                            {{ backend|backend_name }}
-                        </a>
+                        <form class="col-md-2" method="post" action="{% url 'social:begin' backend=backend %}">
+                            {% csrf_token %}
+                            <button id="{{ backend }}-button" class="btn btn-default" type="submit" name="{{ backend }}">
+                                {{ backend|backend_name }}
+                            </button>
+                        </form>
                     </li>
                 {% endfor %}
             </ul>
