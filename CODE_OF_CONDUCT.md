@@ -74,3 +74,7 @@ available at https://www.contributor-covenant.org/version/1/4/code-of-conduct.ht
 
 For answers to common questions about this code of conduct, see
 https://www.contributor-covenant.org/faq
+
+## AI Usage
+
+The Hypha project prioritizes security, privacy & code quality within the codebase, with maintainers carefully reviewing each contribution to guarantee all of these stay true. To limit the burden put on maintainers, purely LLM generated contributions (PRs, issues, comments, etc) will not be reviewed or considered by the team if it seems it has not been reviewed & thoroughly understood by the contributor.
