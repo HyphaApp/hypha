@@ -506,6 +506,8 @@ def partial_screening_card(request, pk):
     return render(request, "funds/includes/screening_status_block.html", ctx)
 
 
+@login_required
+@require_http_methods(["GET"])
 def submission_export_status(request: HttpRequest) -> HttpResponse:
     """The partial to get the status of a bulk submission export task"""
     ctx = {}
@@ -541,6 +543,8 @@ def submission_export_status(request: HttpRequest) -> HttpResponse:
     return render(request, "submissions/partials/export-submission-button.html", ctx)
 
 
+@login_required
+@require_http_methods(["GET"])
 def submission_export_download(request: HttpRequest) -> HttpResponse:
     export_manager = get_object_or_404(SubmissionExportManager, user=request.user)
     if export_manager.status == "success":
