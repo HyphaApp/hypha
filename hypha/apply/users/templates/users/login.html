@@ -142,6 +142,10 @@
                     {% endif %}
                 {% endif %}
             </form>
+
+            {% if wizard.steps.current == 'auth' %}
+                {% include "users/includes/oauth_login_forms.html" %}
+            {% endif %}
         </div>
     </div>
 {% endblock %}

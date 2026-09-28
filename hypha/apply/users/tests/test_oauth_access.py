@@ -73,3 +73,72 @@ class TestOAuthAccess(TestCase):
         response = self.client.get(reverse("users:oauth"), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "users/oauth.html")
+
+
+@override_settings(
+    SOCIAL_AUTH_GOOGLE_OAUTH2_KEY="google-key",
+    SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET="google-secret",
+    SOCIAL_AUTH_OKTA_OAUTH2_KEY="okta-key",
+    SOCIAL_AUTH_OKTA_OAUTH2_SECRET="okta-secret",
+    SOCIAL_AUTH_OKTA_OAUTH2_API_URL="https://example.okta.com/oauth2/default",
+)
+class TestOAuthLoginButtons(TestCase):
+    """`social:begin` only accepts POST since social-auth-app-django 6.0."""
+
+    def test_begin_rejects_get(self):
+        response = self.client.get(reverse("social:begin", args=["google-oauth2"]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_begin_redirects_to_provider_on_post(self):
+        for backend, provider in [
+            ("google-oauth2", "https://accounts.google.com/"),
+            ("okta-oauth2", "https://example.okta.com/oauth2/default/v1/authorize"),
+        ]:
+            with self.subTest(backend=backend):
+                response = self.client.post(reverse("social:begin", args=[backend]))
+                self.assertEqual(response.status_code, 302)
+                self.assertTrue(response["Location"].startswith(provider))
+
+    def test_login_page_posts_to_begin(self):
+        response = self.client.get(reverse("users:login"))
+        for backend in ["google-oauth2", "okta-oauth2"]:
+            with self.subTest(backend=backend):
+                self.assertContains(
+                    response,
+                    f'action="{reverse("social:begin", args=[backend])}"',
+                )
+                self.assertContains(response, f'form="{backend}-login-form"')
+
+    def test_passwordless_login_page_posts_to_begin(self):
+        response = self.client.get(reverse("users:passwordless_login_signup"))
+        for backend in ["google-oauth2", "okta-oauth2"]:
+            with self.subTest(backend=backend):
+                self.assertContains(
+                    response,
+                    f'action="{reverse("social:begin", args=[backend])}"',
+                )
+                self.assertContains(response, f'form="{backend}-login-form"')
+
+    def test_next_is_carried_over_by_the_oauth_form(self):
+        """`do_auth()` only reads POST data, so `next` must be a form field."""
+        response = self.client.get(reverse("users:login") + "?next=/dashboard/")
+        self.assertContains(
+            response, '<input type="hidden" name="next" value="/dashboard/">'
+        )
+
+        self.client.post(
+            reverse("social:begin", args=["google-oauth2"]), {"next": "/dashboard/"}
+        )
+        self.assertEqual(self.client.session["next"], "/dashboard/")
+
+    @override_settings(SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS=["email.com"])
+    def test_account_oauth_page_posts_to_begin(self):
+        user = get_user_model().objects.create_user(
+            email="test@email.com", password="password"
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("users:oauth"))
+        self.assertContains(
+            response, f'action="{reverse("social:begin", args=["google-oauth2"])}"'
+        )
