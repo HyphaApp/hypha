@@ -44,6 +44,11 @@ class CreateDisbursementView(SuccessMessageMixin, CreateView):
             **kwargs,
         )
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["contract"] = self.contract
+        return kwargs
+
     def form_valid(self, form):
         form.instance.contract = self.contract
         form.instance.created_by = self.request.user
@@ -88,6 +93,11 @@ class EditDisbursementView(SuccessMessageMixin, UpdateView):
             value=_("Update"),
             **kwargs,
         )
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["contract"] = self.contract
+        return kwargs
 
     def form_valid(self, form):
         form.instance.updated_by = self.request.user

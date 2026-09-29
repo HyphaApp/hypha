@@ -1431,6 +1431,18 @@ class TestStaffCreateDisbursementView(BaseViewTestCase):
         response = self.get_page(contract)
         self.assertNotContains(response, "has not been countersigned")
 
+    def test_amount_label_shows_contract_currency(self):
+        contract = ContractFactory(currency="USD")
+        response = self.get_page(contract)
+        self.assertContains(response, "Amount (USD)")
+
+    def test_amount_label_omits_missing_currency(self):
+        # Contracts may have no currency (old data, other payments flows),
+        # so the label must not show an empty parenthetical.
+        contract = ContractFactory(currency=None)
+        response = self.get_page(contract)
+        self.assertNotContains(response, "Amount (")
+
     def test_can_create(self):
         contract = ContractFactory()
         url = self.url(contract)
@@ -1544,6 +1556,12 @@ class TestStaffEditDisbursementView(BaseViewTestCase):
         disbursement = DisbursementFactory()
         response = self.get_page(disbursement)
         self.assertEqual(response.status_code, 200)
+
+    def test_amount_label_shows_contract_currency(self):
+        contract = ContractFactory(currency="EUR")
+        disbursement = DisbursementFactory(contract=contract)
+        response = self.get_page(disbursement)
+        self.assertContains(response, "Amount (EUR)")
 
     def test_can_edit(self):
         disbursement = DisbursementFactory(amount=decimal.Decimal("281.97"))
