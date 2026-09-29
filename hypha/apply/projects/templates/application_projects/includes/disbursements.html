@@ -67,7 +67,7 @@ Loops contracts so it is correct in the 1:many Project:Contract world too.
                                         {% if contract.currency is not None %}
                                             <th>{% trans "Amount" %} ({{ contract.currency }})</th>
                                         {% else %}
-                                            <th>{% trans "Amount" %}</th>
+                                            <th align="right">{% trans "Amount" %}</th>
                                         {% endif %}
                                         {% if can_add_disbursement %}<th>
                                             <span>{% trans "Notes" %} ({% trans "visible to staff and finance only" %})</span>
@@ -79,7 +79,7 @@ Loops contracts so it is correct in the 1:many Project:Contract world too.
                                     {% for disbursement in contract.disbursements.all %}
                                         <tr>
                                             <td>{{ disbursement.date|date:"SHORT_DATE_FORMAT" }}</td>
-                                            <td>{{ disbursement.amount|trimmed_decimal }}</td>
+                                            <td align="right">{{ disbursement.amount|trimmed_decimal }}</td>
                                             {% if can_add_disbursement %}<td>{{ disbursement.notes|default:"-" }}</td>{% endif %}
                                             <td>
                                                 {% if can_add_disbursement %}
