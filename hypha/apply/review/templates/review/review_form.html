@@ -40,14 +40,16 @@
 
 {% block content %}
     <section class="flex relative gap-4 justify-between my-4" x-data="reviewScore">
-
-        <div class="absolute top-0 right-0 z-20 h-full lg:block" x-cloak>
+        <!-- Review score sticky display -->
+        <div class="flex absolute top-0 right-0 z-20 flex-col justify-end items-end h-full" x-cloak>
             <div
-                class="inline-block sticky top-1 py-1.5 px-3 mt-1 font-semibold text-center bg-neutral text-neutral-content float-end"
+                class="sticky bottom-4 py-1.5 px-3 mb-1 bg-neutral text-neutral-content"
                 x-cloak
                 x-show="showScore"
             >
-                {% trans "Score:" %} <span x-text="totalScore">-</span>
+                <p class="font-semibold">{% trans "Score" %}</p>
+                <p>{% trans "Total:" %} <span x-text="totalScore">-</span></p>
+                <p>{% trans "Average:" %} <span x-text="averageScore">-</span></p>
             </div>
         </div>
 
@@ -88,9 +90,6 @@
                             {% trans "Save draft" %}
                         </button>
                     {% endif %}
-                    <div class="text-fg-muted" x-cloak x-show="showScore">
-                        {% trans "Total Score:" %} <span x-text="totalScore"></span>
-                    </div>
                 </div>
 
             </form>
