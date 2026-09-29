@@ -1,4 +1,4 @@
-{% load i18n wagtailimages_tags heroicons %}
+{% load i18n review_tags wagtailimages_tags heroicons %}
 
 <li
     class="px-0 py-2 {% if not reviewer.review %}text-base-content/80 {% endif %}"
@@ -49,7 +49,7 @@
                     {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
                 </div>
             {% endif %}
-            {% with reviewer.review.get_recommendation_display as recommendation and reviewer.review.get_score_display as score %}
+            {% with reviewer.review.get_recommendation_display as recommendation and reviewer.review|review_score as score %}
                 <div class="col-span-1 {{ recommendation|slugify }}">{{ recommendation }}</div>
                 <div class="col-span-1 {{ recommendation|slugify }}">{{ score }}</div>
             {% endwith %}
