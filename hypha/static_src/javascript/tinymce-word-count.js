@@ -8,15 +8,6 @@
    * @param {HTMLElement} element - Target element to process
    */
   function updateWordCount(element) {
-    const currentCount = parseInt(element.innerText.match(/\d+/)?.[0], 10) || 0;
-    const fieldset = element.closest("[data-word-limit]");
-    const limit = parseInt(fieldset.dataset.wordLimit, 10);
-    const warningThreshold = limit * WARNING_THRESHOLD;
-    const textCharacters = fieldset.dataset.wordCountCharacters || "characters";
-    const textOutOf = fieldset.dataset.wordCountOutOf || "out of";
-    const textClose = fieldset.dataset.wordCountClose || "(Close to the limit)";
-    const textOver = fieldset.dataset.wordCountOver || "(Over the limit)";
-
     /**
      * Clear warning states and classes
      */
@@ -24,6 +15,22 @@
       delete element.dataset.afterWordCount;
       element.classList.remove("word-count-warning", "word-count-warning-2");
     }
+
+    const currentCount = parseInt(element.innerText.match(/\d+/)?.[0], 10) || 0;
+    const fieldset = element.closest("[data-word-limit]");
+    const limit = parseInt(fieldset?.dataset.wordLimit, 10);
+
+    // Without a usable word limit there is nothing to count against.
+    if (Number.isNaN(limit)) {
+      clearWarnings();
+      return;
+    }
+
+    const warningThreshold = limit * WARNING_THRESHOLD;
+    const textCharacters = fieldset.dataset.wordCountCharacters || "characters";
+    const textOutOf = fieldset.dataset.wordCountOutOf || "out of";
+    const textClose = fieldset.dataset.wordCountClose || "(Close to the limit)";
+    const textOver = fieldset.dataset.wordCountOver || "(Over the limit)";
 
     if (element.textContent.includes(textCharacters)) {
       clearWarnings();
