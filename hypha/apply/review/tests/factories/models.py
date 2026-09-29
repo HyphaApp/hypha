@@ -44,6 +44,7 @@ class ReviewFactory(factory.django.DjangoModelFactory):
     is_draft = False
     recommendation = NO
     score = 0
+    total_score = 0
 
 
 class ReviewOpinionFactory(factory.django.DjangoModelFactory):

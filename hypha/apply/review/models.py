@@ -64,6 +64,30 @@ class ReviewFormFieldsMixin(models.Model):
     def comment_field(self):
         return self._get_field_type(RecommendationCommentsBlock)
 
+    def get_scores(self, data):
+        """Return the individual scores held in ``data``.
+
+        ``data`` is keyed by form field id - a review's ``form_data`` or the
+        cleaned data of a review form - with scored answers deserialised to
+        ``[comment, score]``. NA answers count as 0.
+        """
+        scores = []
+        for field in self.score_fields:
+            score = data.get(field.id)[1]
+            # Include NA answers as 0.
+            if int(score) == NA:
+                score = 0
+            scores.append(int(score))
+        # Check if there are score_fields_without_text and also
+        # append scores from them.
+        for field in self.score_fields_without_text:
+            score = data.get(field.id)
+            # Include '' answers as 0.
+            if score == "":
+                score = 0
+            scores.append(int(score))
+        return scores
+
     def _get_field_type(self, block_type, many=False):
         fields = []
         for field in self.form_fields:
@@ -169,7 +193,10 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     recommendation = models.IntegerField(
         verbose_name=_("recommendation"), choices=RECOMMENDATION_CHOICES, default=0
     )
+    # Average of the individual scores given in the review.
     score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
+    # Sum of the individual scores given in the review.
+    total_score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
     is_draft = models.BooleanField(default=False, verbose_name=_("draft"))
     created_at = models.DateTimeField(
         verbose_name=_("creation time"), auto_now_add=True
@@ -201,6 +228,10 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     @property
     def get_score_display(self):
         return "{:.1f}".format(self.score) if self.score != NA else "-"
+
+    @property
+    def get_total_score_display(self):
+        return "{:.1f}".format(self.total_score) if self.total_score != NA else "-"
 
     def get_absolute_url(self):
         return reverse(
