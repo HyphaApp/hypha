@@ -23,7 +23,9 @@ class DisbursementForm(forms.ModelForm):
     and ``updated_by`` are set by the views so that the model's ``save()``
     audit log (wagtail.create/wagtail.edit) records the acting user. The
     ``amount`` widget mirrors the contract amount fields so values render
-    trimmed but preserve full precision.
+    trimmed but preserve full precision. The views also pass the related
+    ``contract``, whose currency is shown on the ``amount`` label (e.g.
+    ``Amount (USD)``) so the unit of the entered amount is unambiguous.
 
     """
 
@@ -33,6 +35,7 @@ class DisbursementForm(forms.ModelForm):
         widgets = {"amount": TrimmedSignedDecimalInput()}
 
     def __init__(self, *args, **kwargs):
+        contract = kwargs.pop("contract", None)
         super().__init__(*args, **kwargs)
         # Default the date to today so a disbursement recorded on the day it
         # is made does not need re-entering; the model field stays default-free.
@@ -40,3 +43,8 @@ class DisbursementForm(forms.ModelForm):
         self.fields["amount"].help_text = _(
             "Amount sent to the grantee. Use a negative value to record a repayment."
         )
+        # Contract.currency is nullable (old data, other payments flows), so
+        # only annotate the label when a code is actually recorded.
+        if contract is not None and contract.currency:
+            amount_field = self.fields["amount"]
+            amount_field.label = f"{amount_field.label} ({contract.currency})"
