@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 
@@ -100,3 +100,19 @@ class TestReviewScores(TestCase):
         field = review.score_fields[0]
         review.form_data[field.id] = ["", NA]
         self.assertEqual(review.get_scores(review.form_data)[0], 0)
+
+
+class TestReviewScoreDisplay(TestCase):
+    def test_average_shown_by_default(self):
+        review = ReviewFactory(score=4.5, total_score=18)
+        self.assertEqual(review.score_display, "4.5")
+
+    @override_settings(REVIEW_SCORE_SHOW_TOTAL=True)
+    def test_total_shown_when_enabled(self):
+        review = ReviewFactory(score=4.5, total_score=18)
+        self.assertEqual(review.score_display, "18")
+
+    @override_settings(REVIEW_SCORE_SHOW_TOTAL=True)
+    def test_review_without_scores_shown_as_dash(self):
+        review = ReviewFactory(score=NA, total_score=NA)
+        self.assertEqual(review.score_display, "-")

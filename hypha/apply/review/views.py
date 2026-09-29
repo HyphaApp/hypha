@@ -495,7 +495,7 @@ class ReviewListView(ListView):
                 {"opinions": review.opinions.select_related("author").all()}
             )
             review_data["opinions"]["answers"].append(opinions_html)
-            review_data["score"]["answers"].append(review.get_score_display)
+            review_data["score"]["answers"].append(review.score_display)
             review_data["recommendation"]["answers"].append(
                 review.get_recommendation_display()
             )

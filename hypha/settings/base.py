@@ -217,7 +217,7 @@ TRANSITION_AFTER_REVIEWS = env.bool("TRANSITION_AFTER_REVIEWS", False)
 REVIEW_VISIBILITY_DEFAULT = env.str("REVIEW_VISIBILITY_DEFAULT", "private")
 
 # Show the total (sum) of a review's scored answers instead of the average of
-# them, in the "Reviews & assignees" block on the submission detail page.
+# them, wherever a review score is shown.
 REVIEW_SCORE_SHOW_TOTAL = env.bool("REVIEW_SCORE_SHOW_TOTAL", False)
 
 # Require an applicant to view their rendered application before submitting

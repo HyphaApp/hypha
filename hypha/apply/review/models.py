@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.urls import reverse
@@ -231,7 +232,15 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
 
     @property
     def get_total_score_display(self):
-        return "{:.1f}".format(self.total_score) if self.total_score != NA else "-"
+        # Scores are whole numbers, so their total is one too.
+        return "{:.0f}".format(self.total_score) if self.total_score != NA else "-"
+
+    @property
+    def score_display(self):
+        """The score to show in the UI, set with REVIEW_SCORE_SHOW_TOTAL."""
+        if settings.REVIEW_SCORE_SHOW_TOTAL:
+            return self.get_total_score_display
+        return self.get_score_display
 
     def get_absolute_url(self):
         return reverse(

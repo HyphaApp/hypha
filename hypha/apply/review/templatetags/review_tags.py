@@ -52,14 +52,6 @@ def has_draft(user, submission):
 
 
 @register.filter
-def review_score(review):
-    """The score of a single review, as shown in the reviews sidebar."""
-    if settings.REVIEW_SCORE_SHOW_TOTAL:
-        return review.get_total_score_display
-    return review.get_score_display
-
-
-@register.filter
 def reviews_score(reviewers):
     """The combined score of the submitted reviews, for the reviews sidebar.
 
@@ -80,7 +72,7 @@ def reviews_score(reviewers):
     if settings.REVIEW_SCORE_SHOW_TOTAL:
         totals = [review.total_score for review in reviews if review.total_score != NA]
         if totals:
-            return _("Total score: {total}").format(total=sum(totals))
+            return _("Total score: {total}").format(total="{:.0f}".format(sum(totals)))
         return ""
 
     scores = [review.score for review in reviews if review.score != NA]
