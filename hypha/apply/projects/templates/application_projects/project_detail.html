@@ -97,7 +97,7 @@
 
                         {% user_next_step_instructions object user as instructions %}
                         {% if instructions %}
-                            <div class="sidebar__inner--actions--instructions">
+                            <div class="md:mt-2.5 md:ms-2.5">
                                 {% for instruction in instructions %}
                                     <p>{{forloop.counter}}. {{ instruction }}</p>
                                 {% endfor %}
@@ -123,7 +123,7 @@
                                         <div class="flex gap-2">
                                             {% heroicon_outline "exclamation-circle" class="inline stroke-red-500" aria_hidden=true %}
 
-                                            <p class="m-0 sidebar__paf-approvals--approved">
+                                            <p class="m-0">
                                                 {% trans "Request changes or more information by " %}{{ paf_approval.user }}.
 
                                                 {% get_comment_for_requested_approval paf_approval as rejected_comment %}

@@ -69,7 +69,7 @@
                         {% if request.user.is_apply_staff %}
                             {% generate_post_comment_url object.submission object.sow as comment_url %}
                             <div
-                                class="card card-border bg-base-200 shadow-xs sidebar__inner"
+                                class="p-4 card card-border bg-base-200 shadow-xs border-base-300"
                                 hx-get="{{ comment_url }}"
                                 hx-trigger="load"
                             >
