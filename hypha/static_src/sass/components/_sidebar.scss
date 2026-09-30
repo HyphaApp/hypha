@@ -1,14 +1,6 @@
 @use "../abstracts/mixins";
 
 .sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
-
-  @include mixins.media-query(md) {
-    width: 345px;
-  }
-
   &__inner {
     padding: 15px;
     border: 1px solid var(--color-base-300);
@@ -23,19 +15,7 @@
     }
   }
 
-  &__project {
-    // stylelint-disable value-no-vendor-prefix
-    position: -webkit-sticky; /* for Safari */
-    position: sticky;
-    align-self: flex-start;
-    inset-block-start: 2rem;
-  }
-
   &__paf-approvals {
-    &--pending {
-      color: var(--color-base-300);
-    }
-
     &--approved {
       color: var(--color-black);
     }

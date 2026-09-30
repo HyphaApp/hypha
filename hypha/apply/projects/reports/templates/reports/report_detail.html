@@ -61,7 +61,7 @@
         <aside class="layout-sidebar">
             <div class="flex sticky top-8 flex-col gap-2">
                 {% if request.user.is_apply_staff or report.previous or report.next %}
-                    <div class="card card-border bg-base-200 shadow-xs sidebar__inner--actions">
+                    <div class="card card-border bg-base-200 shadow-xs">
                         <div class="card-body">
                             <h2 class="card-title">{% trans "Actions to take" %}</h2>
 
