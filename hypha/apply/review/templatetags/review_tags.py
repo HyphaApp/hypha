@@ -70,7 +70,9 @@ def reviews_score(reviewers):
     ]
 
     if settings.REVIEW_SCORE_SHOW_TOTAL:
-        totals = [review.total_score for review in reviews if review.total_score != NA]
+        totals = [
+            review.total_score for review in reviews if review.total_score is not None
+        ]
         if totals:
             return _("Total score: {total}").format(total="{:.0f}".format(sum(totals)))
         return ""

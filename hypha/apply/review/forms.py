@@ -112,7 +112,7 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
         scores = self.instance.get_scores(data)
 
         if not scores:
-            return NA
+            return None
 
         return sum(scores)
 

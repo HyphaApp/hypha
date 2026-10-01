@@ -42,7 +42,7 @@ def calculate_total_scores(apps, schema_editor):
         scores = get_scores(review)
         # A queryset update leaves "updated_at" untouched.
         Review.objects.filter(pk=review.pk).update(
-            total_score=sum(scores) if scores else NA
+            total_score=sum(scores) if scores else None
         )
 
 
@@ -59,7 +59,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="review",
             name="total_score",
-            field=models.DecimalField(decimal_places=1, default=0, max_digits=10),
+            field=models.DecimalField(
+                blank=True, decimal_places=1, max_digits=10, null=True
+            ),
         ),
         migrations.RunPython(calculate_total_scores, revert_total_scores),
     ]

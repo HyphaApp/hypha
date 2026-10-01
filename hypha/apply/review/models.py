@@ -197,7 +197,9 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     # Average of the individual scores given in the review.
     score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
     # Sum of the individual scores given in the review.
-    total_score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
+    total_score = models.DecimalField(
+        max_digits=10, decimal_places=1, null=True, blank=True
+    )
     is_draft = models.BooleanField(default=False, verbose_name=_("draft"))
     created_at = models.DateTimeField(
         verbose_name=_("creation time"), auto_now_add=True
@@ -233,7 +235,9 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     @property
     def get_total_score_display(self):
         # Scores are whole numbers, so their total is one too.
-        return "{:.0f}".format(self.total_score) if self.total_score != NA else "-"
+        return (
+            "{:.0f}".format(self.total_score) if self.total_score is not None else "-"
+        )
 
     @property
     def score_display(self):

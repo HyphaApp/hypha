@@ -114,5 +114,11 @@ class TestReviewScoreDisplay(TestCase):
 
     @override_settings(REVIEW_SCORE_SHOW_TOTAL=True)
     def test_review_without_scores_shown_as_dash(self):
-        review = ReviewFactory(score=NA, total_score=NA)
+        review = ReviewFactory(score=NA, total_score=None)
         self.assertEqual(review.score_display, "-")
+
+    @override_settings(REVIEW_SCORE_SHOW_TOTAL=True)
+    def test_total_of_99_shown(self):
+        # 99 is NA for the average score but a valid total.
+        review = ReviewFactory(total_score=99)
+        self.assertEqual(review.score_display, "99")

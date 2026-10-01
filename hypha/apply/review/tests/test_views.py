@@ -208,7 +208,7 @@ class TestReviewScore(BaseViewTestCase):
     def test_no_score_is_NA(self):
         review = self.submit_review_scores()
         self.assertEqual(review.score, NA)
-        self.assertEqual(review.total_score, NA)
+        self.assertIsNone(review.total_score)
 
     def test_na_included_in_review_average(self):
         review = self.submit_review_scores((NA, 5))
