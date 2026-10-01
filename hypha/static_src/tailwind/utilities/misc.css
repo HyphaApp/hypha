@@ -114,3 +114,11 @@
   @apply size-4 inline-block aspect-square rounded-full;
   background-color: currentColor;
 }
+
+/*
+  Restore table header/footer wrapping.
+  This means less horizontal scrolling on small-width viewports.
+*/
+.table :where(thead, tfoot) {
+  @apply whitespace-normal;
+}
