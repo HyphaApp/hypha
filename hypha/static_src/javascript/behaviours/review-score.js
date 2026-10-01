@@ -25,16 +25,18 @@ document.addEventListener("alpine:init", () => {
       },
 
       /**
-       * Calculates the total and average score based on valid selector values.
+       * Calculates the total and average score of the selector values.
+       * As on the server, n/a (99) and blank answers count as 0.
        */
       calculateScore() {
-        const validValues = [...this.selectors]
-          .map((selector) => parseInt(selector.value))
-          .filter((value) => !isNaN(value) && value !== 99);
+        const values = [...this.selectors].map((selector) => {
+          const value = parseInt(selector.value);
+          return isNaN(value) || value === 99 ? 0 : value;
+        });
 
-        this.totalScore = validValues.reduce((sum, value) => sum + value, 0);
-        this.averageScore = validValues.length
-          ? Math.round((this.totalScore / validValues.length) * 10) / 10
+        this.totalScore = values.reduce((sum, value) => sum + value, 0);
+        this.averageScore = values.length
+          ? Math.round((this.totalScore / values.length) * 10) / 10
           : 0;
       },
 
