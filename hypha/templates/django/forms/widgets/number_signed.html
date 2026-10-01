@@ -1,0 +1,27 @@
+{% load i18n %}
+{% comment %}
+Signed number input: like number.html but allows an optional leading minus
+so disbursements can record repayments. Scoped to the disbursement amount;
+the shared number.html stays positive-only for the rest of the codebase.
+{% endcomment %}
+<div {# fmt:off #}
+     x-data="{
+        value: '{% if widget.value != None %}{{ widget.value|stringformat:'s' }}{% endif %}',
+        get error() {
+            return this.value !== '' && isNaN(this.value) ? '{% trans "* This must be a number" %}': ''
+        }
+    }"{# fmt:on #}
+>
+    <input
+        class="input {{ widget.attrs.class|default:'' }}"
+        x-model='value'
+        :class="error ? 'invalid': ''"
+        type="text"
+        inputmode="numeric"
+        pattern="-?[0-9.]*"  {% comment %} Allow a digit with a decimal, optional leading minus (e.g. repayments). {% endcomment %}
+        name="{{ widget.name }}"
+        {% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}
+        {% include "django/forms/widgets/attrs.html" with skip_class_attr=True %}
+    >
+    <p x-cloak x-show="error" x-text="error" class="mt-2 text-error"></p>
+</div>

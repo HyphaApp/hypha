@@ -16,8 +16,12 @@ from .views import (
     ChangeProjectstatusView,
     ContractDocumentPrivateMediaView,
     ContractPrivateMediaView,
+    CreateContractView,
+    CreateDisbursementView,
     CreateInvoiceView,
+    DeleteDisbursementView,
     DeleteInvoiceView,
+    EditDisbursementView,
     EditInvoiceView,
     InvoiceListView,
     InvoicePrivateMedia,
@@ -222,6 +226,11 @@ urlpatterns = [
                     name="contract_upload",
                 ),
                 path(
+                    "contract/add/",
+                    CreateContractView.as_view(),
+                    name="contract_add",
+                ),
+                path(
                     "partial/contract/documents/",
                     partial_contracting_documents,
                     name="contract_documents",
@@ -260,6 +269,28 @@ urlpatterns = [
                     "contract/approve/",
                     ApproveContractView.as_view(),
                     name="contract_approve",
+                ),
+                path(
+                    "contract/<int:contract_pk>/disbursement/",
+                    CreateDisbursementView.as_view(),
+                    name="disbursement",
+                ),
+                path(
+                    "contract/<int:contract_pk>/disbursements/<int:disbursement_pk>/",
+                    include(
+                        [
+                            path(
+                                "edit/",
+                                EditDisbursementView.as_view(),
+                                name="disbursement-edit",
+                            ),
+                            path(
+                                "delete/",
+                                DeleteDisbursementView.as_view(),
+                                name="disbursement-delete",
+                            ),
+                        ]
+                    ),
                 ),
                 path(
                     "download/<str:export_type>/",

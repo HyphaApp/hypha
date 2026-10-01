@@ -114,6 +114,15 @@ PROJECTS_AUTO_CREATE = env.bool("PROJECTS_AUTO_CREATE", False)
 # Allow a submission to have multiple projects associated.
 PROJECTS_ALLOW_MULTIPLE = env.bool("PROJECTS_ALLOW_MULTIPLE", False)
 
+# Which payments flow a deployment uses: "INVOICING" (upstream's approval-based
+# invoice system, the default), "DISBURSEMENTS" (the simplified per-contract
+# disbursement ledger), or "DISABLED" (neither). The project detail page gates
+# the invoices section on INVOICING and the disbursements section on
+# DISBURSEMENTS; DISABLED shows neither. The ARDC fork sets DISBURSEMENTS in
+# hypha/settings/ardc.py. Valid values are defined in
+# hypha.apply.projects.payments.PaymentsFlow.
+PROJECTS_PAYMENTS_FLOW = env.str("PROJECTS_PAYMENTS_FLOW", "INVOICING")
+
 # Default status for projects, must be a string literal of "draft" (default), "contracting", "invoicing_and_reporting" or "closing"
 # Will be used for auto-create or be the default selection in the project creation form
 PROJECTS_DEFAULT_STATUS = env.str("PROJECTS_DEFAULT_STATUS", "draft")

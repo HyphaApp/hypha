@@ -1,3 +1,4 @@
+from .disbursement import Disbursement
 from .invoice import Invoice, InvoiceExportManager, InvoiceTag, SupportingDocument
 from .project import (
     Contract,
@@ -31,4 +32,5 @@ __all__ = [
     "InvoiceExportManager",
     "InvoiceTag",
     "SupportingDocument",
+    "Disbursement",
 ]
