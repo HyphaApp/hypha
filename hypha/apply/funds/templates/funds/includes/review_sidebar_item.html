@@ -70,7 +70,7 @@
                         {% if role %}{% image role.icon max-12x12 %}{% endif %}
                     {% endwith %}
                 </span>
-                <div class="reviews-sidebar__outcome {{ opinion.get_opinion_display|slugify }}">
+                <div class="{% if opinion.is_agree %}text-success{% elif opinion.is_disagree %}text-error{% endif %}">
                     {{ opinion.get_opinion_display }}
                 </div>
 

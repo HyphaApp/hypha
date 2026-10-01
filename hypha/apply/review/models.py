@@ -22,6 +22,7 @@ from .blocks import (
     VisibilityBlock,
 )
 from .options import (
+    AGREE,
     DISAGREE,
     MAYBE,
     NA,
@@ -255,3 +256,11 @@ class ReviewOpinion(models.Model):
     @property
     def opinion_display(self):
         return self.get_opinion_display()
+
+    @property
+    def is_agree(self):
+        return self.opinion == AGREE
+
+    @property
+    def is_disagree(self):
+        return self.opinion == DISAGREE

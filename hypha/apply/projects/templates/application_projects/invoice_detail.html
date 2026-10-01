@@ -107,7 +107,7 @@
         <aside class="layout-sidebar">
             <div class="flex sticky top-8 flex-col gap-2">
                 <div
-                    class="card card-border bg-base-200 shadow-xs sidebar__inner--actions"
+                    class="card card-border bg-base-200 shadow-xs"
                     hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}"
                     hx-trigger="invoicesUpdated from:body"
                     data-testid="sidebar-primary-actions"
@@ -117,7 +117,7 @@
                 {% if request.user.is_apply_staff %}
                     {% generate_post_comment_url object.project.submission object as comment_url %}
                     <div
-                        class="card card-border bg-base-200 shadow-xs sidebar__inner"
+                        class="p-4 card card-border bg-base-200 shadow-xs border-base-300"
                         hx-get="{{ comment_url }}"
                         hx-trigger="load"
                     >

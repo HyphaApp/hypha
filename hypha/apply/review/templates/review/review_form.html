@@ -80,11 +80,11 @@
                 {% endfor %}
 
                 <div class="items-center mt-4 card-actions">
-                    <button class="btn btn-primary" type="submit" name="submit">
+                    <button class="w-full sm:w-auto btn btn-primary" type="submit" name="submit">
                         {% trans "Submit" %}
                     </button>
                     {% if not object.id or object.is_draft %}
-                        <button class="btn btn-secondary btn-outline" type="submit" name="{{ form.draft_button_name }}" formnovalidate>
+                        <button class="w-full sm:w-auto btn btn-secondary btn-outline" type="submit" name="{{ form.draft_button_name }}" formnovalidate>
                             {% trans "Save draft" %}
                         </button>
                     {% endif %}

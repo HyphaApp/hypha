@@ -50,7 +50,7 @@
             <div class="mt-4 card-actions">
                 {# Submit button - uses form="preview-form-submit" #}
                 <button
-                    class="btn btn-primary"
+                    class="w-full sm:w-auto btn btn-primary"
                     form="preview-form-submit"
                     name="submit"
                     type="submit"
@@ -60,7 +60,7 @@
                 </button>
 
                 <a
-                    class="btn btn-secondary btn-outline"
+                    class="w-full sm:w-auto btn btn-secondary btn-outline"
                     href="{% url 'funds:submissions:edit' object.id %}"
                 >
                     {% trans "Continue editing" %}

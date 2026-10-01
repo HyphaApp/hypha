@@ -26,7 +26,7 @@
     </p>
 {% endif %}
 
-<ul class="divide-y reviews-sidebar" id="id_reviewers" x-data='{showHiddenReviewers: false}'>
+<ul class="divide-y" id="id_reviewers" x-data='{showHiddenReviewers: false}'>
 
     {% regroup assigned_reviewers by type as reviewers_list %}
 
