@@ -181,3 +181,9 @@ def with_indefinite_article(text):
         return text
 
     return f"{an_or_a(text)} {text}"
+
+
+@register.filter(is_safe=True)
+@stringfilter
+def remove_nbsp(nbsp_string: str) -> str:
+    return nbsp_string.replace("&nbsp;", " ")
