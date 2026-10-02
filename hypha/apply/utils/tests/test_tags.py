@@ -41,6 +41,6 @@ class TestWithIndefiniteArticle(SimpleTestCase):
 
 class TestRemoveNbsp(SimpleTestCase):
     def test_nbsp_replaces_with_space(self):
-        test_str = "test      tesssssst"  # Contains nbsp chars: " "
+        test_str = "test &nbsp; tesssssst"
 
-        self.assertEqual(remove_nbsp(test_str), "test      tesssssst")
+        self.assertEqual(remove_nbsp(test_str), "test   tesssssst")
