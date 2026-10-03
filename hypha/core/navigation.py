@@ -1,5 +1,4 @@
 import copy
-import functools
 import importlib
 import logging
 import re
@@ -47,7 +46,6 @@ def _calculate_is_active(
     return False
 
 
-@functools.cache
 def get_primary_navigation_items(request):
     DEFAULT_NAV_ITEMS = [
         {
