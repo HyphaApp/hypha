@@ -72,7 +72,7 @@ repos:
         types_or: [html, css]
 
   - repo: https://github.com/biomejs/pre-commit
-    rev: "v2.5.13"
+    rev: "v2.5.15"
     hooks:
       - id: biome-check
 
