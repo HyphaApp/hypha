@@ -21,13 +21,15 @@
     {% include "forms/includes/form_errors.html" with form=form %}
     <div class="relative my-8" x-data="reviewScore">
         <!-- Review score sticky display -->
-        <div class="absolute top-0 right-0 h-full lg:block">
+        <div class="flex absolute inset-y-0 right-0 z-20 flex-col justify-end pointer-events-none">
             <div
-                class="inline-block sticky top-1 py-1.5 px-3 mt-1 font-semibold text-center text-white bg-arsenic"
+                class="sticky bottom-4 py-1.5 px-3 shadow-sm pointer-events-auto bg-neutral text-neutral-content"
                 x-cloak
                 x-show="showScore"
             >
-                {% trans "Score:" %} <span x-text="totalScore">-</span>
+                <p class="font-semibold">{% trans "Score" %}</p>
+                <p>{% trans "Total:" %} <span x-text="totalScore">-</span></p>
+                <p>{% trans "Average:" %} <span x-text="averageScore">-</span></p>
             </div>
         </div>
 
@@ -75,10 +77,6 @@
                         {% trans "Save draft" %}
                     </button>
                 {% endif %}
-
-                <div class="text-fg-muted" x-cloak x-show="showScore">
-                    {% trans "Total Score:" %} <span x-text="totalScore"></span>
-                </div>
             </div>
         </form>
     </div>

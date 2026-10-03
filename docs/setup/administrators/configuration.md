@@ -207,6 +207,12 @@ Send out e-mail, slack messages etc. from Hypha. Set to true for production.
 
 ----
 
+Show the total (sum) of a review's scored answers instead of the average of them. Affects the "Reviews & assignees" block on the submission detail page, the review detail page and the all-reviews comparison table. The overall score in the "Reviews & assignees" block is then the sum of every review's total, rather than the average of their averages.
+
+    REVIEW_SCORE_SHOW_TOTAL = env.bool('REVIEW_SCORE_SHOW_TOTAL', False)
+
+----
+
 If automatic e-mails should be sent out to reviewers when submissions are ready for review.
 
     SEND_READY_FOR_REVIEW = env.bool('SEND_READY_FOR_REVIEW', True)

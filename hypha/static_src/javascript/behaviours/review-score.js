@@ -7,6 +7,8 @@ document.addEventListener("alpine:init", () => {
     return {
       /** @type {number} The calculated review score. */
       totalScore: 0,
+      /** @type {number} The average of the valid review scores. */
+      averageScore: 0,
 
       /**
        * Initializes the component.
@@ -23,14 +25,19 @@ document.addEventListener("alpine:init", () => {
       },
 
       /**
-       * Calculates the total score based on valid selector values.
+       * Calculates the total and average score of the selector values.
+       * As on the server, n/a (99) and blank answers count as 0.
        */
       calculateScore() {
-        const validValues = [...this.selectors]
-          .map((selector) => parseInt(selector.value))
-          .filter((value) => !isNaN(value) && value !== 99);
+        const values = [...this.selectors].map((selector) => {
+          const value = parseInt(selector.value);
+          return isNaN(value) || value === 99 ? 0 : value;
+        });
 
-        this.totalScore = validValues.reduce((sum, value) => sum + value, 0);
+        this.totalScore = values.reduce((sum, value) => sum + value, 0);
+        this.averageScore = values.length
+          ? Math.round((this.totalScore / values.length) * 10) / 10
+          : 0;
       },
 
       /**

@@ -1,14 +1,14 @@
 {% load i18n review_tags heroicons %}
 
 {% with recommendation|traffic_light as traffic_light_html %}
-    {% with assigned_reviewers|average_review_score as average %}
-        {% if traffic_light_html or average %}
+    {% with assigned_reviewers|reviews_score as score %}
+        {% if traffic_light_html or score %}
             <div class="flex justify-around items-center p-2 mb-2 border rounded-box">
                 {% if traffic_light_html %}
                     <span>{{ recommendation|traffic_light }}</span>
                 {% endif %}
-                {% if average %}
-                    <span class="font-medium">{{ average }}</span>
+                {% if score %}
+                    <span class="font-medium">{{ score }}</span>
                 {% endif %}
             </div>
         {% endif %}

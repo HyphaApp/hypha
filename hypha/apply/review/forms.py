@@ -21,11 +21,18 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
     class Meta:
         model = Review
-        fields = ["recommendation", "visibility", "score", "submission"]
+        fields = [
+            "recommendation",
+            "visibility",
+            "score",
+            "total_score",
+            "submission",
+        ]
 
         widgets = {
             "recommendation": forms.HiddenInput(),
             "score": forms.HiddenInput(),
+            "total_score": forms.HiddenInput(),
             "submission": forms.HiddenInput(),
             "visibility": forms.HiddenInput(),
         }
@@ -71,6 +78,7 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
     def save(self, commit=True):
         self.instance.score = self.calculate_score(self.cleaned_data)
+        self.instance.total_score = self.calculate_total_score(self.cleaned_data)
         self.instance.recommendation = int(
             self.cleaned_data[self.instance.recommendation_field.id]
         )
@@ -93,26 +101,20 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
         return super().save(commit)
 
     def calculate_score(self, data):
-        scores = []
-        for field in self.instance.score_fields:
-            score = data.get(field.id)[1]
-            # Include NA answers as 0.
-            if score == NA:
-                score = 0
-            scores.append(score)
-        # Check if there are score_fields_without_text and also
-        # append scores from them.
-        for field in self.instance.score_fields_without_text:
-            score = data.get(field.id)
-            # Include '' answers as 0.
-            if score == "":
-                score = 0
-            scores.append(int(score))
+        scores = self.instance.get_scores(data)
 
         try:
             return sum(scores) / len(scores)
         except ZeroDivisionError:
             return NA
+
+    def calculate_total_score(self, data):
+        scores = self.instance.get_scores(data)
+
+        if not scores:
+            return None
+
+        return sum(scores)
 
 
 class SubmitButtonWidget(forms.Widget):

@@ -58,7 +58,7 @@ class SlackAdapter(AdapterBase):
             "<{link}|{source.title_text_display}> by {source.user} has been invited to submit a proposal"
         ),
         MESSAGES.NEW_REVIEW: _(
-            "{user} has submitted a review for <{link}|{source.title_text_display}>. Outcome: {review.outcome},  Score: {review.get_score_display}"
+            "{user} has submitted a review for <{link}|{source.title_text_display}>. Outcome: {review.outcome},  Score: {review.score_display}"
         ),
         MESSAGES.READY_FOR_REVIEW: "notify_reviewers",
         MESSAGES.OPENED_SEALED: _(
