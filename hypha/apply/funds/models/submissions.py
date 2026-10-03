@@ -257,7 +257,15 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 "previous__lead",
             )
             .prefetch_related("screening_statuses")
-            .defer("search_data", "search_document")
+            .defer(
+                "search_data",
+                "search_document",
+                # Only used to check if a previous stage exists, skip the large fields.
+                "previous__form_data",
+                "previous__form_fields",
+                "previous__search_data",
+                "previous__search_document",
+            )
         )
 
 
