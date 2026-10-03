@@ -5,7 +5,7 @@
 
   let DeterminationCopy = class {
     static selector() {
-      return "#id_" + field_blocks_ids["determination"];
+      return "#id_" + field_blocks_ids.determination;
     }
 
     constructor(node) {
@@ -55,7 +55,7 @@
 
     updateTextArea(text) {
       this.message_box = document.querySelector(
-        "#id_" + field_blocks_ids["message"] + "_ifr"
+        "#id_" + field_blocks_ids.message + "_ifr"
       );
       this.message_box.contentDocument.getElementsByTagName(
         "body"
@@ -66,7 +66,7 @@
   document.querySelectorAll(DeterminationCopy.selector()).forEach((el) => {
     new DeterminationCopy(el);
   });
-  window.addEventListener("load", function (event) {
+  window.addEventListener("load", function () {
     const proposal_form_field = document.querySelector("#id_proposal_form");
     if (proposal_form_field && !proposal_form_field.value) {
       proposal_form_field.disabled = true;

@@ -30,8 +30,8 @@ document.addEventListener("alpine:init", () => {
        */
       calculateScore() {
         const values = [...this.selectors].map((selector) => {
-          const value = parseInt(selector.value);
-          return isNaN(value) || value === 99 ? 0 : value;
+          const value = parseInt(selector.value, 10);
+          return Number.isNaN(value) || value === 99 ? 0 : value;
         });
 
         this.totalScore = values.reduce((sum, value) => sum + value, 0);
