@@ -4,8 +4,6 @@ from django.core.files import File
 from django.http import FileResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.utils import timezone
-from pypdf import PdfReader, PdfWriter
-from xhtml2pdf import pisa
 
 from hypha.apply.utils.models import PDFPageSettings
 
@@ -19,6 +17,9 @@ def html_to_pdf(html_body: str) -> BytesIO:
     Returns:
         BytesIO: PDF file
     """
+    # Imported here to keep xhtml2pdf (and reportlab) out of memory until needed.
+    from xhtml2pdf import pisa
+
     packet = BytesIO()
     pisa.CreatePDF(html_body, dest=packet, raise_exception=True, encoding="utf-8")
     packet.seek(0)
@@ -75,6 +76,8 @@ def merge_pdf(origin_pdf: BytesIO, input_pdf: BytesIO) -> File:
         Return a File object containing the merged PDF and with the same name as the
         original PDF.
     """
+    from pypdf import PdfReader, PdfWriter
+
     merger = PdfWriter(clone_from=origin_pdf)
     merger.append(PdfReader(input_pdf))
 

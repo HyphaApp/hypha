@@ -32,8 +32,6 @@ from django_htmx.http import (
     HttpResponseClientRefresh,
 )
 from django_tables2 import SingleTableMixin
-from docx import Document
-from htmldocx import HtmlToDocx
 from rolepermissions.checkers import has_object_permission
 
 from hypha.apply.activity.adapters.utils import get_users_for_groups
@@ -1994,6 +1992,10 @@ class ProjectSOWDownloadView(ProjectByIdMixin, SingleObjectMixin, View):
         html = template.render(context)
 
         buf = io.BytesIO()
+        # Imported here to keep python-docx (and lxml) out of memory until needed.
+        from docx import Document
+        from htmldocx import HtmlToDocx
+
         document = Document()
         new_parser = HtmlToDocx()
         new_parser.add_html_to_document(html, document)
@@ -2063,6 +2065,10 @@ class ProjectDetailDownloadView(ProjectByIdMixin, SingleObjectMixin, View):
         html = template.render(context)
 
         buf = io.BytesIO()
+        # Imported here to keep python-docx (and lxml) out of memory until needed.
+        from docx import Document
+        from htmldocx import HtmlToDocx
+
         document = Document()
         new_parser = HtmlToDocx()
         new_parser.add_html_to_document(html, document)
