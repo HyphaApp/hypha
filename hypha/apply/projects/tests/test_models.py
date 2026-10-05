@@ -1,6 +1,9 @@
+import datetime
 from decimal import Decimal
 
+from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
+from wagtail.models import ModelLogEntry
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.users.tests.factories import (
@@ -9,6 +12,7 @@ from hypha.apply.users.tests.factories import (
     StaffFactory,
 )
 
+from ..models.disbursement import Disbursement
 from ..models.invoice import (
     APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
@@ -24,7 +28,7 @@ from ..models.invoice import (
     invoice_status_user_choices,
 )
 from ..models.project import Project
-from .factories import InvoiceFactory
+from .factories import ContractFactory, InvoiceFactory
 
 
 class TestProjectModel(TestCase):
@@ -223,3 +227,121 @@ class TestInvoiceQueryset(TestCase):
     def test_get_totals_no_value(self):
         self.assertEqual(Invoice.objects.paid_value(), 0)
         self.assertEqual(Invoice.objects.unpaid_value(), 0)
+
+
+class TestDisbursementModel(TestCase):
+    """Test values use prime numbers (prime left and right of the decimal
+    point) that are unique to this test, and dates several hundred years in
+    the future, so a correct assertion is traceable to this test and not a
+    coincidence. The system under test (Disbursement) is constructed directly
+    via its initializer; factories are used only for its dependencies
+    (Contract, Staff), which the test harness owns.
+    """
+
+    def test_str_includes_amount_and_date(self):
+        contract = ContractFactory()
+        disbursement = Disbursement(
+            contract=contract,
+            amount=Decimal("53.17"),
+            date=datetime.date(2525, 7, 19),
+        )
+        disbursement.save()
+        rendered = str(disbursement)
+        self.assertIn("53.17", rendered)
+        self.assertIn("2525-07-19", rendered)
+
+    def test_negative_amount_allowed_for_repayment(self):
+        disbursement = Disbursement(
+            contract=ContractFactory(),
+            amount=Decimal("-61.13"),
+            date=datetime.date(2527, 11, 23),
+        )
+        disbursement.save()
+        disbursement.refresh_from_db()
+        self.assertEqual(disbursement.amount, Decimal("-61.13"))
+
+    def test_create_emits_wagtail_create_log_entry(self):
+        staff = StaffFactory()
+        contract = ContractFactory()
+        disbursement = Disbursement(
+            contract=contract,
+            amount=Decimal("67.19"),
+            date=datetime.date(2529, 3, 17),
+            updated_by=staff,
+        )
+        disbursement.save()
+        entries = ModelLogEntry.objects.filter(
+            content_type=ContentType.objects.get_for_model(Disbursement),
+            object_id=disbursement.pk,
+        )
+        self.assertTrue(entries.exists())
+        self.assertEqual(entries.first().action, "wagtail.create")
+        self.assertEqual(entries.first().user, staff)
+
+    def test_edit_emits_wagtail_edit_log_entry(self):
+        staff = StaffFactory()
+        disbursement = Disbursement(
+            contract=ContractFactory(),
+            amount=Decimal("71.23"),
+            date=datetime.date(2537, 1, 7),
+            updated_by=staff,
+        )
+        disbursement.save()
+        disbursement.amount = Decimal("73.29")
+        disbursement.updated_by = staff
+        disbursement.save()
+        entries = ModelLogEntry.objects.filter(
+            content_type=ContentType.objects.get_for_model(Disbursement),
+            object_id=disbursement.pk,
+        )
+        # create then edit each emit an entry; assert both are present and the
+        # edit is the most recent (ModelLogEntry defaults to newest-first).
+        self.assertEqual(entries.count(), 2)
+        self.assertEqual(
+            set(entries.values_list("action", flat=True)),
+            {"wagtail.create", "wagtail.edit"},
+        )
+        self.assertEqual(entries.first().action, "wagtail.edit")
+
+    def test_contract_disbursements_related_name(self):
+        contract = ContractFactory()
+        Disbursement(
+            contract=contract, amount=Decimal("79.31"), date=datetime.date(2539, 4, 3)
+        ).save()
+        Disbursement(
+            contract=contract,
+            amount=Decimal("-83.37"),
+            date=datetime.date(2539, 4, 3),
+        ).save()
+        # Sum() over the related manager nets negatives (repayments) correctly.
+        total = sum(d.amount for d in contract.disbursements.all())
+        self.assertEqual(total, Decimal("-4.06"))
+
+    def test_updated_by_changes_on_edit_while_created_by_does_not(self):
+        creator = StaffFactory()
+        editor = StaffFactory()
+        disbursement = Disbursement(
+            contract=ContractFactory(),
+            amount=Decimal("89.41"),
+            date=datetime.date(2531, 5, 13),
+            created_by=creator,
+            updated_by=creator,
+        )
+        disbursement.save()
+        disbursement.amount = Decimal("97.11")
+        disbursement.updated_by = editor
+        disbursement.save()
+        disbursement.refresh_from_db()
+        self.assertEqual(disbursement.created_by, creator)
+        self.assertEqual(disbursement.updated_by, editor)
+
+    def test_notes_field_persisted(self):
+        disbursement = Disbursement(
+            contract=ContractFactory(),
+            amount=Decimal("101.03"),
+            date=datetime.date(2533, 9, 29),
+            notes="Wire transfer for the reporting period.",
+        )
+        disbursement.save()
+        disbursement.refresh_from_db()
+        self.assertEqual(disbursement.notes, "Wire transfer for the reporting period.")

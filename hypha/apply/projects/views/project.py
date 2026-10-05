@@ -8,10 +8,17 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import Group
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
 from django.db.models import Q
-from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect
+from django.http import (
+    FileResponse,
+    Http404,
+    HttpResponse,
+    HttpResponseForbidden,
+    HttpResponseRedirect,
+)
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import get_template
 from django.urls import reverse
@@ -64,6 +71,7 @@ from hypha.apply.todo.views import (
 )
 from hypha.apply.users.decorators import (
     staff_or_finance_or_contracting_required,
+    staff_or_finance_required,
     staff_required,
 )
 from hypha.apply.users.roles import CONTRACTING_GROUP_NAME
@@ -80,6 +88,7 @@ from ..forms import (
     AssignApproversForm,
     ChangePAFStatusForm,
     ChangeProjectStatusForm,
+    CreateContractForm,
     ProjectForm,
     ProjectSOWForm,
     SetPendingForm,
@@ -619,7 +628,7 @@ class ContractsMixin(ProjectByIdMixin):
 
 
 @method_decorator(staff_required, name="dispatch")
-class ApproveContractView(ProjectByIdMixin, View):
+class ApproveContractView(ProjectByIdMixin, UpdateView):
     form_class = ApproveContractForm
     model = Contract
     template_name = "application_projects/modals/approve_contract.html"
@@ -726,80 +735,81 @@ class UploadContractView(ProjectByIdMixin, View):
         )
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, *args, **kwargs):
-        form = self.get_form()
+    def get(self, request, *args, **kwargs):
+        # Get the existing contract if it exists
+        existing_contract = self.project.contracts.order_by("created_at").first()
+
+        # Pass instance explicitly. This is the KEY to making edits work with FileFormMixin.
+        form = self.form_class(instance=existing_contract, user=request.user)
+
         return render(
-            self.request,
+            request,
             self.template_name,
             context={
                 "form": form,
-                "user": self.request.user,
-                "value": _("Upload") if self.request.user.is_applicant else _("Submit"),
+                "user": request.user,
+                "value": _("Upload") if request.user.is_applicant else _("Submit"),
                 "object": self.project,
             },
         )
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.pop("instance")
-        kwargs.pop("user")
-        return kwargs
+    def post(self, request, *args, **kwargs):
+        old_stage = self.project.status
 
-    def get_form(self, *args, **kwargs):
-        form = self.form_class(*args, **kwargs)
-        if self.request.user.is_applicant:
-            form.fields.pop("signed_and_approved")
-        return form
+        # 1. Determine the contract instance
+        existing_contract = self.project.contracts.order_by("created_at").first()
 
-    def post(self, *args, **kwargs):
-        form = self.get_form(self.request.POST)
+        # 2. Instantiate form with POST data AND the instance
+        # This allows ModelForm to:
+        # a) Validate against the existing DB state
+        # b) Populate initial data for FileFormMixin
+        # c) Set form.instance to the existing object for editing
+        form = self.form_class(
+            request.POST, instance=existing_contract, user=request.user
+        )
 
         if form.is_valid():
-            if self.project.contracts.exists():
-                form.instance = self.project.contracts.order_by("created_at").first()
-
+            # 3. Assign common fields
             form.instance.project = self.project
 
-            if self.request.user.is_applicant:
+            # 4. Handle user-specific logic
+            if request.user.is_applicant:
                 form.instance.signed_by_applicant = True
                 form.instance.uploaded_by_applicant_at = timezone.now()
-                messages.success(self.request, _("Countersigned contract uploaded"))
-            elif self.request.user.is_contracting or self.request.user.is_apply_staff:
+                messages.success(request, _("Countersigned contract uploaded"))
+            else:
                 form.instance.uploaded_by_contractor_at = timezone.now()
-                messages.success(self.request, _("Signed contract uploaded"))
+                messages.success(request, _("Signed contract uploaded"))
 
+            # 5. Handle approval logic
+            if form.cleaned_data.get("signed_and_approved"):
+                form.instance.approver = request.user
+                form.instance.approved_at = timezone.now()
+                form.instance.signed_and_approved = True
+                form.instance.signed_by_applicant = True
+
+            # 6. Save ONCE.
+            # Django ModelForm.save() automatically maps cleaned_data to instance
+            # and saves if commit=True (default).
             form.save()
 
-            contract_signed_and_approved = form.cleaned_data.get("signed_and_approved")
-            if contract_signed_and_approved:
-                form.instance.approver = self.request.user
-                form.instance.approved_at = timezone.now()
-                form.instance.signed_and_approved = contract_signed_and_approved
-                form.instance.signed_by_applicant = True
-                form.instance.save(
-                    update_fields=[
-                        "approver",
-                        "approved_at",
-                        "signed_and_approved",
-                        "signed_by_applicant",
-                    ]
-                )
-
+            # 7. Handle Project status transition
+            if form.cleaned_data.get("signed_and_approved"):
                 self.project.status = INVOICING_AND_REPORTING
                 self.project.save(update_fields=["status"])
-                old_stage = CONTRACTING
 
                 if settings.PROJECTS_START_AFTER_CONTRACTING:
                     self.project.proposed_start = datetime.date.today()
-                    self.project.save()
+                    self.project.save(update_fields=["proposed_start"])
 
                 messenger(
                     MESSAGES.PROJECT_TRANSITION,
-                    request=self.request,
-                    user=self.request.user,
+                    request=request,
+                    user=request.user,
                     source=self.project,
                     related=old_stage,
                 )
+
                 # remove Project waiting contract task for contracting/staff group
                 if settings.STAFF_UPLOAD_CONTRACT:
                     remove_tasks_for_user(
@@ -820,11 +830,11 @@ class UploadContractView(ProjectByIdMixin, View):
                     related_obj=self.project,
                 )
             else:
-                if self.request.user != self.project.user:
+                if request.user != self.project.user:
                     messenger(
                         MESSAGES.UPLOAD_CONTRACT,
-                        request=self.request,
-                        user=self.request.user,
+                        request=request,
+                        user=request.user,
                         source=self.project,
                         related=form.instance,
                     )
@@ -851,13 +861,14 @@ class UploadContractView(ProjectByIdMixin, View):
                     )
             return HttpResponseClientRefresh()
 
+        # If invalid, re-render with errors
         return render(
-            self.request,
+            request,
             self.template_name,
             context={
                 "form": form,
-                "user": self.request.user,
-                "value": _("Upload") if self.request.user.is_applicant else _("Submit"),
+                "user": request.user,
+                "value": _("Upload") if request.user.is_applicant else _("Submit"),
                 "object": self.project,
             },
         )
@@ -994,6 +1005,36 @@ class SubmitContractDocumentsView(View):
                 "object": self.project,
             },
         )
+
+
+@method_decorator(staff_or_finance_required, name="dispatch")
+class CreateContractView(SuccessMessageMixin, ProjectByIdMixin, CreateView):
+    """Add a further contract from the Contracts and Disbursements section
+    (DISBURSEMENTS model). The first contract still goes through the
+    contracting flow, so this view performs no stage transition.
+
+    """
+
+    form_class = CreateContractForm
+    model = Contract
+    template_name = "application_projects/modals/contract_form.html"
+    success_message = _("Contract added")
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = self.get_object()
+        if has_object_permission("add_contract", request.user, obj=self.project):
+            return super().dispatch(request, *args, **kwargs)
+        return HttpResponseForbidden()
+
+    def form_valid(self, form):
+        form.instance.project = self.project
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(project=self.project, value=_("Save"), **kwargs)
+
+    def get_success_url(self):
+        return reverse("funds:submissions:project", kwargs={"pk": self.kwargs["pk"]})
 
 
 @method_decorator(login_required, name="dispatch")
