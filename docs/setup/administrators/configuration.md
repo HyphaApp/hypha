@@ -213,6 +213,14 @@ Show the total (sum) of a review's scored answers instead of the average of them
 
 ----
 
+Change the labels of, or disable, review score choices. A JSON object keyed by score value (0-5 and 99 for "n/a - choose not to answer"). A string sets a new label, `null`, `false` or `""` disables the choice. The n/a choice can be relabelled but not disabled. Existing reviews that used a disabled choice still show its label. Labels set here are not translated.
+
+Example: `REVIEW_RATE_CHOICES='{"0": null, "3": "3. Okay", "99": "n/a"}'`
+
+    REVIEW_RATE_CHOICES = env.json('REVIEW_RATE_CHOICES', {})
+
+----
+
 If automatic e-mails should be sent out to reviewers when submissions are ready for review.
 
     SEND_READY_FOR_REVIEW = env.bool('SEND_READY_FOR_REVIEW', True)

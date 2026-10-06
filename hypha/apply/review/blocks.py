@@ -87,8 +87,7 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
     def render(self, value, context=None):
         data = context.get("data", None)
         if data:
-            choices = dict(self.get_choices(RATE_CHOICES))
-            context["data"] = choices[int(data)]
+            context["data"] = RATE_CHOICES_DICT.get(int(data), RATE_CHOICE_NA)
         else:
             context["data"] = ""
 
@@ -98,9 +97,8 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
         """
         Replace 'NA' option with an empty string choice.
         """
-        rate_choices = list(choices)
-        rate_choices.pop(-1)
-        rate_choices.append(("", _("n/a - choose not to answer")))
+        rate_choices = [choice for choice in choices if choice[0] != NA]
+        rate_choices.append(("", RATE_CHOICE_NA))
         return tuple(rate_choices)
 
 

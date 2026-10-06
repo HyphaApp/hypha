@@ -220,6 +220,12 @@ REVIEW_VISIBILITY_DEFAULT = env.str("REVIEW_VISIBILITY_DEFAULT", "private")
 # them, wherever a review score is shown.
 REVIEW_SCORE_SHOW_TOTAL = env.bool("REVIEW_SCORE_SHOW_TOTAL", False)
 
+# Override labels of, or disable, review score choices. JSON object keyed by
+# score value; a string sets a new label, null/false/"" disables the choice.
+# The n/a choice (99) can be relabelled but not disabled.
+# Example: {"0": null, "3": "3. Okay", "99": "n/a"}
+REVIEW_RATE_CHOICES = env.json("REVIEW_RATE_CHOICES", {})
+
 # Require an applicant to view their rendered application before submitting
 SUBMISSION_PREVIEW_REQUIRED = env.bool("SUBMISSION_PREVIEW_REQUIRED", True)
 
