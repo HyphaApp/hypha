@@ -156,8 +156,9 @@ class CoApplicantInviteAcceptView(View):
 
             # handle auto login/signup
             user, created = User.objects.get_or_create(
-                email=self.invite.invited_user_email, is_active=True
+                email=self.invite.invited_user_email
             )
+
             if created:
                 applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
                 user.groups.add(applicant_group)
