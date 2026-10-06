@@ -1443,6 +1443,32 @@ class TestStaffCreateDisbursementView(BaseViewTestCase):
         response = self.get_page(contract)
         self.assertNotContains(response, "Amount (")
 
+    def test_amount_prepopulates_from_contract_approved_amount(self):
+        contract = ContractFactory(amount_approved=decimal.Decimal("283.29"))
+        response = self.get_page(contract)
+        self.assertContains(response, 'value="283.29"')
+
+    def test_amount_prepopulates_from_project_value_without_contract_amount(self):
+        # Contracts recorded before per-contract amounts existed carry no
+        # approved amount; fall back to the project's awarded value.
+        project = ProjectFactory(value=decimal.Decimal("277"))
+        contract = ContractFactory(project=project, amount_approved=None)
+        response = self.get_page(contract)
+        self.assertContains(response, 'value="277.00"')
+
+    def test_amount_prepopulates_net_of_existing_disbursements(self):
+        contract = ContractFactory(amount_approved=decimal.Decimal("283.29"))
+        DisbursementFactory(contract=contract, amount=decimal.Decimal("31.11"))
+        response = self.get_page(contract)
+        self.assertContains(response, 'value="252.18"')
+
+    def test_amount_prepopulates_net_of_repayments(self):
+        # Repayments are negative, so they net the other way.
+        contract = ContractFactory(amount_approved=decimal.Decimal("283.29"))
+        DisbursementFactory(contract=contract, amount=decimal.Decimal("-17.13"))
+        response = self.get_page(contract)
+        self.assertContains(response, 'value="300.42"')
+
     def test_can_create(self):
         contract = ContractFactory()
         url = self.url(contract)
@@ -1553,6 +1579,17 @@ class TestStaffEditDisbursementView(BaseViewTestCase):
         disbursement = DisbursementFactory(contract=contract)
         response = self.get_page(disbursement)
         self.assertContains(response, "Amount (EUR)")
+
+    def test_edit_shows_instance_amount_not_contract_award(self):
+        # The full-award prepopulation applies on create only; editing an
+        # existing disbursement must show its recorded amount.
+        contract = ContractFactory(amount_approved=decimal.Decimal("281.83"))
+        disbursement = DisbursementFactory(
+            contract=contract, amount=decimal.Decimal("311.13")
+        )
+        response = self.get_page(disbursement)
+        self.assertContains(response, 'value="311.13"')
+        self.assertNotContains(response, 'value="281.83"')
 
     def test_can_edit(self):
         disbursement = DisbursementFactory(amount=decimal.Decimal("281.97"))

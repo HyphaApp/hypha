@@ -1,4 +1,6 @@
 from django import forms
+from django.db.models import DecimalField, Sum, Value
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -25,7 +27,10 @@ class DisbursementForm(forms.ModelForm):
     ``amount`` widget mirrors the contract amount fields so values render
     trimmed but preserve full precision. The views also pass the related
     ``contract``, whose currency is shown on the ``amount`` label (e.g.
-    ``Amount (USD)``) so the unit of the entered amount is unambiguous.
+    ``Amount (USD)``) so the unit of the entered amount is unambiguous. On
+    create the ``amount`` prepopulates with the contract's approved amount
+    (else the project's awarded value) less this contract's existing
+    disbursements, still editable.
 
     """
 
@@ -40,6 +45,17 @@ class DisbursementForm(forms.ModelForm):
         # Default the date to today so a disbursement recorded on the day it
         # is made does not need re-entering; the model field stays default-free.
         self.fields["date"].initial = timezone.localdate()
+        # Prepopulate with the awarded amount net of this contract's
+        # disbursements; editing keeps the instance's recorded amount.
+        if self.instance.pk is None:
+            awarded = contract.amount_approved if contract is not None else None
+            if awarded is None and contract is not None:
+                awarded = contract.project.value
+            if awarded is not None:
+                disbursed = contract.disbursements.aggregate(
+                    total=Coalesce(Sum("amount"), Value(0), output_field=DecimalField())
+                )["total"]
+                self.fields["amount"].initial = awarded - disbursed
         self.fields["amount"].help_text = _(
             "Amount sent to the grantee. Use a negative value to record a repayment."
         )
