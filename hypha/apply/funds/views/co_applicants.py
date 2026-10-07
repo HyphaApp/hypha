@@ -23,6 +23,7 @@ from hypha.apply.users.models import User
 from hypha.apply.users.roles import APPLICANT_GROUP_NAME
 from hypha.apply.users.services import PasswordlessAuthService
 from hypha.apply.users.tokens import CoApplicantInviteTokenGenerator
+from hypha.apply.users.utils import get_user_by_email
 
 from ..forms import EditCoApplicantForm, InviteCoApplicantForm
 from ..models import ApplicationSubmission, CoApplicant, CoApplicantInvite
@@ -118,9 +119,8 @@ class CoApplicantInviteAcceptView(View):
         if self.invite.status != CoApplicantInviteStatus.PENDING:
             return self.render_invalid()
 
-        if User.objects.filter(
-            email=self.invite.invited_user_email, is_active=False
-        ).exists():
+        self.invited_user = get_user_by_email(self.invite.invited_user_email)
+        if self.invited_user and not self.invited_user.is_active:
             return self.render_invalid(account_inactive=True)
 
         return super().dispatch(request, *args, **kwargs)
@@ -138,7 +138,7 @@ class CoApplicantInviteAcceptView(View):
         return token_generator.check_token(invite, token)
 
     def get(self, *args, **kwargs):
-        user = User.objects.filter(email=self.invite.invited_user_email).first()
+        user = self.invited_user
         if user and (user.is_apply_staff or user.is_apply_staff_admin):
             return HttpResponseRedirect(reverse_lazy("dashboard:dashboard"))
         return render(
@@ -158,11 +158,9 @@ class CoApplicantInviteAcceptView(View):
             self.invite.respond(CoApplicantInviteStatus.ACCEPTED)
 
             # handle auto login/signup
-            user, created = User.objects.get_or_create(
-                email=self.invite.invited_user_email
-            )
-
-            if created:
+            user = self.invited_user
+            if user is None:
+                user = User.objects.create(email=self.invite.invited_user_email)
                 applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
                 user.groups.add(applicant_group)
                 user.set_unusable_password()

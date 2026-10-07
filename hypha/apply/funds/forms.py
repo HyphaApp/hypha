@@ -461,11 +461,23 @@ class InviteCoApplicantForm(forms.ModelForm):
     def __init__(self, *args, submission, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.invited_by = user
+        self.submission = submission
 
         if submission:
             self.fields["submission"].initial = submission.id
             if not submission.projects.exists():
                 self.fields.pop("project_permission", None)
+
+    def clean_invited_user_email(self):
+        email = self.cleaned_data["invited_user_email"]
+        if (
+            self.submission
+            and CoApplicantInvite.objects.filter(
+                submission=self.submission, invited_user_email__iexact=email
+            ).exists()
+        ):
+            raise forms.ValidationError(_("This email has already been invited."))
+        return email
 
     class Meta:
         model = CoApplicantInvite
