@@ -29,6 +29,7 @@ from hypha.apply.users.roles import (
     FINANCE_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
+from hypha.apply.users.utils import get_user_by_email
 from hypha.core.mail import (
     language,
     remove_extra_empty_lines,
@@ -203,7 +204,7 @@ class EmailAdapter(AdapterBase):
     def handle_co_applicant_invite(self, source, related, **kwargs):
         from hypha.apply.funds.utils import generate_invite_path
 
-        invited_user = User.objects.filter(email=related.invited_user_email).first()
+        invited_user = get_user_by_email(related.invited_user_email)
         can_accept = True
         if invited_user and (invited_user.is_org_faculty):
             can_accept = False

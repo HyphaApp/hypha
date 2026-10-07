@@ -23,6 +23,7 @@ from hypha.apply.users.models import User
 from hypha.apply.users.roles import APPLICANT_GROUP_NAME
 from hypha.apply.users.services import PasswordlessAuthService
 from hypha.apply.users.tokens import CoApplicantInviteTokenGenerator
+from hypha.apply.users.utils import get_user_by_email
 
 from ..forms import EditCoApplicantForm, InviteCoApplicantForm
 from ..models import ApplicationSubmission, CoApplicant, CoApplicantInvite
@@ -105,28 +106,30 @@ class CoApplicantInviteView(View):
 
 class CoApplicantInviteAcceptView(View):
     def dispatch(self, request, *args, **kwargs):
-        token = kwargs.get("token")
         try:
             self.invite = CoApplicantInvite.objects.get(
                 pk=force_str(urlsafe_base64_decode(kwargs.get("uidb64")))
             )
         except (TypeError, ValueError, OverflowError, CoApplicantInvite.DoesNotExist):
-            return render(
-                self.request,
-                "funds/coapplicant_invite_landing_page.html",
-                context={"is_valid": False},
-                status=200,
-            )
-        if (
-            self.invite
-            and self.check_token(self.invite, token)
-            and self.invite.status == CoApplicantInviteStatus.PENDING
-        ):
-            return super().dispatch(request, *args, **kwargs)
+            return self.render_invalid()
+
+        if not self.check_token(self.invite, kwargs.get("token")):
+            return self.render_invalid()
+
+        if self.invite.status != CoApplicantInviteStatus.PENDING:
+            return self.render_invalid()
+
+        self.invited_user = get_user_by_email(self.invite.invited_user_email)
+        if self.invited_user and not self.invited_user.is_active:
+            return self.render_invalid(account_inactive=True)
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def render_invalid(self, **context):
         return render(
             self.request,
             "funds/coapplicant_invite_landing_page.html",
-            context={"is_valid": False},
+            context={"is_valid": False, **context},
             status=200,
         )
 
@@ -135,7 +138,7 @@ class CoApplicantInviteAcceptView(View):
         return token_generator.check_token(invite, token)
 
     def get(self, *args, **kwargs):
-        user = User.objects.filter(email=self.invite.invited_user_email).first()
+        user = self.invited_user
         if user and (user.is_apply_staff or user.is_apply_staff_admin):
             return HttpResponseRedirect(reverse_lazy("dashboard:dashboard"))
         return render(
@@ -155,10 +158,9 @@ class CoApplicantInviteAcceptView(View):
             self.invite.respond(CoApplicantInviteStatus.ACCEPTED)
 
             # handle auto login/signup
-            user, created = User.objects.get_or_create(
-                email=self.invite.invited_user_email, is_active=True
-            )
-            if created:
+            user = self.invited_user
+            if user is None:
+                user = User.objects.create(email=self.invite.invited_user_email)
                 applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
                 user.groups.add(applicant_group)
                 user.set_unusable_password()
