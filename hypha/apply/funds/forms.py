@@ -472,6 +472,14 @@ class InviteCoApplicantForm(forms.ModelForm):
         email = self.cleaned_data["invited_user_email"]
         if (
             self.submission
+            and self.submission.user
+            and self.submission.user.email.lower() == email.lower()
+        ):
+            raise forms.ValidationError(
+                _("The submission owner can not be invited as a co-applicant.")
+            )
+        if (
+            self.submission
             and CoApplicantInvite.objects.filter(
                 submission=self.submission, invited_user_email__iexact=email
             ).exists()
