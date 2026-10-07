@@ -40,6 +40,11 @@
                         hx-swap="none"
                     >{% trans "Accept" %} </a>
                 </div>
+            {% elif account_inactive %}
+                <h2 class="card-title">{% trans "Account deactivated" %}</h2>
+                <p>
+                    {% trans "You can't accept this invitation because your account is deactivated. Please contact site administrators." %}
+                </p>
             {% else %}
                 <h2 class="card-title">{% trans "Invalid Invitation" %}</h2>
                 <p>

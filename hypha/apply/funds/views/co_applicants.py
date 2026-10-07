@@ -105,28 +105,31 @@ class CoApplicantInviteView(View):
 
 class CoApplicantInviteAcceptView(View):
     def dispatch(self, request, *args, **kwargs):
-        token = kwargs.get("token")
         try:
             self.invite = CoApplicantInvite.objects.get(
                 pk=force_str(urlsafe_base64_decode(kwargs.get("uidb64")))
             )
         except (TypeError, ValueError, OverflowError, CoApplicantInvite.DoesNotExist):
-            return render(
-                self.request,
-                "funds/coapplicant_invite_landing_page.html",
-                context={"is_valid": False},
-                status=200,
-            )
-        if (
-            self.invite
-            and self.check_token(self.invite, token)
-            and self.invite.status == CoApplicantInviteStatus.PENDING
-        ):
-            return super().dispatch(request, *args, **kwargs)
+            return self.render_invalid()
+
+        if not self.check_token(self.invite, kwargs.get("token")):
+            return self.render_invalid()
+
+        if self.invite.status != CoApplicantInviteStatus.PENDING:
+            return self.render_invalid()
+
+        if User.objects.filter(
+            email=self.invite.invited_user_email, is_active=False
+        ).exists():
+            return self.render_invalid(account_inactive=True)
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def render_invalid(self, **context):
         return render(
             self.request,
             "funds/coapplicant_invite_landing_page.html",
-            context={"is_valid": False},
+            context={"is_valid": False, **context},
             status=200,
         )
 
