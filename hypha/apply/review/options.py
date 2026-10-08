@@ -19,7 +19,7 @@ def get_rate_choices():
     Apply the REVIEW_RATE_CHOICES setting to DEFAULT_RATE_CHOICES.
 
     The setting maps a score value (int or str) to a new label, or to a falsy
-    value to disable that choice. NA can be relabelled but not disabled.
+    value to disable that choice.
 
     Returns ``(choices, labels)`` where ``labels`` also includes disabled
     choices, so existing reviews using them can still be displayed.
@@ -34,7 +34,7 @@ def get_rate_choices():
         override = overrides.get(str(value), default_label)
         label = override if isinstance(override, str) and override else default_label
         labels[value] = label
-        if override or value == NA:
+        if override:
             choices.append((value, label))
     return tuple(choices), labels
 

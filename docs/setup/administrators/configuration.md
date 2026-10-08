@@ -213,7 +213,7 @@ Show the total (sum) of a review's scored answers instead of the average of them
 
 ----
 
-Change the labels of, or disable, review score choices. A JSON object keyed by score value (0-5 and 99 for "n/a - choose not to answer"). A string sets a new label, `null`, `false` or `""` disables the choice. The n/a choice can be relabelled but not disabled. Existing reviews that used a disabled choice still show its label. Labels set here are not translated.
+Change the labels of, or disable, review score choices. A JSON object keyed by score value (0-5 and 99 for "n/a - choose not to answer"). A string sets a new label, `null`, `false` or `""` disables the choice. If the n/a choice is disabled, score fields start out empty ("---------") instead of at n/a, so in required score fields reviewers have to pick a score. An optional score field left empty still counts as n/a. Existing reviews that used a disabled choice still show its label. Labels set here are not translated.
 
 Example: `REVIEW_RATE_CHOICES='{"0": null, "3": "3. Okay", "99": "n/a"}'`
 

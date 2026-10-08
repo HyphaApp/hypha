@@ -222,7 +222,7 @@ REVIEW_SCORE_SHOW_TOTAL = env.bool("REVIEW_SCORE_SHOW_TOTAL", False)
 
 # Override labels of, or disable, review score choices. JSON object keyed by
 # score value; a string sets a new label, null/false/"" disables the choice.
-# The n/a choice (99) can be relabelled but not disabled.
+# Disabling the n/a choice (99) makes reviewers pick a score in required fields.
 # Example: {"0": null, "3": "3. Okay", "99": "n/a"}
 REVIEW_RATE_CHOICES = env.json("REVIEW_RATE_CHOICES", {})
 
