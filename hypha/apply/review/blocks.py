@@ -2,6 +2,7 @@ import json
 
 from django import forms
 from django.conf import settings
+from django.db.models import BLANK_CHOICE_DASH
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.blocks import RichTextBlock
@@ -69,7 +70,8 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
     This block modifies RATE_CHOICES to have empty string('') in place of NA
     for text value `n/a - choose not to answer` as it helps to render this value
     as default to the forms and also when this field is
-    required it automatically handles validation on empty string.
+    required it automatically handles validation on empty string. If NA is
+    disabled an empty choice is added first instead.
     """
 
     name = "score without text"
@@ -87,8 +89,7 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
     def render(self, value, context=None):
         data = context.get("data", None)
         if data:
-            choices = dict(self.get_choices(RATE_CHOICES))
-            context["data"] = choices[int(data)]
+            context["data"] = RATE_CHOICES_DICT.get(int(data), RATE_CHOICE_NA)
         else:
             context["data"] = ""
 
@@ -98,9 +99,11 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
         """
         Replace 'NA' option with an empty string choice.
         """
-        rate_choices = list(choices)
-        rate_choices.pop(-1)
-        rate_choices.append(("", _("n/a - choose not to answer")))
+        rate_choices = [choice for choice in choices if choice[0] != NA]
+        if len(rate_choices) < len(choices):
+            rate_choices.append(("", RATE_CHOICE_NA))
+        else:
+            rate_choices = BLANK_CHOICE_DASH + rate_choices
         return tuple(rate_choices)
 
 

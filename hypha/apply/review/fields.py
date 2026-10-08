@@ -1,4 +1,5 @@
 from django import forms
+from django.db.models import BLANK_CHOICE_DASH
 from django.forms import widgets
 from django.utils.safestring import mark_safe
 from tinymce.widgets import TinyMCE
@@ -7,11 +8,23 @@ from hypha.apply.review.options import NA, RATE_CHOICES
 from hypha.apply.utils.options import MCE_ATTRIBUTES_SHORT
 
 
+def get_score_choices():
+    """
+    The NA choice is the default. If it is disabled, add an empty choice
+    in its place so no score is preselected.
+    """
+    if NA in dict(RATE_CHOICES):
+        return RATE_CHOICES
+    return tuple(BLANK_CHOICE_DASH) + RATE_CHOICES
+
+
 class ScoredAnswerWidget(forms.MultiWidget):
     def __init__(self, attrs=None):
         _widgets = (
             TinyMCE(attrs=attrs, mce_attrs=MCE_ATTRIBUTES_SHORT),
-            widgets.Select(attrs={"data-score-field": "true"}, choices=RATE_CHOICES),
+            widgets.Select(
+                attrs={"data-score-field": "true"}, choices=get_score_choices()
+            ),
         )
         super().__init__(_widgets, attrs)
 
@@ -42,13 +55,15 @@ class ScoredAnswerField(forms.MultiValueField):
     def __init__(self, *args, **kwargs):
         fields = (
             forms.CharField(),
-            forms.ChoiceField(choices=RATE_CHOICES),
+            forms.ChoiceField(choices=get_score_choices()),
         )
 
         super().__init__(*args, **kwargs, fields=fields)
 
     def compress(self, data_list):
         if data_list:
-            return [data_list[0], int(data_list[1])]
+            # An empty score is only possible when NA is disabled.
+            score = data_list[1]
+            return [data_list[0], int(score) if score != "" else NA]
         else:
             return ["", NA]
