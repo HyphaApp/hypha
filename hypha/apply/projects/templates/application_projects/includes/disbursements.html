@@ -9,8 +9,9 @@ contract. The Add/Edit/Delete disbursement buttons are gated by the
 ``add_disbursement`` object checker (staff/finance); the list is visible to
 anyone who can view the project. Staff/finance can also add further contracts
 from here via the ``add_contract`` checker (the first contract still goes
-through the contracting flow, which transitions the project). Notes are
-staff/finance-only, so the Notes column is omitted for applicants.
+through the contracting flow, which transitions the project). Disbursement
+notes are visible to everyone who can view the project; only the
+Add/Edit/Delete disbursement actions are staff/finance.
 Loops contracts so it is correct in the 1:many Project:Contract world too.
 {% endcomment %}
 
@@ -69,9 +70,7 @@ Loops contracts so it is correct in the 1:many Project:Contract world too.
                                         {% else %}
                                             <th align="right">{% trans "Amount" %}</th>
                                         {% endif %}
-                                        {% if can_add_disbursement %}<th>
-                                            <span>{% trans "Notes" %} ({% trans "visible to staff and finance only" %})</span>
-                                        </th>{% endif %}
+                                        <th>{% trans "Notes" %}</th>
                                         <th>{% if can_add_disbursement %}{% endif %}</th>
                                     </tr>
                                 </thead>
@@ -80,7 +79,7 @@ Loops contracts so it is correct in the 1:many Project:Contract world too.
                                         <tr>
                                             <td>{{ disbursement.date|date:"SHORT_DATE_FORMAT" }}</td>
                                             <td align="right">{{ disbursement.amount|trimmed_decimal }}</td>
-                                            {% if can_add_disbursement %}<td>{{ disbursement.notes|default:"-" }}</td>{% endif %}
+                                            <td>{{ disbursement.notes|default:"-" }}</td>
                                             <td>
                                                 {% if can_add_disbursement %}
                                                     <div class="flex gap-1">

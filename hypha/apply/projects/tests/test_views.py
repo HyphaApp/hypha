@@ -380,6 +380,18 @@ class TestApplicantProjectDetailView(BaseProjectDetailTestCase):
         response = self.get_page(project, view_name="project_lead")
         self.assertContains(response, str(lead))
 
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_applicant_can_see_disbursement_notes(self):
+        project = ProjectFactory(user=self.user)
+        DisbursementFactory(
+            contract__project=project,
+            amount=decimal.Decimal("251.47"),
+            notes="Prime tranche sent by wire.",
+        )
+        response = self.get_page(project)
+        self.assertContains(response, "Prime tranche sent by wire.")
+        self.assertNotContains(response, "visible to staff and finance only")
+
 
 class TestStaffProjectDetailView(BaseProjectDetailTestCase):
     user_factory = StaffFactory
@@ -404,6 +416,17 @@ class TestStaffProjectDetailView(BaseProjectDetailTestCase):
         # both sibling projects appear in the tab dropdown
         self.assertContains(response, "Hardware bucket")
         self.assertContains(response, "Travel bucket")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_staff_can_see_disbursement_notes(self):
+        project = ProjectFactory()
+        DisbursementFactory(
+            contract__project=project,
+            amount=decimal.Decimal("257.17"),
+            notes="Second tranche sent by wire.",
+        )
+        response = self.get_page(project)
+        self.assertContains(response, "Second tranche sent by wire.")
 
 
 class TestFinanceProjectDetailView(BaseProjectDetailTestCase):
