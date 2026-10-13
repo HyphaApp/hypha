@@ -122,6 +122,7 @@ from ..permissions import has_permission
 from ..reports.views import ReportingMixin
 from ..tables import ProjectsListTable
 from ..utils import (
+    export_projects_to_csv,
     get_paf_status_display,
     get_placeholder_file,
     get_project_status_choices,
@@ -2442,11 +2443,24 @@ class ProjectSOWEditView(ProjectFormEditView):
 @method_decorator(staff_or_finance_or_contracting_required, name="dispatch")
 class ProjectListView(SingleTableMixin, FilterView):
     filterset_class = ProjectListFilter
-    queryset = Project.objects.for_table()
     table_class = ProjectsListTable
     template_name = "application_projects/project_list.html"
 
     excluded_fields = settings.PROJECTS_TABLE_EXCLUDED_FIELDS
+
+    def get_queryset(self):
+        # Built per request so the contracts total follows the active
+        # PROJECTS_PAYMENTS_FLOW instead of the import-time setting.
+        return Project.objects.for_table()
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.GET.get("format") == "csv":
+            response = HttpResponse(content_type="text/csv")
+            response["Content-Disposition"] = 'attachment; filename="projects.csv"'
+            export_projects_to_csv(context["object_list"], response)
+            return response
+        else:
+            return super().render_to_response(context, **response_kwargs)
 
     def get_filterset_kwargs(self, filterset_class, **kwargs):
         new_kwargs = super().get_filterset_kwargs(filterset_class)

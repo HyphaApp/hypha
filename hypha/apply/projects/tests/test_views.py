@@ -9,6 +9,7 @@ from django.contrib.auth.models import AnonymousUser, Group
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
+from django.utils import translation
 
 from hypha.apply.activity.adapters.activity_feed import ActivityAdapter
 from hypha.apply.activity.options import MESSAGES
@@ -19,6 +20,7 @@ from hypha.apply.funds.tests.factories import (
 )
 from hypha.apply.projects.utils import (
     format_local_minute,
+    get_contract_approved_amounts_cell,
     get_invoice_status_display_value,
 )
 from hypha.apply.users.roles import TEAMADMIN_GROUP_NAME
@@ -36,6 +38,8 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 from hypha.home.factories import ApplySiteFactory
 
 from ..forms import SetPendingForm
+from ..forms.project import TrimmedDecimalInput, trimmed_decimal_string
+from ..models import Project
 from ..models.disbursement import Disbursement
 from ..models.invoice import CHANGES_REQUESTED_BY_STAFF, DECLINED, SUBMITTED
 from ..models.project import (
@@ -1370,6 +1374,315 @@ class TestProjectListView(TestCase):
 
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 403)
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_sum_shown_in_project_list(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("571")
+        )
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "992.00 XTS")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_sum_without_currency_code(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(project=project, amount_approved=decimal.Decimal("421"))
+        ContractFactory(project=project, amount_approved=decimal.Decimal("571"))
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "992.00")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_absent_without_contracts(self):
+        ProjectFactory(status=INVOICING_AND_REPORTING)
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        table = response.context["table"]
+        self.assertEqual(table.rows[0].get_cell("contract_approved_total"), "—")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_zero_sum_shown(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("0")
+        )
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "0.00 XTS")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_not_summed_across_currencies(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+        ContractFactory(
+            project=project, currency="QZC", amount_approved=decimal.Decimal("571")
+        )
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Multiple currencies")
+        self.assertNotContains(response, "992.00")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_not_summed_when_currency_code_missing(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+        ContractFactory(project=project, amount_approved=decimal.Decimal("571"))
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Multiple currencies")
+        self.assertNotContains(response, "992.00")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_column_ordering(self):
+        with_total = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=with_total,
+            currency="XTS",
+            amount_approved=decimal.Decimal("571"),
+        )
+        without_total = ProjectFactory(status=INVOICING_AND_REPORTING)
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(f"{url}?sort=contract_approved_total")
+        self.assertEqual(response.status_code, 200)
+        table = response.context["table"]
+        # Absent totals are NULL: last ascending, first descending.
+        self.assertEqual(
+            [row.record.pk for row in table.rows],
+            [with_total.pk, without_total.pk],
+        )
+
+        response = self.client.get(f"{url}?sort=-contract_approved_total")
+        self.assertEqual(response.status_code, 200)
+        table = response.context["table"]
+        self.assertEqual(
+            [row.record.pk for row in table.rows],
+            [without_total.pk, with_total.pk],
+        )
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_right_justified(self):
+        ProjectFactory(status=INVOICING_AND_REPORTING)
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        column = response.context["table"].columns["contract_approved_total"]
+        self.assertEqual(column.attrs["td"]["align"], "right")
+        self.assertEqual(column.attrs["th"]["align"], "right")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_total_not_inflated_by_invoices(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("173")
+        )
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("179")
+        )
+        InvoiceFactory(project=project)
+        InvoiceFactory(project=project)
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "352.00 XTS")
+        self.assertNotContains(response, "704.00")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_csv_value_locale_neutral(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("571")
+        )
+        project_row = Project.objects.for_table().get(pk=project.pk)
+
+        with translation.override("cs"):
+            self.assertEqual(
+                get_contract_approved_amounts_cell(project_row, trimmed_decimal_string),
+                "992.00 XTS",
+            )
+            self.assertEqual(
+                get_contract_approved_amounts_cell(
+                    project_row, TrimmedDecimalInput().format_value
+                ),
+                "992,00 XTS",
+            )
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_included_in_csv_export(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("571")
+        )
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(f"{url}?format=csv")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Contracts total")
+        self.assertContains(response, "992.00 XTS")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING")
+    def test_contract_total_column_absent_outside_disbursements_flow(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Contracts total")
+        self.assertNotContains(response, "421.00 XTS")
+
+        response = self.client.get(f"{url}?format=csv")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Contracts total")
+        self.assertNotContains(response, "421.00 XTS")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_csv_export_values_match_columns_with_contracts_flow(self):
+        project = ProjectFactory(
+            status=INVOICING_AND_REPORTING, proposed_end=datetime.date(2573, 6, 18)
+        )
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("571")
+        )
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(f"{url}?format=csv")
+        self.assertEqual(response.status_code, 200)
+
+        rows = list(csv.reader(StringIO(response.content.decode())))
+        self.assertEqual(len(rows), 2)
+        header, values = rows[0], dict(zip(*rows, strict=False))
+
+        self.assertEqual(
+            header,
+            [
+                "Submission #",
+                "Title",
+                "Organization",
+                "Status",
+                "Lead",
+                "Fund",
+                "Round",
+                "Reporting",
+                "Last payment request",
+                "Contracts total",
+                "End Date",
+            ],
+        )
+        self.assertEqual(values["Submission #"], str(project.submission.id))
+        self.assertEqual(values["Title"], project.title)
+        self.assertEqual(values["Contracts total"], "992.00 XTS")
+        self.assertEqual(values["End Date"], "2573-06-18")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING")
+    def test_csv_export_values_match_columns_outside_contracts_flow(self):
+        project = ProjectFactory(
+            status=INVOICING_AND_REPORTING, proposed_end=datetime.date(2577, 8, 25)
+        )
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(f"{url}?format=csv")
+        self.assertEqual(response.status_code, 200)
+
+        rows = list(csv.reader(StringIO(response.content.decode())))
+        self.assertEqual(len(rows), 2)
+        header, values = rows[0], dict(zip(*rows, strict=False))
+
+        self.assertEqual(
+            header,
+            [
+                "Submission #",
+                "Title",
+                "Organization",
+                "Status",
+                "Lead",
+                "Fund",
+                "Round",
+                "Reporting",
+                "Last payment request",
+                "End Date",
+            ],
+        )
+        self.assertNotIn("Contracts total", header)
+        self.assertEqual(values["Submission #"], str(project.submission.id))
+        self.assertEqual(values["Title"], project.title)
+        self.assertEqual(values["End Date"], "2577-08-25")
 
 
 @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
