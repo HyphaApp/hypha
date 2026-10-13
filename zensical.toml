@@ -73,7 +73,7 @@ link = "https://github.com/HyphaApp/"
 name = "GitHub Org"
 
 # Python and Node versions are filled in automatically by
-# scripts/doc_macros.py, which reads ".python-version" and ".nvmrc".
+# docs_scripts/macros.py, which reads ".python-version" and ".nvmrc".
 # Setting them here overrides the automatic versioning.
 [project.extra.versions]
 python.version = ""
@@ -83,6 +83,6 @@ postgres.packages.debian = "postgresql-server-dev-17"
 postgres.packages.fedora = "postgresql-server"
 postgres.packages.macos = "postgres@17"
 postgres_devel.packages.fedora = "libpq-devel"
-tested_ubuntu.version = "22.04 LTS"
-tested_macos.version = "Sequoia 15.5"
-tested_fedora.version = "Workstation 38"
+tested_ubuntu.version = "24.04 LTS"
+tested_macos.version = "Sequoia 15.8"
+tested_fedora.version = "Workstation 40"

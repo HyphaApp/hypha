@@ -7,6 +7,7 @@ on:
     paths:
       - "docs/**"
       - "zensical.toml"
+      - "docs_scripts/**"
       - ".github/workflows/deploy-docs.yml"
 
   workflow_dispatch:
@@ -46,7 +47,7 @@ jobs:
         uses: actions/configure-pages@v6
 
       - name: Build the site
-        run: uv run zensical build --clean
+        run: uv run --no-sync zensical build --clean
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
