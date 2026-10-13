@@ -2,6 +2,7 @@ import json
 
 import django_tables2 as tables
 from django.conf import settings
+from django.db.models import F
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
@@ -15,7 +16,13 @@ from hypha.core.tables import RelativeTimeColumn
 
 from .forms.invoice import get_invoice_possible_transition_for_user
 from .models import Disbursement, Invoice, PAFApprovals, Project
-from .utils import format_local_minute, format_trimmed_amount, get_project_title
+from .payments import PaymentsFlow
+from .utils import (
+    format_local_minute,
+    format_trimmed_amount,
+    get_contract_approved_amounts_cell,
+    get_project_title,
+)
 
 
 def render_invoice_actions(table, record):
@@ -204,7 +211,22 @@ class BaseProjectsTable(tables.Table):
     contract_number = tables.Column(verbose_name=_("Contract #"), default="-")
     reporting = tables.Column(verbose_name=_("Reporting"), accessor="pk")
     last_payment_request = RelativeTimeColumn()
+    # render_contract_approved_total reads annotations that
+    # Project.objects.for_table() provides.
+    contract_approved_total = tables.Column(
+        verbose_name=_("Contracts total"),
+        accessor="pk",
+        order_by="contract_approved_total",
+        attrs={"th": {"align": "right"}, "td": {"align": "right"}},
+    )
     end_date = RelativeTimeColumn(verbose_name=_("End date"), accessor="proposed_end")
+
+    def __init__(self, *args, **kwargs):
+        if settings.PROJECTS_PAYMENTS_FLOW != PaymentsFlow.DISBURSEMENTS:
+            exclude = list(kwargs.get("exclude") or [])
+            exclude.append("contract_approved_total")
+            kwargs["exclude"] = exclude
+        super().__init__(*args, **kwargs)
 
     def order_reporting(self, qs, is_descending):
         direction = "-" if is_descending else ""
@@ -232,6 +254,23 @@ class BaseProjectsTable(tables.Table):
         display += gettext("{count} outstanding").format(count=outstanding_count)
         return mark_safe(display)
 
+    def render_contract_approved_total(self, record):
+        return get_contract_approved_amounts_cell(record, format_trimmed_amount)
+
+    def order_organization_name(self, qs, is_descending):
+        f = F("submission__form_data__organization_name")
+
+        qs = (
+            qs.order_by(f.desc(nulls_last=True))
+            if is_descending
+            else qs.order_by(f.asc(nulls_last=True))
+        )
+
+        return qs, True
+
+    def render_organization_name(self, record):
+        return record.submission.form_data.get("organization_name", "")
+
 
 class ProjectsDashboardTable(BaseProjectsTable):
     class Meta:
@@ -241,6 +280,7 @@ class ProjectsDashboardTable(BaseProjectsTable):
             "fund",
             "reporting",
             "last_payment_request",
+            "contract_approved_total",
             "end_date",
         ]
         model = Project
@@ -324,6 +364,7 @@ class ProjectsListTable(BaseProjectsTable):
             "contract_number",
             "reporting",
             "last_payment_request",
+            "contract_approved_total",
             "end_date",
         ]
         model = Project

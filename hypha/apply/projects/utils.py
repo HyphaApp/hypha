@@ -2,6 +2,7 @@ import csv
 import io
 from datetime import timedelta
 
+from django.conf import settings
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
@@ -37,6 +38,7 @@ from .models.project import (
     PROJECT_STATUS_CHOICES,
     PAFReviewersRole,
 )
+from .payments import PaymentsFlow
 
 PROJECT_TITLE_TEMPLATE = "{text} <span class='text-fg-muted'>#{application_id}</span>"
 
@@ -189,7 +191,34 @@ def get_placeholder_file(initial_file):
     ]
 
 
+def get_contract_approved_amounts_cell(project, format_amount):
+    """Render a project's contracts total cell.
+
+    Returns "Multiple currencies" when the amounts span more than one
+    currency code, an em dash when no approved amount is entered
+    (absence is not zero), and otherwise the formatted total with its
+    currency code. format_amount renders the Decimal total: locale-aware
+    for the table, locale-neutral for the CSV export.
+    """
+    if project.contract_approved_currency_count > 1:
+        return _("Multiple currencies")
+    total = project.contract_approved_total
+    if total is None:
+        return "—"
+    amount = format_amount(total)
+    if project.contract_approved_currency_code:
+        return f"{amount} {project.contract_approved_currency_code}"
+    return amount
+
+
 def export_projects_to_csv(projects_list, csv_stream):
+    # Lazy import: forms.project depends on modules that import this file.
+    from .forms.project import trimmed_decimal_string
+
+    include_contracts_total = (
+        settings.PROJECTS_PAYMENTS_FLOW == PaymentsFlow.DISBURSEMENTS
+    )
+
     header_row = [
         "Submission #",
         "Title",
@@ -200,8 +229,10 @@ def export_projects_to_csv(projects_list, csv_stream):
         "Round",
         "Reporting",
         "Last payment request",
-        "End Date",
     ]
+    if include_contracts_total:
+        header_row.append("Contracts total")
+    header_row.append("End Date")
     data_list = []
 
     for project in projects_list:
@@ -215,17 +246,21 @@ def export_projects_to_csv(projects_list, csv_stream):
                 )
 
         values = {
-            header_row[0]: project.submission.id,
-            header_row[1]: project.title,
-            header_row[2]: project.submission.form_data.get("organization_name", ""),
-            header_row[3]: project.get_status_display(),
-            header_row[4]: project.lead,
-            header_row[5]: project.submission.page,
-            header_row[6]: project.submission.round,
-            header_row[7]: reporting_status,
-            header_row[8]: project.last_payment_request,
-            header_row[9]: project.end_date,
+            "Submission #": project.submission.id,
+            "Title": project.title,
+            "Organization": project.submission.form_data.get("organization_name", ""),
+            "Status": project.get_status_display(),
+            "Lead": project.lead,
+            "Fund": project.submission.page,
+            "Round": project.submission.round,
+            "Reporting": reporting_status,
+            "Last payment request": project.last_payment_request,
         }
+        if include_contracts_total:
+            values["Contracts total"] = get_contract_approved_amounts_cell(
+                project, trimmed_decimal_string
+            )
+        values["End Date"] = project.end_date
         data_list.append(values)
     # Columns will be in header_row order with values matched by key in data_list (order within each notwithstanding).
     writer = csv.DictWriter(csv_stream, fieldnames=header_row, restval="")

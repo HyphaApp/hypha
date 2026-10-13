@@ -118,6 +118,29 @@ class CurrencyCodeField(forms.CharField):
         )
 
 
+def trimmed_decimal_string(value):
+    """Dot-decimal string with a minimum of two decimal places.
+
+    Preserves extra precision. Returns None for None or unparsable
+    values.
+    """
+    if value is None:
+        return None
+    try:
+        s = format(Decimal(str(value)), "f")
+    except (InvalidOperation, ValueError):
+        return None
+    if "." in s:
+        int_part, frac_part = s.split(".")
+        # 1. Remove trailing zeros
+        frac_part = frac_part.rstrip("0")
+        # 2. Pad to minimum 2 decimal places
+        if len(frac_part) < 2:
+            frac_part = frac_part.ljust(2, "0")
+        return f"{int_part}.{frac_part}"
+    return f"{s}.00"
+
+
 class TrimmedDecimalInput(NumberInput):
     """
     Renders Decimal values with a minimum of 2 decimal places,
@@ -127,22 +150,10 @@ class TrimmedDecimalInput(NumberInput):
     localize = True
 
     def format_value(self, value):
-        if value is None:
+        s = trimmed_decimal_string(value)
+        if s is None:
             return ""
-        try:
-            s = format(Decimal(str(value)), "f")
-        except (InvalidOperation, ValueError):
-            return ""
-        if "." in s:
-            int_part, frac_part = s.split(".")
-            # 1. Remove trailing zeros
-            frac_part = frac_part.rstrip("0")
-            # 2. Pad to minimum 2 decimal places
-            if len(frac_part) < 2:
-                frac_part = frac_part.ljust(2, "0")
-            formatted = f"{int_part}.{frac_part}"
-            return number_format(formatted)
-        return number_format(f"{s}.00")
+        return number_format(s)
 
 
 class ApproveContractForm(forms.Form):
