@@ -13,7 +13,6 @@ extra_css = ["assets/extra.css"]
 
 
 [project.theme]
-name = "material"
 variant = "classic"
 favicon = "/assets/favicon-32x32.png"
 logo = "assets/logo.svg"
@@ -38,24 +37,8 @@ features = [
 [project.theme.icon]
 repo = "fontawesome/brands/github"
 
-[project.markdown_extensions]
-admonition = {}
-def_list = {}
-toc.permalink = true
-"zensical.extensions.macros".module_name = "docs_scripts/macros"
-"pymdownx.betterem".smart_enable = "all"
-"pymdownx.highlight".guess_lang = false
-"pymdownx.highlight".linenums = false
-"pymdownx.highlight".anchor_linenums = true
-"pymdownx.highlight".line_spans = "__span"
-"pymdownx.highlight".pygments_lang_class = true
-"pymdownx.magiclink" = {}
-"pymdownx.smartsymbols" = {}
-"pymdownx.superfences".custom_fences = [
-  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
-]
-"pymdownx.tabbed".alternate_style = true
-"pymdownx.tasklist".custom_checkbox = true
+[project.plugins.macros]
+module_name = "docs_scripts/macros"
 
 [[project.extra.social]]
 icon = "material/chat"
