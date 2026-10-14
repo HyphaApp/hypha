@@ -78,6 +78,7 @@ from .utils import (
     login_ratelimit_key,
     send_activation_email,
     send_confirmation_email,
+    send_email_in_use_email,
 )
 
 User = get_user_model()
@@ -229,7 +230,18 @@ def account_email_change(request):
         from_email=settings.DEFAULT_FROM_EMAIL,
     )
 
-    if current_email != updated_email:
+    email_in_use = (
+        User.objects.filter(email__iexact=updated_email)
+        .exclude(pk=request.user.pk)
+        .exists()
+    )
+    if email_in_use:
+        # Tell the owner of the address rather than the requesting user, so the
+        # response looks the same whether or not the address is registered.
+        send_email_in_use_email(
+            updated_email=updated_email, site=Site.find_for_request(request)
+        )
+    elif current_email != updated_email:
         # The token binds the change to this user *and* to their current email.
         # Binding the pk stops a token issued for one account being replayed
         # against another, and binding the current email makes the token
