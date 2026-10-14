@@ -211,11 +211,32 @@ def get_contract_approved_amounts_cell(project, format_amount):
     return amount
 
 
+def get_disbursement_total_cell(project, format_amount):
+    """Render a project's disbursed total cell.
+
+    Returns "Multiple currencies" when the disbursements span more than
+    one currency code (a coded amount beside an uncoded one counts as
+    multiple), an em dash when a project has no disbursements (absence is
+    not zero), and otherwise the formatted total with its currency code.
+    format_amount renders the Decimal total: locale-aware for the table,
+    locale-neutral for the CSV export.
+    """
+    if project.disbursement_currency_count is None:
+        return "—"
+    total = project.disbursement_total
+    if total is None:
+        return _("Multiple currencies")
+    amount = format_amount(total)
+    if project.disbursement_currency_code:
+        return f"{amount} {project.disbursement_currency_code}"
+    return amount
+
+
 def export_projects_to_csv(projects_list, csv_stream):
     # Lazy import: forms.project depends on modules that import this file.
     from .forms.project import trimmed_decimal_string
 
-    include_contracts_total = (
+    include_disbursements_columns = (
         settings.PROJECTS_PAYMENTS_FLOW == PaymentsFlow.DISBURSEMENTS
     )
 
@@ -230,8 +251,9 @@ def export_projects_to_csv(projects_list, csv_stream):
         "Reporting",
         "Last payment request",
     ]
-    if include_contracts_total:
+    if include_disbursements_columns:
         header_row.append("Contracts total")
+        header_row.append("Disbursed total")
     header_row.append("End Date")
     data_list = []
 
@@ -256,8 +278,11 @@ def export_projects_to_csv(projects_list, csv_stream):
             "Reporting": reporting_status,
             "Last payment request": project.last_payment_request,
         }
-        if include_contracts_total:
+        if include_disbursements_columns:
             values["Contracts total"] = get_contract_approved_amounts_cell(
+                project, trimmed_decimal_string
+            )
+            values["Disbursed total"] = get_disbursement_total_cell(
                 project, trimmed_decimal_string
             )
         values["End Date"] = project.end_date
