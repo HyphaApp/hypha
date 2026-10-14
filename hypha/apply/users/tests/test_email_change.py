@@ -1,6 +1,7 @@
 from unittest.mock import patch
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib.messages import get_messages
 from django.core.cache import cache
 from django.core.signing import TimestampSigner, dumps
@@ -29,8 +30,6 @@ def url_with_value(signed_value):
 
 class TestEmailChangeRequiresLogin(TestCase):
     def test_unauthenticated_user_redirected_to_login(self):
-        from django.conf import settings
-
         response = self.client.get(EMAIL_CHANGE_URL, follow=False)
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse(settings.LOGIN_URL), response["Location"])
@@ -152,6 +151,50 @@ class TestEmailChangeSuccess(TestCase):
         self.assertEqual(
             [addr for msg in mail.outbox for addr in msg.to], [self.user.email]
         )
+
+    def test_email_in_use_sends_notice_instead_of_confirmation(self):
+        from django.core import mail
+
+        other_user = UserFactory()
+        signed = make_signed_value(other_user.email.upper())
+        response = self.client.get(url_with_value(signed), follow=False)
+        # Same response as a normal change, so nothing is revealed on screen.
+        self.assertRedirects(
+            response, CONFIRM_LINK_SENT_URL, fetch_redirect_response=False
+        )
+        self.assertEqual(len(mail.outbox), 2)
+        notice = mail.outbox[1]
+        self.assertEqual(notice.to, [other_user.email.upper()])
+        self.assertIn("already an account", notice.body)
+        confirm_path_prefix = confirm_url("x").removesuffix("x/")
+        self.assertNotIn(confirm_path_prefix, notice.body)
+
+
+class TestProfileFormEmailChange(TestCase):
+    """The profile form must not reveal whether an email is registered."""
+
+    def setUp(self):
+        self.user = UserFactory()
+        # The first backend is OAuth, which disables the email field.
+        self.client.force_login(self.user, backend=settings.CUSTOM_AUTH_BACKEND)
+
+    def post_profile(self, email):
+        return self.client.post(
+            ACCOUNT_URL,
+            {"full_name": self.user.full_name, "email": email},
+            follow=False,
+        )
+
+    def test_email_in_use_goes_to_change_flow(self):
+        other_user = UserFactory()
+        response = self.post_profile(other_user.email)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(EMAIL_CHANGE_URL, response["Location"])
+
+    def test_new_email_goes_to_change_flow(self):
+        response = self.post_profile("unused@example.com")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(EMAIL_CHANGE_URL, response["Location"])
 
 
 class TestEmailChangeElevatedUserWithPassword(TestCase):

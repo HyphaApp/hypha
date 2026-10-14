@@ -220,22 +220,18 @@ class ProfileForm(forms.ModelForm):
 
         return slack
 
-    def clean_email(self):
-        email = self.cleaned_data["email"]
-        # Case-insensitive, to match `is_user_already_registered()` and to stop
-        # a case variant of an existing address being registered.
-        if (
-            User.objects.filter(email__iexact=email)
-            .exclude(pk=self.instance.pk)
-            .exists()
-        ):
-            email = (
-                self.instance.email
-            )  # updated email to avoid email existing message, fix information leak.
-        return email
-
     def clean_full_name(self):
         return strip_html_and_nerf_urls(self.cleaned_data["full_name"])
+
+    def validate_unique(self):
+        # A new email is never saved from this form, it goes through the
+        # confirmation flow. Skipping the unique check on it here avoids a form
+        # error that would reveal whether an address is registered.
+        exclude = self._get_validation_exclusions() | {"email"}
+        try:
+            self.instance.validate_unique(exclude=exclude)
+        except forms.ValidationError as e:
+            self._update_errors(e)
 
 
 def get_become_user_choices():
