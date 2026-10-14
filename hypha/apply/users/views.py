@@ -198,7 +198,8 @@ def account_email_change(request):
         return redirect("users:account")
     value = loads(unsigned_value)
 
-    if slack := value["slack"] is not None:
+    slack = value["slack"]
+    if slack is not None:
         request.user.slack = slack
 
     request.user.full_name = value["name"]
