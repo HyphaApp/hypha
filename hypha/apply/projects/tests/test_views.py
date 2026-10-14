@@ -1605,12 +1605,22 @@ class TestProjectListView(TestCase):
         project = ProjectFactory(
             status=INVOICING_AND_REPORTING, proposed_end=datetime.date(2573, 6, 18)
         )
-        ContractFactory(
+        first_contract = ContractFactory(
             project=project, currency="XTS", amount_approved=decimal.Decimal("421")
         )
         ContractFactory(
             project=project, currency="XTS", amount_approved=decimal.Decimal("571")
         )
+        Disbursement(
+            contract=first_contract,
+            amount=decimal.Decimal("269.03"),
+            date=datetime.date(2585, 4, 27),
+        ).save()
+        Disbursement(
+            contract=first_contract,
+            amount=decimal.Decimal("271.01"),
+            date=datetime.date(2587, 6, 29),
+        ).save()
 
         self.client.force_login(StaffFactory())
 
@@ -1636,12 +1646,14 @@ class TestProjectListView(TestCase):
                 "Reporting",
                 "Last payment request",
                 "Contracts total",
+                "Disbursed total",
                 "End Date",
             ],
         )
         self.assertEqual(values["Submission #"], str(project.submission.id))
         self.assertEqual(values["Title"], project.title)
         self.assertEqual(values["Contracts total"], "992.00 XTS")
+        self.assertEqual(values["Disbursed total"], "540.04 XTS")
         self.assertEqual(values["End Date"], "2573-06-18")
 
     @override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING")
@@ -1680,9 +1692,172 @@ class TestProjectListView(TestCase):
             ],
         )
         self.assertNotIn("Contracts total", header)
+        self.assertNotIn("Disbursed total", header)
         self.assertEqual(values["Submission #"], str(project.submission.id))
         self.assertEqual(values["Title"], project.title)
         self.assertEqual(values["End Date"], "2577-08-25")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_disbursement_total_rendered_in_table(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        contract = ContractFactory(project=project)
+        Disbursement(
+            contract=contract,
+            amount=decimal.Decimal("211.43"),
+            date=datetime.date(2553, 6, 27),
+        ).save()
+
+        self.client.force_login(StaffFactory())
+
+        response = self.client.get(reverse("apply:projects:all"), follow=True)
+
+        self.assertContains(response, "211.43")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_disbursement_totals_sum_shown_with_single_currency_code(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        first_contract = ContractFactory(project=project, currency="XTS")
+        second_contract = ContractFactory(project=project, currency="XTS")
+        Disbursement(
+            contract=first_contract,
+            amount=decimal.Decimal("191.39"),
+            date=datetime.date(2559, 12, 31),
+        ).save()
+        Disbursement(
+            contract=second_contract,
+            amount=decimal.Decimal("199.37"),
+            date=datetime.date(2561, 2, 27),
+        ).save()
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "390.76 XTS")
+        self.assertContains(response, '<td align="right">')
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_disbursement_totals_sum_without_currency_code(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        first_contract = ContractFactory(project=project)
+        second_contract = ContractFactory(project=project)
+        Disbursement(
+            contract=first_contract,
+            amount=decimal.Decimal("223.43"),
+            date=datetime.date(2567, 8, 27),
+        ).save()
+        Disbursement(
+            contract=second_contract,
+            amount=decimal.Decimal("227.41"),
+            date=datetime.date(2569, 10, 23),
+        ).save()
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "450.84")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_disbursement_totals_not_summed_across_currencies(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        coded = ContractFactory(project=project, currency="XTS")
+        other = ContractFactory(project=project, currency="QZC")
+        Disbursement(
+            contract=coded,
+            amount=decimal.Decimal("233.33"),
+            date=datetime.date(2563, 4, 23),
+        ).save()
+        Disbursement(
+            contract=other,
+            amount=decimal.Decimal("239.31"),
+            date=datetime.date(2565, 6, 29),
+        ).save()
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Multiple currencies")
+        self.assertNotContains(response, "472.64")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_disbursement_totals_not_summed_when_currency_code_missing(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        coded = ContractFactory(project=project, currency="XTS")
+        uncoded = ContractFactory(project=project)
+        Disbursement(
+            contract=coded,
+            amount=decimal.Decimal("241.79"),
+            date=datetime.date(2581, 10, 27),
+        ).save()
+        Disbursement(
+            contract=uncoded,
+            amount=decimal.Decimal("251.71"),
+            date=datetime.date(2583, 12, 29),
+        ).save()
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Multiple currencies")
+        self.assertNotContains(response, "493.50")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_disbursement_total_included_in_csv_export(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        first_contract = ContractFactory(project=project, currency="XTS")
+        second_contract = ContractFactory(project=project, currency="XTS")
+        Disbursement(
+            contract=first_contract,
+            amount=decimal.Decimal("257.17"),
+            date=datetime.date(2571, 12, 27),
+        ).save()
+        Disbursement(
+            contract=second_contract,
+            amount=decimal.Decimal("263.21"),
+            date=datetime.date(2573, 2, 23),
+        ).save()
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(f"{url}?format=csv")
+        self.assertEqual(response.status_code, 200)
+
+        rows = list(csv.reader(StringIO(response.content.decode())))
+        self.assertEqual(len(rows), 2)
+        header, values = rows[0], dict(zip(*rows, strict=False))
+
+        self.assertEqual(
+            header,
+            [
+                "Submission #",
+                "Title",
+                "Organization",
+                "Status",
+                "Lead",
+                "Fund",
+                "Round",
+                "Reporting",
+                "Last payment request",
+                "Contracts total",
+                "Disbursed total",
+                "End Date",
+            ],
+        )
+        self.assertEqual(values["Contracts total"], "—")
+        self.assertEqual(values["Disbursed total"], "520.38 XTS")
 
 
 @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")

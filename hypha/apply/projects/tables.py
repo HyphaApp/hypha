@@ -21,6 +21,7 @@ from .utils import (
     format_local_minute,
     format_trimmed_amount,
     get_contract_approved_amounts_cell,
+    get_disbursement_total_cell,
     get_project_title,
 )
 
@@ -219,12 +220,20 @@ class BaseProjectsTable(tables.Table):
         order_by="contract_approved_total",
         attrs={"th": {"align": "right"}, "td": {"align": "right"}},
     )
+    # Non-empty accessor (pk) so django-tables2 calls render_disbursement_total.
+    disbursement_total = tables.Column(
+        verbose_name=_("Disbursed total"),
+        accessor="pk",
+        order_by="disbursement_total",
+        attrs={"th": {"align": "right"}, "td": {"align": "right"}},
+    )
     end_date = RelativeTimeColumn(verbose_name=_("End date"), accessor="proposed_end")
 
     def __init__(self, *args, **kwargs):
         if settings.PROJECTS_PAYMENTS_FLOW != PaymentsFlow.DISBURSEMENTS:
             exclude = list(kwargs.get("exclude") or [])
             exclude.append("contract_approved_total")
+            exclude.append("disbursement_total")
             kwargs["exclude"] = exclude
         super().__init__(*args, **kwargs)
 
@@ -257,6 +266,9 @@ class BaseProjectsTable(tables.Table):
     def render_contract_approved_total(self, record):
         return get_contract_approved_amounts_cell(record, format_trimmed_amount)
 
+    def render_disbursement_total(self, record):
+        return get_disbursement_total_cell(record, format_trimmed_amount)
+
     def order_organization_name(self, qs, is_descending):
         f = F("submission__form_data__organization_name")
 
@@ -281,6 +293,7 @@ class ProjectsDashboardTable(BaseProjectsTable):
             "reporting",
             "last_payment_request",
             "contract_approved_total",
+            "disbursement_total",
             "end_date",
         ]
         model = Project
@@ -365,6 +378,7 @@ class ProjectsListTable(BaseProjectsTable):
             "reporting",
             "last_payment_request",
             "contract_approved_total",
+            "disbursement_total",
             "end_date",
         ]
         model = Project

@@ -46,6 +46,7 @@ from hypha.apply.utils.storage import PrivateStorage
 from ..admin_forms import ContractDocumentCategoryAdminForm
 from ..blocks import ProjectFormCustomFormFieldsBlock
 from ..payments import PaymentsFlow
+from .disbursement import Disbursement
 
 logger = logging.getLogger(__name__)
 
@@ -195,6 +196,48 @@ class ProjectQuerySet(models.QuerySet):
             ),
         )
 
+    def with_disbursement_total(self):
+        # Subqueries, not joined aggregates: for_table() already aggregates
+        # over the invoices join, and combining aggregations over two
+        # one-to-many joins in one query multiplies both results (fan-out).
+        # A missing currency code is its own group so uncoded disbursements
+        # never blend into a coded total.
+        project_disbursements = Disbursement.objects.filter(
+            contract__project=OuterRef("pk"),
+        )
+        return self.annotate(
+            disbursement_currency_count=Subquery(
+                project_disbursements.order_by()
+                .values("contract__project")
+                .annotate(
+                    currency_count=Count(
+                        Coalesce("contract__currency", Value("-")),
+                        distinct=True,
+                    ),
+                )
+                .values("currency_count"),
+                output_field=models.IntegerField(),
+            ),
+            disbursement_currency_code=Subquery(
+                project_disbursements.order_by("contract__currency").values(
+                    "contract__currency"
+                )[:1],
+                output_field=models.CharField(max_length=3),
+            ),
+        ).annotate(
+            disbursement_total=Case(
+                When(disbursement_currency_count__gt=1, then=Value(None)),
+                # No Coalesce: no disbursements means no total (NULL), not 0.
+                default=Subquery(
+                    project_disbursements.order_by()
+                    .values("contract__project")
+                    .annotate(total=Sum("amount"))
+                    .values("total"),
+                ),
+                output_field=models.DecimalField(),
+            ),
+        )
+
     def with_outstanding_reports(self):
         Report = apps.get_model("project_reports", "Report")
         return self.annotate(
@@ -228,6 +271,7 @@ class ProjectQuerySet(models.QuerySet):
         )
         if settings.PROJECTS_PAYMENTS_FLOW == PaymentsFlow.DISBURSEMENTS:
             qs = qs.with_contract_approved_total()
+            qs = qs.with_disbursement_total()
         return qs
 
     def for_reporting_table(self):
