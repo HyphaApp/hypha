@@ -1,9 +1,11 @@
+import csv
+import datetime
 import decimal
 import json
-from io import BytesIO
+from io import BytesIO, StringIO
 
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AnonymousUser, Group
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
@@ -15,7 +17,11 @@ from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     LabSubmissionFactory,
 )
-from hypha.apply.projects.utils import get_invoice_status_display_value
+from hypha.apply.projects.utils import (
+    format_local_minute,
+    get_invoice_status_display_value,
+)
+from hypha.apply.users.roles import TEAMADMIN_GROUP_NAME
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     ApproverFactory,
@@ -30,6 +36,7 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 from hypha.home.factories import ApplySiteFactory
 
 from ..forms import SetPendingForm
+from ..models.disbursement import Disbursement
 from ..models.invoice import CHANGES_REQUESTED_BY_STAFF, DECLINED, SUBMITTED
 from ..models.project import (
     APPROVE,
@@ -1363,6 +1370,350 @@ class TestProjectListView(TestCase):
 
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 403)
+
+
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+class TestDisbursementListView(TestCase):
+    """The admin ledger of every disbursement across all projects.
+
+    Admin-only (Staff Admin group or superuser) and gated on the
+    DISBURSEMENTS payments flow; the date filter targets the disbursement's
+    own date, not the date it was entered.
+
+    """
+
+    def make_staff_admin(self):
+        # Staff Admin requires the Staff group too (see the role's help text).
+        user = StaffFactory()
+        admin_group, _ = Group.objects.get_or_create(name=TEAMADMIN_GROUP_NAME)
+        user.groups.add(admin_group)
+        return user
+
+    def test_staff_admin_can_access(self):
+        DisbursementFactory()
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"), follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_superuser_can_access(self):
+        DisbursementFactory()
+        self.client.force_login(SuperUserFactory())
+
+        response = self.client.get(reverse("apply:projects:disbursements"), follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_staff_cannot_access(self):
+        DisbursementFactory()
+        self.client.force_login(StaffFactory())
+
+        response = self.client.get(reverse("apply:projects:disbursements"), follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_finance_cannot_access(self):
+        DisbursementFactory()
+        self.client.force_login(FinanceFactory())
+
+        response = self.client.get(reverse("apply:projects:disbursements"), follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_applicant_cannot_access(self):
+        DisbursementFactory()
+        self.client.force_login(UserFactory())
+
+        response = self.client.get(reverse("apply:projects:disbursements"), follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_not_found_when_payments_flow_is_not_disbursements(self):
+        DisbursementFactory()
+        self.client.force_login(SuperUserFactory())
+
+        with override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING"):
+            response = self.client.get(
+                reverse("apply:projects:disbursements"), follow=True
+            )
+        self.assertEqual(response.status_code, 404)
+
+    def test_date_filter_uses_disbursement_date(self):
+        may_disbursement = DisbursementFactory(
+            date=datetime.date(2543, 5, 23), amount=decimal.Decimal("101.03")
+        )
+        june_disbursement = DisbursementFactory(
+            date=datetime.date(2543, 6, 19), amount=decimal.Decimal("97.01")
+        )
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"),
+            {"date_after": "2543-06-01", "date_before": "2543-06-30"},
+        )
+        self.assertEqual(list(response.context["object_list"]), [june_disbursement])
+        self.assertNotIn(may_disbursement, response.context["object_list"])
+
+    def test_currency_filter(self):
+        usd_disbursement = DisbursementFactory(contract=ContractFactory(currency="USD"))
+        DisbursementFactory(contract=ContractFactory(currency="EUR"))
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"), {"currency": "USD"}
+        )
+        self.assertEqual(list(response.context["object_list"]), [usd_disbursement])
+
+    def test_currency_filter_can_match_uncoded_contracts(self):
+        uncoded_disbursement = DisbursementFactory(contract=ContractFactory())
+        DisbursementFactory(contract=ContractFactory(currency="EUR"))
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"), {"currency": "none"}
+        )
+        self.assertEqual(list(response.context["object_list"]), [uncoded_disbursement])
+
+    def test_project_status_filter(self):
+        contracting_disbursement = DisbursementFactory(
+            contract=ContractFactory(project=ProjectFactory(status=CONTRACTING)),
+        )
+        DisbursementFactory(
+            contract=ContractFactory(
+                project=ProjectFactory(status=INVOICING_AND_REPORTING)
+            ),
+        )
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"), {"project_status": CONTRACTING}
+        )
+        self.assertEqual(
+            list(response.context["object_list"]), [contracting_disbursement]
+        )
+
+    def test_total_is_numeric_for_a_single_currency(self):
+        contract = ContractFactory(currency="USD")
+        DisbursementFactory(contract=contract, amount=decimal.Decimal("101.03"))
+        DisbursementFactory(contract=contract, amount=decimal.Decimal("97.01"))
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertEqual(response.context["disbursements_total"], "198.04 USD")
+        self.assertIn(
+            "Total disbursed (2 records matching this filter): 198.04 USD",
+            response.content.decode("utf-8"),
+        )
+
+    def test_total_elaborates_each_currency(self):
+        DisbursementFactory(
+            contract=ContractFactory(currency="USD"), amount=decimal.Decimal("499.03")
+        )
+        DisbursementFactory(
+            contract=ContractFactory(currency="MXN"), amount=decimal.Decimal("809.03")
+        )
+        DisbursementFactory(
+            contract=ContractFactory(currency="EUR"), amount=decimal.Decimal("1009.03")
+        )
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertEqual(
+            response.context["disbursements_total"],
+            "1009.03 EUR, 809.03 MXN, 499.03 USD",
+        )
+        self.assertIn(
+            "Total disbursed (3 records matching this filter): "
+            "1009.03 EUR, 809.03 MXN, 499.03 USD",
+            response.content.decode("utf-8"),
+        )
+
+    def test_total_lists_uncoded_amounts_last(self):
+        coded = ContractFactory(currency="USD")
+        DisbursementFactory(contract=coded, amount=decimal.Decimal("499.03"))
+        uncoded = ContractFactory()
+        DisbursementFactory(contract=uncoded, amount=decimal.Decimal("251.03"))
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertEqual(response.context["disbursements_total"], "499.03 USD, 251.03")
+
+    def test_total_is_numeric_without_code_when_no_currency(self):
+        contract = ContractFactory()
+        DisbursementFactory(contract=contract, amount=decimal.Decimal("101.03"))
+        DisbursementFactory(contract=contract, amount=decimal.Decimal("97.01"))
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertEqual(response.context["disbursements_total"], "198.04")
+        self.assertIn(
+            "Total disbursed (2 records matching this filter): 198.04",
+            response.content.decode("utf-8"),
+        )
+
+    def test_csv_export_includes_iso_dates_and_amounts(self):
+        contract = ContractFactory(
+            currency="USD",
+            amount_requested=decimal.Decimal("250.5"),
+            amount_approved=decimal.Decimal("249.99"),
+        )
+        DisbursementFactory(
+            contract=contract,
+            amount=decimal.Decimal("101.03"),
+            date=datetime.date(2543, 5, 23),
+            notes="wire #d7b9",
+        )
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"), {"format": "csv"}
+        )
+        self.assertEqual(response.headers["Content-Type"], "text/csv")
+        content = response.content.decode("utf-8")
+        self.assertIn("2543-05-23", content)
+        self.assertIn(f"#{contract.pk}", content)
+        self.assertIn("250.50", content)
+        self.assertIn("101.03", content)
+        self.assertIn("USD", content)
+        self.assertIn("wire #d7b9", content)
+
+    def test_csv_export_respects_filters(self):
+        kept = DisbursementFactory(contract=ContractFactory(currency="USD"))
+        excluded = DisbursementFactory(contract=ContractFactory(currency="EUR"))
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"),
+            {"currency": "USD", "format": "csv"},
+        )
+        content = response.content.decode("utf-8")
+        self.assertIn(f"#{kept.contract.pk}", content)
+        self.assertNotIn(f"#{excluded.contract.pk}", content)
+
+    def test_table_leads_with_project_then_dates(self):
+        DisbursementFactory()
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertEqual(
+            list(response.context["table"].columns.names())[:3],
+            ["project", "date", "created_at"],
+        )
+        self.assertIn("Amount disbursed", response.content.decode("utf-8"))
+
+    def test_entry_date_renders_minute_precision_locally(self):
+        DisbursementFactory()
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertRegex(
+            response.content.decode("utf-8"), r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}(?![:\d])"
+        )
+
+    def test_entry_date_tooltip_shows_edit_when_minutes_differ(self):
+        disbursement = DisbursementFactory()
+        # queryset.update bypasses auto_now, so both timestamps can be pinned.
+        Disbursement.objects.filter(pk=disbursement.pk).update(
+            created_at=datetime.datetime(
+                2543, 5, 23, 14, 32, 0, tzinfo=datetime.timezone.utc
+            ),
+            updated_at=datetime.datetime(
+                2543, 5, 23, 14, 40, 0, tzinfo=datetime.timezone.utc
+            ),
+        )
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        content = response.content.decode("utf-8")
+        self.assertIn("2543-05-23 14:32*", content)
+        self.assertIn('title="Edited 2543-05-23 14:40"', content)
+
+    def test_entry_date_has_no_tooltip_when_minutes_match(self):
+        DisbursementFactory()
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertNotIn('title="Edited', response.content.decode("utf-8"))
+
+    def test_empty_state_shows_message(self):
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        content = response.content.decode("utf-8")
+        self.assertIn("No Disbursements available.", content)
+        self.assertNotIn("disbursements-table", content)
+
+    def test_export_link_visible(self):
+        DisbursementFactory()
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertIn(
+            'data-tippy-content="Export as CSV"', response.content.decode("utf-8")
+        )
+
+    def test_csv_export_follows_table_sort(self):
+        DisbursementFactory(
+            date=datetime.date(2543, 6, 19), amount=decimal.Decimal("101.03")
+        )
+        DisbursementFactory(
+            date=datetime.date(2543, 5, 23), amount=decimal.Decimal("97.01")
+        )
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"), {"format": "csv"}
+        )
+        content = response.content.decode("utf-8")
+        self.assertLess(content.index("101.03"), content.index("97.01"))
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"), {"sort": "amount", "format": "csv"}
+        )
+        content = response.content.decode("utf-8")
+        self.assertLess(content.index("97.01"), content.index("101.03"))
+
+    def test_format_local_minute_rounds_to_nearest_minute(self):
+        self.assertEqual(
+            format_local_minute(datetime.datetime(2543, 5, 23, 14, 32, 29)),
+            "2543-05-23 14:32",
+        )
+        self.assertEqual(
+            format_local_minute(datetime.datetime(2543, 5, 23, 14, 32, 31)),
+            "2543-05-23 14:33",
+        )
+        self.assertEqual(
+            format_local_minute(
+                datetime.datetime(2543, 5, 23, 14, 32, 59, tzinfo=datetime.timezone.utc)
+            ),
+            "2543-05-23 14:33",
+        )
+
+    def test_csv_leads_with_submission_number_then_project(self):
+        disbursement = DisbursementFactory()
+        project = disbursement.contract.project
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"), {"format": "csv"}
+        )
+        rows = list(csv.reader(StringIO(response.content.decode("utf-8"))))
+        self.assertEqual(
+            rows[0],
+            [
+                "Submission #",
+                "Project",
+                "Disbursement date",
+                "Date recorded",
+                "Updated at",
+                "Contract",
+                "Contract requested",
+                "Contract approved",
+                "Currency",
+                "Amount disbursed",
+                "Notes",
+            ],
+        )
+        self.assertEqual(rows[1][:2], [str(project.submission_id), project.title])
+        self.assertEqual(rows[1][2], "2543-05-23")
+        self.assertIn("T", rows[1][3])
+        self.assertIn("T", rows[1][4])
 
 
 class TestStaffProjectDetailDownloadView(BaseViewTestCase):

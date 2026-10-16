@@ -7,19 +7,31 @@ notice, the note is not.
 
 """
 
+from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
+from django.db.models import F, Sum
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DeleteView, UpdateView
+from django_filters.views import FilterView
+from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.users.decorators import staff_or_finance_required
+from hypha.apply.users.decorators import (
+    staff_admin_required,
+    staff_or_finance_required,
+)
 
+from ..filters import DisbursementListFilter
 from ..forms import DisbursementForm
 from ..models import Disbursement, Project
+from ..payments import PaymentsFlow
+from ..tables import AdminDisbursementListTable
+from ..utils import export_disbursements_to_csv, format_trimmed_amount
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")
@@ -149,3 +161,67 @@ class DeleteDisbursementView(DeleteView):
 
     def get_success_url(self):
         return reverse("funds:submissions:project", kwargs={"pk": self.kwargs["pk"]})
+
+
+@method_decorator(staff_admin_required, name="dispatch")
+class DisbursementListView(SingleTableMixin, FilterView):
+    """The admin ledger: every disbursement across every project.
+
+    Admin-only (Staff Admin group or superuser) because it exposes every
+    project's money movement in one place. Gated on the DISBURSEMENTS
+    payments flow, like the per-project disbursements section. The table
+    filters on the disbursement's own date, not the date it was entered, so
+    financial reports can be generated for particular periods; ``?format=csv``
+    exports the filtered rows.
+
+    """
+
+    filterset_class = DisbursementListFilter
+    queryset = Disbursement.objects.select_related("contract__project__submission")
+    table_class = AdminDisbursementListTable
+    template_name = "application_projects/disbursement_list.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        if settings.PROJECTS_PAYMENTS_FLOW != PaymentsFlow.DISBURSEMENTS:
+            raise Http404("Disbursements are not the active payments flow")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # The CSV response discards page context, so skip the totals query.
+        if self.request.GET.get("format") != "csv":
+            context["disbursements_total"] = self.get_total_display()
+        return context
+
+    def get_total_display(self):
+        """Amount/currency pairs summed over the filtered rows, one pair per
+        currency (uncoded rows form their own pair without a code), e.g.
+        "499.03 USD, 809.03 MXN". Value only: the template renders it as
+        "Total disbursed (N records matching this filter)" between the
+        filters and the table. Table rows and per-project displays keep a
+        single numeric value ("Multiple currencies" when needed); only this
+        page summary elaborates every pair.
+
+        """
+        currency_groups = (
+            self.object_list.order_by()
+            .values("contract__currency")
+            .annotate(total=Sum("amount"))
+            .order_by(F("contract__currency").asc(nulls_last=True))
+        )
+        pairs = []
+        for group in currency_groups:
+            amount = format_trimmed_amount(group["total"])
+            currency = group["contract__currency"]
+            pairs.append(f"{amount} {currency}" if currency else amount)
+        return ", ".join(pairs)
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.GET.get("format") == "csv":
+            response = HttpResponse(content_type="text/csv")
+            response["Content-Disposition"] = 'attachment; filename="disbursements.csv"'
+            # table.data.data carries the table's applied ordering (e.g.
+            # ?sort=), so the export matches what the user sees.
+            export_disbursements_to_csv(context["table"].data.data, response)
+            return response
+        return super().render_to_response(context, **response_kwargs)

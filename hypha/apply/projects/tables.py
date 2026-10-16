@@ -14,8 +14,8 @@ from hypha.apply.funds.tables import LabeledCheckboxColumn
 from hypha.core.tables import RelativeTimeColumn
 
 from .forms.invoice import get_invoice_possible_transition_for_user
-from .models import Invoice, PAFApprovals, Project
-from .utils import get_project_title
+from .models import Disbursement, Invoice, PAFApprovals, Project
+from .utils import format_local_minute, format_trimmed_amount, get_project_title
 
 
 def render_invoice_actions(table, record):
@@ -331,3 +331,98 @@ class ProjectsListTable(BaseProjectsTable):
         order_by = ("end_date",)
         template_name = "application_projects/tables/table.html"
         attrs = {"class": "table projects-table"}
+
+
+class AdminDisbursementListTable(tables.Table):
+    """Every disbursement across all projects, one row per disbursement.
+
+    The contract's requested/approved amounts repeat on each of its rows.
+    Amount columns carry no unit: currency is its own column so filtering to
+    a single currency guarantees a numeric total. The disbursement date
+    renders as ISO 8601; the entry date renders compactly in the active
+    timezone, rounded to the nearest minute (strict RFC 3339 stays in the
+    CSV export). The entry date carries a tooltip showing the edited time
+    when an edit rounds to a different minute, marked with an asterisk.
+
+    """
+
+    date = tables.Column(verbose_name=_("Disbursement date"))
+    created_at = tables.Column(verbose_name=_("Date recorded"))
+    project = tables.LinkColumn(
+        "funds:submissions:project",
+        text=lambda record: get_project_title(record.contract.project),
+        args=[A("contract__project__submission_id")],
+        order_by=("contract__project__title",),
+        attrs={
+            "a": {
+                "class": "link link-hover text-h4 font-semibold break-words line-clamp-2 max-w-md",
+            },
+        },
+    )
+    contract = tables.LinkColumn(
+        "apply:projects:contract",
+        text=lambda record: f"#{record.contract_id}",
+        args=[A("contract__project__submission_id"), A("contract_id")],
+        order_by=("contract_id",),
+    )
+    contract_requested = tables.Column(
+        verbose_name=_("Contract requested"),
+        accessor=A("contract__amount_requested"),
+        attrs={"th": {"class": "text-right"}, "td": {"class": "text-right"}},
+    )
+    contract_approved = tables.Column(
+        verbose_name=_("Contract approved"),
+        accessor=A("contract__amount_approved"),
+        attrs={"th": {"class": "text-right"}, "td": {"class": "text-right"}},
+    )
+    currency = tables.Column(
+        verbose_name=_("Currency"),
+        accessor=A("contract__currency"),
+        default="—",
+    )
+    amount = tables.Column(
+        verbose_name=_("Amount disbursed"),
+        attrs={"th": {"class": "text-right"}, "td": {"class": "text-right"}},
+    )
+    notes = tables.Column(attrs={"td": {"class": "max-w-md"}})
+
+    class Meta:
+        fields = [
+            "project",
+            "date",
+            "created_at",
+            "contract",
+            "contract_requested",
+            "contract_approved",
+            "currency",
+            "amount",
+            "notes",
+        ]
+        model = Disbursement
+        orderable = True
+        order_by = ("-date", "-created_at")
+        template_name = "application_projects/tables/table.html"
+        attrs = {"class": "table disbursements-table"}
+
+    def render_date(self, record):
+        return record.date.isoformat()
+
+    def render_created_at(self, record):
+        entry = format_local_minute(record.created_at)
+        edited = format_local_minute(record.updated_at)
+        if entry == edited:
+            return entry
+        return format_html(
+            '<span title="{}">{}*</span>',
+            _("Edited {}").format(edited),
+            entry,
+        )
+
+    def render_contract_requested(self, record):
+        return format_trimmed_amount(record.contract.amount_requested)
+
+    def render_contract_approved(self, record):
+        return format_trimmed_amount(record.contract.amount_approved)
+
+    def render_amount(self, record):
+        return format_trimmed_amount(record.amount)
