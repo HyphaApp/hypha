@@ -1,6 +1,8 @@
 import csv
 import io
+from datetime import timedelta
 
+from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from django_file_form.uploaded_file import PlaceholderUploadedFile
@@ -185,3 +187,137 @@ def get_placeholder_file(initial_file):
         PlaceholderUploadedFile(f.filename, size=f.size, file_id=f.name)
         for f in initial_file
     ]
+
+
+def export_projects_to_csv(projects_list, csv_stream):
+    header_row = [
+        "Submission #",
+        "Title",
+        "Organization",
+        "Status",
+        "Lead",
+        "Fund",
+        "Round",
+        "Reporting",
+        "Last payment request",
+        "End Date",
+    ]
+    data_list = []
+
+    for project in projects_list:
+        reporting_status = ""
+        if hasattr(project, "report_config"):
+            if project.report_config.is_up_to_date():
+                reporting_status = "Up to date"
+            else:
+                reporting_status = (
+                    f"{project.report_config.outstanding_reports()} outstanding"
+                )
+
+        values = {
+            header_row[0]: project.submission.id,
+            header_row[1]: project.title,
+            header_row[2]: project.submission.form_data.get("organization_name", ""),
+            header_row[3]: project.get_status_display(),
+            header_row[4]: project.lead,
+            header_row[5]: project.submission.page,
+            header_row[6]: project.submission.round,
+            header_row[7]: reporting_status,
+            header_row[8]: project.last_payment_request,
+            header_row[9]: project.end_date,
+        }
+        data_list.append(values)
+    # Columns will be in header_row order with values matched by key in data_list (order within each notwithstanding).
+    writer = csv.DictWriter(csv_stream, fieldnames=header_row, restval="")
+    writer.writeheader()
+    for data in data_list:
+        writer.writerow(data)
+
+
+def format_trimmed_amount(value):
+    """Trimmed decimal string for table/CSV amounts; em dash when absent.
+
+    Mirrors the amount input so ledger values never gain or lose precision.
+
+    """
+    if value is None:
+        return "—"
+    # Lazy import: forms.project depends on modules that import this file.
+    from .forms.project import TrimmedDecimalInput
+
+    return TrimmedDecimalInput().format_value(value)
+
+
+def format_local_minute(value):
+    """Compact table display for entry datetimes: the active timezone (the
+    user's zone when a deployment activates one, else the server's), rounded
+    to the nearest minute, space separator, no zone suffix.
+
+    The CSV export keeps strict RFC 3339 (T separator, full precision).
+
+    """
+    if timezone.is_aware(value):
+        rounded = timezone.localtime(value).replace(tzinfo=None)
+    else:
+        rounded = value.replace(tzinfo=None)
+    if rounded.second >= 30:
+        rounded += timedelta(minutes=1)
+    return rounded.replace(second=0, microsecond=0).strftime("%Y-%m-%d %H:%M")
+
+
+def export_disbursements_to_csv(disbursements, csv_stream):
+    """Export disbursements (typically the filtered ledger queryset) to CSV.
+
+    One row per disbursement; the contract's requested/approved amounts
+    repeat on each of its rows, mirroring the table. The row leads with
+    submission # and project. Amounts are bare and trimmed with the currency
+    in its own column; dates are strict RFC 3339 (T separator, full
+    precision), including the full updated_at; absent contract amounts
+    export as empty strings.
+
+    """
+    header_row = [
+        "Submission #",
+        "Project",
+        "Disbursement date",
+        "Date recorded",
+        "Updated at",
+        "Contract",
+        "Contract requested",
+        "Contract approved",
+        "Currency",
+        "Amount disbursed",
+        "Notes",
+    ]
+    data_list = []
+
+    for disbursement in disbursements:
+        contract = disbursement.contract
+        project = contract.project
+        values = {
+            header_row[0]: project.submission_id,
+            header_row[1]: project.title,
+            header_row[2]: disbursement.date.isoformat(),
+            header_row[3]: disbursement.created_at.isoformat(),
+            header_row[4]: disbursement.updated_at.isoformat(),
+            header_row[5]: f"#{contract.pk}",
+            header_row[6]: (
+                format_trimmed_amount(contract.amount_requested)
+                if contract.amount_requested is not None
+                else ""
+            ),
+            header_row[7]: (
+                format_trimmed_amount(contract.amount_approved)
+                if contract.amount_approved is not None
+                else ""
+            ),
+            header_row[8]: contract.currency or "",
+            header_row[9]: format_trimmed_amount(disbursement.amount),
+            header_row[10]: disbursement.notes,
+        }
+        data_list.append(values)
+    # Columns will be in header_row order with values matched by key in data_list (order within each notwithstanding).
+    writer = csv.DictWriter(csv_stream, fieldnames=header_row, restval="")
+    writer.writeheader()
+    for data in data_list:
+        writer.writerow(data)

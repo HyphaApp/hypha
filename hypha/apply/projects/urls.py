@@ -21,6 +21,7 @@ from .views import (
     CreateInvoiceView,
     DeleteDisbursementView,
     DeleteInvoiceView,
+    DisbursementListView,
     EditDisbursementView,
     EditInvoiceView,
     InvoiceListView,
@@ -71,6 +72,7 @@ urlpatterns = [
     path("all/", ProjectListView.as_view(), name="all"),
     path("reports/", include("hypha.apply.projects.reports.urls"), name="reports"),
     path("invoices/", InvoiceListView.as_view(), name="invoices"),
+    path("disbursements/", DisbursementListView.as_view(), name="disbursements"),
     path(
         "invoices/export-status/",
         invoice_export_status,

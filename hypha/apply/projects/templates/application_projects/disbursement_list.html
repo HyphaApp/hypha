@@ -1,0 +1,32 @@
+{% extends "base-apply.html" %}
+
+{% load render_table from django_tables2 %}
+{% load i18n static %}
+
+{% block title %}{% trans "Disbursements" %}{% endblock %}
+
+{% block hero %}
+    <c-hero>
+        <c-hero.header
+            title="{% trans 'All Disbursements' %} ({{ table.rows|length }})"
+        />
+    </c-hero>
+{% endblock %}
+
+{% block content %}
+    <div class="my-4">
+        {% include "funds/includes/table_filter_and_search.html" with include_export=True %}
+        {% if disbursements_total %}
+            <div class="flex justify-end items-center py-2 px-3 border rounded-t-box bg-base-200">
+                <span class="font-semibold">{% blocktrans count counter=table.rows|length %}Total disbursed ({{ counter }} record matching this filter){% plural %}Total disbursed ({{ counter }} records matching this filter){% endblocktrans %}: {{ disbursements_total }}</span>
+            </div>
+        {% endif %}
+        {% if table.rows %}
+            <div class="overflow-x-auto mb-4 border-b rounded-b-box border-x">
+                {% render_table table %}
+            </div>
+        {% else %}
+            <p class="p-4">{% trans "No Disbursements available." %}</p>
+        {% endif %}
+    </div>
+{% endblock content %}
