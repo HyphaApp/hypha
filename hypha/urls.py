@@ -2,7 +2,6 @@ import djp
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path, re_path
-from django_file_form import urls as django_file_form_urls
 from two_factor.urls import urlpatterns as tf_urls
 from two_factor.views import LoginView
 from wagtail import urls as wagtail_urls
@@ -39,7 +38,7 @@ urlpatterns = [
     path("documents/", include(wagtaildocs_urls)),
     path("dashboard/", include(dashboard_urls)),
     path("sitemap.xml", sitemap),
-    path("upload/", include(django_file_form_urls)),
+    path("upload/", include("django_file_form.tus.urls")),
     # path("complete/<str:backend>/", oauth_complete, name=f"{settings.SOCIAL_AUTH_URL_NAMESPACE}:complete"),
     path(
         "", include("social_django.urls", namespace=settings.SOCIAL_AUTH_URL_NAMESPACE)
