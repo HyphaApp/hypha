@@ -2343,7 +2343,7 @@ wheels = [
 
 [[package]]
 name = "hypha"
-version = "6.8.0"
+version = "6.9.0"
 source = { virtual = "." }
 default-groups = ["dev", "docs"]
 dependencies = [
