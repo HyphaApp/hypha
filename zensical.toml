@@ -1,0 +1,71 @@
+[project]
+site_name = "Hypha Documentation"
+site_url = "https://docs.hypha.app/"
+site_description = "Documentation for Hypha, an open source submission management platform."
+copyright = "Copyright &copy; 2018 - 2026 - Open Technology Fund"
+repo_name = "HyphaApp/hypha"
+repo_url = "https://github.com/HyphaApp/hypha"
+edit_uri = "edit/main/docs/"
+
+dev_addr = "localhost:9100"
+site_dir = "docs_build"
+extra_css = ["assets/extra.css"]
+
+
+[project.theme]
+variant = "classic"
+favicon = "/assets/favicon-32x32.png"
+logo = "assets/logo.svg"
+font = false
+features = [
+  "content.action.edit",
+  "content.action.view",
+  "content.code.copy",
+  "content.tabs.link",
+  "header.autohide",
+  "navigation.indexes",
+  "navigation.instant",
+  "navigation.footer",
+  "navigation.sections",
+  "navigation.tabs",
+  "navigation.tabs.sticky",
+  "navigation.top",
+  "navigation.tracking",
+  "toc.follow",
+]
+
+[project.theme.icon]
+repo = "fontawesome/brands/github"
+
+[project.plugins.macros]
+module_name = "docs_scripts/macros"
+
+[[project.extra.social]]
+icon = "material/chat"
+link = "https://chat.hypha.app/"
+name = "Hypha Chat"
+
+[[project.extra.social]]
+icon = "material/forum"
+link = "https://we.hypha.app/"
+name = "Hypha Forum"
+
+[[project.extra.social]]
+icon = "material/github"
+link = "https://github.com/HyphaApp/"
+name = "GitHub Org"
+
+# Python and Node versions are filled in automatically by
+# docs_scripts/macros.py, which reads ".python-version" and ".nvmrc".
+# Setting them here overrides the automatic versioning.
+[project.extra.versions]
+python.version = ""
+node.version = ""
+postgres.version = 17
+postgres.packages.debian = "postgresql-server-dev-17"
+postgres.packages.fedora = "postgresql-server"
+postgres.packages.macos = "postgres@17"
+postgres_devel.packages.fedora = "libpq-devel"
+tested_ubuntu.version = "24.04 LTS"
+tested_macos.version = "Sequoia 15.8"
+tested_fedora.version = "Workstation 40"

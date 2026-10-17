@@ -108,17 +108,17 @@ uv python manage.py wagtailsiteupdate apply.server.domain 80
 uv python manage.py runserver
 ```
 
-\(runs development server at [http://127.0.0.1:8000](http://127.0.0.1:8000)\)
+(runs development server at [http://127.0.0.1:8000](http://127.0.0.1:8000))
 
 You should see the home page of the server. That's great. You can stop the server, and then we can then take the next steps.
 
 ### Deploy with nginx/gunicorn
 
-Make sure gunicorn is installed \(it should be\). Do a test run with gunicorn: `gunicorn --bind 0.0.0.0:<some port> hypha.wsgi:application` This might not work. It's OK if it doesn't work - you can go on anyway.
+Make sure gunicorn is installed (it should be). Do a test run with gunicorn: `gunicorn --bind 0.0.0.0:<some port> hypha.wsgi:application` This might not work. It's OK if it doesn't work - you can go on anyway.
 
 To make gunicorn start automatically with systemd see [https://docs.gunicorn.org/en/stable/deploy.html\#systemd](https://docs.gunicorn.org/en/stable/deploy.html#systemd).
 
-Set up DNS so that apply.server.domain points to the server you've installed the application. Install nginx if you haven't already \(`sudo apt-get install nginx`\). You'll need to add a new config file for nginx in /etc/nginx/sites-available:
+Set up DNS so that apply.server.domain points to the server you've installed the application. Install nginx if you haven't already (`sudo apt-get install nginx`). You'll need to add a new config file for nginx in /etc/nginx/sites-available:
 
 
 ```text
@@ -162,7 +162,7 @@ Follow the instructions, and you're done.
 
 ### Administration
 
-The Django Administration panel can be accessed via `https://apply.server.domain/django-admin/` \(use the email address and password you set in the `python manage.py createsuperuser` step above.\)
+The Django Administration panel can be accessed via `https://apply.server.domain/django-admin/` (use the email address and password you set in the `python manage.py createsuperuser` step above.)
 
 The Apply dashboard is here: `http://apply.server.domain/dashboard/`. The Wagtail admin: `http://apply.server.domain/admin`
 

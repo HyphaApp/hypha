@@ -294,7 +294,7 @@ Hypha development server: [http://hypha.test:9001/](http://hypha.test:9001/)
 
 A live preview of documentation is available at this address.
 
-MkDocs development server: [http://localhost:9100/](http://localhost:9100/)
+Zensical development server: [http://localhost:9100/](http://localhost:9100/)
 
 ## 8. Running tests
 
