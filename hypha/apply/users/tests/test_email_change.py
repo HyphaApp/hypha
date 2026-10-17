@@ -1,12 +1,12 @@
 from unittest.mock import patch
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib.messages import get_messages
+from django.core.cache import cache
 from django.core.signing import TimestampSigner, dumps
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
 
 from .factories import OAuthUserFactory, UserFactory
 
@@ -30,8 +30,6 @@ def url_with_value(signed_value):
 
 class TestEmailChangeRequiresLogin(TestCase):
     def test_unauthenticated_user_redirected_to_login(self):
-        from django.conf import settings
-
         response = self.client.get(EMAIL_CHANGE_URL, follow=False)
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse(settings.LOGIN_URL), response["Location"])
@@ -154,6 +152,50 @@ class TestEmailChangeSuccess(TestCase):
             [addr for msg in mail.outbox for addr in msg.to], [self.user.email]
         )
 
+    def test_email_in_use_sends_notice_instead_of_confirmation(self):
+        from django.core import mail
+
+        other_user = UserFactory()
+        signed = make_signed_value(other_user.email.upper())
+        response = self.client.get(url_with_value(signed), follow=False)
+        # Same response as a normal change, so nothing is revealed on screen.
+        self.assertRedirects(
+            response, CONFIRM_LINK_SENT_URL, fetch_redirect_response=False
+        )
+        self.assertEqual(len(mail.outbox), 2)
+        notice = mail.outbox[1]
+        self.assertEqual(notice.to, [other_user.email.upper()])
+        self.assertIn("already an account", notice.body)
+        confirm_path_prefix = confirm_url("x").removesuffix("x/")
+        self.assertNotIn(confirm_path_prefix, notice.body)
+
+
+class TestProfileFormEmailChange(TestCase):
+    """The profile form must not reveal whether an email is registered."""
+
+    def setUp(self):
+        self.user = UserFactory()
+        # The first backend is OAuth, which disables the email field.
+        self.client.force_login(self.user, backend=settings.CUSTOM_AUTH_BACKEND)
+
+    def post_profile(self, email):
+        return self.client.post(
+            ACCOUNT_URL,
+            {"full_name": self.user.full_name, "email": email},
+            follow=False,
+        )
+
+    def test_email_in_use_goes_to_change_flow(self):
+        other_user = UserFactory()
+        response = self.post_profile(other_user.email)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(EMAIL_CHANGE_URL, response["Location"])
+
+    def test_new_email_goes_to_change_flow(self):
+        response = self.post_profile("unused@example.com")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(EMAIL_CHANGE_URL, response["Location"])
+
 
 class TestEmailChangeElevatedUserWithPassword(TestCase):
     """A user with a password who has elevated their session can proceed."""
@@ -182,47 +224,102 @@ class TestEmailChangeElevatedUserWithPassword(TestCase):
         self.assertEqual(self.user.full_name, "Elevated Name")
 
 
-class EmailChangeConfirmation(TestCase):
-    """Testing the view that handles the actual confirmation & token validation that comes from the confirmation email
+def make_confirmation_token(user, updated_email, current_email=None, pk=None):
+    """Build the signed token that goes into the confirmation email link."""
+    return TimestampSigner().sign(
+        dumps(
+            {
+                "pk": user.pk if pk is None else pk,
+                "current_email": user.email if current_email is None else current_email,
+                "updated_email": updated_email,
+            }
+        )
+    )
 
-    Both a valid & invalid view will result in a 302 response, the big difference is in the messages that get added.
-    """
+
+def confirm_url(token):
+    return reverse("users:confirm_email", kwargs={"token": token})
+
+
+@override_settings(
+    CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+)
+class EmailChangeConfirmation(TestCase):
+    """The confirmation link shows a page on GET and only applies the change on POST."""
 
     def setUp(self):
+        cache.clear()
         self.user = UserFactory()
+        self.original_email = self.user.email
+        self.new_email = f"new{self.user.email}"
         self.client.force_login(self.user)
 
-    def test_processing_valid_token_success(self):
-        new_email = f"new{self.user.email}"
-        signer = TimestampSigner()
-        signed_value = signer.sign(
-            dumps({"updated_email": new_email, "id": self.user.id})
-        )
-        uidb64 = urlsafe_base64_encode(force_bytes(self.user.id))
-        response = self.client.get(
-            reverse(
-                "users:confirm_email", kwargs={"uidb64": uidb64, "token": signed_value}
-            )
-        )
+    def assertEmailUnchanged(self):
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, self.original_email)
 
-        self.assertEqual(response.status_code, 302)
+    def test_get_valid_token_shows_confirm_page_without_changing_email(self):
+        token = make_confirmation_token(self.user, self.new_email)
+        response = self.client.get(confirm_url(token))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "users/email_change/confirm.html")
+        self.assertContains(response, self.new_email)
+        self.assertEmailUnchanged()
+
+    def test_post_valid_token_updates_email(self):
+        token = make_confirmation_token(self.user, self.new_email)
+        response = self.client.post(confirm_url(token))
+        self.assertRedirects(response, ACCOUNT_URL, fetch_redirect_response=False)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, self.new_email)
         messages = list(get_messages(response.wsgi_request))
         self.assertIn("email has been successfully updated", messages[0].message)
 
-    def test_mismatched_id_fails(self):
-        """Indicates tampering of the URL to attempt to change another user's email, should redirect to account page"""
+    def test_token_for_other_user_is_invalid(self):
         other_user = UserFactory()
-        new_email = f"new{self.user.email}"
-        signer = TimestampSigner()
-        signed_value = signer.sign(
-            dumps({"updated_email": new_email, "id": self.user.id})
+        token = make_confirmation_token(
+            other_user, self.new_email, current_email=self.user.email
         )
-        uidb64 = urlsafe_base64_encode(force_bytes(other_user.id))
-        response = self.client.get(
-            reverse(
-                "users:confirm_email", kwargs={"uidb64": uidb64, "token": signed_value}
-            )
+        response = self.client.get(confirm_url(token))
+        self.assertTemplateUsed(response, "users/email_change/invalid_link.html")
+        response = self.client.post(confirm_url(token))
+        self.assertTemplateUsed(response, "users/email_change/invalid_link.html")
+        self.assertEmailUnchanged()
+
+    def test_token_with_stale_current_email_is_invalid(self):
+        token = make_confirmation_token(
+            self.user, self.new_email, current_email="old@example.com"
         )
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(confirm_url(token))
+        self.assertTemplateUsed(response, "users/email_change/invalid_link.html")
+        self.assertEmailUnchanged()
+
+    def test_token_is_single_use(self):
+        token = make_confirmation_token(self.user, self.new_email)
+        self.client.post(confirm_url(token))
+
+        # Even after switching back to the address the token was issued
+        # against, the used token must not work again.
+        self.user.refresh_from_db()
+        self.user.email = self.original_email
+        self.user.save()
+
+        response = self.client.post(confirm_url(token))
+        self.assertTemplateUsed(response, "users/email_change/invalid_link.html")
+        self.assertEmailUnchanged()
+
+    def test_tampered_token_is_invalid(self):
+        token = make_confirmation_token(self.user, self.new_email)
+        for bad_token in (token[:-1] + ("A" if token[-1] != "A" else "B"), "garbage"):
+            response = self.client.post(confirm_url(bad_token))
+            self.assertTemplateUsed(response, "users/email_change/invalid_link.html")
+        self.assertEmailUnchanged()
+
+    def test_email_already_in_use_is_rejected(self):
+        UserFactory(email=self.new_email)
+        token = make_confirmation_token(self.user, self.new_email)
+        response = self.client.post(confirm_url(token))
+        self.assertRedirects(response, ACCOUNT_URL, fetch_redirect_response=False)
         messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(len(messages), 0)
+        self.assertIn("already in use", messages[0].message)
+        self.assertEmailUnchanged()

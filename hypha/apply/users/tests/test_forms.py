@@ -29,13 +29,14 @@ class TestProfileForm(BaseTestProfileForm):
     def setUp(self):
         self.user = UserFactory()
 
-    def test_email_unique(self):
+    def test_email_in_use_does_not_reveal_it(self):
         other_user = UserFactory()
-        form = self.submit_form(instance=self.user, email=other_user.email)
-        # form will update the other user's email with same user email, only non exiting email address can be added
+        form = ProfileForm(
+            instance=self.user, data=self.form_data(self.user, email=other_user.email)
+        )
+        # No "already exists" error, that would reveal the address is registered.
+        # The address is checked in the email change flow instead.
         self.assertTrue(form.is_valid())
-        self.user.refresh_from_db()
-        self.assertNotEqual(self.user.email, other_user.email)
 
     def test_can_change_email(self):
         new_email = "me@another.com"

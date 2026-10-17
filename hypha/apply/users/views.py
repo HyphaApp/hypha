@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import time
 from typing import Any
 from urllib.parse import urlencode
@@ -16,8 +17,10 @@ from django.contrib.auth.views import (
 from django.contrib.auth.views import PasswordResetView as DjPasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.core.signing import TimestampSigner, dumps, loads
+from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -75,6 +78,7 @@ from .utils import (
     login_ratelimit_key,
     send_activation_email,
     send_confirmation_email,
+    send_email_in_use_email,
 )
 
 User = get_user_model()
@@ -195,21 +199,17 @@ def account_email_change(request):
         return redirect("users:account")
     value = loads(unsigned_value)
 
-    if slack := value["slack"] is not None:
+    slack = value["slack"]
+    if slack is not None:
         request.user.slack = slack
 
     request.user.full_name = value["name"]
     request.user.save()
 
-    if request.user.email != value["updated_email"]:
-        send_confirmation_email(
-            request.user,
-            signer.sign(
-                dumps({"updated_email": value["updated_email"], "id": request.user.id})
-            ),
-            updated_email=value["updated_email"],
-            site=Site.find_for_request(request),
-        )
+    # The old address is alerted before anything is sent to the new one, so it
+    # is always notified even if the confirmation mail bounces.
+    current_email = request.user.email
+    updated_email = value["updated_email"]
 
     # alert email
     request.user.email_user(
@@ -219,6 +219,9 @@ def account_email_change(request):
             {
                 "name": request.user.get_full_name(),
                 "username": request.user.get_username(),
+                "unverified_email": (
+                    updated_email if updated_email != current_email else ""
+                ),
                 "ORG_EMAIL": settings.ORG_EMAIL,
                 "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
                 "ORG_LONG_NAME": settings.ORG_LONG_NAME,
@@ -226,6 +229,37 @@ def account_email_change(request):
         ),
         from_email=settings.DEFAULT_FROM_EMAIL,
     )
+
+    email_in_use = (
+        User.objects.filter(email__iexact=updated_email)
+        .exclude(pk=request.user.pk)
+        .exists()
+    )
+    if email_in_use:
+        # Tell the owner of the address rather than the requesting user, so the
+        # response looks the same whether or not the address is registered.
+        send_email_in_use_email(
+            updated_email=updated_email, site=Site.find_for_request(request)
+        )
+    elif current_email != updated_email:
+        # The token binds the change to this user *and* to their current email.
+        # Binding the pk stops a token issued for one account being replayed
+        # against another, and binding the current email makes the token
+        # single-use: once the change is applied it no longer matches.
+        send_confirmation_email(
+            request.user,
+            signer.sign(
+                dumps(
+                    {
+                        "pk": request.user.pk,
+                        "current_email": current_email,
+                        "updated_email": updated_email,
+                    }
+                )
+            ),
+            updated_email=updated_email,
+            site=Site.find_for_request(request),
+        )
     return redirect("users:confirm_link_sent")
 
 
@@ -262,56 +296,105 @@ def oauth(request):
 
 
 @method_decorator(login_required, name="dispatch")
+@method_decorator(never_cache, name="dispatch")
 class EmailChangeConfirmationView(TemplateView):
-    def get(self, request, *args, **kwargs):
-        user = self.get_user(kwargs.get("uidb64"))
-        value = self.unsigned(kwargs.get("token"))
+    template_name = "users/email_change/confirm.html"
 
-        # A non-dict `value` means an expired, tampered, or legacy-format token.
-        if not isinstance(value, dict):
+    def get(self, request, *args, **kwargs):
+        """Show a confirmation page — the change is only applied on POST.
+
+        Keeping the mutation off GET means mail scanners and link-preview bots
+        cannot complete the change by fetching the link.
+        """
+        payload = self.get_payload(request, kwargs.get("token"))
+        if not payload:
             return render(request, "users/email_change/invalid_link.html")
 
-        # Verify that the user who requested this change is the same as the current user
-        # ie. an attacker didn't swap out the uidb64 ID for another user's
-        if user and user.id != value.get("id"):
-            return redirect("users:account")
-        email = value.get("updated_email")
-        if user and email:
-            if user.email != email:
-                user.email = email
-                user.save()
-                messages.success(
-                    request,
-                    _("Your email has been successfully updated to {email}!").format(
-                        email=email
-                    ),
-                )
+        return self.render_to_response(
+            self.get_context_data(updated_email=payload["updated_email"])
+        )
+
+    def post(self, request, *args, **kwargs):
+        payload = self.get_payload(request, kwargs.get("token"))
+        if not payload:
+            return render(request, "users/email_change/invalid_link.html")
+
+        user = request.user
+        email = payload["updated_email"]
+
+        if User.objects.filter(email__iexact=email).exclude(pk=user.pk).exists():
+            messages.error(
+                request,
+                _("That email address is already in use by another account."),
+            )
             return redirect("users:account")
 
-        return render(request, "users/email_change/invalid_link.html")
+        user.email = email
+        try:
+            user.save(update_fields=["email"])
+        except IntegrityError:
+            # Lost a race with another account claiming the same address.
+            user.refresh_from_db()
+            messages.error(
+                request,
+                _("That email address is already in use by another account."),
+            )
+            return redirect("users:account")
 
-    def unsigned(self, token):
+        # Burn the token so the link cannot be replayed, even if the user
+        # later changes back to the address it was issued against.
+        cache.set(
+            self.consumed_cache_key(kwargs["token"]),
+            True,
+            timeout=settings.PASSWORD_RESET_TIMEOUT,
+        )
+
+        # Rotate the session key on this credential change.
+        request.session.cycle_key()
+
+        messages.success(
+            request,
+            _("Your email has been successfully updated to {email}!").format(
+                email=email
+            ),
+        )
+        return redirect("users:account")
+
+    def consumed_cache_key(self, token):
+        return f"email-change-token:{hashlib.sha256(token.encode()).hexdigest()}"
+
+    def get_payload(self, request, token):
+        """Return the signed token payload if it is valid for the current user.
+
+        The token must be unexpired, unused, issued for the logged-in user, and
+        issued against the email they still hold.
+        """
+        if not token or cache.get(self.consumed_cache_key(token)):
+            return None
+
         signer = TimestampSigner()
         try:
             unsigned_value = signer.unsign(
                 token,
                 max_age=datetime.timedelta(seconds=settings.PASSWORD_RESET_TIMEOUT),
             )
+            payload = loads(unsigned_value)
         except Exception:
-            return False
-        return loads(unsigned_value)
-
-    def get_user(self, uidb64):
-        """
-        Given the verified uid, look up and return the
-        corresponding user account if it exists, or ``None`` if it
-        doesn't.
-        """
-        try:
-            user = User.objects.get(**{"pk": force_str(urlsafe_base64_decode(uidb64))})
-            return user
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return None
+
+        if not isinstance(payload, dict):
+            return None
+
+        if payload.get("pk") != request.user.pk:
+            return None
+
+        if payload.get("current_email") != request.user.email:
+            return None
+
+        if not payload.get("updated_email"):
+            return None
+
+        return payload
 
 
 class ActivationView(TemplateView):

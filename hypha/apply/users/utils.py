@@ -108,15 +108,12 @@ def send_activation_email(
 
 def send_confirmation_email(user, token, updated_email=None, site=None):
     """
-    Send the confirmation email. The confirmation token is the update email,
-    signed using TimestampSigner.
+    Send the confirmation email. The confirmation token is a signed payload
+    binding the requesting user to the new email, see
+    [`account_email_change`][hypha.apply.users.views.account_email_change].
     """
 
-    uid = urlsafe_base64_encode(force_bytes(user.pk))
-
-    activation_path = reverse(
-        "users:confirm_email", kwargs={"uidb64": uid, "token": token}
-    )
+    activation_path = reverse("users:confirm_email", kwargs={"token": token})
 
     timeout_minutes = settings.PASSWORD_RESET_TIMEOUT // 60
 
@@ -144,6 +141,26 @@ def send_confirmation_email(user, token, updated_email=None, site=None):
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [updated_email])
     else:
         user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
+
+
+def send_email_in_use_email(updated_email, site=None):
+    """
+    Notify an address that someone tried to change their account email to it,
+    when it already belongs to another account.
+    """
+    context = {
+        "unverified_email": updated_email,
+        "ORG_EMAIL": settings.ORG_EMAIL,
+        "ORG_LONG_NAME": settings.ORG_LONG_NAME,
+        "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
+    }
+
+    if site:
+        context.update(site=site)
+
+    subject = _("Email change request at {ORG_LONG_NAME}").format(**context)
+    message = render_to_string("users/email_change/email_in_use.txt", context)
+    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [updated_email])
 
 
 def get_redirect_url(
