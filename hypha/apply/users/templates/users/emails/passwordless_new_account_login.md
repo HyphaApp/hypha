@@ -1,7 +1,7 @@
 {% load i18n wagtailadmin_tags %}{% base_url_setting as base_url %}
 {% blocktrans %}Dear,{% endblocktrans %}
 
-{% blocktrans %}Welcome to {{ ORG_LONG_NAME }} web site. Create your account by clicking this link or copying and pasting it to your browser:{% endblocktrans %}
+{% blocktrans %}Welcome to {{ ORG_LONG_NAME }} website. Create your account by clicking this link or copying and pasting it to your browser:{% endblocktrans %}
 
 {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ signup_path }}
 
