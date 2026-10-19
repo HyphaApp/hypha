@@ -10218,7 +10218,7 @@ msgstr ""
 #: hypha/apply/users/templates/users/activation/email.txt:4
 #, python-format
 msgid ""
-"Activate your account on the %(ORG_LONG_NAME)s web site by clicking this "
+"Activate your account on the %(ORG_LONG_NAME)s website by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
 
@@ -10297,7 +10297,7 @@ msgstr ""
 #: hypha/apply/users/templates/users/email_change/confirm_email.txt:4
 #, python-format
 msgid ""
-"Request to change email of your account on the %(ORG_LONG_NAME)s web site "
+"Request to change email of your account on the %(ORG_LONG_NAME)s website "
 "has been accepted. Confirm your email by clicking this link or copying and "
 "pasting it to your browser:"
 msgstr ""
@@ -10359,7 +10359,7 @@ msgstr ""
 #, python-format
 msgid ""
 "There has been an attempt to change email of your account on the "
-"%(ORG_LONG_NAME)s web site. If this action wasn't made by you, please "
+"%(ORG_LONG_NAME)s website. If this action wasn't made by you, please "
 "contact support at %(ORG_EMAIL)s "
 msgstr ""
 
@@ -10449,7 +10449,7 @@ msgstr ""
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:5
 #, python-format
 msgid ""
-"Login to your account on the %(ORG_LONG_NAME)s web site by clicking this "
+"Login to your account on the %(ORG_LONG_NAME)s website by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
 
@@ -10464,7 +10464,7 @@ msgstr ""
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:12
 #, python-format
 msgid ""
-"Your account on the %(ORG_LONG_NAME)s web site is deactivated. Please "
+"Your account on the %(ORG_LONG_NAME)s website is deactivated. Please "
 "contact site administrators."
 msgstr ""
 
@@ -10475,14 +10475,14 @@ msgstr ""
 #: hypha/apply/users/templates/users/emails/passwordless_new_account_login.md:4
 #, python-format
 msgid ""
-"Welcome to %(ORG_LONG_NAME)s web site. Create your account by clicking this "
+"Welcome to %(ORG_LONG_NAME)s website. Create your account by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
 
 #: hypha/apply/users/templates/users/emails/set_password.txt:4
 #, python-format
 msgid ""
-"Set your account password on the %(ORG_LONG_NAME)s web site by clicking this "
+"Set your account password on the %(ORG_LONG_NAME)s website by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
 

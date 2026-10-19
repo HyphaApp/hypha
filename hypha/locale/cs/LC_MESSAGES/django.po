@@ -11228,7 +11228,7 @@ msgstr "vytvořen nový účet"
 #: hypha/apply/users/templates/users/activation/email.txt:4
 #, python-format
 msgid ""
-"Activate your account on the %(ORG_LONG_NAME)s web site by clicking this "
+"Activate your account on the %(ORG_LONG_NAME)s website by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
 "Aktivujte si účet na webových stránkách %(ORG_LONG_NAME)s kliknutím na tento "
@@ -11328,7 +11328,7 @@ msgstr "Změnit heslo"
 #: hypha/apply/users/templates/users/email_change/confirm_email.txt:4
 #, python-format
 msgid ""
-"Request to change email of your account on the %(ORG_LONG_NAME)s web site "
+"Request to change email of your account on the %(ORG_LONG_NAME)s website "
 "has been accepted. Confirm your email by clicking this link or copying and "
 "pasting it to your browser:"
 msgstr ""
@@ -11407,7 +11407,7 @@ msgstr ""
 #, python-format
 msgid ""
 "There has been an attempt to change email of your account on the "
-"%(ORG_LONG_NAME)s web site. If this action wasn't made by you, please "
+"%(ORG_LONG_NAME)s website. If this action wasn't made by you, please "
 "contact support at %(ORG_EMAIL)s "
 msgstr ""
 "Na webových stránkách %(ORG_LONG_NAME)s došlo k pokusu o změnu e-mailu "
@@ -11507,7 +11507,7 @@ msgstr ""
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:5
 #, python-format
 msgid ""
-"Login to your account on the %(ORG_LONG_NAME)s web site by clicking this "
+"Login to your account on the %(ORG_LONG_NAME)s website by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
 "Přihlaste se ke svému účtu na webu %(ORG_LONG_NAME)s kliknutím na tento "
@@ -11529,7 +11529,7 @@ msgstr ""
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:12
 #, python-format
 msgid ""
-"Your account on the %(ORG_LONG_NAME)s web site is deactivated. Please "
+"Your account on the %(ORG_LONG_NAME)s website is deactivated. Please "
 "contact site administrators."
 msgstr ""
 "Váš účet na webu %(ORG_LONG_NAME)s je deaktivován. Kontaktujte prosím "
@@ -11542,7 +11542,7 @@ msgstr "Vážený,"
 #: hypha/apply/users/templates/users/emails/passwordless_new_account_login.md:4
 #, python-format
 msgid ""
-"Welcome to %(ORG_LONG_NAME)s web site. Create your account by clicking this "
+"Welcome to %(ORG_LONG_NAME)s website. Create your account by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
 "Vítejte na stránkách %(ORG_LONG_NAME)s. Vytvořte si účet kliknutím na tento "
@@ -11551,7 +11551,7 @@ msgstr ""
 #: hypha/apply/users/templates/users/emails/set_password.txt:4
 #, python-format
 msgid ""
-"Set your account password on the %(ORG_LONG_NAME)s web site by clicking this "
+"Set your account password on the %(ORG_LONG_NAME)s website by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
 "Heslo k účtu nastavíte na webu %(ORG_LONG_NAME)s kliknutím na tento odkaz "
@@ -12847,7 +12847,7 @@ msgstr "Pro pokračování zadejte heslo."
 
 #, python-format
 #~ msgid ""
-#~ "It looks like you are trying to login on %(ORG_LONG_NAME)s web site, but "
+#~ "It looks like you are trying to login on %(ORG_LONG_NAME)s website, but "
 #~ "we could not find any account with the email provided."
 #~ msgstr ""
 #~ "Vypadá to, že se snažíte přihlásit na webové stránky %(ORG_LONG_NAME)s, "
