@@ -4,7 +4,7 @@ from urllib.parse import parse_qs, urlencode, urlparse
 from django.conf import settings
 from django.contrib.messages import get_messages
 from django.core.cache import cache
-from django.core.signing import TimestampSigner, dumps, loads
+from django.core.signing import TimestampSigner
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -20,8 +20,8 @@ NEW_EMAIL = "newemail@example.com"
 
 def make_signed_value(updated_email):
     """Build the signed query-string value that the profile form produces."""
-    return TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).sign(
-        dumps({"updated_email": updated_email})
+    return TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).sign_object(
+        {"updated_email": updated_email}
     )
 
 
@@ -236,7 +236,7 @@ class TestProfileFormEmailChange(TestCase):
     def test_signed_value_carries_only_the_email(self):
         response = self.post_profile("unused@example.com", full_name="New Name")
         value = parse_qs(urlparse(response["Location"]).query)["value"][0]
-        payload = loads(TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).unsign(value))
+        payload = TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).unsign_object(value)
         self.assertEqual(payload, {"updated_email": "unused@example.com"})
 
 
@@ -278,14 +278,12 @@ class TestEmailChangeElevatedUserWithPassword(TestCase):
 
 def make_confirmation_token(user, updated_email, current_email=None, pk=None):
     """Build the signed token that goes into the confirmation email link."""
-    return TimestampSigner(salt=EMAIL_CHANGE_CONFIRM_SALT).sign(
-        dumps(
-            {
-                "pk": user.pk if pk is None else pk,
-                "current_email": user.email if current_email is None else current_email,
-                "updated_email": updated_email,
-            }
-        )
+    return TimestampSigner(salt=EMAIL_CHANGE_CONFIRM_SALT).sign_object(
+        {
+            "pk": user.pk if pk is None else pk,
+            "current_email": user.email if current_email is None else current_email,
+            "updated_email": updated_email,
+        }
     )
 
 
@@ -339,14 +337,12 @@ class EmailChangeConfirmation(TestCase):
         self.assertEmailUnchanged()
 
     def test_request_value_is_not_accepted_as_token(self):
-        token = TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).sign(
-            dumps(
-                {
-                    "pk": self.user.pk,
-                    "current_email": self.user.email,
-                    "updated_email": self.new_email,
-                }
-            )
+        token = TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).sign_object(
+            {
+                "pk": self.user.pk,
+                "current_email": self.user.email,
+                "updated_email": self.new_email,
+            }
         )
         response = self.client.post(confirm_url(token))
         self.assertTemplateUsed(response, "users/email_change/invalid_link.html")

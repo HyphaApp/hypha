@@ -19,7 +19,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
-from django.core.signing import TimestampSigner, dumps, loads
+from django.core.signing import TimestampSigner
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import Http404, get_object_or_404, redirect, render
@@ -151,7 +151,7 @@ class AccountView(SuccessMessageMixin, UpdateView):
             query_dict = {"updated_email": updated_email}
 
             signer = TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT)
-            signed_value = signer.sign(dumps(query_dict))
+            signed_value = signer.sign_object(query_dict)
             return redirect(
                 "{}?{}".format(base_url, urlencode({"value": signed_value}))
             )
@@ -206,7 +206,7 @@ def account_email_change(request):
     try:
         if cache.get(used_cache_key):
             raise ValueError("Email change request already used.")
-        unsigned_value = TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).unsign(
+        value = TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).unsign_object(
             signed_value, max_age=settings.PASSWORD_PAGE_TIMEOUT
         )
     except Exception:
@@ -215,7 +215,6 @@ def account_email_change(request):
             _("Password Page timed out. Try changing the email again."),
         )
         return redirect("users:account")
-    value = loads(unsigned_value)
 
     current_email = request.user.email
     updated_email = value["updated_email"]
@@ -254,14 +253,12 @@ def account_email_change(request):
         # single-use: once the change is applied it no longer matches.
         send_confirmation_email(
             request.user,
-            TimestampSigner(salt=EMAIL_CHANGE_CONFIRM_SALT).sign(
-                dumps(
-                    {
-                        "pk": request.user.pk,
-                        "current_email": current_email,
-                        "updated_email": updated_email,
-                    }
-                )
+            TimestampSigner(salt=EMAIL_CHANGE_CONFIRM_SALT).sign_object(
+                {
+                    "pk": request.user.pk,
+                    "current_email": current_email,
+                    "updated_email": updated_email,
+                }
             ),
             updated_email=updated_email,
             site=Site.find_for_request(request),
@@ -372,11 +369,10 @@ class EmailChangeConfirmationView(TemplateView):
 
         signer = TimestampSigner(salt=EMAIL_CHANGE_CONFIRM_SALT)
         try:
-            unsigned_value = signer.unsign(
+            payload = signer.unsign_object(
                 token,
                 max_age=datetime.timedelta(seconds=settings.PASSWORD_RESET_TIMEOUT),
             )
-            payload = loads(unsigned_value)
         except Exception:
             return None
 
