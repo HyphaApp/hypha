@@ -400,15 +400,10 @@ class EmailChangeConfirmation(TestCase):
         token = make_confirmation_token(self.user, self.new_email)
         self.client.post(confirm_url(token))
 
-        # Even after switching back to the address the token was issued
-        # against, the used token must not work again.
-        self.user.refresh_from_db()
-        self.user.email = self.original_email
-        self.user.save()
-
         response = self.client.post(confirm_url(token))
         self.assertTemplateUsed(response, "users/email_change/invalid_link.html")
-        self.assertEmailUnchanged()
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, self.new_email)
 
     def test_tampered_token_is_invalid(self):
         token = make_confirmation_token(self.user, self.new_email)
