@@ -133,13 +133,16 @@ class AccountView(SuccessMessageMixin, UpdateView):
 
     def form_valid(self, form):
         updated_email = form.cleaned_data["email"]
-        name = form.cleaned_data["full_name"]
-        # None when the form has no slack field, so the stored value is kept.
-        slack = form.cleaned_data.get("slack")
         user = get_object_or_404(User, id=self.request.user.id)
         if user.email != updated_email:
+            # Other profile edits are saved now. The new email only takes effect
+            # through the confirmation flow, so keep the stored one for this save.
+            form.instance.email = user.email
+            form.save()
+            messages.success(self.request, self.success_message)
+
             base_url = reverse("users:email_change_confirm_password")
-            query_dict = {"updated_email": updated_email, "name": name, "slack": slack}
+            query_dict = {"updated_email": updated_email}
 
             signer = TimestampSigner()
             signed_value = signer.sign(dumps(query_dict))
@@ -199,13 +202,6 @@ def account_email_change(request):
         )
         return redirect("users:account")
     value = loads(unsigned_value)
-
-    slack = value["slack"]
-    if slack is not None:
-        request.user.slack = slack
-
-    request.user.full_name = value["name"]
-    request.user.save()
 
     # The old address is alerted before anything is sent to the new one, so it
     # is always notified even if the confirmation mail bounces.
