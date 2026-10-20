@@ -198,14 +198,7 @@ def account_email_change(request):
         return redirect_to_elevate(request.get_full_path())
 
     signed_value = request.GET.get("value")
-    # The value can only be used once, so reloading the page cannot be used to
-    # send the same mails over and over.
-    used_cache_key = (
-        f"email-change-request:{hashlib.sha256(str(signed_value).encode()).hexdigest()}"
-    )
     try:
-        if cache.get(used_cache_key):
-            raise ValueError("Email change request already used.")
         value = TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).unsign_object(
             signed_value, max_age=settings.PASSWORD_PAGE_TIMEOUT
         )
@@ -221,8 +214,28 @@ def account_email_change(request):
     if updated_email == current_email:
         return redirect("users:account")
 
-    cache.set(used_cache_key, True, timeout=settings.PASSWORD_PAGE_TIMEOUT)
+    # The value can only be used once, so reloading the page cannot be used to
+    # send the same mails over and over. cache.add() is an atomic check-and-set,
+    # so concurrent requests with the same value cannot both get through.
+    used_cache_key = (
+        f"email-change-request:{hashlib.sha256(signed_value.encode()).hexdigest()}"
+    )
+    if not cache.add(used_cache_key, True, timeout=settings.PASSWORD_PAGE_TIMEOUT):
+        # Already handled, e.g. a reload or the back button: the mails are on
+        # their way, so show the same page as the first request did.
+        return redirect("users:confirm_link_sent")
 
+    try:
+        _send_email_change_mails(request, current_email, updated_email)
+    except Exception:
+        # Release the value so the user can retry instead of being left with a
+        # used link and no mail.
+        cache.delete(used_cache_key)
+        raise
+    return redirect("users:confirm_link_sent")
+
+
+def _send_email_change_mails(request, current_email, updated_email):
     # The old address is alerted before anything is sent to the new one, so it
     # is always notified even if the confirmation mail bounces.
     # alert email
@@ -263,7 +276,6 @@ def account_email_change(request):
             updated_email=updated_email,
             site=Site.find_for_request(request),
         )
-    return redirect("users:confirm_link_sent")
 
 
 @method_decorator(login_required, name="dispatch")
