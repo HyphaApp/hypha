@@ -123,10 +123,10 @@ def send_activation_email(
     user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
 
 
-def send_confirmation_email(user, token, updated_email=None, site=None):
+def send_confirmation_email(user, token, updated_email, site=None):
     """
-    Send the confirmation email. The confirmation token is a signed payload
-    binding the requesting user to the new email, see
+    Send the confirmation email to the new address. The confirmation token is
+    a signed payload binding the requesting user to the new email, see
     [`account_email_change`][hypha.apply.users.views.account_email_change].
     """
 
@@ -148,10 +148,7 @@ def send_confirmation_email(user, token, updated_email=None, site=None):
         )
     )
     message = render_to_string("users/email_change/confirm_email.txt", context)
-    if updated_email:
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [updated_email])
-    else:
-        user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
+    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [updated_email])
 
 
 def send_email_in_use_email(updated_email, site=None):
