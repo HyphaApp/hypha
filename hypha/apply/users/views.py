@@ -150,7 +150,7 @@ class AccountView(SuccessMessageMixin, UpdateView):
             messages.success(self.request, self.success_message)
 
             base_url = reverse("users:email_change_confirm_password")
-            query_dict = {"updated_email": updated_email}
+            query_dict = {"pk": self.request.user.pk, "updated_email": updated_email}
 
             signer = TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT)
             signed_value = signer.sign_object(query_dict)
@@ -201,13 +201,26 @@ def account_email_change(request):
 
     signed_value = request.GET.get("value")
     try:
+        # The window has to cover the elevate step as well, which for
+        # passwordless users means waiting for an emailed code.
         value = TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).unsign_object(
-            signed_value, max_age=settings.PASSWORD_PAGE_TIMEOUT
+            signed_value, max_age=settings.PASSWORD_RESET_TIMEOUT
         )
     except Exception:
+        value = None
+
+    # The value is bound to the user who requested the change, so a value made
+    # on one account cannot be replayed in another user's session.
+    if (
+        not isinstance(value, dict)
+        or value.get("pk") != request.user.pk
+        or not value.get("updated_email")
+    ):
         messages.error(
             request,
-            _("Password Page timed out. Try changing the email again."),
+            _(
+                "The email change request has expired or is invalid. Try changing the email again."
+            ),
         )
         return redirect("users:account")
 
@@ -222,7 +235,7 @@ def account_email_change(request):
     used_cache_key = (
         f"email-change-request:{hashlib.sha256(signed_value.encode()).hexdigest()}"
     )
-    if not cache.add(used_cache_key, True, timeout=settings.PASSWORD_PAGE_TIMEOUT):
+    if not cache.add(used_cache_key, True, timeout=settings.PASSWORD_RESET_TIMEOUT):
         # Already handled, e.g. a reload or the back button: the mails are on
         # their way, so show the same page as the first request did.
         return redirect("users:confirm_link_sent")
@@ -263,8 +276,8 @@ def _send_email_change_mails(request, current_email, updated_email):
     else:
         # The token binds the change to this user *and* to their current email.
         # Binding the pk stops a token issued for one account being replayed
-        # against another, and binding the current email makes the token
-        # single-use: once the change is applied it no longer matches.
+        # against another, and binding the current email stops it being used
+        # again: once the change is applied it no longer matches.
         send_confirmation_email(
             request.user,
             TimestampSigner(salt=EMAIL_CHANGE_CONFIRM_SALT).sign_object(
@@ -364,8 +377,9 @@ class EmailChangeConfirmationView(TemplateView):
 
         The token must be unexpired, issued for the logged-in user, issued
         against the email they still hold, and for an address no other account
-        has. The current email check makes it single-use: once the change is
-        applied the current email no longer matches.
+        has. The current email check stops it being used again once the change
+        is applied, for as long as the user does not switch back to the
+        address it was issued against.
         """
         if not token:
             return None
@@ -521,13 +535,11 @@ class PasswordResetView(DjPasswordResetView):
         return ctx
 
     def get_extra_email_context(self):
-        return {
-            "timeout_minutes": settings.PASSWORD_RESET_TIMEOUT // 60,
-            "redirect_url": get_redirect_url(self.request, self.redirect_field_name),
-            "site": Site.find_for_request(self.request),
-            "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
-            "ORG_LONG_NAME": settings.ORG_LONG_NAME,
-        }
+        return get_email_context(
+            site=Site.find_for_request(self.request),
+            timeout_minutes=settings.PASSWORD_RESET_TIMEOUT // 60,
+            redirect_url=get_redirect_url(self.request, self.redirect_field_name),
+        )
 
     def form_valid(self, form):
         """
