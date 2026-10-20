@@ -223,6 +223,15 @@ class ProfileForm(forms.ModelForm):
     def clean_full_name(self):
         return strip_html_and_nerf_urls(self.cleaned_data["full_name"])
 
+    def clean_email(self):
+        email = User.objects.normalize_email(self.cleaned_data["email"])
+        # Keep the stored address when only the domain case differs, so neither
+        # that edit nor an older un-normalized address starts the change flow.
+        current_email = self.initial.get("email")
+        if email == User.objects.normalize_email(current_email):
+            return current_email
+        return email
+
     def validate_unique(self):
         # A new email is never saved from this form, it goes through the
         # confirmation flow. Skipping the unique check on it here avoids a form

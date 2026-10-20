@@ -353,6 +353,28 @@ class TestProfileFormEmailChange(TestCase):
             payload, {"pk": self.user.pk, "updated_email": "unused@example.com"}
         )
 
+    def test_new_email_domain_is_normalized(self):
+        response = self.post_profile("Unused@Example.COM")
+        value = parse_qs(urlparse(response["Location"]).query)["value"][0]
+        payload = TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).unsign_object(value)
+        self.assertEqual(payload["updated_email"], "Unused@example.com")
+
+    def test_domain_case_only_change_does_not_start_change_flow(self):
+        local, domain = self.user.email.split("@")
+        response = self.post_profile(f"{local}@{domain.upper()}")
+        self.assertRedirects(response, ACCOUNT_URL, fetch_redirect_response=False)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, f"{local}@{domain}")
+
+    def test_unnormalized_stored_email_does_not_start_change_flow(self):
+        User = type(self.user)
+        User.objects.filter(pk=self.user.pk).update(email="Legacy@Example.COM")
+        response = self.post_profile("Legacy@Example.COM")
+        self.assertRedirects(response, ACCOUNT_URL, fetch_redirect_response=False)
+        # The model's clean() normalizes the stored address on save.
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, "Legacy@example.com")
+
 
 class TestProfileFormEmailChangeStaff(TestCase):
     def setUp(self):
