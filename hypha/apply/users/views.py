@@ -250,12 +250,11 @@ def _send_email_change_mails(request, current_email, updated_email):
         from_email=settings.DEFAULT_FROM_EMAIL,
     )
 
-    email_in_use = (
+    if (
         User.objects.filter(email__iexact=updated_email)
         .exclude(pk=request.user.pk)
         .exists()
-    )
-    if email_in_use:
+    ):
         # Tell the owner of the address rather than the requesting user, so the
         # response looks the same whether or not the address is registered.
         send_email_in_use_email(
@@ -389,6 +388,9 @@ class EmailChangeConfirmationView(TemplateView):
         if payload.get("current_email") != request.user.email:
             return None
 
+        if not payload.get("updated_email"):
+            return None
+
         # Another account may have claimed the address since the link was
         # sent. Treat that like any other invalid link, so the response does
         # not reveal that the address is registered.
@@ -397,9 +399,6 @@ class EmailChangeConfirmationView(TemplateView):
             .exclude(pk=request.user.pk)
             .exists()
         ):
-            return None
-
-        if not payload.get("updated_email"):
             return None
 
         return payload
