@@ -194,7 +194,7 @@ def hijack_view(request):
 @login_required
 @ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="GET")
 def account_email_change(request):
-    if request.user.has_usable_password() and not request.is_elevated():
+    if not request.is_elevated():
         return redirect_to_elevate(request.get_full_path())
 
     signed_value = request.GET.get("value")

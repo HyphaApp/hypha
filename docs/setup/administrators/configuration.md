@@ -60,9 +60,9 @@ Number of seconds that account activation links are valid (default 900, 15 minut
 
 ----
 
-Seconds to enter password on password page while email change/2FA change (default 120).
+Seconds to enter password on password page while email change/2FA change (default 300, 5 minutes).
 
-    PASSWORD_PAGE_TIMEOUT = env.int('PASSWORD_PAGE_TIMEOUT', 120)
+    PASSWORD_PAGE_TIMEOUT = env.int('PASSWORD_PAGE_TIMEOUT', 300)
 
 ----
 
