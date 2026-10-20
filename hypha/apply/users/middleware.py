@@ -19,7 +19,7 @@ TWO_FACTOR_EXEMPTED_PATH_PREFIXES = [
     "/logout/",
     "/account/",
     "/apply/submissions/success/",
-    "/upload/upload/",
+    "/upload/",
 ]
 
 if settings.DEBUG:
