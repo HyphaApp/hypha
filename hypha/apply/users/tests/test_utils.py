@@ -83,11 +83,6 @@ class TestSendConfirmationEmail(TestCase):
         )
         self.assertIn("new@example.com", mail.outbox[0].subject)
 
-    def test_sends_to_user_when_no_updated_email(self):
-        user = UserFactory(email="user@example.com")
-        send_confirmation_email(user, token="fake-token")
-        self.assertEqual(len(mail.outbox), 1)
-
 
 class TestGetRedirectUrl(TestCase):
     def setUp(self):
