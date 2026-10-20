@@ -29,6 +29,15 @@ def url_with_value(signed_value):
     return f"{EMAIL_CHANGE_URL}?{urlencode({'value': signed_value})}"
 
 
+def elevate_session(testcase):
+    """Treat the test client's session as elevated for the rest of the test."""
+    patcher = patch(
+        "hypha.elevate.middleware.has_elevated_privileges", return_value=True
+    )
+    patcher.start()
+    testcase.addCleanup(patcher.stop)
+
+
 class TestEmailChangeRequiresLogin(TestCase):
     def test_unauthenticated_user_redirected_to_login(self):
         response = self.client.get(EMAIL_CHANGE_URL, follow=False)
@@ -37,7 +46,7 @@ class TestEmailChangeRequiresLogin(TestCase):
 
 
 class TestEmailChangeElevationCheck(TestCase):
-    """Users with a usable password must re-authenticate (elevate) before proceeding."""
+    """Users must re-authenticate (elevate) before proceeding."""
 
     def setUp(self):
         self.user = UserFactory()  # has a usable password
@@ -64,25 +73,35 @@ class TestEmailChangeElevationCheck(TestCase):
         self.assertNotEqual(response["Location"], ELEVATE_URL)
 
 
-class TestEmailChangeOAuthUserSkipsElevation(TestCase):
-    """OAuth users have no usable password — the elevation gate must be skipped."""
+class TestEmailChangePasswordlessUserMustElevate(TestCase):
+    """Users without a usable password must also elevate, via an emailed code."""
 
     def setUp(self):
         self.user = OAuthUserFactory()
         self.client.force_login(self.user)
 
-    def test_oauth_user_not_redirected_to_elevate(self):
+    def test_unelevated_passwordless_user_redirected_to_elevate(self):
         signed = make_signed_value(NEW_EMAIL)
         response = self.client.get(url_with_value(signed), follow=False)
-        self.assertNotIn(ELEVATE_URL, response.get("Location", ""))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(ELEVATE_URL, response["Location"])
+
+    def test_elevated_passwordless_user_can_complete_email_change(self):
+        elevate_session(self)
+        signed = make_signed_value(NEW_EMAIL)
+        response = self.client.get(url_with_value(signed), follow=False)
+        self.assertRedirects(
+            response, CONFIRM_LINK_SENT_URL, fetch_redirect_response=False
+        )
 
 
 class TestEmailChangeTokenValidation(TestCase):
     """The signed token in the query string must be valid, unexpired and requested by the same user that the change is being executed for."""
 
     def setUp(self):
-        self.user = OAuthUserFactory()  # skip elevation
+        self.user = UserFactory()
         self.client.force_login(self.user)
+        elevate_session(self)
 
     def test_missing_value_param_redirects_to_account(self):
         response = self.client.get(EMAIL_CHANGE_URL, follow=False)
@@ -111,8 +130,9 @@ class TestEmailChangeSuccess(TestCase):
 
     def setUp(self):
         cache.clear()
-        self.user = OAuthUserFactory()  # skip elevation
+        self.user = UserFactory()
         self.client.force_login(self.user)
+        elevate_session(self)
 
     def test_valid_token_redirects_to_confirm_link_sent(self):
         signed = make_signed_value(NEW_EMAIL)
