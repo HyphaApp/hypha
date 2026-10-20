@@ -1,14 +1,14 @@
 from unittest.mock import patch
-from urllib.parse import urlencode
+from urllib.parse import parse_qs, urlencode, urlparse
 
 from django.conf import settings
 from django.contrib.messages import get_messages
 from django.core.cache import cache
-from django.core.signing import TimestampSigner, dumps
+from django.core.signing import TimestampSigner, dumps, loads
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from .factories import OAuthUserFactory, UserFactory
+from .factories import OAuthUserFactory, StaffFactory, UserFactory
 
 EMAIL_CHANGE_URL = reverse("users:email_change_confirm_password")
 ELEVATE_URL = reverse("users:elevate")
@@ -16,12 +16,9 @@ CONFIRM_LINK_SENT_URL = reverse("users:confirm_link_sent")
 ACCOUNT_URL = reverse("users:account")
 
 
-def make_signed_value(updated_email, name="Test User", slack=""):
+def make_signed_value(updated_email):
     """Build the signed query-string value that the profile form produces."""
-    signer = TimestampSigner()
-    return signer.sign(
-        dumps({"updated_email": updated_email, "name": name, "slack": slack})
-    )
+    return TimestampSigner().sign(dumps({"updated_email": updated_email}))
 
 
 def url_with_value(signed_value):
@@ -110,17 +107,11 @@ class TestEmailChangeSuccess(TestCase):
         self.client.force_login(self.user)
 
     def test_valid_token_redirects_to_confirm_link_sent(self):
-        signed = make_signed_value(self.user.email, name="New Name")
+        signed = make_signed_value(self.user.email)
         response = self.client.get(url_with_value(signed), follow=False)
         self.assertRedirects(
             response, CONFIRM_LINK_SENT_URL, fetch_redirect_response=False
         )
-
-    def test_valid_token_updates_full_name(self):
-        signed = make_signed_value(self.user.email, name="Updated Name")
-        self.client.get(url_with_value(signed))
-        self.user.refresh_from_db()
-        self.assertEqual(self.user.full_name, "Updated Name")
 
     def test_valid_token_sends_alert_email(self):
         from django.core import mail
@@ -178,10 +169,10 @@ class TestProfileFormEmailChange(TestCase):
         # The first backend is OAuth, which disables the email field.
         self.client.force_login(self.user, backend=settings.CUSTOM_AUTH_BACKEND)
 
-    def post_profile(self, email):
+    def post_profile(self, email, full_name=None):
         return self.client.post(
             ACCOUNT_URL,
-            {"full_name": self.user.full_name, "email": email},
+            {"full_name": full_name or self.user.full_name, "email": email},
             follow=False,
         )
 
@@ -196,6 +187,45 @@ class TestProfileFormEmailChange(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(EMAIL_CHANGE_URL, response["Location"])
 
+    def test_other_edits_saved_before_email_confirmed(self):
+        old_email = self.user.email
+        self.post_profile("unused@example.com", full_name="New Name")
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.full_name, "New Name")
+        self.assertEqual(self.user.email, old_email)
+
+    def test_other_edits_saved_when_email_in_use(self):
+        old_email = self.user.email
+        other_user = UserFactory()
+        self.post_profile(other_user.email, full_name="New Name")
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.full_name, "New Name")
+        self.assertEqual(self.user.email, old_email)
+
+    def test_signed_value_carries_only_the_email(self):
+        response = self.post_profile("unused@example.com", full_name="New Name")
+        value = parse_qs(urlparse(response["Location"]).query)["value"][0]
+        payload = loads(TimestampSigner().unsign(value))
+        self.assertEqual(payload, {"updated_email": "unused@example.com"})
+
+
+class TestProfileFormEmailChangeStaff(TestCase):
+    def setUp(self):
+        self.user = StaffFactory()
+        self.client.force_login(self.user, backend=settings.CUSTOM_AUTH_BACKEND)
+
+    def test_slack_saved_before_email_confirmed(self):
+        self.client.post(
+            ACCOUNT_URL,
+            {
+                "full_name": self.user.full_name,
+                "email": "unused@example.com",
+                "slack": "@newslack",
+            },
+        )
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.slack, "@newslack")
+
 
 class TestEmailChangeElevatedUserWithPassword(TestCase):
     """A user with a password who has elevated their session can proceed."""
@@ -205,7 +235,7 @@ class TestEmailChangeElevatedUserWithPassword(TestCase):
         self.client.force_login(self.user)
 
     def test_elevated_user_can_complete_email_change(self):
-        signed = make_signed_value(self.user.email, name="Elevated Name")
+        signed = make_signed_value(self.user.email)
         with patch(
             "hypha.elevate.middleware.has_elevated_privileges", return_value=True
         ):
@@ -213,15 +243,6 @@ class TestEmailChangeElevatedUserWithPassword(TestCase):
         self.assertRedirects(
             response, CONFIRM_LINK_SENT_URL, fetch_redirect_response=False
         )
-
-    def test_elevated_user_name_is_updated(self):
-        signed = make_signed_value(self.user.email, name="Elevated Name")
-        with patch(
-            "hypha.elevate.middleware.has_elevated_privileges", return_value=True
-        ):
-            self.client.get(url_with_value(signed))
-        self.user.refresh_from_db()
-        self.assertEqual(self.user.full_name, "Elevated Name")
 
 
 def make_confirmation_token(user, updated_email, current_email=None, pk=None):
