@@ -84,6 +84,14 @@ class TestPasswordReset(BaseViewTestCase):
             "https://testserver/account/password/reset/confirm", mail.outbox[0].body
         )
 
+    def test_email_is_not_html_escaped(self):
+        self.user.full_name = "Anna O'Brien"
+        self.user.save()
+        self.post_page(None, data={"email": self.user.email, "next": "/apply/?a=1&b=2"})
+        email_body = mail.outbox[0].body
+        self.assertIn("Dear Anna O'Brien,", email_body)
+        self.assertIn("?next=/apply/?a=1&b=2", email_body)
+
 
 class TestBecome(TestCase):
     def setUp(self):

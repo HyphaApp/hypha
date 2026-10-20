@@ -1,4 +1,4 @@
-{% load i18n wagtailadmin_tags %}{% base_url_setting as base_url %}
+{% load i18n wagtailadmin_tags %}{% autoescape off %}{% base_url_setting as base_url %}
 {% blocktranslate %}Dear {{ user }},{% endblocktranslate %}
 
 {% blocktranslate %}You're receiving this email because you requested a password reset for your user account at {{ ORG_LONG_NAME }}.{% endblocktranslate %}
@@ -14,4 +14,4 @@ The {{ ORG_SHORT_NAME }} Team{% endblocktrans %}
 
 --
 {{ ORG_LONG_NAME }}
-{% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}
+{% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{% endautoescape %}
