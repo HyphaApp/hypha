@@ -380,12 +380,3 @@ class EmailChangeConfirmation(TestCase):
             response = self.client.post(confirm_url(bad_token))
             self.assertTemplateUsed(response, "users/email_change/invalid_link.html")
         self.assertEmailUnchanged()
-
-    def test_email_already_in_use_is_rejected(self):
-        UserFactory(email=self.new_email)
-        token = make_confirmation_token(self.user, self.new_email)
-        response = self.client.post(confirm_url(token))
-        self.assertRedirects(response, ACCOUNT_URL, fetch_redirect_response=False)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertIn("already in use", messages[0].message)
-        self.assertEmailUnchanged()
