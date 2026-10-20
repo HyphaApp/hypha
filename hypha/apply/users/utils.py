@@ -126,8 +126,9 @@ def send_activation_email(
 def send_confirmation_email(user, token, updated_email, site=None):
     """
     Send the confirmation email to the new address. The confirmation token is
-    a signed payload binding the requesting user to the new email, see
-    [`account_email_change`][hypha.apply.users.views.account_email_change].
+    a signed payload of the requesting user's pk, their current email and the
+    new email, so it only works for that user while they still hold the
+    current email.
     """
 
     activation_path = reverse("users:confirm_email", kwargs={"token": token})
