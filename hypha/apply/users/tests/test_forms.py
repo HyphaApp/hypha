@@ -2,7 +2,7 @@ import pytest
 from django.forms.models import model_to_dict
 from django.test import RequestFactory, TestCase
 
-from ..forms import BecomeUserForm, EmailChangePasswordForm, ProfileForm
+from ..forms import BecomeUserForm, ProfileForm
 from .factories import StaffFactory, UserFactory
 
 
@@ -29,13 +29,14 @@ class TestProfileForm(BaseTestProfileForm):
     def setUp(self):
         self.user = UserFactory()
 
-    def test_email_unique(self):
+    def test_email_in_use_does_not_reveal_it(self):
         other_user = UserFactory()
-        form = self.submit_form(instance=self.user, email=other_user.email)
-        # form will update the other user's email with same user email, only non exiting email address can be added
+        form = ProfileForm(
+            instance=self.user, data=self.form_data(self.user, email=other_user.email)
+        )
+        # No "already exists" error, that would reveal the address is registered.
+        # The address is checked in the email change flow instead.
         self.assertTrue(form.is_valid())
-        self.user.refresh_from_db()
-        self.assertNotEqual(self.user.email, other_user.email)
 
     def test_can_change_email(self):
         new_email = "me@another.com"
@@ -98,21 +99,6 @@ class TestStaffProfileForm(BaseTestProfileForm):
 
         self.staff.refresh_from_db()
         self.assertEqual(self.staff.slack, slack_name)
-
-
-class TestEmailChangePasswordForm(TestCase):
-    def setUp(self):
-        self.user = UserFactory()
-
-    def test_doesnt_error_on_null_slack_field(self):
-        form = EmailChangePasswordForm(self.user)
-        form.save("", "", None)
-
-    def test_can_update_slack(self):
-        slack_name = "foobar"
-        form = EmailChangePasswordForm(self.user)
-        form.save("", "", slack_name)
-        self.assertEqual(self.user.slack, slack_name)
 
 
 @pytest.mark.django_db

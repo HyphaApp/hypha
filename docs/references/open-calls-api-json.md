@@ -14,4 +14,4 @@ At `/api/v2/open-calls.json` that same lists and order of open calls that appear
 ]
 ```
 
-This should make it easy to add a list of open calls to the organisations main web site.
+This should make it easy to add a list of open calls to the organisations main website.

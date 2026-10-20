@@ -1,22 +1,24 @@
 {% extends "base-apply.html" %}
-{% load i18n %}
-{% block page_title %}{% trans "Email Change - Verify Email" %}{% endblock %}
-{% block title %}{% trans "Verify Email" %}{% endblock %}
+{% load i18n heroicons %}
 
-{% block hero %}
-    <c-hero>
-        <c-hero.header title="{% trans 'Email Update' %}" />
-    </c-hero>
-{% endblock %}
+{% block title %}{% trans "Verify email" %}{% endblock %}
+{% block body_class %}bg-base-200{% endblock %}
 
 {% block content %}
-    <div class="mt-12 max-w-2xl prose">
-        <h2 class="mb-4 font-semibold text-h0">{% trans "Confirm &amp; verify your new email!" %} </h2>
-        <p>
-            {% trans "We have sent a confirmation link to your new email." %}
-        </p>
-        <p>
-            {% trans "To start using the new email, please click on the confirmation link that has been sent to you on your new email." %}
-        </p>
+    <div class="flex flex-col justify-center items-center min-h-[60vh]">
+        <section class="w-full max-w-2xl card shadow-xs bg-base-100 md:card-lg">
+            <div class="items-center card-body">
+                <span class="flex justify-center items-center mb-4 rounded-full bg-primary/10">
+                    {% heroicon_outline "envelope" aria_hidden="true" size=64 %}
+                </span>
+                <h1 class="mb-4 font-semibold text-h0">{% trans "Confirm &amp; verify your new email" %}</h1>
+
+                <div class="mb-6 prose">
+                    <p>
+                        {% trans "Click the link in the email we sent to your new address to finish the change." %}
+                    </p>
+                </div>
+            </div>
+        </section>
     </div>
 {% endblock %}
