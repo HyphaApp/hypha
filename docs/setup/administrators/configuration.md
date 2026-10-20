@@ -48,21 +48,15 @@ The corresponding locale dir is named: en, en_GB, en_US
 
 ----
 
-Number of seconds that password reset links are valid (default 259200, 3 days).
+Number of seconds that password reset links are valid (default 900, 15 minutes).
 
-    PASSWORD_RESET_TIMEOUT = env.int('PASSWORD_RESET_TIMEOUT', 259200)
+    PASSWORD_RESET_TIMEOUT = env.int('PASSWORD_RESET_TIMEOUT', 900)
 
 ----
 
 Number of seconds that account activation links are valid (default 900, 15 minutes).
 
     PASSWORD_ACTIVATION_TIMEOUT = env.int("PASSWORD_ACTIVATION_TIMEOUT", 900)
-
-----
-
-Seconds to enter password on password page while email change/2FA change (default 300, 5 minutes).
-
-    PASSWORD_PAGE_TIMEOUT = env.int('PASSWORD_PAGE_TIMEOUT', 300)
 
 ----
 
