@@ -83,6 +83,11 @@ from .utils import (
 
 User = get_user_model()
 
+# Separate salts so a value signed for one step of the email change flow is
+# never accepted by the other.
+EMAIL_CHANGE_REQUEST_SALT = "hypha.users.email_change.request"
+EMAIL_CHANGE_CONFIRM_SALT = "hypha.users.email_change.confirm"
+
 
 @method_decorator(
     ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
@@ -144,7 +149,7 @@ class AccountView(SuccessMessageMixin, UpdateView):
             base_url = reverse("users:email_change_confirm_password")
             query_dict = {"updated_email": updated_email}
 
-            signer = TimestampSigner()
+            signer = TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT)
             signed_value = signer.sign(dumps(query_dict))
             return redirect(
                 "{}?{}".format(base_url, urlencode({"value": signed_value}))
@@ -186,14 +191,22 @@ def hijack_view(request):
 
 
 @login_required
+@ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="GET")
 def account_email_change(request):
     if request.user.has_usable_password() and not request.is_elevated():
         return redirect_to_elevate(request.get_full_path())
 
-    signer = TimestampSigner()
+    signed_value = request.GET.get("value")
+    # The value can only be used once, so reloading the page cannot be used to
+    # send the same mails over and over.
+    used_cache_key = (
+        f"email-change-request:{hashlib.sha256(str(signed_value).encode()).hexdigest()}"
+    )
     try:
-        unsigned_value = signer.unsign(
-            request.GET.get("value"), max_age=settings.PASSWORD_PAGE_TIMEOUT
+        if cache.get(used_cache_key):
+            raise ValueError("Email change request already used.")
+        unsigned_value = TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).unsign(
+            signed_value, max_age=settings.PASSWORD_PAGE_TIMEOUT
         )
     except Exception:
         messages.error(
@@ -203,11 +216,15 @@ def account_email_change(request):
         return redirect("users:account")
     value = loads(unsigned_value)
 
-    # The old address is alerted before anything is sent to the new one, so it
-    # is always notified even if the confirmation mail bounces.
     current_email = request.user.email
     updated_email = value["updated_email"]
+    if updated_email == current_email:
+        return redirect("users:account")
 
+    cache.set(used_cache_key, True, timeout=settings.PASSWORD_PAGE_TIMEOUT)
+
+    # The old address is alerted before anything is sent to the new one, so it
+    # is always notified even if the confirmation mail bounces.
     # alert email
     request.user.email_user(
         subject=_("Alert! An attempt to update your email."),
@@ -216,9 +233,7 @@ def account_email_change(request):
             {
                 "name": request.user.get_full_name(),
                 "username": request.user.get_username(),
-                "unverified_email": (
-                    updated_email if updated_email != current_email else ""
-                ),
+                "unverified_email": updated_email,
                 "ORG_EMAIL": settings.ORG_EMAIL,
                 "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
                 "ORG_LONG_NAME": settings.ORG_LONG_NAME,
@@ -238,14 +253,14 @@ def account_email_change(request):
         send_email_in_use_email(
             updated_email=updated_email, site=Site.find_for_request(request)
         )
-    elif current_email != updated_email:
+    else:
         # The token binds the change to this user *and* to their current email.
         # Binding the pk stops a token issued for one account being replayed
         # against another, and binding the current email makes the token
         # single-use: once the change is applied it no longer matches.
         send_confirmation_email(
             request.user,
-            signer.sign(
+            TimestampSigner(salt=EMAIL_CHANGE_CONFIRM_SALT).sign(
                 dumps(
                     {
                         "pk": request.user.pk,
@@ -365,7 +380,7 @@ class EmailChangeConfirmationView(TemplateView):
         if not token or cache.get(self.consumed_cache_key(token)):
             return None
 
-        signer = TimestampSigner()
+        signer = TimestampSigner(salt=EMAIL_CHANGE_CONFIRM_SALT)
         try:
             unsigned_value = signer.unsign(
                 token,

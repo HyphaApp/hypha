@@ -8,17 +8,21 @@ from django.core.signing import TimestampSigner, dumps, loads
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from ..views import EMAIL_CHANGE_CONFIRM_SALT, EMAIL_CHANGE_REQUEST_SALT
 from .factories import OAuthUserFactory, StaffFactory, UserFactory
 
 EMAIL_CHANGE_URL = reverse("users:email_change_confirm_password")
 ELEVATE_URL = reverse("users:elevate")
 CONFIRM_LINK_SENT_URL = reverse("users:confirm_link_sent")
 ACCOUNT_URL = reverse("users:account")
+NEW_EMAIL = "newemail@example.com"
 
 
 def make_signed_value(updated_email):
     """Build the signed query-string value that the profile form produces."""
-    return TimestampSigner().sign(dumps({"updated_email": updated_email}))
+    return TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).sign(
+        dumps({"updated_email": updated_email})
+    )
 
 
 def url_with_value(signed_value):
@@ -40,19 +44,19 @@ class TestEmailChangeElevationCheck(TestCase):
         self.client.force_login(self.user)
 
     def test_unelevated_user_redirected_to_elevate(self):
-        signed = make_signed_value(self.user.email)
+        signed = make_signed_value(NEW_EMAIL)
         response = self.client.get(url_with_value(signed), follow=False)
         self.assertEqual(response.status_code, 302)
         self.assertIn(ELEVATE_URL, response["Location"])
 
     def test_elevate_redirect_preserves_next_url(self):
-        signed = make_signed_value(self.user.email)
+        signed = make_signed_value(NEW_EMAIL)
         target = url_with_value(signed)
         response = self.client.get(target, follow=False)
         self.assertIn(EMAIL_CHANGE_URL, response["Location"])
 
     def test_elevated_user_is_not_redirected_to_elevate(self):
-        signed = make_signed_value(self.user.email)
+        signed = make_signed_value(NEW_EMAIL)
         with patch(
             "hypha.elevate.middleware.has_elevated_privileges", return_value=True
         ):
@@ -68,7 +72,7 @@ class TestEmailChangeOAuthUserSkipsElevation(TestCase):
         self.client.force_login(self.user)
 
     def test_oauth_user_not_redirected_to_elevate(self):
-        signed = make_signed_value(self.user.email)
+        signed = make_signed_value(NEW_EMAIL)
         response = self.client.get(url_with_value(signed), follow=False)
         self.assertNotIn(ELEVATE_URL, response.get("Location", ""))
 
@@ -99,15 +103,19 @@ class TestEmailChangeTokenValidation(TestCase):
         self.assertContains(response, "timed out")
 
 
+@override_settings(
+    CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+)
 class TestEmailChangeSuccess(TestCase):
     """With a valid elevated session and correct token, the view updates the user."""
 
     def setUp(self):
+        cache.clear()
         self.user = OAuthUserFactory()  # skip elevation
         self.client.force_login(self.user)
 
     def test_valid_token_redirects_to_confirm_link_sent(self):
-        signed = make_signed_value(self.user.email)
+        signed = make_signed_value(NEW_EMAIL)
         response = self.client.get(url_with_value(signed), follow=False)
         self.assertRedirects(
             response, CONFIRM_LINK_SENT_URL, fetch_redirect_response=False
@@ -116,10 +124,9 @@ class TestEmailChangeSuccess(TestCase):
     def test_valid_token_sends_alert_email(self):
         from django.core import mail
 
-        signed = make_signed_value(self.user.email)
+        signed = make_signed_value(NEW_EMAIL)
         self.client.get(url_with_value(signed))
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertIn(self.user.email, mail.outbox[0].to)
+        self.assertEqual(mail.outbox[0].to, [self.user.email])
 
     def test_changed_email_sends_confirmation_email(self):
         from django.core import mail
@@ -132,16 +139,40 @@ class TestEmailChangeSuccess(TestCase):
         all_recipients = [addr for msg in mail.outbox for addr in msg.to]
         self.assertIn(new_email, all_recipients)
 
-    def test_same_email_does_not_send_confirmation_email(self):
+    def test_same_email_sends_nothing(self):
         from django.core import mail
 
         signed = make_signed_value(self.user.email)  # same email
-        self.client.get(url_with_value(signed))
-        # Only the alert to the existing address — nothing is sent anywhere else.
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(
-            [addr for msg in mail.outbox for addr in msg.to], [self.user.email]
-        )
+        response = self.client.get(url_with_value(signed), follow=False)
+        self.assertRedirects(response, ACCOUNT_URL, fetch_redirect_response=False)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_signed_value_can_only_be_used_once(self):
+        from django.core import mail
+
+        target = url_with_value(make_signed_value(NEW_EMAIL))
+        self.client.get(target)
+        sent = len(mail.outbox)
+        response = self.client.get(target, follow=False)
+        self.assertRedirects(response, ACCOUNT_URL, fetch_redirect_response=False)
+        self.assertEqual(len(mail.outbox), sent)
+
+    def test_confirmation_token_is_not_accepted_as_value(self):
+        from django.core import mail
+
+        token = make_confirmation_token(self.user, NEW_EMAIL)
+        response = self.client.get(url_with_value(token), follow=False)
+        self.assertRedirects(response, ACCOUNT_URL, fetch_redirect_response=False)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_requests_are_rate_limited(self):
+        statuses = [
+            self.client.get(
+                url_with_value(make_signed_value(f"new{i}@example.com"))
+            ).status_code
+            for i in range(6)
+        ]
+        self.assertEqual(statuses[-1], 403)
 
     def test_email_in_use_sends_notice_instead_of_confirmation(self):
         from django.core import mail
@@ -205,7 +236,7 @@ class TestProfileFormEmailChange(TestCase):
     def test_signed_value_carries_only_the_email(self):
         response = self.post_profile("unused@example.com", full_name="New Name")
         value = parse_qs(urlparse(response["Location"]).query)["value"][0]
-        payload = loads(TimestampSigner().unsign(value))
+        payload = loads(TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).unsign(value))
         self.assertEqual(payload, {"updated_email": "unused@example.com"})
 
 
@@ -235,7 +266,7 @@ class TestEmailChangeElevatedUserWithPassword(TestCase):
         self.client.force_login(self.user)
 
     def test_elevated_user_can_complete_email_change(self):
-        signed = make_signed_value(self.user.email)
+        signed = make_signed_value(NEW_EMAIL)
         with patch(
             "hypha.elevate.middleware.has_elevated_privileges", return_value=True
         ):
@@ -247,7 +278,7 @@ class TestEmailChangeElevatedUserWithPassword(TestCase):
 
 def make_confirmation_token(user, updated_email, current_email=None, pk=None):
     """Build the signed token that goes into the confirmation email link."""
-    return TimestampSigner().sign(
+    return TimestampSigner(salt=EMAIL_CHANGE_CONFIRM_SALT).sign(
         dumps(
             {
                 "pk": user.pk if pk is None else pk,
@@ -303,6 +334,20 @@ class EmailChangeConfirmation(TestCase):
         )
         response = self.client.get(confirm_url(token))
         self.assertTemplateUsed(response, "users/email_change/invalid_link.html")
+        response = self.client.post(confirm_url(token))
+        self.assertTemplateUsed(response, "users/email_change/invalid_link.html")
+        self.assertEmailUnchanged()
+
+    def test_request_value_is_not_accepted_as_token(self):
+        token = TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).sign(
+            dumps(
+                {
+                    "pk": self.user.pk,
+                    "current_email": self.user.email,
+                    "updated_email": self.new_email,
+                }
+            )
+        )
         response = self.client.post(confirm_url(token))
         self.assertTemplateUsed(response, "users/email_change/invalid_link.html")
         self.assertEmailUnchanged()
