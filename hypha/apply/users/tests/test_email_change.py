@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.messages import get_messages
 from django.core.cache import cache
 from django.core.signing import TimestampSigner
+from django.db import IntegrityError
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -404,6 +405,22 @@ class EmailChangeConfirmation(TestCase):
         self.assertTemplateUsed(response, "users/email_change/invalid_link.html")
         self.user.refresh_from_db()
         self.assertEqual(self.user.email, self.new_email)
+
+    def test_token_for_address_taken_since_is_invalid(self):
+        token = make_confirmation_token(self.user, self.new_email)
+        UserFactory(email=self.new_email.upper())
+        response = self.client.get(confirm_url(token))
+        self.assertTemplateUsed(response, "users/email_change/invalid_link.html")
+        response = self.client.post(confirm_url(token))
+        self.assertTemplateUsed(response, "users/email_change/invalid_link.html")
+        self.assertEmailUnchanged()
+
+    def test_save_integrity_error_shows_invalid_link(self):
+        token = make_confirmation_token(self.user, self.new_email)
+        with patch.object(self.user.__class__, "save", side_effect=IntegrityError):
+            response = self.client.post(confirm_url(token))
+        self.assertTemplateUsed(response, "users/email_change/invalid_link.html")
+        self.assertEmailUnchanged()
 
     def test_tampered_token_is_invalid(self):
         token = make_confirmation_token(self.user, self.new_email)

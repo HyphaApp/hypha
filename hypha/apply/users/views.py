@@ -339,16 +339,15 @@ class EmailChangeConfirmationView(TemplateView):
         user = request.user
         email = payload["updated_email"]
 
-        if User.objects.filter(email__iexact=email).exclude(pk=user.pk).exists():
-            return redirect("users:account")
-
         user.email = email
         try:
             user.save(update_fields=["email"])
         except IntegrityError:
             # Lost a race with another account claiming the same address.
+            # Respond exactly as for an invalid link, so this does not reveal
+            # that the address is registered.
             user.refresh_from_db()
-            return redirect("users:account")
+            return render(request, "users/email_change/invalid_link.html")
 
         # Rotate the session key on this credential change.
         request.session.cycle_key()
@@ -364,9 +363,10 @@ class EmailChangeConfirmationView(TemplateView):
     def get_payload(self, request, token):
         """Return the signed token payload if it is valid for the current user.
 
-        The token must be unexpired, issued for the logged-in user, and issued
-        against the email they still hold. The last check makes it single-use:
-        once the change is applied the current email no longer matches.
+        The token must be unexpired, issued for the logged-in user, issued
+        against the email they still hold, and for an address no other account
+        has. The current email check makes it single-use: once the change is
+        applied the current email no longer matches.
         """
         if not token:
             return None
@@ -387,6 +387,16 @@ class EmailChangeConfirmationView(TemplateView):
             return None
 
         if payload.get("current_email") != request.user.email:
+            return None
+
+        # Another account may have claimed the address since the link was
+        # sent. Treat that like any other invalid link, so the response does
+        # not reveal that the address is registered.
+        if (
+            User.objects.filter(email__iexact=payload.get("updated_email"))
+            .exclude(pk=request.user.pk)
+            .exists()
+        ):
             return None
 
         if not payload.get("updated_email"):
