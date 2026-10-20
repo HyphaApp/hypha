@@ -9,8 +9,9 @@ from django.db import IntegrityError
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from ..models import ConfirmAccessToken
 from ..views import EMAIL_CHANGE_CONFIRM_SALT, EMAIL_CHANGE_REQUEST_SALT
-from .factories import OAuthUserFactory, StaffFactory, UserFactory
+from .factories import StaffFactory, UserFactory
 
 EMAIL_CHANGE_URL = reverse("users:email_change_confirm_password")
 ELEVATE_URL = reverse("users:elevate")
@@ -78,22 +79,45 @@ class TestEmailChangePasswordlessUserMustElevate(TestCase):
     """Users without a usable password must also elevate, via an emailed code."""
 
     def setUp(self):
-        self.user = OAuthUserFactory()
-        self.client.force_login(self.user)
+        cache.clear()
+        self.user = UserFactory()
+        self.user.set_unusable_password()
+        self.user.save()
+        # Passwordless users log in with an emailed code, through the custom
+        # backend. The first backend is OAuth, which disables the email field.
+        self.client.force_login(self.user, backend=settings.CUSTOM_AUTH_BACKEND)
 
-    def test_unelevated_passwordless_user_redirected_to_elevate(self):
-        signed = make_signed_value(self.user, NEW_EMAIL)
-        response = self.client.get(url_with_value(signed), follow=False)
-        self.assertEqual(response.status_code, 302)
+    def test_email_change_is_held_until_elevated_with_emailed_code(self):
+        from django.core import mail
+
+        response = self.client.post(
+            ACCOUNT_URL, {"full_name": self.user.full_name, "email": NEW_EMAIL}
+        )
+        change_url = response["Location"]
+        self.assertIn(EMAIL_CHANGE_URL, change_url)
+
+        response = self.client.get(change_url)
         self.assertIn(ELEVATE_URL, response["Location"])
+        self.assertEqual(len(mail.outbox), 0)
 
-    def test_elevated_passwordless_user_can_complete_email_change(self):
-        elevate_session(self)
-        signed = make_signed_value(self.user, NEW_EMAIL)
-        response = self.client.get(url_with_value(signed), follow=False)
+        # With no password to enter, the elevate page offers an emailed code.
+        send_code_url = reverse("users:elevate_send_confirm_access_email")
+        self.assertContains(self.client.get(response["Location"]), send_code_url)
+
+        next_query = urlencode({"next": change_url})
+        self.client.post(f"{send_code_url}?{next_query}")
+        code = ConfirmAccessToken.objects.get(user=self.user).token
+        response = self.client.post(
+            f"{reverse('users:elevate_check_code')}?{next_query}", {"code": code}
+        )
+        self.assertEqual(response["HX-Redirect"], change_url)
+
+        mail.outbox.clear()
+        response = self.client.get(change_url)
         self.assertRedirects(
             response, CONFIRM_LINK_SENT_URL, fetch_redirect_response=False
         )
+        self.assertIn(NEW_EMAIL, [addr for msg in mail.outbox for addr in msg.to])
 
 
 class TestEmailChangeTokenValidation(TestCase):
