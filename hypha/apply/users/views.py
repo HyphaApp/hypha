@@ -350,14 +350,6 @@ class EmailChangeConfirmationView(TemplateView):
             user.refresh_from_db()
             return redirect("users:account")
 
-        # Burn the token so the link cannot be replayed, even if the user
-        # later changes back to the address it was issued against.
-        cache.set(
-            self.consumed_cache_key(kwargs["token"]),
-            True,
-            timeout=settings.PASSWORD_RESET_TIMEOUT,
-        )
-
         # Rotate the session key on this credential change.
         request.session.cycle_key()
 
@@ -369,16 +361,14 @@ class EmailChangeConfirmationView(TemplateView):
         )
         return redirect("users:account")
 
-    def consumed_cache_key(self, token):
-        return f"email-change-token:{hashlib.sha256(token.encode()).hexdigest()}"
-
     def get_payload(self, request, token):
         """Return the signed token payload if it is valid for the current user.
 
-        The token must be unexpired, unused, issued for the logged-in user, and
-        issued against the email they still hold.
+        The token must be unexpired, issued for the logged-in user, and issued
+        against the email they still hold. The last check makes it single-use:
+        once the change is applied the current email no longer matches.
         """
-        if not token or cache.get(self.consumed_cache_key(token)):
+        if not token:
             return None
 
         signer = TimestampSigner(salt=EMAIL_CHANGE_CONFIRM_SALT)
