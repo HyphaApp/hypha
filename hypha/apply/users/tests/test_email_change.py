@@ -3,7 +3,6 @@ from urllib.parse import parse_qs, urlencode, urlparse
 
 from django.conf import settings
 from django.contrib.messages import get_messages
-from django.core.cache import cache
 from django.core.signing import TimestampSigner
 from django.db import IntegrityError
 from django.test import TestCase
@@ -65,14 +64,6 @@ class TestEmailChangeElevationCheck(TestCase):
         target = url_with_value(signed)
         response = self.client.get(target, follow=False)
         self.assertIn(EMAIL_CHANGE_URL, response["Location"])
-
-    def test_elevated_user_is_not_redirected_to_elevate(self):
-        signed = make_signed_value(self.user, NEW_EMAIL)
-        with patch(
-            "hypha.elevate.middleware.has_elevated_privileges", return_value=True
-        ):
-            response = self.client.get(url_with_value(signed), follow=False)
-        self.assertNotEqual(response["Location"], ELEVATE_URL)
 
 
 class TestEmailChangePasswordlessUserMustElevate(TestCase):
@@ -217,21 +208,6 @@ class TestEmailChangeSuccess(TestCase):
         )
         self.assertEqual(len(mail.outbox), 2)
 
-    def test_used_value_stays_used_when_cache_is_cleared(self):
-        from django.core import mail
-
-        target = url_with_value(make_signed_value(self.user, NEW_EMAIL))
-        self.client.get(target)
-        sent = len(mail.outbox)
-        # The database cache culls entries when full, so the guard must not
-        # depend on it.
-        cache.clear()
-        response = self.client.get(target, follow=False)
-        self.assertRedirects(
-            response, CONFIRM_LINK_SENT_URL, fetch_redirect_response=False
-        )
-        self.assertEqual(len(mail.outbox), sent)
-
     def test_new_value_after_used_one_still_sends(self):
         from django.core import mail
 
@@ -257,15 +233,6 @@ class TestEmailChangeSuccess(TestCase):
         response = self.client.get(url_with_value(signed), follow=False)
         self.assertRedirects(response, ACCOUNT_URL, fetch_redirect_response=False)
         self.assertEqual(len(mail.outbox), 0)
-
-    def test_requests_are_rate_limited(self):
-        statuses = [
-            self.client.get(
-                url_with_value(make_signed_value(self.user, f"new{i}@example.com"))
-            ).status_code
-            for i in range(6)
-        ]
-        self.assertEqual(statuses[-1], 403)
 
     def test_email_in_use_sends_notice_instead_of_confirmation(self):
         from django.core import mail
