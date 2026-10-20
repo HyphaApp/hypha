@@ -1,7 +1,7 @@
 {% load i18n wagtailadmin_tags %}{% base_url_setting as base_url %}{% firstof name username as user %}
 {% blocktrans %}Dear {{ user }},{% endblocktrans %}
 
-{% blocktrans %}There has been an attempt to change email of your account on the {{ ORG_LONG_NAME }} web site. If this action wasn't made by you, please contact support at {{ ORG_EMAIL }} {% endblocktrans %}
+{% blocktrans %}There has been an attempt to change email of your account on the {{ ORG_LONG_NAME }} website. If this action wasn't made by you, please contact support at {{ ORG_EMAIL }} {% endblocktrans %}
 {# fmt:off #}{% if unverified_email %}
 {% blocktrans %}The address requested is: {{ unverified_email }}. The change only takes effect once it has been confirmed from that address.{% endblocktrans %}
 {% endif %}{# fmt:on #}
