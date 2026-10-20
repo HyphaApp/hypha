@@ -38,7 +38,9 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django_htmx.http import HttpResponseClientRedirect
 from django_otp import devices_for_user
+from django_ratelimit.core import is_ratelimited
 from django_ratelimit.decorators import ratelimit
+from django_ratelimit.exceptions import Ratelimited
 from formtools.wizard.forms import ManagementForm as WizardManagementForm
 from hijack.views import AcquireUserView
 from social_django.utils import psa
@@ -194,7 +196,6 @@ def hijack_view(request):
 
 
 @login_required
-@ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="GET")
 def account_email_change(request):
     if not request.is_elevated():
         return redirect_to_elevate(request.get_full_path())
@@ -236,6 +237,17 @@ def account_email_change(request):
         # The mails are on their way, so show the same page as the first
         # request did.
         return redirect("users:confirm_link_sent")
+
+    # Only requests that send mails are counted, so the elevate redirect and
+    # reloads of a request already handled do not use up the allowance.
+    if is_ratelimited(
+        request,
+        group="users.account_email_change",
+        key="user",
+        rate=settings.DEFAULT_RATE_LIMIT,
+        increment=True,
+    ):
+        raise Ratelimited()
 
     _send_email_change_mails(request, current_email, updated_email)
     # Marked only once sent, so a request that failed can be retried.
