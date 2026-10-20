@@ -34,6 +34,7 @@ from .views import (
     create_password,
     elevate_check_code_view,
     hijack_view,
+    logout_other_sessions_view,
     oauth,
     send_confirm_access_email_view,
     set_password_view,
@@ -161,6 +162,11 @@ account_urls = [
     path("activate/", create_password, name="activate_password"),
     path("oauth", oauth, name="oauth"),
     path("set-timezone/", set_timezone_view, name="set_timezone"),
+    path(
+        "logout-other-sessions/",
+        logout_other_sessions_view,
+        name="logout_other_sessions",
+    ),
     # 2FA
     path("two_factor/setup/", TWOFASetupView.as_view(), name="setup"),
     path(

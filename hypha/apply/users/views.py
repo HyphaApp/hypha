@@ -5,7 +5,12 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import get_user_model, login, update_session_auth_hash
+from django.contrib.auth import (
+    SESSION_KEY,
+    get_user_model,
+    login,
+    update_session_auth_hash,
+)
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -15,6 +20,7 @@ from django.contrib.auth.views import (
 )
 from django.contrib.auth.views import PasswordResetView as DjPasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.sessions.models import Session
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.core.signing import TimestampSigner
@@ -998,6 +1004,20 @@ def set_password_view(request):
             email_subject_template="users/emails/set_password_subject.txt",
         )
         return HttpResponse(_("✓ Check your email for password set link."))
+
+
+@login_required
+@require_POST
+def logout_other_sessions_view(request):
+    """Log out all sessions of the user except the current one."""
+    for session in Session.objects.filter(expire_date__gt=timezone.now()):
+        if (
+            session.get_decoded().get(SESSION_KEY) == str(request.user.pk)
+            and session.session_key != request.session.session_key
+        ):
+            session.delete()
+    messages.success(request, _("You have been logged out of all other sessions."))
+    return redirect("users:account")
 
 
 @require_POST
