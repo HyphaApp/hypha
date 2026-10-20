@@ -240,6 +240,25 @@ class TestEmailChangeSuccess(TestCase):
         confirm_path_prefix = confirm_url("x").removesuffix("x/")
         self.assertNotIn(confirm_path_prefix, notice.body)
 
+    def test_plain_text_emails_are_not_html_escaped(self):
+        from django.core import mail
+
+        self.user.full_name = "Anna O'Brien"
+        self.user.save()
+        signed = make_signed_value(self.user, "o'brien@example.com")
+        self.client.get(url_with_value(signed))
+        alert, confirmation = mail.outbox
+        self.assertIn("o'brien@example.com", alert.body)
+        self.assertIn("Anna O'Brien", confirmation.body)
+
+    def test_email_in_use_notice_is_not_html_escaped(self):
+        from django.core import mail
+
+        other_user = UserFactory(email="o'brien@example.com")
+        signed = make_signed_value(self.user, other_user.email)
+        self.client.get(url_with_value(signed))
+        self.assertIn("o'brien@example.com", mail.outbox[1].body)
+
 
 class TestProfileFormEmailChange(TestCase):
     """The profile form must not reveal whether an email is registered."""
