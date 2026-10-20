@@ -134,7 +134,8 @@ class AccountView(SuccessMessageMixin, UpdateView):
     def form_valid(self, form):
         updated_email = form.cleaned_data["email"]
         name = form.cleaned_data["full_name"]
-        slack = form.cleaned_data.get("slack", "")
+        # None when the form has no slack field, so the stored value is kept.
+        slack = form.cleaned_data.get("slack")
         user = get_object_or_404(User, id=self.request.user.id)
         if user.email != updated_email:
             base_url = reverse("users:email_change_confirm_password")
@@ -322,18 +323,14 @@ class EmailChangeConfirmationView(TemplateView):
         user = request.user
         email = payload["updated_email"]
 
-        if User.objects.filter(email__iexact=email).exclude(pk=user.pk).exists():
-            messages.error(
-                request,
-                _("That email address is already in use by another account."),
-            )
-            return redirect("users:account")
-
         user.email = email
         try:
+            if User.objects.filter(email__iexact=email).exclude(pk=user.pk).exists():
+                raise IntegrityError
             user.save(update_fields=["email"])
         except IntegrityError:
-            # Lost a race with another account claiming the same address.
+            # Address already taken, possibly by losing a race with another
+            # account claiming it.
             user.refresh_from_db()
             messages.error(
                 request,
