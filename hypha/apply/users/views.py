@@ -139,11 +139,13 @@ class AccountView(SuccessMessageMixin, UpdateView):
 
     def form_valid(self, form):
         updated_email = form.cleaned_data["email"]
-        user = get_object_or_404(User, id=self.request.user.id)
-        if user.email != updated_email:
+        # form.initial is populated from the instance before validation copies
+        # the submitted values onto it, so it still holds the stored email.
+        current_email = form.initial["email"]
+        if current_email != updated_email:
             # Other profile edits are saved now. The new email only takes effect
             # through the confirmation flow, so keep the stored one for this save.
-            form.instance.email = user.email
+            form.instance.email = current_email
             form.save()
             messages.success(self.request, self.success_message)
 
