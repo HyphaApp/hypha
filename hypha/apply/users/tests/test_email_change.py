@@ -174,8 +174,28 @@ class TestEmailChangeSuccess(TestCase):
         self.client.get(target)
         sent = len(mail.outbox)
         response = self.client.get(target, follow=False)
-        self.assertRedirects(response, ACCOUNT_URL, fetch_redirect_response=False)
+        # A reload lands on the same "link sent" page, without sending again.
+        self.assertRedirects(
+            response, CONFIRM_LINK_SENT_URL, fetch_redirect_response=False
+        )
         self.assertEqual(len(mail.outbox), sent)
+
+    def test_signed_value_reusable_if_sending_fails(self):
+        from django.core import mail
+
+        target = url_with_value(make_signed_value(NEW_EMAIL))
+        with patch(
+            "hypha.apply.users.views.send_confirmation_email",
+            side_effect=ConnectionError,
+        ):
+            with self.assertRaises(ConnectionError):
+                self.client.get(target)
+        mail.outbox.clear()
+        response = self.client.get(target, follow=False)
+        self.assertRedirects(
+            response, CONFIRM_LINK_SENT_URL, fetch_redirect_response=False
+        )
+        self.assertEqual(len(mail.outbox), 2)
 
     def test_confirmation_token_is_not_accepted_as_value(self):
         from django.core import mail
