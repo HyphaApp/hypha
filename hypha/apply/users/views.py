@@ -73,6 +73,7 @@ from .services import PasswordlessAuthService
 from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGenerator
 from .utils import (
     generate_numeric_token,
+    get_email_context,
     get_redirect_url,
     get_zoneinfo,
     login_ratelimit_key,
@@ -230,14 +231,7 @@ def account_email_change(request):
         subject=_("Alert! An attempt to update your email."),
         message=render_to_string(
             "users/email_change/update_info_email.html",
-            {
-                "name": request.user.get_full_name(),
-                "username": request.user.get_username(),
-                "unverified_email": updated_email,
-                "ORG_EMAIL": settings.ORG_EMAIL,
-                "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
-                "ORG_LONG_NAME": settings.ORG_LONG_NAME,
-            },
+            get_email_context(user=request.user, unverified_email=updated_email),
         ),
         from_email=settings.DEFAULT_FROM_EMAIL,
     )
@@ -334,19 +328,15 @@ class EmailChangeConfirmationView(TemplateView):
         user = request.user
         email = payload["updated_email"]
 
+        if User.objects.filter(email__iexact=email).exclude(pk=user.pk).exists():
+            return redirect("users:account")
+
         user.email = email
         try:
-            if User.objects.filter(email__iexact=email).exclude(pk=user.pk).exists():
-                raise IntegrityError
             user.save(update_fields=["email"])
         except IntegrityError:
-            # Address already taken, possibly by losing a race with another
-            # account claiming it.
+            # Lost a race with another account claiming the same address.
             user.refresh_from_db()
-            messages.error(
-                request,
-                _("That email address is already in use by another account."),
-            )
             return redirect("users:account")
 
         # Burn the token so the link cannot be replayed, even if the user
