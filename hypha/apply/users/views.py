@@ -257,7 +257,7 @@ def _send_email_change_mails(request, current_email, updated_email):
     request.user.email_user(
         subject=_("Alert! An attempt to update your email."),
         message=render_to_string(
-            "users/email_change/update_info_email.html",
+            "users/email_change/update_info_email.txt",
             get_email_context(user=request.user, unverified_email=updated_email),
         ),
         from_email=settings.DEFAULT_FROM_EMAIL,
