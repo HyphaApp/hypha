@@ -448,7 +448,7 @@ See <https://github.com/tm-kn/django-basic-auth-ip-whitelist>
 
 How long should Elevate mode be active for?
 
-    ELEVATE_COOKIE_AGE = env.int("ELEVATE_COOKIE_AGE", 3600)  # 1 hours
+    ELEVATE_COOKIE_AGE = env.int("ELEVATE_COOKIE_AGE", 900)  # 15 minutes
 
 ----
 

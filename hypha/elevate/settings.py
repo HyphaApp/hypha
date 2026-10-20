@@ -16,7 +16,7 @@ REDIRECT_URL = getattr(settings, "ELEVATE_REDIRECT_URL", "/")
 REDIRECT_FIELD_NAME = getattr(settings, "ELEVATE_REDIRECT_FIELD_NAME", "next")
 
 # How long should Elevate mode be active for? Duration in seconds.
-COOKIE_AGE = getattr(settings, "ELEVATE_COOKIE_AGE", 10800)
+COOKIE_AGE = getattr(settings, "ELEVATE_COOKIE_AGE", 900)  # 15 minutes
 
 # The domain to bind the Elevate cookie to. Default to the current domain.
 COOKIE_DOMAIN = getattr(settings, "ELEVATE_COOKIE_DOMAIN", None)
