@@ -1,5 +1,4 @@
 import datetime
-import hashlib
 import time
 from typing import Any
 from urllib.parse import urlencode
@@ -17,7 +16,6 @@ from django.contrib.auth.views import (
 from django.contrib.auth.views import PasswordResetView as DjPasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.core.signing import TimestampSigner
 from django.db import IntegrityError
@@ -88,6 +86,8 @@ User = get_user_model()
 # never accepted by the other.
 EMAIL_CHANGE_REQUEST_SALT = "hypha.users.email_change.request"
 EMAIL_CHANGE_CONFIRM_SALT = "hypha.users.email_change.confirm"
+# Session key holding the last email change request that mails were sent for.
+EMAIL_CHANGE_SENT_SESSION_KEY = "email_change_sent"
 
 
 @method_decorator(
@@ -229,24 +229,17 @@ def account_email_change(request):
     if updated_email == current_email:
         return redirect("users:account")
 
-    # The value can only be used once, so reloading the page cannot be used to
-    # send the same mails over and over. cache.add() is an atomic check-and-set,
-    # so concurrent requests with the same value cannot both get through.
-    used_cache_key = (
-        f"email-change-request:{hashlib.sha256(signed_value.encode()).hexdigest()}"
-    )
-    if not cache.add(used_cache_key, True, timeout=settings.PASSWORD_RESET_TIMEOUT):
-        # Already handled, e.g. a reload or the back button: the mails are on
-        # their way, so show the same page as the first request did.
+    # Reloading, or going back through the elevate page, must not send the same
+    # mails again. The session is kept per user and, unlike the cache, is not
+    # culled, so it reliably remembers the request handled last.
+    if request.session.get(EMAIL_CHANGE_SENT_SESSION_KEY) == signed_value:
+        # The mails are on their way, so show the same page as the first
+        # request did.
         return redirect("users:confirm_link_sent")
 
-    try:
-        _send_email_change_mails(request, current_email, updated_email)
-    except Exception:
-        # Release the value so the user can retry instead of being left with a
-        # used link and no mail.
-        cache.delete(used_cache_key)
-        raise
+    _send_email_change_mails(request, current_email, updated_email)
+    # Marked only once sent, so a request that failed can be retried.
+    request.session[EMAIL_CHANGE_SENT_SESSION_KEY] = signed_value
     return redirect("users:confirm_link_sent")
 
 

@@ -6,7 +6,7 @@ from django.contrib.messages import get_messages
 from django.core.cache import cache
 from django.core.signing import TimestampSigner
 from django.db import IntegrityError
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.urls import reverse
 
 from ..models import ConfirmAccessToken
@@ -79,7 +79,6 @@ class TestEmailChangePasswordlessUserMustElevate(TestCase):
     """Users without a usable password must also elevate, via an emailed code."""
 
     def setUp(self):
-        cache.clear()
         self.user = UserFactory()
         self.user.set_unusable_password()
         self.user.save()
@@ -147,14 +146,10 @@ class TestEmailChangeTokenValidation(TestCase):
         self.assertContains(response, "expired or is invalid")
 
 
-@override_settings(
-    CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
-)
 class TestEmailChangeSuccess(TestCase):
     """With a valid elevated session and correct token, the view updates the user."""
 
     def setUp(self):
-        cache.clear()
         self.user = UserFactory()
         self.client.force_login(self.user)
         elevate_session(self)
@@ -221,6 +216,31 @@ class TestEmailChangeSuccess(TestCase):
             response, CONFIRM_LINK_SENT_URL, fetch_redirect_response=False
         )
         self.assertEqual(len(mail.outbox), 2)
+
+    def test_used_value_stays_used_when_cache_is_cleared(self):
+        from django.core import mail
+
+        target = url_with_value(make_signed_value(self.user, NEW_EMAIL))
+        self.client.get(target)
+        sent = len(mail.outbox)
+        # The database cache culls entries when full, so the guard must not
+        # depend on it.
+        cache.clear()
+        response = self.client.get(target, follow=False)
+        self.assertRedirects(
+            response, CONFIRM_LINK_SENT_URL, fetch_redirect_response=False
+        )
+        self.assertEqual(len(mail.outbox), sent)
+
+    def test_new_value_after_used_one_still_sends(self):
+        from django.core import mail
+
+        self.client.get(url_with_value(make_signed_value(self.user, NEW_EMAIL)))
+        mail.outbox.clear()
+        other_email = "other@example.com"
+        self.client.get(url_with_value(make_signed_value(self.user, other_email)))
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertIn(other_email, [addr for msg in mail.outbox for addr in msg.to])
 
     def test_confirmation_token_is_not_accepted_as_value(self):
         from django.core import mail
@@ -385,14 +405,10 @@ def confirm_url(token):
     return reverse("users:confirm_email", kwargs={"token": token})
 
 
-@override_settings(
-    CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
-)
 class EmailChangeConfirmation(TestCase):
     """The confirmation link shows a page on GET and only applies the change on POST."""
 
     def setUp(self):
-        cache.clear()
         self.user = UserFactory()
         self.original_email = self.user.email
         self.new_email = f"new{self.user.email}"
