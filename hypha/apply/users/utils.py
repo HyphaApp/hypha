@@ -64,6 +64,31 @@ def can_use_oauth_check(user):
     return False
 
 
+def get_email_context(user=None, site=None, **extra):
+    """
+    Build the template context shared by the account emails: organisation
+    details, plus the recipient's names and the site when given.
+    """
+    context = {
+        "ORG_EMAIL": settings.ORG_EMAIL,
+        "ORG_LONG_NAME": settings.ORG_LONG_NAME,
+        "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
+    }
+    if user:
+        context.update(
+            user=user, name=user.get_full_name(), username=user.get_username()
+        )
+    if site:
+        context.update(site=site)
+    context.update(extra)
+    return context
+
+
+def single_line(subject):
+    """Force an email subject to a single line to avoid header-injection issues."""
+    return "".join(subject.splitlines())
+
+
 def send_activation_email(
     user,
     site=None,
@@ -86,22 +111,14 @@ def send_activation_email(
 
     timeout_minutes = settings.PASSWORD_ACTIVATION_TIMEOUT // 60
 
-    context = {
-        "user": user,
-        "name": user.get_full_name(),
-        "username": user.get_username(),
-        "activation_path": activation_path,
-        "timeout_minutes": timeout_minutes,
-        "ORG_LONG_NAME": settings.ORG_LONG_NAME,
-        "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
-    }
+    context = get_email_context(
+        user=user,
+        site=site,
+        activation_path=activation_path,
+        timeout_minutes=timeout_minutes,
+    )
 
-    if site:
-        context.update(site=site)
-
-    subject = render_to_string(email_subject_template, context)
-    # Force subject to a single line to avoid header-injection issues.
-    subject = "".join(subject.splitlines())
+    subject = single_line(render_to_string(email_subject_template, context))
     message = render_to_string(email_template, context)
     user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
 
@@ -117,25 +134,19 @@ def send_confirmation_email(user, token, updated_email=None, site=None):
 
     timeout_minutes = settings.PASSWORD_RESET_TIMEOUT // 60
 
-    context = {
-        "user": user,
-        "name": user.get_full_name(),
-        "username": user.get_username(),
-        "unverified_email": updated_email,
-        "activation_path": activation_path,
-        "timeout_minutes": timeout_minutes,
-        "ORG_LONG_NAME": settings.ORG_LONG_NAME,
-        "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
-    }
-
-    if site:
-        context.update(site=site)
-
-    subject = _("Confirmation email for {unverified_email} at {ORG_LONG_NAME}").format(
-        **context
+    context = get_email_context(
+        user=user,
+        site=site,
+        unverified_email=updated_email,
+        activation_path=activation_path,
+        timeout_minutes=timeout_minutes,
     )
-    # Force subject to a single line to avoid header-injection issues.
-    subject = "".join(subject.splitlines())
+
+    subject = single_line(
+        _("Confirmation email for {unverified_email} at {ORG_LONG_NAME}").format(
+            **context
+        )
+    )
     message = render_to_string("users/email_change/confirm_email.txt", context)
     if updated_email:
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [updated_email])
@@ -148,17 +159,11 @@ def send_email_in_use_email(updated_email, site=None):
     Notify an address that someone tried to change their account email to it,
     when it already belongs to another account.
     """
-    context = {
-        "unverified_email": updated_email,
-        "ORG_EMAIL": settings.ORG_EMAIL,
-        "ORG_LONG_NAME": settings.ORG_LONG_NAME,
-        "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
-    }
+    context = get_email_context(site=site, unverified_email=updated_email)
 
-    if site:
-        context.update(site=site)
-
-    subject = _("Email change request at {ORG_LONG_NAME}").format(**context)
+    subject = single_line(
+        _("Email change request at {ORG_LONG_NAME}").format(**context)
+    )
     message = render_to_string("users/email_change/email_in_use.txt", context)
     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [updated_email])
 
