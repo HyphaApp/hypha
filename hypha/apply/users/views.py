@@ -205,7 +205,7 @@ def account_email_change(request):
         # The window has to cover the elevate step as well, which for
         # passwordless users means waiting for an emailed code.
         value = TimestampSigner(salt=EMAIL_CHANGE_REQUEST_SALT).unsign_object(
-            signed_value, max_age=settings.PASSWORD_RESET_TIMEOUT
+            signed_value, max_age=settings.PASSWORDLESS_LOGIN_TIMEOUT
         )
     except Exception:
         value = None
