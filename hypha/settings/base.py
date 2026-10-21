@@ -48,7 +48,8 @@ WEBAUTHN_RP_ID = env.str("WEBAUTHN_RP_ID", None)
 WEBAUTHN_ORIGIN = env.str("WEBAUTHN_ORIGIN", None)
 WEBAUTHN_RP_NAME = env.str("WEBAUTHN_RP_NAME", None)
 
-# Set the allowed file extension for all uploads fields.
+# Set the allowed file extension for all uploads fields. The file inputs
+# "accept" attribute and help text are derived from this list.
 FILE_ALLOWED_EXTENSIONS = [
     "doc",
     "docx",
@@ -63,7 +64,6 @@ FILE_ALLOWED_EXTENSIONS = [
     "xls",
     "xlsx",
 ]
-FILE_ACCEPT_ATTR_VALUE = ", ".join(["." + ext for ext in FILE_ALLOWED_EXTENSIONS])
 
 # Make it possible for staff to anonymise users and applications.
 SUBMISSION_ANONYMIZATION_ENABLED = env.bool("SUBMISSION_ANONYMIZATION_ENABLED", False)

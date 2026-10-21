@@ -3,7 +3,6 @@ import nh3
 from anyascii import anyascii
 from dateutil.parser import isoparse, parse
 from django import forms
-from django.conf import settings
 from django.db.models import BLANK_CHOICE_DASH
 from django.forms.widgets import ClearableFileInput
 from django.utils.dateparse import parse_datetime
@@ -29,7 +28,7 @@ from wagtail.blocks import (
     TimeBlock,
 )
 
-from .fields import MultiFileField, SingleFileField
+from .fields import MultiFileField, SingleFileField, get_file_accept_attr_value
 
 
 class FormFieldBlock(StructBlock):
@@ -461,7 +460,7 @@ class FileFieldBlock(UploadableMediaBlock):
         kwargs["help_text"] = mark_safe(
             _("{help_text} Accepted file types are {file_types}").format(
                 help_text=kwargs["help_text"],
-                file_types=settings.FILE_ACCEPT_ATTR_VALUE,
+                file_types=get_file_accept_attr_value(),
             )
         )
         return kwargs
@@ -480,7 +479,7 @@ class MultiFileFieldBlock(UploadableMediaBlock):
         kwargs["help_text"] = mark_safe(
             _("{help_text} Accepted file types are {file_types}").format(
                 help_text=kwargs["help_text"],
-                file_types=settings.FILE_ACCEPT_ATTR_VALUE,
+                file_types=get_file_accept_attr_value(),
             )
         )
         return kwargs
