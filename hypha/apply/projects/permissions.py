@@ -9,7 +9,7 @@ from hypha.apply.funds.models.co_applicants import (
     CoApplicantRole,
 )
 from hypha.apply.users.models import User
-from hypha.apply.users.roles import Applicant, Staff
+from hypha.apply.users.roles import Applicant, Contracting, Finance, Staff
 
 from .models.project import (
     CLOSING,
@@ -489,6 +489,38 @@ def add_invoice(role, user, project) -> bool:
                 and co_applicant.role == CoApplicantRole.EDIT
             ):
                 return True
+    return False
+
+
+@register_object_checker(name="add_disbursement")
+def can_add_disbursement(role, user, project) -> bool:
+    """Gate the Add/Edit/Delete disbursement buttons in the template.
+
+    Mirrors the view-side ``staff_or_finance_required`` decorator: Staff and
+    Finance (and superusers via rolepermissions' superpower) may record
+    disbursements. Contracting is intentionally excluded -- recording a
+    disbursement is a finance action, not a contracting one. No phase gate by
+    design (see ARDC: less phase gating than upstream invoices); the section
+    itself only renders once the project has a contract. ``can_`` prefix
+    follows the other checkers in this module; the registration name stays
+    ``add_disbursement`` for the ``{% can %}`` tag.
+
+    """
+    if role in (Staff, Finance):
+        return True
+    return False
+
+
+@register_object_checker(name="add_contract")
+def can_add_contract(role, user, project) -> bool:
+    """Gate the ``Add Contract`` button in the Contracts and Disbursements
+    section (staff/finance/contracting). Used to attach further contracts once
+    a project already has one; the first contract still goes through the
+    contracting flow, which transitions the project.
+
+    """
+    if role in (Staff, Finance, Contracting):
+        return True
     return False
 
 
