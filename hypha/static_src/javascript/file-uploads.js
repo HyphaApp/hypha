@@ -36,36 +36,35 @@ htmx.onLoad(function () {
 
   // Handle client side validation for required file fields
   fileInputs.forEach((input) => {
-    input.addEventListener("invalid", function (event) {
-      event.preventDefault(); // Prevent default browser behavior
+    // The field wrapper, see forms/includes/field.html.
+    const container =
+      input.closest("[data-js-file-upload]") || input.parentElement;
 
-      const fileUploadEl = input.closest("[data-js-file-upload]");
-      const errorMessage = fileUploadEl
-        ? fileUploadEl.dataset.requiredText
-        : "This field is required.";
-      // Find the closest dff-uploader wrapper and display an error
-      let container = input.closest(".form__item");
+    // Do not call preventDefault() here, that stops the browser from
+    // focusing and scrolling to the field like it does for other fields.
+    input.addEventListener("invalid", function () {
+      const errorMessage =
+        container.dataset.requiredText || "This field is required.";
 
-      let errorDiv = container.querySelector(".form__error-text");
+      let errorEl = container.querySelector(".text-error");
 
-      errorDiv = document.createElement("p");
-      errorDiv.classList.add("form__error-text");
-      container.appendChild(errorDiv);
-      errorDiv.innerText = errorMessage; // Show error message
+      if (!errorEl) {
+        errorEl = document.createElement("p");
+        errorEl.classList.add("text-error");
+        container.appendChild(errorEl);
+      }
+      errorEl.innerText = errorMessage; // Show error message
     });
 
     input.addEventListener("change", function () {
-      let container = input.closest(".form__item");
-      let errorDiv = container.querySelector(".form__error-text");
+      const errorEl = container.querySelector(".text-error");
 
-      if (errorDiv) {
-        if (
-          input.files.length > 0 ||
-          container.querySelector(".dff-file") !== null
-        ) {
-          errorDiv.classList.remove("form__error-text");
-          errorDiv.innerText = ""; // Clear the error only when a file is selected
-        }
+      // Clear the error only when a file is selected
+      if (
+        errorEl &&
+        (input.files.length > 0 || container.querySelector(".dff-file"))
+      ) {
+        errorEl.remove();
       }
     });
   });
