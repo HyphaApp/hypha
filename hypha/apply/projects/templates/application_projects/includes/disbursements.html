@@ -39,8 +39,7 @@ Loops contracts so it is correct in the 1:many Project:Contract world too.
                 <div class="mb-4 last:mb-0">
                     <div class="flex justify-between items-center mb-1">
                         <h3 class="text-sm font-semibold text-fg-muted">
-                            {% trans "Contract" %}
-                            <a class="link link-hover" href="{{ contract.get_absolute_url }}">#{{ contract.pk }}</a>
+                            <a class="link link-hover" href="{{ contract.get_absolute_url }}">{% trans "Contract" %} #{{ contract.pk }}</a>
                             {% if contract.amount_approved is not None %}
                                 <span class="text-fg-muted/80">
                                     ({% trans "Approved:" %} {{ contract.amount_approved|trimmed_decimal }} {{ contract.currency }})
@@ -60,11 +59,18 @@ Loops contracts so it is correct in the 1:many Project:Contract world too.
                     </div>
 
                     {% if contract.disbursements.exists %}
+                        <h4 class="mb-1 text-sm font-semibold text-fg-muted">
+                            {% blocktrans count counter=contract.disbursements.count trimmed %}
+                                {{ counter }} Disbursement:
+                            {% plural %}
+                                {{ counter }} Disbursements:
+                            {% endblocktrans %}
+                        </h4>
                         <div class="overflow-x-auto">
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>{% trans "Date" %}</th>
+                                        <th>{% trans "Disbursement date" %}</th>
                                         {% if contract.currency is not None %}
                                             <th>{% trans "Amount" %} ({{ contract.currency }})</th>
                                         {% else %}
