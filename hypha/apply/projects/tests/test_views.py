@@ -2206,6 +2206,39 @@ class TestStaffDisbursementsSection(BaseProjectDetailTestCase):
         response = self.get_page(project)
         self.assertContains(response, "Contracts and Disbursements")
 
+    def test_contract_link_includes_contract_word(self):
+        # The link text reads "Contract #65", not just "#65", so the
+        # destination is clear out of context (screen readers, copy-paste).
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, f"Contract #{contract.pk}")
+
+    def test_disbursements_labelled_with_count(self):
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract)
+        DisbursementFactory(contract=contract)
+        response = self.get_page(project)
+        self.assertContains(response, "2 Disbursements:")
+
+    def test_single_disbursement_label_is_singular(self):
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract)
+        response = self.get_page(project)
+        self.assertContains(response, "1 Disbursement:")
+        self.assertNotContains(response, "1 Disbursements:")
+
+    def test_date_column_is_disbursement_date(self):
+        # The per-contract table matches the All Disbursements table, where
+        # the first column is likewise "Disbursement date".
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract)
+        response = self.get_page(project)
+        self.assertContains(response, "Disbursement date")
+
     def test_contract_approved_amount_shown(self):
         from decimal import Decimal
 
