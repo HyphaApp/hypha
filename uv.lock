@@ -1753,6 +1753,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/1f/21/3cedee63417bc5553eed0c204be478071c9ab208e5e259e97287590194f1/django_storages-1.14.6-py3-none-any.whl", hash = "sha256:11b7b6200e1cb5ffcd9962bd3673a39c7d6a6109e8096f0e03d46fab3d3aabd9", size = 33095, upload-time = "2025-04-02T02:34:53.291Z" },
 ]
 
+[package.optional-dependencies]
+s3 = [
+    { name = "boto3" },
+]
+
 [[package]]
 name = "django-stubs"
 version = "6.0.9"
@@ -2348,7 +2353,6 @@ source = { virtual = "." }
 default-groups = ["dev", "docs"]
 dependencies = [
     { name = "babel" },
-    { name = "boto3" },
     { name = "celery" },
     { name = "click" },
     { name = "dj-database-url" },
@@ -2357,7 +2361,6 @@ dependencies = [
     { name = "django-basic-auth-ip-whitelist" },
     { name = "django-cotton" },
     { name = "django-countries" },
-    { name = "django-extensions" },
     { name = "django-file-form" },
     { name = "django-filter" },
     { name = "django-formtools" },
@@ -2368,7 +2371,7 @@ dependencies = [
     { name = "django-ratelimit" },
     { name = "django-role-permissions" },
     { name = "django-slack" },
-    { name = "django-storages" },
+    { name = "django-storages", extra = ["s3"] },
     { name = "django-tables2" },
     { name = "django-tinymce" },
     { name = "django-two-factor-auth" },
@@ -2405,6 +2408,7 @@ dev = [
     { name = "django-coverage-plugin" },
     { name = "django-debug-toolbar" },
     { name = "django-dynamic-fixture" },
+    { name = "django-extensions" },
     { name = "django-stubs", version = "6.0.9", source = { registry = "https://pypi.org/simple" }, extra = ["compatible-mypy"], marker = "python_full_version < '3.11'" },
     { name = "django-stubs", version = "6.1.2", source = { registry = "https://pypi.org/simple" }, extra = ["compatible-mypy"], marker = "python_full_version >= '3.11'" },
     { name = "djhtml" },
@@ -2438,7 +2442,6 @@ translate = [
 [package.metadata]
 requires-dist = [
     { name = "babel", specifier = "~=2.18.0" },
-    { name = "boto3", specifier = "~=1.42.23" },
     { name = "celery", specifier = "~=5.6.3" },
     { name = "click", specifier = "~=8.4.1" },
     { name = "dj-database-url", specifier = "~=3.1.2" },
@@ -2447,7 +2450,6 @@ requires-dist = [
     { name = "django-basic-auth-ip-whitelist", specifier = "~=0.8.0" },
     { name = "django-cotton", specifier = "~=2.7.2" },
     { name = "django-countries", specifier = "~=9.0.0" },
-    { name = "django-extensions", specifier = "~=4.1" },
     { name = "django-file-form", specifier = "~=4.0.0" },
     { name = "django-filter", specifier = "==25.2" },
     { name = "django-formtools", specifier = "~=2.6.1" },
@@ -2458,7 +2460,7 @@ requires-dist = [
     { name = "django-ratelimit", specifier = "~=4.1.0" },
     { name = "django-role-permissions", specifier = "~=3.2.0" },
     { name = "django-slack", specifier = "~=5.19.0" },
-    { name = "django-storages", specifier = "~=1.14.6" },
+    { name = "django-storages", extras = ["s3"], specifier = "~=1.14.6" },
     { name = "django-tables2", specifier = "~=2.8.0" },
     { name = "django-tinymce", specifier = "~=5.0.0" },
     { name = "django-two-factor-auth", specifier = "~=1.18.1" },
@@ -2495,6 +2497,7 @@ dev = [
     { name = "django-coverage-plugin", specifier = ">=3.2.0" },
     { name = "django-debug-toolbar", specifier = ">=6.1.0" },
     { name = "django-dynamic-fixture", specifier = ">=4.0.1" },
+    { name = "django-extensions", specifier = "~=4.1" },
     { name = "django-stubs", extras = ["compatible-mypy"], specifier = ">=5.2.9" },
     { name = "djhtml", specifier = ">=3.0.10" },
     { name = "dslr", specifier = ">=0.6.0" },

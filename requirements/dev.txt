@@ -321,7 +321,7 @@ billiard==4.3.1 \
 boto3==1.42.97 \
     --hash=sha256:2833dbeda3670ea610ad48dff7d27cdc829dbbfcdfbc6b750b673948e949b6f0 \
     --hash=sha256:966e49f0510af9a64057a902b7df53d4348c447de0d3df4cc855dfd85e058fcd
-    # via hypha
+    # via django-storages
 botocore==1.42.97 \
     --hash=sha256:5c0bb00e32d16ff6d278cc8c9e10dc3672d9c1d569031635ac3c908a60de8310 \
     --hash=sha256:77d2c8ce1bc592d3fbd7c01c35836f4a5b0cac2ca03ccdf6ffc60faa16b5fadc
@@ -964,7 +964,6 @@ django-dynamic-fixture==4.0.1 \
 django-extensions==4.1 \
     --hash=sha256:0699a7af28f2523bf8db309a80278519362cd4b6e1fd0a8cd4bf063e1e023336 \
     --hash=sha256:7b70a4d28e9b840f44694e3f7feb54f55d495f8b3fa6c5c0e5e12bcb2aa3cdeb
-    # via hypha
 django-file-form==4.0.0 \
     --hash=sha256:09b835bd256849b51982320763b975565c6f0dfdcf11f4e8b4366695e3dd2cec
     # via hypha
