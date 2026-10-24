@@ -6,6 +6,10 @@ from django_file_form.fields import MultipleUploadedFileField, UploadedFileField
 from django_file_form.widgets import UploadMultipleWidget, UploadWidget
 
 
+def get_file_accept_attr_value():
+    return ", ".join(["." + ext for ext in settings.FILE_ALLOWED_EXTENSIONS])
+
+
 class MultiFileFieldWidget(UploadMultipleWidget):
     pass
 
@@ -47,7 +51,7 @@ class MultiFileField(MultipleUploadedFileField):
     def widget_attrs(self, widget):
         attrs = super().widget_attrs(widget)
         if isinstance(widget, MultiFileFieldWidget) and "accept" not in widget.attrs:
-            attrs.setdefault("accept", settings.FILE_ACCEPT_ATTR_VALUE)
+            attrs.setdefault("accept", get_file_accept_attr_value())
         return attrs
 
 
@@ -74,5 +78,5 @@ class SingleFileField(UploadedFileField):
     def widget_attrs(self, widget):
         attrs = super().widget_attrs(widget)
         if isinstance(widget, SingleFileFieldWidget) and "accept" not in widget.attrs:
-            attrs.setdefault("accept", settings.FILE_ACCEPT_ATTR_VALUE)
+            attrs.setdefault("accept", get_file_accept_attr_value())
         return attrs

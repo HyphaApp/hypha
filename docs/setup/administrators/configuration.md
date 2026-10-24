@@ -118,10 +118,9 @@ If applicants should be forced to preview their application before submitting
 
 ----
 
-Set the allowed file extension for all uploads fields.
+Set the allowed file extension for all uploads fields. The file inputs "accept" attribute and the "Accepted file types" help text are derived from this list.
 
     FILE_ALLOWED_EXTENSIONS = ['doc', 'docx', 'odp', 'ods', 'odt', 'pdf', 'ppt', 'pptx', 'rtf', 'txt', 'xls', 'xlsx']
-    FILE_ACCEPT_ATTR_VALUE = ', '.join(['.' + ext for ext in FILE_ALLOWED_EXTENSIONS])
 
 ----
 
