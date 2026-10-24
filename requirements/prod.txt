@@ -425,6 +425,7 @@ django==5.2.18 \
     #   djp
     #   hypha
     #   laces
+    #   modelsearch
     #   pwned-passwords-django
     #   social-auth-app-django
     #   wagtail
@@ -524,10 +525,12 @@ django-taggit==6.1.0 \
     --hash=sha256:ab776264bbc76cb3d7e49e1bf9054962457831bd21c3a42db9138b41956e4cf0 \
     --hash=sha256:c4d1199e6df34125dd36db5eb0efe545b254dec3980ce5dd80e6bab3e78757c3
     # via wagtail
-django-tasks==0.7.0 \
-    --hash=sha256:499f80d1a051566443cfa88a300d8b03435af7fc5708cad4d8da6d285614f739 \
-    --hash=sha256:8a8d64f2dc6e29ac2f45092d90e2dd82dc1dca100dfe3a4f2ce1209db99f3527
-    # via wagtail
+django-tasks==0.12.0 \
+    --hash=sha256:58be66c1e487da32a3ce7320bd1949d0d1dc381b9004819f92591eb37fb2c1b8 \
+    --hash=sha256:ffcc1d7bdfad3bc5ef9c2d498596c6546484c9ec6b182fb9709c691eb66a8709
+    # via
+    #   modelsearch
+    #   wagtail
 django-tinymce==5.0.0 \
     --hash=sha256:6257669ed596accf5fa967ff3061276b2c5352baac1bbc658fcd8252b12ca38a \
     --hash=sha256:c2e9c5efd2cc6c036f4c57e602b133180433e2bd1513b897089d3c4fb4e20579
@@ -737,6 +740,10 @@ mistune==3.3.4 \
     --hash=sha256:58b5c96d6fcb61190dfe5fae498d2b2065f99cf61e9649418fd54cf1ada86dfe \
     --hash=sha256:ee015381e955e370962968befe1d729ab60fafb6a715ac6751763fbce38c8d4a
     # via hypha
+modelsearch==1.3.2 \
+    --hash=sha256:52ede0f65e91efdb9d715f603e0bb3db96a95c80eba695abcd4628c03759999e \
+    --hash=sha256:8738ad7dc6fd2f70f622e717c52fbdcc60285e6b74acc41a7bf3fe911718532b
+    # via wagtail
 nh3==0.3.7 \
     --hash=sha256:157ec1eb7a62f3d9a7badb8d82d89aa810e3e24e097eedfa481a25d0c8a99877 \
     --hash=sha256:15f5fbf090f5c88d61c820e1fc1fceecb6520cca9fe85649c06b57ef9dc9ff62 \
@@ -1137,15 +1144,15 @@ vine==5.1.0 \
     #   amqp
     #   celery
     #   kombu
-wagtail==7.0.10 \
-    --hash=sha256:52543a8ef2912fa389a9c00246c93d112b70b922677be3144b730456a981d0a7 \
-    --hash=sha256:698a234f510b366d333af5354600197dc135729d76a84ccea698fc65a05825d3
+wagtail==7.4.4 \
+    --hash=sha256:1f328154bd08afa39fcb5f1042a0c9181dcd0a6c80e27e72a0257de4c16e3541 \
+    --hash=sha256:949bf7129d69e5b94d655651724b4fa90264fa21ae20426f89914814e030a2f7
     # via
     #   hypha
     #   wagtail-modeladmin
-wagtail-modeladmin==2.2.0 \
-    --hash=sha256:41e12f9a79f8c1595fce73bd6b51007422f258089564f9df8e09a82246a8e133 \
-    --hash=sha256:60ea08b128761b5b6a1cbfe3c8ab828fba13e41ff3d7563a0b8c62c8fe36c4ce
+wagtail-modeladmin==2.5.0 \
+    --hash=sha256:0f86e96d5172437e14f6e5fd986bae9648f499c117dff3bf6b2f9844ea9f440e \
+    --hash=sha256:909c6238dc95371b97dc23651a5a9d8aeb9c3d1660ed0349b4a3e31c8fb8dc0d
     # via hypha
 wcwidth==0.9.3 \
     --hash=sha256:16d09df90b3a8f799ea14c726a41d9b906c3104f95f46d158e1ebe45cf4d547b \
