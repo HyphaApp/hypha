@@ -5,7 +5,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db import models
@@ -176,10 +175,7 @@ def submissions_all(
             qs = qs.active().current()
 
     if search_term:
-        query = SearchQuery(search_term, search_type="websearch")
-        rank_annotation = SearchRank(models.F("search_document"), query)
-        qs = qs.filter(search_document=query)
-        qs = qs.annotate(rank=rank_annotation)
+        qs = qs.search(search_term)
 
     filter_extras = {
         "exclude": settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS,
