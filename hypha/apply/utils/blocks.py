@@ -109,7 +109,8 @@ class CustomFormFieldsBlock(StreamBlock):
         ]
 
         all_errors = []
-        if missing:
+        # Wagtail sets is_deferred_validation when saving drafts, required checks are skipped then.
+        if missing and not self.is_deferred_validation:
             all_errors.append(
                 _("You are missing the following required fields: {}").format(
                     ", ".join(prettify_names(missing))
@@ -127,6 +128,8 @@ class CustomFormFieldsBlock(StreamBlock):
                     self.add_error_to_child(error_dict, i, "info", _("Duplicate field"))
 
         for block in value:
+            if self.is_deferred_validation:
+                break
             if hasattr(block.block, "child_blocks"):
                 for child_block_name, child_block in block.block.child_blocks.items():
                     if child_block.required and not block.value[child_block_name]:
