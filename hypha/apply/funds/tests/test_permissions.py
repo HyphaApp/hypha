@@ -270,6 +270,32 @@ class TestIsUserHasAccessToViewSubmission(TestCase):
         result, _ = can_view_submission(user, submission)
         self.assertFalse(result)
 
+    def test_reviewer_cannot_view_draft(self):
+        reviewer = ReviewerFactory()
+        submission = ApplicationSubmissionFactory(status=DRAFT_STATE)
+        result, _ = can_view_submission(reviewer, submission)
+        self.assertFalse(result)
+
+    def test_submission_owner_can_view_draft(self):
+        applicant = ApplicantFactory()
+        submission = ApplicationSubmissionFactory(user=applicant, status=DRAFT_STATE)
+        result, _ = can_view_submission(applicant, submission)
+        self.assertTrue(result)
+
+    @override_settings(SUBMISSIONS_DRAFT_ACCESS_STAFF=False)
+    def test_staff_cannot_view_draft_when_setting_disabled(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory(status=DRAFT_STATE)
+        result, _ = can_view_submission(staff, submission)
+        self.assertFalse(result)
+
+    @override_settings(SUBMISSIONS_DRAFT_ACCESS_STAFF=True)
+    def test_staff_can_view_draft_when_setting_enabled(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory(status=DRAFT_STATE)
+        result, _ = can_view_submission(staff, submission)
+        self.assertTrue(result)
+
     @override_settings(SUBMISSIONS_ARCHIVED_VIEW_ACCESS_STAFF=False)
     def test_staff_cannot_view_archived_when_setting_disabled(self):
         staff = StaffFactory()
