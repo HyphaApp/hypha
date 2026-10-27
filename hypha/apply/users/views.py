@@ -151,11 +151,12 @@ class AccountView(SuccessMessageMixin, UpdateView):
         # the submitted values onto it, so it still holds the stored email.
         current_email = form.initial["email"]
         if current_email != updated_email:
-            # Other profile edits are saved now. The new email only takes effect
-            # through the confirmation flow, so keep the stored one for this save.
-            form.instance.email = current_email
-            form.save()
-            messages.success(self.request, self.success_message)
+            # Check if other profile fields are changed and if so save them.
+            if set(form.changed_data) - {"email"}:
+                # Keep the stored email, the new one only takes effect after confirmation.
+                form.instance.email = current_email
+                form.save()
+                messages.success(self.request, self.success_message)
 
             base_url = reverse("users:email_change_confirm_password")
             query_dict = {"pk": self.request.user.pk, "updated_email": updated_email}
