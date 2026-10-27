@@ -432,27 +432,34 @@ class TestApplicationSubmission(TestCase):
         text = "I am text"
         rich_text = f"<b>{text}</b>"
         submission = self.make_submission(form_data__char=rich_text)
-        self.assertNotIn(rich_text, submission.search_data)
-        self.assertIn(text, submission.search_data)
+        self.assertNotIn(rich_text, " ".join(submission.get_searchable_contents()))
+        self.assertIn(text, " ".join(submission.get_searchable_contents()))
 
     def test_richtext_is_removed_for_search(self):
         text = "I am text"
         rich_text = f"<b>{text}</b>"
         submission = self.make_submission(form_data__rich_text=rich_text)
-        self.assertNotIn(rich_text, submission.search_data)
-        self.assertIn(text, submission.search_data)
+        self.assertNotIn(rich_text, " ".join(submission.get_searchable_contents()))
+        self.assertIn(text, " ".join(submission.get_searchable_contents()))
 
     def test_choices_added_for_search(self):
         choices = ["blah", "foo"]
         submission = self.make_submission(
             form_fields__radios__choices=choices, form_data__radios=["blah"]
         )
-        self.assertIn("blah", submission.search_data)
+        self.assertIn("blah", " ".join(submission.get_searchable_contents()))
 
     def test_number_not_in_search(self):
         value = 12345
         submission = self.make_submission(form_data__number=value)
-        self.assertNotIn(str(value), submission.search_data)
+        self.assertNotIn(str(value), " ".join(submission.get_searchable_contents()))
+
+    def test_search_matches_form_answers(self):
+        submission = self.make_submission(form_data__char="Mycelium network")
+        self.make_submission(round=submission.round, form_data__char="Unrelated")
+        self.assertEqual(
+            list(ApplicationSubmission.objects.search("mycelium")), [submission]
+        )
 
     def test_file_gets_uploaded(self):
         filename = "test_image.png"

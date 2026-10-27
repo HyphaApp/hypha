@@ -313,7 +313,7 @@ class SubmissionFilterAndSearch(SubmissionFilter):
         possible_id = re.search("^#(\\d+)$", value.strip())
         if possible_id:
             return queryset.filter(id=possible_id.groups()[0])
-        return queryset.filter(search_data__icontains=value)
+        return queryset.search(value)
 
     def filter_archived(self, queryset, name, value):
         if not value:

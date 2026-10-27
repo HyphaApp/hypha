@@ -8,13 +8,19 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser, AnonymousUser, Group
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import SearchVector, SearchVectorField
+from django.contrib.postgres.search import (
+    SearchQuery,
+    SearchRank,
+    SearchVector,
+    SearchVectorField,
+)
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import (
     Avg,
     Count,
     Exists,
+    F,
     FloatField,
     OuterRef,
     Q,
@@ -117,6 +123,12 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
     def active(self):
         return self.filter(status__in=active_statuses, is_archive=False)
+
+    def search(self, term):
+        query = SearchQuery(term, search_type="websearch")
+        return self.filter(search_document=query).annotate(
+            rank=SearchRank(F("search_document"), query)
+        )
 
     def inactive(self):
         return self.exclude(Q(status__in=active_statuses) | Q(is_archive=True))
@@ -258,12 +270,10 @@ class ApplicationSubmissionQueryset(JSONOrderable):
             )
             .prefetch_related("screening_statuses")
             .defer(
-                "search_data",
                 "search_document",
                 # Only used to check if a previous stage exists, skip the large fields.
                 "previous__form_data",
                 "previous__form_fields",
-                "previous__search_data",
                 "previous__search_document",
             )
         )
@@ -504,7 +514,6 @@ class ApplicationSubmission(
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True
     )
-    search_data = models.TextField()
     search_document = SearchVectorField(null=True)
 
     # Workflow inherited from WorkflowHelpers
@@ -552,6 +561,11 @@ class ApplicationSubmission(
     class Meta:
         indexes = [
             GinIndex(fields=["search_document"]),
+            GinIndex(
+                fields=["form_data"],
+                name="funds_appsub_form_data_gin",
+                opclasses=["jsonb_path_ops"],
+            ),
         ]
         verbose_name = _("application submission")
         verbose_name_plural = _("application submissions")
@@ -775,7 +789,6 @@ class ApplicationSubmission(
                     revision.is_draft = False
                     revision.save()
                 self.live_revision = revision
-                self.search_data = " ".join(list(self.prepare_search_values()))
                 self.search_document = self.prepare_search_vector()
 
             self.draft_revision = revision
@@ -791,7 +804,6 @@ class ApplicationSubmission(
                 revision.is_draft = False
                 revision.save()
                 self.live_revision = revision
-                self.search_data = " ".join(list(self.prepare_search_values()))
                 self.search_document = self.prepare_search_vector()
                 self.save(skip_custom=True)
 
@@ -844,8 +856,6 @@ class ApplicationSubmission(
         self.clean_submission()
 
         # add a denormed version of the answer for searching
-        # @TODO: remove 'search_data' in favour of 'search_document' for FTS
-        self.search_data = " ".join(self.prepare_search_values())
         self.search_document = self.prepare_search_vector()
 
         super().save(*args, **kwargs)
@@ -955,15 +965,6 @@ class ApplicationSubmission(
                 else:
                     contents.append(value)
         return contents
-
-    def prepare_search_values(self):
-        values = self.get_searchable_contents()
-
-        # Add named fields into the search index
-        for field in ["full_name", "email", "title", "public_id"]:
-            if value := getattr(self, field):
-                values.append(value)
-        return values
 
     def index_components(self):
         return {
