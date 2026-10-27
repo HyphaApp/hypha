@@ -3,8 +3,9 @@ import zoneinfo
 
 import nh3
 from django.conf import settings
-from django.contrib.auth import get_user_model
+from django.contrib.auth import SESSION_KEY, get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.sessions.models import Session
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -82,6 +83,16 @@ def get_email_context(user=None, site=None, **extra):
         context.update(site=site)
     context.update(extra)
     return context
+
+
+def get_other_sessions(request):
+    """Yield the user's unexpired sessions, except the current one. Session data is encoded, so each one is decoded to check the user."""
+    sessions = Session.objects.filter(expire_date__gt=timezone.now()).exclude(
+        session_key=request.session.session_key
+    )
+    for session in sessions.iterator():
+        if session.get_decoded().get(SESSION_KEY) == str(request.user.pk):
+            yield session
 
 
 def single_line(subject):

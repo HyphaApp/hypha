@@ -6,7 +6,6 @@ from urllib.parse import urlencode
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import (
-    SESSION_KEY,
     get_user_model,
     login,
     update_session_auth_hash,
@@ -20,7 +19,6 @@ from django.contrib.auth.views import (
 )
 from django.contrib.auth.views import PasswordResetView as DjPasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.sessions.models import Session
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.core.signing import TimestampSigner
@@ -80,6 +78,7 @@ from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGene
 from .utils import (
     generate_numeric_token,
     get_email_context,
+    get_other_sessions,
     get_redirect_url,
     get_zoneinfo,
     login_ratelimit_key,
@@ -176,9 +175,12 @@ class AccountView(SuccessMessageMixin, UpdateView):
             password_management_enabled() and self.request.user.has_usable_password(),
         )
 
+        has_other_sessions = any(get_other_sessions(self.request))
+
         return super().get_context_data(
             default_device=default_device(self.request.user),
             show_change_password=show_change_password,
+            has_other_sessions=has_other_sessions,
             **kwargs,
         )
 
@@ -1011,12 +1013,8 @@ def set_password_view(request):
 @require_POST
 def logout_other_sessions_view(request):
     """Log out all sessions of the user except the current one."""
-    for session in Session.objects.filter(expire_date__gt=timezone.now()):
-        if (
-            session.get_decoded().get(SESSION_KEY) == str(request.user.pk)
-            and session.session_key != request.session.session_key
-        ):
-            session.delete()
+    for session in list(get_other_sessions(request)):
+        session.delete()
     messages.success(request, _("You have been logged out of all other sessions."))
     return redirect("users:account")
 
