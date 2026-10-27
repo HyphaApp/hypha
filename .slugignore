@@ -1,0 +1,32 @@
+# Database dump for the sandbox demo
+public/sandbox_db.dump
+
+# Docs (zensical)
+docs/
+docs_scripts/
+zensical.toml
+
+# CI, editor and tooling config
+.github/
+.vscode/
+.editorconfig
+.pre-commit-config.yaml
+.stylelintrc.yaml
+biome.json
+dslr.toml
+.test_durations
+
+# Docker setup (not used on Heroku)
+docker/
+
+# Tests
+conftest.py
+hypha/**/tests/
+hypha/**/tests.py
+
+# Repo meta
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+SECURITY.md
+README.md
+Makefile
