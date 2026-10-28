@@ -69,7 +69,6 @@
 
 .form__error {
   & select,
-  /* textarea, */
   & input[type="url"],
   & input[type="text"],
   & input[type="date"],

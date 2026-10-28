@@ -13,7 +13,6 @@
       "!**/*.min.js",
       "!**/*.html",
       "!**/static_src/images",
-      "!**/static_src/tailwind",
       "!**/javascript/esm",
       "!**/javascript/vendor",
       "!**/public",
@@ -40,12 +39,18 @@
         "noInnerDeclarations": "off"
       },
       "style": {
+        "noDescendingSpecificity": "off",
         "useTemplate": "off",
         "useConst": "off"
       },
       "suspicious": {
         "useIterableCallbackReturn": "off"
       }
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   },
   "javascript": {

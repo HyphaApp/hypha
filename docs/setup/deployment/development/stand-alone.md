@@ -299,7 +299,7 @@ Zensical development server: [http://localhost:9100/](http://localhost:9100/)
 ## 8. Running tests
 
 Hypha uses `ruff` and [py.test](https://pytest-django.readthedocs.io/en/latest/) test runner and uses `hypha/settings/testing.py` for test settings.
-For frontend code, biome is used.
+For frontend code (JS and CSS), biome is used.
 
 Run the test with:
 

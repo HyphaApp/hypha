@@ -18,12 +18,19 @@
 @import "./components/form.css";
 @import "./components/two-factor.css";
 @import "./utilities/misc.css";
+@import "./base/themes.css";
 
-@plugin '@tailwindcss/typography';
+/* Print styles, unlayered so they win over everything else when printing. */
+@import "./base/print.css" print;
+
+/* Custom overrides, keep last. Imports must precede all other rules, so
+   everything below this point only configures Tailwind and emits no CSS. */
+@import "./custom/custom.css";
+
+@plugin "@tailwindcss/typography";
 @plugin "daisyui" {
   themes: false;
 }
-@import "./base/themes.css";
 
 /* Tailwind's stock `dark:` variant keys off prefers-color-scheme, which ignores
    the theme toggle. Follow the daisyUI themes instead: an explicit
@@ -61,9 +68,3 @@
     }
   }
 }
-
-/* Print styles, unlayered so they win over everything else when printing. */
-@import "./base/print.css" print;
-
-/* Custom overrides, keep last. */
-@import "./custom/custom.css";
