@@ -14,6 +14,9 @@
 @import "./components/link.css" layer(utilities);
 @import "./components/steps.css" layer(utilities);
 @import "./components/nprogress";
+@import "./components/all-submissions-table.css";
+@import "./components/form.css";
+@import "./components/two-factor.css";
 @import "./utilities/misc.css";
 
 @plugin '@tailwindcss/typography';

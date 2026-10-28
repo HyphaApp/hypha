@@ -1,0 +1,120 @@
+/* stylelint-disable selector-class-pattern */
+.form--report-frequency {
+  & .form__group--schedule {
+    display: flex;
+    align-items: center;
+  }
+
+  & .form__group.id_occurrence {
+    width: 15%;
+  }
+
+  & .form__group.id_frequency {
+    margin: 0;
+  }
+}
+
+.form__file-list {
+  & ul {
+    margin: 0.5rem 0;
+  }
+}
+
+.form__help {
+  margin: 0;
+  color: var(--color-fg-muted);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.form__item {
+  position: relative;
+  padding-block-start: 0.5rem;
+}
+
+.form__select {
+  max-width: 385px;
+
+  &:has(.choices) {
+    background: none;
+  }
+
+  & select[multiple="multiple"] {
+    display: block;
+  }
+}
+
+.form {
+  & select,
+  & input[type="url"],
+  & input[type="date"],
+  & input[type="time"],
+  & input[type="email"],
+  & input[type="number"],
+  & input[type="password"],
+  & input[type="datetime-local"] {
+    &.invalid {
+      --input-color: var(--color-error);
+    }
+  }
+
+  & input[type="file"] {
+    position: absolute;
+    inset-inline-start: -9999px;
+
+    @media (scripting: none) {
+      display: block;
+    }
+  }
+}
+
+.form__error {
+  & select,
+  /* textarea, */
+  & input[type="url"],
+  & input[type="text"],
+  & input[type="date"],
+  & input[type="time"],
+  & input[type="email"],
+  & input[type="number"],
+  & input[type="password"],
+  & input[type="datetime-local"] {
+    --input-color: var(--color-error);
+  }
+}
+
+.form__error-text {
+  max-width: 200px;
+  padding: 5px;
+  margin: 20px 0 0;
+  color: var(--color-error-content);
+  background: var(--color-error);
+  z-index: 2;
+
+  @media (width >= 1024px) {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    max-width: auto;
+    margin: 0;
+
+    &::before {
+      position: absolute;
+      inset-block-start: 12px;
+      inset-inline-start: -10px;
+      border-color: transparent var(--color-error) transparent transparent;
+      border-style: solid;
+      border-width: 5px 10px 5px 0;
+      content: "";
+    }
+  }
+}
+
+.form__comments {
+  /* stylelint-disable-next-line selector-id-pattern */
+  & ul#id_visibility {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
