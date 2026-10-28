@@ -26,7 +26,7 @@ git push --force-with-lease
 
 ## Coding style and linting in pre-commit hook
 
-Hypha's coding style is enforced by ruff, stylelint and biome.
+Hypha's coding style is enforced by ruff and biome.
 
 Install pre-commit to auto-format the code before each commit:
 
@@ -130,7 +130,7 @@ This command runs `npm watch` to keep the front end updates and runs development
 
 If you editor does not have a Language Server Protocol (LSP) preinstalled make sure to add the plugin for it. Then add "LSP-ruff" for a fast Python linter and code transformation tool.
 
-Your editor most likely have plugins for the other languages Hypha uses as well, css/scss, yaml and html. We recommend to install them as well.
+Your editor most likely have plugins for the other languages Hypha uses as well, css, yaml and html. We recommend to install them as well.
 
 ## Shell configuration
 

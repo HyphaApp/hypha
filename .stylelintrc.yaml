@@ -1,9 +1,0 @@
-extends:
-  - stylelint-config-standard-scss
-rules:
-  declaration-block-no-redundant-longhand-properties: null
-  declaration-empty-line-before: null
-  no-descending-specificity: null
-  selector-class-pattern:
-    - "^[a-z0-9\\-]+$"
-    - message: Selector should be written in lowercase with hyphens (selector-class-pattern)
