@@ -36,6 +36,9 @@ except ImportError:
 
 # We add these here so they can react on settings made in local.py.
 
+# Recalculate in case local.py changed the long session cookie age.
+SOCIAL_AUTH_MAX_SESSION_LENGTH = SESSION_COOKIE_AGE_LONG
+
 # E-mail to local files.
 if LOCAL_FILE_EMAIL:
     EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"

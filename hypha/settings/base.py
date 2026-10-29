@@ -662,6 +662,7 @@ SESSION_COOKIE_AGE_LONG = env.int(
 )  # 2 weeks
 
 # OAuth logins get the long session age, set only when the login succeeds.
+# Repeated after local.py is imported in dev.py and production.py.
 SOCIAL_AUTH_MAX_SESSION_LENGTH = SESSION_COOKIE_AGE_LONG
 
 # This is used by Wagtail's email notifications for constructing absolute URLs.

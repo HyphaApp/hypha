@@ -9,6 +9,9 @@ try:
 except ImportError:
     pass
 
+# Recalculate in case local.py changed the long session cookie age.
+SOCIAL_AUTH_MAX_SESSION_LENGTH = SESSION_COOKIE_AGE_LONG
+
 # Security settings
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
