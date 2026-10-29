@@ -16,7 +16,7 @@ class TestOAuthAccess(TestCase):
     def login(self):
         email = "test@email.com"
         password = "password"
-        user = get_user_model().objects.create_user(email=email, password=password)
+        user = UserFactory(email=email, password=password)
         logged_in = self.client.login(email=email, password=password)
         self.assertTrue(logged_in)
         return user
@@ -141,9 +141,7 @@ class TestOAuthLoginButtons(TestCase):
 
     @override_settings(SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS=["email.com"])
     def test_account_oauth_page_posts_to_begin(self):
-        user = get_user_model().objects.create_user(
-            email="test@email.com", password="password"
-        )
+        user = UserFactory(email="test@email.com")
         self.client.force_login(user)
 
         response = self.client.get(reverse("users:oauth"))
