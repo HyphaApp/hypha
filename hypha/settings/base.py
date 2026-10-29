@@ -479,9 +479,6 @@ SOCIAL_AUTH_URL_NAMESPACE = "social"
 SOCIAL_AUTH_LOGIN_ERROR_URL = "users:login"
 SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = "users:account"
 
-# The User model has no first/last name fields, skip them to avoid a save on every login.
-SOCIAL_AUTH_PROTECTED_USER_FIELDS = ["first_name", "last_name"]
-
 # For pipelines, see http://python-social-auth.readthedocs.io/en/latest/pipeline.html?highlight=pipelines#authentication-pipeline
 # Create / associate accounts (including by email)
 SOCIAL_AUTH_PIPELINE = (
@@ -493,7 +490,6 @@ SOCIAL_AUTH_PIPELINE = (
     "social_core.pipeline.user.create_user",
     "social_core.pipeline.social_auth.associate_user",
     "social_core.pipeline.social_auth.load_extra_data",
-    "social_core.pipeline.user.user_details",
 )
 
 # NH3 Settings

@@ -6,8 +6,6 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from social_core.backends.google import GoogleOAuth2
 from social_core.exceptions import AuthCanceled
-from social_core.pipeline.user import user_details
-from social_django.utils import load_backend, load_strategy
 
 from .factories import UserFactory
 
@@ -148,19 +146,6 @@ class TestOAuthLoginButtons(TestCase):
         self.assertContains(
             response, f'action="{reverse("social:begin", args=["google-oauth2"])}"'
         )
-
-
-class TestOAuthUserDetails(TestCase):
-    def test_name_details_do_not_save_user(self):
-        user = UserFactory()
-        strategy = load_strategy()
-        backend = load_backend(strategy, "google-oauth2", redirect_uri=None)
-        details = {"fullname": "Jane Doe", "first_name": "Jane", "last_name": "Doe"}
-
-        with mock.patch.object(user, "save") as save:
-            user_details(strategy, details, backend, user)
-
-        save.assert_not_called()
 
 
 def fake_google_auth_complete(self, *args, **kwargs):
