@@ -164,6 +164,11 @@ def fake_google_auth_complete(self, *args, **kwargs):
     return self.strategy.authenticate(*args, **kwargs)
 
 
+def fake_google_auth_canceled(self, *args, **kwargs):
+    """Fail the same way as a user canceling the login at Google."""
+    raise AuthCanceled(self)
+
+
 @override_settings(
     SOCIAL_AUTH_GOOGLE_OAUTH2_KEY="google-key",
     SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET="google-secret",
@@ -185,10 +190,8 @@ class TestOAuthComplete(TestCase):
             self.client.session.get_expiry_age(), settings.SESSION_COOKIE_AGE_LONG
         )
 
-    @mock.patch.object(
-        GoogleOAuth2, "auth_complete", side_effect=AuthCanceled("google-oauth2")
-    )
-    def test_failed_login_keeps_default_session(self, _auth_complete):
+    @mock.patch.object(GoogleOAuth2, "auth_complete", fake_google_auth_canceled)
+    def test_failed_login_keeps_default_session(self):
         response = self.complete()
 
         self.assertRedirects(
