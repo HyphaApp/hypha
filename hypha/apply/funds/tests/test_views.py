@@ -26,7 +26,7 @@ from hypha.apply.funds.tests.factories import (
     SealedSubmissionFactory,
 )
 from hypha.apply.funds.views.submission_detail import SubmissionDetailView
-from hypha.apply.funds.workflows import INITIAL_STATE
+from hypha.apply.funds.workflows import DRAFT_STATE, INITIAL_STATE
 from hypha.apply.projects.models import Project
 from hypha.apply.projects.models.project import CONTRACTING
 from hypha.apply.projects.tests.factories import ProjectFactory
@@ -978,6 +978,18 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         # "Complete draft review" should be displayed
         ReviewFactory(submission=submission, author__reviewer=self.user, is_draft=True)
         assert_create_review_displayed(submission, "Complete draft review")
+
+    def test_cant_see_draft_answers_partial(self):
+        self.reviewer_settings.use_settings = False
+        self.reviewer_settings.save()
+        submission = ApplicationSubmissionFactory(
+            status=DRAFT_STATE, user=self.applicant
+        )
+        response = self.client.get(
+            reverse("apply:submissions:partial-answers", kwargs={"pk": submission.pk}),
+            secure=True,
+        )
+        self.assertEqual(response.status_code, 403)
 
     def test_cant_see_create_review_primary_action(self):
         def assert_create_review_not_displayed(submission, button_text):

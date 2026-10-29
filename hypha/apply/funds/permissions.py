@@ -221,6 +221,9 @@ def can_view_submission(user, submission):
     if submission.is_archive and not can_view_archived_submissions(user):
         return False, _("Archived Submission")
 
+    if submission.is_draft and not submission.can_view_draft(user):
+        return False, _("Draft Submission")
+
     if user.is_apply_staff or is_submission_applicant(user, submission):
         return True, ""
 
