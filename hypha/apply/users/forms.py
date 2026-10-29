@@ -220,16 +220,27 @@ class ProfileForm(forms.ModelForm):
 
         return slack
 
-    def clean_email(self):
-        email = self.cleaned_data["email"]
-        if User.objects.filter(email=email).exists():
-            email = (
-                self.instance.email
-            )  # updated email to avoid email existing message, fix information leak.
-        return email
-
     def clean_full_name(self):
         return strip_html_and_nerf_urls(self.cleaned_data["full_name"])
+
+    def clean_email(self):
+        email = User.objects.normalize_email(self.cleaned_data["email"])
+        # Keep the stored address when only the domain case differs, so neither
+        # that edit nor an older un-normalized address starts the change flow.
+        current_email = self.initial.get("email")
+        if email == User.objects.normalize_email(current_email):
+            return current_email
+        return email
+
+    def validate_unique(self):
+        # A new email is never saved from this form, it goes through the
+        # confirmation flow. Skipping the unique check on it here avoids a form
+        # error that would reveal whether an address is registered.
+        exclude = self._get_validation_exclusions() | {"email"}
+        try:
+            self.instance.validate_unique(exclude=exclude)
+        except forms.ValidationError as e:
+            self._update_errors(e)
 
 
 def get_become_user_choices():
@@ -262,36 +273,6 @@ class BecomeUserForm(forms.Form):
         required=False,
     )
     user_pk.widget.attrs.update({"data-js-choices": ""})
-
-
-class EmailChangePasswordForm(forms.Form):
-    password = forms.CharField(
-        label=_("Password"),
-        help_text=_("Email change requires you to put password."),
-        strip=False,
-        widget=forms.PasswordInput(attrs={"autofocus": True}),
-    )
-
-    def __init__(self, user, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.user = user
-
-    def clean_password(self):
-        password = self.cleaned_data["password"]
-        if not self.user.check_password(password):
-            raise forms.ValidationError(
-                _("Incorrect password. Please try again."),
-                code="password_incorrect",
-            )
-        return password
-
-    def save(self, updated_email, name, slack, commit=True):
-        self.user.full_name = name
-        if slack is not None:
-            self.user.slack = slack
-        if commit:
-            self.user.save()
-        return self.user
 
 
 class Disable2FAConfirmationForm(forms.Form):

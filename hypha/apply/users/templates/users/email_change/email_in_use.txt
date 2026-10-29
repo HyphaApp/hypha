@@ -1,0 +1,15 @@
+{% load i18n wagtailadmin_tags %}{% autoescape off %}{% base_url_setting as base_url %}
+{% blocktrans %}Hello,{% endblocktrans %}
+
+{% blocktrans %}Someone asked to change the email of their account on the {{ ORG_LONG_NAME }} website to {{ unverified_email }}. There is already an account using this address, so no change was made.{% endblocktrans %}
+
+{% blocktrans %}If this was you, you already have an account with this address. Log in with it, or use the password reset to regain access. If you need help, contact support at {{ ORG_EMAIL }}.{% endblocktrans %}
+
+{% blocktrans %}If this wasn't you, you can ignore this email.{% endblocktrans %}
+
+{% blocktrans %}Kind Regards,
+The {{ ORG_SHORT_NAME }} Team{% endblocktrans %}
+
+--
+{{ ORG_LONG_NAME }}
+{% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{% endautoescape %}

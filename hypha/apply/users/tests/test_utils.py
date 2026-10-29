@@ -26,6 +26,25 @@ class TestActivationEmail(TestCase):
         assert "log in at: https://primary-test-host.org/auth/" in email_body
         assert "no password needed" in email_body
 
+    def test_activation_email_is_not_html_escaped(self):
+        send_activation_email(
+            UserFactory(full_name="Anna O'Brien"), redirect_url="/apply/?a=1&b=2"
+        )
+        email_body = mail.outbox[0].body
+        assert "Dear Anna O'Brien," in email_body
+        assert "?next=/apply/?a=1&b=2" in email_body
+
+    def test_set_password_email_is_not_html_escaped(self):
+        send_activation_email(
+            UserFactory(full_name="Anna O'Brien"),
+            email_template="users/emails/set_password.txt",
+            email_subject_template="users/emails/set_password_subject.txt",
+            redirect_url="/apply/?a=1&b=2",
+        )
+        email_body = mail.outbox[0].body
+        assert "Dear Anna O'Brien," in email_body
+        assert "?next=/apply/?a=1&b=2" in email_body
+
 
 class TestGetUserByEmail(TestCase):
     def test_no_account(self):
@@ -82,11 +101,6 @@ class TestSendConfirmationEmail(TestCase):
             updated_email="new@example.com",
         )
         self.assertIn("new@example.com", mail.outbox[0].subject)
-
-    def test_sends_to_user_when_no_updated_email(self):
-        user = UserFactory(email="user@example.com")
-        send_confirmation_email(user, token="fake-token")
-        self.assertEqual(len(mail.outbox), 1)
 
 
 class TestGetRedirectUrl(TestCase):

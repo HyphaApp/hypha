@@ -111,6 +111,23 @@
                 </div>
             {% endif %}
 
+            <h3 class="mt-6 mb-2 text-sm font-semibold">{% trans "Sessions" %}</h3>
+            {% if has_other_sessions %}
+                <p class="mb-2 text-sm text-fg-muted">
+                    {% trans "Log out everywhere else you are logged in, for example on another computer or a lost device. You stay logged in here." %}
+                </p>
+                <form method="post" action="{% url 'users:logout_other_sessions' %}">
+                    {% csrf_token %}
+                    <button class="btn btn-warning btn-outline" type="submit">
+                        {% trans "Log out other sessions" %}
+                    </button>
+                </form>
+            {% else %}
+                <p class="mb-2 text-sm text-fg-muted">
+                    {% trans "You are not logged in on any other devices." %}
+                </p>
+            {% endif %}
+
             {# Remove the comment block tags below when such need arises. e.g. adding new providers #}
             {% comment %}
             {% can_use_oauth as show_oauth_link %}

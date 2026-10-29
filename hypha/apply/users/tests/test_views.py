@@ -84,6 +84,14 @@ class TestPasswordReset(BaseViewTestCase):
             "https://testserver/account/password/reset/confirm", mail.outbox[0].body
         )
 
+    def test_email_is_not_html_escaped(self):
+        self.user.full_name = "Anna O'Brien"
+        self.user.save()
+        self.post_page(None, data={"email": self.user.email, "next": "/apply/?a=1&b=2"})
+        email_body = mail.outbox[0].body
+        self.assertIn("Dear Anna O'Brien,", email_body)
+        self.assertIn("?next=/apply/?a=1&b=2", email_body)
+
 
 class TestBecome(TestCase):
     def setUp(self):
@@ -315,3 +323,31 @@ class TestPasswordlessSignupView(TestCase):
         )
         response = self.client.post(url)
         self.assertTemplateUsed(response, "users/activation/invalid.html")
+
+
+class TestLogoutOtherSessions(TestCase):
+    url = reverse("users:logout_other_sessions")
+
+    def setUp(self):
+        self.user = UserFactory()
+        self.other_client = self.client_class()
+        self.other_client.force_login(self.user)
+        self.client.force_login(self.user)
+
+    def is_logged_in(self, client):
+        response = client.get(reverse("users:account"))
+        return response.status_code == 200
+
+    def test_logs_out_other_sessions_only(self):
+        other_user_client = self.client_class()
+        other_user_client.force_login(UserFactory())
+        response = self.client.post(self.url)
+        self.assertRedirects(response, reverse("users:account"))
+        self.assertTrue(self.is_logged_in(self.client))
+        self.assertFalse(self.is_logged_in(self.other_client))
+        self.assertTrue(self.is_logged_in(other_user_client))
+
+    def test_get_is_not_allowed(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 405)
+        self.assertTrue(self.is_logged_in(self.other_client))
