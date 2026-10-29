@@ -2,6 +2,9 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from social_core.pipeline.social_auth import social_details, social_names
+from social_core.pipeline.user import user_details
+from social_django.utils import load_backend, load_strategy
 
 
 class TestOAuthAccess(TestCase):
@@ -142,3 +145,30 @@ class TestOAuthLoginButtons(TestCase):
         self.assertContains(
             response, f'action="{reverse("social:begin", args=["google-oauth2"])}"'
         )
+
+
+class TestOAuthPipelineNames(TestCase):
+    """`social_names` fills `fullname`, which must reach `User.full_name`."""
+
+    def run_pipeline(self, user, response):
+        strategy = load_strategy()
+        backend = load_backend(strategy, "google-oauth2", redirect_uri=None)
+        details = social_details(backend, {}, response)["details"]
+        details = social_names(backend, details)["details"]
+        user_details(strategy, details, backend, user)
+        user.refresh_from_db()
+
+    def test_full_name_is_set_when_empty(self):
+        user = get_user_model().objects.create_user(email="test@email.com")
+        self.run_pipeline(
+            user,
+            {"email": "test@email.com", "given_name": "Jane", "family_name": "Doe"},
+        )
+        self.assertEqual(user.full_name, "Jane Doe")
+
+    def test_existing_full_name_is_not_overwritten(self):
+        user = get_user_model().objects.create_user(
+            email="test@email.com", full_name="Jane Smith"
+        )
+        self.run_pipeline(user, {"email": "test@email.com", "name": "Jane Doe"})
+        self.assertEqual(user.full_name, "Jane Smith")
