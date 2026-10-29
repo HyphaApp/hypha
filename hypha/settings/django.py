@@ -89,7 +89,7 @@ MIDDLEWARE = [
     "django_otp.middleware.OTPMiddleware",
     "hypha.apply.users.middleware.TwoFactorAuthenticationMiddleware",
     "hijack.middleware.HijackUserMiddleware",
-    "hypha.apply.users.middleware.SocialAuthExceptionMiddleware",
+    "social_django.middleware.SocialAuthExceptionMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "hypha.apply.middleware.HandleProtectionErrorMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
