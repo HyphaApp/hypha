@@ -1732,9 +1732,9 @@ social-auth-app-django==6.0.1 \
     --hash=sha256:43002de0530e2ad13ef067f54aba7185a05fc8527310006c5328dc0b5e7a4cfd \
     --hash=sha256:652ec21105ef58a34ffd223a02c338bc03e5f56d357ee69c33283afd08442065
     # via hypha
-social-auth-core==5.2.0 \
-    --hash=sha256:72d3c52fe87d07c0db8421fee5f5ec33b3dacce449975b8a572cd0691e3de315 \
-    --hash=sha256:e7b9990450291488deffce8d92d14d4396021b8d3c4a0ac5c32ec03bfaccc496
+social-auth-core==6.2.0 \
+    --hash=sha256:385771345372b9e87b448fe23b1ca4909fcbb0b752d1206600ab3c18342cd321 \
+    --hash=sha256:93daa49e5cb11e7ac06838690679fc6e2901d9add2ba8316651ee19aca26a340
     # via social-auth-app-django
 soupsieve==3.0.4 \
     --hash=sha256:8412826614f9c632227067d0985aeb9f584bd15efc852955430e097a9fe7afbf \
