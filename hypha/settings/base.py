@@ -479,15 +479,13 @@ SOCIAL_AUTH_URL_NAMESPACE = "social"
 SOCIAL_AUTH_LOGIN_ERROR_URL = "users:login"
 SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = "users:account"
 
-# Fill in an empty full name from the provider but never overwrite an existing one.
-SOCIAL_AUTH_USER_FIELD_MAPPING = {"fullname": "full_name"}
-SOCIAL_AUTH_IMMUTABLE_USER_FIELDS = ["full_name"]
+# The User model has no first/last name fields, skip them to avoid a save on every login.
+SOCIAL_AUTH_PROTECTED_USER_FIELDS = ["first_name", "last_name"]
 
 # For pipelines, see http://python-social-auth.readthedocs.io/en/latest/pipeline.html?highlight=pipelines#authentication-pipeline
 # Create / associate accounts (including by email)
 SOCIAL_AUTH_PIPELINE = (
     "social_core.pipeline.social_auth.social_details",
-    "social_core.pipeline.social_auth.social_names",
     "social_core.pipeline.social_auth.social_uid",
     "social_core.pipeline.social_auth.auth_allowed",
     "social_core.pipeline.social_auth.social_user",

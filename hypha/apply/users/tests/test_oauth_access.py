@@ -6,9 +6,10 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from social_core.backends.google import GoogleOAuth2
 from social_core.exceptions import AuthCanceled
-from social_core.pipeline.social_auth import social_details, social_names
 from social_core.pipeline.user import user_details
 from social_django.utils import load_backend, load_strategy
+
+from .factories import UserFactory
 
 
 class TestOAuthAccess(TestCase):
@@ -151,31 +152,17 @@ class TestOAuthLoginButtons(TestCase):
         )
 
 
-class TestOAuthPipelineNames(TestCase):
-    """`social_names` fills `fullname`, which must reach `User.full_name`."""
-
-    def run_pipeline(self, user, response):
+class TestOAuthUserDetails(TestCase):
+    def test_name_details_do_not_save_user(self):
+        user = UserFactory()
         strategy = load_strategy()
         backend = load_backend(strategy, "google-oauth2", redirect_uri=None)
-        details = social_details(backend, {}, response)["details"]
-        details = social_names(backend, details)["details"]
-        user_details(strategy, details, backend, user)
-        user.refresh_from_db()
+        details = {"fullname": "Jane Doe", "first_name": "Jane", "last_name": "Doe"}
 
-    def test_full_name_is_set_when_empty(self):
-        user = get_user_model().objects.create_user(email="test@email.com")
-        self.run_pipeline(
-            user,
-            {"email": "test@email.com", "given_name": "Jane", "family_name": "Doe"},
-        )
-        self.assertEqual(user.full_name, "Jane Doe")
+        with mock.patch.object(user, "save") as save:
+            user_details(strategy, details, backend, user)
 
-    def test_existing_full_name_is_not_overwritten(self):
-        user = get_user_model().objects.create_user(
-            email="test@email.com", full_name="Jane Smith"
-        )
-        self.run_pipeline(user, {"email": "test@email.com", "name": "Jane Doe"})
-        self.assertEqual(user.full_name, "Jane Smith")
+        save.assert_not_called()
 
 
 def fake_google_auth_complete(self, *args, **kwargs):
@@ -208,10 +195,9 @@ class TestOAuthComplete(TestCase):
         response = self.complete()
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(
-            int(self.client.session["_auth_user_id"]),
-            get_user_model().objects.get(email="staff@email.com").pk,
-        )
+        user = get_user_model().objects.get(email="staff@email.com")
+        self.assertEqual(int(self.client.session["_auth_user_id"]), user.pk)
+        self.assertEqual(user.full_name, "")
         self.assertEqual(
             self.client.session.get_expiry_age(), settings.SESSION_COOKIE_AGE_LONG
         )
