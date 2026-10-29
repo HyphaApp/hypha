@@ -452,6 +452,11 @@ if env.str("CLOUDFLARE_BEARER_TOKEN", None) and env.str("CLOUDFLARE_API_ZONEID")
 
 # Social Auth settings
 
+# OAuth logins get the same default as long session age, set only when the login succeeds.
+SOCIAL_AUTH_MAX_SESSION_LENGTH = env.int(
+    "SOCIAL_AUTH_MAX_SESSION_LENGTH", 60 * 60 * 24 * 7 * 2
+)  # 2 weeks
+
 # Set the Google OAuth2 credentials in ENV variables or local.py
 # To create a new set of credentials, go to https://console.developers.google.com/apis/credentials
 # Make sure the Google+ API is enabled for your API project
@@ -656,10 +661,6 @@ SESSION_COOKIE_AGE = env.int("SESSION_COOKIE_AGE", 60 * 60 * 12)  # 12 hours
 SESSION_COOKIE_AGE_LONG = env.int(
     "SESSION_COOKIE_AGE_LONG", 60 * 60 * 24 * 7 * 2
 )  # 2 weeks
-
-# OAuth logins get the long session age, set only when the login succeeds.
-# Repeated after local.py is imported in dev.py and production.py.
-SOCIAL_AUTH_MAX_SESSION_LENGTH = SESSION_COOKIE_AGE_LONG
 
 # This is used by Wagtail's email notifications for constructing absolute URLs.
 PRIMARY_HOST = env.str("PRIMARY_HOST", None)
