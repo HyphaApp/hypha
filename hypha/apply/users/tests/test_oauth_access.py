@@ -1,7 +1,11 @@
+from unittest import mock
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from social_core.backends.google import GoogleOAuth2
+from social_core.exceptions import AuthCanceled
 from social_core.pipeline.social_auth import social_details, social_names
 from social_core.pipeline.user import user_details
 from social_django.utils import load_backend, load_strategy
@@ -172,3 +176,56 @@ class TestOAuthPipelineNames(TestCase):
         )
         self.run_pipeline(user, {"email": "test@email.com", "name": "Jane Doe"})
         self.assertEqual(user.full_name, "Jane Smith")
+
+
+def fake_google_auth_complete(self, *args, **kwargs):
+    """Skip the token exchange with Google and run the pipeline directly."""
+    kwargs.update(
+        {
+            "backend": self,
+            "response": {
+                "sub": "1234",
+                "email": "staff@email.com",
+                "email_verified": True,
+                "name": "Staff Member",
+            },
+        }
+    )
+    return self.strategy.authenticate(*args, **kwargs)
+
+
+@override_settings(
+    SOCIAL_AUTH_GOOGLE_OAUTH2_KEY="google-key",
+    SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET="google-secret",
+    SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS=["email.com"],
+)
+class TestOAuthComplete(TestCase):
+    def complete(self):
+        return self.client.get(reverse("social:complete", args=["google-oauth2"]))
+
+    @mock.patch.object(GoogleOAuth2, "auth_complete", fake_google_auth_complete)
+    def test_successful_login_gets_long_session(self):
+        response = self.complete()
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            int(self.client.session["_auth_user_id"]),
+            get_user_model().objects.get(email="staff@email.com").pk,
+        )
+        self.assertEqual(
+            self.client.session.get_expiry_age(), settings.SESSION_COOKIE_AGE_LONG
+        )
+
+    @mock.patch.object(
+        GoogleOAuth2, "auth_complete", side_effect=AuthCanceled("google-oauth2")
+    )
+    def test_failed_login_keeps_default_session(self, _auth_complete):
+        response = self.complete()
+
+        self.assertRedirects(
+            response, reverse("users:login"), fetch_redirect_response=False
+        )
+        self.assertNotIn("_auth_user_id", self.client.session)
+        self.assertEqual(
+            self.client.session.get_expiry_age(), settings.SESSION_COOKIE_AGE
+        )

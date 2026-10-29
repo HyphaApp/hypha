@@ -663,6 +663,9 @@ SESSION_COOKIE_AGE_LONG = env.int(
     "SESSION_COOKIE_AGE_LONG", 60 * 60 * 24 * 7 * 2
 )  # 2 weeks
 
+# OAuth logins get the long session age, set only when the login succeeds.
+SOCIAL_AUTH_MAX_SESSION_LENGTH = SESSION_COOKIE_AGE_LONG
+
 # This is used by Wagtail's email notifications for constructing absolute URLs.
 PRIMARY_HOST = env.str("PRIMARY_HOST", None)
 WAGTAILADMIN_BASE_URL = env.str("WAGTAILADMIN_BASE_URL", None) or (
