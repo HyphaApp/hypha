@@ -4,10 +4,6 @@ from django.conf import settings
 from django.core.exceptions import MiddlewareNotUsed
 from django.utils.log import log_response
 from django.utils.translation import gettext_lazy as _
-from social_core.exceptions import AuthForbidden
-from social_django.middleware import (
-    SocialAuthExceptionMiddleware as _SocialAuthExceptionMiddleware,
-)
 
 from hypha.apply.users.views import mfa_failure_view
 
@@ -29,18 +25,6 @@ if settings.DEBUG:
 def get_page_path(wagtail_page):
     _, _, page_path = wagtail_page.get_url_parts()
     return page_path
-
-
-class SocialAuthExceptionMiddleware(_SocialAuthExceptionMiddleware):
-    """
-    Wrapper around SocialAuthExceptionMiddleware to customise messages
-    """
-
-    def get_message(self, request, exception):
-        if isinstance(exception, AuthForbidden):
-            return "Your credentials are not recognised."
-
-        super().get_message(request, exception)
 
 
 class TwoFactorAuthenticationMiddleware:

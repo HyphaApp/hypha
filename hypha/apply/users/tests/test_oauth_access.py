@@ -1,14 +1,20 @@
+from unittest import mock
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from social_core.backends.google import GoogleOAuth2
+from social_core.exceptions import AuthCanceled
+
+from .factories import UserFactory
 
 
 class TestOAuthAccess(TestCase):
     def login(self):
         email = "test@email.com"
         password = "password"
-        user = get_user_model().objects.create_user(email=email, password=password)
+        user = UserFactory(email=email, password=password)
         logged_in = self.client.login(email=email, password=password)
         self.assertTrue(logged_in)
         return user
@@ -133,12 +139,65 @@ class TestOAuthLoginButtons(TestCase):
 
     @override_settings(SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS=["email.com"])
     def test_account_oauth_page_posts_to_begin(self):
-        user = get_user_model().objects.create_user(
-            email="test@email.com", password="password"
-        )
+        user = UserFactory(email="test@email.com")
         self.client.force_login(user)
 
         response = self.client.get(reverse("users:oauth"))
         self.assertContains(
             response, f'action="{reverse("social:begin", args=["google-oauth2"])}"'
+        )
+
+
+def fake_google_auth_complete(self, *args, **kwargs):
+    """Skip the token exchange with Google and run the pipeline directly."""
+    kwargs.update(
+        {
+            "backend": self,
+            "response": {
+                "sub": "1234",
+                "email": "staff@email.com",
+                "email_verified": True,
+                "name": "Staff Member",
+            },
+        }
+    )
+    return self.strategy.authenticate(*args, **kwargs)
+
+
+def fake_google_auth_canceled(self, *args, **kwargs):
+    """Fail the same way as a user canceling the login at Google."""
+    raise AuthCanceled(self)
+
+
+@override_settings(
+    SOCIAL_AUTH_GOOGLE_OAUTH2_KEY="google-key",
+    SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET="google-secret",
+    SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS=["email.com"],
+)
+class TestOAuthComplete(TestCase):
+    def complete(self):
+        return self.client.get(reverse("social:complete", args=["google-oauth2"]))
+
+    @mock.patch.object(GoogleOAuth2, "auth_complete", fake_google_auth_complete)
+    def test_successful_login_gets_long_session(self):
+        response = self.complete()
+
+        self.assertEqual(response.status_code, 302)
+        user = get_user_model().objects.get(email="staff@email.com")
+        self.assertEqual(int(self.client.session["_auth_user_id"]), user.pk)
+        self.assertEqual(user.full_name, "")
+        self.assertEqual(
+            self.client.session.get_expiry_age(), settings.SESSION_COOKIE_AGE_LONG
+        )
+
+    @mock.patch.object(GoogleOAuth2, "auth_complete", fake_google_auth_canceled)
+    def test_failed_login_keeps_default_session(self):
+        response = self.complete()
+
+        self.assertRedirects(
+            response, reverse("users:login"), fetch_redirect_response=False
+        )
+        self.assertNotIn("_auth_user_id", self.client.session)
+        self.assertEqual(
+            self.client.session.get_expiry_age(), settings.SESSION_COOKIE_AGE
         )
