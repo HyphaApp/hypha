@@ -1,27 +1,31 @@
 // We use htmx.onLoad() so it will initialise file uploads in htmx dialogs.
-// It runs after every htmx swap, so each form and input is flagged to only
-// be initialised once.
-htmx.onLoad(function () {
+// It runs for the body on page load and then for each swapped in element.
+htmx.onLoad(function (elt) {
   // Initialize django-file-form for forms that have a `form_id` field
-  // added by django-file-form.
-  document.querySelectorAll("form").forEach(function (form) {
-    if (!form.initUploadFieldsDone && form.querySelector("[name=form_id]")) {
-      if (form.querySelector("[data-js-file-upload]")) {
-        window.initUploadFields(form);
-      }
+  // added by django-file-form. Include the form the new content was swapped
+  // into, it might have been initialised already so it is flagged.
+  const forms = new Set(elt.querySelectorAll("form"));
+  const parentForm = elt.closest("form");
+  if (parentForm) {
+    forms.add(parentForm);
+  }
+  forms.forEach(function (form) {
+    if (
+      !form.initUploadFieldsDone &&
+      form.querySelector("[name=form_id]") &&
+      form.querySelector("[data-js-file-upload]")
+    ) {
+      window.initUploadFields(form);
       form.initUploadFieldsDone = true;
     }
   });
 
   // Handle client side validation for required file fields.
-  document
-    .querySelectorAll("input[type='file'][required]")
-    .forEach(function (input) {
-      if (!input.fileValidationDone) {
-        initValidation(input);
-        input.fileValidationDone = true;
-      }
-    });
+  const fileSelector = "input[type='file'][required]";
+  if (elt.matches(fileSelector)) {
+    initValidation(elt);
+  }
+  elt.querySelectorAll(fileSelector).forEach(initValidation);
 
   /**
    * Show an error message for a required file field when it is invalid.
@@ -33,9 +37,20 @@ htmx.onLoad(function () {
       input.closest("[data-js-file-upload]") || input.parentElement;
     const errorId = `${input.id || input.name}-error`;
 
-    // Do not call preventDefault() here, that stops the browser from
-    // focusing and scrolling to the field like it does for other fields.
-    input.addEventListener("invalid", function () {
+    input.addEventListener("invalid", function (event) {
+      // Prevent the native bubble, the input is visually hidden, and
+      // focus/scroll to the visible wrapper ourselves.
+      event.preventDefault();
+      const firstInvalid =
+        input.form &&
+        Array.from(input.form.elements).find(
+          (el) => el.willValidate && !el.validity.valid
+        );
+      if (firstInvalid === input) {
+        container.scrollIntoView({ block: "center", behavior: "smooth" });
+        input.focus({ preventScroll: true });
+      }
+
       // Reuse the server side error if there is one.
       let errorEl = container.querySelector(".text-error");
 
@@ -46,7 +61,10 @@ htmx.onLoad(function () {
         (input.closest(".dff-uploader") || input).after(errorEl);
       }
       errorEl.id = errorId;
-      errorEl.textContent = container.dataset.requiredText;
+      // Fall back to the browser's localised message for inputs not
+      // rendered through forms/includes/field.html.
+      errorEl.textContent =
+        container.dataset.requiredText || input.validationMessage;
 
       input.setAttribute("aria-invalid", "true");
       setDescribedBy(input, errorId, true);
