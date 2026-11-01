@@ -3,8 +3,6 @@
 @import "./base/base.css" layer(base);
 /* @plugin statements cannot be nested so must be unlayered */
 @import "./base/themes.css";
-/* Print styles, unlayered so they win over everything else when printing. */
-@import "./base/print.css" print;
 
 @import "./components/card.css" layer(components);
 @import "./components/choices.css" layer(components);
@@ -25,6 +23,9 @@
 @import "./utilities/steps.css" layer(utilities);
 /* Keep unlayered so overrides other styles. */
 @import "./utilities/misc.css";
+
+/* Print styles, unlayered so they win over everything else when printing. */
+@import "./base/print.css" print;
 
 /* Custom overrides, keep last. Imports must precede all other rules, so
    everything below this point only configures Tailwind and emits no CSS. */

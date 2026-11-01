@@ -93,7 +93,7 @@
     position: absolute;
     inset-block-start: 0;
     inset-inline-end: 0;
-    max-width: auto;
+    max-width: none;
     margin: 0;
 
     &::before {
