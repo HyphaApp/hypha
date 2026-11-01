@@ -11,23 +11,23 @@
 
       /* set column widths */
       &.title {
-        @media (width >= 1024px) {
+        @variant lg {
           width: 130px;
         }
 
-        @media (width >= 1280px) {
+        @variant xl {
           width: 260px;
         }
       }
 
       &.comments {
-        @media (width >= 1024px) {
+        @variant lg {
           width: 110px;
         }
       }
 
       &.organization_name {
-        @media (width >= 1024px) {
+        @variant lg {
           width: 110px;
         }
       }
@@ -48,12 +48,12 @@
         padding-block-start: 15px;
         font-weight: var(--font-weight-bold);
 
-        @media (width >= 1024px) {
+        @variant lg {
           display: flex;
           align-items: center;
         }
 
-        @media (width >= 1280px) {
+        @variant xl {
           display: table-cell;
         }
       }
@@ -72,7 +72,7 @@
       &.reviews_stats {
         display: none;
 
-        @media (width >= 1024px) {
+        @variant lg {
           display: table-cell;
         }
       }
@@ -84,7 +84,7 @@
       }
 
       &.organization_name {
-        @media (width >= 1024px) {
+        @variant lg {
           padding-inline-start: 15px;
         }
       }

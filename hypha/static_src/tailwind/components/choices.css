@@ -208,7 +208,7 @@
   text-align: end;
 }
 
-@media (width >= 640px) {
+@media (width >= --theme(--breakpoint-sm)) {
   .choices__list--dropdown .choices__item--selectable::after,
   .choices__list[aria-expanded] .choices__item--selectable::after {
     content: "";

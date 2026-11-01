@@ -8,19 +8,19 @@
     minmax(0, calc(100% - var(--layout-sidebar-width) - var(--layout-gutter)));
 }
 
-@media (min-width: 32rem) {
+@media (width > 32rem) {
   .layout {
     --layout-sidebar-width: 13.5rem;
   }
 }
 
-@media (min-width: 48rem) {
+@media (width > 48rem) {
   .layout {
     --layout-sidebar-width: 16rem;
   }
 }
 
-@media (min-width: 72rem) {
+@media (width > 72rem) {
   .layout {
     --layout-gutter: calc(var(--spacing) * 6);
     --layout-sidebar-width: 18.5rem;
@@ -50,7 +50,7 @@
   }
 }
 
-@media (max-width: 48rem) {
+@media (width <= 48rem) {
   .layout.layout-flowrow-until-md {
     @apply grid-flow-row grid-cols-[1fr_!important];
 

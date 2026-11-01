@@ -8,7 +8,7 @@
   --h5-size: 0.875rem;
   --h6-size: 0.75rem;
 
-  @media (width >= 48rem) {
+  @media (width >= --theme(--breakpoint-md)) {
     --h00-size: 3rem;
     --h0-size: 2.5rem;
     --h1-size: 2rem;
