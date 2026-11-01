@@ -11,8 +11,9 @@
 @import "./components/wmd.css" layer(components);
 
 @import "./utilities/typography.css" layer(utilities);
-@import "./components/link.css" layer(utilities);
-@import "./components/steps.css" layer(utilities);
+@import "./utilities/link.css" layer(utilities);
+@import "./utilities/steps.css" layer(utilities);
+
 @import "./components/nprogress";
 @import "./components/all-submissions-table.css";
 @import "./components/form.css";
