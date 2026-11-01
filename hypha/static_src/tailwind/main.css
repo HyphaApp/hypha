@@ -27,9 +27,6 @@
 /* Keep unlayered so overrides other styles. */
 @import "./utilities/misc.css";
 
-/* Print styles, unlayered so they win over everything else when printing. */
-@import "./base/print.css" print;
-
 /* Custom overrides, keep last. Imports must precede all other rules, so
    everything below this point only configures Tailwind and emits no CSS. */
 @import "./custom/custom.css";
