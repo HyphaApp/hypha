@@ -60,7 +60,7 @@
     });
 
     var classes = "field-group-wrapper field-group-wrapper-" + i;
-    if (isHidden) classes += " js-hidden";
+    if (isHidden) classes += " hidden";
 
     wrapAll(groupEls, classes);
   }
@@ -79,12 +79,12 @@
         if (!wrapper) return;
 
         if (this.value === toggleOn) {
-          wrapper.classList.remove("js-hidden");
+          wrapper.classList.remove("hidden");
           wrapper.classList.add("highlighted");
           setGroupRequired(wrapper, true);
         } else if (this.value === toggleOff) {
           wrapper.classList.remove("highlighted");
-          wrapper.classList.add("js-hidden");
+          wrapper.classList.add("hidden");
           setGroupRequired(wrapper, false);
         }
       });

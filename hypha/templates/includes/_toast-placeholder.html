@@ -96,7 +96,7 @@ How this works:
             @click="remove(toast.id)"
             @mouseenter="pause(toast.id)"
             @mouseleave="resume(toast.id)"
-            class="relative mt-4 w-full max-w-full shadow-xl cursor-pointer sm:w-auto sm:max-w-sm alert break-anywhere hyphens-auto group sm:min-w-64"
+            class="relative mt-4 w-full max-w-full shadow-xl cursor-pointer sm:w-auto sm:max-w-sm alert hyphens-auto group wrap-anywhere sm:min-w-64"
             :class="{
                     '': toast.type === 'debug',
                     'alert-success': toast.type === 'success',
