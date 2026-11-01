@@ -54,7 +54,7 @@
   }
 
   details {
-    & > summary {
+    > summary {
       cursor: pointer;
     }
   }

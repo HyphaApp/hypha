@@ -1,20 +1,20 @@
 .form--report-frequency {
-  & .form__group--schedule {
+  .form__group--schedule {
     display: flex;
     align-items: center;
   }
 
-  & .form__group.id_occurrence {
+  .form__group.id_occurrence {
     width: 15%;
   }
 
-  & .form__group.id_frequency {
+  .form__group.id_frequency {
     margin: 0;
   }
 }
 
 .form__file-list {
-  & ul {
+  ul {
     margin: 0.5rem 0;
   }
 }
@@ -38,26 +38,26 @@
     background: none;
   }
 
-  & select[multiple="multiple"] {
+  select[multiple="multiple"] {
     display: block;
   }
 }
 
 .form {
-  & select,
-  & input[type="url"],
-  & input[type="date"],
-  & input[type="time"],
-  & input[type="email"],
-  & input[type="number"],
-  & input[type="password"],
-  & input[type="datetime-local"] {
+  select,
+  input[type="url"],
+  input[type="date"],
+  input[type="time"],
+  input[type="email"],
+  input[type="number"],
+  input[type="password"],
+  input[type="datetime-local"] {
     &.invalid {
       --input-color: var(--color-error);
     }
   }
 
-  & input[type="file"] {
+  input[type="file"] {
     position: absolute;
     inset-inline-start: -9999px;
 
@@ -68,15 +68,15 @@
 }
 
 .form__error {
-  & select,
-  & input[type="url"],
-  & input[type="text"],
-  & input[type="date"],
-  & input[type="time"],
-  & input[type="email"],
-  & input[type="number"],
-  & input[type="password"],
-  & input[type="datetime-local"] {
+  select,
+  input[type="url"],
+  input[type="text"],
+  input[type="date"],
+  input[type="time"],
+  input[type="email"],
+  input[type="number"],
+  input[type="password"],
+  input[type="datetime-local"] {
     --input-color: var(--color-error);
   }
 }
@@ -109,7 +109,7 @@
 }
 
 .form__comments {
-  & ul#id_visibility {
+  ul#id_visibility {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;

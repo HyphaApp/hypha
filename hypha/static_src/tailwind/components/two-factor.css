@@ -1,12 +1,12 @@
 .two-factor {
   position: relative;
 
-  & h1,
-  & h2 {
+  h1,
+  h2 {
     font-weight: 700;
   }
 
-  & .mb-3 {
+  .mb-3 {
     margin-block-end: 1rem;
   }
 }

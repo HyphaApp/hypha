@@ -1,10 +1,10 @@
 .all-submissions-table {
-  & thead {
-    & th {
+  thead {
+    th {
       &.reviews_stats {
         color: var(--color-fg-muted);
 
-        & div {
+        div {
           font-size: 0.75rem;
         }
       }
@@ -34,14 +34,14 @@
     }
   }
 
-  & tbody {
-    & tr {
+  tbody {
+    tr {
       &[data-archived="True"] {
         background-color: var(--color-base-200);
       }
     }
 
-    & td {
+    td {
       /* project title */
       &.title {
         position: relative;
