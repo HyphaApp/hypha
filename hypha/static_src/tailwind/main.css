@@ -23,6 +23,7 @@
 @import "./utilities/typography.css" layer(utilities);
 @import "./utilities/link.css" layer(utilities);
 @import "./utilities/steps.css" layer(utilities);
+/* Keep unlayered so overrides other styles. */
 @import "./utilities/misc.css";
 
 /* Custom overrides, keep last. Imports must precede all other rules, so

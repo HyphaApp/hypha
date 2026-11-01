@@ -13,15 +13,6 @@
   @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
 }
 
-.separator-dot:not(:last-child)::after {
-  @apply text-fg-muted mx-1;
-  content: "\00B7"; /* Unicode for middle dot */
-}
-
-.errorlist {
-  @apply alert alert-error;
-}
-
 @utility triangle-up {
   @apply size-4 inline-block aspect-square;
   background-color: currentColor;
@@ -37,6 +28,17 @@
 @utility circle {
   @apply size-4 inline-block aspect-square rounded-full;
   background-color: currentColor;
+}
+
+/* Needs to load late or no better place for these. */
+
+.separator-dot:not(:last-child)::after {
+  @apply text-fg-muted mx-1;
+  content: "\00B7"; /* Unicode for middle dot */
+}
+
+.errorlist {
+  @apply alert alert-error;
 }
 
 /*
