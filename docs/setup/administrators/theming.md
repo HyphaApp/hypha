@@ -13,7 +13,7 @@ operating system) with the theme toggle in the header. Whatever you change, chan
 
 ## How the colours are organised
 
-Hypha's defaults live in `hypha/static_src/tailwind/base/themes.css`. You do not need to edit
+Hypha's defaults live in `hypha/static_src/css/base/themes.css`. You do not need to edit
 that file — but it is worth knowing how it is put together, because it explains why so little
 CSS is needed to re-theme the whole application.
 
@@ -240,7 +240,7 @@ python manage.py collectstatic --noinput --settings=hypha.settings.production
 
 If you already run Hypha from your own fork and build the frontend assets as part of your
 deployment, you can change the defaults directly in
-`hypha/static_src/tailwind/base/themes.css` instead. Edit `--color-brand` in the `:root` block,
+`hypha/static_src/css/base/themes.css` instead. Edit `--color-brand` in the `:root` block,
 or set variables inside the two `@plugin "daisyui/theme"` blocks:
 
 ```css
@@ -268,10 +268,10 @@ and 404 error pages, which are standalone templates that do not include `head_en
 ## Custom CSS in your own fork
 
 For styling that goes beyond the theme variables, add your rules to
-`hypha/static_src/tailwind/custom/custom.css`. The file ships empty and exists for exactly this
+`hypha/static_src/css/custom/custom.css`. The file ships empty and exists for exactly this
 purpose, so it is the one place to change and makes upgrades easy to merge.
 
-It is imported at the very end of `hypha/static_src/tailwind/main.css`, so it is compiled into
+It is imported at the very end of `hypha/static_src/css/main.css`, so it is compiled into
 `tailwind-output.css` together with the rest of Hypha's styles. Because it is imported last and
 outside any cascade layer, your rules win over Hypha's components and Tailwind utilities without
 needing extra specificity or `!important`.
