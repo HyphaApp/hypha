@@ -1,12 +1,13 @@
 @import "tailwindcss";
 
 @import "./components/card.css" layer(components);
-@import "./components/theme-toggle.css" layer(components);
 @import "./components/choices.css" layer(components);
 @import "./components/django-file-field.css" layer(components);
 @import "./components/html-diff.css" layer(components);
 @import "./components/layout.css" layer(components);
+@import "./components/nprogress" layer(components);
 @import "./components/table.css" layer(components);
+@import "./components/theme-toggle.css" layer(components);
 @import "./components/tinymce.css" layer(components);
 @import "./components/wmd.css" layer(components);
 
@@ -14,7 +15,6 @@
 @import "./utilities/link.css" layer(utilities);
 @import "./utilities/steps.css" layer(utilities);
 
-@import "./components/nprogress";
 @import "./components/all-submissions-table.css";
 @import "./components/form.css";
 @import "./components/two-factor.css";
