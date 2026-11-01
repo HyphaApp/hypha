@@ -27,8 +27,10 @@
 /* Keep unlayered so overrides other styles. */
 @import "./utilities/misc.css";
 
-/* Custom overrides, keep last. Imports must precede all other rules, so
-   everything below this point only configures Tailwind and emits no CSS. */
+/* Custom overrides, unlayered so they win over everything else. Imports must
+   precede all other rules, so the plugins and @theme come after this, but
+   they emit their CSS into Tailwind's cascade layers so do not compete with
+   it. Do not add unlayered rules below. */
 @import "./custom/custom.css";
 
 @plugin "@tailwindcss/typography";
