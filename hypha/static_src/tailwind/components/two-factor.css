@@ -23,7 +23,7 @@ label[for="id_generator-token"] {
 
 /* 2FA token field. */
 #id_generator-token {
-  -moz-appearance: textfield;
+  appearance: textfield;
   line-height: 1.5;
   width: 8ch;
   padding: 3px;
