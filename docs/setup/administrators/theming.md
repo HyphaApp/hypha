@@ -265,36 +265,6 @@ python manage.py collectstatic --noinput --settings=hypha.settings.production
 This is more work to carry across upgrades, but it is the only approach that also covers the 400
 and 404 error pages, which are standalone templates that do not include `head_end.html`.
 
-## Custom CSS in your own fork
-
-For styling that goes beyond the theme variables, add your rules to
-`hypha/static_src/css/custom/custom.css`. The file ships empty and exists for exactly this
-purpose, so it is the one place to change and makes upgrades easy to merge.
-
-It is imported at the very end of `hypha/static_src/css/main.css`, so it is compiled into
-`tailwind-output.css` together with the rest of Hypha's styles. Because it is imported last and
-outside any cascade layer, your rules win over Hypha's components and Tailwind utilities without
-needing extra specificity or `!important`.
-
-The file is processed by Tailwind, so plain CSS, native CSS nesting, the theme variables and
-`@apply` all work:
-
-```css
-.card {
-  border-color: var(--color-primary);
-}
-
-.form__help {
-  @apply text-sm italic;
-}
-```
-
-If you prefer to split your CSS into several files, put them in the same directory and
-`@import` them from `custom.css`.
-
-Rebuild the assets afterwards, exactly as described in the previous section. In development,
-`make serve` picks up changes automatically.
-
 ## Logo and favicon
 
 Colours are only part of blending in.
