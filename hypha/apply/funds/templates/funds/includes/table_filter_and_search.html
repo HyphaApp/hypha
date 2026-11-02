@@ -36,15 +36,15 @@
                 role="search"
                 class="relative grow"
             >
-                <label class="flex gap-2 items-center w-auto input input-border">
-                    {% heroicon_mini "magnifying-glass" size=20 class="opacity-50 h-[1em]" aria_hidden=true %}
+                <label class="flex gap-2 items-center input input-border">
+                    {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" aria_hidden=true %}
                     <input
                         type="search"
-                        placeholder="{% trans 'Search...' %}"
+                        class=""
+                        placeholder="{% trans 'Search…' %}"
                         name="query"
-                        {% if search_term %}value="{{ request.GET.query }}"{% endif %}
                         aria-label="{% trans 'Search input' %}"
-                        class="sm:w-auto w-[15ch]"
+                        {% if search_term %}value="{{ request.GET.query }}" autofocus{% endif %}
                     >
                 </label>
             </form>

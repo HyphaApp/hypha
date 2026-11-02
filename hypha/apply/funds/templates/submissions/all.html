@@ -131,14 +131,12 @@
                 {% endif %}
             {% endfor %}
 
-            <label class="inline-flex relative flex-auto items-center">
-                <span class="flex absolute inset-y-0 items-center pointer-events-none start-0 ps-3">
-                    {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" aria_hidden=true %}
-                </span>
+            <label class="flex gap-2 items-center w-full input input-border">
+                {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" aria_hidden=true %}
                 <input
                     type="text"
                     id="search-navbar"
-                    class="w-full input"
+                    class=""
                     placeholder="{% trans 'Search…' %}"
                     name="query"
                     aria-label="{% trans 'Search submissions' %}"
