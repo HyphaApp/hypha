@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 @import "./base/base.css" layer(base);
-/* @plugin statements cannot be nested so must be unlayered */
+/* Plugins, dark variant, @theme and daisyUI themes. Must be unlayered since
+   @plugin and @theme cannot be nested inside a layer. */
 @import "./base/themes.css";
 
 @import "./components/card.css" layer(components);
@@ -26,51 +27,3 @@
 
 /* Keep unlayered so overrides other styles. */
 @import "./utilities/misc.css";
-
-/* Custom overrides, unlayered so they win over everything else. Imports must
-   precede all other rules, so the plugins and @theme come after this, but
-   they emit their CSS into Tailwind's cascade layers so do not compete with
-   it. Do not add unlayered rules below. */
-@import "./custom/custom.css";
-
-@plugin "@tailwindcss/typography";
-@plugin "daisyui" {
-  themes: false;
-}
-
-/* Tailwind's stock `dark:` variant keys off prefers-color-scheme, which ignores
-   the theme toggle. Follow the daisyUI themes instead: an explicit
-   data-theme="dark", or auto mode (no data-theme anywhere above the element) on
-   a dark OS. In auto mode a scoped subtree that sets its own data-theme drops
-   out of the second branch, so <div data-theme="light"> is not painted as dark.
-   Under an explicit data-theme root the variant follows that root and does not
-   track nested overrides — "nearest data-theme ancestor wins" needs :has(), so
-   scoped themes inside an explicitly themed page are out of scope. Hypha only
-   ever sets data-theme on <html>. */
-@custom-variant dark {
-  &:where([data-theme="dark"], [data-theme="dark"] *) {
-    @slot;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    &:where(:not([data-theme]):not([data-theme] *)) {
-      @slot;
-    }
-  }
-}
-
-@theme {
-  --default-border-width: var(--border);
-
-  /* Custom colors */
-  --color-fg-muted: color-mix(in oklab, currentColor 60%, transparent);
-
-  /* Custom Animations */
-  --animate-flash: flash 1s ease 1;
-
-  @keyframes flash {
-    50% {
-      background-color: var(--color-base-300);
-    }
-  }
-}
