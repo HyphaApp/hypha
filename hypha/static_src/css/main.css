@@ -27,3 +27,4 @@
 
 /* Keep unlayered so overrides other styles. */
 @import "./utilities/misc.css";
+@import "./utilities/print.css" print;
