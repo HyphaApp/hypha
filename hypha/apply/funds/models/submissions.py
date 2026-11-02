@@ -852,19 +852,22 @@ class ApplicationSubmission(
 
             # We need the submission id to correctly save the files
             files = self.extract_files()
+        elif not self.public_id:
+            self.public_id = f"{self.get_from_parent('submission_id_prefix')}{self.id}"
 
         self.clean_submission()
 
-        # add a denormed version of the answer for searching
-        self.search_document = self.prepare_search_vector()
+        if not creating:
+            # add a denormed version of the answer for searching. New
+            # submissions are indexed by the save at the end of the creating
+            # block, once they have an id and public_id.
+            self.search_document = self.prepare_search_vector()
 
         super().save(*args, **kwargs)
 
-        if self.id and not self.public_id:
-            self.public_id = f"{self.get_from_parent('submission_id_prefix')}{self.id}"
-
         # TODO: This functionality should be extracted and moved to a separate function, too hidden here
         if creating:
+            self.public_id = f"{self.get_from_parent('submission_id_prefix')}{self.id}"
             AssignedReviewers = apps.get_model("funds", "AssignedReviewers")
             ApplicationRevision = apps.get_model("funds", "ApplicationRevision")
 

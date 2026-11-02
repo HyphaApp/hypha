@@ -471,6 +471,21 @@ class TestApplicationSubmission(TestCase):
             [submission],
         )
 
+    def test_missing_public_id_saved_and_indexed(self):
+        submission = self.make_submission(round__submission_id_prefix="HYPHA")
+        public_id = submission.public_id
+        ApplicationSubmission.objects.filter(pk=submission.pk).update(
+            public_id=None, search_document=None
+        )
+
+        ApplicationSubmission.objects.get(pk=submission.pk).save()
+
+        submission.refresh_from_db()
+        self.assertEqual(submission.public_id, public_id)
+        self.assertEqual(
+            list(ApplicationSubmission.objects.search(public_id)), [submission]
+        )
+
     def test_file_gets_uploaded(self):
         filename = "test_image.png"
         submission = self.make_submission(
