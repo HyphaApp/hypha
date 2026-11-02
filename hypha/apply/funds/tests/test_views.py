@@ -1902,6 +1902,19 @@ class TestReviewerLeaderboard(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
+class TestSubmissionsAll(TestCase):
+    def test_relevance_sort_with_filter_only_query(self):
+        staff = StaffFactory()
+        ApplicationSubmissionFactory(lead=staff)
+        self.client.force_login(staff)
+        response = self.client.get(
+            reverse("funds:submissions:list"),
+            {"query": "lead:@me", "sort": "relevance-desc"},
+            secure=True,
+        )
+        self.assertEqual(response.status_code, 200)
+
+
 class TestUpdateReviewersMixin(BaseSubmissionViewTestCase):
     user_factory = StaffFactory
 

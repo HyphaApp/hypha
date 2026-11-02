@@ -252,7 +252,7 @@ def submissions_all(
     ]
 
     if selected_sort and selected_sort in sort_options_raw.keys():
-        if not search_query and selected_sort == "relevance-desc":
+        if not search_term and selected_sort == "relevance-desc":
             qs = qs.order_by("-submit_time")
         else:
             qs = qs.order_by(sort_options_raw[selected_sort][0])
