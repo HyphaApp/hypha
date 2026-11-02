@@ -143,3 +143,20 @@ class TestSubmissionCleanupCommand(TestCase):
 
         # Draft should NOT be deleted by --submissions
         self.assertTrue(ApplicationSubmission.objects.filter(id=draft_id).exists())
+
+
+class TestRebuildSearchIndex(TestCase):
+    def test_rebuilds_search_document(self):
+        submission = ApplicationSubmissionFactory(form_data__char="Mycelium network")
+        ApplicationSubmission.objects.filter(pk=submission.pk).update(
+            search_document=None
+        )
+        self.assertFalse(ApplicationSubmission.objects.search("mycelium").exists())
+
+        out = StringIO()
+        call_command("rebuild_search_index", stdout=out)
+
+        self.assertEqual(
+            list(ApplicationSubmission.objects.search("mycelium")), [submission]
+        )
+        self.assertIn("1 submissions", out.getvalue())

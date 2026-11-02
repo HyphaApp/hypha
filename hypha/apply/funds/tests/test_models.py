@@ -461,6 +461,15 @@ class TestApplicationSubmission(TestCase):
             list(ApplicationSubmission.objects.search("mycelium")), [submission]
         )
 
+    def test_new_submission_indexed_with_public_id(self):
+        submission = self.make_submission()
+        self.make_submission(round=submission.round)
+        self.assertEqual(
+            list(ApplicationSubmission.objects.search(str(submission.public_id))),
+            [submission],
+        )
+        self.assertFalse(ApplicationSubmission.objects.search("none").exists())
+
     def test_file_gets_uploaded(self):
         filename = "test_image.png"
         submission = self.make_submission(

@@ -680,7 +680,7 @@ class ApplicationSubmission(
     @property
     def application_id_nc(self):
         """
-        Only used in e-mail and other notifications where a cached_property gives a None value.
+        Only used in search, e-mail and other notifications where a cached_property gives a None value.
         """
         return self.public_id or self.id
 
@@ -968,7 +968,7 @@ class ApplicationSubmission(
 
     def index_components(self):
         return {
-            "A": " ".join([f"id:{self.application_id}", self.title]),
+            "A": " ".join([f"id:{self.application_id_nc}", self.title]),
             "C": " ".join([self.full_name, self.email]),
             "B": " ".join(self.get_searchable_contents()),
         }
