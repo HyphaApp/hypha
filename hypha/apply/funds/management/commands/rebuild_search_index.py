@@ -10,9 +10,11 @@ class Command(BaseCommand):
     help = "Rebuild the full text search index (search_document) for all submissions."
 
     def handle(self, *args, **options):
-        submissions = ApplicationSubmission.objects.defer("search_document").order_by(
-            "pk"
-        )
+        # Only load what prepare_search_vector() needs. This also keeps the
+        # command safe to run from migration 0140, before later schema changes.
+        submissions = ApplicationSubmission.objects.only(
+            "id", "public_id", "form_data", "form_fields"
+        ).order_by("pk")
         total = submissions.count()
         self.failed = []
         indexed = 0
