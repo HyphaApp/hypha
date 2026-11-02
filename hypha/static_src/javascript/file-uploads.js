@@ -43,20 +43,9 @@ htmx.onLoad(function (elt) {
       input.closest("[data-js-file-upload]") || input.parentElement;
     const errorId = `${input.id || input.name}-error`;
 
-    input.addEventListener("invalid", function (event) {
-      // Prevent the native bubble, the input is visually hidden, and
-      // focus/scroll to the visible wrapper ourselves.
-      event.preventDefault();
-      const firstInvalid =
-        input.form &&
-        Array.from(input.form.elements).find(
-          (el) => el.willValidate && !el.validity.valid
-        );
-      if (firstInvalid === input) {
-        container.scrollIntoView({ block: "center", behavior: "smooth" });
-        input.focus({ preventScroll: true });
-      }
-
+    // Do not call preventDefault() here, that stops the browser from
+    // focusing and scrolling to the field like it does for other fields.
+    input.addEventListener("invalid", function () {
       // Reuse the server side error if there is one.
       let errorEl = container.querySelector(".text-error");
 

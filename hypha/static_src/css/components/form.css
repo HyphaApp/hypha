@@ -57,12 +57,13 @@
     }
   }
 
+  /* Visually hidden in place, so the browser's validation focus, scroll
+     and bubble land on the field. The upload label acts as the button. */
   input[type="file"] {
-    position: absolute;
-    inset-inline-start: -9999px;
+    @apply sr-only;
 
     @media (scripting: none) {
-      display: block;
+      @apply not-sr-only;
     }
   }
 }
