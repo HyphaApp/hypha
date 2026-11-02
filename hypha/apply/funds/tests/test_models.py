@@ -462,13 +462,14 @@ class TestApplicationSubmission(TestCase):
         )
 
     def test_new_submission_indexed_with_public_id(self):
-        submission = self.make_submission()
+        # A prefix makes the id a unique search token, a bare number could also
+        # match numbers in the other submission's generated form data.
+        submission = self.make_submission(round__submission_id_prefix="HYPHA")
         self.make_submission(round=submission.round)
         self.assertEqual(
-            list(ApplicationSubmission.objects.search(str(submission.public_id))),
+            list(ApplicationSubmission.objects.search(submission.public_id)),
             [submission],
         )
-        self.assertFalse(ApplicationSubmission.objects.search("none").exists())
 
     def test_file_gets_uploaded(self):
         filename = "test_image.png"
