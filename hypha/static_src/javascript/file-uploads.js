@@ -32,6 +32,12 @@ htmx.onLoad(function (elt) {
    * @param {HTMLInputElement} input The file input.
    */
   function initValidation(input) {
+    // The same element can be part of more than one htmx load.
+    if (input.fileValidationDone) {
+      return;
+    }
+    input.fileValidationDone = true;
+
     // The field wrapper, see forms/includes/field.html.
     const container =
       input.closest("[data-js-file-upload]") || input.parentElement;
