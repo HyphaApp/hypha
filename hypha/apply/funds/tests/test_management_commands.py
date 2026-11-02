@@ -3,8 +3,12 @@
 import argparse
 from datetime import timedelta
 from io import StringIO
+from unittest import mock
 
+from django.contrib.postgres.search import SearchVectorField
 from django.core.management import call_command
+from django.db.models import Value
+from django.db.models.functions import Cast
 from django.test import TestCase
 from django.utils import timezone
 
@@ -160,3 +164,51 @@ class TestRebuildSearchIndex(TestCase):
             list(ApplicationSubmission.objects.search("mycelium")), [submission]
         )
         self.assertIn("1 submissions", out.getvalue())
+
+    def _call_with_broken(self, broken_pk, error):
+        original = ApplicationSubmission.prepare_search_vector
+
+        def prepare_search_vector(submission):
+            if submission.pk == broken_pk:
+                return error()
+            return original(submission)
+
+        out, err = StringIO(), StringIO()
+        with mock.patch.object(
+            ApplicationSubmission, "prepare_search_vector", prepare_search_vector
+        ):
+            call_command("rebuild_search_index", stdout=out, stderr=err)
+        return out.getvalue(), err.getvalue()
+
+    def test_reports_and_skips_submission_that_raises(self):
+        broken = ApplicationSubmissionFactory()
+        submission = ApplicationSubmissionFactory(form_data__char="Mycelium network")
+        ApplicationSubmission.objects.update(search_document=None)
+
+        def error():
+            raise TypeError("boom")
+
+        out, err = self._call_with_broken(broken.pk, error)
+
+        self.assertEqual(
+            list(ApplicationSubmission.objects.search("mycelium")), [submission]
+        )
+        self.assertIn("1 submissions", out)
+        self.assertIn(f"Could not index submission {broken.pk}: boom", err)
+
+    def test_reports_and_skips_submission_rejected_by_database(self):
+        broken = ApplicationSubmissionFactory()
+        submission = ApplicationSubmissionFactory(form_data__char="Mycelium network")
+        ApplicationSubmission.objects.update(search_document=None)
+
+        def error():
+            # Not valid tsvector syntax, so Postgres rejects the update.
+            return Cast(Value("'unterminated"), SearchVectorField())
+
+        out, err = self._call_with_broken(broken.pk, error)
+
+        self.assertEqual(
+            list(ApplicationSubmission.objects.search("mycelium")), [submission]
+        )
+        self.assertIn("1 submissions", out)
+        self.assertIn(f"Could not index submission {broken.pk}", err)
