@@ -15,7 +15,7 @@ from django.contrib.postgres.search import (
     SearchVectorField,
 )
 from django.core.exceptions import PermissionDenied
-from django.db import models
+from django.db import models, transaction
 from django.db.models import (
     Avg,
     Count,
@@ -858,16 +858,17 @@ class ApplicationSubmission(
         self.clean_submission()
 
         if not creating:
-            # add a denormed version of the answer for searching. New
-            # submissions are indexed by the save at the end of the creating
-            # block, once they have an id and public_id.
+            # add a denormed version of the answer for searching
             self.search_document = self.prepare_search_vector()
+            return super().save(*args, **kwargs)
 
-        super().save(*args, **kwargs)
-
+        # New submissions get their public_id and search index from the save at
+        # the end, once they have an id. Run it all in one transaction so a
+        # failure can't leave a half created, unsearchable submission behind.
         # TODO: This functionality should be extracted and moved to a separate function, too hidden here
-        if creating:
-            self.public_id = f"{self.get_from_parent('submission_id_prefix')}{self.id}"
+        with transaction.atomic():
+            super().save(*args, **kwargs)
+
             AssignedReviewers = apps.get_model("funds", "AssignedReviewers")
             ApplicationRevision = apps.get_model("funds", "ApplicationRevision")
 

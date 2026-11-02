@@ -486,6 +486,27 @@ class TestApplicationSubmission(TestCase):
             list(ApplicationSubmission.objects.search(public_id)), [submission]
         )
 
+    def test_public_id_given_on_create_is_kept(self):
+        submission = self.make_submission(
+            public_id="LEGACY-42", round__submission_id_prefix="HYPHA"
+        )
+        submission.refresh_from_db()
+        self.assertEqual(submission.public_id, "LEGACY-42")
+        self.assertEqual(
+            list(ApplicationSubmission.objects.search("LEGACY-42")), [submission]
+        )
+
+    def test_failed_create_leaves_no_submission(self):
+        round = RoundFactory()
+        count = ApplicationSubmission.objects.count()
+        # Fail after the first insert, before the final save indexes it.
+        with patch.object(
+            AssignedReviewers.objects, "bulk_create_reviewers", side_effect=RuntimeError
+        ):
+            with self.assertRaises(RuntimeError):
+                self.make_submission(round=round)
+        self.assertEqual(ApplicationSubmission.objects.count(), count)
+
     def test_file_gets_uploaded(self):
         filename = "test_image.png"
         submission = self.make_submission(
