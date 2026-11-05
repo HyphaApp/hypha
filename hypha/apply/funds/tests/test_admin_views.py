@@ -257,6 +257,62 @@ class TestCreateApplicationFormView(TestCase):
             self.assertIn(str(message.message).strip(), expected_messages_list)
         self.assertEqual(ApplicationForm.objects.count(), 0)
 
+    def test_duplicate_fields_are_reported(self):
+        data = {"name": [self.name]}
+        form_field_data = create_form_fields_data(
+            {
+                "title": {"field_label": "Title"},
+                "email": {"field_label": "Email"},
+                "full_name": {"field_label": "Full name"},
+            }
+        )
+        form_field_data["form_fields-count"] = ["4"]
+        form_field_data.update(
+            {
+                "form_fields-3-deleted": [""],
+                "form_fields-3-order": ["3"],
+                "form_fields-3-type": ["title"],
+                "form_fields-3-value-field_label": ["Title again"],
+            }
+        )
+        data.update(form_field_data)
+        response = self.create_page(data=data)
+
+        message_texts = [
+            str(message.message).strip()
+            for message in get_messages(response.context["request"])
+        ]
+        self.assertIn(
+            "The following fields must be included only once: Title", message_texts
+        )
+        self.assertNotIn("Validation error in StreamBlock", message_texts)
+        self.assertContains(response, "Duplicate field")
+        self.assertEqual(ApplicationForm.objects.count(), 0)
+
+    def test_invalid_child_block_value_is_reported(self):
+        data = {"name": [self.name]}
+        form_field_data = create_form_fields_data(
+            {
+                "title": self.label_help_text_data,
+                "email": self.label_help_text_data,
+                "full_name": self.label_help_text_data,
+                "rich_text": {**self.label_help_text_data, "word_limit": "aaa"},
+            }
+        )
+        data.update(form_field_data)
+        response = self.create_page(data=data)
+
+        message_texts = [
+            str(message.message).strip()
+            for message in get_messages(response.context["request"])
+        ]
+        self.assertEqual(
+            message_texts, ["Please correct the errors on the highlighted fields."]
+        )
+        self.assertContains(response, "Go to the first error")
+        self.assertContains(response, "Enter a whole number.")
+        self.assertEqual(ApplicationForm.objects.count(), 0)
+
     def test_form_creation(self):
         data = {"name": [self.name]}
         form_field_data = create_form_fields_data(

@@ -1,12 +1,16 @@
 from collections import Counter
 
 import nh3
-from django.core.exceptions import ValidationError
-from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin import messages
-from wagtail.blocks import ListBlock, StaticBlock, StreamBlock
+from wagtail.blocks import (
+    ListBlock,
+    StaticBlock,
+    StreamBlock,
+    StreamBlockValidationError,
+    StructBlockValidationError,
+)
 
 from hypha.apply.stream_forms.blocks import (
     FormFieldBlock,
@@ -32,12 +36,18 @@ def nice_field_name(name):
 
 
 def show_admin_form_error_messages(request, form):
-    for err in form.errors.values():
-        if isinstance(err, list):
-            for form_field_error in err:
-                messages.error(request, form_field_error)
-        else:
-            messages.error(request, err.as_text())
+    for errors in form.errors.as_data().values():
+        for error in errors:
+            # Errors on individual blocks are displayed in the StreamField editor.
+            # A message is still needed, it holds Wagtail's "Go to the first error" button.
+            if isinstance(error, StreamBlockValidationError):
+                error_messages = error.non_block_errors or [
+                    _("Please correct the errors on the highlighted fields.")
+                ]
+            else:
+                error_messages = error.messages
+            for error_message in error_messages:
+                messages.error(request, error_message)
 
 
 class RichTextFieldBlock(TextFieldBlock):
@@ -92,12 +102,13 @@ class CustomFormFieldsBlock(StreamBlock):
         super().__init__(child_blocks, *args, **kwargs)
 
     def clean(self, value):
+        block_errors = {}
+        all_errors = []
         try:
             value = super().clean(value)
-        except ValidationError as e:
-            error_dict = e.params or {}
-        else:
-            error_dict = {}
+        except StreamBlockValidationError as e:
+            block_errors = e.block_errors
+            all_errors = list(e.non_block_errors)
 
         block_types = [block.block_type for block in value]
         missing = set(self.required_block_names) - set(block_types)
@@ -108,7 +119,6 @@ class CustomFormFieldsBlock(StreamBlock):
             if name in self.single_block_names
         ]
 
-        all_errors = []
         # Wagtail sets is_deferred_validation when saving drafts, required checks are skipped then.
         if missing and not self.is_deferred_validation:
             all_errors.append(
@@ -125,7 +135,7 @@ class CustomFormFieldsBlock(StreamBlock):
             )
             for i, block_name in enumerate(block_types):
                 if block_name in duplicates:
-                    self.add_error_to_child(error_dict, i, "info", _("Duplicate field"))
+                    self.add_error_to_child(block_errors, i, _("Duplicate field"))
 
         for block in value:
             if self.is_deferred_validation:
@@ -151,20 +161,16 @@ class CustomFormFieldsBlock(StreamBlock):
                                     )
                                 )
 
-        if all_errors or error_dict:
-            error_dict["__all__"] = all_errors
-            raise ValidationError(all_errors, params=error_dict)
+        if all_errors or block_errors:
+            raise StreamBlockValidationError(
+                block_errors=block_errors, non_block_errors=all_errors
+            )
 
         return value
 
-    def add_error_to_child(self, errors, child_number, field, message):
-        new_error = ErrorList([message])
-        try:
-            errors[child_number].data[0].params[field] = new_error
-        except KeyError:
-            errors[child_number] = ErrorList(
-                [ValidationError("Error", params={field: new_error})]
-            )
+    def add_error_to_child(self, errors, child_number, message):
+        error = errors.setdefault(child_number, StructBlockValidationError())
+        error.non_block_errors.append(message)
 
     # TODO: This result in a TypeError: 'StreamChild' object is not subscriptable.
     # Do we need it or can we fallback on the default function in BaseStreamBlock Class.
