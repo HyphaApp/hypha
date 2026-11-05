@@ -1,0 +1,59 @@
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+*,
+::after,
+::before,
+::backdrop,
+::file-selector-button {
+  border-color: var(--color-base-300, currentColor);
+}
+
+/* Transitioning page view. */
+@view-transition {
+  navigation: auto;
+}
+
+:root {
+  /* Activate transition to intrinsic sizes like auto and fit-content. */
+  interpolate-size: allow-keywords;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-normal text-inherit text-balance;
+}
+
+a {
+  @apply underline-offset-2;
+}
+
+p,
+li,
+dd {
+  text-wrap: pretty;
+}
+
+textarea {
+  @apply textarea w-full;
+}
+
+/* make date & time input siblings inline */
+input[type="date"] + input[type="time"] {
+  width: 10rem;
+}
+
+details {
+  > summary {
+    cursor: pointer;
+  }
+}

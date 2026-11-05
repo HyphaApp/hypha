@@ -36,7 +36,7 @@
 
                 {% for invite in co_applicants %}
                     {% can_update_coapplicant user invite as can_update %}
-                    <div class="list-row list-row-card">
+                    <div class="py-2 px-0 list-row">
                         <div class="min-w-0 list-col-grow">
                             <div class="font-medium truncate">
                                 {% if invite.status == "accepted" %}
@@ -70,7 +70,7 @@
                         {% endif %}
                     </div>
                 {% empty %}
-                    <div class="list-row list-row-card">
+                    <div class="py-2 px-0 list-row">
                         {% trans "No co-applicants yet." %}
                     </div>
                 {% endfor %}

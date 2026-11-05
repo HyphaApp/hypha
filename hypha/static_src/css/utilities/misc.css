@@ -1,0 +1,50 @@
+@utility border-stripe {
+  border-image: repeating-linear-gradient(
+      -55deg,
+      #000 0,
+      #000 20px,
+      #ffb101 20px,
+      #ffb101 40px
+    )
+    10;
+}
+
+@utility container-constrained {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+@utility triangle-up {
+  @apply size-4 inline-block aspect-square;
+  background-color: currentColor;
+  clip-path: polygon(50% 0, 0 100%, 100% 100%);
+}
+
+@utility triangle-down {
+  @apply size-4 inline-block aspect-square;
+  background-color: currentColor;
+  clip-path: polygon(100% 0, 0 0, 50% 100%);
+}
+
+@utility circle {
+  @apply size-4 inline-block aspect-square rounded-full;
+  background-color: currentColor;
+}
+
+/* Needs to load late or no better place for these. */
+
+.separator-dot:not(:last-child)::after {
+  @apply text-fg-muted mx-1;
+  content: "\00B7"; /* Unicode for middle dot */
+}
+
+.errorlist {
+  @apply alert alert-error;
+}
+
+/*
+  Restore table header/footer wrapping.
+  This means less horizontal scrolling on small-width viewports.
+*/
+.table :where(thead, tfoot) {
+  @apply whitespace-normal;
+}

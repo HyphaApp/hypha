@@ -11,7 +11,6 @@ zensical.toml
 .vscode/
 .editorconfig
 .pre-commit-config.yaml
-.stylelintrc.yaml
 biome.json
 dslr.toml
 .test_durations

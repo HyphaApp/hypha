@@ -120,7 +120,7 @@ nvm install     # Install the Node version in .nvmrc
 nvm use         # Use the Node version in .nvmrc
 ```
 
-### Install all node packages and compile JS & SCSS
+### Install all node packages and compile JS & CSS
 
 Install node dependencies.
 
@@ -135,7 +135,7 @@ npm run dev:build
 ```
 
 !!! info
-    Hypha uses NodeJS to compile SCSS and JS from the `hypha/static_src/` directory. See the `package.json` 
+    Hypha uses NodeJS to compile CSS (Tailwind) and JS from the `hypha/static_src/` directory. See the `package.json` 
     file for a complete list of commands.
 
 
@@ -299,7 +299,7 @@ Zensical development server: [http://localhost:9100/](http://localhost:9100/)
 ## 8. Running tests
 
 Hypha uses `ruff` and [py.test](https://pytest-django.readthedocs.io/en/latest/) test runner and uses `hypha/settings/testing.py` for test settings.
-For frontend code, stylelint and biome is used.
+For frontend code (JS and CSS), biome is used.
 
 Run the test with:
 

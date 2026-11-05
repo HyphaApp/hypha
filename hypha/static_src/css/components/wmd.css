@@ -17,7 +17,7 @@
   .wmd-button {
     @apply btn btn-square btn-sm bg-white btn-soft hover:border-secondary;
 
-    & > span {
+    > span {
       @apply inline-block bg-no-repeat size-(--btn-width);
       background-image: url("./../images/editor-buttons.png");
       background-position: 0 0;

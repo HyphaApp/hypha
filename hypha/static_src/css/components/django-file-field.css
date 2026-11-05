@@ -1,15 +1,15 @@
 .dff-uploader {
   width: clamp(3rem, 20rem, 100%);
 
-  & .dff-files {
+  .dff-files {
     @apply m-0! shadow-inner outline-dashed! rounded-field;
     outline-width: var(--border) !important;
 
-    & .dff-filesize {
+    .dff-filesize {
       @apply text-fg-muted text-sm;
     }
 
-    & .dff-filename {
+    .dff-filename {
       @apply me-2;
     }
 
@@ -17,11 +17,11 @@
       @apply ring-2! ring-offset-4;
     }
 
-    & span {
+    span {
       margin-left: 0 !important;
     }
 
-    & .dff-delete {
+    .dff-delete {
       @apply text-error! font-medium before:content-['•'] before:mr-2;
     }
   }

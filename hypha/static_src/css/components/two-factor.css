@@ -1,12 +1,5 @@
-// stylelint-disable property-no-vendor-prefix, selector-id-pattern
-
 .two-factor {
   position: relative;
-
-  &__back {
-    position: absolute;
-    inset-block-start: 0.5rem;
-  }
 
   h1,
   h2 {
@@ -18,14 +11,19 @@
   }
 }
 
-// 2FA token label font size
+.two-factor__back {
+  position: absolute;
+  inset-block-start: 0.5rem;
+}
+
+/* 2FA token label font size */
 label[for="id_generator-token"] {
   margin-inline-end: 0.5rem;
 }
 
-// 2FA token field.
+/* 2FA token field. */
 #id_generator-token {
-  -moz-appearance: textfield;
+  appearance: textfield;
   line-height: 1.5;
   width: 8ch;
   padding: 3px;

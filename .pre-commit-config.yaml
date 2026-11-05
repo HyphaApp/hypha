@@ -76,16 +76,6 @@ repos:
     hooks:
       - id: biome-check
 
-  - repo: https://github.com/awebdeveloper/pre-commit-stylelint
-    rev: "0.0.2"
-    hooks:
-      - id: stylelint
-        files: .*/static_src/sass/.*\.scss$
-        args: [--fix]
-        additional_dependencies:
-          - stylelint@16.26.1
-          - stylelint-config-standard-scss@13.1.0
-
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.0
     hooks:
