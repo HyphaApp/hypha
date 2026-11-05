@@ -351,3 +351,50 @@ class TestLogoutOtherSessions(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 405)
         self.assertTrue(self.is_logged_in(self.other_client))
+
+
+class TestWagtailUserIndexView(TestCase):
+    def setUp(self):
+        self.superuser = SuperUserFactory()
+        self.staff = StaffFactory()
+        self.inactive_user = UserFactory(is_active=False)
+        self.client.force_login(self.superuser)
+        self.url = reverse("wagtailusers_users:index")
+
+    def get_users(self, **params):
+        response = self.client.get(self.url, params, secure=True)
+        self.assertEqual(response.status_code, 200)
+        return list(response.context["object_list"])
+
+    def test_index_lists_users(self):
+        self.assertCountEqual(
+            self.get_users(), [self.superuser, self.staff, self.inactive_user]
+        )
+
+    def test_results_view(self):
+        response = self.client.get(
+            reverse("wagtailusers_users:index_results"), secure=True
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_search(self):
+        self.assertEqual(self.get_users(q=self.staff.email), [self.staff])
+
+    def test_filter_by_role(self):
+        role = self.staff.groups.first()
+        self.assertIn(self.staff, self.get_users(roles=role.pk))
+        self.assertNotIn(self.inactive_user, self.get_users(roles=role.pk))
+
+    def test_filter_by_status(self):
+        self.assertEqual(self.get_users(status="inactive"), [self.inactive_user])
+
+    def test_search_and_filter_by_role(self):
+        role = self.staff.groups.first()
+        self.assertEqual(
+            self.get_users(q=self.staff.email, roles=role.pk), [self.staff]
+        )
+
+    def test_csv_export(self):
+        response = self.client.get(self.url, {"export": "csv"}, secure=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.staff.email, response.getvalue().decode())
