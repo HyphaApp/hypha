@@ -172,19 +172,28 @@ class CustomFormFieldsBlock(StreamBlock):
         error = errors.setdefault(child_number, StructBlockValidationError())
         error.non_block_errors.append(message)
 
-    # TODO: This result in a TypeError: 'StreamChild' object is not subscriptable.
-    # Do we need it or can we fallback on the default function in BaseStreamBlock Class.
+    # Activate if/when needed.
+    #
     # def to_python(self, value):
     #     """
     #     This allows historic data to still be accessible even
     #     if a custom field type is removed from the code in the future.
     #     """
-    #     # If the data type is missing, fallback to a CharField
-    #     for child_data in value:
-    #         if child_data["type"] not in self.child_blocks:
-    #             child_data["type"] = "char"
+    #     # Only the JSON-ish form holds stored data, Wagtail also calls this with
+    #     # StreamValues, tuples, strings and None, leave those to the default.
+    #     if isinstance(value, list):
+    #         # If the data type is missing, fallback to a CharField. Blocks without
+    #         # a struct value are markup that hold no answers, the default drops them.
+    #         value = [
+    #             {**child_data, "type": "char"}
+    #             if isinstance(child_data, dict)
+    #             and child_data["type"] not in self.child_blocks
+    #             and isinstance(child_data.get("value"), dict)
+    #             else child_data
+    #             for child_data in value
+    #         ]
 
-    #     return StreamValue(self, value, is_lazy=True)
+    #     return super().to_python(value)
 
 
 class SingleIncludeStatic(StaticBlock):
