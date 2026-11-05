@@ -59,6 +59,11 @@ class UserFilterSet(WagtailFilterSet):
         model = User
         fields = ["roles", "status", "is_superuser"]
 
+    def __init__(self, *args, is_searching=False, **kwargs):
+        # Wagtail's users IndexView always passes is_searching, it is only used
+        # by Wagtail's own UserFilterSet.
+        super().__init__(*args, **kwargs)
+
     def filter_by_roles(self, queryset, name, value):
         queryset = queryset.filter(groups__name=value)
         return queryset
