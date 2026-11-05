@@ -1,10 +1,12 @@
 """Tests for hypha/apply/funds/management/commands/submission_cleanup.py"""
 
 import argparse
+import importlib
 from datetime import timedelta
 from io import StringIO
 from unittest import mock
 
+from django.apps import apps
 from django.contrib.postgres.search import SearchVectorField
 from django.core.management import call_command
 from django.db.models import Value
@@ -212,3 +214,46 @@ class TestRebuildSearchIndex(TestCase):
         )
         self.assertIn("1 submissions", out)
         self.assertIn(f"Could not index submission {broken.pk}", err)
+
+    def test_reports_and_skips_submission_that_cannot_be_loaded(self):
+        broken = ApplicationSubmissionFactory()
+        submission = ApplicationSubmissionFactory(form_data__char="Mycelium network")
+        ApplicationSubmission.objects.update(search_document=None)
+        original = ApplicationSubmission.deserialised_data
+
+        def deserialised_data(instance, data, form_fields):
+            if instance.pk == broken.pk:
+                raise KeyError("removed_block")
+            return original(instance, data, form_fields)
+
+        out, err = StringIO(), StringIO()
+        with mock.patch.object(
+            ApplicationSubmission, "deserialised_data", deserialised_data
+        ):
+            call_command("rebuild_search_index", stdout=out, stderr=err)
+
+        self.assertEqual(
+            list(ApplicationSubmission.objects.search("mycelium")), [submission]
+        )
+        self.assertIn("Rebuilt search index for 1 submissions", out.getvalue())
+        self.assertIn(f"Could not index submission {broken.pk}", err.getvalue())
+
+
+class TestRemoveSearchDataMigration(TestCase):
+    migration = importlib.import_module(
+        "hypha.apply.funds.migrations.0140_remove_applicationsubmission_search_data"
+    )
+
+    def _rebuild(self):
+        self.migration.rebuild_search_index(apps, None)
+
+    def test_new_install_does_not_run_the_command(self):
+        with mock.patch.object(self.migration, "call_command") as command:
+            self._rebuild()
+        command.assert_not_called()
+
+    def test_existing_submissions_run_the_command(self):
+        ApplicationSubmissionFactory()
+        with mock.patch.object(self.migration, "call_command") as command:
+            self._rebuild()
+        command.assert_called_once_with("rebuild_search_index")

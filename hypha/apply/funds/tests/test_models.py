@@ -486,6 +486,17 @@ class TestApplicationSubmission(TestCase):
             list(ApplicationSubmission.objects.search(public_id)), [submission]
         )
 
+    def test_missing_named_fields_still_indexed(self):
+        submission = self.make_submission(form_data__char="Mycelium network")
+        for field in ["title", "full_name", "email"]:
+            submission.form_data.pop(field)
+
+        submission.save()
+
+        self.assertEqual(
+            list(ApplicationSubmission.objects.search("mycelium")), [submission]
+        )
+
     def test_public_id_given_on_create_is_kept(self):
         submission = self.make_submission(
             public_id="LEGACY-42", round__submission_id_prefix="HYPHA"

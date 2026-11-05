@@ -3,6 +3,11 @@ from django.db import migrations, models
 
 
 def rebuild_search_index(apps, schema_editor):
+    # Nothing to index on a new install, and that way only sites upgrading
+    # through this migration depend on the current model code.
+    if not apps.get_model("funds", "ApplicationSubmission").objects.exists():
+        return
+
     # Submissions from before search_document was added (0111) were never
     # indexed, and older indexed ones may have "id:None" instead of their
     # public id. Rebuild the full weighted vector for every submission before
@@ -18,6 +23,8 @@ class Migration(migrations.Migration):
     atomic = False
 
     dependencies = [
+        # Loading form fields queries the categories tables.
+        ("categories", "0009_alter_option_options"),
         ("funds", "0139_alter_applicationbasedeterminationform_options_and_more"),
     ]
 
