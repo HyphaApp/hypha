@@ -89,7 +89,7 @@ MIDDLEWARE = [
     "django_otp.middleware.OTPMiddleware",
     "hypha.apply.users.middleware.TwoFactorAuthenticationMiddleware",
     "hijack.middleware.HijackUserMiddleware",
-    "hypha.apply.users.middleware.SocialAuthExceptionMiddleware",
+    "social_django.middleware.SocialAuthExceptionMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "hypha.apply.middleware.HandleProtectionErrorMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
@@ -203,7 +203,7 @@ AUTH_USER_MODEL = "users.User"
 LOGIN_URL = "users:passwordless_login_signup"
 LOGIN_REDIRECT_URL = "dashboard:dashboard"
 
-# Keeps complaining about "social:complete" and "two_factor:setup_complete".
+# Keeps complaining about "two_factor:setup_complete".
 SILENCED_SYSTEM_CHECKS = ["urls.W003"]
 
 # https://django-elevate.readthedocs.io/en/latest/config/index.html#configuration

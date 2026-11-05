@@ -34,7 +34,6 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_POST
 from django.views.generic import UpdateView
@@ -47,8 +46,6 @@ from django_ratelimit.decorators import ratelimit
 from django_ratelimit.exceptions import Ratelimited
 from formtools.wizard.forms import ManagementForm as WizardManagementForm
 from hijack.views import AcquireUserView
-from social_django.utils import psa
-from social_django.views import complete
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.utils import default_device, get_otpauth_url, totp_digits
 from two_factor.views import BackupTokensView as TwoFactorBackupTokensView
@@ -1026,31 +1023,3 @@ def set_timezone_view(request: HttpRequest) -> HttpResponse:
     if get_zoneinfo(tz_name):
         request.session["user_timezone"] = tz_name
     return HttpResponse(status=204)
-
-
-@never_cache
-@csrf_exempt
-@psa(f"{settings.SOCIAL_AUTH_URL_NAMESPACE}:complete")
-def oauth_complete(
-    request: HttpRequest, backend: str, *args, **kwargs
-) -> HttpResponseRedirect:
-    """View utilized after an OAuth login is successful.
-
-    This is utilized to extend the OAuth session age to the `SESSION_COOKIE_AGE_LONG`.
-
-    Args:
-        request:
-            The request with a custom `backend` attribute that is populated by the `social_django.utils.psa` decorator
-        backend:
-            String containing the backend being utilized
-
-    Returns:
-        A `HttpResponseRedirect` to bring the user to a landing page or the `next` URL.
-    """
-    redirect = complete(request, backend, *args, **kwargs)
-
-    request.backend.strategy.request.session.set_expiry(
-        settings.SESSION_COOKIE_AGE_LONG
-    )
-
-    return redirect

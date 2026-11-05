@@ -12,7 +12,7 @@ from wagtail.images.views.serve import ServeView
 
 from hypha.apply.dashboard import urls as dashboard_urls
 from hypha.apply.users.urls import urlpatterns as user_urls
-from hypha.apply.users.views import become, oauth_complete
+from hypha.apply.users.views import become
 from hypha.apply.utils.views import custom_wagtail_page_delete
 from hypha.home.views import home
 
@@ -39,7 +39,6 @@ urlpatterns = [
     path("dashboard/", include(dashboard_urls)),
     path("sitemap.xml", sitemap),
     path("upload/", include("django_file_form.tus.urls")),
-    # path("complete/<str:backend>/", oauth_complete, name=f"{settings.SOCIAL_AUTH_URL_NAMESPACE}:complete"),
     path(
         "", include("social_django.urls", namespace=settings.SOCIAL_AUTH_URL_NAMESPACE)
     ),
@@ -89,15 +88,6 @@ if settings.DEBUG:
         ),
         path("test500/", dj_default_views.server_error),
     ]
-
-# Override the social auth `<SOCIAL_NAMESPACE>:complete` to allow for extending the OAuth session
-urlpatterns = [
-    path(
-        "complete/<str:backend>/",
-        oauth_complete,
-        name=f"{settings.SOCIAL_AUTH_URL_NAMESPACE}:complete",
-    )
-] + urlpatterns
 
 urlpatterns += [
     re_path(

@@ -452,6 +452,11 @@ if env.str("CLOUDFLARE_BEARER_TOKEN", None) and env.str("CLOUDFLARE_API_ZONEID")
 
 # Social Auth settings
 
+# OAuth logins get the same default as long session age, set only when the login succeeds.
+SOCIAL_AUTH_MAX_SESSION_LENGTH = env.int(
+    "SOCIAL_AUTH_MAX_SESSION_LENGTH", 60 * 60 * 24 * 7 * 2
+)  # 2 weeks
+
 # Set the Google OAuth2 credentials in ENV variables or local.py
 # To create a new set of credentials, go to https://console.developers.google.com/apis/credentials
 # Make sure the Google+ API is enabled for your API project
@@ -490,7 +495,6 @@ SOCIAL_AUTH_PIPELINE = (
     "social_core.pipeline.user.create_user",
     "social_core.pipeline.social_auth.associate_user",
     "social_core.pipeline.social_auth.load_extra_data",
-    "social_core.pipeline.user.user_details",
 )
 
 # NH3 Settings
