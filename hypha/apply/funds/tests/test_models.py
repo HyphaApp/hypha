@@ -988,3 +988,23 @@ class TestAssignedReviewersQuerySet(TestCase):
         ReviewOpinionFactory(review=review1, author=reviewer2, opinion=AGREE)
         self.assertEqual(AssignedReviewers.objects.reviewed().count(), 2)
         self.assertEqual(AssignedReviewers.objects.reviewed().review_order().count(), 1)
+
+
+class TestAssignedReviewersDeletion(TestCase):
+    def setUp(self):
+        self.reviewer = StaffFactory()
+        self.submissions = ApplicationSubmissionFactory.create_batch(2)
+        for submission in self.submissions:
+            AssignedReviewersFactory(submission=submission, reviewer=self.reviewer)
+
+    def test_delete_reviewer_assigned_to_multiple_submissions(self):
+        self.reviewer.delete()
+
+        self.assertFalse(AssignedReviewers.objects.exists())
+
+    def test_bulk_delete_submissions_sharing_a_reviewer(self):
+        ApplicationSubmission.objects.filter(
+            pk__in=[submission.pk for submission in self.submissions]
+        ).delete()
+
+        self.assertFalse(AssignedReviewers.objects.exists())

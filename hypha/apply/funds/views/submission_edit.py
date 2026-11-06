@@ -600,12 +600,25 @@ class UpdateReviewersView(View):
         form = UpdateReviewersForm(
             self.request.POST, user=self.request.user, instance=self.submission
         )
-        old_reviewers = {copy(reviewer) for reviewer in form.instance.assigned.all()}
+        # Compare on reviewer and role, not pk, as saving the form can recreate rows.
+        old_reviewers = {
+            (assigned.reviewer_id, assigned.role_id): assigned
+            for assigned in form.instance.assigned.all()
+        }
         if form.is_valid():
             form.save()
-            new_reviewers = set(form.instance.assigned.all())
-            added = new_reviewers - old_reviewers
-            removed = old_reviewers - new_reviewers
+            new_reviewers = {
+                (assigned.reviewer_id, assigned.role_id): assigned
+                for assigned in form.instance.assigned.all()
+            }
+            added = [
+                new_reviewers[key]
+                for key in new_reviewers.keys() - old_reviewers.keys()
+            ]
+            removed = [
+                old_reviewers[key]
+                for key in old_reviewers.keys() - new_reviewers.keys()
+            ]
             messenger(
                 MESSAGES.REVIEWERS_UPDATED,
                 request=self.request,

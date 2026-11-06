@@ -4,6 +4,12 @@ from django.contrib.auth.models import Group
 from django.test import TestCase, override_settings
 from django.utils import translation
 
+from hypha.apply.funds.models import ApplicationSubmission, AssignedReviewers
+from hypha.apply.funds.tests.factories import (
+    ApplicationSubmissionFactory,
+    AssignedReviewersFactory,
+)
+
 from ..models import ConfirmAccessToken, PendingSignup, User
 from ..roles import (
     APPROVER_GROUP_NAME,
@@ -189,6 +195,19 @@ class TestUserModel(TestCase):
     def test_superuser_is_apply_staff_admin(self):
         superuser = SuperUserFactory()
         self.assertTrue(superuser.is_apply_staff_admin)
+
+    def test_delete_user_with_submissions_sharing_a_reviewer(self):
+        applicant = ApplicantFactory()
+        reviewer = ReviewerFactory()
+        submissions = ApplicationSubmissionFactory.create_batch(2, user=applicant)
+        for submission in submissions:
+            AssignedReviewersFactory(submission=submission, reviewer=reviewer)
+
+        applicant.delete()
+
+        self.assertFalse(User.objects.filter(pk=applicant.pk).exists())
+        self.assertFalse(ApplicationSubmission.objects.exists())
+        self.assertFalse(AssignedReviewers.objects.exists())
 
 
 class TestUserManagerCreateUser(TestCase):

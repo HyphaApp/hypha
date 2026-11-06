@@ -1,5 +1,6 @@
 import re
 from datetime import timedelta
+from unittest.mock import patch
 
 import wagtail.blocks
 from bs4 import BeautifulSoup
@@ -902,6 +903,32 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         self.post_form(submission, reviewers=[self.reviewers[1]])
 
         self.assertCountEqual(submission.reviewers.all(), [reviewer, self.reviewers[1]])
+
+    @patch("hypha.apply.funds.views.submission_edit.messenger")
+    def test_unchanged_role_reviewer_not_reported_as_updated(self, messenger):
+        submission = ApplicationSubmissionFactory(lead=self.user)
+        AssignedWithRoleReviewersFactory(
+            role=self.roles[0], submission=submission, reviewer=self.staff[0]
+        )
+
+        self.post_form(submission, reviewer_roles=[self.staff[0]])
+
+        self.assertCountEqual(messenger.call_args.kwargs["added"], [])
+        self.assertCountEqual(messenger.call_args.kwargs["removed"], [])
+
+    @patch("hypha.apply.funds.views.submission_edit.messenger")
+    def test_changed_role_reviewer_reported_as_updated(self, messenger):
+        submission = ApplicationSubmissionFactory(lead=self.user)
+        AssignedWithRoleReviewersFactory(
+            role=self.roles[0], submission=submission, reviewer=self.staff[0]
+        )
+
+        self.post_form(submission, reviewer_roles=[self.staff[1]])
+
+        added = messenger.call_args.kwargs["added"]
+        removed = messenger.call_args.kwargs["removed"]
+        self.assertEqual([a.reviewer for a in added], [self.staff[1]])
+        self.assertEqual([r.reviewer for r in removed], [self.staff[0]])
 
 
 class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
