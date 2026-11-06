@@ -1,4 +1,6 @@
-from django.test import TestCase
+import decimal
+
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from hypha.apply.funds.tests.factories import (
@@ -174,6 +176,19 @@ class TestStaffDashboard(BaseViewTestCase):
 
         response = self.get_page()
         self.assertNotContains(response, "Projects awaiting approval")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_projects_table_shows_contracts_total(self):
+        project = ProjectFactory(lead=self.user, status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("571")
+        )
+
+        response = self.get_page()
+        self.assertContains(response, "992.00 XTS")
 
 
 class TestStaffDashboardWithWagtailAdminAccess(BaseViewTestCase):

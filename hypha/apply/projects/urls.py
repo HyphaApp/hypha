@@ -16,8 +16,13 @@ from .views import (
     ChangeProjectstatusView,
     ContractDocumentPrivateMediaView,
     ContractPrivateMediaView,
+    CreateContractView,
+    CreateDisbursementView,
     CreateInvoiceView,
+    DeleteDisbursementView,
     DeleteInvoiceView,
+    DisbursementListView,
+    EditDisbursementView,
     EditInvoiceView,
     InvoiceListView,
     InvoicePrivateMedia,
@@ -67,6 +72,7 @@ urlpatterns = [
     path("all/", ProjectListView.as_view(), name="all"),
     path("reports/", include("hypha.apply.projects.reports.urls"), name="reports"),
     path("invoices/", InvoiceListView.as_view(), name="invoices"),
+    path("disbursements/", DisbursementListView.as_view(), name="disbursements"),
     path(
         "invoices/export-status/",
         invoice_export_status,
@@ -222,6 +228,11 @@ urlpatterns = [
                     name="contract_upload",
                 ),
                 path(
+                    "contract/add/",
+                    CreateContractView.as_view(),
+                    name="contract_add",
+                ),
+                path(
                     "partial/contract/documents/",
                     partial_contracting_documents,
                     name="contract_documents",
@@ -260,6 +271,28 @@ urlpatterns = [
                     "contract/approve/",
                     ApproveContractView.as_view(),
                     name="contract_approve",
+                ),
+                path(
+                    "contract/<int:contract_pk>/disbursement/",
+                    CreateDisbursementView.as_view(),
+                    name="disbursement",
+                ),
+                path(
+                    "contract/<int:contract_pk>/disbursements/<int:disbursement_pk>/",
+                    include(
+                        [
+                            path(
+                                "edit/",
+                                EditDisbursementView.as_view(),
+                                name="disbursement-edit",
+                            ),
+                            path(
+                                "delete/",
+                                DeleteDisbursementView.as_view(),
+                                name="disbursement-delete",
+                            ),
+                        ]
+                    ),
                 ),
                 path(
                     "download/<str:export_type>/",

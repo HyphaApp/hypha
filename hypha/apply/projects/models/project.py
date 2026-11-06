@@ -45,6 +45,8 @@ from hypha.apply.utils.storage import PrivateStorage
 
 from ..admin_forms import ContractDocumentCategoryAdminForm
 from ..blocks import ProjectFormCustomFormFieldsBlock
+from ..payments import PaymentsFlow
+from .disbursement import Disbursement
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +101,8 @@ PROJECT_PUBLIC_STATUSES = [
     (COMPLETE, _("Complete")),
 ]
 
+CURRENCY_CODE_REGEX = r"^[A-Z]{3}$"
+
 
 class ProjectQuerySet(models.QuerySet):
     def active(self):
@@ -149,6 +153,91 @@ class ProjectQuerySet(models.QuerySet):
             ),
         )
 
+    def with_contract_approved_total(self):
+        # A missing currency code is its own group so uncoded approved
+        # amounts never blend into a coded total.
+        # Subqueries, not joined aggregates: for_table() already aggregates
+        # over the invoices join, and combining aggregations over two
+        # one-to-many joins in one query multiplies both results (fan-out).
+        approved_contracts = Contract.objects.filter(
+            project=OuterRef("pk"),
+            amount_approved__isnull=False,
+        )
+        return self.annotate(
+            contract_approved_currency_count=Coalesce(
+                Subquery(
+                    approved_contracts.order_by()
+                    .values("project")
+                    .annotate(
+                        currency_count=Count(
+                            Coalesce("currency", Value("-")),
+                            distinct=True,
+                        ),
+                    )
+                    .values("currency_count"),
+                ),
+                Value(0),
+                output_field=models.IntegerField(),
+            ),
+            contract_approved_currency_code=Subquery(
+                approved_contracts.order_by("currency").values("currency")[:1],
+                output_field=models.CharField(max_length=3),
+            ),
+        ).annotate(
+            contract_approved_total=Case(
+                When(contract_approved_currency_count__gt=1, then=Value(None)),
+                default=Subquery(
+                    approved_contracts.order_by()
+                    .values("project")
+                    .annotate(total=Sum("amount_approved"))
+                    .values("total"),
+                ),
+                output_field=models.DecimalField(),
+            ),
+        )
+
+    def with_disbursement_total(self):
+        # Subqueries, not joined aggregates: for_table() already aggregates
+        # over the invoices join, and combining aggregations over two
+        # one-to-many joins in one query multiplies both results (fan-out).
+        # A missing currency code is its own group so uncoded disbursements
+        # never blend into a coded total.
+        project_disbursements = Disbursement.objects.filter(
+            contract__project=OuterRef("pk"),
+        )
+        return self.annotate(
+            disbursement_currency_count=Subquery(
+                project_disbursements.order_by()
+                .values("contract__project")
+                .annotate(
+                    currency_count=Count(
+                        Coalesce("contract__currency", Value("-")),
+                        distinct=True,
+                    ),
+                )
+                .values("currency_count"),
+                output_field=models.IntegerField(),
+            ),
+            disbursement_currency_code=Subquery(
+                project_disbursements.order_by("contract__currency").values(
+                    "contract__currency"
+                )[:1],
+                output_field=models.CharField(max_length=3),
+            ),
+        ).annotate(
+            disbursement_total=Case(
+                When(disbursement_currency_count__gt=1, then=Value(None)),
+                # No Coalesce: no disbursements means no total (NULL), not 0.
+                default=Subquery(
+                    project_disbursements.order_by()
+                    .values("contract__project")
+                    .annotate(total=Sum("amount"))
+                    .values("total"),
+                ),
+                output_field=models.DecimalField(),
+            ),
+        )
+
     def with_outstanding_reports(self):
         Report = apps.get_model("project_reports", "Report")
         return self.annotate(
@@ -168,7 +257,7 @@ class ProjectQuerySet(models.QuerySet):
         )
 
     def for_table(self):
-        return (
+        qs = (
             self.with_amount_paid()
             .with_last_payment()
             .with_outstanding_reports()
@@ -180,6 +269,10 @@ class ProjectQuerySet(models.QuerySet):
             )
             .defer("form_data", "form_fields")
         )
+        if settings.PROJECTS_PAYMENTS_FLOW == PaymentsFlow.DISBURSEMENTS:
+            qs = qs.with_contract_approved_total()
+            qs = qs.with_disbursement_total()
+        return qs
 
     def for_reporting_table(self):
         today = timezone.now().date()
@@ -752,12 +845,24 @@ class Contract(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     approved_at = models.DateTimeField(null=True)
     updated_at = models.DateTimeField(null=True)
+    # Purposefully avoid currency libraries: support unofficial currencies.
+    currency = models.CharField(max_length=3, null=True, blank=True, default=None)
+    # Purposefully large decimal fields: support many currencies and inflation.
+    amount_requested = models.DecimalField(max_digits=38, decimal_places=19, null=True)
+    amount_approved = models.DecimalField(max_digits=38, decimal_places=19, null=True)
 
     objects = ContractQuerySet.as_manager()
 
     class Meta:
         verbose_name = _("contract")
         verbose_name_plural = _("contracts")
+        ordering = ["-created_at"]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(currency__isnull=True) | Q(currency__regex=r"^[A-Z]{3}$"),
+                name="contract_currency_code_format",
+            ),
+        ]
 
     def save(self, *args, **kwargs):
         self.updated_at = timezone.now()

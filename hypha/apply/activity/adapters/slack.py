@@ -114,6 +114,15 @@ class SlackAdapter(AdapterBase):
         MESSAGES.CREATE_INVOICE: _(
             "{user} has created invoice for <{link}|{source.title}>"
         ),
+        MESSAGES.CREATE_DISBURSEMENT: _(
+            "{user} has created a disbursement of {disbursement.amount} for <{link}|{source.title}>"
+        ),
+        MESSAGES.UPDATE_DISBURSEMENT: _(
+            "{user} has updated a disbursement of {disbursement.amount} for <{link}|{source.title}>"
+        ),
+        MESSAGES.DELETE_DISBURSEMENT: _(
+            "{user} has deleted a disbursement of {disbursement.amount} for <{link}|{source.title}>"
+        ),
         MESSAGES.UPDATE_INVOICE_STATUS: _(
             "{user} has changed the status of <{link_related}|invoice> on <{link}|{source.title}> to {invoice.status_display}"
         ),

@@ -1,7 +1,7 @@
 {% load django_tables2 i18n heroicons %}
 {% load querystrings table_tags static %}
 
-{% if heading or use_search %}
+{% if heading or use_search or include_export %}
     <div
         class="flex flex-wrap gap-4 justify-between items-center mb-2 w-full"
     >

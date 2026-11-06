@@ -8,6 +8,8 @@ from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
+from hypha.apply.projects.payments import PaymentsFlow
+
 logger = logging.getLogger(__name__)
 
 
@@ -47,6 +49,34 @@ def _calculate_is_active(
 
 
 def get_primary_navigation_items(request):
+    projects_sub_items = [
+        {
+            "title": _("All Projects"),
+            "url": reverse_lazy("apply:projects:all"),
+            "permission_method": "hypha.apply.users.decorators.is_apply_staff_or_finance_or_contracting_or_reviewer",
+        },
+        {
+            "title": _("Reporting"),
+            "url": reverse_lazy("apply:projects:reporting"),
+            "permission_method": "hypha.apply.users.decorators.is_apply_staff_or_finance_or_contracting_or_reviewer",
+        },
+        {
+            "title": _("Reports"),
+            "url": reverse_lazy("apply:projects:reports:submitted"),
+            "permission_method": "hypha.apply.users.decorators.is_apply_staff_or_finance_or_contracting_or_reviewer",
+        },
+    ]
+    # The disbursements ledger exists only under the DISBURSEMENTS payments
+    # flow and is admin-only, like the page itself.
+    if settings.PROJECTS_PAYMENTS_FLOW == PaymentsFlow.DISBURSEMENTS:
+        projects_sub_items.append(
+            {
+                "title": _("All Disbursements"),
+                "url": reverse_lazy("apply:projects:disbursements"),
+                "permission_method": "hypha.apply.users.decorators.is_apply_staff_admin",
+            }
+        )
+
     DEFAULT_NAV_ITEMS = [
         {
             "title": _("My Dashboard"),
@@ -97,23 +127,7 @@ def get_primary_navigation_items(request):
             "url": reverse_lazy("apply:projects:all"),
             "permission_method": "hypha.apply.users.decorators.is_apply_staff_or_finance_or_contracting",
             "active_url_regex": r"(.*)/projects?/",
-            "sub_items": [
-                {
-                    "title": _("All Projects"),
-                    "url": reverse_lazy("apply:projects:all"),
-                    "permission_method": "hypha.apply.users.decorators.is_apply_staff_or_finance_or_contracting",
-                },
-                {
-                    "title": _("Invoices"),
-                    "url": reverse_lazy("apply:projects:invoices"),
-                    "permission_method": "hypha.apply.users.decorators.is_apply_staff_or_finance",
-                },
-                {
-                    "title": _("Reports"),
-                    "url": reverse_lazy("apply:projects:reports:submitted"),
-                    "permission_method": "hypha.apply.users.decorators.is_apply_staff_or_finance",
-                },
-            ],
+            "sub_items": projects_sub_items,
         },
     ]
 
