@@ -283,10 +283,9 @@ class TestCreateApplicationFormView(TestCase):
             str(message.message).strip()
             for message in get_messages(response.context["request"])
         ]
-        self.assertIn(
-            "The following fields must be included only once: Title", message_texts
+        self.assertEqual(
+            message_texts, ["The following fields must be included only once: Title"]
         )
-        self.assertNotIn("Validation error in StreamBlock", message_texts)
         self.assertContains(response, "Duplicate field")
         self.assertEqual(ApplicationForm.objects.count(), 0)
 

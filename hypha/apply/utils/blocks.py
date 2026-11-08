@@ -40,7 +40,8 @@ def show_admin_form_error_messages(request, form):
             # A message is still needed, it holds Wagtail's "Go to the first error" button.
             if isinstance(error, StreamBlockValidationError):
                 error_messages = list(error.non_block_errors)
-                if error.block_errors:
+                # Blocks only marked as duplicates are already explained by a non block error.
+                if getattr(error, "has_unexplained_block_errors", error.block_errors):
                     error_messages.append(
                         _("Please correct the errors on the highlighted fields.")
                     )
@@ -127,6 +128,8 @@ class CustomFormFieldsBlock(StreamBlock):
                 )
             )
 
+        has_unexplained_block_errors = bool(block_errors)
+
         if duplicates:
             all_errors.append(
                 _("The following fields must be included only once: {}").format(
@@ -138,9 +141,11 @@ class CustomFormFieldsBlock(StreamBlock):
                     self.add_error_to_child(block_errors, i, _("Duplicate field"))
 
         if all_errors or block_errors:
-            raise StreamBlockValidationError(
+            error = StreamBlockValidationError(
                 block_errors=block_errors, non_block_errors=all_errors
             )
+            error.has_unexplained_block_errors = has_unexplained_block_errors
+            raise error
 
         return value
 
