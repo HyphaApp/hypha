@@ -1,11 +1,9 @@
 from collections import Counter
 
 import nh3
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin import messages
 from wagtail.blocks import (
-    ListBlock,
     StaticBlock,
     StreamBlock,
     StreamBlockValidationError,
@@ -41,9 +39,11 @@ def show_admin_form_error_messages(request, form):
             # Errors on individual blocks are displayed in the StreamField editor.
             # A message is still needed, it holds Wagtail's "Go to the first error" button.
             if isinstance(error, StreamBlockValidationError):
-                error_messages = error.non_block_errors or [
-                    _("Please correct the errors on the highlighted fields.")
-                ]
+                error_messages = list(error.non_block_errors)
+                if error.block_errors:
+                    error_messages.append(
+                        _("Please correct the errors on the highlighted fields.")
+                    )
             else:
                 error_messages = error.messages
             for error_message in error_messages:
@@ -108,7 +108,7 @@ class CustomFormFieldsBlock(StreamBlock):
             value = super().clean(value)
         except StreamBlockValidationError as e:
             block_errors = e.block_errors
-            all_errors = list(e.non_block_errors)
+            all_errors = list(e.non_block_errors.as_data())
 
         block_types = [block.block_type for block in value]
         missing = set(self.required_block_names) - set(block_types)
@@ -137,30 +137,6 @@ class CustomFormFieldsBlock(StreamBlock):
                 if block_name in duplicates:
                     self.add_error_to_child(block_errors, i, _("Duplicate field"))
 
-        for block in value:
-            if self.is_deferred_validation:
-                break
-            if hasattr(block.block, "child_blocks"):
-                for child_block_name, child_block in block.block.child_blocks.items():
-                    if child_block.required and not block.value[child_block_name]:
-                        all_errors.append(
-                            _("{child} cannot be empty for {parent}").format(
-                                child=child_block.label, parent=block.block.label
-                            )
-                        )
-                    if (
-                        isinstance(child_block, ListBlock)
-                        and child_block.child_block.required
-                    ):
-                        for child_value in block.value[child_block_name]:
-                            if not child_value:
-                                all_errors.append(
-                                    _("{child} cannot be empty for {parent}").format(
-                                        child=child_block.label,
-                                        parent=block.block.label,
-                                    )
-                                )
-
         if all_errors or block_errors:
             raise StreamBlockValidationError(
                 block_errors=block_errors, non_block_errors=all_errors
@@ -169,8 +145,14 @@ class CustomFormFieldsBlock(StreamBlock):
         return value
 
     def add_error_to_child(self, errors, child_number, message):
-        error = errors.setdefault(child_number, StructBlockValidationError())
-        error.non_block_errors.append(message)
+        error = errors.get(child_number)
+        if isinstance(error, StructBlockValidationError):
+            error.non_block_errors.append(message)
+        else:
+            # The child may have failed with a plain ValidationError, keep it next to the new message.
+            errors[child_number] = StructBlockValidationError(
+                non_block_errors=([error] if error else []) + [message]
+            )
 
     # Activate if/when needed.
     #
@@ -187,7 +169,7 @@ class CustomFormFieldsBlock(StreamBlock):
     #         value = [
     #             {**child_data, "type": "char"}
     #             if isinstance(child_data, dict)
-    #             and child_data["type"] not in self.child_blocks
+    #             and child_data.get("type") not in self.child_blocks
     #             and isinstance(child_data.get("value"), dict)
     #             else child_data
     #             for child_data in value
@@ -197,9 +179,7 @@ class CustomFormFieldsBlock(StreamBlock):
 
 
 class SingleIncludeStatic(StaticBlock):
-    """Helper block which displays additional information about the must include block and
-    helps display the error in a noticeable way.
-    """
+    """Helper block which displays additional information about the must include block."""
 
     def __init__(self, *args, description="", **kwargs):
         self.description = description
@@ -207,22 +187,6 @@ class SingleIncludeStatic(StaticBlock):
 
     class Meta:
         admin_text = _("Must be included in the form only once.")
-
-    def render_form(self, *args, **kwargs):
-        errors = kwargs.pop("errors")
-        if errors:
-            # Pretend the error is a readonly input so that we get nice formatting
-            # Issue discussed here: https://github.com/wagtail/wagtail/issues/4122
-            error_message = (
-                '<div class="error"><input readonly placeholder="{}"></div>'.format(
-                    errors[0]
-                )
-            )
-        else:
-            error_message = ""
-        form = super().render_form(*args, **kwargs)
-        form = "<br>".join([self.description, form]) + error_message
-        return mark_safe(form)
 
     def deconstruct(self):
         return ("wagtail.blocks.static_block.StaticBlock", (), {})

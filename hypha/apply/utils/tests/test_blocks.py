@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.test import SimpleTestCase
 from wagtail.blocks import StreamBlockValidationError
 
@@ -72,3 +73,19 @@ class TestCustomFormFieldsBlockClean(SimpleTestCase):
         block_error = error.as_json_data()["blockErrors"][1]
         self.assertEqual(block_error["messages"], ["Duplicate field"])
         self.assertIn("field_label", block_error["blockErrors"])
+
+    def test_duplicate_mark_keeps_plain_child_error(self):
+        errors = {0: ValidationError("Bad")}
+        ApplicationCustomFormFieldsBlock().add_error_to_child(
+            errors, 0, "Duplicate field"
+        )
+        self.assertEqual(
+            errors[0].as_json_data()["messages"], ["Bad", "Duplicate field"]
+        )
+
+    def test_empty_child_label_is_reported_on_the_block(self):
+        error = self.clean_errors(
+            ProjectFormCustomFormFieldsBlock(), [char_block(field_label="")]
+        )
+        self.assertEqual(list(error.non_block_errors), [])
+        self.assertIn("field_label", error.block_errors[0].block_errors)
