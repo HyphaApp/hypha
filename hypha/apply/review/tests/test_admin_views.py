@@ -112,15 +112,11 @@ class TestCreateReviewFormView(TestCase):
         data.update(form_field_data)
         response = self.create_page(data=data)
 
-        expected_messages_list = [
-            "Label cannot be empty for Recommendation",
-            "Label cannot be empty for Comments",
-            "Label cannot be empty for Visibility",
-        ]
-        messages = list(response.context["messages"])
-        self.assertEqual(len(messages), 3)
-        for message in messages:
-            self.assertIn(str(message).strip(), expected_messages_list)
+        messages = [str(message).strip() for message in response.context["messages"]]
+        self.assertEqual(
+            messages, ["Please correct the errors on the highlighted fields."]
+        )
+        self.assertContains(response, "This field is required.")
         self.assertEqual(ReviewForm.objects.count(), 0)
 
     def test_form_creation(self):
