@@ -59,9 +59,17 @@ class UserFilterSet(WagtailFilterSet):
         model = User
         fields = ["roles", "status", "is_superuser"]
 
+    def __init__(self, *args, is_searching=False, **kwargs):
+        # Same workaround as Wagtail's RelatedFilterMixin (wagtail#6616), a filter on a
+        # related field combined with search needs a pk subquery.
+        self.is_searching = is_searching
+        super().__init__(*args, **kwargs)
+
     def filter_by_roles(self, queryset, name, value):
-        queryset = queryset.filter(groups__name=value)
-        return queryset
+        filtered = queryset.filter(groups__name=value)
+        if self.is_searching:
+            return queryset.filter(pk__in=list(filtered.values_list("pk", flat=True)))
+        return filtered
 
     def filter_by_status(self, queryset, name, value):
         if value == "active":

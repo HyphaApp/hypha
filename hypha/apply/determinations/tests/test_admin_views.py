@@ -116,12 +116,14 @@ class TestCreateDeterminationFormView(TestCase):
         data.update(form_field_data)
         response = self.create_page(data=data)
 
-        expected_messages_list = [
-            "Label cannot be empty for Determination",
-            "Label cannot be empty for Message",
+        message_texts = [
+            str(message.message).strip()
+            for message in get_messages(response.context["request"])
         ]
-        for message in get_messages(response.context["request"]):
-            self.assertIn(str(message.message).strip(), expected_messages_list)
+        self.assertEqual(
+            message_texts, ["Please correct the errors on the highlighted fields."]
+        )
+        self.assertContains(response, "This field is required.")
         self.assertEqual(DeterminationForm.objects.count(), 0)
 
     def test_form_creation(self):
