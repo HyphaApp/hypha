@@ -432,27 +432,91 @@ class TestApplicationSubmission(TestCase):
         text = "I am text"
         rich_text = f"<b>{text}</b>"
         submission = self.make_submission(form_data__char=rich_text)
-        self.assertNotIn(rich_text, submission.search_data)
-        self.assertIn(text, submission.search_data)
+        self.assertNotIn(rich_text, " ".join(submission.get_searchable_contents()))
+        self.assertIn(text, " ".join(submission.get_searchable_contents()))
 
     def test_richtext_is_removed_for_search(self):
         text = "I am text"
         rich_text = f"<b>{text}</b>"
         submission = self.make_submission(form_data__rich_text=rich_text)
-        self.assertNotIn(rich_text, submission.search_data)
-        self.assertIn(text, submission.search_data)
+        self.assertNotIn(rich_text, " ".join(submission.get_searchable_contents()))
+        self.assertIn(text, " ".join(submission.get_searchable_contents()))
 
     def test_choices_added_for_search(self):
         choices = ["blah", "foo"]
         submission = self.make_submission(
             form_fields__radios__choices=choices, form_data__radios=["blah"]
         )
-        self.assertIn("blah", submission.search_data)
+        self.assertIn("blah", " ".join(submission.get_searchable_contents()))
 
     def test_number_not_in_search(self):
         value = 12345
         submission = self.make_submission(form_data__number=value)
-        self.assertNotIn(str(value), submission.search_data)
+        self.assertNotIn(str(value), " ".join(submission.get_searchable_contents()))
+
+    def test_search_matches_form_answers(self):
+        submission = self.make_submission(form_data__char="Mycelium network")
+        self.make_submission(round=submission.round, form_data__char="Unrelated")
+        self.assertEqual(
+            list(ApplicationSubmission.objects.search("mycelium")), [submission]
+        )
+
+    def test_new_submission_indexed_with_public_id(self):
+        # A prefix makes the id a unique search token, a bare number could also
+        # match numbers in the other submission's generated form data.
+        submission = self.make_submission(round__submission_id_prefix="HYPHA")
+        self.make_submission(round=submission.round)
+        self.assertEqual(
+            list(ApplicationSubmission.objects.search(submission.public_id)),
+            [submission],
+        )
+
+    def test_missing_public_id_saved_and_indexed(self):
+        submission = self.make_submission(round__submission_id_prefix="HYPHA")
+        public_id = submission.public_id
+        ApplicationSubmission.objects.filter(pk=submission.pk).update(
+            public_id=None, search_document=None
+        )
+
+        ApplicationSubmission.objects.get(pk=submission.pk).save()
+
+        submission.refresh_from_db()
+        self.assertEqual(submission.public_id, public_id)
+        self.assertEqual(
+            list(ApplicationSubmission.objects.search(public_id)), [submission]
+        )
+
+    def test_missing_named_fields_still_indexed(self):
+        submission = self.make_submission(form_data__char="Mycelium network")
+        for field in ["title", "full_name", "email"]:
+            submission.form_data.pop(field)
+
+        submission.save()
+
+        self.assertEqual(
+            list(ApplicationSubmission.objects.search("mycelium")), [submission]
+        )
+
+    def test_public_id_given_on_create_is_kept(self):
+        submission = self.make_submission(
+            public_id="LEGACY-42", round__submission_id_prefix="HYPHA"
+        )
+        submission.refresh_from_db()
+        self.assertEqual(submission.public_id, "LEGACY-42")
+        self.assertEqual(
+            list(ApplicationSubmission.objects.search("LEGACY-42")), [submission]
+        )
+
+    def test_failed_create_leaves_no_submission(self):
+        round = RoundFactory()
+        count = ApplicationSubmission.objects.count()
+        # Fail after the first insert, before the final save indexes it.
+        with patch.object(
+            AssignedReviewers.objects, "bulk_create_reviewers", side_effect=RuntimeError
+        ):
+            with self.assertRaises(RuntimeError):
+                self.make_submission(round=round)
+        self.assertEqual(ApplicationSubmission.objects.count(), count)
 
     def test_file_gets_uploaded(self):
         filename = "test_image.png"
