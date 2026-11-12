@@ -4,9 +4,8 @@ from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
 from django.http import Http404, HttpResponse
@@ -88,29 +87,28 @@ from ..service_utils import batch_update_invoices_status, handle_tasks_on_invoic
 from ..tables import AdminInvoiceListTable, FinanceInvoiceTable
 
 
-@method_decorator(login_required, name="dispatch")
-class InvoiceAccessMixin(UserPassesTestMixin):
+class InvoiceAccessMixin(LoginRequiredMixin, UserPassesTestMixin):
     model = Invoice
 
     def get_object(self):
         return get_object_or_404(Invoice, pk=self.kwargs["pk"])
 
     def test_func(self):
+        invoice = self.get_object()
+
         if self.request.user.is_apply_staff:
             return True
 
         if self.request.user.is_finance:
             return True
 
-        if self.request.user == self.get_object().project.user:
+        if self.request.user == invoice.project.user:
             return True
 
         if self.request.user.is_applicant:
-            co_applicant = (
-                self.get_object()
-                .project.submission.co_applicants.filter(user=self.request.user)
-                .first()
-            )
+            co_applicant = invoice.project.submission.co_applicants.filter(
+                user=self.request.user
+            ).first()
             if (
                 co_applicant
                 and CoApplicantProjectPermission.INVOICES
@@ -228,16 +226,14 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
         )
 
 
-class DeleteInvoiceView(DeleteView):
+class DeleteInvoiceView(InvoiceAccessMixin, DeleteView):
     model = Invoice
     template_name = "application_projects/modals/invoice_confirm_delete.html"
 
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if not self.object.can_user_delete(request.user):
-            raise PermissionDenied
-
-        return super().dispatch(request, *args, **kwargs)
+    def test_func(self):
+        """Ensure that the user can not only access the invoice but delete it too"""
+        invoice = self.get_object()
+        return super().test_func() and invoice.can_user_delete(self.request.user)
 
     @transaction.atomic()
     def form_valid(self, form):
@@ -349,11 +345,10 @@ class CreateInvoiceView(SuccessMessageMixin, CreateView):
 class EditInvoiceView(InvoiceAccessMixin, UpdateView):
     form_class = EditInvoiceForm
 
-    def dispatch(self, request, *args, **kwargs):
+    def test_func(self):
+        """Ensure that the user can not only access the invoice but view it too"""
         invoice = self.get_object()
-        if not invoice.can_user_edit(request.user):
-            return redirect(invoice)
-        return super().dispatch(request, *args, **kwargs)
+        return super().test_func() and invoice.can_user_edit(self.request.user)
 
     def buttons(self):
         yield ("submit", "btn-primary", _("Update"))
@@ -458,16 +453,11 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         return response
 
 
-@method_decorator(login_required, name="dispatch")
-class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
+class InvoicePrivateMedia(InvoiceAccessMixin, PrivateMediaView):
     raise_exception = True
 
-    def dispatch(self, *args, **kwargs):
-        self.invoice = get_object_or_404(Invoice, pk=self.kwargs["pk"])
-
-        return super().dispatch(*args, **kwargs)
-
     def get_media(self, *args, **kwargs):
+        self.invoice = self.get_object()
         # check if the request is for a supporting document
         if file_pk := kwargs.get("file_pk"):
             document = get_object_or_404(self.invoice.supporting_documents, pk=file_pk)
@@ -500,29 +490,6 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
                 return merge_pdf(self.invoice.document.file, approval_pdf_page)
 
         return self.invoice.document
-
-    def test_func(self):
-        if self.request.user.is_apply_staff:
-            return True
-
-        if self.request.user.is_finance:
-            return True
-
-        if self.request.user == self.invoice.project.user:
-            return True
-
-        if self.request.user.is_applicant:
-            co_applicant = self.invoice.project.submission.co_applicants.filter(
-                user=self.request.user
-            ).first()
-            if (
-                co_applicant
-                and CoApplicantProjectPermission.INVOICES
-                in co_applicant.project_permission
-            ):
-                return True
-
-        return False
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")

@@ -958,6 +958,23 @@ class TestApplicantDetailInvoiceStatus(BaseViewTestCase):
         self.assertContains(response, invoice_added_msg)
 
 
+class TestAnonEditInvoiceView(BaseViewTestCase):
+    base_view_name = "invoice-edit"
+    url_name = "funds:projects:{}"
+    user_factory = AnonymousUser
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.pk}
+
+    def test_anonymous_can_not_access(self):
+        invoice = InvoiceFactory(project__user=ApplicantFactory())
+        response = self.get_page(invoice)
+
+        expected_redirect = f"{reverse('users:passwordless_login_signup')}?next={reverse('apply:projects:invoice-edit', kwargs={'pk': invoice.pk})}"
+
+        self.assertRedirects(response, expected_redirect)
+
+
 class TestApplicantEditInvoiceView(BaseViewTestCase):
     base_view_name = "invoice-edit"
     url_name = "funds:projects:{}"
