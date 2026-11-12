@@ -10,13 +10,16 @@ from hypha.apply.funds.tables import (
     get_used_funds,
 )
 
+from .models.disbursement import Disbursement
 from .models.invoice import INVOICE_STATUS_CHOICES, Invoice
 from .models.project import (
     CLOSING,
     INVOICING_AND_REPORTING,
     PROJECT_STATUS_CHOICES,
+    Contract,
     Project,
 )
+from .reports.filters import DateRangeInputWidget
 
 User = get_user_model()
 
@@ -114,3 +117,66 @@ class ProjectListFilter(filters.FilterSet):
             Q(outstanding_reports__lt=1) | Q(outstanding_reports__isnull=True),
             status__in=(INVOICING_AND_REPORTING, CLOSING),
         )
+
+
+NO_CURRENCY = "none"
+
+
+def get_currency_choices():
+    """Choices for the disbursement currency filter.
+
+    Currency lives on the related Contract, so the choices are the distinct
+    codes recorded on contracts, plus an explicit choice for rows whose
+    contract carries no code (they must remain filterable on their own so a
+    single-currency total stays reachable).
+
+    Called per FilterSet instantiation (DB-backed choices) and bound to the
+    filter's form field there, because django-filter's choice rendering does
+    not resolve callables.
+
+    """
+    codes = (
+        Contract.objects.filter(currency__isnull=False)
+        .values_list("currency", flat=True)
+        .distinct()
+        .order_by("currency")
+    )
+    return [(code, code) for code in codes] + [(NO_CURRENCY, _("No currency"))]
+
+
+class DisbursementListFilter(filters.FilterSet):
+    """Filters for the all-disbursements ledger. Minimal by design: date
+    range (the disbursement's own date, not the date it was entered),
+    currency and project status; more may be added on customer request.
+
+    """
+
+    date = filters.DateFromToRangeFilter(widget=DateRangeInputWidget)
+    currency = MultipleChoiceFilter(
+        label=_("Currency"),
+        method="filter_currency",
+    )
+    project_status = MultipleChoiceFilter(
+        field_name="contract__project__status",
+        label=_("Project status"),
+        choices=PROJECT_STATUS_CHOICES,
+    )
+
+    class Meta:
+        fields = ["date", "currency", "project_status"]
+        model = Disbursement
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.filters["currency"].field.choices = get_currency_choices()
+
+    def filter_currency(self, queryset, name, value):
+        codes = [code for code in value if code != NO_CURRENCY]
+        if NO_CURRENCY in value:
+            q = Q(contract__currency__isnull=True)
+            if codes:
+                q |= Q(contract__currency__in=codes)
+            return queryset.filter(q)
+        if codes:
+            return queryset.filter(contract__currency__in=codes)
+        return queryset

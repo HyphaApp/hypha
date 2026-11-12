@@ -1,11 +1,15 @@
+import csv
+import datetime
+import decimal
 import json
-from io import BytesIO
+from io import BytesIO, StringIO
 
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AnonymousUser, Group
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
+from django.utils import translation
 
 from hypha.apply.activity.adapters.activity_feed import ActivityAdapter
 from hypha.apply.activity.options import MESSAGES
@@ -14,7 +18,12 @@ from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     LabSubmissionFactory,
 )
-from hypha.apply.projects.utils import get_invoice_status_display_value
+from hypha.apply.projects.utils import (
+    format_local_minute,
+    get_contract_approved_amounts_cell,
+    get_invoice_status_display_value,
+)
+from hypha.apply.users.roles import TEAMADMIN_GROUP_NAME
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     ApproverFactory,
@@ -29,6 +38,9 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 from hypha.home.factories import ApplySiteFactory
 
 from ..forms import SetPendingForm
+from ..forms.project import TrimmedDecimalInput, trimmed_decimal_string
+from ..models import Project
+from ..models.disbursement import Disbursement
 from ..models.invoice import CHANGES_REQUESTED_BY_STAFF, DECLINED, SUBMITTED
 from ..models.project import (
     APPROVE,
@@ -42,6 +54,7 @@ from ..models.project import (
 from ..views.project import ContractsMixin, ProjectDetailApprovalView
 from .factories import (
     ContractFactory,
+    DisbursementFactory,
     DocumentCategoryFactory,
     InvoiceFactory,
     PacketFileFactory,
@@ -378,6 +391,18 @@ class TestApplicantProjectDetailView(BaseProjectDetailTestCase):
         response = self.get_page(project, view_name="project_lead")
         self.assertContains(response, str(lead))
 
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_applicant_can_see_disbursement_notes(self):
+        project = ProjectFactory(user=self.user)
+        DisbursementFactory(
+            contract__project=project,
+            amount=decimal.Decimal("251.47"),
+            notes="Prime tranche sent by wire.",
+        )
+        response = self.get_page(project)
+        self.assertContains(response, "Prime tranche sent by wire.")
+        self.assertNotContains(response, "visible to staff and finance only")
+
 
 class TestStaffProjectDetailView(BaseProjectDetailTestCase):
     user_factory = StaffFactory
@@ -402,6 +427,17 @@ class TestStaffProjectDetailView(BaseProjectDetailTestCase):
         # both sibling projects appear in the tab dropdown
         self.assertContains(response, "Hardware bucket")
         self.assertContains(response, "Travel bucket")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_staff_can_see_disbursement_notes(self):
+        project = ProjectFactory()
+        DisbursementFactory(
+            contract__project=project,
+            amount=decimal.Decimal("257.17"),
+            notes="Second tranche sent by wire.",
+        )
+        response = self.get_page(project)
+        self.assertContains(response, "Second tranche sent by wire.")
 
 
 class TestFinanceProjectDetailView(BaseProjectDetailTestCase):
@@ -1339,6 +1375,834 @@ class TestProjectListView(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 403)
 
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_sum_shown_in_project_list(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("571")
+        )
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "992.00 XTS")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_sum_without_currency_code(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(project=project, amount_approved=decimal.Decimal("421"))
+        ContractFactory(project=project, amount_approved=decimal.Decimal("571"))
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "992.00")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_absent_without_contracts(self):
+        ProjectFactory(status=INVOICING_AND_REPORTING)
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        table = response.context["table"]
+        self.assertEqual(table.rows[0].get_cell("contract_approved_total"), "—")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_zero_sum_shown(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("0")
+        )
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "0.00 XTS")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_not_summed_across_currencies(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+        ContractFactory(
+            project=project, currency="QZC", amount_approved=decimal.Decimal("571")
+        )
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Multiple currencies")
+        self.assertNotContains(response, "992.00")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_not_summed_when_currency_code_missing(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+        ContractFactory(project=project, amount_approved=decimal.Decimal("571"))
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Multiple currencies")
+        self.assertNotContains(response, "992.00")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_column_ordering(self):
+        with_total = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=with_total,
+            currency="XTS",
+            amount_approved=decimal.Decimal("571"),
+        )
+        without_total = ProjectFactory(status=INVOICING_AND_REPORTING)
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(f"{url}?sort=contract_approved_total")
+        self.assertEqual(response.status_code, 200)
+        table = response.context["table"]
+        # Absent totals are NULL: last ascending, first descending.
+        self.assertEqual(
+            [row.record.pk for row in table.rows],
+            [with_total.pk, without_total.pk],
+        )
+
+        response = self.client.get(f"{url}?sort=-contract_approved_total")
+        self.assertEqual(response.status_code, 200)
+        table = response.context["table"]
+        self.assertEqual(
+            [row.record.pk for row in table.rows],
+            [without_total.pk, with_total.pk],
+        )
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_right_justified(self):
+        ProjectFactory(status=INVOICING_AND_REPORTING)
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        column = response.context["table"].columns["contract_approved_total"]
+        self.assertEqual(column.attrs["td"]["align"], "right")
+        self.assertEqual(column.attrs["th"]["align"], "right")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_total_not_inflated_by_invoices(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("173")
+        )
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("179")
+        )
+        InvoiceFactory(project=project)
+        InvoiceFactory(project=project)
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "352.00 XTS")
+        self.assertNotContains(response, "704.00")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_csv_value_locale_neutral(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("571")
+        )
+        project_row = Project.objects.for_table().get(pk=project.pk)
+
+        with translation.override("cs"):
+            self.assertEqual(
+                get_contract_approved_amounts_cell(project_row, trimmed_decimal_string),
+                "992.00 XTS",
+            )
+            self.assertEqual(
+                get_contract_approved_amounts_cell(
+                    project_row, TrimmedDecimalInput().format_value
+                ),
+                "992,00 XTS",
+            )
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_contract_approved_amounts_included_in_csv_export(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("571")
+        )
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(f"{url}?format=csv")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Contracts total")
+        self.assertContains(response, "992.00 XTS")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING")
+    def test_contract_total_column_absent_outside_disbursements_flow(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Contracts total")
+        self.assertNotContains(response, "421.00 XTS")
+
+        response = self.client.get(f"{url}?format=csv")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Contracts total")
+        self.assertNotContains(response, "421.00 XTS")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_csv_export_values_match_columns_with_contracts_flow(self):
+        project = ProjectFactory(
+            status=INVOICING_AND_REPORTING, proposed_end=datetime.date(2573, 6, 18)
+        )
+        first_contract = ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("571")
+        )
+        Disbursement(
+            contract=first_contract,
+            amount=decimal.Decimal("269.03"),
+            date=datetime.date(2585, 4, 27),
+        ).save()
+        Disbursement(
+            contract=first_contract,
+            amount=decimal.Decimal("271.01"),
+            date=datetime.date(2587, 6, 29),
+        ).save()
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(f"{url}?format=csv")
+        self.assertEqual(response.status_code, 200)
+
+        rows = list(csv.reader(StringIO(response.content.decode())))
+        self.assertEqual(len(rows), 2)
+        header, values = rows[0], dict(zip(*rows, strict=False))
+
+        self.assertEqual(
+            header,
+            [
+                "Submission #",
+                "Title",
+                "Organization",
+                "Status",
+                "Lead",
+                "Fund",
+                "Round",
+                "Reporting",
+                "Last payment request",
+                "Contracts total",
+                "Disbursed total",
+                "End Date",
+            ],
+        )
+        self.assertEqual(values["Submission #"], str(project.submission.id))
+        self.assertEqual(values["Title"], project.title)
+        self.assertEqual(values["Contracts total"], "992.00 XTS")
+        self.assertEqual(values["Disbursed total"], "540.04 XTS")
+        self.assertEqual(values["End Date"], "2573-06-18")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING")
+    def test_csv_export_values_match_columns_outside_contracts_flow(self):
+        project = ProjectFactory(
+            status=INVOICING_AND_REPORTING, proposed_end=datetime.date(2577, 8, 25)
+        )
+        ContractFactory(
+            project=project, currency="XTS", amount_approved=decimal.Decimal("421")
+        )
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(f"{url}?format=csv")
+        self.assertEqual(response.status_code, 200)
+
+        rows = list(csv.reader(StringIO(response.content.decode())))
+        self.assertEqual(len(rows), 2)
+        header, values = rows[0], dict(zip(*rows, strict=False))
+
+        self.assertEqual(
+            header,
+            [
+                "Submission #",
+                "Title",
+                "Organization",
+                "Status",
+                "Lead",
+                "Fund",
+                "Round",
+                "Reporting",
+                "Last payment request",
+                "End Date",
+            ],
+        )
+        self.assertNotIn("Contracts total", header)
+        self.assertNotIn("Disbursed total", header)
+        self.assertEqual(values["Submission #"], str(project.submission.id))
+        self.assertEqual(values["Title"], project.title)
+        self.assertEqual(values["End Date"], "2577-08-25")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_disbursement_total_rendered_in_table(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        contract = ContractFactory(project=project)
+        Disbursement(
+            contract=contract,
+            amount=decimal.Decimal("211.43"),
+            date=datetime.date(2553, 6, 27),
+        ).save()
+
+        self.client.force_login(StaffFactory())
+
+        response = self.client.get(reverse("apply:projects:all"), follow=True)
+
+        self.assertContains(response, "211.43")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_disbursement_totals_sum_shown_with_single_currency_code(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        first_contract = ContractFactory(project=project, currency="XTS")
+        second_contract = ContractFactory(project=project, currency="XTS")
+        Disbursement(
+            contract=first_contract,
+            amount=decimal.Decimal("191.39"),
+            date=datetime.date(2559, 12, 31),
+        ).save()
+        Disbursement(
+            contract=second_contract,
+            amount=decimal.Decimal("199.37"),
+            date=datetime.date(2561, 2, 27),
+        ).save()
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "390.76 XTS")
+        self.assertContains(response, '<td align="right">')
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_disbursement_totals_sum_without_currency_code(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        first_contract = ContractFactory(project=project)
+        second_contract = ContractFactory(project=project)
+        Disbursement(
+            contract=first_contract,
+            amount=decimal.Decimal("223.43"),
+            date=datetime.date(2567, 8, 27),
+        ).save()
+        Disbursement(
+            contract=second_contract,
+            amount=decimal.Decimal("227.41"),
+            date=datetime.date(2569, 10, 23),
+        ).save()
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "450.84")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_disbursement_totals_not_summed_across_currencies(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        coded = ContractFactory(project=project, currency="XTS")
+        other = ContractFactory(project=project, currency="QZC")
+        Disbursement(
+            contract=coded,
+            amount=decimal.Decimal("233.33"),
+            date=datetime.date(2563, 4, 23),
+        ).save()
+        Disbursement(
+            contract=other,
+            amount=decimal.Decimal("239.31"),
+            date=datetime.date(2565, 6, 29),
+        ).save()
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Multiple currencies")
+        self.assertNotContains(response, "472.64")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_disbursement_totals_not_summed_when_currency_code_missing(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        coded = ContractFactory(project=project, currency="XTS")
+        uncoded = ContractFactory(project=project)
+        Disbursement(
+            contract=coded,
+            amount=decimal.Decimal("241.79"),
+            date=datetime.date(2581, 10, 27),
+        ).save()
+        Disbursement(
+            contract=uncoded,
+            amount=decimal.Decimal("251.71"),
+            date=datetime.date(2583, 12, 29),
+        ).save()
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Multiple currencies")
+        self.assertNotContains(response, "493.50")
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+    def test_disbursement_total_included_in_csv_export(self):
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        first_contract = ContractFactory(project=project, currency="XTS")
+        second_contract = ContractFactory(project=project, currency="XTS")
+        Disbursement(
+            contract=first_contract,
+            amount=decimal.Decimal("257.17"),
+            date=datetime.date(2571, 12, 27),
+        ).save()
+        Disbursement(
+            contract=second_contract,
+            amount=decimal.Decimal("263.21"),
+            date=datetime.date(2573, 2, 23),
+        ).save()
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse("apply:projects:all")
+
+        response = self.client.get(f"{url}?format=csv")
+        self.assertEqual(response.status_code, 200)
+
+        rows = list(csv.reader(StringIO(response.content.decode())))
+        self.assertEqual(len(rows), 2)
+        header, values = rows[0], dict(zip(*rows, strict=False))
+
+        self.assertEqual(
+            header,
+            [
+                "Submission #",
+                "Title",
+                "Organization",
+                "Status",
+                "Lead",
+                "Fund",
+                "Round",
+                "Reporting",
+                "Last payment request",
+                "Contracts total",
+                "Disbursed total",
+                "End Date",
+            ],
+        )
+        self.assertEqual(values["Contracts total"], "—")
+        self.assertEqual(values["Disbursed total"], "520.38 XTS")
+
+
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+class TestDisbursementListView(TestCase):
+    """The admin ledger of every disbursement across all projects.
+
+    Admin-only (Staff Admin group or superuser) and gated on the
+    DISBURSEMENTS payments flow; the date filter targets the disbursement's
+    own date, not the date it was entered.
+
+    """
+
+    def make_staff_admin(self):
+        # Staff Admin requires the Staff group too (see the role's help text).
+        user = StaffFactory()
+        admin_group, _ = Group.objects.get_or_create(name=TEAMADMIN_GROUP_NAME)
+        user.groups.add(admin_group)
+        return user
+
+    def test_staff_admin_can_access(self):
+        DisbursementFactory()
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"), follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_superuser_can_access(self):
+        DisbursementFactory()
+        self.client.force_login(SuperUserFactory())
+
+        response = self.client.get(reverse("apply:projects:disbursements"), follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_staff_cannot_access(self):
+        DisbursementFactory()
+        self.client.force_login(StaffFactory())
+
+        response = self.client.get(reverse("apply:projects:disbursements"), follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_finance_cannot_access(self):
+        DisbursementFactory()
+        self.client.force_login(FinanceFactory())
+
+        response = self.client.get(reverse("apply:projects:disbursements"), follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_applicant_cannot_access(self):
+        DisbursementFactory()
+        self.client.force_login(UserFactory())
+
+        response = self.client.get(reverse("apply:projects:disbursements"), follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_not_found_when_payments_flow_is_not_disbursements(self):
+        DisbursementFactory()
+        self.client.force_login(SuperUserFactory())
+
+        with override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING"):
+            response = self.client.get(
+                reverse("apply:projects:disbursements"), follow=True
+            )
+        self.assertEqual(response.status_code, 404)
+
+    def test_date_filter_uses_disbursement_date(self):
+        may_disbursement = DisbursementFactory(
+            date=datetime.date(2543, 5, 23), amount=decimal.Decimal("101.03")
+        )
+        june_disbursement = DisbursementFactory(
+            date=datetime.date(2543, 6, 19), amount=decimal.Decimal("97.01")
+        )
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"),
+            {"date_after": "2543-06-01", "date_before": "2543-06-30"},
+        )
+        self.assertEqual(list(response.context["object_list"]), [june_disbursement])
+        self.assertNotIn(may_disbursement, response.context["object_list"])
+
+    def test_currency_filter(self):
+        usd_disbursement = DisbursementFactory(contract=ContractFactory(currency="USD"))
+        DisbursementFactory(contract=ContractFactory(currency="EUR"))
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"), {"currency": "USD"}
+        )
+        self.assertEqual(list(response.context["object_list"]), [usd_disbursement])
+
+    def test_currency_filter_can_match_uncoded_contracts(self):
+        uncoded_disbursement = DisbursementFactory(contract=ContractFactory())
+        DisbursementFactory(contract=ContractFactory(currency="EUR"))
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"), {"currency": "none"}
+        )
+        self.assertEqual(list(response.context["object_list"]), [uncoded_disbursement])
+
+    def test_project_status_filter(self):
+        contracting_disbursement = DisbursementFactory(
+            contract=ContractFactory(project=ProjectFactory(status=CONTRACTING)),
+        )
+        DisbursementFactory(
+            contract=ContractFactory(
+                project=ProjectFactory(status=INVOICING_AND_REPORTING)
+            ),
+        )
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"), {"project_status": CONTRACTING}
+        )
+        self.assertEqual(
+            list(response.context["object_list"]), [contracting_disbursement]
+        )
+
+    def test_total_is_numeric_for_a_single_currency(self):
+        contract = ContractFactory(currency="USD")
+        DisbursementFactory(contract=contract, amount=decimal.Decimal("101.03"))
+        DisbursementFactory(contract=contract, amount=decimal.Decimal("97.01"))
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertEqual(response.context["disbursements_total"], "198.04 USD")
+        self.assertIn(
+            "Total disbursed (2 records matching this filter): 198.04 USD",
+            response.content.decode("utf-8"),
+        )
+
+    def test_total_elaborates_each_currency(self):
+        DisbursementFactory(
+            contract=ContractFactory(currency="USD"), amount=decimal.Decimal("499.03")
+        )
+        DisbursementFactory(
+            contract=ContractFactory(currency="MXN"), amount=decimal.Decimal("809.03")
+        )
+        DisbursementFactory(
+            contract=ContractFactory(currency="EUR"), amount=decimal.Decimal("1009.03")
+        )
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertEqual(
+            response.context["disbursements_total"],
+            "1009.03 EUR, 809.03 MXN, 499.03 USD",
+        )
+        self.assertIn(
+            "Total disbursed (3 records matching this filter): "
+            "1009.03 EUR, 809.03 MXN, 499.03 USD",
+            response.content.decode("utf-8"),
+        )
+
+    def test_total_lists_uncoded_amounts_last(self):
+        coded = ContractFactory(currency="USD")
+        DisbursementFactory(contract=coded, amount=decimal.Decimal("499.03"))
+        uncoded = ContractFactory()
+        DisbursementFactory(contract=uncoded, amount=decimal.Decimal("251.03"))
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertEqual(response.context["disbursements_total"], "499.03 USD, 251.03")
+
+    def test_total_is_numeric_without_code_when_no_currency(self):
+        contract = ContractFactory()
+        DisbursementFactory(contract=contract, amount=decimal.Decimal("101.03"))
+        DisbursementFactory(contract=contract, amount=decimal.Decimal("97.01"))
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertEqual(response.context["disbursements_total"], "198.04")
+        self.assertIn(
+            "Total disbursed (2 records matching this filter): 198.04",
+            response.content.decode("utf-8"),
+        )
+
+    def test_csv_export_includes_iso_dates_and_amounts(self):
+        contract = ContractFactory(
+            currency="USD",
+            amount_requested=decimal.Decimal("250.5"),
+            amount_approved=decimal.Decimal("249.99"),
+        )
+        DisbursementFactory(
+            contract=contract,
+            amount=decimal.Decimal("101.03"),
+            date=datetime.date(2543, 5, 23),
+            notes="wire #d7b9",
+        )
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"), {"format": "csv"}
+        )
+        self.assertEqual(response.headers["Content-Type"], "text/csv")
+        content = response.content.decode("utf-8")
+        self.assertIn("2543-05-23", content)
+        self.assertIn(f"#{contract.pk}", content)
+        self.assertIn("250.50", content)
+        self.assertIn("101.03", content)
+        self.assertIn("USD", content)
+        self.assertIn("wire #d7b9", content)
+
+    def test_csv_export_respects_filters(self):
+        kept = DisbursementFactory(contract=ContractFactory(currency="USD"))
+        excluded = DisbursementFactory(contract=ContractFactory(currency="EUR"))
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"),
+            {"currency": "USD", "format": "csv"},
+        )
+        content = response.content.decode("utf-8")
+        self.assertIn(f"#{kept.contract.pk}", content)
+        self.assertNotIn(f"#{excluded.contract.pk}", content)
+
+    def test_table_leads_with_project_then_dates(self):
+        DisbursementFactory()
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertEqual(
+            list(response.context["table"].columns.names())[:3],
+            ["project", "date", "created_at"],
+        )
+        self.assertIn("Amount disbursed", response.content.decode("utf-8"))
+
+    def test_entry_date_renders_minute_precision_locally(self):
+        DisbursementFactory()
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertRegex(
+            response.content.decode("utf-8"), r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}(?![:\d])"
+        )
+
+    def test_entry_date_tooltip_shows_edit_when_minutes_differ(self):
+        disbursement = DisbursementFactory()
+        # queryset.update bypasses auto_now, so both timestamps can be pinned.
+        Disbursement.objects.filter(pk=disbursement.pk).update(
+            created_at=datetime.datetime(
+                2543, 5, 23, 14, 32, 0, tzinfo=datetime.timezone.utc
+            ),
+            updated_at=datetime.datetime(
+                2543, 5, 23, 14, 40, 0, tzinfo=datetime.timezone.utc
+            ),
+        )
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        content = response.content.decode("utf-8")
+        self.assertIn("2543-05-23 14:32*", content)
+        self.assertIn('title="Edited 2543-05-23 14:40"', content)
+
+    def test_entry_date_has_no_tooltip_when_minutes_match(self):
+        DisbursementFactory()
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertNotIn('title="Edited', response.content.decode("utf-8"))
+
+    def test_empty_state_shows_message(self):
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        content = response.content.decode("utf-8")
+        self.assertIn("No Disbursements available.", content)
+        self.assertNotIn("disbursements-table", content)
+
+    def test_export_link_visible(self):
+        DisbursementFactory()
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(reverse("apply:projects:disbursements"))
+        self.assertIn(
+            'data-tippy-content="Export as CSV"', response.content.decode("utf-8")
+        )
+
+    def test_csv_export_follows_table_sort(self):
+        DisbursementFactory(
+            date=datetime.date(2543, 6, 19), amount=decimal.Decimal("101.03")
+        )
+        DisbursementFactory(
+            date=datetime.date(2543, 5, 23), amount=decimal.Decimal("97.01")
+        )
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"), {"format": "csv"}
+        )
+        content = response.content.decode("utf-8")
+        self.assertLess(content.index("101.03"), content.index("97.01"))
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"), {"sort": "amount", "format": "csv"}
+        )
+        content = response.content.decode("utf-8")
+        self.assertLess(content.index("97.01"), content.index("101.03"))
+
+    def test_format_local_minute_rounds_to_nearest_minute(self):
+        self.assertEqual(
+            format_local_minute(datetime.datetime(2543, 5, 23, 14, 32, 29)),
+            "2543-05-23 14:32",
+        )
+        self.assertEqual(
+            format_local_minute(datetime.datetime(2543, 5, 23, 14, 32, 31)),
+            "2543-05-23 14:33",
+        )
+        self.assertEqual(
+            format_local_minute(
+                datetime.datetime(2543, 5, 23, 14, 32, 59, tzinfo=datetime.timezone.utc)
+            ),
+            "2543-05-23 14:33",
+        )
+
+    def test_csv_leads_with_submission_number_then_project(self):
+        disbursement = DisbursementFactory()
+        project = disbursement.contract.project
+        self.client.force_login(self.make_staff_admin())
+
+        response = self.client.get(
+            reverse("apply:projects:disbursements"), {"format": "csv"}
+        )
+        rows = list(csv.reader(StringIO(response.content.decode("utf-8"))))
+        self.assertEqual(
+            rows[0],
+            [
+                "Submission #",
+                "Project",
+                "Disbursement date",
+                "Date recorded",
+                "Updated at",
+                "Contract",
+                "Contract requested",
+                "Contract approved",
+                "Currency",
+                "Amount disbursed",
+                "Notes",
+            ],
+        )
+        self.assertEqual(rows[1][:2], [str(project.submission_id), project.title])
+        self.assertEqual(rows[1][2], "2543-05-23")
+        self.assertIn("T", rows[1][3])
+        self.assertIn("T", rows[1][4])
+
 
 class TestStaffProjectDetailDownloadView(BaseViewTestCase):
     base_view_name = "download"
@@ -1393,4 +2257,666 @@ class ApplicantStaffProjectDetailDownloadView(BaseViewTestCase):
     def test_cant_access_docx(self):
         project = ProjectFactory()
         response = self.get_page(project, url_kwargs={"export_type": "docx"})
+        self.assertEqual(response.status_code, 403)
+
+
+class TestStaffCreateDisbursementView(BaseViewTestCase):
+    """Disbursement create/edit/delete views. The disbursement FK->Contract,
+    so routes are scoped under the project's contract (pk = project pk,
+    contract_pk, disbursement_pk). Only staff/finance may record disbursements.
+
+    """
+
+    base_view_name = "disbursement"
+    url_name = "funds:projects:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        # instance is a Contract
+        return {"pk": instance.project.pk, "contract_pk": instance.pk}
+
+    def test_can_get(self):
+        contract = ContractFactory()
+        response = self.get_page(contract)
+        self.assertEqual(response.status_code, 200)
+
+    def test_warns_for_unsigned_contract(self):
+        # A disbursement against a not-yet-countersigned contract shows a
+        # warning so the user knows they are disbursing toward an unsigned
+        # contract.
+        contract = ContractFactory(signed_by_applicant=False)
+        response = self.get_page(contract)
+        self.assertContains(response, "has not been countersigned")
+
+    def test_no_warning_for_countersigned_contract(self):
+        contract = ContractFactory(signed_by_applicant=True)
+        response = self.get_page(contract)
+        self.assertNotContains(response, "has not been countersigned")
+
+    def test_amount_label_shows_contract_currency(self):
+        contract = ContractFactory(currency="USD")
+        response = self.get_page(contract)
+        self.assertContains(response, "Amount (USD)")
+
+    def test_amount_label_omits_missing_currency(self):
+        # Contracts may have no currency (old data, other payments flows),
+        # so the label must not show an empty parenthetical.
+        contract = ContractFactory(currency=None)
+        response = self.get_page(contract)
+        self.assertNotContains(response, "Amount (")
+
+    def test_amount_prepopulates_from_contract_approved_amount(self):
+        contract = ContractFactory(amount_approved=decimal.Decimal("283.29"))
+        response = self.get_page(contract)
+        self.assertContains(response, 'value="283.29"')
+
+    def test_amount_prepopulates_from_project_value_without_contract_amount(self):
+        # Contracts recorded before per-contract amounts existed carry no
+        # approved amount; fall back to the project's awarded value.
+        project = ProjectFactory(value=decimal.Decimal("277"))
+        contract = ContractFactory(project=project, amount_approved=None)
+        response = self.get_page(contract)
+        self.assertContains(response, 'value="277.00"')
+
+    def test_amount_prepopulates_net_of_existing_disbursements(self):
+        contract = ContractFactory(amount_approved=decimal.Decimal("283.29"))
+        DisbursementFactory(contract=contract, amount=decimal.Decimal("31.11"))
+        response = self.get_page(contract)
+        self.assertContains(response, 'value="252.18"')
+
+    def test_amount_prepopulates_net_of_repayments(self):
+        # Repayments are negative, so they net the other way.
+        contract = ContractFactory(amount_approved=decimal.Decimal("283.29"))
+        DisbursementFactory(contract=contract, amount=decimal.Decimal("-17.13"))
+        response = self.get_page(contract)
+        self.assertContains(response, 'value="300.42"')
+
+    def test_can_create(self):
+        contract = ContractFactory()
+        url = self.url(contract)
+        response = self.client.post(
+            url,
+            {"amount": "263.53", "date": "2541-03-07", "notes": "first tranche"},
+        )
+        self.assertEqual(response.status_code, 302)
+        # Saving returns to the project page (where the Add button is), not the
+        # contract PDF.
+        self.assertEqual(
+            response["Location"],
+            contract.project.get_absolute_url(),
+        )
+        self.assertEqual(contract.disbursements.count(), 1)
+        disbursement = contract.disbursements.get()
+        self.assertEqual(disbursement.amount, decimal.Decimal("263.53"))
+        self.assertEqual(disbursement.created_by, self.user)
+        self.assertEqual(disbursement.updated_by, self.user)
+
+    def test_can_create_negative_repayment(self):
+        contract = ContractFactory()
+        url = self.url(contract)
+        response = self.client.post(
+            url,
+            {"amount": "-269.71", "date": "2545-09-19", "notes": "repayment"},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            contract.disbursements.get().amount, decimal.Decimal("-269.71")
+        )
+
+    def test_create_records_event(self):
+        from hypha.apply.activity.models import Event
+
+        contract = ContractFactory()
+        self.client.post(
+            self.url(contract),
+            {"amount": "271.83", "date": "2547-11-29", "notes": ""},
+        )
+        # Event.source is a GenericForeignKey, so filter by object_id.
+        self.assertTrue(
+            Event.objects.filter(
+                type="CREATE_DISBURSEMENT", object_id=contract.project.id
+            ).exists()
+        )
+
+
+class TestApplicantCreateDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement"
+    url_name = "funds:projects:{}"
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.project.pk, "contract_pk": instance.pk}
+
+    def test_cannot_get(self):
+        contract = ContractFactory()
+        response = self.get_page(contract)
+        self.assertEqual(response.status_code, 403)
+
+
+class TestFinanceCreateDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement"
+    url_name = "funds:projects:{}"
+    user_factory = FinanceFactory
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.project.pk, "contract_pk": instance.pk}
+
+    def test_can_get(self):
+        contract = ContractFactory()
+        response = self.get_page(contract)
+        self.assertEqual(response.status_code, 200)
+
+    def test_can_create(self):
+        contract = ContractFactory()
+        response = self.client.post(
+            self.url(contract),
+            {"amount": "277.89", "date": "2549-01-13", "notes": ""},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["Location"], contract.project.get_absolute_url())
+        self.assertEqual(contract.disbursements.count(), 1)
+        self.assertEqual(contract.disbursements.get().created_by, self.user)
+
+
+class TestStaffEditDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-edit"
+    url_name = "funds:projects:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        # instance is a Disbursement
+        return {
+            "pk": instance.contract.project.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_can_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 200)
+
+    def test_amount_label_shows_contract_currency(self):
+        contract = ContractFactory(currency="EUR")
+        disbursement = DisbursementFactory(contract=contract)
+        response = self.get_page(disbursement)
+        self.assertContains(response, "Amount (EUR)")
+
+    def test_edit_shows_instance_amount_not_contract_award(self):
+        # The full-award prepopulation applies on create only; editing an
+        # existing disbursement must show its recorded amount.
+        contract = ContractFactory(amount_approved=decimal.Decimal("281.83"))
+        disbursement = DisbursementFactory(
+            contract=contract, amount=decimal.Decimal("311.13")
+        )
+        response = self.get_page(disbursement)
+        self.assertContains(response, 'value="311.13"')
+        self.assertNotContains(response, 'value="281.83"')
+
+    def test_can_edit(self):
+        disbursement = DisbursementFactory(amount=decimal.Decimal("281.97"))
+        url = self.url(disbursement)
+        response = self.client.post(
+            url,
+            {
+                "amount": "293.59",
+                "date": disbursement.date.isoformat(),
+                "notes": "updated",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            response["Location"],
+            disbursement.contract.project.get_absolute_url(),
+        )
+        disbursement.refresh_from_db()
+        self.assertEqual(disbursement.amount, decimal.Decimal("293.59"))
+        self.assertEqual(disbursement.updated_by, self.user)
+
+    def test_edit_records_event(self):
+        from hypha.apply.activity.models import Event
+
+        disbursement = DisbursementFactory()
+        self.client.post(
+            self.url(disbursement),
+            {
+                "amount": "307.61",
+                "date": disbursement.date.isoformat(),
+                "notes": "",
+            },
+        )
+        self.assertTrue(
+            Event.objects.filter(
+                type="UPDATE_DISBURSEMENT",
+                object_id=disbursement.contract.project.id,
+            ).exists()
+        )
+
+
+class TestStaffDeleteDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-delete"
+    url_name = "funds:projects:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {
+            "pk": instance.contract.project.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_can_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 200)
+
+    def test_can_delete(self):
+        disbursement = DisbursementFactory()
+        contract = disbursement.contract
+        response = self.client.post(self.url(disbursement), {})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            response["Location"],
+            contract.project.get_absolute_url(),
+        )
+        self.assertFalse(contract.disbursements.filter(pk=disbursement.pk).exists())
+
+    def test_delete_records_event(self):
+        from hypha.apply.activity.models import Event
+
+        disbursement = DisbursementFactory()
+        contract = disbursement.contract
+        self.client.post(self.url(disbursement), {})
+        self.assertTrue(
+            Event.objects.filter(
+                type="DELETE_DISBURSEMENT", object_id=contract.project.id
+            ).exists()
+        )
+
+
+class TestApplicantDeleteDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-delete"
+    url_name = "funds:projects:{}"
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {
+            "pk": instance.contract.project.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_cannot_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 403)
+
+
+class TestFinanceEditDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-edit"
+    url_name = "funds:projects:{}"
+    user_factory = FinanceFactory
+
+    def get_kwargs(self, instance):
+        return {
+            "pk": instance.contract.project.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_can_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 200)
+
+
+class TestFinanceDeleteDisbursementView(BaseViewTestCase):
+    base_view_name = "disbursement-delete"
+    url_name = "funds:projects:{}"
+    user_factory = FinanceFactory
+
+    def get_kwargs(self, instance):
+        return {
+            "pk": instance.contract.project.pk,
+            "contract_pk": instance.contract.pk,
+            "disbursement_pk": instance.pk,
+        }
+
+    def test_can_get(self):
+        disbursement = DisbursementFactory()
+        response = self.get_page(disbursement)
+        self.assertEqual(response.status_code, 200)
+
+
+class TestDisbursementFormWidget(TestCase):
+    def test_amount_uses_trimmed_decimal_input(self):
+        from ..forms import DisbursementForm
+        from ..forms.project import TrimmedDecimalInput
+
+        form = DisbursementForm()
+        self.assertIsInstance(form.fields["amount"].widget, TrimmedDecimalInput)
+
+    def test_negatives_allowed(self):
+        from ..forms import DisbursementForm
+
+        form = DisbursementForm(
+            data={"amount": "-311.13", "date": "2551-03-17", "notes": ""}
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_amount_input_pattern_allows_negative(self):
+        # The disbursement amount widget accepts a leading minus so
+        # repayments can be recorded; the shared number widget stays
+        # positive-only for the rest of the codebase.
+        from ..forms import DisbursementForm
+        from ..forms.disbursement import TrimmedSignedDecimalInput
+
+        form = DisbursementForm()
+        self.assertIsInstance(form.fields["amount"].widget, TrimmedSignedDecimalInput)
+        self.assertIn('pattern="-?[0-9.]*"', str(form["amount"]))
+
+    def test_exposes_expected_fields(self):
+        from ..forms import DisbursementForm
+
+        form = DisbursementForm()
+        self.assertEqual(set(form.fields), {"amount", "date", "notes"})
+
+    def test_date_defaults_to_today(self):
+        from django.utils import timezone
+
+        from ..forms import DisbursementForm
+
+        form = DisbursementForm()
+        self.assertEqual(form.fields["date"].initial, timezone.localdate())
+
+
+class TestDisbursementActivityMessage(TestCase):
+    def test_create_message_includes_amount_not_note(self):
+        from hypha.apply.activity.adapters.activity_feed import ActivityAdapter
+        from hypha.apply.activity.options import MESSAGES
+
+        from ..models import Disbursement
+
+        disbursement = Disbursement(
+            amount=decimal.Decimal("271.83"), notes="secret note"
+        )
+        message = ActivityAdapter().message(
+            MESSAGES.CREATE_DISBURSEMENT, disbursement=disbursement
+        )
+        self.assertIn("271.83", message)
+        self.assertNotIn("secret note", message)
+
+
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+class TestStaffDisbursementsSection(BaseProjectDetailTestCase):
+    user_factory = StaffFactory
+
+    def test_section_not_shown_without_contract(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+        self.assertNotContains(response, 'id="disbursements"')
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING")
+    def test_section_hidden_when_invoicing(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertNotContains(response, 'id="disbursements"')
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="DISABLED")
+    def test_section_hidden_when_disabled(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertNotContains(response, 'id="disbursements"')
+
+    def test_section_shown_with_contract(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, 'id="disbursements"')
+
+    def test_add_button_shown_to_staff(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Add Disbursement")
+
+    def test_add_contract_button_shown_to_staff(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Add Contract")
+
+    def test_section_header_is_contracts_and_disbursements(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Contracts and Disbursements")
+
+    def test_contract_link_includes_contract_word(self):
+        # The link text reads "Contract #65", not just "#65", so the
+        # destination is clear out of context (screen readers, copy-paste).
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, f"Contract #{contract.pk}")
+
+    def test_disbursements_labelled_with_count(self):
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract)
+        DisbursementFactory(contract=contract)
+        response = self.get_page(project)
+        self.assertContains(response, "2 Disbursements:")
+
+    def test_single_disbursement_label_is_singular(self):
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract)
+        response = self.get_page(project)
+        self.assertContains(response, "1 Disbursement:")
+        self.assertNotContains(response, "1 Disbursements:")
+
+    def test_date_column_is_disbursement_date(self):
+        # The per-contract table matches the All Disbursements table, where
+        # the first column is likewise "Disbursement date".
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract)
+        response = self.get_page(project)
+        self.assertContains(response, "Disbursement date")
+
+    def test_contract_approved_amount_shown(self):
+        from decimal import Decimal
+
+        project = ProjectFactory()
+        ContractFactory(project=project, amount_approved=Decimal("99.50"))
+        response = self.get_page(project)
+        self.assertContains(response, "Approved: 99.50")
+
+    def test_edit_and_delete_links_shown_for_existing_disbursement(self):
+        from django.urls import reverse
+
+        from hypha.apply.projects.models import Disbursement
+
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        disbursement = DisbursementFactory(contract=contract)
+        response = self.get_page(project)
+        # The URL name is "disbursement-edit"/"disbursement-delete", but the
+        # rendered href is the resolved path (.../disbursements/<pk>/edit/),
+        # so assert on the reversed URLs rather than the hyphenated name.
+        edit_url = reverse(
+            "funds:projects:disbursement-edit",
+            kwargs={
+                "pk": project.pk,
+                "contract_pk": contract.pk,
+                "disbursement_pk": disbursement.pk,
+            },
+        )
+        delete_url = reverse(
+            "funds:projects:disbursement-delete",
+            kwargs={
+                "pk": project.pk,
+                "contract_pk": contract.pk,
+                "disbursement_pk": disbursement.pk,
+            },
+        )
+        self.assertContains(response, edit_url)
+        self.assertContains(response, delete_url)
+        # Sanity: the Disbursement row is the one we created.
+        self.assertEqual(Disbursement.objects.filter(contract=contract).count(), 1)
+
+    def test_empty_state_message(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "No disbursements yet.")
+
+    def test_amount_displayed_with_minimum_two_decimals(self):
+        from decimal import Decimal
+
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract, amount=Decimal("99.5"))
+        response = self.get_page(project)
+        # 99.5 is padded to "99.50" to match the contract amount rendering.
+        self.assertContains(response, "99.50")
+
+    def test_amount_display_keeps_extra_precision(self):
+        from decimal import Decimal
+
+        project = ProjectFactory()
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract, amount=Decimal("99.123"))
+        response = self.get_page(project)
+        # More than two decimal places are preserved, not truncated.
+        self.assertContains(response, "99.123")
+
+    def test_contracting_section_hidden_under_disbursements(self):
+        # The disbursements section already lists the contracts, so the
+        # contracting documents section is hidden under DISBURSEMENTS to
+        # avoid duplication.
+        from hypha.apply.projects.models.project import INVOICING_AND_REPORTING
+
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertNotContains(response, 'id="contract-documents-section"')
+
+    @override_settings(PROJECTS_PAYMENTS_FLOW="INVOICING")
+    def test_contracting_section_shown_under_invoicing(self):
+        from hypha.apply.projects.models.project import INVOICING_AND_REPORTING
+
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, 'id="contract-documents-section"')
+
+    def test_contracting_section_shown_during_contracting_under_disbursements(self):
+        # The first contract still goes through the contracting flow, so the
+        # contracting section shows during the Contracting stage even under
+        # DISBURSEMENTS (a contract may already be uploaded, awaiting signoff).
+        from hypha.apply.projects.models.project import CONTRACTING
+
+        project = ProjectFactory(status=CONTRACTING)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, 'id="contract-documents-section"')
+
+
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+class TestApplicantDisbursementsSection(BaseProjectDetailTestCase):
+    user_factory = ApplicantFactory
+
+    def test_section_shown_read_only_with_contract(self):
+        project = ProjectFactory(user=self.user)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, 'id="disbursements"')
+
+    def test_add_button_hidden_from_applicant(self):
+        project = ProjectFactory(user=self.user)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertNotContains(response, "Add Disbursement")
+
+    def test_edit_delete_hidden_from_applicant(self):
+        project = ProjectFactory(user=self.user)
+        contract = ContractFactory(project=project)
+        DisbursementFactory(contract=contract)
+        response = self.get_page(project)
+        self.assertNotContains(response, "disbursement-edit")
+        self.assertNotContains(response, "disbursement-delete")
+
+    def test_add_contract_button_hidden_from_applicant(self):
+        project = ProjectFactory(user=self.user)
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertNotContains(response, "Add Contract")
+
+
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+class TestFinanceDisbursementsSection(BaseProjectDetailTestCase):
+    user_factory = FinanceFactory
+
+    def test_add_disbursement_button_shown_to_finance(self):
+        # Finance may record disbursements (matches staff_or_finance_required).
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Add Disbursement")
+
+    def test_add_contract_button_shown_to_finance(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertContains(response, "Add Contract")
+
+
+@override_settings(PROJECTS_PAYMENTS_FLOW="DISBURSEMENTS")
+class TestCreateContractView(BaseViewTestCase):
+    base_view_name = "contract_add"
+    url_name = "funds:projects:{}"
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.id}
+
+    def test_get_form(self):
+        project = ProjectFactory()
+        ContractFactory(project=project)
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_creates_additional_contract(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
+        ContractFactory(project=project)
+        before = project.contracts.count()
+
+        response = self.post_page(
+            project,
+            {"file": SimpleUploadedFile("contract.pdf", b"contract-bytes")},
+        )
+        self.assertEqual(response.status_code, 200)
+        project.refresh_from_db()
+        # A new contract is attached; the project stage is unchanged (no
+        # transition: the first contract already moved the project on).
+        self.assertEqual(project.contracts.count(), before + 1)
+        self.assertEqual(project.status, INVOICING_AND_REPORTING)
+
+    def test_applicant_forbidden(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        applicant = ApplicantFactory()
+        self.client.force_login(applicant)
+        project = ProjectFactory(status=INVOICING_AND_REPORTING, user=applicant)
+        ContractFactory(project=project)
+        response = self.post_page(
+            project,
+            {"file": SimpleUploadedFile("contract.pdf", b"contract-bytes")},
+        )
         self.assertEqual(response.status_code, 403)

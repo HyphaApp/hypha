@@ -1,7 +1,7 @@
 {% load django_tables2 i18n heroicons %}
 {% load querystrings table_tags static %}
 
-{% if heading or use_search %}
+{% if heading or use_search or include_export %}
     <div
         class="flex flex-wrap gap-4 justify-between items-center mb-2 w-full"
     >
@@ -62,6 +62,18 @@
                 {% heroicon_mini "arrow-down-tray" %}
             </a>
         {% endif %}
+
+        {% if include_export %}
+            <a
+                class="btn btn-square"
+                aria-label="{% trans 'Export as CSV' %}"
+                href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}format=csv"
+                data-tippy-content="{% trans 'Export as CSV' %}"
+            >
+                {% heroicon_mini "arrow-down-tray" aria_hidden=true %}
+            </a>
+        {% endif %}
+
     </div>
 {% endif %}
 

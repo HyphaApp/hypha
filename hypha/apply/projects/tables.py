@@ -2,6 +2,7 @@ import json
 
 import django_tables2 as tables
 from django.conf import settings
+from django.db.models import F
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
@@ -14,8 +15,15 @@ from hypha.apply.funds.tables import LabeledCheckboxColumn
 from hypha.core.tables import RelativeTimeColumn
 
 from .forms.invoice import get_invoice_possible_transition_for_user
-from .models import Invoice, PAFApprovals, Project
-from .utils import get_project_title
+from .models import Disbursement, Invoice, PAFApprovals, Project
+from .payments import PaymentsFlow
+from .utils import (
+    format_local_minute,
+    format_trimmed_amount,
+    get_contract_approved_amounts_cell,
+    get_disbursement_total_cell,
+    get_project_title,
+)
 
 
 def render_invoice_actions(table, record):
@@ -204,7 +212,30 @@ class BaseProjectsTable(tables.Table):
     contract_number = tables.Column(verbose_name=_("Contract #"), default="-")
     reporting = tables.Column(verbose_name=_("Reporting"), accessor="pk")
     last_payment_request = RelativeTimeColumn()
+    # render_contract_approved_total reads annotations that
+    # Project.objects.for_table() provides.
+    contract_approved_total = tables.Column(
+        verbose_name=_("Contracts total"),
+        accessor="pk",
+        order_by="contract_approved_total",
+        attrs={"th": {"align": "right"}, "td": {"align": "right"}},
+    )
+    # Non-empty accessor (pk) so django-tables2 calls render_disbursement_total.
+    disbursement_total = tables.Column(
+        verbose_name=_("Disbursed total"),
+        accessor="pk",
+        order_by="disbursement_total",
+        attrs={"th": {"align": "right"}, "td": {"align": "right"}},
+    )
     end_date = RelativeTimeColumn(verbose_name=_("End date"), accessor="proposed_end")
+
+    def __init__(self, *args, **kwargs):
+        if settings.PROJECTS_PAYMENTS_FLOW != PaymentsFlow.DISBURSEMENTS:
+            exclude = list(kwargs.get("exclude") or [])
+            exclude.append("contract_approved_total")
+            exclude.append("disbursement_total")
+            kwargs["exclude"] = exclude
+        super().__init__(*args, **kwargs)
 
     def order_reporting(self, qs, is_descending):
         direction = "-" if is_descending else ""
@@ -232,6 +263,26 @@ class BaseProjectsTable(tables.Table):
         display += gettext("{count} outstanding").format(count=outstanding_count)
         return mark_safe(display)
 
+    def render_contract_approved_total(self, record):
+        return get_contract_approved_amounts_cell(record, format_trimmed_amount)
+
+    def render_disbursement_total(self, record):
+        return get_disbursement_total_cell(record, format_trimmed_amount)
+
+    def order_organization_name(self, qs, is_descending):
+        f = F("submission__form_data__organization_name")
+
+        qs = (
+            qs.order_by(f.desc(nulls_last=True))
+            if is_descending
+            else qs.order_by(f.asc(nulls_last=True))
+        )
+
+        return qs, True
+
+    def render_organization_name(self, record):
+        return record.submission.form_data.get("organization_name", "")
+
 
 class ProjectsDashboardTable(BaseProjectsTable):
     class Meta:
@@ -241,6 +292,8 @@ class ProjectsDashboardTable(BaseProjectsTable):
             "fund",
             "reporting",
             "last_payment_request",
+            "contract_approved_total",
+            "disbursement_total",
             "end_date",
         ]
         model = Project
@@ -324,6 +377,8 @@ class ProjectsListTable(BaseProjectsTable):
             "contract_number",
             "reporting",
             "last_payment_request",
+            "contract_approved_total",
+            "disbursement_total",
             "end_date",
         ]
         model = Project
@@ -331,3 +386,98 @@ class ProjectsListTable(BaseProjectsTable):
         order_by = ("end_date",)
         template_name = "application_projects/tables/table.html"
         attrs = {"class": "table projects-table"}
+
+
+class AdminDisbursementListTable(tables.Table):
+    """Every disbursement across all projects, one row per disbursement.
+
+    The contract's requested/approved amounts repeat on each of its rows.
+    Amount columns carry no unit: currency is its own column so filtering to
+    a single currency guarantees a numeric total. The disbursement date
+    renders as ISO 8601; the entry date renders compactly in the active
+    timezone, rounded to the nearest minute (strict RFC 3339 stays in the
+    CSV export). The entry date carries a tooltip showing the edited time
+    when an edit rounds to a different minute, marked with an asterisk.
+
+    """
+
+    date = tables.Column(verbose_name=_("Disbursement date"))
+    created_at = tables.Column(verbose_name=_("Date recorded"))
+    project = tables.LinkColumn(
+        "funds:submissions:project",
+        text=lambda record: get_project_title(record.contract.project),
+        args=[A("contract__project__submission_id"), A("contract__project__pk")],
+        order_by=("contract__project__title",),
+        attrs={
+            "a": {
+                "class": "link link-hover text-h4 font-semibold break-words line-clamp-2 max-w-md",
+            },
+        },
+    )
+    contract = tables.LinkColumn(
+        "apply:projects:contract",
+        text=lambda record: f"#{record.contract_id}",
+        args=[A("contract__project__id"), A("contract_id")],
+        order_by=("contract_id",),
+    )
+    contract_requested = tables.Column(
+        verbose_name=_("Contract requested"),
+        accessor=A("contract__amount_requested"),
+        attrs={"th": {"class": "text-right"}, "td": {"class": "text-right"}},
+    )
+    contract_approved = tables.Column(
+        verbose_name=_("Contract approved"),
+        accessor=A("contract__amount_approved"),
+        attrs={"th": {"class": "text-right"}, "td": {"class": "text-right"}},
+    )
+    currency = tables.Column(
+        verbose_name=_("Currency"),
+        accessor=A("contract__currency"),
+        default="—",
+    )
+    amount = tables.Column(
+        verbose_name=_("Amount disbursed"),
+        attrs={"th": {"class": "text-right"}, "td": {"class": "text-right"}},
+    )
+    notes = tables.Column(attrs={"td": {"class": "max-w-md"}})
+
+    class Meta:
+        fields = [
+            "project",
+            "date",
+            "created_at",
+            "contract",
+            "contract_requested",
+            "contract_approved",
+            "currency",
+            "amount",
+            "notes",
+        ]
+        model = Disbursement
+        orderable = True
+        order_by = ("-date", "-created_at")
+        template_name = "application_projects/tables/table.html"
+        attrs = {"class": "table disbursements-table"}
+
+    def render_date(self, record):
+        return record.date.isoformat()
+
+    def render_created_at(self, record):
+        entry = format_local_minute(record.created_at)
+        edited = format_local_minute(record.updated_at)
+        if entry == edited:
+            return entry
+        return format_html(
+            '<span title="{}">{}*</span>',
+            _("Edited {}").format(edited),
+            entry,
+        )
+
+    def render_contract_requested(self, record):
+        return format_trimmed_amount(record.contract.amount_requested)
+
+    def render_contract_approved(self, record):
+        return format_trimmed_amount(record.contract.amount_approved)
+
+    def render_amount(self, record):
+        return format_trimmed_amount(record.amount)
