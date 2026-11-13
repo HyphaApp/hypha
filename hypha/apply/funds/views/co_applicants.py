@@ -15,6 +15,7 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext as _
 from django.views import View
+from django.views.decorators.http import require_POST
 from django_htmx.http import HttpResponseClientRedirect
 from two_factor.utils import default_device
 
@@ -204,6 +205,7 @@ class CoApplicantInviteAcceptView(View):
         )
 
 
+@method_decorator(login_required, name="dispatch")
 class EditCoApplicantView(View):
     def dispatch(self, request, *args, **kwargs):
         self.invite = get_object_or_404(CoApplicantInvite, id=kwargs.get("invite_pk"))
@@ -255,6 +257,8 @@ class EditCoApplicantView(View):
         )
 
 
+@login_required
+@require_POST
 def co_applicant_re_invite_view(request, invite_pk):
     invite = get_object_or_404(CoApplicantInvite, id=invite_pk)
     has_permission(
@@ -283,6 +287,8 @@ def co_applicant_re_invite_view(request, invite_pk):
     )
 
 
+@login_required
+@require_POST
 def co_applicant_invite_delete_view(request, invite_pk):
     invite = get_object_or_404(CoApplicantInvite, id=invite_pk)
     has_permission(
