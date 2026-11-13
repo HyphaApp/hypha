@@ -204,6 +204,7 @@ class CoApplicantInviteAcceptView(View):
         )
 
 
+@method_decorator(login_required, name="dispatch")
 class EditCoApplicantView(View):
     def dispatch(self, request, *args, **kwargs):
         self.invite = get_object_or_404(CoApplicantInvite, id=kwargs.get("invite_pk"))
@@ -255,6 +256,7 @@ class EditCoApplicantView(View):
         )
 
 
+@login_required
 def co_applicant_re_invite_view(request, invite_pk):
     invite = get_object_or_404(CoApplicantInvite, id=invite_pk)
     has_permission(
@@ -283,6 +285,7 @@ def co_applicant_re_invite_view(request, invite_pk):
     )
 
 
+@login_required
 def co_applicant_invite_delete_view(request, invite_pk):
     invite = get_object_or_404(CoApplicantInvite, id=invite_pk)
     has_permission(
