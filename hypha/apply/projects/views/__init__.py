@@ -1,3 +1,27 @@
+from .approval import (
+    ChangePAFStatusView,
+    ProjectDetailApprovalView,
+    ProjectDetailDownloadView,
+    SendForApprovalView,
+    SkipPAFApprovalProcessView,
+    UpdateAssignApproversView,
+    UpdatePAFApproversView,
+)
+from .contract import (
+    ApproveContractView,
+    ContractDocumentPrivateMediaView,
+    ContractPrivateMediaView,
+    RemoveContractDocumentView,
+    SubmitContractDocumentsView,
+    UploadContractDocumentView,
+    UploadContractView,
+)
+from .documents import (
+    CategoryTemplatePrivateMediaView,
+    ProjectPrivateMediaView,
+    RemoveDocumentView,
+    UploadDocumentView,
+)
 from .invoice import (
     BatchUpdateInvoiceStatusView,
     ChangeInvoiceStatusView,
@@ -14,36 +38,20 @@ from .invoice import (
 from .project import (
     AdminProjectDetailView,
     ApplicantProjectDetailView,
-    ApproveContractView,
     BaseProjectDetailView,
-    CategoryTemplatePrivateMediaView,
-    ChangePAFStatusView,
     ChangeProjectstatusView,
-    ContractDocumentPrivateMediaView,
-    ContractPrivateMediaView,
-    ProjectDetailApprovalView,
-    ProjectDetailDownloadView,
     ProjectDetailView,
-    ProjectFormEditView,
     ProjectListView,
-    ProjectPrivateMediaView,
-    ProjectSOWDownloadView,
-    ProjectSOWView,
-    RemoveContractDocumentView,
-    RemoveDocumentView,
-    SendForApprovalView,
-    SkipPAFApprovalProcessView,
     SubmissionProjectsView,
-    SubmitContractDocumentsView,
-    UpdateAssignApproversView,
     UpdateLeadView,
-    UpdatePAFApproversView,
-    UploadContractDocumentView,
-    UploadContractView,
-    UploadDocumentView,
     update_project_contract_number,
     update_project_dates,
     update_project_title,
+)
+from .project_forms import (
+    ProjectFormEditView,
+    ProjectSOWDownloadView,
+    ProjectSOWView,
 )
 from .project_partials import (
     partial_contracting_documents,

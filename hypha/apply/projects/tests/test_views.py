@@ -39,7 +39,8 @@ from ..models.project import (
     REQUEST_CHANGE,
     ProjectSettings,
 )
-from ..views.project import ContractsMixin, ProjectDetailApprovalView
+from ..views.approval import ProjectDetailApprovalView
+from ..views.mixins import ContractsMixin
 from .factories import (
     ContractFactory,
     DocumentCategoryFactory,
