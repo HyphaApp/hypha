@@ -26,7 +26,9 @@ class MixedFieldMetaclass(DeclarativeFieldsMetaclass):
 
 # Hidden fields added by django_file_form's FileFormMixin. They must always get
 # fresh values and should never be stored in or restored from form_data.
+# The mixin also adds "<field>-uploads" and "<field>-metadata" for each file field.
 FILE_FORM_INTERNAL_FIELDS = ("upload_url", "form_id", "s3_upload_dir")
+FILE_FORM_FIELD_SUFFIXES = ("-uploads", "-metadata")
 
 
 class StreamBaseForm(FileFormMixin, forms.Form, metaclass=MixedFieldMetaclass):
@@ -53,16 +55,30 @@ class StreamBaseForm(FileFormMixin, forms.Form, metaclass=MixedFieldMetaclass):
         # No hidden fields are returned by default because of MixedFieldMetaclass
         return [self[f] for f in self.fields.keys() if self[f].is_hidden]
 
+    def _is_file_form_internal_field(self, field_name):
+        if field_name in FILE_FORM_INTERNAL_FIELDS:
+            return True
+        file_field_names = self._file_form_field_names()
+        return any(
+            field_name.removesuffix(suffix) in file_field_names
+            for suffix in FILE_FORM_FIELD_SUFFIXES
+            if field_name.endswith(suffix)
+        )
+
     def get_initial_for_field(self, field, field_name):
         # Ignore stale values from stored form_data, e.g. an old upload_url.
-        if field_name in FILE_FORM_INTERNAL_FIELDS:
+        if self._is_file_form_internal_field(field_name):
             return field.initial
         return super().get_initial_for_field(field, field_name)
 
     def clean(self):
         cleaned_data = super().clean()
-        for field_name in FILE_FORM_INTERNAL_FIELDS:
-            cleaned_data.pop(field_name, None)
+        # "<field>-uploads" is kept, process_file_data() needs it.
+        for field_name in list(cleaned_data):
+            if self._is_file_form_internal_field(
+                field_name
+            ) and not field_name.endswith("-uploads"):
+                cleaned_data.pop(field_name)
         return cleaned_data
 
     def _update_files_data(self):

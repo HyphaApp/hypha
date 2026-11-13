@@ -2,6 +2,7 @@ from django import forms
 from django.http import QueryDict
 from django.test import TestCase
 from django.urls import reverse
+from django_file_form.forms import MultipleUploadedFileField
 from faker import Faker
 
 from .blocks import FormFieldBlock, FormFieldsBlock
@@ -41,3 +42,35 @@ class TestStreamBaseForm(TestCase):
         self.assertEqual(form.cleaned_data["title"], "A title")
         self.assertNotIn("upload_url", form.cleaned_data)
         self.assertNotIn("form_id", form.cleaned_data)
+
+    def get_file_form(self, **kwargs):
+        form_class = type(
+            "TestFileForm",
+            (StreamBaseForm,),
+            {
+                "docs": MultipleUploadedFileField(required=False),
+                "notes-uploads": forms.CharField(required=False),
+            },
+        )
+        return form_class(**kwargs)
+
+    def test_stored_file_field_inputs_are_ignored_as_initial(self):
+        form = self.get_file_form(
+            initial={
+                "docs-uploads": '[{"name": "stale"}]',
+                "docs-metadata": '{"stale": {}}',
+                "notes-uploads": "kept",
+            }
+        )
+        self.assertEqual(form["docs-uploads"].value(), "[]")
+        self.assertEqual(form["docs-metadata"].value(), "{}")
+        self.assertEqual(form["notes-uploads"].value(), "kept")
+
+    def test_file_field_metadata_is_not_in_cleaned_data(self):
+        form = self.get_file_form(
+            data=QueryDict("docs-uploads=[]&docs-metadata={}&notes-uploads=kept")
+        )
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data["docs-uploads"], "[]")
+        self.assertNotIn("docs-metadata", form.cleaned_data)
+        self.assertEqual(form.cleaned_data["notes-uploads"], "kept")

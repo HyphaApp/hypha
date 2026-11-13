@@ -2195,7 +2195,6 @@ class ProjectFormEditView(ProjectFormsEditView):
         kwargs["extra_fields"] = fields
         initial = self.object.raw_data
         for field_id in self.object.file_field_ids:
-            initial.pop(field_id + "-uploads", False)
             initial[field_id] = get_placeholder_file(self.object.raw_data.get(field_id))
         kwargs["initial"].update(initial)
         return kwargs
@@ -2336,7 +2335,6 @@ class ProjectSOWEditView(ProjectFormEditView):
                 sow_instance = self.object.sow
                 initial = sow_instance.raw_data
                 for field_id in sow_instance.file_field_ids:
-                    initial.pop(field_id + "-uploads", False)
                     initial[field_id] = get_placeholder_file(
                         sow_instance.raw_data.get(field_id)
                     )
