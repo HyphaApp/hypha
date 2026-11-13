@@ -59,7 +59,7 @@
 
             <!-- status -->
             <section>
-                {% url 'apply:projects:partial-invoice-status' pk=object.project.pk invoice_pk=object.pk as activity_url %}
+                {% url 'apply:projects:partial-invoice-status' pk=object.pk as activity_url %}
                 {% include "application_projects/includes/fetch_object_activity.html" with fetch_activity_url=activity_url extra_triggers="invoicesUpdated from:body" %}
             </section>
 
@@ -108,7 +108,7 @@
             <div class="flex sticky top-8 flex-col gap-2">
                 <div
                     class="card card-border bg-base-200 shadow-xs"
-                    hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}"
+                    hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.pk %}"
                     hx-trigger="invoicesUpdated from:body"
                     data-testid="sidebar-primary-actions"
                 >
