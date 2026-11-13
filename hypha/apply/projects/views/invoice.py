@@ -92,17 +92,7 @@ class InvoiceAccessMixin(LoginRequiredMixin, UserPassesTestMixin):
 
     def get_object(self, queryset=None):
         if not hasattr(self, "_invoice"):
-            # Project scoped urls pass the invoice pk as "invoice_pk" and the
-            # project pk as "pk", the invoice only urls pass the invoice pk
-            # as "pk".
-            if "invoice_pk" in self.kwargs:
-                self._invoice = get_object_or_404(
-                    Invoice,
-                    pk=self.kwargs["invoice_pk"],
-                    project__pk=self.kwargs["pk"],
-                )
-            else:
-                self._invoice = get_object_or_404(Invoice, pk=self.kwargs["pk"])
+            self._invoice = get_object_or_404(Invoice, pk=self.kwargs["pk"])
         return self._invoice
 
     def test_func(self):

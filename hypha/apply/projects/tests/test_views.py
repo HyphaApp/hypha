@@ -896,7 +896,7 @@ class TestStaffDetailInvoiceStatus(BaseViewTestCase):
         response = self.client.get(
             reverse(
                 "apply:projects:partial-invoice-status",
-                kwargs={"pk": invoice.project.pk, "invoice_pk": invoice.pk},
+                kwargs={"pk": invoice.pk},
             ),
             secure=True,
             follow=True,
@@ -949,13 +949,39 @@ class TestApplicantDetailInvoiceStatus(BaseViewTestCase):
         response = self.client.get(
             reverse(
                 "apply:projects:partial-invoice-status",
-                kwargs={"pk": invoice.project.pk, "invoice_pk": invoice.pk},
+                kwargs={"pk": invoice.pk},
             ),
             secure=True,
             follow=True,
         )
 
         self.assertContains(response, invoice_added_msg)
+
+    def test_other_cant_get_partials(self):
+        invoice = InvoiceFactory()
+        for url_name in [
+            "partial-invoice-status",
+            "partial-invoice-detail-actions",
+            "partial-invoice-tags",
+        ]:
+            response = self.client.get(
+                reverse(f"apply:projects:{url_name}", kwargs={"pk": invoice.pk}),
+                secure=True,
+            )
+            self.assertEqual(response.status_code, 403, url_name)
+
+    def test_can_get_partials(self):
+        invoice = InvoiceFactory(project__user=self.user)
+        for url_name in [
+            "partial-invoice-status",
+            "partial-invoice-detail-actions",
+            "partial-invoice-tags",
+        ]:
+            response = self.client.get(
+                reverse(f"apply:projects:{url_name}", kwargs={"pk": invoice.pk}),
+                secure=True,
+            )
+            self.assertEqual(response.status_code, 200, url_name)
 
 
 class TestAnonEditInvoiceView(BaseViewTestCase):
@@ -1198,7 +1224,7 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.client.get(
             reverse(
                 "apply:projects:partial-invoice-status",
-                kwargs={"pk": project.pk, "invoice_pk": invoice.pk},
+                kwargs={"pk": invoice.pk},
             ),
             secure=True,
             follow=True,
@@ -1220,7 +1246,7 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.client.get(
             reverse(
                 "apply:projects:partial-invoice-status",
-                kwargs={"pk": project.pk, "invoice_pk": invoice.pk},
+                kwargs={"pk": invoice.pk},
             ),
             secure=True,
             follow=True,

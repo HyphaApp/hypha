@@ -40,6 +40,29 @@ def _get_accessible_project(request: HttpRequest, project_pk: int) -> Project:
     return project
 
 
+def _get_accessible_invoice(request: HttpRequest, invoice_pk: int) -> Invoice:
+    """Get an invoice, ensuring the current user is allowed to access its project.
+
+    Args:
+        request: request used to retrieve the partial
+        invoice_pk: the pk of the invoice to get
+
+    Returns:
+        The invoice
+
+    Raises:
+        Http404: if no invoice with that pk exists
+        PermissionDenied: if the user may not access the invoice's project
+    """
+    invoice = get_object_or_404(
+        Invoice.objects.select_related("project"), pk=invoice_pk
+    )
+    has_permission(
+        "project_access", request.user, object=invoice.project, raise_exception=True
+    )
+    return invoice
+
+
 def _get_object_activity(
     request: HttpRequest,
     object_class: type[Model],
@@ -190,9 +213,7 @@ def partial_get_invoice_status_table(
 
 @login_required
 @require_GET
-def partial_get_invoice_status(
-    request: HttpRequest, pk: int, invoice_pk: int, *args, **kwargs
-):
+def partial_get_invoice_status(request: HttpRequest, pk: int, *args, **kwargs):
     """
     Partial to get the invoice status for invoice detail view
 
@@ -203,8 +224,8 @@ def partial_get_invoice_status(
     Returns:
         HttpResponse containing the activity of requested invoice
     """
-    project = _get_accessible_project(request, pk)
-    return _get_object_activity(request, Invoice, invoice_pk, project=project)
+    invoice = _get_accessible_invoice(request, pk)
+    return _get_object_activity(request, Invoice, invoice.pk)
 
 
 @login_required
@@ -276,7 +297,7 @@ def partial_get_invoice_detail_actions(request: HttpRequest, pk: int):
     Returns:
         HttpResponse containing the status line of requested invoice
     """
-    invoice = get_object_or_404(Invoice, pk=pk)
+    invoice = _get_accessible_invoice(request, pk)
     user = request.user
 
     return render(
@@ -288,7 +309,7 @@ def partial_get_invoice_detail_actions(request: HttpRequest, pk: int):
 
 @login_required
 def partial_get_invoice_tags(request: HttpRequest, pk: int):
-    invoice = get_object_or_404(Invoice, pk=pk)
+    invoice = _get_accessible_invoice(request, pk)
     return render(
         request,
         "application_projects/partials/invoice_tags.html",
