@@ -34,9 +34,6 @@
         <!-- Load extra css. -->
         {% block extra_css %}{% endblock %}
 
-        <!-- Nprogressbar -->
-        <script defer src="{% static 'js/vendor/nprogress-2.0.0.min.js' %}"></script>
-
         <!-- Cookieconsent -->
         <script defer src="{% static 'js/cookieconsent.js' %}"></script>
 
@@ -70,6 +67,10 @@
         class="antialiased bg-base-100 transition-colors duration-300 min-h-full flex flex-col {% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}"
         {% block body_attrs %}{% endblock %}
     >
+        <div id="htmx-progress" class="hidden fixed inset-x-0 top-0 pointer-events-none z-[1031]" aria-hidden="true">
+            <progress class="block w-full h-1 rounded-none progress progress-primary"></progress>
+        </div>
+
         {% if request.user.is_hijacked %}
             {% include "includes/hijack-bar.html" %}
         {% endif %}
@@ -98,13 +99,29 @@
         <!-- htmx progress, error handling and tooltip loading -->
         <script>
             window.addEventListener('DOMContentLoaded', () => {
+                const progressBar = document.getElementById("htmx-progress");
+                // Keep the progress bar visible at least this long so fast requests don't just flash it.
+                const progressMinTime = 750;
+                let activeRequests = 0;
+                let progressShownAt = 0;
+                let progressHideTimer = null;
+                // Any htmx element with a `hx-noprog` attribute shouldn't show the progress bar
+                const showsProgress = (event) => !event.target.hasAttribute("hx-noprog");
                 document.addEventListener("htmx:beforeRequest", function(event) {
-                    // Any htmx element with a `hx-noprog` attribute shouldn't show the nprogress loading indicator
-                    if (!event.target.hasAttribute("hx-noprog")) {
-                        NProgress.start();
+                    if (!showsProgress(event)) return;
+                    activeRequests++;
+                    clearTimeout(progressHideTimer);
+                    if (progressBar.classList.contains("hidden")) {
+                        progressShownAt = Date.now();
+                        progressBar.classList.remove("hidden");
                     }
                 });
-                document.addEventListener("htmx:afterRequest", function(event) { NProgress.done(); });
+                document.addEventListener("htmx:afterRequest", function(event) {
+                    if (!showsProgress(event) || --activeRequests > 0) return;
+                    activeRequests = 0;
+                    const remaining = progressMinTime - (Date.now() - progressShownAt);
+                    progressHideTimer = setTimeout(() => progressBar.classList.add("hidden"), Math.max(0, remaining));
+                });
             });
 
             {% comment %}
