@@ -348,9 +348,16 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
     form_class = EditInvoiceForm
 
     def test_func(self):
-        """Ensure that the user can not only access the invoice but view it too"""
+        """Ensure that the user can not only access the invoice but edit it too"""
         invoice = self.get_object()
         return super().test_func() and invoice.can_user_edit(self.request.user)
+
+    def handle_no_permission(self):
+        # Users who can access the invoice but not edit it, e.g. after its
+        # status changed, are sent back to the invoice.
+        if self.request.user.is_authenticated and super().test_func():
+            return redirect(self.get_object())
+        return super().handle_no_permission()
 
     def buttons(self):
         yield ("submit", "btn-primary", _("Update"))
@@ -456,8 +463,6 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
 
 
 class InvoicePrivateMedia(InvoiceAccessMixin, PrivateMediaView):
-    raise_exception = True
-
     def get_media(self, *args, **kwargs):
         self.invoice = self.get_object()
         # check if the request is for a supporting document

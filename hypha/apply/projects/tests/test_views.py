@@ -29,7 +29,12 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 from hypha.home.factories import ApplySiteFactory
 
 from ..forms import SetPendingForm
-from ..models.invoice import CHANGES_REQUESTED_BY_STAFF, DECLINED, SUBMITTED
+from ..models.invoice import (
+    APPROVED_BY_STAFF,
+    CHANGES_REQUESTED_BY_STAFF,
+    DECLINED,
+    SUBMITTED,
+)
 from ..models.project import (
     APPROVE,
     CONTRACTING,
@@ -1065,6 +1070,16 @@ class TestApplicantEditInvoiceView(BaseViewTestCase):
             invoice.supporting_documents.first().document, supporting_document.document
         )
 
+    def test_not_editable_redirects_to_invoice(self):
+        invoice = InvoiceFactory(project__user=self.user, status=APPROVED_BY_STAFF)
+        response = self.get_page(invoice)
+        self.assertRedirects(response, invoice.get_absolute_url())
+
+    def test_other_cant_access(self):
+        invoice = InvoiceFactory()
+        response = self.get_page(invoice)
+        self.assertEqual(response.status_code, 403)
+
 
 class TestStaffEditInvoiceView(BaseViewTestCase):
     base_view_name = "invoice-edit"
@@ -1303,6 +1318,21 @@ class TestStaffInvoiceDocumentPrivateMedia(BaseViewTestCase):
         invoice = InvoiceFactory()
         response = self.get_page(invoice)
         self.assertContains(response, invoice.document.read())
+
+
+class TestAnonInvoiceDocumentPrivateMedia(BaseViewTestCase):
+    base_view_name = "invoice-document"
+    url_name = "funds:projects:{}"
+    user_factory = AnonymousUser
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.pk}
+
+    def test_redirects_to_login(self):
+        invoice = InvoiceFactory()
+        response = self.get_page(invoice)
+        expected_redirect = f"{reverse('users:passwordless_login_signup')}?next={reverse('apply:projects:invoice-document', kwargs={'pk': invoice.pk})}"
+        self.assertRedirects(response, expected_redirect)
 
 
 class TestApplicantInvoiceDocumentPrivateMedia(BaseViewTestCase):
