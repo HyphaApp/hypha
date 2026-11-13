@@ -125,12 +125,7 @@ class InvoiceAccessMixin(LoginRequiredMixin, UserPassesTestMixin):
 class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
     form_class = ChangeInvoiceStatusForm
     context_name = "change_invoice_status"
-    model = Invoice
     template = "application_projects/modals/invoice_status_update.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        self.object: Invoice = self.get_object()
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         if not (form := kwargs.get("form")):
@@ -151,12 +146,14 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
         return {**kwargs, **extras}
 
     def get(self, *args, **kwargs):
+        self.object: Invoice = self.get_object()
         form_instance = self.form_class(instance=self.object, user=self.request.user)
         form_instance.name = self.context_name
 
         return render(self.request, self.template, self.get_context_data())
 
     def post(self, *args, **kwargs):
+        self.object: Invoice = self.get_object()
         # Don't process the post request if the user can't change the status
         old_status = self.object.status
         if not self.object.can_user_change_status(self.request.user):
@@ -229,7 +226,6 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
 
 
 class DeleteInvoiceView(InvoiceAccessMixin, DeleteView):
-    model = Invoice
     template_name = "application_projects/modals/invoice_confirm_delete.html"
 
     def test_func(self):
@@ -464,39 +460,39 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
 
 class InvoicePrivateMedia(InvoiceAccessMixin, PrivateMediaView):
     def get_media(self, *args, **kwargs):
-        self.invoice = self.get_object()
+        invoice = self.get_object()
         # check if the request is for a supporting document
         if file_pk := kwargs.get("file_pk"):
-            document = get_object_or_404(self.invoice.supporting_documents, pk=file_pk)
+            document = get_object_or_404(invoice.supporting_documents, pk=file_pk)
             return document.document
 
         # if not, then it's for invoice document
-        if self.invoice.status in [
+        if invoice.status in [
             APPROVED_BY_STAFF,
             APPROVED_BY_FINANCE,
             PAID,
             PAYMENT_FAILED,
-        ] and self.invoice.document.file.name.endswith(".pdf"):
+        ] and invoice.document.file.name.endswith(".pdf"):
             if activities := Activity.actions.filter(
                 Q(message__contains=APPROVED_BY_STAFF)
                 | Q(message__contains=APPROVED_BY_FINANCE),
                 related_content_type__model="invoice",
-                related_object_id=self.invoice.id,
+                related_object_id=invoice.id,
             ).visible_to(self.request.user):
                 approval_pdf_page = html_to_pdf(
                     render_to_string(
                         "application_projects/pdf_invoice_approved_page.html",
                         context={
-                            "invoice": self.invoice,
+                            "invoice": invoice,
                             "generated_at": timezone.now(),
                             "activities": activities,
                         },
                         request=self.request,
                     )
                 )
-                return merge_pdf(self.invoice.document.file, approval_pdf_page)
+                return merge_pdf(invoice.document.file, approval_pdf_page)
 
-        return self.invoice.document
+        return invoice.document
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")
@@ -661,11 +657,8 @@ class TagInvoiceView(InvoiceAccessMixin, View):
     form_class = InvoiceTagsForm
     template_name = "application_projects/modals/invoice_tag.html"
 
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return super().dispatch(request, *args, **kwargs)
-
     def get(self, *args, **kwargs):
+        self.object = self.get_object()
         form = self.form_class(instance=self.object)
         return render(
             self.request,
@@ -674,6 +667,7 @@ class TagInvoiceView(InvoiceAccessMixin, View):
         )
 
     def post(self, *args, **kwargs):
+        self.object = self.get_object()
         form = self.form_class(self.request.POST, instance=self.object)
         if form.is_valid():
             form.save()
