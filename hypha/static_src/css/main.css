@@ -10,7 +10,6 @@
 @import "./components/django-file-field.css" layer(components);
 @import "./components/html-diff.css" layer(components);
 @import "./components/layout.css" layer(components);
-@import "./components/nprogress.css" layer(components);
 @import "./components/table.css" layer(components);
 @import "./components/theme-toggle.css" layer(components);
 @import "./components/tinymce.css" layer(components);
