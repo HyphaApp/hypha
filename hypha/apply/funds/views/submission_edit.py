@@ -245,7 +245,6 @@ class BaseSubmissionEditView(UpdateView):
         initial = instance.raw_data
         for field_id in instance.file_field_ids:
             original_value = initial.get(field_id)
-            initial.pop(field_id + "-uploads", False)
             initial[field_id] = self.get_placeholder_file(original_value)
         kwargs["initial"] = initial
         return kwargs

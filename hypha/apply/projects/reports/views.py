@@ -231,7 +231,6 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
             initial = current.raw_data
             # Is the following needed to see the file in a friendly URL? Does not appear so. But needed to not blow up.
             for field_id in current.file_field_ids:
-                initial.pop(field_id + "-uploads", False)
                 initial[field_id] = get_placeholder_file(current.raw_data.get(field_id))
 
         return initial
