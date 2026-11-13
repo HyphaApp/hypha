@@ -24,6 +24,11 @@ class MixedFieldMetaclass(DeclarativeFieldsMetaclass):
         return new_class
 
 
+# Hidden fields added by django_file_form's FileFormMixin. They must always get
+# fresh values and should never be stored in or restored from form_data.
+FILE_FORM_INTERNAL_FIELDS = ("upload_url", "form_id", "s3_upload_dir")
+
+
 class StreamBaseForm(FileFormMixin, forms.Form, metaclass=MixedFieldMetaclass):
     def swap_fields_for_display(func):
         def wrapped(self, *args, **kwargs):
@@ -47,6 +52,18 @@ class StreamBaseForm(FileFormMixin, forms.Form, metaclass=MixedFieldMetaclass):
     def hidden_fields(self):
         # No hidden fields are returned by default because of MixedFieldMetaclass
         return [self[f] for f in self.fields.keys() if self[f].is_hidden]
+
+    def get_initial_for_field(self, field, field_name):
+        # Ignore stale values from stored form_data, e.g. an old upload_url.
+        if field_name in FILE_FORM_INTERNAL_FIELDS:
+            return field.initial
+        return super().get_initial_for_field(field, field_name)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        for field_name in FILE_FORM_INTERNAL_FIELDS:
+            cleaned_data.pop(field_name, None)
+        return cleaned_data
 
     def _update_files_data(self):
         """
