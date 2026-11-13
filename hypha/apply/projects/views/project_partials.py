@@ -213,7 +213,7 @@ def partial_get_invoice_status_table(
 
 @login_required
 @require_GET
-def partial_get_invoice_status(request: HttpRequest, pk: int, *args, **kwargs):
+def partial_get_invoice_status(request: HttpRequest, pk: int):
     """
     Partial to get the invoice status for invoice detail view
 
@@ -308,6 +308,7 @@ def partial_get_invoice_detail_actions(request: HttpRequest, pk: int):
 
 
 @login_required
+@require_GET
 def partial_get_invoice_tags(request: HttpRequest, pk: int):
     invoice = _get_accessible_invoice(request, pk)
     return render(

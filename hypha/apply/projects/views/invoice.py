@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views.generic import (
@@ -90,10 +91,13 @@ from ..tables import AdminInvoiceListTable, FinanceInvoiceTable
 class InvoiceAccessMixin(LoginRequiredMixin, UserPassesTestMixin):
     model = Invoice
 
+    @cached_property
+    def object(self) -> Invoice:
+        # Loaded lazily so the login check in dispatch runs first.
+        return get_object_or_404(Invoice, pk=self.kwargs["pk"])
+
     def get_object(self, queryset=None):
-        if not hasattr(self, "_invoice"):
-            self._invoice = get_object_or_404(Invoice, pk=self.kwargs["pk"])
-        return self._invoice
+        return self.object
 
     def test_func(self):
         invoice = self.get_object()
@@ -146,14 +150,12 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
         return {**kwargs, **extras}
 
     def get(self, *args, **kwargs):
-        self.object: Invoice = self.get_object()
         form_instance = self.form_class(instance=self.object, user=self.request.user)
         form_instance.name = self.context_name
 
         return render(self.request, self.template, self.get_context_data())
 
     def post(self, *args, **kwargs):
-        self.object: Invoice = self.get_object()
         # Don't process the post request if the user can't change the status
         old_status = self.object.status
         if not self.object.can_user_change_status(self.request.user):
@@ -373,7 +375,6 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         )
 
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
         form = self.get_form()
         if "delete" in form.data:
             return redirect("apply:projects:invoice-delete", pk=self.object.pk)
@@ -658,7 +659,6 @@ class TagInvoiceView(InvoiceAccessMixin, View):
     template_name = "application_projects/modals/invoice_tag.html"
 
     def get(self, *args, **kwargs):
-        self.object = self.get_object()
         form = self.form_class(instance=self.object)
         return render(
             self.request,
@@ -667,7 +667,6 @@ class TagInvoiceView(InvoiceAccessMixin, View):
         )
 
     def post(self, *args, **kwargs):
-        self.object = self.get_object()
         form = self.form_class(self.request.POST, instance=self.object)
         if form.is_valid():
             form.save()
