@@ -29,7 +29,12 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 from hypha.home.factories import ApplySiteFactory
 
 from ..forms import SetPendingForm
-from ..models.invoice import CHANGES_REQUESTED_BY_STAFF, DECLINED, SUBMITTED
+from ..models.invoice import (
+    APPROVED_BY_STAFF,
+    CHANGES_REQUESTED_BY_STAFF,
+    DECLINED,
+    SUBMITTED,
+)
 from ..models.project import (
     APPROVE,
     CONTRACTING,
@@ -896,7 +901,7 @@ class TestStaffDetailInvoiceStatus(BaseViewTestCase):
         response = self.client.get(
             reverse(
                 "apply:projects:partial-invoice-status",
-                kwargs={"pk": invoice.project.pk, "invoice_pk": invoice.pk},
+                kwargs={"pk": invoice.pk},
             ),
             secure=True,
             follow=True,
@@ -949,13 +954,56 @@ class TestApplicantDetailInvoiceStatus(BaseViewTestCase):
         response = self.client.get(
             reverse(
                 "apply:projects:partial-invoice-status",
-                kwargs={"pk": invoice.project.pk, "invoice_pk": invoice.pk},
+                kwargs={"pk": invoice.pk},
             ),
             secure=True,
             follow=True,
         )
 
         self.assertContains(response, invoice_added_msg)
+
+    def test_other_cant_get_partials(self):
+        invoice = InvoiceFactory()
+        for url_name in [
+            "partial-invoice-status",
+            "partial-invoice-detail-actions",
+            "partial-invoice-tags",
+        ]:
+            response = self.client.get(
+                reverse(f"apply:projects:{url_name}", kwargs={"pk": invoice.pk}),
+                secure=True,
+            )
+            self.assertEqual(response.status_code, 403, url_name)
+
+    def test_can_get_partials(self):
+        invoice = InvoiceFactory(project__user=self.user)
+        for url_name in [
+            "partial-invoice-status",
+            "partial-invoice-detail-actions",
+            "partial-invoice-tags",
+        ]:
+            response = self.client.get(
+                reverse(f"apply:projects:{url_name}", kwargs={"pk": invoice.pk}),
+                secure=True,
+            )
+            self.assertEqual(response.status_code, 200, url_name)
+
+
+class TestAnonEditInvoiceView(BaseViewTestCase):
+    base_view_name = "invoice-edit"
+    url_name = "funds:projects:{}"
+    user_factory = AnonymousUser
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.pk}
+
+    def test_anonymous_can_not_access(self):
+        invoice = InvoiceFactory(project__user=ApplicantFactory())
+        response = self.get_page(invoice)
+
+        expected_redirect = f"{reverse('users:passwordless_login_signup')}?next={reverse('apply:projects:invoice-edit', kwargs={'pk': invoice.pk})}"
+
+        self.assertRedirects(response, expected_redirect)
 
 
 class TestApplicantEditInvoiceView(BaseViewTestCase):
@@ -1021,6 +1069,16 @@ class TestApplicantEditInvoiceView(BaseViewTestCase):
         self.assertEqual(
             invoice.supporting_documents.first().document, supporting_document.document
         )
+
+    def test_not_editable_redirects_to_invoice(self):
+        invoice = InvoiceFactory(project__user=self.user, status=APPROVED_BY_STAFF)
+        response = self.get_page(invoice)
+        self.assertRedirects(response, invoice.get_absolute_url())
+
+    def test_other_cant_access(self):
+        invoice = InvoiceFactory()
+        response = self.get_page(invoice)
+        self.assertEqual(response.status_code, 403)
 
 
 class TestStaffEditInvoiceView(BaseViewTestCase):
@@ -1181,7 +1239,7 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.client.get(
             reverse(
                 "apply:projects:partial-invoice-status",
-                kwargs={"pk": project.pk, "invoice_pk": invoice.pk},
+                kwargs={"pk": invoice.pk},
             ),
             secure=True,
             follow=True,
@@ -1203,7 +1261,7 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         response = self.client.get(
             reverse(
                 "apply:projects:partial-invoice-status",
-                kwargs={"pk": project.pk, "invoice_pk": invoice.pk},
+                kwargs={"pk": invoice.pk},
             ),
             secure=True,
             follow=True,
@@ -1260,6 +1318,21 @@ class TestStaffInvoiceDocumentPrivateMedia(BaseViewTestCase):
         invoice = InvoiceFactory()
         response = self.get_page(invoice)
         self.assertContains(response, invoice.document.read())
+
+
+class TestAnonInvoiceDocumentPrivateMedia(BaseViewTestCase):
+    base_view_name = "invoice-document"
+    url_name = "funds:projects:{}"
+    user_factory = AnonymousUser
+
+    def get_kwargs(self, instance):
+        return {"pk": instance.pk}
+
+    def test_redirects_to_login(self):
+        invoice = InvoiceFactory()
+        response = self.get_page(invoice)
+        expected_redirect = f"{reverse('users:passwordless_login_signup')}?next={reverse('apply:projects:invoice-document', kwargs={'pk': invoice.pk})}"
+        self.assertRedirects(response, expected_redirect)
 
 
 class TestApplicantInvoiceDocumentPrivateMedia(BaseViewTestCase):

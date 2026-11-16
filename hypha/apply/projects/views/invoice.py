@@ -4,9 +4,8 @@ from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
 from django.http import Http404, HttpResponse
@@ -14,6 +13,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views.generic import (
@@ -88,29 +88,33 @@ from ..service_utils import batch_update_invoices_status, handle_tasks_on_invoic
 from ..tables import AdminInvoiceListTable, FinanceInvoiceTable
 
 
-@method_decorator(login_required, name="dispatch")
-class InvoiceAccessMixin(UserPassesTestMixin):
+class InvoiceAccessMixin(LoginRequiredMixin, UserPassesTestMixin):
     model = Invoice
 
-    def get_object(self):
+    @cached_property
+    def object(self) -> Invoice:
+        # Loaded lazily so the login check in dispatch runs first.
         return get_object_or_404(Invoice, pk=self.kwargs["pk"])
 
+    def get_object(self, queryset=None):
+        return self.object
+
     def test_func(self):
+        invoice = self.get_object()
+
         if self.request.user.is_apply_staff:
             return True
 
         if self.request.user.is_finance:
             return True
 
-        if self.request.user == self.get_object().project.user:
+        if self.request.user == invoice.project.user:
             return True
 
         if self.request.user.is_applicant:
-            co_applicant = (
-                self.get_object()
-                .project.submission.co_applicants.filter(user=self.request.user)
-                .first()
-            )
+            co_applicant = invoice.project.submission.co_applicants.filter(
+                user=self.request.user
+            ).first()
             if (
                 co_applicant
                 and CoApplicantProjectPermission.INVOICES
@@ -125,12 +129,7 @@ class InvoiceAccessMixin(UserPassesTestMixin):
 class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
     form_class = ChangeInvoiceStatusForm
     context_name = "change_invoice_status"
-    model = Invoice
     template = "application_projects/modals/invoice_status_update.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        self.object: Invoice = self.get_object()
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         if not (form := kwargs.get("form")):
@@ -228,16 +227,13 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
         )
 
 
-class DeleteInvoiceView(DeleteView):
-    model = Invoice
+class DeleteInvoiceView(InvoiceAccessMixin, DeleteView):
     template_name = "application_projects/modals/invoice_confirm_delete.html"
 
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if not self.object.can_user_delete(request.user):
-            raise PermissionDenied
-
-        return super().dispatch(request, *args, **kwargs)
+    def test_func(self):
+        """Ensure that the user can not only access the invoice but delete it too"""
+        invoice = self.get_object()
+        return super().test_func() and invoice.can_user_delete(self.request.user)
 
     @transaction.atomic()
     def form_valid(self, form):
@@ -349,11 +345,17 @@ class CreateInvoiceView(SuccessMessageMixin, CreateView):
 class EditInvoiceView(InvoiceAccessMixin, UpdateView):
     form_class = EditInvoiceForm
 
-    def dispatch(self, request, *args, **kwargs):
+    def test_func(self):
+        """Ensure that the user can not only access the invoice but edit it too"""
         invoice = self.get_object()
-        if not invoice.can_user_edit(request.user):
-            return redirect(invoice)
-        return super().dispatch(request, *args, **kwargs)
+        return super().test_func() and invoice.can_user_edit(self.request.user)
+
+    def handle_no_permission(self):
+        # Users who can access the invoice but not edit it, e.g. after its
+        # status changed, are sent back to the invoice.
+        if self.request.user.is_authenticated and super().test_func():
+            return redirect(self.get_object())
+        return super().handle_no_permission()
 
     def buttons(self):
         yield ("submit", "btn-primary", _("Update"))
@@ -373,7 +375,6 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         )
 
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
         form = self.get_form()
         if "delete" in form.data:
             return redirect("apply:projects:invoice-delete", pk=self.object.pk)
@@ -458,71 +459,41 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         return response
 
 
-@method_decorator(login_required, name="dispatch")
-class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
-    raise_exception = True
-
-    def dispatch(self, *args, **kwargs):
-        self.invoice = get_object_or_404(Invoice, pk=self.kwargs["pk"])
-
-        return super().dispatch(*args, **kwargs)
-
+class InvoicePrivateMedia(InvoiceAccessMixin, PrivateMediaView):
     def get_media(self, *args, **kwargs):
+        invoice = self.get_object()
         # check if the request is for a supporting document
         if file_pk := kwargs.get("file_pk"):
-            document = get_object_or_404(self.invoice.supporting_documents, pk=file_pk)
+            document = get_object_or_404(invoice.supporting_documents, pk=file_pk)
             return document.document
 
         # if not, then it's for invoice document
-        if self.invoice.status in [
+        if invoice.status in [
             APPROVED_BY_STAFF,
             APPROVED_BY_FINANCE,
             PAID,
             PAYMENT_FAILED,
-        ] and self.invoice.document.file.name.endswith(".pdf"):
+        ] and invoice.document.file.name.endswith(".pdf"):
             if activities := Activity.actions.filter(
                 Q(message__contains=APPROVED_BY_STAFF)
                 | Q(message__contains=APPROVED_BY_FINANCE),
                 related_content_type__model="invoice",
-                related_object_id=self.invoice.id,
+                related_object_id=invoice.id,
             ).visible_to(self.request.user):
                 approval_pdf_page = html_to_pdf(
                     render_to_string(
                         "application_projects/pdf_invoice_approved_page.html",
                         context={
-                            "invoice": self.invoice,
+                            "invoice": invoice,
                             "generated_at": timezone.now(),
                             "activities": activities,
                         },
                         request=self.request,
                     )
                 )
-                return merge_pdf(self.invoice.document.file, approval_pdf_page)
+                return merge_pdf(invoice.document.file, approval_pdf_page)
 
-        return self.invoice.document
-
-    def test_func(self):
-        if self.request.user.is_apply_staff:
-            return True
-
-        if self.request.user.is_finance:
-            return True
-
-        if self.request.user == self.invoice.project.user:
-            return True
-
-        if self.request.user.is_applicant:
-            co_applicant = self.invoice.project.submission.co_applicants.filter(
-                user=self.request.user
-            ).first()
-            if (
-                co_applicant
-                and CoApplicantProjectPermission.INVOICES
-                in co_applicant.project_permission
-            ):
-                return True
-
-        return False
+        return invoice.document
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")
@@ -686,10 +657,6 @@ class InvoiceListView(SingleTableMixin, FilterView, DelegateableListView):
 class TagInvoiceView(InvoiceAccessMixin, View):
     form_class = InvoiceTagsForm
     template_name = "application_projects/modals/invoice_tag.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         form = self.form_class(instance=self.object)
