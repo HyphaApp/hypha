@@ -48,8 +48,8 @@ class UserFilterSet(WagtailFilterSet):
     )
     roles = django_filters.ModelChoiceFilter(
         queryset=Group.objects.all(),
+        field_name="groups",
         label=gettext_lazy("Roles"),
-        method="filter_by_roles",
     )
     status = django_filters.ChoiceFilter(
         choices=STATUS_CHOICES, label=gettext_lazy("Status"), method="filter_by_status"
@@ -64,9 +64,6 @@ class UserFilterSet(WagtailFilterSet):
         # the related field workaround in Wagtail's RelatedFilterMixin (wagtail#6616)
         # is not needed.
         super().__init__(*args, **kwargs)
-
-    def filter_by_roles(self, queryset, name, value):
-        return queryset.filter(groups=value)
 
     def filter_by_status(self, queryset, name, value):
         if value == "active":
