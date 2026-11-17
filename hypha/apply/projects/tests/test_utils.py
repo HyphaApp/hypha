@@ -35,6 +35,7 @@ from ..models.project import (
 from ..utils import (
     get_invoice_public_status,
     get_invoice_table_status,
+    get_placeholder_file,
     get_project_public_status,
     get_project_status_choices,
     get_project_status_display_value,
@@ -199,3 +200,11 @@ class TestGetProjectStatusDisplayValue(TestCase):
     def test_unknown_status_raises(self):
         with self.assertRaises(KeyError):
             get_project_status_display_value("not-a-status")
+
+
+class TestGetPlaceholderFile(TestCase):
+    def test_no_file_returns_none(self):
+        self.assertIsNone(get_placeholder_file(None))
+
+    def test_empty_list_returns_empty_list(self):
+        self.assertEqual(get_placeholder_file([]), [])

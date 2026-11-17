@@ -66,7 +66,7 @@ class AccessFormData:
             )
 
         if isinstance(file, PlaceholderUploadedFile):
-            return cls.stream_file_class(
+            stream_file = cls.stream_file_class(
                 instance,
                 field,
                 None,
@@ -74,6 +74,10 @@ class AccessFormData:
                 filename=file.name,
                 storage=cls.storage_class(),
             )
+            # An existing file kept in an edit form, it is already in storage.
+            # Without this save() would make a copy of it with a new name.
+            stream_file._committed = True
+            return stream_file
 
         # This fixes a backwards compatibility issue with #507
         # Once every application has been re-saved it should be possible to remove it
@@ -101,10 +105,13 @@ class AccessFormData:
             if isinstance(field.block, UploadableMediaBlock):
                 # {field_id}-uploads contains all files data for that field
                 # get all uploaded files(existing + new)
-                uploaded_files = data.get(field.id + "-uploads", "")
+                uploads_key = field.id + "-uploads"
+                uploaded_files = data.get(uploads_key)
+                # Only used here, it should not be stored in form_data.
+                self.form_data.pop(uploads_key, None)
 
                 try:
-                    uploads_data = json.loads(uploaded_files)
+                    uploads_data = json.loads(uploaded_files or "")
                 except json.JSONDecodeError:
                     uploads_data = []
 
@@ -122,6 +129,25 @@ class AccessFormData:
 
                 # uploaded file ids to check for removed/deleted files
                 uploaded_file_ids = [f["id"] for f in uploads_data if "id" in f]
+
+                if uploaded_files is None:
+                    # Not posted from a file form, e.g. a plain re-save.
+                    # The files in data are the ones to keep.
+                    files = self.process_file(self, field, data.get(field.id, []))
+                    files = files if isinstance(files, list) else [files]
+                    uploaded_file_ids = [f.name for f in files]
+                    existing_ids = [
+                        f.name
+                        for f in (
+                            existing_file
+                            if isinstance(existing_file, list)
+                            else [existing_file]
+                        )
+                        if f
+                    ]
+                    new_file_upload = any(
+                        f not in existing_ids for f in uploaded_file_ids
+                    )
 
                 # if any existing file id is not in uploaded file ids that means it has been deleted
                 # remove deleted files from existing files
