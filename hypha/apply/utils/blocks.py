@@ -188,10 +188,6 @@ class CustomFormFieldsBlock(StreamBlock):
 class SingleIncludeStatic(StaticBlock):
     """Helper block which displays additional information about the must include block."""
 
-    def __init__(self, *args, description="", **kwargs):
-        self.description = description
-        super().__init__(*args, **kwargs)
-
     class Meta:
         admin_text = _("Must be included in the form only once.")
 
@@ -204,9 +200,7 @@ class SingleIncludeMixin:
         info_name = _("{} Field").format(
             self._meta_class.label if self._meta_class.label else self.name.title()
         )
-        child_blocks = [
-            ("info", SingleIncludeStatic(label=info_name, description=self.description))
-        ]
+        child_blocks = [("info", SingleIncludeStatic(label=info_name))]
         super().__init__(child_blocks, *args, **kwargs)
 
 
