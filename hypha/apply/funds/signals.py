@@ -5,8 +5,30 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from hypha.apply.funds.models.application_revisions import ApplicationRevision
+from hypha.apply.funds.models.mixins import AccessFormData
 from hypha.apply.funds.models.submissions import ApplicationSubmission
 from hypha.apply.funds.utils import delete_directory
+
+
+def revision_files_to_delete(revision):
+    """
+    Files of the revision that no other revision or the submission uses.
+
+    Files kept between edits are not copied, revisions share them.
+    """
+    submission = revision.submission
+    others = [submission, *submission.revisions.exclude(pk=revision.pk)]
+    in_use = set()
+    for other in others:
+        for value in other.extract_files().values():
+            in_use |= AccessFormData._file_names(value)
+
+    files = []
+    for value in revision.extract_files().values():
+        for file in value if isinstance(value, list) else [value]:
+            if file and file.name not in in_use:
+                files.append(file)
+    return files
 
 
 @receiver(signal=pre_delete, sender=ApplicationSubmission)
@@ -27,12 +49,8 @@ def delete_attachments(sender, instance=None, **kwargs):
     # This will be called anytime a deletion is ran, so ensure the object being deleted
     # can have attachments
     if issubclass(sender, ApplicationRevision):
-        files = instance.extract_files()
-        for value in files.values():
-            if not isinstance(value, list):  # Single file field
-                value.delete()
-            else:  # Multiple file fields
-                [sub_file.delete() for sub_file in value]
+        for file in revision_files_to_delete(instance):
+            file.delete()
     elif issubclass(sender, ApplicationSubmission):
         submission_attachment_path = f"submission/{instance.id}"
 
