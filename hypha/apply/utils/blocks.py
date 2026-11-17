@@ -112,7 +112,9 @@ class CustomFormFieldsBlock(StreamBlock):
             all_errors = list(e.non_block_errors.as_data())
 
         block_types = [block.block_type for block in value]
-        missing = set(self.required_block_names) - set(block_types)
+        missing = [
+            name for name in self.required_block_names if name not in block_types
+        ]
 
         duplicates = [
             name

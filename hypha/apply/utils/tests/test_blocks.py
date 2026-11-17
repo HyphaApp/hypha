@@ -5,6 +5,7 @@ from wagtail.blocks import StreamBlockValidationError
 from hypha.apply.funds.blocks import ApplicationCustomFormFieldsBlock
 from hypha.apply.projects.blocks import ProjectFormCustomFormFieldsBlock
 from hypha.apply.stream_forms.blocks import CharFieldBlock
+from hypha.apply.utils.blocks import prettify_names
 
 
 def char_block(**kwargs):
@@ -48,6 +49,19 @@ class TestCustomFormFieldsBlockClean(SimpleTestCase):
         self.assertIn(
             "You are missing the following required fields",
             error.non_block_errors[0],
+        )
+
+    def test_missing_required_blocks_are_listed_in_order(self):
+        block = ApplicationCustomFormFieldsBlock()
+        error = self.clean_errors(block, [char_block()])
+        self.assertGreater(len(block.required_block_names), 1)
+        self.assertEqual(
+            list(error.non_block_errors),
+            [
+                "You are missing the following required fields: {}".format(
+                    ", ".join(prettify_names(block.required_block_names))
+                )
+            ],
         )
 
     def test_duplicates_are_marked_on_each_block(self):
