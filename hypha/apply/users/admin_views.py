@@ -101,6 +101,7 @@ class CustomUserIndexView(UserIndexView):
                 "name",
                 accessor=lambda u: get_user_display_name(u),
                 label=gettext_lazy("Name"),
+                sort_key="name",
                 get_url=self.get_edit_url,
                 classname="name",
             ),
@@ -165,7 +166,7 @@ class CustomUserIndexView(UserIndexView):
         if self.ordering == "name":
             return queryset.order_by(Lower("display_name"))
         if self.ordering == "-name":
-            return queryset.order_by(Lower("display_name"))
+            return queryset.order_by(Lower("display_name").desc())
         return super().order_queryset(queryset)
 
 
