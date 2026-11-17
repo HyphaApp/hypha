@@ -1,10 +1,8 @@
 from django.urls import include, path
 from django.views.generic import RedirectView
 
-from hypha.apply.projects.views.project import (
-    ProjectSOWEditView,
-    project_detail_redirect,
-)
+from hypha.apply.projects.views.project import project_detail_redirect
+from hypha.apply.projects.views.project_forms import ProjectSOWEditView
 
 from .reports.views import ReportDateAddView, ReportFrequencyUpdate
 from .views import (
