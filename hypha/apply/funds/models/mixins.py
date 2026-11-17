@@ -1,6 +1,3 @@
-import json
-import uuid
-
 from django.core.files import File
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
@@ -66,7 +63,7 @@ class AccessFormData:
             )
 
         if isinstance(file, PlaceholderUploadedFile):
-            stream_file = cls.stream_file_class(
+            return cls.stream_file_class(
                 instance,
                 field,
                 None,
@@ -74,10 +71,6 @@ class AccessFormData:
                 filename=file.name,
                 storage=cls.storage_class(),
             )
-            # An existing file kept in an edit form, it is already in storage.
-            # Without this save() would make a copy of it with a new name.
-            stream_file._committed = True
-            return stream_file
 
         # This fixes a backwards compatibility issue with #507
         # Once every application has been re-saved it should be possible to remove it
@@ -101,87 +94,54 @@ class AccessFormData:
             return cls.stream_file(instance, field, file)
 
     def process_file_data(self, data, latest_existing_data=None):
+        """
+        Store new files and keep existing ones.
+
+        Files already stored under the instance's own path are kept as they are,
+        everything else is saved. Files kept in an edit form are posted back as
+        placeholders, those are only accepted if they belong to the instance,
+        i.e. are stored under its path or are in latest_existing_data.
+        """
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
-                # {field_id}-uploads contains all files data for that field
-                # get all uploaded files(existing + new)
-                uploads_key = field.id + "-uploads"
-                uploaded_files = data.get(uploads_key)
-                # Only used here, it should not be stored in form_data.
-                self.form_data.pop(uploads_key, None)
+                # Only used by the file form, it should not be stored in form_data.
+                self.form_data.pop(field.id + "-uploads", None)
 
-                try:
-                    uploads_data = json.loads(uploaded_files or "")
-                except json.JSONDecodeError:
-                    uploads_data = []
-
-                new_file_upload = False
-                for file_data in uploads_data:
-                    # id can be a path or a uuid, where path can exist only for existing files so uuid means a new file
-                    if self._is_valid_uuid(file_data.get("id", None)):
-                        new_file_upload = True  # if any new file is uploaded we have to process and save the files
-
-                # get existing files from instance
-                if latest_existing_data:
-                    existing_file = latest_existing_data.get(field.id, [])
-                else:
-                    existing_file = None
-
-                # uploaded file ids to check for removed/deleted files
-                uploaded_file_ids = [f["id"] for f in uploads_data if "id" in f]
-
-                if uploaded_files is None:
-                    # Not posted from a file form, e.g. a plain re-save.
-                    # The files in data are the ones to keep.
-                    files = self.process_file(self, field, data.get(field.id, []))
-                    files = files if isinstance(files, list) else [files]
-                    uploaded_file_ids = [f.name for f in files]
-                    existing_ids = [
-                        f.name
-                        for f in (
-                            existing_file
-                            if isinstance(existing_file, list)
-                            else [existing_file]
-                        )
-                        if f
-                    ]
-                    new_file_upload = any(
-                        f not in existing_ids for f in uploaded_file_ids
-                    )
-
-                # if any existing file id is not in uploaded file ids that means it has been deleted
-                # remove deleted files from existing files
-                if existing_file:
-                    if isinstance(existing_file, list):
-                        existing_file = [
-                            f for f in existing_file if f.name in uploaded_file_ids
-                        ]
-                    else:
-                        if existing_file.name not in uploaded_file_ids:
-                            existing_file = None
-
-                # save only if there is any new file uploaded or no existing file
-                if not existing_file or new_file_upload:
-                    new_file = data.get(field.id, [])
-                    new_stream_file = self.process_file(self, field, new_file)
+                known_names = self._file_names(
+                    (latest_existing_data or {}).get(field.id)
+                )
+                value = data.get(field.id, [])
+                is_list = isinstance(value, list)
+                files = []
+                for file in value if is_list else [value]:
+                    stream_file = self.stream_file(self, field, file)
+                    if not stream_file:
+                        continue
+                    if (
+                        isinstance(file, PlaceholderUploadedFile)
+                        and not stream_file.is_own_file()
+                        and stream_file.name not in known_names
+                    ):
+                        # The placeholder path is posted by the client, never
+                        # trust it to point to a file of another instance.
+                        continue
                     try:
-                        new_stream_file.save()
-                    except (AttributeError, FileNotFoundError):
-                        try:
-                            for f in new_stream_file:
-                                f.save()
-                        except FileNotFoundError:
-                            pass
-                    self.form_data[field.id] = new_stream_file
-                else:
-                    self.form_data[field.id] = existing_file
+                        stream_file.save()
+                    except FileNotFoundError:
+                        pass
+                    files.append(stream_file)
 
-    def _is_valid_uuid(self, value):
-        try:
-            uuid.UUID(value)
-            return True
-        except (ValueError, TypeError):
-            return False
+                if is_list:
+                    self.form_data[field.id] = files
+                else:
+                    self.form_data[field.id] = files[0] if files else []
+
+    @staticmethod
+    def _file_names(files):
+        if not files:
+            return set()
+        files = files if isinstance(files, list) else [files]
+        return {f.name if isinstance(f, File) else f.get("name") for f in files}
 
     def extract_files(self):
         files = {}
@@ -212,6 +172,8 @@ class AccessFormData:
             if isinstance(block, UploadableMediaBlock):
                 field_id = field_data.get("id")
                 if field_id:
+                    # Left over in older form_data, it is only used by the file form.
+                    data.pop(field_id + "-uploads", None)
                     field = form_fields[i]
                     file = data.get(field_id, [])
                     data[field_id] = cls.process_file(instance, field, file)

@@ -183,12 +183,13 @@ class ProjectForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
 
     def save(self, *args, **kwargs):
         self.instance.form_fields = kwargs.pop("pf_form_fields", {})
+        existing_data = self.instance.form_data
         self.instance.form_data = {
             field: self.cleaned_data[field]
             for field in self.instance.question_field_ids
             if field in self.cleaned_data
         }
-        self.instance.process_file_data(self.cleaned_data)
+        self.instance.process_file_data(self.cleaned_data, existing_data)
         return super().save(*args, **kwargs)
 
 
@@ -217,12 +218,13 @@ class ProjectSOWForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
             project=kwargs.pop("project", None)
         )
         self.instance.form_fields = kwargs.pop("sow_form_fields", {})
+        existing_data = self.instance.form_data
         self.instance.form_data = {
             field: self.cleaned_data[field]
             for field in self.instance.question_field_ids
             if field in self.cleaned_data
         }
-        self.instance.process_file_data(self.cleaned_data)
+        self.instance.process_file_data(self.cleaned_data, existing_data)
         return super().save(*args, **kwargs)
 
 
