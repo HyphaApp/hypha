@@ -177,6 +177,8 @@ def export_invoices_to_csv(invoices_iter) -> str:
 
 
 def get_placeholder_file(initial_file):
+    if initial_file is None:
+        return None
     if not isinstance(initial_file, list):
         return PlaceholderUploadedFile(
             initial_file.filename, size=initial_file.size, file_id=initial_file.name

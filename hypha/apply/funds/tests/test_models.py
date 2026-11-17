@@ -1,5 +1,7 @@
 import itertools
+import json
 import os
+import uuid
 from datetime import date, timedelta
 from unittest.mock import ANY, patch
 
@@ -10,6 +12,7 @@ from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django_file_form.models import PlaceholderUploadedFile
 
 from hypha.apply.funds.blocks import EmailBlock, FullNameBlock
 from hypha.apply.funds.models import (
@@ -23,6 +26,7 @@ from hypha.apply.funds.workflows.constants import DRAFT_STATE
 from hypha.apply.funds.workflows.registry import Request
 from hypha.apply.review.options import AGREE, MAYBE, NO
 from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
+from hypha.apply.stream_forms.testing.factories import UploadedFile
 from hypha.apply.users.tests.factories import StaffFactory
 from hypha.apply.utils.testing import make_request
 
@@ -553,6 +557,71 @@ class TestApplicationSubmission(TestCase):
                     check_generated_file_path(stream_file, file_id=file_id)
             else:
                 check_generated_file_path(file_response, file_id=file_id)
+
+    def test_file_uploads_data_not_stored(self):
+        submission = ApplicationSubmissionFactory(with_files=True)
+        uploads_keys = [f"{field_id}-uploads" for field_id in submission.file_field_ids]
+        for key in uploads_keys:
+            submission.form_data[key] = "[]"
+
+        submission.save()
+
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        for key in uploads_keys:
+            self.assertNotIn(key, submission.form_data)
+
+    def test_resave_keeps_existing_files(self):
+        submission = ApplicationSubmissionFactory(with_files=True)
+
+        def file_names(submission):
+            names = {}
+            for field_id in submission.file_field_ids:
+                files = submission.data(field_id)
+                files = files if isinstance(files, list) else [files]
+                names[field_id] = [f.name for f in files]
+            return names
+
+        # The first save syncs form_data with the live revision file paths.
+        ApplicationSubmission.objects.get(id=submission.id).save()
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        names_before = file_names(submission)
+
+        submission.save()
+
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual(file_names(submission), names_before)
+
+    def test_edit_keeps_existing_file_name_when_adding_file(self):
+        submission = ApplicationSubmissionFactory(with_files=True)
+        # The first save syncs form_data with the live revision file paths.
+        ApplicationSubmission.objects.get(id=submission.id).save()
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        field_id = next(
+            field_id
+            for field_id in submission.file_field_ids
+            if isinstance(submission.data(field_id), list)
+        )
+        kept, removed = submission.data(field_id)
+
+        # Mimic an edit form: one file kept, one removed and one new added.
+        new_file = UploadedFile("new.pdf", b"new content")
+        submission.form_data[field_id] = [
+            PlaceholderUploadedFile(kept.filename, size=0, file_id=kept.name),
+            new_file,
+        ]
+        submission.form_data[f"{field_id}-uploads"] = json.dumps(
+            [
+                {"id": kept.name, "name": kept.name, "type": "existing"},
+                {"id": str(uuid.uuid4()), "name": "new.pdf", "type": "tus"},
+            ]
+        )
+        submission.save()
+
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        names = [f.name for f in submission.data(field_id)]
+        self.assertEqual(len(names), 2)
+        self.assertIn(kept.name, names)
+        self.assertNotIn(removed.name, names)
 
     def test_create_revision_on_create(self):
         submission = ApplicationSubmissionFactory()
