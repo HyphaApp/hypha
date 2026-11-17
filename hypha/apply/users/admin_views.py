@@ -60,16 +60,13 @@ class UserFilterSet(WagtailFilterSet):
         fields = ["roles", "status", "is_superuser"]
 
     def __init__(self, *args, is_searching=False, **kwargs):
-        # Same workaround as Wagtail's RelatedFilterMixin (wagtail#6616), a filter on a
-        # related field combined with search needs a pk subquery.
-        self.is_searching = is_searching
+        # The User model is not search indexed so search is a plain ORM filter and
+        # the related field workaround in Wagtail's RelatedFilterMixin (wagtail#6616)
+        # is not needed.
         super().__init__(*args, **kwargs)
 
     def filter_by_roles(self, queryset, name, value):
-        filtered = queryset.filter(groups__name=value)
-        if self.is_searching:
-            return queryset.filter(pk__in=list(filtered.values_list("pk", flat=True)))
-        return filtered
+        return queryset.filter(groups=value)
 
     def filter_by_status(self, queryset, name, value):
         if value == "active":
@@ -90,6 +87,7 @@ class CustomUserIndexView(UserIndexView):
         "date_joined",
         "last_login",
     ]
+    search_fields = ["email", "full_name"]
 
     @cached_property
     def columns(self):
