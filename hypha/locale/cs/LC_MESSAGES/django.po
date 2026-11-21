@@ -9,7 +9,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-10-27 20:49+0000\n"
 "PO-Revision-Date: 2026-11-21 11:24+0000\n"
-"Last-Translator: Fredrik Jonsson <frjo@users.noreply.hosted.weblate.org>\n"
+"Last-Translator: Jiří Podhorecký "
+"<trendspotter@users.noreply.hosted.weblate.org>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "cs/>\n"
 "Language: cs\n"
@@ -465,8 +466,7 @@ msgstr ""
 msgid ""
 "A proposal has been submitted for review: <{link}|{source.title_text_display}"
 ">"
-msgstr ""
-"Návrh byl předložen k přezkoumání: <{link}|{source.title_text_display}>"
+msgstr "Návrh byl předložen k přezkoumání: <{link}|{source.title_text_display}>"
 
 #: hypha/apply/activity/adapters/slack.py:58
 #, python-brace-format
@@ -592,8 +592,7 @@ msgstr "{user} schválil projekt <{link}|{source.title}>"
 msgid ""
 "{user} has requested changes for project acceptance on <{link}|{source.title}"
 ">"
-msgstr ""
-"{user} požádal o změny pro přijetí projektu dne <{link}|{source.title}>"
+msgstr "{user} požádal o změny pro přijetí projektu dne <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:106
 #, python-brace-format
@@ -3103,8 +3102,8 @@ msgid ""
 "A determination of \"{current}\" exists but you tried to progress as "
 "\"{target}\""
 msgstr ""
-"Rozhodnutí o \"{current}\" existuje, ale pokusili jste se postoupit jako "
-"\"{target}\""
+"Rozhodnutí o \"{current}\" existuje, ale pokusili jste se postoupit jako \""
+"{target}\""
 
 #: hypha/apply/flags/models.py:13 hypha/apply/funds/tables.py:628
 #: hypha/apply/users/roles.py:6
@@ -3417,8 +3416,7 @@ msgstr "Jak se jmenujete?"
 
 #: hypha/apply/funds/blocks.py:221
 msgid "We will use this name when we communicate with you about your proposal."
-msgstr ""
-"Toto jméno budeme používat při komunikaci s vámi ohledně vašeho návrhu."
+msgstr "Toto jméno budeme používat při komunikaci s vámi ohledně vašeho návrhu."
 
 #: hypha/apply/funds/blocks.py:238
 #, fuzzy
@@ -3493,8 +3491,7 @@ msgstr "Externí hodnotitelé"
 
 #: hypha/apply/funds/forms.py:177
 msgid "Can't unassign, just change, because review already submitted"
-msgstr ""
-"Nelze zrušit přiřazení, pouze změnit, protože recenze již byla odeslána"
+msgstr "Nelze zrušit přiřazení, pouze změnit, protože recenze již byla odeslána"
 
 #: hypha/apply/funds/forms.py:183 hypha/apply/funds/forms.py:295
 msgid "Users cannot be assigned to multiple roles."
@@ -4296,8 +4293,7 @@ msgstr "Výchozí hodnota Ano/Ne"
 
 #: hypha/apply/funds/models/screening.py:17
 msgid "Only one Yes and No screening decision can be set as default."
-msgstr ""
-"Jako výchozí lze nastavit pouze jedno rozhodnutí o screeningu Ano a Ne."
+msgstr "Jako výchozí lze nastavit pouze jedno rozhodnutí o screeningu Ano a Ne."
 
 #: hypha/apply/funds/models/screening.py:23
 #: hypha/apply/funds/templates/funds/includes/screening_status_block.html:8
@@ -8921,8 +8917,7 @@ msgstr "Volitelně"
 
 #: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:34
 msgid "No reviewer roles configured. Please add roles in "
-msgstr ""
-"Nejsou nakonfigurovány žádné role hodnotitele. Přidejte prosím role do "
+msgstr "Nejsou nakonfigurovány žádné role hodnotitele. Přidejte prosím role do "
 
 #: hypha/apply/projects/templates/application_projects/modals/submit_contracting_documents.html:2
 msgid "Submit contracting documents"
@@ -10270,8 +10265,8 @@ msgid ""
 "#{related.source.application_id}</span><br>{related.user} assigned you a "
 "comment: <q class=\"text-fg-muted italic align-bottom\">{msg}</q>"
 msgstr ""
-"<span class=\"text-xs\">{related.source.fund_name} "
-"#{related.source.application_id}</span><br>{related.user} vám přidělil "
+"<span class=\"text-xs\">{related.source.fund_name} #"
+"{related.source.application_id}</span><br>{related.user} vám přidělil "
 "komentář: <q class=\"text-fg-muted italic align-bottom\">{msg}</q>"
 
 #: hypha/apply/todo/options.py:82
@@ -10281,8 +10276,8 @@ msgid ""
 "span><br>A draft application <span class=\"truncate inline-block max-w-32 "
 "align-bottom \">\"{related.title}\"</span> is waiting to be submitted"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Koncept žádosti <span class=\"truncate inline-block max-w-32 align-"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Koncept žádosti <span class=\"truncate inline-block max-w-32 align-"
 "bottom \">\"{related.title}\"</span> čeká na odeslání"
 
 #: hypha/apply/todo/options.py:90
@@ -10293,10 +10288,10 @@ msgid ""
 "submission <span class=\"truncate inline-block max-w-32 align-"
 "bottom\">\"{related.submission.title}\"</span> is waiting to be submitted"
 msgstr ""
-"<span class=\"text-xs\">{related.submission.fund_name} "
-"#{related.submission.application_id}</span><br>Koncept rozhodnutí k odeslání "
-"<span class=\"truncate inline-block max-w-32 align-"
-"bottom\">\"{related.submission.title}\"</span> čeká na odeslání"
+"<span class=\"text-xs\">{related.submission.fund_name} #"
+"{related.submission.application_id}</span><br>Koncept rozhodnutí k odeslání "
+"<span class=\"truncate inline-block max-w-32 align-bottom\">\""
+"{related.submission.title}\"</span> čeká na odeslání"
 
 #: hypha/apply/todo/options.py:98
 #, python-brace-format
@@ -10306,10 +10301,10 @@ msgid ""
 "<span class=\"truncate inline-block max-w-32 align-"
 "bottom\">\"{related.submission.title}\"</span> is waiting to be submitted"
 msgstr ""
-"<span class=\"text-xs\">{related.submission.fund_name} "
-"#{related.submission.application_id}</span><br>Koncept recenze pro odeslání "
-"<span class=\"truncate inline-block max-w-32 align-"
-"bottom\">\"{related.submission.title}\"</span> čeká na odeslání"
+"<span class=\"text-xs\">{related.submission.fund_name} #"
+"{related.submission.application_id}</span><br>Koncept recenze pro odeslání "
+"<span class=\"truncate inline-block max-w-32 align-bottom\">\""
+"{related.submission.title}\"</span> čeká na odeslání"
 
 #: hypha/apply/todo/options.py:108
 #, python-brace-format
@@ -10317,8 +10312,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for project form"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Projekt čeká na formulář projektu"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Projekt čeká na formulář projektu"
 
 #: hypha/apply/todo/options.py:116
 #, python-brace-format
@@ -10326,8 +10321,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for scope of work"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Projekt čeká na rozsah práce"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Projekt čeká na rozsah práce"
 
 #: hypha/apply/todo/options.py:124
 #, python-brace-format
@@ -10335,8 +10330,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for project form(s) submission"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Projekt čeká na odeslání projektových formulářů"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Projekt čeká na odeslání projektových formulářů"
 
 #: hypha/apply/todo/options.py:132
 #, python-brace-format
@@ -10344,8 +10339,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project form requires changes or more information"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Formulář projektu vyžaduje změny nebo další informace"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Formulář projektu vyžaduje změny nebo další informace"
 
 #: hypha/apply/todo/options.py:141
 #, python-brace-format
@@ -10353,8 +10348,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project form is waiting for assignee"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Formulář projektu čeká na příjemce"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Formulář projektu čeká na příjemce"
 
 #: hypha/apply/todo/options.py:149
 #, python-brace-format
@@ -10362,8 +10357,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br> Project form is waiting for your approval"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br> Formulář projektu čeká na vaše schválení"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br> Formulář projektu čeká na vaše schválení"
 
 #: hypha/apply/todo/options.py:158
 #, python-brace-format
@@ -10371,8 +10366,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for contract"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Projekt čeká na smlouvu"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Projekt čeká na smlouvu"
 
 #: hypha/apply/todo/options.py:166
 #, python-brace-format
@@ -10380,8 +10375,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for contracting documents"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Projekt čeká na smluvní dokumenty"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Projekt čeká na smluvní dokumenty"
 
 #: hypha/apply/todo/options.py:174
 #, python-brace-format
@@ -10389,8 +10384,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Contract for project is waiting for review"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Smlouva na projekt čeká na kontrolu"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Smlouva na projekt čeká na kontrolu"
 
 #: hypha/apply/todo/options.py:183
 #, fuzzy, python-brace-format
@@ -10414,8 +10409,8 @@ msgid ""
 "#{related.project.application_id}</span><br>Invoice no. "
 "{related.invoice_number} required changes or more information"
 msgstr ""
-"<span class='text-xs'>{related.project.fund_name} "
-"#{related.project.application_id}</span><br>Č. faktury "
+"<span class='text-xs'>{related.project.fund_name} #"
+"{related.project.application_id}</span><br>Č. faktury "
 "{related.invoice_number} vyžaduje změny nebo další informace"
 
 #: hypha/apply/todo/options.py:199
@@ -10425,8 +10420,8 @@ msgid ""
 "#{related.project.application_id}</span><br>Invoice no. "
 "{related.invoice_number} is waiting for your approval"
 msgstr ""
-"<span class='text-xs'>{related.project.fund_name} "
-"#{related.project.application_id}</span><br>Č. faktury "
+"<span class='text-xs'>{related.project.fund_name} #"
+"{related.project.application_id}</span><br>Č. faktury "
 "{related.invoice_number} čeká na vaše schválení"
 
 #: hypha/apply/todo/options.py:207
@@ -10436,8 +10431,8 @@ msgid ""
 "#{related.project.application_id}</span><br>Invoice no. "
 "{related.invoice_number} is waiting to be paid"
 msgstr ""
-"<span class='text-xs'>{related.project.fund_name} "
-"#{related.project.application_id}</span><br>Č. faktury "
+"<span class='text-xs'>{related.project.fund_name} #"
+"{related.project.application_id}</span><br>Č. faktury "
 "{related.invoice_number} čeká na zaplacení"
 
 #: hypha/apply/todo/options.py:215
@@ -10448,10 +10443,10 @@ msgid ""
 "class=\"truncate inline-block max-w-32 align-bottom "
 "\">\"{related.project.title}\"</span> is due"
 msgstr ""
-"<span class=\"text-xs\">{related.project.fund_name} "
-"#{related.project.application_id}</span><br>Zpráva pro projekt <span "
-"class=\"truncate inline-block max-w-32 align-bottom "
-"\">\"{related.project.title}\"</span> je po termínu"
+"<span class=\"text-xs\">{related.project.fund_name} #"
+"{related.project.application_id}</span><br>Zpráva pro projekt <span "
+"class=\"truncate inline-block max-w-32 align-bottom \">\""
+"{related.project.title}\"</span> je po termínu"
 
 #: hypha/apply/todo/options.py:223
 msgid "Your generated submission export file is ready for download"
