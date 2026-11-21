@@ -9,7 +9,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-10-27 20:49+0000\n"
 "PO-Revision-Date: 2026-11-21 11:24+0000\n"
-"Last-Translator: Fredrik Jonsson <frjo@users.noreply.hosted.weblate.org>\n"
+"Last-Translator: arctic_garden "
+"<siaurine.roze@users.noreply.hosted.weblate.org>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "ru/>\n"
 "Language: ru\n"
@@ -3191,8 +3192,7 @@ msgstr "Окончательное решение уже представлен�
 
 #: hypha/apply/determinations/views.py:340
 msgid "There is a draft determination you do not have permission to edit."
-msgstr ""
-"Существует черновик решения, на редактирование которого у вас нет прав."
+msgstr "Существует черновик решения, на редактирование которого у вас нет прав."
 
 #: hypha/apply/determinations/views.py:493
 #, fuzzy
@@ -4390,8 +4390,7 @@ msgstr "Заявки, для которых назначен ревьюер"
 
 #: hypha/apply/funds/models/reviewer_role.py:86
 msgid "Use the above configured variables to filter out submissions"
-msgstr ""
-"Используйте указанные выше настроенные переменные для фильтрации заявок"
+msgstr "Используйте указанные выше настроенные переменные для фильтрации заявок"
 
 #: hypha/apply/funds/models/screening.py:11
 msgid "yes/no"
@@ -9705,8 +9704,7 @@ msgstr "Ожидание представления контрактной до�
 
 #: hypha/apply/projects/templatetags/project_tags.py:274
 msgid "Review the contract for all relevant details and approve."
-msgstr ""
-"Проверьте контракт на наличие всех необходимых деталей и утвердите его."
+msgstr "Проверьте контракт на наличие всех необходимых деталей и утвердите его."
 
 #: hypha/apply/projects/templatetags/project_tags.py:281
 #, python-brace-format
