@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-10-27 20:49+0000\n"
 "PO-Revision-Date: 2026-11-21 11:24+0000\n"
-"Last-Translator: Fredrik Jonsson <frjo@users.noreply.hosted.weblate.org>\n"
+"Last-Translator: 复予 <clonewith@users.noreply.hosted.weblate.org>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
 "projects/hypha/hypha-core/zh_Hans/>\n"
 "Language: zh_Hans\n"
@@ -1937,8 +1937,8 @@ msgid ""
 "button and we’ll know to take a look at it. We’ll reply to you with feedback "
 "on your Proposal as quickly as possible."
 msgstr ""
-"在你撰写提案时，系统会让您保存一份草稿。当您认为准备好接受审核时，请点击“提"
-"交”按钮，我们会看一看。我们会尽快向您回复关于提案的反馈。"
+"在你撰写提案时，系统会让您保存一份草稿。当您认为准备好接受审核时，请点击“提交"
+"”按钮，我们会看一看。我们会尽快向您回复关于提案的反馈。"
 
 #: hypha/apply/activity/templates/messages/email/invoice_approved.html:6
 #, fuzzy, python-format
@@ -2197,8 +2197,8 @@ msgid ""
 "For more information about our support options, review process, and "
 "selection criteria, please visit our website at %(ORG_URL)s."
 msgstr ""
-"对于更多有关支持选项、审核流程、选择原则的信息，请登陆我们的网站 "
-"%(ORG_URL)s。"
+"对于更多有关支持选项、审核流程、选择原则的信息，请登陆我们的网站 %(ORG_URL)s"
+"。"
 
 #: hypha/apply/activity/templates/messages/email/submission_confirmation.html:18
 msgid "Project name"
@@ -11365,8 +11365,7 @@ msgstr ""
 msgid ""
 "To identify and verify your YubiKey, please insert a token in the field "
 "below. Your YubiKey will be linked to your account."
-msgstr ""
-"要识别并验证您的 YubiKey，请在下列字段输入令牌。您的 YubiKey 将与账户关联。"
+msgstr "要识别并验证您的 YubiKey，请在下列字段输入令牌。您的 YubiKey 将与账户关联。"
 
 #: hypha/apply/users/templates/two_factor/core/setup_complete.html:6
 msgid "Congratulations, you've successfully enabled two-factor authentication."
@@ -11376,15 +11375,13 @@ msgstr "恭喜，您已成功启用双重认证。"
 msgid ""
 "We strongly recommend you to save the backup codes. To get the backup codes "
 "you can continue to Show Codes."
-msgstr ""
-"我们强烈推荐您将这些备用代码保存下来。要获取代码，您可以点击“显示代码”。"
+msgstr "我们强烈推荐您将这些备用代码保存下来。要获取代码，您可以点击“显示代码”。"
 
 #: hypha/apply/users/templates/two_factor/core/setup_complete.html:16
 msgid ""
 "However, it might happen that you don't have access to your primary token "
 "device. To enable account recovery, add a phone number."
-msgstr ""
-"然而，您无法访问主令牌设备时也会发生此情况。请添加手机号码以启用账户恢复。"
+msgstr "然而，您无法访问主令牌设备时也会发生此情况。请添加手机号码以启用账户恢复。"
 
 #: hypha/apply/users/templates/two_factor/core/setup_complete.html:23
 #: hypha/apply/users/templates/two_factor/core/setup_complete.html:33
