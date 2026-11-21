@@ -9,8 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-10-27 20:49+0000\n"
 "PO-Revision-Date: 2026-11-21 11:24+0000\n"
-"Last-Translator: arctic_garden "
-"<siaurine.roze@users.noreply.hosted.weblate.org>\n"
+"Last-Translator: Anonymous <anonymous@users.noreply.hosted.weblate.org>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "ru/>\n"
 "Language: ru\n"
@@ -2115,8 +2114,8 @@ msgid ""
 "We appreciate your \"%(title)s\" application submission to the "
 "%(ORG_LONG_NAME)s."
 msgstr ""
-"Мы благодарим вас за подачу заявки на участие в программе %(title)s в "
-"%(ORG_LONG_NAME)s."
+"Мы благодарим вас за подачу заявки на участие в программе %(title)s в %"
+"(ORG_LONG_NAME)s."
 
 #: hypha/apply/activity/templates/messages/email/submission_confirmation.html:8
 msgid ""
@@ -9726,8 +9725,7 @@ msgstr "Проверьте инвойс и возьмите в работу"
 #: hypha/apply/projects/templatetags/project_tags.py:316
 #, python-brace-format
 msgid "Please download the signed contract uploaded by {ORG_SHORT_NAME}"
-msgstr ""
-"Пожалуйста, загрузите подписанный договор, загруженный {ORG_SHORT_NAME}"
+msgstr "Пожалуйста, загрузите подписанный договор, загруженный {ORG_SHORT_NAME}"
 
 #: hypha/apply/projects/templatetags/project_tags.py:318
 msgid "Countersign"
