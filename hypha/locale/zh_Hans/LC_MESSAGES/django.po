@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-10-27 20:49+0000\n"
-"PO-Revision-Date: 2024-07-11 01:42+0000\n"
-"Last-Translator: 复予 <clonewith@qq.com>\n"
-"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
-"hypha/hypha-core/zh_Hans/>\n"
+"PO-Revision-Date: 2026-11-21 11:24+0000\n"
+"Last-Translator: 复予 <clonewith@users.noreply.hosted.weblate.org>\n"
+"Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
+"projects/hypha/hypha-core/zh_Hans/>\n"
 "Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.7-dev\n"
+"X-Generator: Weblate 2026.12.dev0\n"
 
 #: hypha/addressfield/fields.py:53
 #, fuzzy
@@ -1864,8 +1864,8 @@ msgid ""
 "Please review the contract and sign it before reuploading it to your project "
 "page for the %(ORG_SHORT_NAME)s team to approve."
 msgstr ""
-"请核对合同信息，在签名后上传到您的项目页面，以供 %(ORG_SHORT_NAME)s 团队批"
-"准。"
+"请核对合同信息，在签名后上传到您的项目页面，以供 %(ORG_SHORT_NAME)s 团队批准"
+"。"
 
 #: hypha/apply/activity/templates/messages/email/determination.html:5
 msgid "Your application has been reviewed and the outcome is"
@@ -1897,8 +1897,8 @@ msgid ""
 "But you can't accept this invite because your account is deactivated. Please "
 "contact site administrators."
 msgstr ""
-"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账"
-"户："
+"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账户"
+"："
 
 #: hypha/apply/activity/templates/messages/email/invite_co_applicant.html:13
 msgid "Click on link if you want to accept it."
@@ -1937,8 +1937,8 @@ msgid ""
 "button and we’ll know to take a look at it. We’ll reply to you with feedback "
 "on your Proposal as quickly as possible."
 msgstr ""
-"在你撰写提案时，系统会让您保存一份草稿。当您认为准备好接受审核时，请点击“提"
-"交”按钮，我们会看一看。我们会尽快向您回复关于提案的反馈。"
+"在你撰写提案时，系统会让您保存一份草稿。当您认为准备好接受审核时，请点击“提交"
+"”按钮，我们会看一看。我们会尽快向您回复关于提案的反馈。"
 
 #: hypha/apply/activity/templates/messages/email/invoice_approved.html:6
 #, fuzzy, python-format
@@ -2197,8 +2197,8 @@ msgid ""
 "For more information about our support options, review process, and "
 "selection criteria, please visit our website at %(ORG_URL)s."
 msgstr ""
-"对于更多有关支持选项、审核流程、选择原则的信息，请登陆我们的网站 "
-"%(ORG_URL)s。"
+"对于更多有关支持选项、审核流程、选择原则的信息，请登陆我们的网站 %(ORG_URL)s"
+"。"
 
 #: hypha/apply/activity/templates/messages/email/submission_confirmation.html:18
 msgid "Project name"
@@ -5182,8 +5182,8 @@ msgid ""
 "You can't accept this invitation because your account is deactivated. Please "
 "contact site administrators."
 msgstr ""
-"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账"
-"户："
+"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账户"
+"："
 
 #: hypha/apply/funds/templates/funds/coapplicant_invite_landing_page.html:49
 #, fuzzy
@@ -11365,8 +11365,7 @@ msgstr ""
 msgid ""
 "To identify and verify your YubiKey, please insert a token in the field "
 "below. Your YubiKey will be linked to your account."
-msgstr ""
-"要识别并验证您的 YubiKey，请在下列字段输入令牌。您的 YubiKey 将与账户关联。"
+msgstr "要识别并验证您的 YubiKey，请在下列字段输入令牌。您的 YubiKey 将与账户关联。"
 
 #: hypha/apply/users/templates/two_factor/core/setup_complete.html:6
 msgid "Congratulations, you've successfully enabled two-factor authentication."
@@ -11376,15 +11375,13 @@ msgstr "恭喜，您已成功启用双重认证。"
 msgid ""
 "We strongly recommend you to save the backup codes. To get the backup codes "
 "you can continue to Show Codes."
-msgstr ""
-"我们强烈推荐您将这些备用代码保存下来。要获取代码，您可以点击“显示代码”。"
+msgstr "我们强烈推荐您将这些备用代码保存下来。要获取代码，您可以点击“显示代码”。"
 
 #: hypha/apply/users/templates/two_factor/core/setup_complete.html:16
 msgid ""
 "However, it might happen that you don't have access to your primary token "
 "device. To enable account recovery, add a phone number."
-msgstr ""
-"然而，您无法访问主令牌设备时也会发生此情况。请添加手机号码以启用账户恢复。"
+msgstr "然而，您无法访问主令牌设备时也会发生此情况。请添加手机号码以启用账户恢复。"
 
 #: hypha/apply/users/templates/two_factor/core/setup_complete.html:23
 #: hypha/apply/users/templates/two_factor/core/setup_complete.html:33
@@ -11554,8 +11551,8 @@ msgid ""
 "Activate your account on the %(ORG_LONG_NAME)s web site by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
-"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账"
-"户："
+"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账户"
+"："
 
 #: hypha/apply/users/templates/users/activation/email.txt:8
 #, fuzzy, python-format
@@ -11568,8 +11565,8 @@ msgid ""
 "for %(timeout_minutes)s minutes, so please activate your account as soon as "
 "possible."
 msgstr ""
-"此链接仅可使用一次，会将您带到密码设置页面。链接在 %(timeout_days)s 天内有"
-"效，因此请您尽快设置密码。"
+"此链接仅可使用一次，会将您带到密码设置页面。链接在 %(timeout_days)s 天内有效"
+"，因此请您尽快设置密码。"
 
 #: hypha/apply/users/templates/users/activation/email.txt:10
 #, fuzzy
@@ -11732,8 +11729,8 @@ msgid ""
 "Try again to change email from accounts page. If that fails please contact "
 "%(ORG_SHORT_NAME)s at <a href=\"mailto:%(ORG_EMAIL)s\">%(ORG_EMAIL)s</a>."
 msgstr ""
-"请从账户页面再次尝试更改电子邮箱。如果依然失败，请用以下地址联系 "
-"%(ORG_SHORT_NAME)s"
+"请从账户页面再次尝试更改电子邮箱。如果依然失败，请用以下地址联系 %"
+"(ORG_SHORT_NAME)s"
 
 #: hypha/apply/users/templates/users/email_change/update_info_email.html:4
 #, python-format
@@ -11836,8 +11833,8 @@ msgid ""
 "Login to your account on the %(ORG_LONG_NAME)s website by clicking this link "
 "or copying and pasting it to your browser:"
 msgstr ""
-"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账"
-"户："
+"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账户"
+"："
 
 #: hypha/apply/users/templates/users/emails/passwordless_login_email.md:9
 #: hypha/apply/users/templates/users/emails/passwordless_new_account_login.md:8
@@ -11856,8 +11853,8 @@ msgid ""
 "Your account on the %(ORG_LONG_NAME)s website is deactivated. Please contact "
 "site administrators."
 msgstr ""
-"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账"
-"户："
+"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账户"
+"："
 
 #: hypha/apply/users/templates/users/emails/passwordless_new_account_login.md:2
 msgid "Dear,"
@@ -11872,8 +11869,8 @@ msgid ""
 "Welcome to %(ORG_LONG_NAME)s website. Create your account by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
-"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账"
-"户："
+"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账户"
+"："
 
 #: hypha/apply/users/templates/users/emails/set_password.txt:4
 #, fuzzy, python-format
@@ -11884,8 +11881,8 @@ msgid ""
 "Set your account password on the %(ORG_LONG_NAME)s website by clicking this "
 "link or copying and pasting it to your browser:"
 msgstr ""
-"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账"
-"户："
+"点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的账户"
+"："
 
 #: hypha/apply/users/templates/users/emails/set_password.txt:8
 #, fuzzy, python-format
@@ -11898,8 +11895,8 @@ msgid ""
 "set your password. It will remain active for %(timeout_minutes)s minutes, so "
 "please set your password as soon as possible."
 msgstr ""
-"此链接仅可使用一次，会将您带到密码设置页面。链接在 %(timeout_days)s 天内有"
-"效，因此请您尽快设置密码。"
+"此链接仅可使用一次，会将您带到密码设置页面。链接在 %(timeout_days)s 天内有效"
+"，因此请您尽快设置密码。"
 
 #: hypha/apply/users/templates/users/emails/set_password_subject.txt:2
 #, python-format
@@ -12246,8 +12243,8 @@ msgid ""
 "remain active for %(timeout_minutes)s minutes, so please set your password "
 "as soon as possible."
 msgstr ""
-"此链接仅可使用一次，会将您带到密码设置页面。链接在 %(timeout_days)s 天内有"
-"效，因此请您尽快设置密码。"
+"此链接仅可使用一次，会将您带到密码设置页面。链接在 %(timeout_days)s 天内有效"
+"，因此请您尽快设置密码。"
 
 #: hypha/apply/users/templates/users/password_reset/form.html:14
 msgid ""
@@ -13069,1102 +13066,3 @@ msgstr "需要密码"
 #: hypha/templates/password_required.html:11
 msgid "Please enter the password to proceed."
 msgstr "请输入密码以继续。"
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "This will result in a gap in reporting for the project. You can undo "
-#~| "this at any time."
-#~ msgid ""
-#~ " You&#x27;re skipping the report for %(start_date)s - %(end_date)s. This "
-#~ "will result in a gap in reporting for the project. You can undo this at "
-#~ "any time. "
-#~ msgstr "这将导致项目报告中的空白。您可随时撤销此操作。"
-
-#, fuzzy, python-format
-#~| msgid "Are you sure you want to delete \"%(object)s\"?"
-#~ msgid ""
-#~ "Are you sure you want to remove the &quot;%(current_status)s&quot; "
-#~ "screening decision?"
-#~ msgstr "您确定要删除“%(object)s”吗？"
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "Activate your account on the %(ORG_LONG_NAME)s website by clicking this "
-#~| "link or copying and pasting it to your browser:"
-#~ msgid ""
-#~ "Login to your account on the %(ORG_LONG_NAME)s web site by clicking this "
-#~ "link or copying and pasting it to your browser:"
-#~ msgstr ""
-#~ "点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的"
-#~ "账户："
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "Activate your account on the %(ORG_LONG_NAME)s website by clicking this "
-#~| "link or copying and pasting it to your browser:"
-#~ msgid ""
-#~ "Your account on the %(ORG_LONG_NAME)s web site is deactivated. Please "
-#~ "contact site administrators."
-#~ msgstr ""
-#~ "点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的"
-#~ "账户："
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "Activate your account on the %(ORG_LONG_NAME)s website by clicking this "
-#~| "link or copying and pasting it to your browser:"
-#~ msgid ""
-#~ "Welcome to %(ORG_LONG_NAME)s web site. Create your account by clicking "
-#~ "this link or copying and pasting it to your browser:"
-#~ msgstr ""
-#~ "点击此链接或将其复制并粘贴到浏览器中，以激活您在 %(ORG_LONG_NAME)s 网站的"
-#~ "账户："
-
-#, fuzzy, python-format
-#~| msgid "You have been added as a partner the following submission."
-#~ msgid ""
-#~ "You have been assigned as an Applicant to submission &quot;"
-#~ "%(title)s&quot;."
-#~ msgstr "您已作为合伙人被添加到如下提交。"
-
-#, fuzzy, python-format
-#~| msgid "There has been a new comment on \"%(title)s\" by %(user)s."
-#~ msgid "You have been assigned to a comment on &quot;%(title)s&quot;."
-#~ msgstr "%(user)s 在“%(title)s”发布了新评论。"
-
-#, fuzzy, python-format
-#~| msgid "There has been a new comment on \"%(title)s\" by %(user)s."
-#~ msgid ""
-#~ "There has been a new comment on &quot;%(title)s&quot; by %(display_user)s."
-#~ msgstr "%(user)s 在“%(title)s”发布了新评论。"
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "We’ve reviewed your Concept note and think it could be a good fit for "
-#~| "%(ORG_SHORT_NAME)s funding. We would like to invite you to submit a "
-#~| "Proposal with more details about your project. You will receive a second "
-#~| "email linking to a determination message with detailed feedback."
-#~ msgid ""
-#~ "We&#8217;ve reviewed your Concept note and think it could be a good fit "
-#~ "for %(ORG_SHORT_NAME)s funding. We would like to invite you to submit a "
-#~ "Proposal with more details about your project. You will receive a second "
-#~ "email linking to a determination message with detailed feedback."
-#~ msgstr ""
-#~ "我们审核了您的概念备注，觉得很适合 %(ORG_SHORT_NAME)s 资助。我们想邀请您提"
-#~ "交一份提案，叙述更多项目相关的信息。您将会收到第二封邮件，其中包含带有详尽"
-#~ "反馈的决策消息链接。"
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "Please review our Proposal Guide at %(ORG_GUIDE_URL)s to learn more "
-#~| "about the information we’d like to see. In the proposal please also "
-#~| "address the feedback we provided in the concept note determination."
-#~ msgid ""
-#~ "Please review our Proposal Guide at %(ORG_GUIDE_URL)s to learn more about "
-#~ "the information we&#8217;d like to see. In the proposal please also "
-#~ "address the feedback we provided in the concept note determination."
-#~ msgstr ""
-#~ "请在 %(ORG_GUIDE_URL)s 查看我们的提案指南，了解我们想要看到的东西。在提案"
-#~ "中也请处理我们在概念备注决议中提供的反馈。"
-
-#, fuzzy
-#~| msgid ""
-#~| "The system will allow you to save a draft of your proposal as you work "
-#~| "on it. When you feel it is ready for our review, please click the "
-#~| "“Submit” button and we’ll know to take a look at it. We’ll reply to you "
-#~| "with feedback on your Proposal as quickly as possible."
-#~ msgid ""
-#~ "The system will allow you to save a draft of your proposal as you work on "
-#~ "it. When you feel it is ready for our review, please click the "
-#~ "&#8220;Submit&#8221; button and we&#8217;ll know to take a look at it. "
-#~ "We&#8217;ll reply to you with feedback on your Proposal as quickly as "
-#~ "possible."
-#~ msgstr ""
-#~ "在你撰写提案时，系统会让您保存一份草稿。当您认为准备好接受审核时，请点击"
-#~ "“提交”按钮，我们会看一看。我们会尽快向您回复关于提案的反馈。"
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "An %(ORG_SHORT_NAME)s staff member has changed the reporting frequency "
-#~| "of %(title)s."
-#~ msgid ""
-#~ "An %(ORG_SHORT_NAME)s staff member has updated an invoice on your project "
-#~ "&quot;%(title)s&quot;."
-#~ msgstr "%(ORG_SHORT_NAME)s 员工更改了 %(title)s 的报告频率。"
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "A Project has been created for your submission on %(ORG_SHORT_NAME)s."
-#~ msgid ""
-#~ "A project, &quot;%(title)s&quot; has been created for your submission to "
-#~ "the %(ORG_LONG_NAME)s."
-#~ msgstr "已为您的提交在 %(ORG_SHORT_NAME)s 创建了新项目。"
-
-#, fuzzy, python-format
-#~| msgid "A report is due for %(title)s on %(end_date)s."
-#~ msgid ""
-#~ "A report is due for your project &quot;%(title)s&quot; on %(end_date)s."
-#~ msgstr "%(title)s 有报告将于 %(end_date)s 截止。"
-
-#, fuzzy, python-format
-#~| msgid " for %(title)s for period %(start_date)s to %(end_date)s."
-#~ msgid ""
-#~ " for &quot;%(title)s&quot; for period %(start_date)s to %(end_date)s."
-#~ msgstr " 为 %(start_date)s 到 %(end_date)s 阶段的 %(title)s。"
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "An %(ORG_SHORT_NAME)s staff member has submitted a report for %(title)s "
-#~| "for period %(start_date)s to %(end_date)s."
-#~ msgid ""
-#~ "An %(ORG_SHORT_NAME)s staff member has submitted a report for your "
-#~ "project &quot;%(title)s&quot; for period %(start_date)s to %(end_date)s."
-#~ msgstr ""
-#~ "%(ORG_SHORT_NAME)s 员工提交了 %(title)s 的 %(start_date)s 到 %(end_date)s "
-#~ "阶段报告。"
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "We appreciate your %(title)s application submission to the "
-#~| "%(ORG_LONG_NAME)s."
-#~ msgid ""
-#~ "We appreciate your &quot;%(title)s&quot; application submission to the "
-#~ "%(ORG_LONG_NAME)s."
-#~ msgstr "我们很感谢您对 %(ORG_LONG_NAME)s 的 %(title)s 申请提交。"
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "Your application is now in \"%(new_status)s\" status (progressed from "
-#~| "\"%(old_status)s\")."
-#~ msgid ""
-#~ "Your application is now in &quot;%(new_phase)s&quot; status (progressed "
-#~ "from &quot;%(old_phase)s&quot;)."
-#~ msgstr "您的申请目前处于“%(new_status)s”状态（曾是“%(old_status)s”）。"
-
-#, fuzzy
-#~| msgid "Score"
-#~ msgid "Score:"
-#~ msgstr "分数"
-
-#~ msgid "After setting your password, you will be able to log in at"
-#~ msgstr "在设置密码后，您将能登录于"
-
-#~ msgid "Your chosen password"
-#~ msgstr "您选用的密码"
-
-#, fuzzy
-#~| msgid "View"
-#~ msgid "View "
-#~ msgstr "查看"
-
-#, fuzzy
-#~| msgid "Are you sure you want to delete selected submissions?"
-#~ msgid "Are you sure you want to archive the selected submissions?"
-#~ msgstr "您确定要删除所选提交吗？"
-
-#~ msgid "Ready For Preliminary Determination"
-#~ msgstr "已准备好初步决策"
-
-#~ msgid "Ready For Discussion"
-#~ msgstr "准备接受讨论"
-
-#~ msgid "Ready For Final Determination"
-#~ msgstr "准备接受最终决策"
-
-#~ msgid "Ready For Determination"
-#~ msgstr "准备接受决策"
-
-#~ msgid "The"
-#~ msgstr "此"
-
-#~ msgid "current"
-#~ msgstr "当前"
-
-#~ msgid "next"
-#~ msgstr "下一页"
-
-#~ msgid "reporting period is"
-#~ msgstr "报告间隔为"
-
-#~ msgid "A report is due for the period"
-#~ msgstr "此阶段应提交报告"
-
-#, fuzzy
-#~| msgid "Show Codes"
-#~ msgid "show less"
-#~ msgstr "显示代码"
-
-#~ msgid "Partners updated."
-#~ msgstr "合作者已更新。"
-
-#, fuzzy, python-brace-format
-#~| msgid "{user} has updated the partners on <{link}|{source.title}>"
-#~ msgid ""
-#~ "{user} has updated the partners on <{link}|{source.title_text_display}>"
-#~ msgstr "{user} 更新了 <{link}|{source.title}>"
-
-#, fuzzy
-#~| msgid "Applicant"
-#~ msgid "applicant"
-#~ msgstr "申请者"
-
-#, fuzzy
-#~| msgid "Partners"
-#~ msgid "partners"
-#~ msgstr "合作者"
-
-#, fuzzy
-#~| msgid "All"
-#~ msgid "all"
-#~ msgstr "所有"
-
-#~ msgid "Partners"
-#~ msgstr "合作者"
-
-#, fuzzy
-#~| msgid "Update Partners"
-#~ msgid "Applicants & Partners"
-#~ msgstr "更新"
-
-#~ msgid "Your active submissions"
-#~ msgstr "您的活动提交"
-
-#~ msgid "You are the partner of these submissions"
-#~ msgstr "您是这些提交的合作者"
-
-#~ msgid "Determining"
-#~ msgstr "决策"
-
-#~ msgid "submission"
-#~ msgstr "提交"
-
-#~ msgid "Yes/No"
-#~ msgstr "是/否"
-
-#~ msgid "Amounts"
-#~ msgstr "数目"
-
-#, fuzzy
-#~| msgid "Applicant"
-#~ msgid "Applied amounts"
-#~ msgstr "申请者"
-
-#~ msgid "Applied"
-#~ msgstr "已申请"
-
-#, fuzzy
-#~| msgid "Requested amount"
-#~ msgid "Accepted amounts"
-#~ msgstr "请求数目"
-
-#, fuzzy
-#~| msgid "Related submissions"
-#~ msgid "Accepted submissions"
-#~ msgstr "相关提交"
-
-#, fuzzy
-#~| msgid "All reviewers"
-#~ msgid "All reviews"
-#~ msgstr "所有审核人"
-
-#, fuzzy
-#~| msgid "No reviews"
-#~ msgid "Your reviews"
-#~ msgstr "无审核"
-
-#~ msgid "You"
-#~ msgstr "您"
-
-#, fuzzy
-#~| msgid "Your avg. score"
-#~ msgid "Your average score"
-#~ msgstr "您的平均分数"
-
-#~ msgid "Your avg. score"
-#~ msgstr "您的平均分数"
-
-#, fuzzy
-#~| msgid "Partners updated."
-#~ msgid "Partners updated successfully."
-#~ msgstr "合作者已更新。"
-
-#~ msgid "Partner"
-#~ msgstr "合作者"
-
-#, fuzzy
-#~| msgid "Forgot your password?"
-#~ msgid "Forgot password?"
-#~ msgstr "忘记密码？"
-
-#~ msgid "Link to your application"
-#~ msgstr "到您申请的链接"
-
-#, python-format
-#~ msgid ""
-#~ "Kind Regards,\n"
-#~ "    The %(ORG_SHORT_NAME)s Team"
-#~ msgstr ""
-#~ "谨致问候，\n"
-#~ "%(ORG_SHORT_NAME)s 团队"
-
-#, python-format
-#~ msgid ""
-#~ "An %(ORG_SHORT_NAME)s staff member has updated your invoice for %(title)s "
-#~ "for period %(date_from)s to %(date_to)s."
-#~ msgstr ""
-#~ "%(ORG_SHORT_NAME)s 员工更新了您对 %(title)s 从 %(date_from)s 到 "
-#~ "%(date_to)s 的发票。"
-
-#~ msgid "Invoice Link"
-#~ msgstr "发票链接"
-
-#~ msgid "Project Link"
-#~ msgstr "项目链接"
-
-#, fuzzy
-#~| msgid "Link to your application"
-#~ msgid "Link to your project"
-#~ msgstr "到您申请的链接"
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "If you have any issues accessing the submission system or other general "
-#~| "inquiries, please email us at %(ORG_EMAIL)s"
-#~ msgid ""
-#~ "If you have any issues accessing the project or other general inquiries, "
-#~ "please email us at %(ORG_EMAIL)s"
-#~ msgstr ""
-#~ "如果您在访问提交系统时有问题，或有其他一般问题，请用 %(ORG_EMAIL)s 向我们"
-#~ "发送电子邮件"
-
-#~ msgid "More information can be found on the project page:"
-#~ msgstr "可在项目页面获取更多信息："
-
-#, fuzzy
-#~| msgid "A Project is awaiting your review."
-#~ msgid "A Project's contract is awaiting your review."
-#~ msgstr "有项目正等待您的审核。"
-
-#, fuzzy
-#~| msgid "Date field"
-#~ msgid "Date added: "
-#~ msgstr "日期字段"
-
-#~ msgid "No Active Invoices"
-#~ msgstr "无活跃发票"
-
-#, fuzzy
-#~| msgid "Draft"
-#~ msgid "Drafted on "
-#~ msgstr "草稿"
-
-#, fuzzy
-#~| msgid "Edit a Determination"
-#~ msgid "Edit determination"
-#~ msgstr "编辑决策"
-
-#~ msgid ""
-#~ "There were some errors with your form. Please amend the fields "
-#~ "highlighted below"
-#~ msgstr "您的表单中有错误。请修正下方高亮的字段"
-
-#, fuzzy
-#~| msgid "Congratulations!"
-#~ msgid "Conversation"
-#~ msgstr "恭喜！"
-
-#~ msgid "Create Project"
-#~ msgstr "创建项目"
-
-#~ msgid "submissions"
-#~ msgstr "提交"
-
-#, fuzzy
-#~| msgid "Remove"
-#~ msgid "Remove filter"
-#~ msgstr "移除"
-
-#, fuzzy
-#~| msgid "Proposal Information"
-#~ msgid "Proposal Information (Old)"
-#~ msgstr "提案信息"
-
-#, fuzzy
-#~| msgid "Proposal Information"
-#~ msgid "Proposal Information (New)"
-#~ msgstr "提案信息"
-
-#, fuzzy
-#~| msgid "Submission details"
-#~ msgid "Submission value totals"
-#~ msgstr "提交详情"
-
-#~ msgid "Review outcomes"
-#~ msgstr "审核结果"
-
-#~ msgid "Awaiting"
-#~ msgstr "等待中"
-
-#~ msgid "Linked"
-#~ msgstr "已链接"
-
-#~ msgid "previous"
-#~ msgstr "上一页"
-
-#, fuzzy
-#~| msgid "Screening decisions"
-#~ msgid "Remove screening decisions filter"
-#~ msgstr "审核决定"
-
-#, fuzzy
-#~| msgid "First Name"
-#~ msgid "First Page"
-#~ msgstr "名"
-
-#, fuzzy
-#~| msgid "previous"
-#~ msgid "Previous Page"
-#~ msgstr "上一页"
-
-#, fuzzy
-#~| msgid "Next deadline"
-#~ msgid "Next Page"
-#~ msgstr "下个截止时间"
-
-#, fuzzy
-#~| msgid "Last Name"
-#~ msgid "Last Page"
-#~ msgstr "姓"
-
-#, fuzzy
-#~| msgid "Past 7 days"
-#~ msgid "Last 7 Days"
-#~ msgstr "过去 7 天"
-
-#, fuzzy
-#~| msgid "Past 7 days"
-#~ msgid "Last 30 Days"
-#~ msgstr "过去 7 天"
-
-#, fuzzy
-#~| msgid "This month"
-#~ msgid "This Month"
-#~ msgstr "这个月"
-
-#, fuzzy
-#~| msgid "Reporting Period"
-#~ msgid "Reporting Disabled"
-#~ msgstr "报告间隔"
-
-#~ msgid "Invoice Number"
-#~ msgstr "发票号"
-
-#, fuzzy
-#~| msgid "Approved contract"
-#~ msgid "Approve contract documents"
-#~ msgstr "批准了合同"
-
-#~ msgid "Approve Contract"
-#~ msgstr "批准合同"
-
-#, fuzzy
-#~| msgid "Update Project Status"
-#~ msgid "Update Project Form Status"
-#~ msgstr "更新项目状态"
-
-#, fuzzy
-#~| msgid "Create Project"
-#~ msgid "Back to Project"
-#~ msgstr "创建项目"
-
-#, fuzzy
-#~| msgid "Pending"
-#~ msgid " - Pending"
-#~ msgstr "等待中"
-
-#, fuzzy
-#~| msgid "Download PDF"
-#~ msgid "Download Project Form"
-#~ msgstr "下载 PDF"
-
-#, fuzzy
-#~| msgid "Download PDF"
-#~ msgid "Download SOW"
-#~ msgstr "下载 PDF"
-
-#, fuzzy
-#~| msgid "Approval form not configured. Please add an approval form in the"
-#~ msgid "Scope of work form not configured. Please add it in the"
-#~ msgstr "未配置好批准表单，请在如下位置添加"
-
-#~ msgid "Back to Account"
-#~ msgstr "返回账户"
-
-#~ msgid "Invalid activation URL"
-#~ msgstr "激活 URL 无效"
-
-#~ msgid "Two possible reasons:"
-#~ msgstr "有两个可能原因："
-
-#~ msgid "Possible reason:"
-#~ msgstr "可能原因："
-
-#, fuzzy
-#~| msgid "First Name"
-#~ msgid "Display Name"
-#~ msgstr "名"
-
-#, python-format
-#~ msgid "Sorry, no users match \"<em>%(query_string)s</em>\""
-#~ msgstr "抱歉，没有用户匹配“<em>%(query_string)s</em>”"
-
-#, python-format
-#~ msgid ""
-#~ "The %(group_name)s group has no users configured. Why not <a "
-#~ "href=\"%(wagtailusers_add_url)s\">add some</a>?"
-#~ msgstr ""
-#~ "%(group_name)s 分组没有已配置的用户。为何不<a "
-#~ "href=\"%(wagtailusers_add_url)s\">添加一些</a>？"
-
-#, python-format
-#~ msgid ""
-#~ "There are no users configured. Why not <a "
-#~ "href=\"%(wagtailusers_add_url)s\">add some</a>?"
-#~ msgstr ""
-#~ "没有已配置的用户。为何不<a href=\"%(wagtailusers_add_url)s\">添加一些</"
-#~ "a>？"
-
-#, fuzzy
-#~| msgid "No Invoices available"
-#~ msgid "No notifications available."
-#~ msgstr "无可用发票"
-
-#~ msgid "Communications"
-#~ msgstr "交流"
-
-#~ msgid "Activity Feed"
-#~ msgstr "活动订阅"
-
-#, fuzzy
-#~| msgid "No submissions"
-#~ msgid "Back to submissions"
-#~ msgstr "无提交"
-
-#~ msgid "List of Submissions summary"
-#~ msgstr "提交概要列表"
-
-#, fuzzy
-#~| msgid "Archived"
-#~ msgid "Hide Archived"
-#~ msgstr "已归档"
-
-#, fuzzy
-#~| msgid "Archived"
-#~ msgid "Show Archived"
-#~ msgstr "已归档"
-
-#~ msgid "Filters"
-#~ msgstr "筛选器"
-
-#, python-format
-#~ msgid ">Are you sure you want to delete \"%(object)s\"?"
-#~ msgstr ">您确定要删除“%(object)s”吗？"
-
-#, fuzzy
-#~| msgid "Project"
-#~ msgid "Project #"
-#~ msgstr "项目"
-
-#~ msgid "Pay to"
-#~ msgstr "付款到"
-
-#~ msgid "Some details"
-#~ msgstr "一些详情"
-
-#~ msgid "Report frequency"
-#~ msgstr "报告频率"
-
-#~ msgid "Past reports"
-#~ msgstr "既往报告"
-
-#~ msgid ""
-#~ "You confirm that the uploaded contract is acceptable for commencing the "
-#~ "project."
-#~ msgstr "您确定上传的合同可用于启动项目。"
-
-#, fuzzy
-#~| msgid "Reporting"
-#~ msgid "Disable Reporting"
-#~ msgstr "报告"
-
-#, fuzzy
-#~| msgid "Approved"
-#~ msgid "Approved by "
-#~ msgstr "批准"
-
-#~ msgid "You are reporting for the period running from"
-#~ msgstr "您正为如下阶段进行报告"
-
-#~ msgid "Submit for Approval"
-#~ msgstr "提交以批准"
-
-#~ msgid "Successfully removed document"
-#~ msgstr "文档删除成功"
-
-#, python-brace-format
-#~ msgid ""
-#~ "Successfully updated reporting frequency. They will now report "
-#~ "{new_schedule} starting on {schedule_start}"
-#~ msgstr ""
-#~ "成功更新了报告频率。他们现在会从 {schedule_start} 开始，{new_schedule} 进"
-#~ "行报告"
-
-#, python-brace-format
-#~ msgid "Successfully skipped a Report for {start_date} to {end_date}"
-#~ msgstr "成功跳过从 {start_date} 到 {end_date} 期间的报告"
-
-#, python-brace-format
-#~ msgid "Successfully unskipped a Report for {start_date} to {end_date}"
-#~ msgstr "成功取消跳过从 {start_date} 到 {end_date} 期间的报告"
-
-#~ msgid "Dear Partner,"
-#~ msgstr "亲爱的合作者，"
-
-#~ msgid "Original Submission"
-#~ msgstr "原始提交"
-
-#~ msgid ""
-#~ "Next step is to complete Contracting Information by visiting project "
-#~ "detail page."
-#~ msgstr "下一步是登陆项目详情页面，完善合同信息。"
-
-#~ msgid "fund"
-#~ msgstr "基金"
-
-#~ msgid "Invoice Already has this deliverable"
-#~ msgstr "发票已包含此交付产品"
-
-#~ msgid "Required quantity is more than available"
-#~ msgstr "所需数额超出可用值"
-
-#~ msgid "Apply admin"
-#~ msgstr "申请管理"
-
-#~ msgid "Do you wish to contiune?"
-#~ msgstr "您希望继续吗？"
-
-#~ msgid "Not yet"
-#~ msgstr "现在不要"
-
-#~ msgid "Meta terms"
-#~ msgstr "元条款"
-
-#~ msgid "Terms"
-#~ msgstr "条款"
-
-#~ msgid ""
-#~ "All content related to this submission will also be deleted. This "
-#~ "includes reviews, determinations and comments."
-#~ msgstr "所有此提交相关内容也会被删除。这包括审核、决策与评论。"
-
-#~ msgid "Past Submissions"
-#~ msgstr "既往提交"
-
-#~ msgid "Meta Terms"
-#~ msgstr "元条款"
-
-#~ msgid ""
-#~ "All content related to these submissions will also be deleted. This "
-#~ "includes reviews, determinations and comments"
-#~ msgstr "所有提交相关的内容也会被删除。这包括审核、决策与评论"
-
-#~ msgid "Add Reviewers"
-#~ msgstr "添加审核人"
-
-#~ msgid ""
-#~ "None. Meta terms can be added to a submission using Meta terms button at "
-#~ "top."
-#~ msgstr "无。可以用顶部的“元条款”按钮将其添加到提交。"
-
-#~ msgid "untitled reminder"
-#~ msgstr "未命名提醒"
-
-#~ msgid "Current decisions"
-#~ msgstr "当前决定"
-
-#~ msgid "Update Meta Terms"
-#~ msgstr "更新元条款"
-
-#~ msgid "Search results"
-#~ msgstr "搜索结果"
-
-#, python-format
-#~ msgid "There are %(count)s results for: %(search_term)s"
-#~ msgstr "有 %(count)s 个结果符合：%(search_term)s"
-
-#~ msgid "No Round or Lab found matching the query"
-#~ msgstr "没有找到轮次或实验室匹配搜索"
-
-#~ msgid "No statuses match the requested value"
-#~ msgstr "没有匹配请求值的状态"
-
-#~ msgid ""
-#~ "This section of the report will be shared with the broader community."
-#~ msgstr "报告的此部分会与更广泛的社区分享。"
-
-#~ msgid "This section of the report will be shared with staff only."
-#~ msgstr "报告的此部分仅会与员工分享。"
-
-#~ msgid ""
-#~ "Must include either public or private content when submitting a report."
-#~ msgstr "提交报告时必须包含公开或私人内容。"
-
-#~ msgid "Yes, the account belongs to the organisation above"
-#~ msgstr "是的，此账户属于上述组织"
-
-#~ msgid "No, it is a personal bank account"
-#~ msgstr "不，这是私人银行账户"
-
-#~ msgid "Quantity Selected on an Invoice"
-#~ msgstr "发票选择的数额"
-
-#~ msgid "Choose deliverables"
-#~ msgstr "选择交付产品"
-
-#~ msgid "Invoice Covers Deliverables"
-#~ msgstr "发票包含的交付产品"
-
-#~ msgid "Quantity:"
-#~ msgstr "数目："
-
-#~ msgid "Deliverables"
-#~ msgstr "可交付产品"
-
-#~ msgid "You're skipping the report for"
-#~ msgstr "您将跳过报告"
-
-#~ msgid "Contracting Information"
-#~ msgstr "合同信息"
-
-#~ msgid "Approval Form"
-#~ msgstr "批准表单"
-
-#~ msgid "Track and explore recent projects"
-#~ msgstr "跟踪与探索最近项目"
-
-#~ msgid "Update PAF Status"
-#~ msgstr "更新 PAF 状态"
-
-#~ msgid "Details"
-#~ msgstr "详情"
-
-#~ msgid "Edit PAF"
-#~ msgstr "编辑 PAF"
-
-#~ msgid "Private Report"
-#~ msgstr "私密报告"
-
-#~ msgid "Submit report"
-#~ msgstr "提交报告"
-
-#~ msgid "Contracting Information for"
-#~ msgstr "合同信息为"
-
-#~ msgid "Update Contracting Information"
-#~ msgstr "更新合同信息"
-
-#~ msgid "Save and continue"
-#~ msgstr "保存并继续"
-
-#~ msgid "Contractor Setup Completed"
-#~ msgstr "合约配置完成"
-
-#~ msgid "Thank you for submitting your information."
-#~ msgstr "感谢您提交信息。"
-
-#~ msgid ""
-#~ "Your {{ ORG_SHORT_NAME }} Programme Manager will be in touch with you if "
-#~ "there are any issues."
-#~ msgstr "若有任何问题，您的 {{ ORG_SHORT_NAME }} 项目管理员会与您联系。"
-
-#~ msgid "What will happen next?"
-#~ msgstr "接下来会发生什么？"
-
-#~ msgid ""
-#~ "We will use this information to create the contract for your project."
-#~ msgstr "我们会使用此信息为您的项目创建合同。"
-
-#~ msgid ""
-#~ "Once this has happened, we will send you a message with your contract."
-#~ msgstr "此事发生后，我们会向您发送消息，并附上合同。"
-
-#~ msgid "We'll ask you to read it, and if everything is OK, you can sign it."
-#~ msgstr "我们会让您阅读合同，如果一切正确，您就可以签订了。"
-
-#~ msgid "Visit Project Detail Page"
-#~ msgstr "访问项目详情页"
-
-#~ msgid "Bank Account Information"
-#~ msgstr "银行账户信息"
-
-#~ msgid "(Optional) Extra Information for Accepting Payments"
-#~ msgstr "（可选）接收支付的额外信息"
-
-#~ msgid "Intermediary Bank Account Information"
-#~ msgstr "中间人银行账户信息"
-
-#~ msgid "Account Holder National Identity Document Information"
-#~ msgstr "账户持有人身份证件信息"
-
-#~ msgid "Help link"
-#~ msgstr "帮助链接"
-
-#~ msgid "See help guide for more information."
-#~ msgstr "查看帮助指南获取更多信息。"
-
-#~ msgid "Search users"
-#~ msgstr "搜索用户"
-
-#~ msgid "Please type your password to confirm"
-#~ msgstr "请输入密码以确认"
-
-#~ msgid "Login"
-#~ msgstr "登录"
-
-#~ msgid "Two-Factor Authentication(2FA)"
-#~ msgstr "双重认证 (2FA)"
-
-#~ msgid "Tokens will be generated by your token generator."
-#~ msgstr "您的令牌生成器会生成令牌。"
-
-#, python-format
-#~ msgid "Primary method: %(primary)s"
-#~ msgstr "主要方法：%(primary)s"
-
-#~ msgid "Tokens will be generated by your YubiKey."
-#~ msgstr "您的 YubiKey 会生成令牌。"
-
-#~ msgid "Backup Phone Numbers"
-#~ msgstr "备用手机号码"
-
-#~ msgid ""
-#~ "If your primary method is not available, we are able to send backup "
-#~ "tokens to the phone numbers listed below."
-#~ msgstr "如果主要认证方式不可用，我们可以向下面列出的手机号码发送备用令牌。"
-
-#~ msgid "Are you sure?"
-#~ msgstr "您确定吗？"
-
-#~ msgid "Backup Tokens"
-#~ msgstr "备用令牌"
-
-#~ msgid ""
-#~ "If you don't have any device with you, you can access your account using "
-#~ "backup tokens."
-#~ msgstr "如果您身边没有其他设备，您可以用备用令牌访问您的账户。"
-
-#, python-format
-#~ msgid "You have only one backup token remaining."
-#~ msgid_plural "You have %(counter)s backup tokens remaining."
-#~ msgstr[0] "您还剩下 %(counter)s 个备用令牌。"
-
-#~ msgid "Disable Two-Factor Authentication"
-#~ msgstr "禁用双重认证"
-
-#~ msgid ""
-#~ "However we strongly discourage you to do so, you can also disable two-"
-#~ "factor authentication for your account."
-#~ msgstr "我们强烈不建议您这么做，但您仍可为您的账户禁用双重认证。"
-
-#~ msgid ""
-#~ "Two-factor authentication is not enabled for your account. Enable two-"
-#~ "factor authentication for enhanced account security."
-#~ msgstr "您的账户未启用双重认证。请启用双重认证以增强账户安全性。"
-
-#~ msgid "Check your email"
-#~ msgstr "检查您的邮箱"
-
-#~ msgid "Apply filters"
-#~ msgstr "应用筛选器"
-
-#~ msgid "field type"
-#~ msgstr "字段类型"
-
-#~ msgid "Related pages"
-#~ msgstr "相关页面"
-
-#~ msgid "External link"
-#~ msgstr "外部链接"
-
-#~ msgid "Text to display on the button for external links"
-#~ msgstr "外部链接按钮显示的文本"
-
-#~ msgid "Link for lab application"
-#~ msgstr "实验室申请链接"
-
-#~ msgid "Cannot link to both a Lab page and external link"
-#~ msgstr "无法同时链接到实验室页面与外部链接"
-
-#~ msgid "Cannot customise the text for internal lab pages, leave blank"
-#~ msgstr "无法自定义内部实验室页面的文字，请留空"
-
-#~ msgid "Apply for this"
-#~ msgstr "申请此项"
-
-#~ msgid "CLOSED"
-#~ msgstr "已关闭"
-
-#~ msgid "The first word will be bold"
-#~ msgstr "第一个单词会以粗体显示"
-
-#~ msgid "Introduction"
-#~ msgstr "介绍"
-
-#~ msgid "News"
-#~ msgstr "新闻"
-
-#~ msgid "Our Work"
-#~ msgstr "我们的工作"
-
-#~ msgid "Promoted Funds"
-#~ msgstr "推广基金"
-
-#~ msgid "Promoted Labs"
-#~ msgstr "推广实验室"
-
-#~ msgid "Promoted RFPs"
-#~ msgstr "推广 RFP"
-
-#~ msgid "Email Address"
-#~ msgstr "电子邮箱地址"
-
-#~ msgid "The title of the newsletter signup form."
-#~ msgstr "新闻快报注册表单的标题。"
-
-#~ msgid "Sorry, there were errors with your form."
-#~ msgstr "抱歉，您的表单中有错误。"
-
-#~ msgid "Sorry, there has been an problem. Please try again later."
-#~ msgstr "抱歉，出现了问题。请稍后再试。"
-
-#~ msgid "Thank you for subscribing"
-#~ msgstr "感谢订阅"
-
-#~ msgid "Leave blank to use the page's own title"
-#~ msgstr "留空以使用页面标题"
-
-#~ msgid "Main site navigation"
-#~ msgstr "主网站导航"
-
-#~ msgid ""
-#~ "Please enter only table id from embed code. Table widget code creates "
-#~ "automatically."
-#~ msgstr "请只输入嵌入代码中的表格编号。将自动编写表格部件代码。"
-
-#~ msgid ""
-#~ "Use this field to override the date that the news item appears to have "
-#~ "been published."
-#~ msgstr "使用此字段覆盖已发布新闻项目的日期。"
-
-#~ msgid "Authors"
-#~ msgstr "作者"
-
-#~ msgid "News types"
-#~ msgstr "新闻类型"
-
-#~ msgid "The description of the main news feed."
-#~ msgstr "主新闻订阅源的描述。"
-
-#, python-brace-format
-#~ msgid ""
-#~ "The title of the news feed by type. Use {news_type} to insert the type "
-#~ "name."
-#~ msgstr "含类型的新闻源标题。用 {news_type} 插入类型名称。"
-
-#, python-brace-format
-#~ msgid ""
-#~ "The description of the news feed by type. Use {news_type} to insert the "
-#~ "type name."
-#~ msgstr "含类型的新闻源描述。用 {news_type} 插入类型名称。"
-
-#~ msgid "Partner Page"
-#~ msgstr "合作者页面"
-
-#~ msgid "Investment Category Settings"
-#~ msgstr "投资分类设置"
-
-#~ msgid "Select the categories that should be used in investments."
-#~ msgstr "选择投资应使用的分类。"
-
-#~ msgid "Use format: <YYYY>"
-#~ msgstr "使用格式：<YYYY>"
-
-#, python-brace-format
-#~ msgid "Amount Committed ({currency})"
-#~ msgstr "贡献数目（{currency}）"
-
-#~ msgid "Items per page"
-#~ msgstr "每页项目"
-
-#~ msgid "Year"
-#~ msgstr "年"
-
-#~ msgid "Other"
-#~ msgstr "其他"
-
-#~ msgid "Social accounts"
-#~ msgstr "社交账号"
-
-#~ msgid "Other Contact Methods"
-#~ msgstr "其他联系方式"
-
-#~ msgid "Person types"
-#~ msgstr "个人类型"
-
-#~ msgid "Funds Reviewed"
-#~ msgstr "已审核资金"
-
-#~ msgid "Override the page title used when this page appears in listings"
-#~ msgstr "当此页面出现在列表中时，覆盖页面标题"
-
-#~ msgid ""
-#~ "The text summary used when this page appears in listings. It's also used "
-#~ "as the description for search engines if the 'Search description' field "
-#~ "above is not defined."
-#~ msgstr ""
-#~ "此页面在列表中显示时使用的文本概要。当上面的“搜索描述”未设置时，也会用作搜"
-#~ "索引擎的描述。"
-
-#~ msgid "Your Twitter username without the @, e.g. katyperry"
-#~ msgstr "您的 Twitter 用户名（没有@），例如 katyperry"
-
-#~ msgid "Your Facebook app ID."
-#~ msgstr "您的 Facebook 应用 ID。"
-
-#~ msgid ""
-#~ "Default sharing text to use if social text has not been set on a page."
-#~ msgstr "当页面未设置社交媒体文本时，默认的分享文本。"
-
-#~ msgid "Site name, used by Open Graph."
-#~ msgstr "网站名称，由 Open Graph 使用。"
-
-#~ msgid "In months"
-#~ msgstr "在数个月内"
-
-#~ msgid "Funding"
-#~ msgstr "资金"
-
-#~ msgid "You might also like…"
-#~ msgstr "您可能也想…"
-
-#~ msgid "Share"
-#~ msgstr "分享"
-
-#~ msgid "Share on Twitter"
-#~ msgstr "在 Twitter 上分享"
-
-#~ msgid "Share on LinkedIn"
-#~ msgstr "在领英上分享"
-
-#~ msgid "Share on Facebook"
-#~ msgstr "在 Facebook 上分享"

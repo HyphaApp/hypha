@@ -8,8 +8,9 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-10-27 20:49+0000\n"
-"PO-Revision-Date: 2025-05-10 00:03+0000\n"
-"Last-Translator: Jiří Podhorecký <j.podhorecky@volny.cz>\n"
+"PO-Revision-Date: 2026-11-21 11:24+0000\n"
+"Last-Translator: Jiří Podhorecký "
+"<trendspotter@users.noreply.hosted.weblate.org>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "cs/>\n"
 "Language: cs\n"
@@ -17,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
-"X-Generator: Weblate 5.12-dev\n"
+"X-Generator: Weblate 2026.12.dev0\n"
 
 #: hypha/addressfield/fields.py:53
 #, fuzzy
@@ -465,8 +466,7 @@ msgstr ""
 msgid ""
 "A proposal has been submitted for review: <{link}|{source.title_text_display}"
 ">"
-msgstr ""
-"Návrh byl předložen k přezkoumání: <{link}|{source.title_text_display}>"
+msgstr "Návrh byl předložen k přezkoumání: <{link}|{source.title_text_display}>"
 
 #: hypha/apply/activity/adapters/slack.py:58
 #, python-brace-format
@@ -592,8 +592,7 @@ msgstr "{user} schválil projekt <{link}|{source.title}>"
 msgid ""
 "{user} has requested changes for project acceptance on <{link}|{source.title}"
 ">"
-msgstr ""
-"{user} požádal o změny pro přijetí projektu dne <{link}|{source.title}>"
+msgstr "{user} požádal o změny pro přijetí projektu dne <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:106
 #, python-brace-format
@@ -2103,8 +2102,8 @@ msgid ""
 "Your application is now in \"%(new_phase)s\" status (progressed from "
 "\"%(old_phase)s\")."
 msgstr ""
-"Vaše žádost je nyní ve stavu „%(new_status)s“ (postoupila ze stavu "
-"„%(old_status)s“)."
+"Vaše žádost je nyní ve stavu „%(new_status)s“ (postoupila ze stavu „%"
+"(old_status)s“)."
 
 #: hypha/apply/activity/templates/messages/email/transition.html:8
 msgid "Please submit any questions related to your application here"
@@ -3103,8 +3102,8 @@ msgid ""
 "A determination of \"{current}\" exists but you tried to progress as "
 "\"{target}\""
 msgstr ""
-"Rozhodnutí o \"{current}\" existuje, ale pokusili jste se postoupit jako "
-"\"{target}\""
+"Rozhodnutí o \"{current}\" existuje, ale pokusili jste se postoupit jako \""
+"{target}\""
 
 #: hypha/apply/flags/models.py:13 hypha/apply/funds/tables.py:628
 #: hypha/apply/users/roles.py:6
@@ -3417,8 +3416,7 @@ msgstr "Jak se jmenujete?"
 
 #: hypha/apply/funds/blocks.py:221
 msgid "We will use this name when we communicate with you about your proposal."
-msgstr ""
-"Toto jméno budeme používat při komunikaci s vámi ohledně vašeho návrhu."
+msgstr "Toto jméno budeme používat při komunikaci s vámi ohledně vašeho návrhu."
 
 #: hypha/apply/funds/blocks.py:238
 #, fuzzy
@@ -3493,8 +3491,7 @@ msgstr "Externí hodnotitelé"
 
 #: hypha/apply/funds/forms.py:177
 msgid "Can't unassign, just change, because review already submitted"
-msgstr ""
-"Nelze zrušit přiřazení, pouze změnit, protože recenze již byla odeslána"
+msgstr "Nelze zrušit přiřazení, pouze změnit, protože recenze již byla odeslána"
 
 #: hypha/apply/funds/forms.py:183 hypha/apply/funds/forms.py:295
 msgid "Users cannot be assigned to multiple roles."
@@ -4296,8 +4293,7 @@ msgstr "Výchozí hodnota Ano/Ne"
 
 #: hypha/apply/funds/models/screening.py:17
 msgid "Only one Yes and No screening decision can be set as default."
-msgstr ""
-"Jako výchozí lze nastavit pouze jedno rozhodnutí o screeningu Ano a Ne."
+msgstr "Jako výchozí lze nastavit pouze jedno rozhodnutí o screeningu Ano a Ne."
 
 #: hypha/apply/funds/models/screening.py:23
 #: hypha/apply/funds/templates/funds/includes/screening_status_block.html:8
@@ -8028,8 +8024,7 @@ msgstr ""
 #, fuzzy
 #| msgid "No reviewer roles configured. Please add roles in "
 msgid "PAF reviewer roles are configured, cannot skip approval process"
-msgstr ""
-"Nejsou nakonfigurovány žádné role hodnotitele. Přidejte prosím role do "
+msgstr "Nejsou nakonfigurovány žádné role hodnotitele. Přidejte prosím role do "
 
 #: hypha/apply/projects/permissions.py:445
 msgid "Project form is editable for active projects if no reviewer roles"
@@ -8922,8 +8917,7 @@ msgstr "Volitelně"
 
 #: hypha/apply/projects/templates/application_projects/modals/send_for_approval.html:34
 msgid "No reviewer roles configured. Please add roles in "
-msgstr ""
-"Nejsou nakonfigurovány žádné role hodnotitele. Přidejte prosím role do "
+msgstr "Nejsou nakonfigurovány žádné role hodnotitele. Přidejte prosím role do "
 
 #: hypha/apply/projects/templates/application_projects/modals/submit_contracting_documents.html:2
 msgid "Submit contracting documents"
@@ -10271,8 +10265,8 @@ msgid ""
 "#{related.source.application_id}</span><br>{related.user} assigned you a "
 "comment: <q class=\"text-fg-muted italic align-bottom\">{msg}</q>"
 msgstr ""
-"<span class=\"text-xs\">{related.source.fund_name} "
-"#{related.source.application_id}</span><br>{related.user} vám přidělil "
+"<span class=\"text-xs\">{related.source.fund_name} #"
+"{related.source.application_id}</span><br>{related.user} vám přidělil "
 "komentář: <q class=\"text-fg-muted italic align-bottom\">{msg}</q>"
 
 #: hypha/apply/todo/options.py:82
@@ -10282,8 +10276,8 @@ msgid ""
 "span><br>A draft application <span class=\"truncate inline-block max-w-32 "
 "align-bottom \">\"{related.title}\"</span> is waiting to be submitted"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Koncept žádosti <span class=\"truncate inline-block max-w-32 align-"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Koncept žádosti <span class=\"truncate inline-block max-w-32 align-"
 "bottom \">\"{related.title}\"</span> čeká na odeslání"
 
 #: hypha/apply/todo/options.py:90
@@ -10294,10 +10288,10 @@ msgid ""
 "submission <span class=\"truncate inline-block max-w-32 align-"
 "bottom\">\"{related.submission.title}\"</span> is waiting to be submitted"
 msgstr ""
-"<span class=\"text-xs\">{related.submission.fund_name} "
-"#{related.submission.application_id}</span><br>Koncept rozhodnutí k odeslání "
-"<span class=\"truncate inline-block max-w-32 align-"
-"bottom\">\"{related.submission.title}\"</span> čeká na odeslání"
+"<span class=\"text-xs\">{related.submission.fund_name} #"
+"{related.submission.application_id}</span><br>Koncept rozhodnutí k odeslání "
+"<span class=\"truncate inline-block max-w-32 align-bottom\">\""
+"{related.submission.title}\"</span> čeká na odeslání"
 
 #: hypha/apply/todo/options.py:98
 #, python-brace-format
@@ -10307,10 +10301,10 @@ msgid ""
 "<span class=\"truncate inline-block max-w-32 align-"
 "bottom\">\"{related.submission.title}\"</span> is waiting to be submitted"
 msgstr ""
-"<span class=\"text-xs\">{related.submission.fund_name} "
-"#{related.submission.application_id}</span><br>Koncept recenze pro odeslání "
-"<span class=\"truncate inline-block max-w-32 align-"
-"bottom\">\"{related.submission.title}\"</span> čeká na odeslání"
+"<span class=\"text-xs\">{related.submission.fund_name} #"
+"{related.submission.application_id}</span><br>Koncept recenze pro odeslání "
+"<span class=\"truncate inline-block max-w-32 align-bottom\">\""
+"{related.submission.title}\"</span> čeká na odeslání"
 
 #: hypha/apply/todo/options.py:108
 #, python-brace-format
@@ -10318,8 +10312,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for project form"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Projekt čeká na formulář projektu"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Projekt čeká na formulář projektu"
 
 #: hypha/apply/todo/options.py:116
 #, python-brace-format
@@ -10327,8 +10321,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for scope of work"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Projekt čeká na rozsah práce"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Projekt čeká na rozsah práce"
 
 #: hypha/apply/todo/options.py:124
 #, python-brace-format
@@ -10336,8 +10330,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for project form(s) submission"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Projekt čeká na odeslání projektových formulářů"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Projekt čeká na odeslání projektových formulářů"
 
 #: hypha/apply/todo/options.py:132
 #, python-brace-format
@@ -10345,8 +10339,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project form requires changes or more information"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Formulář projektu vyžaduje změny nebo další informace"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Formulář projektu vyžaduje změny nebo další informace"
 
 #: hypha/apply/todo/options.py:141
 #, python-brace-format
@@ -10354,8 +10348,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project form is waiting for assignee"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Formulář projektu čeká na příjemce"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Formulář projektu čeká na příjemce"
 
 #: hypha/apply/todo/options.py:149
 #, python-brace-format
@@ -10363,8 +10357,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br> Project form is waiting for your approval"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br> Formulář projektu čeká na vaše schválení"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br> Formulář projektu čeká na vaše schválení"
 
 #: hypha/apply/todo/options.py:158
 #, python-brace-format
@@ -10372,8 +10366,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for contract"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Projekt čeká na smlouvu"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Projekt čeká na smlouvu"
 
 #: hypha/apply/todo/options.py:166
 #, python-brace-format
@@ -10381,8 +10375,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Project is waiting for contracting documents"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Projekt čeká na smluvní dokumenty"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Projekt čeká na smluvní dokumenty"
 
 #: hypha/apply/todo/options.py:174
 #, python-brace-format
@@ -10390,8 +10384,8 @@ msgid ""
 "<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
 "span><br>Contract for project is waiting for review"
 msgstr ""
-"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</"
-"span><br>Smlouva na projekt čeká na kontrolu"
+"<span class=\"text-xs\">{related.fund_name} #{related.application_id}</span>"
+"<br>Smlouva na projekt čeká na kontrolu"
 
 #: hypha/apply/todo/options.py:183
 #, fuzzy, python-brace-format
@@ -10404,9 +10398,9 @@ msgid ""
 "span><br>Project <span class=\"truncate inline-block max-w-32 align-"
 "bottom\">\"{related.title}\"</span> is waiting for invoice"
 msgstr ""
-"<span class=\"text-sm\">{related.fund_name} #{related.application_id}</"
-"span><br>Projekt <span class=\"truncate inline-block max-w-32 align-"
-"bottom\">\"{related.title}\"</span> čeká na fakturu"
+"<span class=\"text-sm\">{related.fund_name} #{related.application_id}</span>"
+"<br>Projekt <span class=\"truncate inline-block max-w-32 align-bottom\">\""
+"{related.title}\"</span> čeká na fakturu"
 
 #: hypha/apply/todo/options.py:191
 #, python-brace-format
@@ -10415,8 +10409,8 @@ msgid ""
 "#{related.project.application_id}</span><br>Invoice no. "
 "{related.invoice_number} required changes or more information"
 msgstr ""
-"<span class='text-xs'>{related.project.fund_name} "
-"#{related.project.application_id}</span><br>Č. faktury "
+"<span class='text-xs'>{related.project.fund_name} #"
+"{related.project.application_id}</span><br>Č. faktury "
 "{related.invoice_number} vyžaduje změny nebo další informace"
 
 #: hypha/apply/todo/options.py:199
@@ -10426,8 +10420,8 @@ msgid ""
 "#{related.project.application_id}</span><br>Invoice no. "
 "{related.invoice_number} is waiting for your approval"
 msgstr ""
-"<span class='text-xs'>{related.project.fund_name} "
-"#{related.project.application_id}</span><br>Č. faktury "
+"<span class='text-xs'>{related.project.fund_name} #"
+"{related.project.application_id}</span><br>Č. faktury "
 "{related.invoice_number} čeká na vaše schválení"
 
 #: hypha/apply/todo/options.py:207
@@ -10437,8 +10431,8 @@ msgid ""
 "#{related.project.application_id}</span><br>Invoice no. "
 "{related.invoice_number} is waiting to be paid"
 msgstr ""
-"<span class='text-xs'>{related.project.fund_name} "
-"#{related.project.application_id}</span><br>Č. faktury "
+"<span class='text-xs'>{related.project.fund_name} #"
+"{related.project.application_id}</span><br>Č. faktury "
 "{related.invoice_number} čeká na zaplacení"
 
 #: hypha/apply/todo/options.py:215
@@ -10449,10 +10443,10 @@ msgid ""
 "class=\"truncate inline-block max-w-32 align-bottom "
 "\">\"{related.project.title}\"</span> is due"
 msgstr ""
-"<span class=\"text-xs\">{related.project.fund_name} "
-"#{related.project.application_id}</span><br>Zpráva pro projekt <span "
-"class=\"truncate inline-block max-w-32 align-bottom "
-"\">\"{related.project.title}\"</span> je po termínu"
+"<span class=\"text-xs\">{related.project.fund_name} #"
+"{related.project.application_id}</span><br>Zpráva pro projekt <span "
+"class=\"truncate inline-block max-w-32 align-bottom \">\""
+"{related.project.title}\"</span> je po termínu"
 
 #: hypha/apply/todo/options.py:223
 msgid "Your generated submission export file is ready for download"
@@ -12806,1542 +12800,3 @@ msgstr "Vyžadováno heslo"
 #: hypha/templates/password_required.html:11
 msgid "Please enter the password to proceed."
 msgstr "Pro pokračování zadejte heslo."
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| " You're skipping the report for %(start_date)s - %(end_date)s. This will "
-#~| "result in a gap in reporting for the project. You can undo this at any "
-#~| "time. "
-#~ msgid ""
-#~ " You&#x27;re skipping the report for %(start_date)s - %(end_date)s. This "
-#~ "will result in a gap in reporting for the project. You can undo this at "
-#~ "any time. "
-#~ msgstr ""
-#~ " Přeskakujete hlášení pro %(start_date)s - %(end_date)s. To bude mít za "
-#~ "následek mezeru ve vykazování projektu. Tento krok můžete kdykoli vrátit "
-#~ "zpět. "
-
-#, fuzzy, python-format
-#~| msgid "Are you sure you want to delete \"%(object)s\"?"
-#~ msgid ""
-#~ "Are you sure you want to remove the &quot;%(current_status)s&quot; "
-#~ "screening decision?"
-#~ msgstr "Jste si jisti, že chcete odstranit „%(object)s“?"
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "Login to your account on the %(ORG_LONG_NAME)s website by clicking this "
-#~| "link or copying and pasting it to your browser:"
-#~ msgid ""
-#~ "Login to your account on the %(ORG_LONG_NAME)s web site by clicking this "
-#~ "link or copying and pasting it to your browser:"
-#~ msgstr ""
-#~ "Přihlaste se ke svému účtu na webu %(ORG_LONG_NAME)s kliknutím na tento "
-#~ "odkaz nebo jeho zkopírováním a vložením do prohlížeče:"
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "Your account on the %(ORG_LONG_NAME)s website is deactivated. Please "
-#~| "contact site administrators."
-#~ msgid ""
-#~ "Your account on the %(ORG_LONG_NAME)s web site is deactivated. Please "
-#~ "contact site administrators."
-#~ msgstr ""
-#~ "Váš účet na webu %(ORG_LONG_NAME)s je deaktivován. Kontaktujte prosím "
-#~ "správce stránek."
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "Welcome to %(ORG_LONG_NAME)s website. Create your account by clicking "
-#~| "this link or copying and pasting it to your browser:"
-#~ msgid ""
-#~ "Welcome to %(ORG_LONG_NAME)s web site. Create your account by clicking "
-#~ "this link or copying and pasting it to your browser:"
-#~ msgstr ""
-#~ "Vítejte na stránkách %(ORG_LONG_NAME)s. Vytvořte si účet kliknutím na "
-#~ "tento odkaz nebo jeho zkopírováním a vložením do prohlížeče:"
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "There has been an attempt to change email of your account on the "
-#~| "%(ORG_LONG_NAME)s website. If this action wasn't made by you, please "
-#~| "contact support at %(ORG_EMAIL)s "
-#~ msgid ""
-#~ "There has been an attempt to change email of your account on the "
-#~ "%(ORG_LONG_NAME)s web site. If this action wasn&#x27;t made by you, "
-#~ "please contact support at %(ORG_EMAIL)s "
-#~ msgstr ""
-#~ "Na webových stránkách %(ORG_LONG_NAME)s došlo k pokusu o změnu e-mailu "
-#~ "vašeho účtu.Pokud jste tuto akci neprovedli vy, kontaktujte prosím "
-#~ "podporu na adrese %(ORG_EMAIL)s. "
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "You're receiving this email because you requested a password reset for "
-#~| "your user account at %(ORG_LONG_NAME)s."
-#~ msgid ""
-#~ "You&#x27;re receiving this email because you requested a password reset "
-#~ "for your user account at %(ORG_LONG_NAME)s."
-#~ msgstr ""
-#~ "Tento e-mail jste obdrželi, protože jste požádali o obnovení hesla ke "
-#~ "svému uživatelskému účtu na %(ORG_LONG_NAME)s."
-
-#, fuzzy, python-format
-#~| msgid "You have been added as a partner the following submission."
-#~ msgid ""
-#~ "You have been assigned as an Applicant to submission &quot;"
-#~ "%(title)s&quot;."
-#~ msgstr "Byli jste přidáni jako partner následujícího podání."
-
-#, fuzzy, python-format
-#~| msgid "There has been a new comment on \"%(title)s\" by %(display_user)s."
-#~ msgid "You have been assigned to a comment on &quot;%(title)s&quot;."
-#~ msgstr "Byl přidán nový komentář k „%(title)s“ od %(display_user)s."
-
-#, fuzzy, python-format
-#~| msgid "There has been a new comment on \"%(title)s\" by %(display_user)s."
-#~ msgid ""
-#~ "There has been a new comment on &quot;%(title)s&quot; by %(display_user)s."
-#~ msgstr "Byl přidán nový komentář k „%(title)s“ od %(display_user)s."
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "We’ve reviewed your Concept note and think it could be a good fit for "
-#~| "%(ORG_SHORT_NAME)s funding. We would like to invite you to submit a "
-#~| "Proposal with more details about your project. You will receive a second "
-#~| "email linking to a determination message with detailed feedback."
-#~ msgid ""
-#~ "We&#8217;ve reviewed your Concept note and think it could be a good fit "
-#~ "for %(ORG_SHORT_NAME)s funding. We would like to invite you to submit a "
-#~ "Proposal with more details about your project. You will receive a second "
-#~ "email linking to a determination message with detailed feedback."
-#~ msgstr ""
-#~ "Zkontrolovali jsme vaši koncepční poznámku a myslíme si, že by mohla být "
-#~ "vhodná pro financování %(ORG_SHORT_NAME)s. Rádi bychom vás pozvali k "
-#~ "předložení návrhu s podrobnějšími informacemi o vašem projektu. Obdržíte "
-#~ "druhý e-mail s odkazem na zprávu o rozhodnutí s podrobnou zpětnou vazbou."
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "Please review our Proposal Guide at %(ORG_GUIDE_URL)s to learn more "
-#~| "about the information we’d like to see. In the proposal please also "
-#~| "address the feedback we provided in the concept note determination."
-#~ msgid ""
-#~ "Please review our Proposal Guide at %(ORG_GUIDE_URL)s to learn more about "
-#~ "the information we&#8217;d like to see. In the proposal please also "
-#~ "address the feedback we provided in the concept note determination."
-#~ msgstr ""
-#~ "Prostudujte si prosím našeho průvodce návrhem na adrese "
-#~ "%(ORG_GUIDE_URL)s, kde se dozvíte více o informacích, které bychom chtěli "
-#~ "vidět. V návrhu se prosím také věnujte zpětné vazbě, kterou jsme poskytli "
-#~ "v rámci stanovení koncepce."
-
-#, fuzzy
-#~| msgid ""
-#~| "The system will allow you to save a draft of your proposal as you work "
-#~| "on it. When you feel it is ready for our review, please click the "
-#~| "“Submit” button and we’ll know to take a look at it. We’ll reply to you "
-#~| "with feedback on your Proposal as quickly as possible."
-#~ msgid ""
-#~ "The system will allow you to save a draft of your proposal as you work on "
-#~ "it. When you feel it is ready for our review, please click the "
-#~ "&#8220;Submit&#8221; button and we&#8217;ll know to take a look at it. "
-#~ "We&#8217;ll reply to you with feedback on your Proposal as quickly as "
-#~ "possible."
-#~ msgstr ""
-#~ "Systém vám umožní uložit návrh návrhu v průběhu práce na něm. Až budete "
-#~ "mít pocit, že je připraven k našemu posouzení, klikněte na tlačítko "
-#~ "„Odeslat“ a my budeme vědět, že se na něj máme podívat. Co nejrychleji "
-#~ "vám odpovíme a poskytneme zpětnou vazbu k vašemu návrhu."
-
-#, fuzzy, python-format
-#~| msgid "It is now %(invoice_status)s."
-#~ msgid "It&#x27;s status is now &quot;%(status)s&quot;."
-#~ msgstr "Nyní je %(invoice_status)s."
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "An %(ORG_SHORT_NAME)s staff member has changed the reporting frequency "
-#~| "of \"%(title)s\"."
-#~ msgid ""
-#~ "An %(ORG_SHORT_NAME)s staff member has updated an invoice on your project "
-#~ "&quot;%(title)s&quot;."
-#~ msgstr ""
-#~ "Zaměstnanec %(ORG_SHORT_NAME)s změnil frekvenci hlášení zpráv "
-#~ "\"%(title)s\"."
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "A Project has been created for your submission on %(ORG_SHORT_NAME)s."
-#~ msgid ""
-#~ "A project, &quot;%(title)s&quot; has been created for your submission to "
-#~ "the %(ORG_LONG_NAME)s."
-#~ msgstr "Byl vytvořen projekt pro vaše podání na %(ORG_SHORT_NAME)s."
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "A Project has been rejected by project form reviewers, please update it "
-#~| "accordingly and resubmit it to the reviewers."
-#~ msgid ""
-#~ "The project forms for &quot;%(title)s&quot; was rejected by project form "
-#~ "reviewers, please update it accordingly and resubmit it to the reviewers. "
-#~ msgstr ""
-#~ "Projekt byl hodnotiteli formuláře projektu zamítnut, aktualizujte jej a "
-#~ "znovu jej předložte hodnotitelům."
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "The contract for your project \"%(title)s\" has approved. Now, your "
-#~| "project is ready for invoicing."
-#~ msgid ""
-#~ "The contract for your project &quot;%(title)s&quot; has approved. Now, "
-#~ "your project is ready for invoicing."
-#~ msgstr ""
-#~ "Smlouva pro váš projekt „%(title)s“ byla schválena. Nyní je váš projekt "
-#~ "připraven k fakturaci."
-
-#, fuzzy, python-format
-#~| msgid "A report is due for \"%(title)s\" on %(end_date)s."
-#~ msgid ""
-#~ "A report is due for your project &quot;%(title)s&quot; on %(end_date)s."
-#~ msgstr "Dne %(end_date)s je třeba podat zprávu pro \"%(title)s\"."
-
-#, fuzzy, python-format
-#~| msgid " for \"%(title)s\" for period %(start_date)s to %(end_date)s."
-#~ msgid ""
-#~ " for &quot;%(title)s&quot; for period %(start_date)s to %(end_date)s."
-#~ msgstr " pro \"%(title)s\" za období %(start_date)s až %(end_date)s."
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "An %(ORG_SHORT_NAME)s staff member has submitted a report for "
-#~| "\"%(title)s\" for period %(start_date)s to %(end_date)s."
-#~ msgid ""
-#~ "An %(ORG_SHORT_NAME)s staff member has submitted a report for your "
-#~ "project &quot;%(title)s&quot; for period %(start_date)s to %(end_date)s."
-#~ msgstr ""
-#~ "Člen týmu %(ORG_SHORT_NAME)s předložil zprávu pro \"%(title)s\" za období "
-#~ "od %(start_date)s do %(end_date)s."
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "We appreciate your \"%(title)s\" application submission to the "
-#~| "%(ORG_LONG_NAME)s."
-#~ msgid ""
-#~ "We appreciate your &quot;%(title)s&quot; application submission to the "
-#~ "%(ORG_LONG_NAME)s."
-#~ msgstr ""
-#~ "Vážíme si toho, že jste \"%(title)s\" podali přihlášku do "
-#~ "%(ORG_LONG_NAME)s."
-
-#, fuzzy, python-format
-#~| msgid ""
-#~| "Your application is now in \"%(new_status)s\" status (progressed from "
-#~| "\"%(old_status)s\")."
-#~ msgid ""
-#~ "Your application is now in &quot;%(new_phase)s&quot; status (progressed "
-#~ "from &quot;%(old_phase)s&quot;)."
-#~ msgstr ""
-#~ "Vaše žádost je nyní ve stavu „%(new_status)s“ (postoupila ze stavu "
-#~ "„%(old_status)s“)."
-
-#~ msgid "Score:"
-#~ msgstr "Skóre:"
-
-#~ msgid "After setting your password, you will be able to log in at"
-#~ msgstr "Po nastavení hesla se budete moci přihlásit na adrese"
-
-#~ msgid "Your chosen password"
-#~ msgstr "Vámi zvolené heslo"
-
-#~ msgid "View "
-#~ msgstr "Zobrazit "
-
-#~ msgid "Are you sure you want to archive the selected submissions?"
-#~ msgstr "Opravdu chcete vybrané příspěvky archivovat?"
-
-#~ msgid "Ready For Preliminary Determination"
-#~ msgstr "Připraveno k předběžnému rozhodnutí"
-
-#~ msgid "Ready For Discussion"
-#~ msgstr "Připraveno k diskusi"
-
-#~ msgid "Ready For Final Determination"
-#~ msgstr "Připraveno ke konečnému rozhodnutí"
-
-#~ msgid "Ready For Determination"
-#~ msgstr "Připraveno k rozhodnutí"
-
-#~ msgid "The"
-#~ msgstr " "
-
-#~ msgid "current"
-#~ msgstr "aktuální"
-
-#~ msgid "next"
-#~ msgstr "další"
-
-#~ msgid "reporting period is"
-#~ msgstr "vykazované období je"
-
-#~ msgid "A report is due for the period"
-#~ msgstr "Je třeba předložit zprávu za období"
-
-#, fuzzy
-#~| msgid "Show less..."
-#~ msgid "show less"
-#~ msgstr "Zobrazit méně..."
-
-#~ msgid "Partners updated."
-#~ msgstr "Partneři aktualizováni."
-
-#, python-brace-format
-#~ msgid ""
-#~ "{user} has updated the partners on <{link}|{source.title_text_display}>"
-#~ msgstr ""
-#~ "{user} aktualizoval partnery na <{link}|{source.title_text_display}>"
-
-#~ msgid "applicant"
-#~ msgstr "žadatel"
-
-#~ msgid "team"
-#~ msgstr "tým"
-
-#~ msgid "partners"
-#~ msgstr "partneři"
-
-#~ msgid "all"
-#~ msgstr "vše"
-
-#~ msgid "Partners"
-#~ msgstr "Partneři"
-
-#~ msgid "Applicants & Partners"
-#~ msgstr "Žadatelé a partneři"
-
-#~ msgid "Your active submissions"
-#~ msgstr "Vaše aktivní podání"
-
-#~ msgid "You are the partner of these submissions"
-#~ msgstr "Jste partnerem těchto podání"
-
-#~ msgid "Determining"
-#~ msgstr "Rozhodování"
-
-#~ msgid "submission"
-#~ msgstr "podání"
-
-#~ msgid "Yes/No"
-#~ msgstr "Ano/Ne"
-
-#~ msgid "Amounts"
-#~ msgstr "Částky"
-
-#~ msgid "Applied amounts"
-#~ msgstr "Uplatněné částky"
-
-#~ msgid "Applied"
-#~ msgstr "Použito"
-
-#~ msgid "Accepted amounts"
-#~ msgstr "Přijaté částky"
-
-#~ msgid "Accepted submissions"
-#~ msgstr "Přijatá podání"
-
-#~ msgid "All reviews"
-#~ msgstr "Všechna hodnocení"
-
-#~ msgid "Your reviews"
-#~ msgstr "Vaše hodnocení"
-
-#~ msgid "You"
-#~ msgstr "Vy"
-
-#~ msgid "Your average score"
-#~ msgstr "Vaše průměrné skóre"
-
-#~ msgid "Your avg. score"
-#~ msgstr "Vaše prům. skóre"
-
-#~ msgid "Partners updated successfully."
-#~ msgstr "Partneři úspěšně aktualizováni."
-
-#~ msgid "Partner"
-#~ msgstr "Partner"
-
-#~ msgid ""
-#~ "Can view, edit, and comment on a specific application they are assigned "
-#~ "to."
-#~ msgstr ""
-#~ "Může prohlížet, upravovat a komentovat konkrétní aplikaci, ke které je "
-#~ "přiřazen."
-
-#~ msgid ""
-#~ "If you loose your smartphone, or your Authenticator app is not available, "
-#~ "you can use a backup code along with your username and password to login "
-#~ "until you recover your smartphone. Each backup code can be used only "
-#~ "once. </br> </br> These codes should be kept in a secure, private place "
-#~ "(print them or store them in your password manager) for when you need "
-#~ "them. When they are used up, you can generate a new set of backup codes."
-#~ msgstr ""
-#~ "Pokud ztratíte svůj smartphone nebo vaše aplikace Authenticator není k "
-#~ "dispozici, můžete se přihlásit pomocí záložního kódu spolu s uživatelským "
-#~ "jménem a heslem, dokud smartphone neobnovíte. Každý záložní kód lze "
-#~ "použít pouze jednou. </br> </br> Tyto kódy by měly být uloženy na "
-#~ "bezpečném a soukromém místě (vytiskněte si je nebo uložte do správce "
-#~ "hesel), abyste je mohli potřebovat. Po jejich vyčerpání můžete "
-#~ "vygenerovat novou sadu záložních kódů."
-
-#, python-format
-#~ msgid ""
-#~ "It looks like you are trying to login on %(ORG_LONG_NAME)s website, but "
-#~ "we could not find any account with the email provided."
-#~ msgstr ""
-#~ "Vypadá to, že se snažíte přihlásit na webové stránky %(ORG_LONG_NAME)s, "
-#~ "ale nepodařilo se nám najít žádný účet se zadaným e-mailem."
-
-#~ msgid ""
-#~ "We've sent you an email with a login link. Kindly check your email and "
-#~ "follow the link to access your account."
-#~ msgstr ""
-#~ "Zaslali jsme vám e-mail s odkazem pro přihlášení. Zkontrolujte laskavě "
-#~ "svůj e-mail a podle odkazu získejte přístup ke svému účtu."
-
-#~ msgid "Check your inbox for a password reset email!"
-#~ msgstr ""
-#~ "Podívejte se do své e-mailové schránky, zda vám nepřišel e-mail o "
-#~ "obnovení hesla!"
-
-#~ msgid "Forgot password?"
-#~ msgstr "Zapomněli jste heslo?"
-
-#~ msgid "Link to your application"
-#~ msgstr "Odkaz na vaši žádost"
-
-#, python-format
-#~ msgid ""
-#~ "Kind Regards,\n"
-#~ "    The %(ORG_SHORT_NAME)s Team"
-#~ msgstr ""
-#~ "S laskavým pozdravem,\n"
-#~ "    Tým %(ORG_SHORT_NAME)s"
-
-#, python-format
-#~ msgid ""
-#~ "An %(ORG_SHORT_NAME)s staff member has updated your invoice for %(title)s "
-#~ "for period %(date_from)s to %(date_to)s."
-#~ msgstr ""
-#~ "Pracovník %(ORG_SHORT_NAME)s aktualizoval vaši fakturu pro %(title)s za "
-#~ "období od %(date_from)s do %(date_to)s."
-
-#~ msgid "Invoice Link"
-#~ msgstr "Odkaz na fakturu"
-
-#~ msgid "Project Link"
-#~ msgstr "Odkaz na projekt"
-
-#~ msgid "Link to your project"
-#~ msgstr "Odkaz na váš projekt"
-
-#, python-format
-#~ msgid ""
-#~ "If you have any issues accessing the project or other general inquiries, "
-#~ "please email us at %(ORG_EMAIL)s"
-#~ msgstr ""
-#~ "Pokud máte problémy s přístupem k projektu nebo jiné obecné dotazy, "
-#~ "napište nám na %(ORG_EMAIL)s"
-
-#~ msgid "More information can be found on the project page:"
-#~ msgstr "Více informací najdete na stránce projektu:"
-
-#~ msgid "A Project's contract is awaiting your review."
-#~ msgstr "Smlouva o projektu čeká na vaši kontrolu."
-
-#~ msgid "Date added: "
-#~ msgstr "Datum přidání: "
-
-#~ msgid "No Active Invoices"
-#~ msgstr "Žádné aktivní faktury"
-
-#~ msgid "Drafted on "
-#~ msgstr "Navrženo v "
-
-#~ msgid "Edit determination"
-#~ msgstr "Upravit určení"
-
-#~ msgid ""
-#~ "There were some errors with your form. Please amend the fields "
-#~ "highlighted below"
-#~ msgstr ""
-#~ "Ve vašem formuláři se vyskytly chyby. Opravte prosím níže zvýrazněná pole"
-
-#~ msgid "Conversation"
-#~ msgstr "Konverzace"
-
-#~ msgid "Create Project"
-#~ msgstr "Vytvořit projekt"
-
-#~ msgid "submissions"
-#~ msgstr "podání"
-
-#~ msgid "Remove filter"
-#~ msgstr "Odebrat filtr"
-
-#~ msgid "Comparing revisions"
-#~ msgstr "Porovnávání revizí"
-
-#~ msgid "Proposal Information (Old)"
-#~ msgstr "Informace o návrhu (staré)"
-
-#~ msgid "Proposal Information (New)"
-#~ msgstr "Informace o návrhu (nové)"
-
-#~ msgid "Submission value totals"
-#~ msgstr "Celkové hodnoty podání"
-
-#~ msgid "Review outcomes"
-#~ msgstr "Výsledky hodnocení"
-
-#~ msgid "Awaiting"
-#~ msgstr "Čekající"
-
-#~ msgid "Linked"
-#~ msgstr "Propojeno"
-
-#~ msgid "previous"
-#~ msgstr "předchozí"
-
-#~ msgid "Remove status filter"
-#~ msgstr "Odebrat filtr stavu"
-
-#~ msgid "Remove fund filter"
-#~ msgstr "Odebrat filtr fond"
-
-#~ msgid "Remove round filter"
-#~ msgstr "Odebrat filtr round"
-
-#~ msgid "Remove leads filter"
-#~ msgstr "Odebrat filtr vedení"
-
-#~ msgid "Remove reviewer filter"
-#~ msgstr "Odebrat filtr hodnotitel"
-
-#~ msgid "Remove category filter"
-#~ msgstr "Odebrat filtr kategorie"
-
-#~ msgid "Remove screening decisions filter"
-#~ msgstr "Odebrat filtr Rozhodnutí o prověření"
-
-#~ msgid "First Page"
-#~ msgstr "První strana"
-
-#~ msgid "Previous Page"
-#~ msgstr "Předchozí strana"
-
-#, python-format
-#~ msgid "Page %(page_number)s of %(total)s."
-#~ msgstr "Strana %(page_number)s z %(total)s."
-
-#~ msgid "Next Page"
-#~ msgstr "Další strana"
-
-#~ msgid "Last Page"
-#~ msgstr "Poslední strana"
-
-#~ msgid "Last 7 Days"
-#~ msgstr "Posledních 7 dní"
-
-#~ msgid "Last 30 Days"
-#~ msgstr "Posledních 30 dní"
-
-#~ msgid "This Month"
-#~ msgstr "Tento měsíc"
-
-#~ msgid "Last Month"
-#~ msgstr "Poslední měsíc"
-
-#~ msgid "Meta terms updated successfully."
-#~ msgstr "Meta termíny byly úspěšně aktualizovány."
-
-#~ msgid "Reporting Disabled"
-#~ msgstr "Vykazování zakázáno"
-
-#~ msgid "ENABLE"
-#~ msgstr "POVOLIT"
-
-#~ msgid "Invoice Number"
-#~ msgstr "Číslo faktury"
-
-#~ msgid "Approve contract documents"
-#~ msgstr "Schválení smluvní dokumentace"
-
-#~ msgid "Approve Contract"
-#~ msgstr "Schválit smlouvu"
-
-#~ msgid "Update Project Form Status"
-#~ msgstr "Aktualizovat stav projektového formuláře"
-
-#~ msgid ""
-#~ "The signed contract will be sent to Applicant once you submit. But if you "
-#~ "select Signed and approved then it will directly be approved and project "
-#~ "will move to Invoicing and Reporting."
-#~ msgstr ""
-#~ "Podepsaná smlouva bude žadateli zaslána po odeslání. Pokud však vyberete "
-#~ "možnost Podepsáno a schváleno, bude přímo schválena a projekt se přesune "
-#~ "do fáze Fakturace a vykazování."
-
-#~ msgid "Hide"
-#~ msgstr "Skrýt"
-
-#~ msgid "Back to Project"
-#~ msgstr "Zpět na projekt"
-
-#~ msgid " - Pending"
-#~ msgstr " - Čeká se"
-
-#~ msgid "Download Project Form"
-#~ msgstr "Stáhnout projektový formulář"
-
-#~ msgid "Download SOW"
-#~ msgstr "Stáhnout rozah práce"
-
-#~ msgid "Scope of work form not configured. Please add it in the"
-#~ msgstr "Formulář rozsahu práce není nakonfigurován.Přidejte jej prosím do"
-
-#~ msgid "No pending task."
-#~ msgstr "Žádný nevyřízený úkol."
-
-#~ msgid "Back to Account"
-#~ msgstr "Zpět na účet"
-
-#~ msgid "Invalid activation URL"
-#~ msgstr "Neplatná aktivační adresa URL"
-
-#~ msgid "Two possible reasons:"
-#~ msgstr "Dva možné důvody:"
-
-#~ msgid "Possible reason:"
-#~ msgstr "Možný důvod:"
-
-#~ msgid "Select all users in listing"
-#~ msgstr "Vybrat všechny uživatele ve výpisu"
-
-#~ msgid "Display Name"
-#~ msgstr "Zobrazované jméno"
-
-#, python-format
-#~ msgid "There is %(counter)s match"
-#~ msgid_plural "There are %(counter)s matches"
-#~ msgstr[0] "Je zde %(counter)s shoda"
-#~ msgstr[1] "Jsou zde %(counter)s shody"
-#~ msgstr[2] "Je zde %(counter)s shod"
-
-#, python-format
-#~ msgid "Sorry, no users match \"<em>%(query_string)s</em>\""
-#~ msgstr ""
-#~ "Je nám líto, ale žádný uživatel neodpovídá \"<em>%(query_string)s</em>\""
-
-#, python-format
-#~ msgid ""
-#~ "The %(group_name)s group has no users configured. Why not <a "
-#~ "href=\"%(wagtailusers_add_url)s\">add some</a>?"
-#~ msgstr ""
-#~ "Skupina %(group_name)s nemá nakonfigurované žádné uživatele. Proč je <a "
-#~ "href=\"%(wagtailusers_add_url)s\">nepřidat</a>?"
-
-#, python-format
-#~ msgid ""
-#~ "There are no users configured. Why not <a "
-#~ "href=\"%(wagtailusers_add_url)s\">add some</a>?"
-#~ msgstr ""
-#~ "Nejsou nakonfigurováni žádní uživatelé. Proč je <a "
-#~ "href=\"%(wagtailusers_add_url)s\">nepřidat</a>?"
-
-#~ msgid "ID"
-#~ msgstr "ID"
-
-#~ msgid ""
-#~ "Reporting has been disabled, just save the form with appropriate report "
-#~ "date and frequency to enable it again."
-#~ msgstr ""
-#~ "Vykazování bylo zakázáno, stačí uložit formulář s příslušným datem a "
-#~ "frekvencí vykazování, aby bylo opět povoleno."
-
-#~ msgid "No notifications available."
-#~ msgstr "Nejsou k dispozici žádná oznámení."
-
-#~ msgid "Communications"
-#~ msgstr "Komunikace"
-
-#~ msgid "Activity Feed"
-#~ msgstr "Kanál aktivit"
-
-#~ msgid "Back to submissions"
-#~ msgstr "Zpět na podání"
-
-#~ msgid "List of Submissions summary"
-#~ msgstr "Přehled podaných žádostí"
-
-#~ msgid "Hide Archived"
-#~ msgstr "Skrýt archivované"
-
-#~ msgid "Show Archived"
-#~ msgstr "Zobrazit archivované"
-
-#~ msgid "Filters"
-#~ msgstr "Filtry"
-
-#, python-format
-#~ msgid ">Are you sure you want to delete \"%(object)s\"?"
-#~ msgstr ">Opravdu chcete odstranit \"%(object)s\"?"
-
-#~ msgid "Project #"
-#~ msgstr "Projekt č"
-
-#~ msgid "Pay to"
-#~ msgstr "Zaplatit"
-
-#~ msgid "Some details"
-#~ msgstr "Některé detaily"
-
-#~ msgid "Report frequency"
-#~ msgstr "Frekvence podávání zpráv"
-
-#~ msgid "Past reports"
-#~ msgstr "Minulé zprávy"
-
-#~ msgid ""
-#~ "You confirm that the uploaded contract is acceptable for commencing the "
-#~ "project."
-#~ msgstr ""
-#~ "Potvrzujete, že nahraná smlouva je přijatelná pro zahájení projektu."
-
-#~ msgid "Disable Reporting"
-#~ msgstr "Vypnout hlášení"
-
-#~ msgid "Approved by "
-#~ msgstr "Schváleno od "
-
-#~ msgid "You are reporting for the period running from"
-#~ msgstr "Podáváte zprávu za období od"
-
-#, python-brace-format
-#~ msgid ""
-#~ "{related.user} assigned you a comment on [<span class=\"truncate inline-"
-#~ "block max-w-32 align-bottom \">{related.source.title}</span>]({link} "
-#~ "\"{related.source.title}\"):\n"
-#~ "<span class=\"line-clamp-2 italic align-bottom \">{msg}</span>"
-#~ msgstr ""
-#~ "{related.user} vám přidělil komentář k [<span class=\"truncate inline-"
-#~ "block max-w-32 align-bottom \">{related.source.title}</span>]({link} "
-#~ "\"{related.source.title}\"):\n"
-#~ "<span class=\"line-clamp-2 italic align-bottom \">{msg}</span>"
-
-#, python-brace-format
-#~ msgid ""
-#~ "Review draft for submission [<span class=\"truncate inline-block max-w-32 "
-#~ "align-bottom \">{related.submission.title}</span>]({link} "
-#~ "\"{related.submission.title}\") is waiting to be submitted"
-#~ msgstr ""
-#~ "Návrh hodnocení k odeslání [<span class=\"truncate inline-block max-w-32 "
-#~ "align-bottom \">{related.submission.title}</span>]({link} "
-#~ "\"{related.submission.title}\") čeká na předložení"
-
-#, python-brace-format
-#~ msgid ""
-#~ "Project [<span class=\"truncate inline-block max-w-32 align-bottom "
-#~ "\">{related.title}</span>]({link} \"{related.title}\") is waiting for "
-#~ "project form"
-#~ msgstr ""
-#~ "Projekt [<span class=\"truncate inline-block max-w-32 align-bottom "
-#~ "\">{related.title}</span>]({link} \"{related.title}\") čeká na formulář "
-#~ "projektu"
-
-#, python-brace-format
-#~ msgid ""
-#~ "Project [<span class=\"truncate inline-block max-w-32 align-bottom "
-#~ "\">{related.title}</span>]({link} \"{related.title}\") is waiting for "
-#~ "scope of work"
-#~ msgstr ""
-#~ "Projekt [<span class=\"truncate inline-block max-w-32 align-bottom "
-#~ "\">{related.title}</span>]({link} \"{related.title}\") čeká na rozsah "
-#~ "prací"
-
-#, python-brace-format
-#~ msgid ""
-#~ "Project form for project [<span class=\"truncate inline-block max-w-32 "
-#~ "align-bottom \">{related.title}</span>]({link} \"{related.title}\") "
-#~ "required changes or more information"
-#~ msgstr ""
-#~ "Projektový formulář pro projekt [<span class=\"truncate inline-block max-"
-#~ "w-32 align-bottom \">{related.title}</span>]({link} \"{related.title}\") "
-#~ "vyžaduje změny nebo další informace"
-
-#, python-brace-format
-#~ msgid ""
-#~ "Project form for project [<span class=\"truncate inline-block max-w-32 "
-#~ "align-bottom \">{related.title}</span>]({link} \"{related.title}\") is "
-#~ "waiting for assignee"
-#~ msgstr ""
-#~ "Formulář projektu pro projekt [<span class=\"truncate inline-block max-"
-#~ "w-32 align-bottom \">{related.title}</span>]({link} \"{related.title}\") "
-#~ "čeká na příjemce"
-
-#, python-brace-format
-#~ msgid ""
-#~ "Project form for project [<span class=\"truncate inline-block max-w-32 "
-#~ "align-bottom \">{related.title}</span>]({link} \"{related.title}\") is "
-#~ "waiting for your approval"
-#~ msgstr ""
-#~ "Projektový formulář pro projekt [<span class=\"truncate inline-block max-"
-#~ "w-32 align-bottom \">{related.title}</span>]({link} \"{related.title}\") "
-#~ "čeká na vaše schválení"
-
-#, python-brace-format
-#~ msgid ""
-#~ "Project [<span class=\"truncate inline-block max-w-32 align-bottom "
-#~ "\">{related.title}</span>]({link} \"{related.title}\") is waiting for "
-#~ "contract"
-#~ msgstr ""
-#~ "Projekt [<span class=\"truncate inline-block max-w-32 align-bottom "
-#~ "\">{related.title}</span>]({link} \"{related.title}\") čeká na smlouvu"
-
-#, python-brace-format
-#~ msgid ""
-#~ "Project [<span class=\"truncate inline-block max-w-32 align-bottom "
-#~ "\">{related.title}</span>]({link} \"{related.title}\") is waiting for "
-#~ "contracting documents"
-#~ msgstr ""
-#~ "Projekt [<span class=\"truncate inline-block max-w-32 align-bottom "
-#~ "\">{related.title}</span>]({link} \"{related.title}\") čeká na zadávací "
-#~ "dokumentaci"
-
-#, python-brace-format
-#~ msgid ""
-#~ "Contract for project [<span class=\"truncate inline-block max-w-32 align-"
-#~ "bottom \">{related.title}</span>]({link} \"{related.title}\") is waiting "
-#~ "for review"
-#~ msgstr ""
-#~ "Smlouva na projekt [<span class=\"truncate inline-block max-w-32 align-"
-#~ "bottom \">{related.title}</span>]({link} \"{related.title}\") čeká na "
-#~ "posouzení"
-
-#, python-brace-format
-#~ msgid ""
-#~ "Invoice [{related.invoice_number}]({link}) required changes or more "
-#~ "information"
-#~ msgstr ""
-#~ "Faktura [{related.invoice_number}]({link}) vyžaduje změny nebo další "
-#~ "informace"
-
-#, python-brace-format
-#~ msgid ""
-#~ "Invoice [{related.invoice_number}]({link}) is waiting for your approval"
-#~ msgstr "Faktura [{related.invoice_number}]({link}) čeká na vaše schválení"
-
-#, python-brace-format
-#~ msgid "Invoice [{related.invoice_number}]({link}) is waiting to be paid"
-#~ msgstr "Faktura [{related.invoice_number}]({link}) čeká na proplacení"
-
-#~ msgid ""
-#~ "Are you sure you want to remove this task? It will remove this task from "
-#~ "your task list."
-#~ msgstr ""
-#~ "Opravdu chcete tuto úlohu odebrat? Odstraní tuto úlohu ze seznamu úloh."
-
-#~ msgid "Submit for Approval"
-#~ msgstr "Předložit ke schválení"
-
-#~ msgid ""
-#~ "Are you sure you're ready to submit the project documents to be approved "
-#~ "in"
-#~ msgstr ""
-#~ "Opravdu jste připraveni předložit projektovou dokumentaci ke schválení v"
-
-#~ msgid "Created"
-#~ msgstr "Vytvořeno"
-
-#, python-brace-format
-#~ msgid "Progressed from {old_stage} to {source.status_display}"
-#~ msgstr "Postoupilo z {old_stage} do {source.status_display}"
-
-#~ msgid "Successfully uploaded document"
-#~ msgstr "Dokument byl úspěšně nahrán"
-
-#~ msgid "Successfully removed document"
-#~ msgstr "Dokument byl úspěšně odstraněn"
-
-#, python-brace-format
-#~ msgid ""
-#~ "Successfully updated reporting frequency. They will now report "
-#~ "{new_schedule} starting on {schedule_start}"
-#~ msgstr ""
-#~ "Úspěšná aktualizace frekvence podávání zpráv. Nyní budou hlásit "
-#~ "{new_schedule} počínaje dnem {schedule_start}"
-
-#, python-brace-format
-#~ msgid "Successfully skipped a Report for {start_date} to {end_date}"
-#~ msgstr "Úspěšně vynecháno hlášení pro {start_date} až {end_date}"
-
-#, python-brace-format
-#~ msgid "Successfully unskipped a Report for {start_date} to {end_date}"
-#~ msgstr ""
-#~ "Úspěšně zrušeno přeskočení hlášení v období od {start_date} do {end_date}"
-
-#~ msgid "Link to our guide"
-#~ msgstr "Odkaz na našeho průvodce"
-
-#, python-format
-#~ msgid ""
-#~ "Kind Regards,\n"
-#~ "The %(ORG_SHORT_NAME)s Team\n"
-#~ "\n"
-#~ "-- \n"
-#~ "%(ORG_LONG_NAME)s\n"
-#~ "%(PUBLIC_SITE.root_url)s"
-#~ msgstr ""
-#~ "s pozdravem\n"
-#~ "Tým %(ORG_SHORT_NAME)s\n"
-#~ "\n"
-#~ "--\n"
-#~ "%(ORG_LONG_NAME)s\n"
-#~ "%(PUBLIC_SITE.root_url)s"
-
-#~ msgid "Dear Partner,"
-#~ msgstr "Vážený partnere,"
-
-#~ msgid "Original Submission"
-#~ msgstr "Původní podání"
-
-#~ msgid ""
-#~ "Next step is to complete Contracting Information by visiting project "
-#~ "detail page."
-#~ msgstr ""
-#~ "Dalším krokem je vyplnění informací o zakázce na stránce s podrobnostmi o "
-#~ "projektu."
-
-#~ msgid "fund"
-#~ msgstr "fond"
-
-#~ msgid "Invoice Already has this deliverable"
-#~ msgstr "Faktura již obsahuje tento výstup"
-
-#~ msgid "Required quantity is more than available"
-#~ msgstr "Požadované množství je větší než dostupné"
-
-#~ msgid "Apply admin"
-#~ msgstr "Použít administrátora"
-
-#~ msgid "Section text/header"
-#~ msgstr "Text/záhlaví sekce"
-
-#~ msgid "Do you wish to contiune?"
-#~ msgstr "Přejete si pokračovat?"
-
-#~ msgid "Not yet"
-#~ msgstr "Zatím ne"
-
-#~ msgid "-- No reviewer selected --"
-#~ msgstr "-- Nevybrán žádný hodnotitel--"
-
-#~ msgid "Meta terms"
-#~ msgstr "Meta pojmy"
-
-#~ msgid "Terms"
-#~ msgstr "Podmínky"
-
-#~ msgid ""
-#~ "All content related to this submission will also be deleted. This "
-#~ "includes reviews, determinations and comments."
-#~ msgstr ""
-#~ "Veškerý obsah související s tímto příspěvkem bude rovněž smazán. To "
-#~ "zahrnuje posudky, rozhodnutí a komentáře."
-
-#, python-format
-#~ msgid ""
-#~ "We appreciate your %(title)s application submission to the "
-#~ "%(ORG_LONG_NAME)s. We will review and reply to your submission as quickly "
-#~ "as possible.\n"
-#~ "\n"
-#~ "Our reply will have the next steps for your %(title)s application. You "
-#~ "can find more information about our support options, review process and "
-#~ "selection criteria on our website."
-#~ msgstr ""
-#~ "Oceňujeme vaši přihlášku %(title)s, kterou jste odeslali do "
-#~ "%(ORG_LONG_NAME)s. Váš příspěvek zkontrolujeme a odpovíme na něj co "
-#~ "nejrychleji.\n"
-#~ "\n"
-#~ "Naše odpověď bude obsahovat další kroky pro vaši aplikaci %(title)s. Více "
-#~ "informací o našich možnostech podpory, procesu kontroly a výběrových "
-#~ "kritériích naleznete na našich webových stránkách."
-
-#~ msgid "Meta Terms"
-#~ msgstr "Meta termíny"
-
-#~ msgid ""
-#~ "All content related to these submissions will also be deleted. This "
-#~ "includes reviews, determinations and comments"
-#~ msgstr ""
-#~ "Veškerý obsah související s těmito podáními bude rovněž smazán. To "
-#~ "zahrnuje hodnocení, rozhodnutí a komentáře"
-
-#~ msgid "This will create a new project and notify the Applicant."
-#~ msgstr "Tím vytvoříte nový projekt a informujete žadatele."
-
-#~ msgid ""
-#~ "None. Meta terms can be added to a submission using Meta terms button at "
-#~ "top."
-#~ msgstr ""
-#~ "Žádné. Meta termíny lze k podání přidat pomocí tlačítka Meta termíny v "
-#~ "horní části."
-
-#~ msgid "untitled reminder"
-#~ msgstr "nepojmenované připomenutí"
-
-#~ msgid "All Assigned Advisors"
-#~ msgstr "Všichni přidělení poradci"
-
-#~ msgid "Current statuses"
-#~ msgstr "Aktuální stavy"
-
-#~ msgid "Screening status"
-#~ msgstr "Stav prověřování"
-
-#~ msgid "By status"
-#~ msgstr "Podle stavu"
-
-#~ msgid "Update Meta Terms"
-#~ msgstr "Aktualizovat meta termíny"
-
-#~ msgid "Track and explore the results"
-#~ msgstr "Sledujte a prozkoumávejte výsledky"
-
-#~ msgid "Search results"
-#~ msgstr "Výsledky hledání"
-
-#, python-format
-#~ msgid "There are %(count)s results for: %(search_term)s"
-#~ msgstr "Tady jsou %(count)s výsledky pro: %(search_term)s"
-
-#~ msgid "Screening statuses"
-#~ msgstr "Stavy kontroly"
-
-#~ msgid "No Round or Lab found matching the query"
-#~ msgstr "Nebylo nalezeno žádné kolo nebo lab, které by odpovídalo dotazu"
-
-#~ msgid "No statuses match the requested value"
-#~ msgstr "Žádné stavy neodpovídají požadované hodnotě"
-
-#~ msgid "You can only set a value when moving to the Paid status."
-#~ msgstr "Hodnotu můžete nastavit pouze při přechodu do stavu Zaplaceno."
-
-#~ msgid "Date From must be before Date To"
-#~ msgstr "Datum od musí být před datem do"
-
-#~ msgid "Cannot approve for a different user"
-#~ msgstr "Nelze schválit pro jiného uživatele"
-
-#~ msgid ""
-#~ "This section of the report will be shared with the broader community."
-#~ msgstr "Tato část zprávy bude sdílena s širší komunitou."
-
-#~ msgid "This section of the report will be shared with staff only."
-#~ msgstr "Tato část zprávy bude zpřístupněna pouze členům týmu."
-
-#~ msgid ""
-#~ "Must include either public or private content when submitting a report."
-#~ msgstr "Při odesílání zprávy musíte uvést buď veřejný, nebo soukromý obsah."
-
-#~ msgid "No."
-#~ msgstr "Ne."
-
-#~ msgid "Cannot start a schedule before the current reporting period"
-#~ msgstr "Nelze spustit plán před aktuálním obdobím hodnocení"
-
-#~ msgid "Cannot start a schedule in the past"
-#~ msgstr "Nelze spustit plán v minulosti"
-
-#~ msgid "Cannot start a schedule beyond the end date"
-#~ msgstr "Plán nelze spustit po datu ukončení"
-
-#~ msgid "Yes, the account belongs to the organisation above"
-#~ msgstr "Ano, účet patří výše uvedené organizaci"
-
-#~ msgid "No, it is a personal bank account"
-#~ msgstr "Ne, jde o osobní bankovní účet"
-
-#~ msgid "Quantity Selected on an Invoice"
-#~ msgstr "Vybrané množství na faktuře"
-
-#~ msgid "Committed"
-#~ msgstr "Předložený"
-
-#, python-brace-format
-#~ msgid "Monthly on the {day} of the month"
-#~ msgstr "Měsíčně v {day} v měsíci"
-
-#, python-brace-format
-#~ msgid "Value ({currency})"
-#~ msgstr "Hodnota ({currency})"
-
-#~ msgid "Period Start"
-#~ msgstr "Začátek období"
-
-#, python-brace-format
-#~ msgid "Fund Allocation ({currency})"
-#~ msgstr "Alokace prostředků ({currency})"
-
-#~ msgid "Choose deliverables"
-#~ msgstr "Zvolte si výstupy"
-
-#~ msgid "Invoice Covers Deliverables"
-#~ msgstr "Faktura pokrývá výstupy"
-
-#~ msgid "Quantity:"
-#~ msgstr "Množství:"
-
-#~ msgid "Fund total"
-#~ msgstr "Celkem prostředků"
-
-#~ msgid "Total paid"
-#~ msgstr "Zaplaceno celkem"
-
-#~ msgid "Awaiting payment"
-#~ msgstr "Čekání na platbu"
-
-#~ msgid "From"
-#~ msgstr "Od"
-
-#~ msgid "To"
-#~ msgstr "Komu"
-
-#~ msgid "You're skipping the report for"
-#~ msgstr "Přeskakujete zprávu pro"
-
-#~ msgid "Schedule reports every"
-#~ msgstr "Naplánujte zprávy každý"
-
-#~ msgid "Contracting Information"
-#~ msgstr "Informace o smlouvách"
-
-#~ msgid "Approval Form"
-#~ msgstr "Schvalovací formulář"
-
-#~ msgid "Choose file"
-#~ msgstr "Vyberte soubor"
-
-#~ msgid "Upload new"
-#~ msgstr "Nahrát nový"
-
-#~ msgid "Every project should include the following documents"
-#~ msgstr "Každý projekt by měl obsahovat následující dokumenty"
-
-#~ msgid "Cannot change from 'Paid' or 'Declined' state"
-#~ msgstr "Nelze změnit ze stavu „Zaplaceno“ nebo „Odmítnuto“"
-
-#~ msgid "Change Status"
-#~ msgstr "Změnit stav"
-
-#~ msgid "Period of Performance"
-#~ msgstr "Období plnění"
-
-#~ msgid "Track and explore recent projects"
-#~ msgstr "Sledovat a prozkoumat nedávné projekty"
-
-#~ msgid "Request Approval"
-#~ msgstr "Žádost o schválení"
-
-#~ msgid "Add Approval"
-#~ msgstr "Přidat schválení"
-
-#~ msgid ""
-#~ "This will move the project into contracting and notify the compliance "
-#~ "team."
-#~ msgstr ""
-#~ "Tím se projekt přesune do smluvního vztahu a upozorní tým pro dodržování "
-#~ "předpisů."
-
-#~ msgid "Approved By"
-#~ msgstr "Schváleno od"
-
-#~ msgid "We are awaiting a lead to be assigned."
-#~ msgstr "Čekáme na přidělení vedoucího."
-
-#~ msgid "It is currently under review by a staff member."
-#~ msgstr "V současné době je hodnocen zaměstnancem."
-
-#~ msgid "Details"
-#~ msgstr "Detaily"
-
-#~ msgid "Legal name"
-#~ msgstr "Právní název"
-
-#~ msgid "Phone"
-#~ msgstr "Telefon"
-
-#~ msgid "Fill in Contracting Info"
-#~ msgstr "Vyplňte informace o smlouvě"
-
-#~ msgid "Upload contract"
-#~ msgstr "Nahrát smlouvu"
-
-#~ msgid "Supporting Information"
-#~ msgstr "Doprovodné informace"
-
-#~ msgid "Private Report"
-#~ msgstr "Soukromá zpráva"
-
-#~ msgid "Submit report"
-#~ msgstr "Odeslat zprávu"
-
-#~ msgid "Contracting Information for"
-#~ msgstr "Informace o uzavírání smluv pro"
-
-#~ msgid "Update Contracting Information"
-#~ msgstr "Aktualizace informací o smlouvách"
-
-#~ msgid "Save and continue"
-#~ msgstr "Uložit a pokračovat"
-
-#~ msgid "Contractor Setup Completed"
-#~ msgstr "Nastavení smluvního partnera dokončeno"
-
-#~ msgid "Thank you for submitting your information."
-#~ msgstr "Děkujeme vám za zaslání informací."
-
-#~ msgid ""
-#~ "Your {{ ORG_SHORT_NAME }} Programme Manager will be in touch with you if "
-#~ "there are any issues."
-#~ msgstr ""
-#~ "V případě jakýchkoli problémů vaší organizace {{ ORG_SHORT_NAME }} se s "
-#~ "vámi spojí vedoucí programu."
-
-#~ msgid "What will happen next?"
-#~ msgstr "Co bude dál?"
-
-#~ msgid ""
-#~ "Once this has happened, we will send you a message with your contract."
-#~ msgstr "Jakmile se tak stane, zašleme vám zprávu s vaší smlouvou."
-
-#~ msgid "We'll ask you to read it, and if everything is OK, you can sign it."
-#~ msgstr ""
-#~ "Požádáme vás, abyste si ji přečetli, a pokud je vše v pořádku, můžete ji "
-#~ "podepsat."
-
-#~ msgid "Visit Project Detail Page"
-#~ msgstr "Navštivte stránku s detaily projektu"
-
-#~ msgid "Bank Account Information"
-#~ msgstr "Informace o bankovním účtu"
-
-#~ msgid "(Optional) Extra Information for Accepting Payments"
-#~ msgstr "(Volitelné) Další informace pro přijímání plateb"
-
-#~ msgid "Intermediary Bank Account Information"
-#~ msgstr "Informace o zprostředkovatelském bankovním účtu"
-
-#~ msgid "Account Holder National Identity Document Information"
-#~ msgstr "Informace o dokladu totožnosti držitele účtu"
-
-#~ msgid "Help link"
-#~ msgstr "Odkaz na nápovědu"
-
-#~ msgid "File field"
-#~ msgstr "Souborové pole"
-
-#~ msgid "Search users"
-#~ msgstr "Hledat uživatele"
-
-#~ msgid ""
-#~ "Backup tokens can be used when your primary and backup\n"
-#~ "      phone numbers aren't available. The backup tokens below can be "
-#~ "used\n"
-#~ "      for login verification. If you've used up all your backup tokens, "
-#~ "you\n"
-#~ "      can generate a new set of backup tokens. Only the backup tokens "
-#~ "shown\n"
-#~ "      below will be valid."
-#~ msgstr ""
-#~ "Záložní tokeny lze použít v případě, že primární a záložní \n"
-#~ "telefonní číslo nejsou k dispozici. Níže uvedené záložní tokeny lze "
-#~ "použít \n"
-#~ "pro ověření přihlášení. Pokud jste vyčerpali všechny záložní tokeny, \n"
-#~ "můžete si vygenerovat novou sadu záložních tokenů. Platné budou pouze \n"
-#~ "záložní tokeny uvedené níže."
-
-#~ msgid "Print these tokens and keep them somewhere safe."
-#~ msgstr "Vytiskněte si tyto tokeny a uložte je na bezpečném místě."
-
-#~ msgid "Tokens will be generated by your token generator."
-#~ msgstr "Tokeny budou vygenerovány generátorem tokenů."
-
-#, python-format
-#~ msgid "Primary method: %(primary)s"
-#~ msgstr "Primární metoda: %(primary)s"
-
-#~ msgid "Tokens will be generated by your YubiKey."
-#~ msgstr "Tokeny budou generovány pomocí vašeho klíče YubiKey."
-
-#~ msgid "Backup Phone Numbers"
-#~ msgstr "Záložní telefonní čísla"
-
-#~ msgid ""
-#~ "If your primary method is not available, we are able to\n"
-#~ "        send backup tokens to the phone numbers listed below."
-#~ msgstr ""
-#~ "Pokud váš primární způsob není k dispozici, jsme schopni.\n"
-#~ "        zaslat záložní tokeny na níže uvedená telefonní čísla."
-
-#~ msgid ""
-#~ "If you don't have any device with you, you can access\n"
-#~ "        your account using backup tokens."
-#~ msgstr ""
-#~ "Pokud u sebe nemáte žádné zařízení, můžete přistupovat\n"
-#~ "        k účtu pomocí záložních tokenů."
-
-#, python-format
-#~ msgid ""
-#~ "\n"
-#~ "        You have only one backup token remaining.\n"
-#~ "      "
-#~ msgid_plural ""
-#~ "\n"
-#~ "        You have %(counter)s backup tokens remaining.\n"
-#~ "      "
-#~ msgstr[0] ""
-#~ "\n"
-#~ "        Zbývá vám pouze jeden záložní token.\n"
-#~ "      "
-#~ msgstr[1] ""
-#~ "\n"
-#~ "        Zbývají vám %(counter)s záložní žetony.\n"
-#~ "      "
-#~ msgstr[2] ""
-#~ "\n"
-#~ "        Zbývá vám %(counter)s záložních žetonů.\n"
-#~ "      "
-
-#~ msgid "Disable Two-Factor Authentication"
-#~ msgstr "Vypnout dvoufaktorové ověřování"
-
-#~ msgid ""
-#~ "However we strongly discourage you to do so, you can\n"
-#~ "      also disable two-factor authentication for your account."
-#~ msgstr ""
-#~ "Přestože vám to důrazně nedoporučujeme, můžete\n"
-#~ "      také vypnout dvoufaktorové ověřování svého účtu."
-
-#~ msgid ""
-#~ "Use this form for entering backup tokens for logging in.\n"
-#~ "            These tokens have been generated for you to print and keep "
-#~ "safe. Please\n"
-#~ "            enter one of these backup tokens to login to your account."
-#~ msgstr ""
-#~ "Tento formulář slouží k zadávání záložních tokenů pro přihlášení.\n"
-#~ "            Tyto tokeny byly vygenerovány, abyste si je mohli vytisknout "
-#~ "a uschovat. \n"
-#~ "Zadejte prosím jeden z těchto záložních tokenů pro přihlášení k účtu."
-
-#~ msgid "Check your email"
-#~ msgstr "Zkontrolujte svůj e-mail"
-
-#~ msgid "A link to reset your password has been emailed to you."
-#~ msgstr "Odkaz na obnovení hesla vám byl zaslán e-mailem."
-
-#~ msgid "Your username (in case you've forgotten):"
-#~ msgstr "Vaše uživatelské jméno (pro případ, že jste ho zapomněli):"
-
-#~ msgid "field type"
-#~ msgstr "typ pole"
-
-#~ msgid "Related pages"
-#~ msgstr "Související stránky"
-
-#~ msgid "External link"
-#~ msgstr "Externí odkaz"
-
-#~ msgid "Text to display on the button for external links"
-#~ msgstr "Text, který se zobrazí na tlačítku pro externí odkazy"
-
-#~ msgid "Link for lab application"
-#~ msgstr "Odkaz na přihlášku do lab"
-
-#~ msgid "Cannot link to both a Lab page and external link"
-#~ msgstr "Nelze odkazovat na stránku laboratoře i na externí odkaz"
-
-#~ msgid "Cannot customise the text for internal lab pages, leave blank"
-#~ msgstr ""
-#~ "Nelze přizpůsobit text interních stránek laboratoře, ponechte jej prázdný"
-
-#~ msgid "Apply for this"
-#~ msgstr "Požádat o toto"
-
-#~ msgid "CLOSED"
-#~ msgstr "ZAVŘENO"
-
-#~ msgid "The first word will be bold"
-#~ msgstr "První slovo bude tučně"
-
-#~ msgid "Introduction"
-#~ msgstr "Úvod"
-
-#~ msgid "News"
-#~ msgstr "Novinky"
-
-#~ msgid "Our Work"
-#~ msgstr "Naše práce"
-
-#~ msgid "Promoted Funds"
-#~ msgstr "Podporované fondy"
-
-#~ msgid "Promoted Labs"
-#~ msgstr "Propagované laboratoře"
-
-#~ msgid "Promoted RFPs"
-#~ msgstr "Propagované RFP"
-
-#~ msgid "Email Address"
-#~ msgstr "E-mailová adresa"
-
-#~ msgid "The title of the newsletter signup form."
-#~ msgstr "Název formuláře pro přihlášení k odběru newsletteru."
-
-#~ msgid "Sorry, there were errors with your form."
-#~ msgstr "Omlouváme se, ve vašem formuláři se vyskytly chyby."
-
-#~ msgid "Sorry, there has been an problem. Please try again later."
-#~ msgstr "Omlouváme se, došlo k problému. Zkuste to prosím později."
-
-#~ msgid "Thank you for subscribing"
-#~ msgstr "Děkujeme za přihlášení k odběru"
-
-#~ msgid "Leave blank to use the page's own title"
-#~ msgstr "Pro použití vlastního názvu stránky ponechte prázdné místo"
-
-#~ msgid "Main site navigation"
-#~ msgstr "Hlavní navigace webu"
-
-#~ msgid ""
-#~ "Please enter only table id from embed code. Table widget code creates "
-#~ "automatically."
-#~ msgstr ""
-#~ "Zadejte prosím pouze ID tabulky z vloženého kódu. Kód widgetu tabulky se "
-#~ "vytvoří automaticky."
-
-#~ msgid ""
-#~ "Use this field to override the date that the news item appears to have "
-#~ "been published."
-#~ msgstr ""
-#~ "Toto pole slouží k přepsání data, kdy se zdá, že byla novinka zveřejněna."
-
-#~ msgid "Authors"
-#~ msgstr "Autoři"
-
-#~ msgid "News types"
-#~ msgstr "Typy novinek"
-
-#~ msgid "The description of the main news feed."
-#~ msgstr "Popis hlavního informačního kanálu."
-
-#, python-brace-format
-#~ msgid ""
-#~ "The title of the news feed by type. Use {news_type} to insert the type "
-#~ "name."
-#~ msgstr ""
-#~ "Název kanálu zpráv podle typu.Pro vložení názvu typu použijte {news_type}."
-
-#, python-brace-format
-#~ msgid ""
-#~ "The description of the news feed by type. Use {news_type} to insert the "
-#~ "type name."
-#~ msgstr ""
-#~ "Popis kanálu zpráv podle typu. Pro vložení názvu typu použijte "
-#~ "{news_type}."
-
-#~ msgid "Partner Page"
-#~ msgstr "Partnerská stránka"
-
-#~ msgid "Investment Category Settings"
-#~ msgstr "Nastavení investiční kategorie"
-
-#~ msgid "Select the categories that should be used in investments."
-#~ msgstr "Vyberte kategorie, které by měly být použity v investicích."
-
-#~ msgid "Use format: <YYYY>"
-#~ msgstr "Použijte formát: <RRRR>"
-
-#, python-brace-format
-#~ msgid "Amount Committed ({currency})"
-#~ msgstr "Přislíbená částka ({currency})"
-
-#~ msgid "Items per page"
-#~ msgstr "Položek na stránku"
-
-#~ msgid "Year"
-#~ msgstr "Rok"
-
-#~ msgid "Other"
-#~ msgstr "Jiný"
-
-#~ msgid "Social accounts"
-#~ msgstr "Sociální účty"
-
-#~ msgid "Other Contact Methods"
-#~ msgstr "Další způsoby kontaktu"
-
-#~ msgid "Person types"
-#~ msgstr "Typy osob"
-
-#~ msgid "Funds Reviewed"
-#~ msgstr "Přezkoumané fondy"
-
-#~ msgid "Override the page title used when this page appears in listings"
-#~ msgstr ""
-#~ "Přepsání názvu stránky, který se použije, když se tato stránka zobrazí ve "
-#~ "výpisech"
-
-#~ msgid ""
-#~ "The text summary used when this page appears in listings. It's also used "
-#~ "as the description for search engines if the 'Search description' field "
-#~ "above is not defined."
-#~ msgstr ""
-#~ "Textové shrnutí použité při zobrazení této stránky ve výpisech. Používá "
-#~ "se také jako popis pro vyhledávače, pokud není definováno pole \"Popis "
-#~ "pro vyhledávání\" výše."
-
-#~ msgid "Your Twitter username without the @, e.g. katyperry"
-#~ msgstr "Vaše uživatelské jméno na Twitteru bez @, např. katyperry"
-
-#~ msgid "Your Facebook app ID."
-#~ msgstr "ID aplikace Facebook."
-
-#~ msgid ""
-#~ "Default sharing text to use if social text has not been set on a page."
-#~ msgstr ""
-#~ "Výchozí text pro sdílení, který se použije, pokud na stránce nebyl "
-#~ "nastaven text pro sociální sítě."
-
-#~ msgid "Site name, used by Open Graph."
-#~ msgstr "Název webu používaný službou Open Graph."
-
-#~ msgid "In months"
-#~ msgstr "V měsících"
-
-#~ msgid "Funding"
-#~ msgstr "Financování"
-
-#~ msgid "You might also like…"
-#~ msgstr "Mohlo by vás také zajímat…"
-
-#~ msgid "Share"
-#~ msgstr "Sdílet"
-
-#~ msgid "Share on Twitter"
-#~ msgstr "Sdílet na Twitteru"
-
-#~ msgid "Share on LinkedIn"
-#~ msgstr "Sdílet na LinkedIn"
-
-#~ msgid "Share on Facebook"
-#~ msgstr "Sdílet na Facebooku"
