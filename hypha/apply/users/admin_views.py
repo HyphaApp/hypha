@@ -48,8 +48,8 @@ class UserFilterSet(WagtailFilterSet):
     )
     roles = django_filters.ModelChoiceFilter(
         queryset=Group.objects.all(),
+        field_name="groups",
         label=gettext_lazy("Roles"),
-        method="filter_by_roles",
     )
     status = django_filters.ChoiceFilter(
         choices=STATUS_CHOICES, label=gettext_lazy("Status"), method="filter_by_status"
@@ -59,9 +59,11 @@ class UserFilterSet(WagtailFilterSet):
         model = User
         fields = ["roles", "status", "is_superuser"]
 
-    def filter_by_roles(self, queryset, name, value):
-        queryset = queryset.filter(groups__name=value)
-        return queryset
+    def __init__(self, *args, is_searching=False, **kwargs):
+        # The User model is not search indexed so search is a plain ORM filter and
+        # the related field workaround in Wagtail's RelatedFilterMixin (wagtail#6616)
+        # is not needed.
+        super().__init__(*args, **kwargs)
 
     def filter_by_status(self, queryset, name, value):
         if value == "active":
@@ -82,6 +84,7 @@ class CustomUserIndexView(UserIndexView):
         "date_joined",
         "last_login",
     ]
+    search_fields = ["email", "full_name"]
 
     @cached_property
     def columns(self):
@@ -93,6 +96,7 @@ class CustomUserIndexView(UserIndexView):
                 "name",
                 accessor=lambda u: get_user_display_name(u),
                 label=gettext_lazy("Name"),
+                sort_key="name",
                 get_url=self.get_edit_url,
                 classname="name",
             ),
@@ -157,7 +161,7 @@ class CustomUserIndexView(UserIndexView):
         if self.ordering == "name":
             return queryset.order_by(Lower("display_name"))
         if self.ordering == "-name":
-            return queryset.order_by(Lower("display_name"))
+            return queryset.order_by(Lower("display_name").desc())
         return super().order_queryset(queryset)
 
 

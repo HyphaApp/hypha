@@ -20,7 +20,6 @@ class DeterminationMustIncludeFieldBlock(MustIncludeFieldBlock):
 
 class DeterminationBlock(DeterminationMustIncludeFieldBlock):
     name = "determination"
-    description = _("Overall determination")
     field_class = forms.TypedChoiceField
 
     class Meta:
@@ -40,7 +39,6 @@ class DeterminationBlock(DeterminationMustIncludeFieldBlock):
 
 class DeterminationMessageBlock(DeterminationMustIncludeFieldBlock):
     name = "message"
-    description = _("Determination message")
     widget = RICH_TEXT_WIDGET
 
     class Meta:
@@ -55,7 +53,6 @@ class DeterminationMessageBlock(DeterminationMustIncludeFieldBlock):
 
 class SendNoticeBlock(DeterminationMustIncludeFieldBlock):
     name = "send_notice"
-    description = _("Send Notice")
 
     default_value = BooleanBlock(default=True, required=False)
 

@@ -113,7 +113,6 @@ class ReviewMustIncludeFieldBlock(MustIncludeFieldBlock):
 
 class RecommendationBlock(ReviewMustIncludeFieldBlock):
     name = "recommendation"
-    description = _("Overall recommendation")
     field_class = forms.ChoiceField
 
     class Meta:
@@ -134,7 +133,6 @@ class RecommendationBlock(ReviewMustIncludeFieldBlock):
 
 class RecommendationCommentsBlock(ReviewMustIncludeFieldBlock):
     name = "comments"
-    description = _("Recommendation comments")
     widget = RICH_TEXT_WIDGET_SHORT
 
     class Meta:
@@ -149,7 +147,6 @@ class RecommendationCommentsBlock(ReviewMustIncludeFieldBlock):
 
 class VisibilityBlock(ReviewMustIncludeFieldBlock):
     name = "visibility"
-    description = _("Visibility")
     field_class = forms.ChoiceField
     widget = forms.RadioSelect()
 

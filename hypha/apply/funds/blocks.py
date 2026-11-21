@@ -108,7 +108,6 @@ class ApplicationMustIncludeFieldBlock(MustIncludeFieldBlock):
 
 class TitleBlock(ApplicationMustIncludeFieldBlock):
     name = "title"
-    description = _("The title of the project")
     field_label = blocks.CharBlock(
         label=_("Label"), default=_("What is the title of your application?")
     )
@@ -131,7 +130,6 @@ class TitleBlock(ApplicationMustIncludeFieldBlock):
 
 class ValueBlock(ApplicationSingleIncludeFieldBlock):
     name = "value"
-    description = _("The value of the project")
     # TextInput + inputmode="decimal" lets us handle locale-specific separators
     # server-side. <input type="number"> formats/validates using the *browser*
     # locale which differs from Django's active locale and behaves inconsistently
@@ -156,7 +154,6 @@ class ValueBlock(ApplicationSingleIncludeFieldBlock):
 
 class OrganizationNameBlock(ApplicationSingleIncludeFieldBlock):
     name = "organization_name"
-    description = _("The name of the organization")
     widget = forms.TextInput()
 
     class Meta:
@@ -165,7 +162,6 @@ class OrganizationNameBlock(ApplicationSingleIncludeFieldBlock):
 
 class EmailBlock(ApplicationMustIncludeFieldBlock):
     name = "email"
-    description = _("The applicant email address")
     field_label = blocks.CharBlock(
         label=_("Label"), default=_("What email address should we use to contact you?")
     )
@@ -186,7 +182,6 @@ class EmailBlock(ApplicationMustIncludeFieldBlock):
 
 class AddressFieldBlock(ApplicationSingleIncludeFieldBlock):
     name = "address"
-    description = _("The postal address of the user")
 
     field_class = AddressField
 
@@ -212,7 +207,6 @@ class AddressFieldBlock(ApplicationSingleIncludeFieldBlock):
 
 class FullNameBlock(ApplicationMustIncludeFieldBlock):
     name = "full_name"
-    description = _("Full name")
     field_label = blocks.CharBlock(label=_("Label"), default=_("What is your name?"))
     help_text = blocks.RichTextBlock(
         required=False,
@@ -235,7 +229,6 @@ class FullNameBlock(ApplicationMustIncludeFieldBlock):
 
 class DurationBlock(ApplicationSingleIncludeFieldBlock):
     name = "duration"
-    description = _("Duration")
 
     DAYS = "days"
     WEEKS = "weeks"
