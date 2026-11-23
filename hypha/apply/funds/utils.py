@@ -131,6 +131,11 @@ def export_submissions_to_csv(
             field_value = question_field["answer"]
             if field_id == "address" and isinstance(field_value, dict):
                 field_value = "\n".join(f"{k}: {v}" for k, v in field_value.items())
+            elif isinstance(field_value, Iterable) and not isinstance(field_value, str):
+                # Checkboxes give a list and category questions a QuerySet. Their
+                # repr would be exported as is, or for a QuerySet stripped to an
+                # empty string, since `strip_tags()` takes "<QuerySet …>" for a tag.
+                field_value = ", ".join(str(value) for value in field_value)
             if field_name not in header_set:
                 header_set.add(field_name)
                 if field_id not in named:
