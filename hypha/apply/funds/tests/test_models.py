@@ -563,18 +563,6 @@ class TestApplicationSubmission(TestCase):
             else:
                 check_generated_file_path(file_response, file_id=file_id)
 
-    def test_file_uploads_data_not_stored(self):
-        submission = ApplicationSubmissionFactory(with_files=True)
-        uploads_keys = [f"{field_id}-uploads" for field_id in submission.file_field_ids]
-        for key in uploads_keys:
-            submission.form_data[key] = "[]"
-
-        submission.save()
-
-        submission = ApplicationSubmission.objects.get(id=submission.id)
-        for key in uploads_keys:
-            self.assertNotIn(key, submission.form_data)
-
     def file_names(self, instance):
         names = {}
         for field_id in instance.file_field_ids:
@@ -752,12 +740,6 @@ class TestApplicationSubmission(TestCase):
             PlaceholderUploadedFile(kept.filename, size=0, file_id=kept.name),
             new_file,
         ]
-        submission.form_data[f"{field_id}-uploads"] = json.dumps(
-            [
-                {"id": kept.name, "name": kept.name, "type": "existing"},
-                {"id": str(uuid.uuid4()), "name": "new.pdf", "type": "tus"},
-            ]
-        )
         submission.save()
 
         submission = ApplicationSubmission.objects.get(id=submission.id)

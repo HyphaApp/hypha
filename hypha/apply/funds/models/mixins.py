@@ -113,9 +113,6 @@ class AccessFormData:
         """
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
-                # Only used by the file form, it should not be stored in form_data.
-                self.form_data.pop(field.id + "-uploads", None)
-
                 known_names = self._file_names(
                     (latest_existing_data or {}).get(field.id)
                 )
