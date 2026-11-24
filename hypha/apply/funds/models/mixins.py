@@ -1,7 +1,10 @@
+import os
+
 from django.core.files import File
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django_file_form.models import PlaceholderUploadedFile
+from django_file_form.uploaded_file import S3UploadedFileWithId
 
 from hypha.apply.stream_forms.blocks import (
     FileFieldBlock,
@@ -58,8 +61,13 @@ class AccessFormData:
         if isinstance(file, cls.stream_file_class):
             return file
         if isinstance(file, File):
+            # New content, never let its name point to a stored file path.
             return cls.stream_file_class(
-                instance, field, file, name=file.name, storage=cls.storage_class()
+                instance,
+                field,
+                file,
+                name=os.path.basename(file.name),
+                storage=cls.storage_class(),
             )
 
         if isinstance(file, PlaceholderUploadedFile):
@@ -98,9 +106,10 @@ class AccessFormData:
         Store new files and keep existing ones.
 
         Files already stored under the instance's own path are kept as they are,
-        everything else is saved. Files kept in an edit form are posted back as
-        placeholders, those are only accepted if they belong to the instance,
+        new uploads are always saved. Files kept in an edit form are posted back
+        as placeholders, those are only accepted if they belong to the instance,
         i.e. are stored under its path or are in latest_existing_data.
+        S3 direct uploads are not used and always dropped.
         """
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
@@ -114,6 +123,10 @@ class AccessFormData:
                 is_list = isinstance(value, list)
                 files = []
                 for file in value if is_list else [value]:
+                    if isinstance(file, S3UploadedFileWithId):
+                        # Hypha does not use S3 direct uploads, the S3 key is
+                        # posted by the client and could point to any file.
+                        continue
                     stream_file = self.stream_file(self, field, file)
                     if not stream_file:
                         continue

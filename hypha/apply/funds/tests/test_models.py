@@ -3,6 +3,7 @@ import json
 import os
 import uuid
 from datetime import date, timedelta
+from io import BytesIO
 from unittest.mock import ANY, patch
 
 from django.conf import settings
@@ -10,9 +11,11 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.core import mail
 from django.core.exceptions import ValidationError
+from django.core.files import File
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django_file_form.models import PlaceholderUploadedFile
+from django_file_form.uploaded_file import S3UploadedFileWithId
 
 from hypha.apply.funds.blocks import EmailBlock, FullNameBlock
 from hypha.apply.funds.models import (
@@ -632,6 +635,60 @@ class TestApplicationSubmission(TestCase):
 
         submission = ApplicationSubmission.objects.get(id=submission.id)
         self.assertEqual([f.name for f in submission.data(field_id)], [kept.name])
+
+    def test_s3_upload_is_dropped(self):
+        other = ApplicationSubmissionFactory(with_files=True)
+        submission = ApplicationSubmissionFactory(with_files=True)
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        field_id = next(
+            field_id
+            for field_id in submission.file_field_ids
+            if isinstance(submission.data(field_id), list)
+        )
+        kept = submission.data(field_id)[0]
+        s3_uploads = []
+        for key in [
+            f"submission/{other.id}/{field_id}/secret.pdf",
+            f"submission/{submission.id}/{field_id}/x.pdf",
+        ]:
+            # Skip __init__, it fetches the key from S3.
+            upload = S3UploadedFileWithId.__new__(S3UploadedFileWithId)
+            upload.name = key
+            s3_uploads.append(upload)
+        submission.form_data[field_id] = [
+            PlaceholderUploadedFile(kept.filename, size=0, file_id=kept.name),
+            *s3_uploads,
+        ]
+        submission.save()
+
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual([f.name for f in submission.data(field_id)], [kept.name])
+
+    def test_upload_named_like_own_file_is_stored(self):
+        submission = ApplicationSubmissionFactory(with_files=True)
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        field_id = next(
+            field_id
+            for field_id in submission.file_field_ids
+            if isinstance(submission.data(field_id), list)
+        )
+        kept = submission.data(field_id)[0]
+        kept_content = kept.storage.open(kept.name).read()
+        submission.form_data[field_id] = [
+            PlaceholderUploadedFile(kept.filename, size=0, file_id=kept.name),
+            File(BytesIO(b"new content"), name=kept.name),
+        ]
+        submission.save()
+
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        kept_file, new_file = submission.data(field_id)
+        self.assertEqual(kept_file.name, kept.name)
+        self.assertNotEqual(new_file.name, kept.name)
+        self.assertTrue(
+            new_file.name.startswith(f"submission/{submission.id}/{field_id}/")
+        )
+        self.assertEqual(new_file.storage.open(new_file.name).read(), b"new content")
+        self.assertEqual(kept.storage.open(kept.name).read(), kept_content)
 
     def test_stored_file_uploads_data_ignored(self):
         submission = ApplicationSubmissionFactory(with_files=True)
