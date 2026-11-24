@@ -32,6 +32,7 @@ from hypha.apply.review.options import AGREE, MAYBE, NO
 from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
 from hypha.apply.stream_forms.testing.factories import UploadedFile
 from hypha.apply.users.tests.factories import StaffFactory
+from hypha.apply.utils.storage import PrivateStorage
 from hypha.apply.utils.testing import make_request
 
 from .factories import (
@@ -543,6 +544,31 @@ class TestApplicationSubmission(TestCase):
 
         # Check we saved the file somewhere beneath it
         self.assertIn(filename, found_files)
+
+    def test_new_submission_files_saved_once_under_own_id(self):
+        saved_names = []
+        original_save = PrivateStorage.save
+
+        def record_save(storage, name, *args, **kwargs):
+            saved_names.append(name)
+            return original_save(storage, name, *args, **kwargs)
+
+        with patch.object(
+            PrivateStorage, "save", autospec=True, side_effect=record_save
+        ):
+            submission = ApplicationSubmissionFactory(with_files=True)
+
+        file_count = 0
+        for field_id in submission.file_field_ids:
+            files = submission.data(field_id)
+            file_count += len(files) if isinstance(files, list) else 1
+
+        self.assertEqual(len(saved_names), file_count)
+        for name in saved_names:
+            self.assertTrue(
+                name.startswith(f"submission/{submission.id}/"),
+                f"{name} is not stored under the submission's own path",
+            )
 
     def test_correct_file_path_generated(self):
         submission = ApplicationSubmissionFactory(with_files=True)
