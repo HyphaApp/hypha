@@ -1,6 +1,8 @@
 import sys
+from functools import partial
 
 from django.core.files.storage import default_storage
+from django.db import transaction
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
@@ -31,6 +33,19 @@ def revision_files_to_delete(revision):
     return files
 
 
+def delete_revision_files(revision):
+    """
+    Delete the files only the deleted revision used.
+
+    Revisions are mostly deleted together with their submission, then its whole
+    folder is removed and there is nothing to check.
+    """
+    if not ApplicationSubmission.objects.filter(pk=revision.submission_id).exists():
+        return
+    for file in revision_files_to_delete(revision):
+        file.delete()
+
+
 @receiver(signal=pre_delete, sender=ApplicationSubmission)
 @receiver(signal=pre_delete, sender=ApplicationRevision)
 def delete_attachments(sender, instance=None, **kwargs):
@@ -49,8 +64,8 @@ def delete_attachments(sender, instance=None, **kwargs):
     # This will be called anytime a deletion is ran, so ensure the object being deleted
     # can have attachments
     if issubclass(sender, ApplicationRevision):
-        for file in revision_files_to_delete(instance):
-            file.delete()
+        # Only after commit is it known if the submission was deleted as well.
+        transaction.on_commit(partial(delete_revision_files, instance))
     elif issubclass(sender, ApplicationSubmission):
         submission_attachment_path = f"submission/{instance.id}"
 
