@@ -20,7 +20,6 @@ from django_file_form.uploaded_file import S3UploadedFileWithId
 from hypha.apply.funds.blocks import EmailBlock, FullNameBlock
 from hypha.apply.funds.models import (
     AnonymizedSubmission,
-    ApplicationRevision,
     ApplicationSubmission,
     AssignedReviewers,
     Reminder,
@@ -36,6 +35,7 @@ from hypha.apply.users.tests.factories import StaffFactory
 from hypha.apply.utils.testing import make_request
 
 from .factories import (
+    ApplicationRevisionFactory,
     ApplicationSubmissionFactory,
     AssignedReviewersFactory,
     CustomFormFieldsFactory,
@@ -601,7 +601,7 @@ class TestApplicationSubmission(TestCase):
         draft_data = dict(submission.live_revision.form_data)
         for field_id in submission.file_field_ids:
             draft_data[field_id] = []
-        submission.draft_revision = ApplicationRevision.objects.create(
+        submission.draft_revision = ApplicationRevisionFactory(
             submission=submission, form_data=draft_data, is_draft=True
         )
         submission.save(skip_custom=True)

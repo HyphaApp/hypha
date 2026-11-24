@@ -3,7 +3,7 @@ from django.test import TestCase
 from hypha.apply.funds.models import ApplicationRevision, ApplicationSubmission
 from hypha.apply.funds.signals import revision_files_to_delete
 
-from .factories import ApplicationSubmissionFactory
+from .factories import ApplicationRevisionFactory, ApplicationSubmissionFactory
 
 
 class TestRevisionFilesToDelete(TestCase):
@@ -27,7 +27,7 @@ class TestRevisionFilesToDelete(TestCase):
         return form_data
 
     def make_revision(self, files):
-        revision = ApplicationRevision.objects.create(
+        revision = ApplicationRevisionFactory(
             submission=self.submission, form_data=self.form_data(files)
         )
         return ApplicationRevision.objects.get(pk=revision.pk)
