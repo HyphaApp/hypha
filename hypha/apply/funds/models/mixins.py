@@ -154,7 +154,18 @@ class AccessFormData:
         if not files:
             return set()
         files = files if isinstance(files, list) else [files]
-        return {f.name if isinstance(f, File) else f.get("name") for f in files}
+        names = set()
+        for f in files:
+            # Skip empty entries, older form_data can have e.g. null in lists.
+            if isinstance(f, File):
+                name = f.name
+            elif isinstance(f, dict):
+                name = f.get("name")
+            else:
+                continue
+            if name:
+                names.add(name)
+        return names
 
     def extract_files(self):
         files = {}

@@ -25,6 +25,7 @@ from hypha.apply.funds.models import (
     AssignedReviewers,
     Reminder,
 )
+from hypha.apply.funds.signals import revision_files_to_delete
 from hypha.apply.funds.tests.factories.models import ScreeningStatusFactory
 from hypha.apply.funds.workflows.constants import DRAFT_STATE
 from hypha.apply.funds.workflows.registry import Request
@@ -689,6 +690,31 @@ class TestApplicationSubmission(TestCase):
         )
         self.assertEqual(new_file.storage.open(new_file.name).read(), b"new content")
         self.assertEqual(kept.storage.open(kept.name).read(), kept_content)
+
+    def test_empty_entries_in_stored_file_list_are_ignored(self):
+        submission = ApplicationSubmissionFactory(with_files=True)
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        field_id = next(
+            field_id
+            for field_id in submission.file_field_ids
+            if isinstance(submission.data(field_id), list)
+        )
+        names_before = [f.name for f in submission.data(field_id)]
+        # Older form_data can have empty entries in a list of files.
+        form_data = submission.live_revision.form_data
+        form_data[field_id] = [*form_data[field_id], None, {}]
+        ApplicationSubmission.objects.filter(id=submission.id).update(
+            form_data=form_data
+        )
+        submission.revisions.update(form_data=form_data)
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+
+        # The files are still used by the submission.
+        self.assertEqual(revision_files_to_delete(submission.live_revision), [])
+        submission.save()
+
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual([f.name for f in submission.data(field_id)], names_before)
 
     def test_stored_file_uploads_data_ignored(self):
         submission = ApplicationSubmissionFactory(with_files=True)
