@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: "0.12.16"
+    rev: "0.13.10"
     hooks:
       - id: uv-export
         name: uv-export requirements/prod.txt
@@ -36,17 +36,17 @@ repos:
           ]
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.21.2
+    rev: v3.22.0
     hooks:
       - id: pyupgrade
 
   - repo: https://github.com/adamchainz/django-upgrade
-    rev: "1.32.0"
+    rev: "1.33.0"
     hooks:
       - id: django-upgrade
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.16.8"
+    rev: "v0.17.6"
     hooks:
       # Run the linter.
       - id: ruff-check
@@ -72,7 +72,7 @@ repos:
         types_or: [html, css]
 
   - repo: https://github.com/biomejs/pre-commit
-    rev: "v2.5.15"
+    rev: "v2.6.8"
     hooks:
       - id: biome-check
 
@@ -82,6 +82,6 @@ repos:
       - id: gitleaks
 
   - repo: https://github.com/crate-ci/typos
-    rev: v1.50.2
+    rev: v1.52.2
     hooks:
       - id: typos
