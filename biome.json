@@ -12,12 +12,15 @@
       "**",
       "!**/*.min.js",
       "!**/*.html",
+      "!**/*.md",
       "!**/static_src/images",
       "!**/javascript/esm",
       "!**/javascript/vendor",
       "!**/public",
       "!**/site.webmanifest",
-      "!**/settings.local.json"
+      "!**/settings.local.json",
+      "!**/docs",
+      "!**/.github"
     ]
   },
   "formatter": {
