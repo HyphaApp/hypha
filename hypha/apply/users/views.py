@@ -276,13 +276,15 @@ def _send_email_change_mails(request, current_email, updated_email):
         from_email=settings.DEFAULT_FROM_EMAIL,
     )
 
-    if filter_by_email(
+    other_user = filter_by_email(
         User.objects.exclude(pk=request.user.pk), updated_email
-    ).exists():
+    ).first()
+    if other_user:
         # Tell the owner of the address rather than the requesting user, so the
         # response looks the same whether or not the address is registered.
+        # Sent to the account's own address, not the typed one, like invites.
         send_email_in_use_email(
-            updated_email=updated_email, site=Site.find_for_request(request)
+            updated_email=other_user.email, site=Site.find_for_request(request)
         )
     else:
         # The token binds the change to this user *and* to their current email.
