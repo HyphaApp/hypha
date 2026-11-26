@@ -351,7 +351,7 @@ class EmailAdapter(AdapterBase):
         if message_type == MESSAGES.INVITE_COAPPLICANT:
             from hypha.apply.funds.utils import get_invite_recipient
 
-            _, recipient_email = get_invite_recipient(kwargs["related"])
+            _invited_user, recipient_email = get_invite_recipient(kwargs["related"])
             return [recipient_email]
 
         if message_type == MESSAGES.APPROVE_PAF:

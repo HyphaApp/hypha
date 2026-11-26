@@ -132,8 +132,7 @@ class PageStreamBaseForm(BaseForm, StreamBaseForm):
                 # The cleaned value, stripped like the one that gets saved.
                 email = cleaned_data.get(field)
                 if email:
-                    # Double __ to avoid shadowing gettext alias _:
-                    is_registered, __ = is_user_already_registered(email=email)
+                    is_registered, _reason = is_user_already_registered(email=email)
                     if is_registered:
                         user = get_user_by_email(email=email)
                         if not user:

@@ -259,8 +259,7 @@ def can_view_submission_pii(user, submission) -> bool:
 
 
 def can_view_submission_screening(user, submission):
-    # __ to avoid shadowing the gettext alias
-    submission_view, __ = can_view_submission(user, submission)
+    submission_view, _reason = can_view_submission(user, submission)
     if not submission_view:
         return False, _("No access to view submission")
     if submission.user == user:
