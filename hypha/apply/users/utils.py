@@ -34,9 +34,15 @@ def email_comparison_key(email) -> str:
 
 
 def emails_match(email_a, email_b) -> bool:
-    """Return True if two email addresses are the same address."""
-    key = email_comparison_key(email_a)
-    return bool(key) and key == email_comparison_key(email_b)
+    """Return True if two email addresses are the same address.
+
+    Empty values never match, not even each other.
+    """
+    key_a = email_comparison_key(email_a)
+    key_b = email_comparison_key(email_b)
+    if not key_a:
+        return False
+    return key_a == key_b
 
 
 def filter_by_email(queryset, email, field="email"):
