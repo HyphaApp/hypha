@@ -8,7 +8,6 @@ from django.contrib.auth import SESSION_KEY, get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.sessions.models import Session
 from django.core.mail import send_mail
-from django.db.models import Q
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import formats, timezone
@@ -22,15 +21,16 @@ from django_ratelimit.core import _get_ip
 def email_comparison_key(email) -> str:
     """Return the form of an email address used to compare it with another.
 
-    The whole address is NFKC-normalised, stripped and lowercased. Django's
-    `normalize_email` only lowercases the domain, so it is not enough to tell
-    whether two addresses are the same. NFKC folds compatibility forms (e.g.
-    fullwidth letters) into their base letters, but keeps lookalikes from other
-    scripts, like a dotless "ı" or a Cyrillic "а", distinct.
+    Uses the same algorithm as Django's `_unicode_ci_compare` (used by
+    `PasswordResetForm`), the one recommended by Unicode Technical Report 36,
+    section 2.11.2(B)(2): NFKC normalisation followed by case folding. Unlike
+    Django, surrounding whitespace is ignored too, it is never part of a valid
+    address. Django's `normalize_email` only lowercases the domain, so it is
+    not enough to tell whether two addresses are the same.
     """
     if not email:
         return ""
-    return unicodedata.normalize("NFKC", str(email)).strip().lower()
+    return unicodedata.normalize("NFKC", email.strip()).casefold()
 
 
 def emails_match(email_a, email_b) -> bool:
@@ -42,23 +42,21 @@ def emails_match(email_a, email_b) -> bool:
 def filter_by_email(queryset, email, field="email"):
     """Filter a queryset to the rows where `field` matches `email`.
 
-    Matching follows `emails_match`. The `iexact` lookup only fetches
-    candidates, every one is then checked in Python. `iexact` alone is not
-    safe: PostgreSQL compares with UPPER(), and with a UTF-8 locale UPPER('ı')
-    is 'I', so "bob@gmaıl.com" would match "bob@gmail.com".
+    Works like Django's `PasswordResetForm.get_users`, plus surrounding
+    whitespace is ignored: `iexact` fetches the candidates, every one is then
+    checked with `emails_match`. `iexact` alone
+    is not safe: PostgreSQL compares with UPPER(), and with a UTF-8 locale
+    UPPER('ı') is 'I', so "bob@gmaıl.com" would match "bob@gmail.com"
+    (CVE-2019-19844).
     """
-    key = email_comparison_key(email)
-    if not key:
+    email = email.strip() if email else ""
+    if not email:
         return queryset.none()
-    # Match the key and the address as typed, so a stored address is always
-    # found when it's typed exactly as stored, whatever the database locale.
-    candidates = queryset.filter(
-        Q(**{f"{field}__iexact": key}) | Q(**{f"{field}__iexact": email.strip()})
-    )
+    candidates = queryset.filter(**{f"{field}__iexact": email})
     pks = [
         pk
         for pk, value in candidates.values_list("pk", field)
-        if emails_match(value, email)
+        if emails_match(email, value)
     ]
     return queryset.filter(pk__in=pks)
 

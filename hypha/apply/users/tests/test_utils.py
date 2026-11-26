@@ -58,7 +58,12 @@ class TestEmailComparison(TestCase):
         assert email_comparison_key("Bob.Smith@Example.COM") == "bob.smith@example.com"
 
     def test_key_strips_whitespace(self):
-        assert email_comparison_key("  bob@example.com\n") == "bob@example.com"
+        assert email_comparison_key(" Bill@gmail.com\n") == "bill@gmail.com"
+        assert emails_match(" bill@gmail.com", "bill@gmail.com")
+
+    def test_key_case_folds(self):
+        # Same as Django's `_unicode_ci_compare`, casefold() maps "ß" to "ss".
+        assert email_comparison_key("Straße@example.de") == "strasse@example.de"
 
     def test_key_of_empty_value(self):
         assert email_comparison_key(None) == ""
@@ -88,26 +93,17 @@ class TestEmailComparison(TestCase):
 
 
 class TestFilterByEmail(TestCase):
-    def test_matches_case_and_unicode_variants(self):
+    def test_matches_case_variants(self):
         user1 = UserFactory(email="bob@example.com")
-        user2 = UserFactory(email="jos\u00e9@example.com")
         users = get_user_model().objects.all()
 
         assert list(filter_by_email(users, "Bob@Example.COM")) == [user1]
-        assert list(filter_by_email(users, "ｂｏｂ@example.com")) == [user1]
-        assert list(filter_by_email(users, "jose\u0301@example.com")) == [user2]
 
     def test_matches_stored_non_ascii_capitals_typed_as_stored(self):
         user1 = UserFactory(email="ÅSA@example.se")
         users = get_user_model().objects.all()
 
         assert list(filter_by_email(users, "ÅSA@example.se")) == [user1]
-
-    def test_matches_with_surrounding_whitespace(self):
-        user1 = UserFactory(email="bob@example.com")
-        users = get_user_model().objects.all()
-
-        assert list(filter_by_email(users, " Bob@example.com\n")) == [user1]
 
     def test_lookalikes_are_not_matched(self):
         # PostgreSQL UPPER('ı') is 'I' under UTF-8 locales, so an `iexact`
@@ -120,11 +116,18 @@ class TestFilterByEmail(TestCase):
         assert list(filter_by_email(users, "bob@gma\u0131l.com")) == [dotless]
         assert list(filter_by_email(users, "bob@gma\u0130l.com")) == [dotted]
 
+    def test_matches_with_surrounding_whitespace(self):
+        user1 = UserFactory(email="bill@gmail.com")
+        users = get_user_model().objects.all()
+
+        assert list(filter_by_email(users, " bill@gmail.com")) == [user1]
+
     def test_empty_email_matches_nothing(self):
         UserFactory()
         users = get_user_model().objects.all()
 
         assert not filter_by_email(users, "").exists()
+        assert not filter_by_email(users, "   ").exists()
         assert not filter_by_email(users, None).exists()
 
     def test_database_matches_are_checked_in_python(self):
@@ -160,10 +163,14 @@ class TestGetUserByEmail(TestCase):
         assert get_user_by_email(email="ABC@gmail.com").id == user1.id
         assert get_user_by_email(email="ABC@GMAIL.COM").id == user1.id
 
-    def test_unicode_variant(self):
-        user1 = UserFactory(email="bob@example.com")
+    def test_surrounding_whitespace(self):
+        user1 = UserFactory(email="bill@gmail.com")
 
-        assert get_user_by_email(email="ｂｏｂ@example.com").id == user1.id
+        assert get_user_by_email(email=" bill@gmail.com").id == user1.id
+
+    def test_lookalike(self):
+        UserFactory(email="bob@gmail.com")
+
         assert get_user_by_email(email="bob@gma\u0131l.com") is None
 
     def test_multiple_accounts_same_email(self):
@@ -190,10 +197,14 @@ class TestUserAlreadyRegistered(TestCase):
             "Email is already in use.",
         )
 
-    def test_unicode_variant(self):
+    def test_surrounding_whitespace(self):
+        UserFactory(email="bill@gmail.com")
+
+        assert is_user_already_registered(email=" bill@gmail.com")[0]
+
+    def test_lookalike(self):
         UserFactory(email="abc@gmail.com")
 
-        assert is_user_already_registered(email="ａｂｃ@gmail.com")[0]
         assert not is_user_already_registered(email="abc@gma\u0131l.com")[0]
 
 

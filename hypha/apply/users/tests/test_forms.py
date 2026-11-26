@@ -141,11 +141,6 @@ class TestCustomUserAdminFormEmail(TestCase):
         with self.assertRaises(ValidationError):
             self.clean_email("Taken@Example.com")
 
-    def test_rejects_duplicate_unicode_variant(self):
-        UserFactory(email="taken@example.com")
-        with self.assertRaises(ValidationError):
-            self.clean_email("ｔａｋｅｎ@example.com")
-
     def test_allows_own_email(self):
         user = UserFactory(email="mine@example.com")
         self.assertEqual(
