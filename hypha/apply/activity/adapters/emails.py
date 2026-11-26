@@ -29,7 +29,6 @@ from hypha.apply.users.roles import (
     FINANCE_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
-from hypha.apply.users.utils import get_user_by_email
 from hypha.core.mail import (
     language,
     remove_extra_empty_lines,
@@ -202,14 +201,14 @@ class EmailAdapter(AdapterBase):
             )
 
     def handle_co_applicant_invite(self, source, related, **kwargs):
-        from hypha.apply.funds.utils import generate_invite_path
+        from hypha.apply.funds.utils import generate_invite_path, get_invite_recipient
 
-        invited_user = get_user_by_email(related.invited_user_email)
+        invited_user, recipient_email = get_invite_recipient(related)
         can_accept = True
         if invited_user and (invited_user.is_org_faculty):
             can_accept = False
 
-        accept_link = generate_invite_path(invite=related)
+        accept_link = generate_invite_path(related, recipient_email)
         return self.render_message(
             "messages/email/invite_co_applicant.html",
             source=source,
@@ -350,8 +349,10 @@ class EmailAdapter(AdapterBase):
             return [assignee.email]
 
         if message_type == MESSAGES.INVITE_COAPPLICANT:
-            related = kwargs.get("related", None)
-            return [related.invited_user_email]
+            from hypha.apply.funds.utils import get_invite_recipient
+
+            _, recipient_email = get_invite_recipient(kwargs["related"])
+            return [recipient_email]
 
         if message_type == MESSAGES.APPROVE_PAF:
             from hypha.apply.projects.models.project import ProjectSettings

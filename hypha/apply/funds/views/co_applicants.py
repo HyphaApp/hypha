@@ -24,12 +24,12 @@ from hypha.apply.users.models import User
 from hypha.apply.users.roles import APPLICANT_GROUP_NAME
 from hypha.apply.users.services import PasswordlessAuthService
 from hypha.apply.users.tokens import CoApplicantInviteTokenGenerator
-from hypha.apply.users.utils import get_user_by_email
 
 from ..forms import EditCoApplicantForm, InviteCoApplicantForm
 from ..models import ApplicationSubmission, CoApplicant, CoApplicantInvite
 from ..models.co_applicants import CoApplicantInviteStatus
 from ..permissions import has_permission
+from ..utils import get_invite_recipient
 
 
 @method_decorator(login_required, name="dispatch")
@@ -114,13 +114,16 @@ class CoApplicantInviteAcceptView(View):
         except (TypeError, ValueError, OverflowError, CoApplicantInvite.DoesNotExist):
             return self.render_invalid()
 
-        if not self.check_token(self.invite, kwargs.get("token")):
+        # The token only validates for the address the invite was sent to, the
+        # matching account's own address. So if the account that matches now
+        # isn't the one the invite reached, the link is invalid.
+        self.invited_user, recipient_email = get_invite_recipient(self.invite)
+        if not self.check_token(self.invite, kwargs.get("token"), recipient_email):
             return self.render_invalid()
 
         if self.invite.status != CoApplicantInviteStatus.PENDING:
             return self.render_invalid()
 
-        self.invited_user = get_user_by_email(self.invite.invited_user_email)
         if self.invited_user and not self.invited_user.is_active:
             return self.render_invalid(account_inactive=True)
 
@@ -134,8 +137,8 @@ class CoApplicantInviteAcceptView(View):
             status=200,
         )
 
-    def check_token(self, invite, token):
-        token_generator = CoApplicantInviteTokenGenerator()
+    def check_token(self, invite, token, recipient_email):
+        token_generator = CoApplicantInviteTokenGenerator(recipient_email)
         return token_generator.check_token(invite, token)
 
     def get(self, *args, **kwargs):

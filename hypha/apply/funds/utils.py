@@ -17,6 +17,7 @@ from django.utils.translation import gettext_lazy
 # from django.contrib.sites.models import Site
 from hypha.apply.funds.models.submissions import ApplicationSubmission
 from hypha.apply.users.tokens import CoApplicantInviteTokenGenerator
+from hypha.apply.users.utils import get_user_by_email
 
 from .models.screening import ScreeningStatus
 
@@ -231,8 +232,23 @@ def get_export_polling_time(submission_count: int) -> int:
         return max_interval
 
 
-def generate_invite_path(invite):
-    token = CoApplicantInviteTokenGenerator().make_token(invite)
+def get_invite_recipient(invite):
+    """Return the account an invite is for, if any, and the address to send it to.
+
+    Accepting the invite logs the matching account in, so the invite goes to
+    that account's own address, not to the one typed by the inviter (like
+    Django's fix for CVE-2019-19844). Without an account it goes to the typed
+    address.
+    """
+    invited_user = get_user_by_email(invite.invited_user_email)
+    if invited_user:
+        return invited_user, invited_user.email
+    return None, invite.invited_user_email
+
+
+def generate_invite_path(invite, recipient_email):
+    """Return the accept link for an invite sent to `recipient_email`."""
+    token = CoApplicantInviteTokenGenerator(recipient_email).make_token(invite)
     uid = urlsafe_base64_encode(force_bytes(invite.pk))
     login_path = reverse(
         "apply:submissions:accept_coapplicant_invite",
