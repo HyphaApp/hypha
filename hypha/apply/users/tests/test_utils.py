@@ -4,6 +4,7 @@ from django.test import RequestFactory, TestCase, override_settings
 from ..utils import (
     get_redirect_url,
     get_user_by_email,
+    humanize_timeout,
     is_user_already_registered,
     send_activation_email,
     send_confirmation_email,
@@ -13,7 +14,24 @@ from ..utils import (
 from .factories import StaffFactory, UserFactory
 
 
+class TestHumanizeTimeout(TestCase):
+    def test_minutes(self):
+        assert humanize_timeout(900) == "15\xa0minutes"
+
+    def test_day(self):
+        assert humanize_timeout(86400) == "1\xa0day"
+
+    def test_day_and_hour(self):
+        assert humanize_timeout(90000) == "1\xa0day, 1\xa0hour"
+
+
 class TestActivationEmail(TestCase):
+    @override_settings(PASSWORD_ACTIVATION_TIMEOUT=86400)
+    def test_activation_email_shows_humanized_timeout(self):
+        send_activation_email(UserFactory())
+        email_body = mail.outbox[0].body
+        assert "remain active for 1\xa0day," in email_body
+
     def test_activation_email_includes_link(self):
         send_activation_email(UserFactory())
         assert len(mail.outbox) == 1

@@ -5,13 +5,13 @@
 
 {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ activation_path }}
 
-{% blocktrans %}This link can be used only once and will log you in. It will remain active for {{ timeout_minutes }} minutes, so please activate your account as soon as possible.{% endblocktrans %}
+{% blocktrans %}This link can be used only once and will log you in. It will remain active for {{ timeout }}, so please activate your account as soon as possible.{% endblocktrans %}
 
 {% blocktrans %}In the future you can log in at{% endblocktrans %}: {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{% url 'users:passwordless_login_signup' %}
 
 {% blocktrans %}Enter your email address ({{ username }}) and we will send you a link that logs you in — no password needed. You can set a password later from your account settings if you prefer.{% endblocktrans %}
 
-{% blocktrans %}If you do not complete the activation process within {{ timeout_minutes }} minutes, just request a new login link from the address above.{% endblocktrans %}
+{% blocktrans %}If you do not complete the activation process within {{ timeout }}, just request a new login link from the address above.{% endblocktrans %}
 
 {% blocktrans %}Kind Regards,
 The {{ ORG_SHORT_NAME }} Team{% endblocktrans %}

@@ -94,19 +94,33 @@ class CoApplicantInviteTokenGenerator(PasswordlessLoginTokenGenerator):
 
     def _make_hash_value(self, invite, timestamp):
         """
-        Hash the signup request's primary key, email, and some user state
-        that's sure to change after a signup is completed produce a token that is
-        invalidated when it's used.
+        Hash the invite's primary key, submission id and invited email address
+        together with the timestamp, so the token is only valid for this
+        specific invite.
 
-        The token field and modified field will be updated after creating or
-        updating the signup request.
-
-        Failing those things, settings.PASSWORDLESS_SIGNUP_TIMEOUT eventually
-        invalidates the token.
+        The hash includes no state that changes when the invite is used, so
+        settings.PASSWORD_RESET_TIMEOUT is what invalidates the token.
 
         Running this data through salted_hmac() prevents password cracking
-        attempts using the reset token, provided the secret isn't compromised.
+        attempts using the token, provided the secret isn't compromised.
         """
         return (
             f"{invite.pk}{invite.submission_id}{timestamp}{invite.invited_user_email}"
         )
+
+
+class ActivationTokenGenerator(PasswordlessLoginTokenGenerator):
+    """
+    Token for account activation links, valid for
+    settings.PASSWORD_ACTIVATION_TIMEOUT.
+
+    Uses Django's default password reset salt and hash value, so links sent
+    before this generator was introduced stay valid.
+    """
+
+    key_salt = "django.contrib.auth.tokens.PasswordResetTokenGenerator"
+    TIMEOUT = None
+
+    def __init__(self) -> None:
+        self.TIMEOUT = self.TIMEOUT or settings.PASSWORD_ACTIVATION_TIMEOUT
+        super().__init__()

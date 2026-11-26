@@ -24,7 +24,7 @@ from hypha.apply.users.models import User
 from hypha.apply.users.roles import APPLICANT_GROUP_NAME
 from hypha.apply.users.services import PasswordlessAuthService
 from hypha.apply.users.tokens import CoApplicantInviteTokenGenerator
-from hypha.apply.users.utils import get_user_by_email
+from hypha.apply.users.utils import get_user_by_email, humanize_timeout
 
 from ..forms import EditCoApplicantForm, InviteCoApplicantForm
 from ..models import ApplicationSubmission, CoApplicant, CoApplicantInvite
@@ -58,7 +58,7 @@ class CoApplicantInviteView(View):
                 "form": invite_form,
                 "value": _("Invite"),
                 "object": self.submission,
-                "expiry": settings.PASSWORD_RESET_TIMEOUT // (60 * 60 * 24),
+                "timeout": humanize_timeout(CoApplicantInviteTokenGenerator().TIMEOUT),
             },
         )
 

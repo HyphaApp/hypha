@@ -1,7 +1,7 @@
 {% load i18n wagtailadmin_tags %}{% base_url_setting as base_url %}
 {% blocktrans %}Dear {{ user }},{% endblocktrans %}
 
-{% blocktrans %}To confirm access at {{ ORG_LONG_NAME }} use the code below (valid for {{ timeout_minutes }} minutes):{% endblocktrans %}
+{% blocktrans %}To confirm access at {{ ORG_LONG_NAME }} use the code below (valid for {{ timeout }}):{% endblocktrans %}
 
 {{ token }}
 

@@ -1,10 +1,10 @@
 import string
 import zoneinfo
+from datetime import timedelta
 
 import nh3
 from django.conf import settings
 from django.contrib.auth import SESSION_KEY, get_user_model
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.sessions.models import Session
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -13,8 +13,20 @@ from django.utils import formats, timezone
 from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_encode
+from django.utils.timesince import timesince
 from django.utils.translation import gettext as _
 from django_ratelimit.core import _get_ip
+
+from .tokens import ActivationTokenGenerator
+
+
+def humanize_timeout(seconds):
+    """
+    Return a timeout in seconds as a translated duration, e.g. "15 minutes"
+    or "1 day", for telling users how long a one time link or code is valid.
+    """
+    now = timezone.now()
+    return timesince(now - timedelta(seconds=seconds), now)
 
 
 def get_user_by_email(email):
@@ -111,7 +123,7 @@ def send_activation_email(
     Send the activation email. The activation key is the username,
     signed using TimestampSigner.
     """
-    token_generator = PasswordResetTokenGenerator()
+    token_generator = ActivationTokenGenerator()
     token = token_generator.make_token(user)
 
     uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -120,13 +132,11 @@ def send_activation_email(
     if redirect_url:
         activation_path = f"{activation_path}?next={redirect_url}"
 
-    timeout_minutes = settings.PASSWORD_ACTIVATION_TIMEOUT // 60
-
     context = get_email_context(
         user=user,
         site=site,
         activation_path=activation_path,
-        timeout_minutes=timeout_minutes,
+        timeout=humanize_timeout(token_generator.TIMEOUT),
     )
 
     subject = single_line(render_to_string(email_subject_template, context))
@@ -144,14 +154,12 @@ def send_confirmation_email(user, token, updated_email, site=None):
 
     activation_path = reverse("users:confirm_email", kwargs={"token": token})
 
-    timeout_minutes = settings.PASSWORD_RESET_TIMEOUT // 60
-
     context = get_email_context(
         user=user,
         site=site,
         unverified_email=updated_email,
         activation_path=activation_path,
-        timeout_minutes=timeout_minutes,
+        timeout=humanize_timeout(settings.PASSWORD_RESET_TIMEOUT),
     )
 
     subject = single_line(
