@@ -73,6 +73,8 @@ from .models import ConfirmAccessToken, PendingSignup
 from .services import PasswordlessAuthService
 from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGenerator
 from .utils import (
+    emails_match,
+    filter_by_email,
     generate_numeric_token,
     get_email_context,
     get_other_sessions,
@@ -146,7 +148,7 @@ class AccountView(SuccessMessageMixin, UpdateView):
         # form.initial is populated from the instance before validation copies
         # the submitted values onto it, so it still holds the stored email.
         current_email = form.initial["email"]
-        if current_email != updated_email:
+        if not emails_match(current_email, updated_email):
             # Check if other profile fields are changed and if so save them.
             if set(form.changed_data) - {"email"}:
                 # Keep the stored email, the new one only takes effect after confirmation.
@@ -233,7 +235,7 @@ def account_email_change(request):
 
     current_email = request.user.email
     updated_email = value["updated_email"]
-    if updated_email == current_email:
+    if emails_match(updated_email, current_email):
         return redirect("users:account")
 
     # Reloading, or going back through the elevate page, must not send the same
@@ -274,11 +276,9 @@ def _send_email_change_mails(request, current_email, updated_email):
         from_email=settings.DEFAULT_FROM_EMAIL,
     )
 
-    if (
-        User.objects.filter(email__iexact=updated_email)
-        .exclude(pk=request.user.pk)
-        .exists()
-    ):
+    if filter_by_email(
+        User.objects.exclude(pk=request.user.pk), updated_email
+    ).exists():
         # Tell the owner of the address rather than the requesting user, so the
         # response looks the same whether or not the address is registered.
         send_email_in_use_email(
@@ -419,11 +419,9 @@ class EmailChangeConfirmationView(TemplateView):
         # Another account may have claimed the address since the link was
         # sent. Treat that like any other invalid link, so the response does
         # not reveal that the address is registered.
-        if (
-            User.objects.filter(email__iexact=payload.get("updated_email"))
-            .exclude(pk=request.user.pk)
-            .exists()
-        ):
+        if filter_by_email(
+            User.objects.exclude(pk=request.user.pk), payload.get("updated_email")
+        ).exists():
             return None
 
         return payload

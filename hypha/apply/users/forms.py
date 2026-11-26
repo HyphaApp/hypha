@@ -8,7 +8,7 @@ from rolepermissions import roles
 from wagtail.users.forms import UserCreationForm, UserEditForm
 
 from .models import AuthSettings
-from .utils import strip_html_and_nerf_urls
+from .utils import emails_match, filter_by_email, strip_html_and_nerf_urls
 
 User = get_user_model()
 
@@ -109,6 +109,18 @@ class CustomUserAdminFormBase:
         for field_name in ("password1", "password2"):
             if field_name in self.fields:
                 self.fields[field_name].widget.attrs["data_plain"] = True
+
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        others = User.objects.all()
+        if self.instance.pk:
+            others = others.exclude(pk=self.instance.pk)
+        if filter_by_email(others, email).exists():
+            raise forms.ValidationError(
+                self.error_messages["duplicate_username"],
+                code="duplicate_username",
+            )
+        return email
 
 
 class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
@@ -225,10 +237,10 @@ class ProfileForm(forms.ModelForm):
 
     def clean_email(self):
         email = User.objects.normalize_email(self.cleaned_data["email"])
-        # Keep the stored address when only the domain case differs, so neither
-        # that edit nor an older un-normalized address starts the change flow.
+        # Keep the stored address when the new one is the same address, e.g.
+        # only differs in case, so that edit does not start the change flow.
         current_email = self.initial.get("email")
-        if email == User.objects.normalize_email(current_email):
+        if emails_match(email, current_email):
             return current_email
         return email
 

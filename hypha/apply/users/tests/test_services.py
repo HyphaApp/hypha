@@ -76,6 +76,27 @@ class TestPasswordlessAuthServiceInitiateLoginSignup(TestCase):
         )
 
     @override_settings(ENABLE_PUBLIC_SIGNUP=True)
+    def test_repeated_signup_with_other_case_reuses_pending_signup(self):
+        service = self._make_service()
+        service.initiate_login_signup(email="newuser@example.com")
+        first_token = PendingSignup.objects.get().token
+
+        service.initiate_login_signup(email="NewUser@Example.com")
+
+        signup = PendingSignup.objects.get()
+        self.assertEqual(signup.email, "newuser@example.com")
+        self.assertNotEqual(signup.token, first_token)
+
+    def test_existing_user_found_with_other_case(self):
+        user = UserFactory(email="existing@example.com")
+        service = self._make_service()
+        service.initiate_login_signup(email="EXISTING@example.com")
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [user.email])
+        self.assertFalse(PendingSignup.objects.exists())
+
+    @override_settings(ENABLE_PUBLIC_SIGNUP=True)
     def test_nonexistent_user_signup_enabled_sends_new_account_email(self):
         service = self._make_service()
         service.initiate_login_signup(email="newuser@example.com")

@@ -1,4 +1,5 @@
 import string
+import unicodedata
 import zoneinfo
 
 import nh3
@@ -7,6 +8,7 @@ from django.contrib.auth import SESSION_KEY, get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.sessions.models import Session
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import formats, timezone
@@ -17,9 +19,53 @@ from django.utils.translation import gettext as _
 from django_ratelimit.core import _get_ip
 
 
+def email_comparison_key(email) -> str:
+    """Return the form of an email address used to compare it with another.
+
+    The whole address is NFKC-normalised, stripped and lowercased. Django's
+    `normalize_email` only lowercases the domain, so it is not enough to tell
+    whether two addresses are the same. NFKC folds compatibility forms (e.g.
+    fullwidth letters) into their base letters, but keeps lookalikes from other
+    scripts, like a dotless "ı" or a Cyrillic "а", distinct.
+    """
+    if not email:
+        return ""
+    return unicodedata.normalize("NFKC", str(email)).strip().lower()
+
+
+def emails_match(email_a, email_b) -> bool:
+    """Return True if two email addresses are the same address."""
+    key = email_comparison_key(email_a)
+    return bool(key) and key == email_comparison_key(email_b)
+
+
+def filter_by_email(queryset, email, field="email"):
+    """Filter a queryset to the rows where `field` matches `email`.
+
+    Matching follows `emails_match`. The `iexact` lookup only fetches
+    candidates, every one is then checked in Python. `iexact` alone is not
+    safe: PostgreSQL compares with UPPER(), and with a UTF-8 locale UPPER('ı')
+    is 'I', so "bob@gmaıl.com" would match "bob@gmail.com".
+    """
+    key = email_comparison_key(email)
+    if not key:
+        return queryset.none()
+    # Match the key and the address as typed, so a stored address is always
+    # found when it's typed exactly as stored, whatever the database locale.
+    candidates = queryset.filter(
+        Q(**{f"{field}__iexact": key}) | Q(**{f"{field}__iexact": email.strip()})
+    )
+    pks = [
+        pk
+        for pk, value in candidates.values_list("pk", field)
+        if emails_match(value, email)
+    ]
+    return queryset.filter(pk__in=pks)
+
+
 def get_user_by_email(email):
     UserModel = get_user_model()
-    qs = UserModel.objects.filter(email__iexact=email)  # case insensitive matching
+    qs = filter_by_email(UserModel.objects.all(), email)
 
     # if multiple accounts then check with case sensitive search
     if len(qs) > 1:
@@ -40,7 +86,7 @@ def is_user_already_registered(email: str) -> tuple[bool, str]:
     """
 
     user_model = get_user_model()
-    if user_model.objects.filter(email__iexact=email):
+    if filter_by_email(user_model.objects.all(), email).exists():
         return (True, _("Email is already in use."))
 
     return (False, "")
@@ -227,7 +273,7 @@ def login_ratelimit_key(group, request):
     whatever it is given, so every such request would land in a single bucket
     and any one client could exhaust login for everybody.
     """
-    username = request.POST.get("auth-username", "").strip().lower()
+    username = email_comparison_key(request.POST.get("auth-username", ""))
     return username or f"ip:{_get_ip(request)}"
 
 

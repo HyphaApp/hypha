@@ -11,6 +11,7 @@ from wagtail.signal_handlers import disable_reference_index_auto_update
 
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.users.models import User
+from hypha.apply.users.utils import emails_match, filter_by_email
 
 from .models import (
     ApplicationSubmission,
@@ -473,15 +474,17 @@ class InviteCoApplicantForm(forms.ModelForm):
         if (
             self.submission
             and self.submission.user
-            and self.submission.user.email.lower() == email.lower()
+            and emails_match(self.submission.user.email, email)
         ):
             raise forms.ValidationError(
                 _("The submission owner can not be invited as a co-applicant.")
             )
         if (
             self.submission
-            and CoApplicantInvite.objects.filter(
-                submission=self.submission, invited_user_email__iexact=email
+            and filter_by_email(
+                CoApplicantInvite.objects.filter(submission=self.submission),
+                email,
+                field="invited_user_email",
             ).exists()
         ):
             raise forms.ValidationError(_("This email has already been invited."))

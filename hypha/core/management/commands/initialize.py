@@ -4,6 +4,8 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from wagtail.models import Site
 
+from hypha.apply.users.utils import get_user_by_email
+
 
 class Command(BaseCommand):
     help = (
@@ -26,10 +28,9 @@ class Command(BaseCommand):
         User = get_user_model()
 
         # Create Superuser
-        try:
-            user = User.objects.get(email=SUPER_ADMIN_EMAIL)
+        if user := get_user_by_email(SUPER_ADMIN_EMAIL):
             user.set_password(SUPER_ADMIN_PASSWORD)
-        except User.DoesNotExist:
+        else:
             User.objects.create_superuser(
                 email=SUPER_ADMIN_EMAIL, password=SUPER_ADMIN_PASSWORD
             )
