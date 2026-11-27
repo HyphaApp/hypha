@@ -1,8 +1,14 @@
 from decimal import Decimal
 
+import factory
 from django.test import TestCase
 
-from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.funds.tests.factories import (
+    ApplicationSubmissionFactory,
+    CustomFormFieldsFactory,
+)
+from hypha.apply.funds.tests.factories.models import ApplicationFormDataFactory
+from hypha.apply.stream_forms.testing.factories import UploadedFile
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     FinanceFactory,
@@ -24,7 +30,7 @@ from ..models.invoice import (
     invoice_status_user_choices,
 )
 from ..models.project import Project
-from .factories import InvoiceFactory
+from .factories import InvoiceFactory, ProjectFactory
 
 
 class TestProjectModel(TestCase):
@@ -219,3 +225,37 @@ class TestInvoiceQueryset(TestCase):
     def test_get_totals_no_value(self):
         self.assertEqual(Invoice.objects.paid_value(), 0)
         self.assertEqual(Invoice.objects.unpaid_value(), 0)
+
+
+class TestProjectFiles(TestCase):
+    def file_names(self, project):
+        names = {}
+        for field_id in project.file_field_ids:
+            files = project.data(field_id)
+            files = files if isinstance(files, list) else [files]
+            names[field_id] = [f.name for f in files]
+        return names
+
+    def test_resave_keeps_existing_files(self):
+        project = ProjectFactory(
+            form_fields=CustomFormFieldsFactory,
+            form_data=factory.SubFactory(
+                ApplicationFormDataFactory,
+                form_fields=factory.SelfAttribute("..form_fields"),
+            ),
+        )
+        for field_id in project.file_field_ids:
+            project.form_data[field_id] = UploadedFile("paf.pdf", b"paf")
+        project.save()
+        project = Project.objects.get(id=project.id)
+        names_before = self.file_names(project)
+        for files in names_before.values():
+            for name in files:
+                self.assertTrue(name.startswith(f"submission/{project.submission_id}/"))
+
+        project.save()
+        project = Project.objects.get(id=project.id)
+        project.save()
+
+        project = Project.objects.get(id=project.id)
+        self.assertEqual(self.file_names(project), names_before)

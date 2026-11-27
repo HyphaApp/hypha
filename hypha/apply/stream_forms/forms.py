@@ -73,11 +73,9 @@ class StreamBaseForm(FileFormMixin, forms.Form, metaclass=MixedFieldMetaclass):
 
     def clean(self):
         cleaned_data = super().clean()
-        # "<field>-uploads" is kept, process_file_data() needs it.
+        # Only used by the file form, they should not end up in form_data.
         for field_name in list(cleaned_data):
-            if self._is_file_form_internal_field(
-                field_name
-            ) and not field_name.endswith("-uploads"):
+            if self._is_file_form_internal_field(field_name):
                 cleaned_data.pop(field_name)
         return cleaned_data
 

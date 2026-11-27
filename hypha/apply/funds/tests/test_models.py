@@ -1,6 +1,9 @@
 import itertools
+import json
 import os
+import uuid
 from datetime import date, timedelta
+from io import BytesIO
 from unittest.mock import ANY, patch
 
 from django.conf import settings
@@ -8,8 +11,11 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.core import mail
 from django.core.exceptions import ValidationError
+from django.core.files import File
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django_file_form.models import PlaceholderUploadedFile
+from django_file_form.uploaded_file import S3UploadedFileWithId
 
 from hypha.apply.funds.blocks import EmailBlock, FullNameBlock
 from hypha.apply.funds.models import (
@@ -18,15 +24,19 @@ from hypha.apply.funds.models import (
     AssignedReviewers,
     Reminder,
 )
+from hypha.apply.funds.signals import revision_files_to_delete
 from hypha.apply.funds.tests.factories.models import ScreeningStatusFactory
 from hypha.apply.funds.workflows.constants import DRAFT_STATE
 from hypha.apply.funds.workflows.registry import Request
 from hypha.apply.review.options import AGREE, MAYBE, NO
 from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
+from hypha.apply.stream_forms.testing.factories import UploadedFile
 from hypha.apply.users.tests.factories import StaffFactory
+from hypha.apply.utils.storage import PrivateStorage
 from hypha.apply.utils.testing import make_request
 
 from .factories import (
+    ApplicationRevisionFactory,
     ApplicationSubmissionFactory,
     AssignedReviewersFactory,
     CustomFormFieldsFactory,
@@ -516,6 +526,31 @@ class TestApplicationSubmission(TestCase):
         # Check we saved the file somewhere beneath it
         self.assertIn(filename, found_files)
 
+    def test_new_submission_files_saved_once_under_own_id(self):
+        saved_names = []
+        original_save = PrivateStorage.save
+
+        def record_save(storage, name, *args, **kwargs):
+            saved_names.append(name)
+            return original_save(storage, name, *args, **kwargs)
+
+        with patch.object(
+            PrivateStorage, "save", autospec=True, side_effect=record_save
+        ):
+            submission = ApplicationSubmissionFactory(with_files=True)
+
+        file_count = 0
+        for field_id in submission.file_field_ids:
+            files = submission.data(field_id)
+            file_count += len(files) if isinstance(files, list) else 1
+
+        self.assertEqual(len(saved_names), file_count)
+        for name in saved_names:
+            self.assertTrue(
+                name.startswith(f"submission/{submission.id}/"),
+                f"{name} is not stored under the submission's own path",
+            )
+
     def test_correct_file_path_generated(self):
         submission = ApplicationSubmissionFactory(with_files=True)
 
@@ -534,6 +569,191 @@ class TestApplicationSubmission(TestCase):
                     check_generated_file_path(stream_file, file_id=file_id)
             else:
                 check_generated_file_path(file_response, file_id=file_id)
+
+    def file_names(self, instance):
+        names = {}
+        for field_id in instance.file_field_ids:
+            files = instance.data(field_id)
+            files = files if isinstance(files, list) else [files]
+            names[field_id] = [f.name for f in files]
+        return names
+
+    def test_resave_keeps_existing_files(self):
+        submission = ApplicationSubmissionFactory(with_files=True)
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        names_before = self.file_names(submission)
+
+        submission.save()
+
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual(self.file_names(submission), names_before)
+
+    def test_resave_with_differing_draft_keeps_existing_files(self):
+        submission = ApplicationSubmissionFactory(with_files=True)
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        names_before = self.file_names(submission)
+        # A draft where every file has been removed.
+        draft_data = dict(submission.live_revision.form_data)
+        for field_id in submission.file_field_ids:
+            draft_data[field_id] = []
+        submission.draft_revision = ApplicationRevisionFactory(
+            submission=submission, form_data=draft_data, is_draft=True
+        )
+        submission.save(skip_custom=True)
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        submission.save()
+
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual(self.file_names(submission), names_before)
+
+    def test_placeholder_for_other_file_is_dropped(self):
+        other = ApplicationSubmissionFactory(with_files=True)
+        submission = ApplicationSubmissionFactory(with_files=True)
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        field_id = next(
+            field_id
+            for field_id in submission.file_field_ids
+            if isinstance(submission.data(field_id), list)
+        )
+        kept = submission.data(field_id)[0]
+        foreign_paths = [
+            f"submission/{other.id}/{field_id}/secret.pdf",
+            f"submission/{submission.id}/{field_id}/../../{other.id}/{field_id}/x.pdf",
+        ]
+        submission.form_data[field_id] = [
+            PlaceholderUploadedFile(kept.filename, size=0, file_id=kept.name),
+            *[
+                PlaceholderUploadedFile("x.pdf", size=0, file_id=path)
+                for path in foreign_paths
+            ],
+        ]
+        submission.save()
+
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual([f.name for f in submission.data(field_id)], [kept.name])
+
+    def test_s3_upload_is_dropped(self):
+        other = ApplicationSubmissionFactory(with_files=True)
+        submission = ApplicationSubmissionFactory(with_files=True)
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        field_id = next(
+            field_id
+            for field_id in submission.file_field_ids
+            if isinstance(submission.data(field_id), list)
+        )
+        kept = submission.data(field_id)[0]
+        s3_uploads = []
+        for key in [
+            f"submission/{other.id}/{field_id}/secret.pdf",
+            f"submission/{submission.id}/{field_id}/x.pdf",
+        ]:
+            # Skip __init__, it fetches the key from S3.
+            upload = S3UploadedFileWithId.__new__(S3UploadedFileWithId)
+            upload.name = key
+            s3_uploads.append(upload)
+        submission.form_data[field_id] = [
+            PlaceholderUploadedFile(kept.filename, size=0, file_id=kept.name),
+            *s3_uploads,
+        ]
+        submission.save()
+
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual([f.name for f in submission.data(field_id)], [kept.name])
+
+    def test_upload_named_like_own_file_is_stored(self):
+        submission = ApplicationSubmissionFactory(with_files=True)
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        field_id = next(
+            field_id
+            for field_id in submission.file_field_ids
+            if isinstance(submission.data(field_id), list)
+        )
+        kept = submission.data(field_id)[0]
+        kept_content = kept.storage.open(kept.name).read()
+        submission.form_data[field_id] = [
+            PlaceholderUploadedFile(kept.filename, size=0, file_id=kept.name),
+            File(BytesIO(b"new content"), name=kept.name),
+        ]
+        submission.save()
+
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        kept_file, new_file = submission.data(field_id)
+        self.assertEqual(kept_file.name, kept.name)
+        self.assertNotEqual(new_file.name, kept.name)
+        self.assertTrue(
+            new_file.name.startswith(f"submission/{submission.id}/{field_id}/")
+        )
+        self.assertEqual(new_file.storage.open(new_file.name).read(), b"new content")
+        self.assertEqual(kept.storage.open(kept.name).read(), kept_content)
+
+    def test_empty_entries_in_stored_file_list_are_ignored(self):
+        submission = ApplicationSubmissionFactory(with_files=True)
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        field_id = next(
+            field_id
+            for field_id in submission.file_field_ids
+            if isinstance(submission.data(field_id), list)
+        )
+        names_before = [f.name for f in submission.data(field_id)]
+        # Older form_data can have empty entries in a list of files.
+        form_data = submission.live_revision.form_data
+        form_data[field_id] = [*form_data[field_id], None, {}]
+        ApplicationSubmission.objects.filter(id=submission.id).update(
+            form_data=form_data
+        )
+        submission.revisions.update(form_data=form_data)
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+
+        # The files are still used by the submission.
+        self.assertEqual(revision_files_to_delete(submission.live_revision), [])
+        submission.save()
+
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual([f.name for f in submission.data(field_id)], names_before)
+
+    def test_stored_file_uploads_data_ignored(self):
+        submission = ApplicationSubmissionFactory(with_files=True)
+        form_data = submission.live_revision.form_data
+        for field_id in submission.file_field_ids:
+            form_data[f"{field_id}-uploads"] = json.dumps([{"id": str(uuid.uuid4())}])
+        ApplicationSubmission.objects.filter(id=submission.id).update(
+            form_data=form_data
+        )
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        names_before = self.file_names(submission)
+        revisions = submission.revisions.count()
+
+        for field_id in submission.file_field_ids:
+            self.assertNotIn(f"{field_id}-uploads", submission.form_data)
+        submission.create_revision()
+
+        self.assertEqual(submission.revisions.count(), revisions)
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual(self.file_names(submission), names_before)
+
+    def test_edit_keeps_existing_file_name_when_adding_file(self):
+        submission = ApplicationSubmissionFactory(with_files=True)
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        field_id = next(
+            field_id
+            for field_id in submission.file_field_ids
+            if isinstance(submission.data(field_id), list)
+        )
+        kept, removed = submission.data(field_id)
+
+        # Mimic an edit form: one file kept, one removed and one new added.
+        new_file = UploadedFile("new.pdf", b"new content")
+        submission.form_data[field_id] = [
+            PlaceholderUploadedFile(kept.filename, size=0, file_id=kept.name),
+            new_file,
+        ]
+        submission.save()
+
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        names = [f.name for f in submission.data(field_id)]
+        self.assertEqual(len(names), 2)
+        self.assertIn(kept.name, names)
+        self.assertNotIn(removed.name, names)
 
     def test_create_revision_on_create(self):
         submission = ApplicationSubmissionFactory()

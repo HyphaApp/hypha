@@ -66,21 +66,15 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
         )
 
         is_draft = "save" in self.data
+        # The version shares the report's file paths, so it reuses the files
+        # stored above instead of saving copies of the uploads.
         version = ReportVersion.objects.create(
             report=instance,
-            # Save a ReportVersion first then edit/update the form_data below.
             form_data=instance.form_data,
             submitted=timezone.now(),
             draft=is_draft,
             author=self.user,
         )
-        version.process_file_data(
-            self.cleaned_data["form_data"],
-            latest_existing_data=instance.current.form_data
-            if instance.current
-            else None,
-        )
-        version.save()
 
         if is_draft:
             instance.draft = version

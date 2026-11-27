@@ -813,14 +813,13 @@ class ApplicationSubmission(
     def clean_submission(self):
         self.process_form_data()
         self.ensure_user_has_account()
-        # pass current submission data to avoid file save on every submit(if file is not updated)
+        # New submissions have no id yet, save() stores their files once it has one.
+        # Pass current submission data to avoid file save on every submit(if file is not updated)
         if self.id:
             current_submission = ApplicationSubmission.objects.get(id=self.id)
             self.process_file_data(
                 self.form_data, current_submission.from_draft().raw_data
             )
-        else:
-            self.process_file_data(self.form_data)
 
     def get_assigned_meta_terms(self):
         """Returns assigned meta terms excluding the 'root' term"""
@@ -850,8 +849,12 @@ class ApplicationSubmission(
             # Copy extra relevant information to the child
             self.lead = self.get_from_parent("lead")
 
-            # We need the submission id to correctly save the files
+            # We need the submission id to correctly save the files, they are
+            # stored after the first insert. Until then keep them out of form_data,
+            # unsaved uploads can't be serialised.
             files = self.extract_files()
+            for field_id in files:
+                self.form_data[field_id] = []
         elif not self.public_id:
             self.public_id = f"{self.get_from_parent('submission_id_prefix')}{self.id}"
 

@@ -71,6 +71,6 @@ class TestStreamBaseForm(TestCase):
             data=QueryDict("docs-uploads=[]&docs-metadata={}&notes-uploads=kept")
         )
         self.assertTrue(form.is_valid())
-        self.assertEqual(form.cleaned_data["docs-uploads"], "[]")
+        self.assertNotIn("docs-uploads", form.cleaned_data)
         self.assertNotIn("docs-metadata", form.cleaned_data)
         self.assertEqual(form.cleaned_data["notes-uploads"], "kept")

@@ -250,6 +250,8 @@ class BaseSubmissionEditView(UpdateView):
         return kwargs
 
     def get_placeholder_file(self, initial_file):
+        if initial_file is None:
+            return None
         if not isinstance(initial_file, list):
             return PlaceholderUploadedFile(
                 initial_file.filename,

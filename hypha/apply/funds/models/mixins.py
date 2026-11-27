@@ -1,10 +1,10 @@
-import json
-import uuid
+import os
 
 from django.core.files import File
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django_file_form.models import PlaceholderUploadedFile
+from django_file_form.uploaded_file import S3UploadedFileWithId
 
 from hypha.apply.stream_forms.blocks import (
     FileFieldBlock,
@@ -61,8 +61,13 @@ class AccessFormData:
         if isinstance(file, cls.stream_file_class):
             return file
         if isinstance(file, File):
+            # New content, never let its name point to a stored file path.
             return cls.stream_file_class(
-                instance, field, file, name=file.name, storage=cls.storage_class()
+                instance,
+                field,
+                file,
+                name=os.path.basename(file.name),
+                storage=cls.storage_class(),
             )
 
         if isinstance(file, PlaceholderUploadedFile):
@@ -97,65 +102,67 @@ class AccessFormData:
             return cls.stream_file(instance, field, file)
 
     def process_file_data(self, data, latest_existing_data=None):
+        """
+        Store new files and keep existing ones.
+
+        Files already stored under the instance's own path are kept as they are,
+        new uploads are always saved. Files kept in an edit form are posted back
+        as placeholders, those are only accepted if they belong to the instance,
+        i.e. are stored under its path or are in latest_existing_data.
+        S3 direct uploads are not used and always dropped.
+        """
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
-                # {field_id}-uploads contains all files data for that field
-                # get all uploaded files(existing + new)
-                uploaded_files = data.get(field.id + "-uploads", "")
-
-                try:
-                    uploads_data = json.loads(uploaded_files)
-                except json.JSONDecodeError:
-                    uploads_data = []
-
-                new_file_upload = False
-                for file_data in uploads_data:
-                    # id can be a path or a uuid, where path can exist only for existing files so uuid means a new file
-                    if self._is_valid_uuid(file_data.get("id", None)):
-                        new_file_upload = True  # if any new file is uploaded we have to process and save the files
-
-                # get existing files from instance
-                if latest_existing_data:
-                    existing_file = latest_existing_data.get(field.id, [])
-                else:
-                    existing_file = None
-
-                # uploaded file ids to check for removed/deleted files
-                uploaded_file_ids = [f["id"] for f in uploads_data if "id" in f]
-
-                # if any existing file id is not in uploaded file ids that means it has been deleted
-                # remove deleted files from existing files
-                if existing_file:
-                    if isinstance(existing_file, list):
-                        existing_file = [
-                            f for f in existing_file if f.name in uploaded_file_ids
-                        ]
-                    else:
-                        if existing_file.name not in uploaded_file_ids:
-                            existing_file = None
-
-                # save only if there is any new file uploaded or no existing file
-                if not existing_file or new_file_upload:
-                    new_file = data.get(field.id, [])
-                    new_stream_file = self.process_file(self, field, new_file)
+                known_names = self._file_names(
+                    (latest_existing_data or {}).get(field.id)
+                )
+                value = data.get(field.id, [])
+                is_list = isinstance(value, list)
+                files = []
+                for file in value if is_list else [value]:
+                    if isinstance(file, S3UploadedFileWithId):
+                        # Hypha does not use S3 direct uploads, the S3 key is
+                        # posted by the client and could point to any file.
+                        continue
+                    stream_file = self.stream_file(self, field, file)
+                    if not stream_file:
+                        continue
+                    if (
+                        isinstance(file, PlaceholderUploadedFile)
+                        and not stream_file.is_own_file()
+                        and stream_file.name not in known_names
+                    ):
+                        # The placeholder path is posted by the client, never
+                        # trust it to point to a file of another instance.
+                        continue
                     try:
-                        new_stream_file.save()
-                    except (AttributeError, FileNotFoundError):
-                        try:
-                            for f in new_stream_file:
-                                f.save()
-                        except FileNotFoundError:
-                            pass
-                    self.form_data[field.id] = new_stream_file
-                else:
-                    self.form_data[field.id] = existing_file
+                        stream_file.save()
+                    except FileNotFoundError:
+                        pass
+                    files.append(stream_file)
 
-    def _is_valid_uuid(self, value):
-        try:
-            uuid.UUID(value)
-            return True
-        except (ValueError, TypeError):
-            return False
+                if is_list:
+                    self.form_data[field.id] = files
+                else:
+                    self.form_data[field.id] = files[0] if files else []
+
+    @staticmethod
+    def _file_names(files):
+        if not files:
+            return set()
+        files = files if isinstance(files, list) else [files]
+        names = set()
+        for f in files:
+            # Skip empty entries, older form_data can have e.g. null in lists.
+            if isinstance(f, File):
+                name = f.name
+            elif isinstance(f, dict):
+                name = f.get("name")
+            else:
+                continue
+            if name:
+                names.add(name)
+        return names
 
     def extract_files(self):
         files = {}
@@ -186,6 +193,8 @@ class AccessFormData:
             if isinstance(block, UploadableMediaBlock):
                 field_id = field_data.get("id")
                 if field_id:
+                    # Left over in older form_data, it is only used by the file form.
+                    data.pop(field_id + "-uploads", None)
                     field = form_fields[i]
                     file = data.get(field_id, [])
                     data[field_id] = cls.process_file(instance, field, file)

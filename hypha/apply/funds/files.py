@@ -47,6 +47,26 @@ class PrivateStreamFieldFile(StreamFieldFile):
             path_start=path_start,
         )
 
+    def is_own_file(self):
+        """
+        True if the file is already stored under this instance's own path.
+        """
+        entity_id = self.get_entity_id()
+        if not self.name or entity_id is None:
+            return False
+        own_path = generate_private_file_path(entity_id, self.field.id, "")
+        # Reject paths that use ".." or similar to point somewhere else.
+        return os.path.normpath(self.name) == self.name and self.name.startswith(
+            own_path
+        )
+
+    def save(self):
+        # Files in storage already are kept as is, saving would make a renamed copy.
+        if self.is_own_file():
+            self._committed = True
+            return
+        super().save()
+
     @property
     def url(self):
         view_name = "apply:submissions:serve_private_media"

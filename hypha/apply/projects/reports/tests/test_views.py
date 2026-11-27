@@ -1,6 +1,9 @@
 import json
+import os
+import tempfile
 
 from dateutil.relativedelta import relativedelta
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from django.utils import timezone
 
@@ -20,6 +23,7 @@ from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     StaffFactory,
 )
+from hypha.apply.utils.storage import PrivateStorage
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 from ..models import Report
@@ -107,6 +111,50 @@ class TestStaffSubmitReport(BaseViewTestCase):
         assert report.versions.first() == report.current
         assert report.current.author == self.user
         assert report.draft is None
+
+    def test_submit_report_with_file_stores_it_once(self):
+        """Tests the report and its version share one stored copy of an upload"""
+        file_field_id = "6b5d7d3a-4f3e-4b0e-9a57-2d1c3b0e8f11"
+        report_form = ProjectReportForm.objects.create(
+            name="Test Form With File",
+            form_fields=[
+                *FORM_FIELDS,
+                {
+                    "id": file_field_id,
+                    "type": "file",
+                    "value": {
+                        "required": False,
+                        "help_text": "",
+                        "field_label": "Attachment",
+                    },
+                },
+            ],
+        )
+        report = ReportFactory(project__status=INVOICING_AND_REPORTING)
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=report_form.id,
+        )
+        with (
+            tempfile.TemporaryDirectory() as media_root,
+            self.settings(MEDIA_ROOT=media_root),
+        ):
+            self.post_page(
+                report,
+                {
+                    "012a4f29-0882-4b1c-b567-aede1b601d4a": "11",
+                    file_field_id: SimpleUploadedFile("report.pdf", b"report content"),
+                },
+            )
+            report.refresh_from_db()
+
+            report_file = report.form_data[file_field_id]
+            version_file = report.current.form_data[file_field_id]
+            assert report_file.name == version_file.name
+            storage = PrivateStorage()
+            _, stored = storage.listdir(os.path.dirname(report_file.name))
+            assert stored == [os.path.basename(report_file.name)]
+            assert storage.open(report_file.name).read() == b"report content"
 
     def test_cant_submit_report_for_closing_and_complete_project(self):
         """Tests reports cannot be submitted for closed/completed projects"""
