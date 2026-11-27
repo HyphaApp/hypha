@@ -82,10 +82,19 @@ class PasswordlessSignupTokenGenerator(PasswordlessLoginTokenGenerator):
 
 
 class CoApplicantInviteTokenGenerator(PasswordlessLoginTokenGenerator):
+    """Token for the link in a co-applicant invite.
+
+    The token is bound to the address the invite is sent to: the matching
+    account's own address if there is one, else the invited address. Accepting
+    logs that account in, so the token must only work for the inbox it was
+    sent to.
+    """
+
     key_salt = None
     TIMEOUT = None
 
-    def __init__(self) -> None:
+    def __init__(self, recipient_email: str | None = None) -> None:
+        self.recipient_email = recipient_email
         self.key_salt = (
             self.key_salt or "hypha.apply.users.tokens.CoApplicantInviteTokenGenerator"
         )
@@ -107,6 +116,6 @@ class CoApplicantInviteTokenGenerator(PasswordlessLoginTokenGenerator):
         Running this data through salted_hmac() prevents password cracking
         attempts using the reset token, provided the secret isn't compromised.
         """
-        return (
-            f"{invite.pk}{invite.submission_id}{timestamp}{invite.invited_user_email}"
-        )
+        if not self.recipient_email:
+            raise ValueError("An invite token needs the recipient email.")
+        return f"{invite.pk}{invite.submission_id}{timestamp}{self.recipient_email}"

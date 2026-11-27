@@ -129,12 +129,10 @@ class PageStreamBaseForm(BaseForm, StreamBaseForm):
         for field, value in self.fields.items():
             # email validation of submission form
             if isinstance(value, EmailField):
-                email = self.data.get(field)
+                # The cleaned value, stripped like the one that gets saved.
+                email = cleaned_data.get(field)
                 if email:
-                    # Double __ to avoid shadowing gettext alias _:
-                    is_registered, __ = is_user_already_registered(
-                        email=self.data.get(field)
-                    )
+                    is_registered, _reason = is_user_already_registered(email=email)
                     if is_registered:
                         user = get_user_by_email(email=email)
                         if not user:

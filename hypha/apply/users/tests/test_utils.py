@@ -1,7 +1,14 @@
+from unittest import mock
+
+from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import RequestFactory, TestCase, override_settings
 
+from ..models import PendingSignup
 from ..utils import (
+    email_comparison_key,
+    emails_match,
+    filter_by_email,
     get_redirect_url,
     get_user_by_email,
     is_user_already_registered,
@@ -46,6 +53,105 @@ class TestActivationEmail(TestCase):
         assert "?next=/apply/?a=1&b=2" in email_body
 
 
+class TestEmailComparison(TestCase):
+    def test_key_lowercases_whole_address(self):
+        assert email_comparison_key("Bob.Smith@Example.COM") == "bob.smith@example.com"
+
+    def test_key_strips_whitespace(self):
+        assert email_comparison_key(" Bill@gmail.com\n") == "bill@gmail.com"
+        assert emails_match(" bill@gmail.com", "bill@gmail.com")
+
+    def test_key_case_folds(self):
+        # Same as Django's `_unicode_ci_compare`, casefold() maps "ß" to "ss".
+        assert email_comparison_key("Straße@example.de") == "strasse@example.de"
+
+    def test_key_of_empty_value(self):
+        assert email_comparison_key(None) == ""
+        assert email_comparison_key("") == ""
+
+    def test_match_ignores_case(self):
+        assert emails_match("Bob@Example.com", "bob@EXAMPLE.com")
+
+    def test_match_normalizes_unicode(self):
+        # Fullwidth letters fold to their base letters under NFKC.
+        assert emails_match("ｂｏｂ@example.com", "bob@example.com")
+        # Composed and decomposed "é" are the same address.
+        assert emails_match("jos\u00e9@example.com", "jose\u0301@example.com")
+        # Non-ASCII letters are lowercased too.
+        assert emails_match("ÅSA@example.se", "åsa@example.se")
+
+    def test_lookalikes_do_not_match(self):
+        # Dotless i, dotted capital I and Cyrillic a are different letters.
+        assert not emails_match("bob@gmail.com", "bob@gma\u0131l.com")
+        assert not emails_match("bob@gmail.com", "bob@gma\u0130l.com")
+        assert not emails_match("bob@gmail.com", "bob@gm\u0430il.com")
+
+    def test_empty_values_never_match(self):
+        assert not emails_match(None, None)
+        assert not emails_match("", "")
+        assert not emails_match("bob@example.com", None)
+
+
+class TestFilterByEmail(TestCase):
+    def test_matches_case_variants(self):
+        user1 = UserFactory(email="bob@example.com")
+        users = get_user_model().objects.all()
+
+        assert list(filter_by_email(users, "Bob@Example.COM")) == [user1]
+
+    def test_matches_stored_non_ascii_capitals_typed_as_stored(self):
+        user1 = UserFactory(email="ÅSA@example.se")
+        users = get_user_model().objects.all()
+
+        assert list(filter_by_email(users, "ÅSA@example.se")) == [user1]
+
+    def test_lookalikes_are_not_matched(self):
+        # PostgreSQL UPPER('ı') is 'I' under UTF-8 locales, so an `iexact`
+        # lookup would treat these as the same address.
+        dotless = UserFactory(email="bob@gma\u0131l.com")
+        dotted = UserFactory(email="bob@gma\u0130l.com")
+        users = get_user_model().objects.all()
+
+        assert not filter_by_email(users, "bob@gmail.com").exists()
+        assert list(filter_by_email(users, "bob@gma\u0131l.com")) == [dotless]
+        assert list(filter_by_email(users, "bob@gma\u0130l.com")) == [dotted]
+
+    def test_matches_with_surrounding_whitespace(self):
+        user1 = UserFactory(email="bill@gmail.com")
+        users = get_user_model().objects.all()
+
+        assert list(filter_by_email(users, " bill@gmail.com")) == [user1]
+
+    def test_empty_email_matches_nothing(self):
+        UserFactory()
+        users = get_user_model().objects.all()
+
+        assert not filter_by_email(users, "").exists()
+        assert not filter_by_email(users, "   ").exists()
+        assert not filter_by_email(users, None).exists()
+
+    def test_database_matches_are_checked_in_python(self):
+        # Whether `iexact` gives a false match like "ı" == "i" depends on the
+        # database locale, so check that every candidate goes through
+        # emails_match.
+        UserFactory(email="bob@example.com")
+        users = get_user_model().objects.all()
+
+        with mock.patch(
+            "hypha.apply.users.utils.emails_match", return_value=False
+        ) as emails_match_mock:
+            assert not filter_by_email(users, "bob@example.com").exists()
+        emails_match_mock.assert_called_once_with("bob@example.com", "bob@example.com")
+
+    def test_other_field(self):
+        signup = PendingSignup.objects.create(email="New@Example.com", token="x")
+
+        assert (
+            filter_by_email(PendingSignup.objects.all(), "new@example.com").get()
+            == signup
+        )
+
+
 class TestGetUserByEmail(TestCase):
     def test_no_account(self):
         assert get_user_by_email(email="abc@gmail.com") is None
@@ -56,6 +162,16 @@ class TestGetUserByEmail(TestCase):
         assert get_user_by_email(email="abc@gmail.com").id == user1.id
         assert get_user_by_email(email="ABC@gmail.com").id == user1.id
         assert get_user_by_email(email="ABC@GMAIL.COM").id == user1.id
+
+    def test_surrounding_whitespace(self):
+        user1 = UserFactory(email="bill@gmail.com")
+
+        assert get_user_by_email(email=" bill@gmail.com").id == user1.id
+
+    def test_lookalike(self):
+        UserFactory(email="bob@gmail.com")
+
+        assert get_user_by_email(email="bob@gma\u0131l.com") is None
 
     def test_multiple_accounts_same_email(self):
         user1 = UserFactory(email="abc@gmail.com")
@@ -80,6 +196,16 @@ class TestUserAlreadyRegistered(TestCase):
             True,
             "Email is already in use.",
         )
+
+    def test_surrounding_whitespace(self):
+        UserFactory(email="bill@gmail.com")
+
+        assert is_user_already_registered(email=" bill@gmail.com")[0]
+
+    def test_lookalike(self):
+        UserFactory(email="abc@gmail.com")
+
+        assert not is_user_already_registered(email="abc@gma\u0131l.com")[0]
 
 
 class TestSendConfirmationEmail(TestCase):

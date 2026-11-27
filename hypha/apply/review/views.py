@@ -66,8 +66,7 @@ def has_access_to_reviews(user, submission):
     if user.is_apply_staff:
         return True
 
-    # __ to avoid shadowing the gettext alias
-    submission_view, __ = can_view_submission(user, submission)
+    submission_view, _reason = can_view_submission(user, submission)
     return submission_view
 
 

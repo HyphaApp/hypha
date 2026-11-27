@@ -1,9 +1,13 @@
 import pytest
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
 from django.test import RequestFactory, TestCase
 
-from ..forms import BecomeUserForm, ProfileForm
+from ..forms import BecomeUserForm, CustomUserEditForm, ProfileForm
 from .factories import StaffFactory, UserFactory
+
+User = get_user_model()
 
 
 class BaseTestProfileForm(TestCase):
@@ -43,6 +47,14 @@ class TestProfileForm(BaseTestProfileForm):
         self.submit_form(instance=self.user, email=new_email)
         self.user.refresh_from_db()
         self.assertEqual(self.user.email, new_email)
+
+    def test_case_only_change_keeps_stored_email(self):
+        self.user.email = "Bob@example.com"
+        self.user.save()
+        form = self.submit_form(instance=self.user, email="bob@example.com")
+        self.assertEqual(form.cleaned_data["email"], "Bob@example.com")
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, "Bob@example.com")
 
     def test_cant_set_slack_name(self):
         slack_name = "@foobar"
@@ -116,3 +128,25 @@ def test_become_user_form_query_count(django_assert_num_queries):
         form = BecomeUserForm()
         # Access choices to trigger query execution
         list(form.fields["user_pk"].choices)
+
+
+class TestCustomUserAdminFormEmail(TestCase):
+    def clean_email(self, email, instance=None):
+        form = CustomUserEditForm(instance=instance or User())
+        form.cleaned_data = {"email": email}
+        return form.clean_email()
+
+    def test_rejects_duplicate_in_other_case(self):
+        UserFactory(email="taken@example.com")
+        with self.assertRaises(ValidationError):
+            self.clean_email("Taken@Example.com")
+
+    def test_allows_own_email(self):
+        user = UserFactory(email="mine@example.com")
+        self.assertEqual(
+            self.clean_email("Mine@example.com", instance=user), "Mine@example.com"
+        )
+
+    def test_allows_lookalike(self):
+        UserFactory(email="bob@gmail.com")
+        self.assertEqual(self.clean_email("bob@gmaıl.com"), "bob@gmaıl.com")

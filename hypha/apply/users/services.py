@@ -14,7 +14,12 @@ from hypha.core.mail import MarkdownMail
 
 from .models import PendingSignup
 from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGenerator
-from .utils import get_redirect_url, get_user_by_email, local_event_time
+from .utils import (
+    filter_by_email,
+    get_redirect_url,
+    get_user_by_email,
+    local_event_time,
+)
 
 User = get_user_model()
 
@@ -208,10 +213,11 @@ class PasswordlessAuthService:
             return
 
         # Self registration is enabled
-        signup_obj, _ = PendingSignup.objects.update_or_create(
-            email=email,
-            defaults={
-                "token": get_random_string(32, "abcdefghijklmnopqrstuvwxyz0123456789")
-            },
-        )
+        token = get_random_string(32, "abcdefghijklmnopqrstuvwxyz0123456789")
+        signup_obj = filter_by_email(PendingSignup.objects.all(), email).first()
+        if signup_obj:
+            signup_obj.token = token
+            signup_obj.save(update_fields=["token", "modified"])
+        else:
+            signup_obj = PendingSignup.objects.create(email=email, token=token)
         self.send_new_account_login_email(signup_obj)

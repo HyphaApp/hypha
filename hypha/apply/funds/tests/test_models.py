@@ -23,7 +23,7 @@ from hypha.apply.funds.workflows.constants import DRAFT_STATE
 from hypha.apply.funds.workflows.registry import Request
 from hypha.apply.review.options import AGREE, MAYBE, NO
 from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
-from hypha.apply.users.tests.factories import StaffFactory
+from hypha.apply.users.tests.factories import StaffFactory, UserFactory
 from hypha.apply.utils.testing import make_request
 
 from .factories import (
@@ -371,6 +371,12 @@ class TestFormSubmission(TestCase):
         email = "not_a_valid_email@"
         response = self.submit_form(email=email, ignore_errors=True)
         self.assertContains(response, "Enter a valid email address")
+
+    def test_inactive_account_found_with_surrounding_whitespace(self):
+        UserFactory(email=self.email, is_active=False)
+        response = self.submit_form(email=f" {self.email.upper()} ", ignore_errors=True)
+        self.assertContains(response, "Found an inactive account")
+        self.assertEqual(ApplicationSubmission.objects.count(), 0)
 
     @override_settings(SEND_MESSAGES=True)
     @patch("hypha.apply.activity.tasks.send_mail")

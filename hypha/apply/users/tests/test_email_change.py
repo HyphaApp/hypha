@@ -246,7 +246,8 @@ class TestEmailChangeSuccess(TestCase):
         )
         self.assertEqual(len(mail.outbox), 2)
         notice = mail.outbox[1]
-        self.assertEqual(notice.to, [other_user.email.upper()])
+        # Sent to the account's own address, not the typed one.
+        self.assertEqual(notice.to, [other_user.email])
         self.assertIn("already an account", notice.body)
         confirm_path_prefix = confirm_url("x").removesuffix("x/")
         self.assertNotIn(confirm_path_prefix, notice.body)

@@ -1,4 +1,5 @@
 import string
+import unicodedata
 import zoneinfo
 
 import nh3
@@ -17,9 +18,58 @@ from django.utils.translation import gettext as _
 from django_ratelimit.core import _get_ip
 
 
+def email_comparison_key(email) -> str:
+    """Return the form of an email address used to compare it with another.
+
+    Uses the same algorithm as Django's `_unicode_ci_compare` (used by
+    `PasswordResetForm`), the one recommended by Unicode Technical Report 36,
+    section 2.11.2(B)(2): NFKC normalisation followed by case folding. Unlike
+    Django, surrounding whitespace is ignored too, it is never part of a valid
+    address. Django's `normalize_email` only lowercases the domain, so it is
+    not enough to tell whether two addresses are the same.
+    """
+    if not email:
+        return ""
+    return unicodedata.normalize("NFKC", email.strip()).casefold()
+
+
+def emails_match(email_a, email_b) -> bool:
+    """Return True if two email addresses are the same address.
+
+    Empty values never match, not even each other.
+    """
+    key_a = email_comparison_key(email_a)
+    key_b = email_comparison_key(email_b)
+    if not key_a:
+        return False
+    return key_a == key_b
+
+
+def filter_by_email(queryset, email, field="email"):
+    """Filter a queryset to the rows where `field` matches `email`.
+
+    Works like Django's `PasswordResetForm.get_users`, plus surrounding
+    whitespace is ignored: `iexact` fetches the candidates, every one is then
+    checked with `emails_match`. `iexact` alone
+    is not safe: PostgreSQL compares with UPPER(), and with a UTF-8 locale
+    UPPER('ı') is 'I', so "bob@gmaıl.com" would match "bob@gmail.com"
+    (CVE-2019-19844).
+    """
+    email = email.strip() if email else ""
+    if not email:
+        return queryset.none()
+    candidates = queryset.filter(**{f"{field}__iexact": email})
+    pks = [
+        pk
+        for pk, value in candidates.values_list("pk", field)
+        if emails_match(email, value)
+    ]
+    return queryset.filter(pk__in=pks)
+
+
 def get_user_by_email(email):
     UserModel = get_user_model()
-    qs = UserModel.objects.filter(email__iexact=email)  # case insensitive matching
+    qs = filter_by_email(UserModel.objects.all(), email)
 
     # if multiple accounts then check with case sensitive search
     if len(qs) > 1:
@@ -40,7 +90,7 @@ def is_user_already_registered(email: str) -> tuple[bool, str]:
     """
 
     user_model = get_user_model()
-    if user_model.objects.filter(email__iexact=email):
+    if filter_by_email(user_model.objects.all(), email).exists():
         return (True, _("Email is already in use."))
 
     return (False, "")
@@ -227,7 +277,7 @@ def login_ratelimit_key(group, request):
     whatever it is given, so every such request would land in a single bucket
     and any one client could exhaust login for everybody.
     """
-    username = request.POST.get("auth-username", "").strip().lower()
+    username = email_comparison_key(request.POST.get("auth-username", ""))
     return username or f"ip:{_get_ip(request)}"
 
 

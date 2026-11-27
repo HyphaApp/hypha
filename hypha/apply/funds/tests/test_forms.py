@@ -1,6 +1,7 @@
 from django.test import TestCase
 
-from hypha.apply.funds.forms import UpdateReviewersForm
+from hypha.apply.funds.forms import InviteCoApplicantForm, UpdateReviewersForm
+from hypha.apply.funds.models import CoApplicantInvite
 from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     AssignedReviewersFactory,
@@ -124,3 +125,34 @@ class TestReviewerFormQueries(TestCase):
         # 1 - Add new
         with self.assertNumQueries(5):
             form.save()
+
+
+class TestInviteCoApplicantForm(TestCase):
+    def setUp(self):
+        self.submission = ApplicationSubmissionFactory(user__email="owner@example.com")
+
+    def make_form(self, email):
+        return InviteCoApplicantForm(
+            data={"invited_user_email": email, "submission": self.submission.id},
+            submission=self.submission,
+        )
+
+    def test_owner_in_other_case_is_rejected(self):
+        form = self.make_form("Owner@Example.com")
+        self.assertFalse(form.is_valid())
+        self.assertIn("invited_user_email", form.errors)
+
+    def test_already_invited_in_other_case_is_rejected(self):
+        CoApplicantInvite.objects.create(
+            submission=self.submission, invited_user_email="co@example.com"
+        )
+        form = self.make_form("CO@example.com")
+        self.assertFalse(form.is_valid())
+        self.assertIn("invited_user_email", form.errors)
+
+    def test_new_address_is_accepted(self):
+        CoApplicantInvite.objects.create(
+            submission=self.submission, invited_user_email="co@example.com"
+        )
+        form = self.make_form("other@example.com")
+        self.assertTrue(form.is_valid(), form.errors)

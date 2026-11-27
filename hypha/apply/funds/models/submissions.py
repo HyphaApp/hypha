@@ -56,6 +56,7 @@ from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.todo.options import SUBMISSION_DRAFT
 from hypha.apply.todo.views import remove_tasks_for_user
 from hypha.apply.users.roles import APPLICANT_GROUP_NAME
+from hypha.apply.users.utils import get_user_by_email
 
 from ..blocks import NAMED_BLOCKS, ApplicationCustomFormFieldsBlock
 from ..workflows import (
@@ -646,8 +647,8 @@ class ApplicationSubmission(
             User = get_user_model()
             if "skip_account_creation_notification" in self.form_data:
                 self.form_data.pop("skip_account_creation_notification", None)
-                self.user, _ = User.objects.get_or_create(
-                    email=email, defaults={"full_name": full_name}
+                self.user = get_user_by_email(email) or User.objects.create(
+                    email=email, full_name=full_name
                 )
             else:
                 self.user, _ = User.objects.get_or_create_and_notify(
