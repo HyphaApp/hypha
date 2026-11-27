@@ -1,10 +1,15 @@
 import pytest
 from ddf import G
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 from hypha.apply.users.models import PendingSignup
 from hypha.apply.users.tests.factories import UserFactory
 
-from ..tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGenerator
+from ..tokens import (
+    ActivationTokenGenerator,
+    PasswordlessLoginTokenGenerator,
+    PasswordlessSignupTokenGenerator,
+)
 
 # mark all test to use database
 pytestmark = pytest.mark.django_db
@@ -61,3 +66,29 @@ def test_passwordless_signup_token(time_machine, settings):
     # timeout check
     time_machine.shift(delta=62)
     assert token_generator.check_token(signup_obj, token) is False
+
+
+def test_activation_token_uses_activation_timeout(time_machine, settings):
+    settings.PASSWORD_ACTIVATION_TIMEOUT = 60
+    settings.PASSWORD_RESET_TIMEOUT = 3600
+
+    time_machine.move_to("2021-01-01 00:00:00", tick=False)
+    token_generator = ActivationTokenGenerator()
+    user = UserFactory()
+    token = token_generator.make_token(user)
+
+    assert token_generator.check_token(user, token)
+
+    time_machine.shift(delta=62)
+    assert token_generator.check_token(user, token) is False
+
+
+def test_activation_token_accepts_tokens_made_before_upgrade(time_machine, settings):
+    """Activation links sent with Django's generator must keep working."""
+    settings.PASSWORD_ACTIVATION_TIMEOUT = 60
+
+    time_machine.move_to("2021-01-01 00:00:00", tick=False)
+    user = UserFactory()
+    token = PasswordResetTokenGenerator().make_token(user)
+
+    assert ActivationTokenGenerator().check_token(user, token)

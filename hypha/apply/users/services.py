@@ -14,7 +14,12 @@ from hypha.core.mail import MarkdownMail
 
 from .models import PendingSignup
 from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGenerator
-from .utils import get_redirect_url, get_user_by_email, local_event_time
+from .utils import (
+    get_redirect_url,
+    get_user_by_email,
+    humanize_timeout,
+    local_event_time,
+)
 
 User = get_user_model()
 
@@ -137,7 +142,7 @@ class PasswordlessAuthService:
 
     def send_login_email(self, user):
         login_path = self._get_login_path(user)
-        timeout_minutes = self.login_token_generator_class().TIMEOUT // 60
+        timeout = humanize_timeout(self.login_token_generator_class().TIMEOUT)
 
         context = {
             "user": user,
@@ -145,7 +150,7 @@ class PasswordlessAuthService:
             "name": user.get_full_name(),
             "username": user.get_username(),
             "login_path": login_path,
-            "timeout_minutes": timeout_minutes,
+            "timeout": timeout,
             "site": self.site,
         }
 
@@ -165,11 +170,11 @@ class PasswordlessAuthService:
 
     def send_new_account_login_email(self, signup_obj):
         signup_path = self._get_signup_path(signup_obj)
-        timeout_minutes = self.login_token_generator_class().TIMEOUT // 60
+        timeout = humanize_timeout(self.signup_token_generator_class().TIMEOUT)
 
         context = {
             "signup_path": signup_path,
-            "timeout_minutes": timeout_minutes,
+            "timeout": timeout,
             "site": self.site,
         }
 

@@ -12,7 +12,6 @@ from django.contrib.auth import (
 )
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import SetPasswordForm
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth.views import INTERNAL_RESET_SESSION_TOKEN
 from django.contrib.auth.views import (
     PasswordResetConfirmView as DjPasswordResetConfirmView,
@@ -71,13 +70,18 @@ from .forms import (
 )
 from .models import ConfirmAccessToken, PendingSignup
 from .services import PasswordlessAuthService
-from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGenerator
+from .tokens import (
+    ActivationTokenGenerator,
+    PasswordlessLoginTokenGenerator,
+    PasswordlessSignupTokenGenerator,
+)
 from .utils import (
     generate_numeric_token,
     get_email_context,
     get_other_sessions,
     get_redirect_url,
     get_zoneinfo,
+    humanize_timeout,
     login_ratelimit_key,
     send_activation_email,
     send_confirmation_email,
@@ -476,7 +480,7 @@ class ActivationView(TemplateView):
         permitted activation time window.
         """
 
-        token_generator = PasswordResetTokenGenerator()
+        token_generator = ActivationTokenGenerator()
         return user is not None and token_generator.check_token(user, token)
 
     def get_user(self, uidb64):
@@ -548,7 +552,7 @@ class PasswordResetView(DjPasswordResetView):
     def get_extra_email_context(self):
         return get_email_context(
             site=Site.find_for_request(self.request),
-            timeout_minutes=settings.PASSWORD_RESET_TIMEOUT // 60,
+            timeout=humanize_timeout(settings.PASSWORD_RESET_TIMEOUT),
             redirect_url=get_redirect_url(self.request, self.redirect_field_name),
         )
 
@@ -940,7 +944,7 @@ def send_confirm_access_email_view(request):
         "username": request.user.email,
         "site": Site.find_for_request(request),
         "user": request.user,
-        "timeout_minutes": settings.PASSWORDLESS_LOGIN_TIMEOUT // 60,
+        "timeout": humanize_timeout(settings.PASSWORDLESS_LOGIN_TIMEOUT),
     }
     subject = _("Confirmation code for {ORG_LONG_NAME}: {token}").format(
         ORG_LONG_NAME=settings.ORG_LONG_NAME, token=token_obj.token
