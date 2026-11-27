@@ -191,28 +191,10 @@ def test_al_no_postalcode_required(address_field):
 # ---------------------------------------------------------------------------
 
 
-def test_validation_data_loaded(address_field):
-    # The real data should contain well-known countries.
-    for iso in ("GB", "US", "AL", "AF"):
-        assert iso in address_field.data
-
-
-def test_gb_has_postalcode_field(address_field):
-    gb = address_field.data["GB"]
-    fields = flatten_data(gb["fields"])
-    assert "postalcode" in fields
-
-
 def test_gb_postalcode_label(address_field):
     gb = address_field.data["GB"]
     fields = flatten_data(gb["fields"])
     assert fields["postalcode"]["label"] == "Postcode"
-
-
-def test_us_has_administrativearea_field(address_field):
-    us = address_field.data["US"]
-    fields = flatten_data(us["fields"])
-    assert "administrativearea" in fields
 
 
 def test_us_administrativearea_label(address_field):

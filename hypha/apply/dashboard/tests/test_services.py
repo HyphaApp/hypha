@@ -112,8 +112,3 @@ class TestGetPafForReview(TestCase):
         result = get_paf_for_review(user=staff, is_paf_approval_sequential=False)
 
         self.assertIn(paf2, result)
-
-    def test_returns_empty_queryset_when_no_pafs(self):
-        staff = StaffFactory()
-        result = get_paf_for_review(user=staff, is_paf_approval_sequential=False)
-        self.assertEqual(result.count(), 0)

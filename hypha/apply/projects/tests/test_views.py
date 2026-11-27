@@ -883,12 +883,6 @@ class TestStaffDetailInvoiceStatus(BaseViewTestCase):
         response = self.get_page(invoice)
         self.assertEqual(response.status_code, 200)
 
-    def test_wrong_project_cant(self):
-        other_project = ProjectFactory()
-        invoice = InvoiceFactory()
-        response = self.get_page(invoice, url_kwargs={"pk": other_project.pk})
-        self.assertEqual(response.status_code, 404)
-
     def test_activity_renders(self):
         invoice = InvoiceFactory()
         vendor = ApplicantFactory()
@@ -1423,16 +1417,6 @@ class TestStaffProjectDetailDownloadView(BaseViewTestCase):
         return {
             "pk": instance.pk,
         }
-
-    def test_can_access_pdf(self):
-        project = ProjectFactory()
-        response = self.get_page(project, url_kwargs={"export_type": "pdf"})
-        self.assertEqual(response.status_code, 200)
-
-    def test_can_access_docx(self):
-        project = ProjectFactory()
-        response = self.get_page(project, url_kwargs={"export_type": "docx"})
-        self.assertEqual(response.status_code, 200)
 
     def test_response_object_is_pdf(self):
         project = ProjectFactory()

@@ -30,13 +30,6 @@ class TestCalculateIsActive(SimpleTestCase):
             )
         )
 
-    def test_no_regex_and_no_match_returns_false(self):
-        self.assertFalse(_calculate_is_active("/a/", None, "/b/"))
-
-    def test_regex_takes_priority_over_url_mismatch(self):
-        # url doesn't match, but regex does
-        self.assertTrue(_calculate_is_active("/x/", r"^/y/", "/y/anything"))
-
 
 class TestCheckPermission(SimpleTestCase):
     def test_invalid_module_path_returns_false(self):

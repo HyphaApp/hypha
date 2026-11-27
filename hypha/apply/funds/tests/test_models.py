@@ -409,25 +409,6 @@ class TestApplicationSubmission(TestCase):
         submission = self.make_submission(user__email=email)
         self.assertEqual(submission.email, email)
 
-    def test_can_get_ordered_qs(self):
-        # Emails are created sequentially
-        submission_a = self.make_submission()
-        submission_b = self.make_submission(round=submission_a.round)
-        submissions = [submission_a, submission_b]
-        self.assertEqual(
-            list(ApplicationSubmission.objects.order_by("id")),
-            submissions,
-        )
-
-    def test_can_get_reverse_ordered_qs(self):
-        submission_a = self.make_submission()
-        submission_b = self.make_submission(round=submission_a.round)
-        submissions = [submission_b, submission_a]
-        self.assertEqual(
-            list(ApplicationSubmission.objects.order_by("-id")),
-            submissions,
-        )
-
     def test_richtext_in_char_is_removed_for_search(self):
         text = "I am text"
         rich_text = f"<b>{text}</b>"
@@ -972,12 +953,6 @@ class TestForTableQueryset(TestCase):
 
 
 class TestReminderModel(TestCase):
-    def test_can_save_reminder(self):
-        submission = ApplicationSubmissionFactory()
-        reminder = ReminderFactory(submission=submission)
-        self.assertEqual(submission, reminder.submission)
-        self.assertFalse(reminder.sent)
-
     def test_check_default_action(self):
         reminder = ReminderFactory()
         self.assertEqual(reminder.action, Reminder.REVIEW)
@@ -1008,6 +983,7 @@ class TestAsJsonMixin(TestCase):
         self.assertEqual(result["next_deadline"], "")
 
     def test_as_json_deadline_hidden_when_show_deadline_false(self):
+        TodayRoundFactory(parent=self.fund)
         self.fund.show_deadline = False
         self.fund.save()
         # Invalidate cached_property

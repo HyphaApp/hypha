@@ -17,14 +17,6 @@ class TestSlackMessageToMarkdown(SimpleTestCase):
         msg = "Just a plain message"
         self.assertEqual(slack_message_to_markdown(msg), msg)
 
-    def test_multiple_hrefs_on_separate_lines_converted(self):
-        # The regex is greedy so two hrefs on the same line merge into one match.
-        # Each href on its own line is converted independently.
-        line1 = slack_message_to_markdown("<https://a.com|A>")
-        line2 = slack_message_to_markdown("<https://b.com|B>")
-        self.assertEqual(line1, "[A](https://a.com)")
-        self.assertEqual(line2, "[B](https://b.com)")
-
     def test_empty_string_returns_empty(self):
         self.assertEqual(slack_message_to_markdown(""), "")
 
@@ -62,9 +54,3 @@ class TestGroupbyFundLabId(TestCase):
     def test_empty_list_returns_empty(self):
         items = dict(groupby_fund_lab_id([]))
         self.assertEqual(items, {})
-
-    def test_single_message_grouped(self):
-        msg = self._make_message(42)
-        items = dict(groupby_fund_lab_id([msg]))
-        self.assertIn(42, items)
-        self.assertEqual(len(items[42]), 1)

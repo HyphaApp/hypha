@@ -198,9 +198,9 @@ class TestActivationView(TestCase):
         self.assertIn(reverse("two_factor:setup"), response["Location"])
 
     def test_post_valid_token_with_next_includes_redirect(self):
-        url = self.url + "?next=/dashboard/"
+        url = self.url + "?next=/apply/submissions/"
         response = self.client.post(url)
-        self.assertIn("/dashboard/", response["Location"])
+        self.assertIn("/apply/submissions/", response["Location"])
 
 
 class TestPasswordlessLoginView(TestCase):
@@ -253,9 +253,11 @@ class TestPasswordlessLoginView(TestCase):
         self.assertTemplateUsed(response, "users/activation/invalid.html")
 
     def test_post_with_redirect_url_follows_next(self):
-        url = self.url + "?next=/dashboard/"
-        response = self.client.post(url, {"next": "/dashboard/"})
-        self.assertRedirects(response, "/dashboard/", fetch_redirect_response=False)
+        url = self.url + "?next=/apply/submissions/"
+        response = self.client.post(url, {"next": "/apply/submissions/"})
+        self.assertRedirects(
+            response, "/apply/submissions/", fetch_redirect_response=False
+        )
 
 
 class TestPasswordlessSignupView(TestCase):

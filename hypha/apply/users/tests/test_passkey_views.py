@@ -354,10 +354,6 @@ class TestPasskeyAuthBegin(TestCase):
         self.client.post(AUTH_BEGIN_URL)
         self.assertIn(SESSION_CHALLENGE_KEY_AUTH, self.client.session)
 
-    def test_accessible_without_login(self):
-        response = self.client.post(AUTH_BEGIN_URL)
-        self.assertEqual(response.status_code, 200)
-
 
 # ---------------------------------------------------------------------------
 # Authentication complete

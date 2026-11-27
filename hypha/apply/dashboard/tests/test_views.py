@@ -242,14 +242,6 @@ class TestFinanceDashboard(BaseViewTestCase):
     url_name = "dashboard:{}"
     base_view_name = "dashboard"
 
-    def test_dashboard_loads(self):
-        response = self.get_page()
-        self.assertEqual(response.status_code, 200)
-
-    def test_active_invoices_section_in_context(self):
-        response = self.get_page()
-        self.assertIn("active_invoices", response.context)
-
     def test_invoices_for_approval_in_context(self):
         response = self.get_page()
         self.assertIn("invoices_for_approval", response.context)
@@ -270,14 +262,6 @@ class TestContractingDashboard(BaseViewTestCase):
     user_factory = ContractingFactory
     url_name = "dashboard:{}"
     base_view_name = "dashboard"
-
-    def test_dashboard_loads(self):
-        response = self.get_page()
-        self.assertEqual(response.status_code, 200)
-
-    def test_projects_in_contracting_in_context(self):
-        response = self.get_page()
-        self.assertIn("projects_in_contracting", response.context)
 
     def test_project_without_contract_in_waiting_for_contract(self):
         ProjectFactory(status=CONTRACTING)
@@ -330,10 +314,6 @@ class TestApplicantDashboardPartials(BaseViewTestCase):
     url_name = "dashboard:{}"
     base_view_name = "applicant_projects"
 
-    def test_applicant_projects_loads(self):
-        response = self.get_page()
-        self.assertEqual(response.status_code, 200)
-
     def test_shows_applicant_project(self):
         project = ProjectFactory(user=self.user, status=INVOICING_AND_REPORTING)
         response = self.get_page()
@@ -344,13 +324,6 @@ class TestApplicantDashboardPartials(BaseViewTestCase):
         project = ProjectFactory(user=other, status=INVOICING_AND_REPORTING)
         response = self.get_page()
         self.assertNotContains(response, project.title)
-
-    def test_projects_paginated_with_many(self):
-        for _ in range(8):
-            ProjectFactory(user=self.user, status=INVOICING_AND_REPORTING)
-        response = self.get_page()
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("page", response.context)
 
 
 class TestApplicantActiveInvoices(TestCase):

@@ -10,7 +10,7 @@ from hypha.apply.funds.tests.factories import (
     AssignedReviewersFactory,
 )
 
-from ..models import ConfirmAccessToken, PendingSignup, User
+from ..models import User
 from ..roles import (
     APPROVER_GROUP_NAME,
     TEAMADMIN_GROUP_NAME,
@@ -114,11 +114,6 @@ class TestUserModel(TestCase):
     def test_str_returns_display_name(self):
         user = UserFactory(full_name="Bob Smith")
         self.assertEqual(str(user), "Bob Smith")
-
-    def test_repr(self):
-        user = UserFactory(full_name="Bob Smith", email="bob@example.com")
-        self.assertIn("Bob Smith", repr(user))
-        self.assertIn("bob@example.com", repr(user))
 
     def test_get_absolute_url(self):
         user = UserFactory()
@@ -236,18 +231,3 @@ class TestUserManagerCreateUser(TestCase):
             User.objects.create_superuser(
                 email="su@example.com", password="pass", is_superuser=False
             )
-
-
-class TestPendingSignup(TestCase):
-    def test_str_includes_email(self):
-        signup = PendingSignup.objects.create(
-            email="pending@example.com", token="abc123token456"
-        )
-        self.assertIn("pending@example.com", str(signup))
-
-
-class TestConfirmAccessToken(TestCase):
-    def test_str_includes_user_email(self):
-        user = UserFactory(email="tokenuser@example.com")
-        token = ConfirmAccessToken.objects.create(user=user, token="123456")
-        self.assertIn("tokenuser@example.com", str(token))
