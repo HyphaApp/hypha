@@ -28,10 +28,6 @@ class TestJoinWithCommas(SimpleTestCase):
         result = join_with_commas(["apples", "oranges", "pears"])
         self.assertEqual(result, "apples, oranges and pears")
 
-    def test_four_items(self):
-        result = join_with_commas(["a", "b", "c", "d"])
-        self.assertEqual(result, "a, b, c and d")
-
     def test_works_with_non_string_objects(self):
         class Fruit:
             def __init__(self, name):

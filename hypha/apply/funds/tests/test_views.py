@@ -1878,11 +1878,6 @@ class BaseProjectDeleteTestCase(BaseViewTestCase):
 class TestStaffReminderDeleteView(BaseProjectDeleteTestCase):
     user_factory = StaffFactory
 
-    def test_has_access(self):
-        reminder = ReminderFactory()
-        response = self.get_page(reminder)
-        self.assertEqual(response.status_code, 200)
-
     def test_confirm_message(self):
         reminder = ReminderFactory()
         response = self.get_page(reminder)

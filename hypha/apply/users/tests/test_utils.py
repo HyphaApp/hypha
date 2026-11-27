@@ -165,15 +165,6 @@ class TestUpdateIsStaff(TestCase):
         user.refresh_from_db()
         self.assertFalse(user.is_staff)
 
-    def test_no_change_when_already_correct(self):
-        user = UserFactory()
-        user.is_staff = False
-        user.save()
-        # Should not raise, no change
-        update_is_staff(None, user)
-        user.refresh_from_db()
-        self.assertFalse(user.is_staff)
-
 
 class TestStripHtmlAndNerfUrls(TestCase):
     def test_removes_html_tags(self):

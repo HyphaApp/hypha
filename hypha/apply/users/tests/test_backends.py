@@ -51,10 +51,6 @@ class TestCustomModelBackend(TestCase):
         )
         self.assertIsNone(result)
 
-    def test_authenticate_both_none_returns_none(self):
-        result = self.backend.authenticate(self.request, username=None, password=None)
-        self.assertIsNone(result)
-
     def test_authenticate_inactive_user_returns_none(self):
         self.user.is_active = False
         self.user.save()

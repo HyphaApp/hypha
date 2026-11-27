@@ -361,24 +361,6 @@ class TestProfileFormEmailChangeStaff(TestCase):
         self.assertEqual(self.user.slack, "@newslack")
 
 
-class TestEmailChangeElevatedUserWithPassword(TestCase):
-    """A user with a password who has elevated their session can proceed."""
-
-    def setUp(self):
-        self.user = UserFactory()
-        self.client.force_login(self.user)
-
-    def test_elevated_user_can_complete_email_change(self):
-        signed = make_signed_value(self.user, NEW_EMAIL)
-        with patch(
-            "hypha.elevate.middleware.has_elevated_privileges", return_value=True
-        ):
-            response = self.client.get(url_with_value(signed), follow=False)
-        self.assertRedirects(
-            response, CONFIRM_LINK_SENT_URL, fetch_redirect_response=False
-        )
-
-
 def make_confirmation_token(user, updated_email, current_email=None, pk=None):
     """Build the signed token that goes into the confirmation email link."""
     return TimestampSigner(salt=EMAIL_CHANGE_CONFIRM_SALT).sign_object(

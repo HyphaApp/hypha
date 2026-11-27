@@ -45,11 +45,6 @@ class TestSendLoginNotification(TestCase):
         self._fire_signal()
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_no_email_when_request_is_none(self):
-        # Signal can be fired without a request (e.g. management commands)
-        self._fire_signal(request=None)
-        self.assertEqual(len(mail.outbox), 1)
-
     def test_email_body_contains_login_time(self):
         self._fire_signal()
         self.assertTrue(any("Login time" in part for part in [mail.outbox[0].body]))

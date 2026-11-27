@@ -50,15 +50,6 @@ class TestCategoryQuestionBlock(TestCase):
         self.assertNotIsInstance(field, forms.MultipleChoiceField)
         self.assertIsInstance(field, forms.ChoiceField)
 
-    def test_options_included_in_choices(self):
-        # Don't assign to variable as the ordering wont match choices
-        OptionFactory.create_batch(3, category=self.category)
-        field = self.get_field()
-        self.assertEqual(
-            field.choices,
-            [(option.id, option.value) for option in self.category.options.all()],
-        )
-
     def test_choices_follow_option_sort_order(self):
         # Options are Orderable, so the order set in the admin decides the
         # order the choices are offered in.

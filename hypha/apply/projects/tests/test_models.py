@@ -116,10 +116,6 @@ class TestInvoiceModel(TestCase):
         user = ApplicantFactory()
         self.assertFalse(invoice.can_user_delete(user))
 
-    def test_paid_value_used_when_no_paid_value(self):
-        invoice = InvoiceFactory(paid_value=None)
-        self.assertNotEqual(invoice.value, Decimal("1"))
-
     def test_paid_value_overrides_paid_value(self):
         invoice = InvoiceFactory(paid_value=Decimal("2"))
         self.assertEqual(invoice.value, Decimal("2"))

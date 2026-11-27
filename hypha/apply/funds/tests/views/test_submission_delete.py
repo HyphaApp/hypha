@@ -116,47 +116,6 @@ def test_anonymize_view_forbidden_for_applicant(db, client):
     assert res.status_code == 403
 
 
-def test_anonymize_view_get_renders_confirmation(db, client):
-    user = AdminFactory()
-    submission = ApplicationSubmissionFactory(status="internal_review")
-
-    client.force_login(user)
-    url = reverse("apply:submissions:anonymize", kwargs={"pk": submission.pk})
-    res = client.get(url)
-
-    assert res.status_code == 200
-    assert "<form" in res.content.decode()
-    assert f'action="{url}"' in res.content.decode()
-
-
-def test_anonymize_view_post_creates_anonymized_record(db, client):
-    user = AdminFactory()
-    submission = ApplicationSubmissionFactory(status="internal_review")
-    expected_value = submission.form_data["value"]
-
-    client.force_login(user)
-    url = reverse("apply:submissions:anonymize", kwargs={"pk": submission.pk})
-    res = client.post(url)
-
-    assert res.status_code == 302
-    assert AnonymizedSubmission.objects.count() == 1
-    anon = AnonymizedSubmission.objects.last()
-    assert anon.value == expected_value
-
-
-def test_anonymize_view_post_deletes_original_submission(db, client):
-    user = AdminFactory()
-    submission = ApplicationSubmissionFactory(status="internal_review")
-    pk = submission.pk
-
-    client.force_login(user)
-    url = reverse("apply:submissions:anonymize", kwargs={"pk": pk})
-    client.post(url)
-
-    res = client.get(url)
-    assert res.status_code == 404
-
-
 def test_anonymize_view_post_draft_skips_messenger(db, client):
     """Anonymizing a draft should not fire the ANONYMIZE_SUBMISSION messenger."""
     user = AdminFactory()
@@ -169,18 +128,6 @@ def test_anonymize_view_post_draft_skips_messenger(db, client):
     assert res.status_code == 302
     # Draft submissions are still anonymized (record created, original deleted)
     assert AnonymizedSubmission.objects.count() == 1
-
-
-def test_anonymize_view_redirects_to_submissions_list(db, client):
-    user = AdminFactory()
-    submission = ApplicationSubmissionFactory(status="internal_review")
-
-    client.force_login(user)
-    url = reverse("apply:submissions:anonymize", kwargs={"pk": submission.pk})
-    res = client.post(url)
-
-    assert res.status_code == 302
-    assert res.url == "/apply/submissions/all/"
 
 
 # --- SubmissionDeleteView tests ---

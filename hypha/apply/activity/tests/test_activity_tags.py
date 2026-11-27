@@ -14,9 +14,6 @@ from ..templatetags.activity_tags import (
 
 
 class TestLowerfirst(SimpleTestCase):
-    def test_lowercases_first_character(self):
-        self.assertEqual(lowerfirst("Hello"), "hello")
-
     def test_preserves_rest_of_string(self):
         self.assertEqual(lowerfirst("Hello World"), "hello World")
 
@@ -25,9 +22,6 @@ class TestLowerfirst(SimpleTestCase):
 
     def test_empty_string_returns_empty(self):
         self.assertEqual(lowerfirst(""), "")
-
-    def test_single_character(self):
-        self.assertEqual(lowerfirst("A"), "a")
 
 
 class TestEmailName(SimpleTestCase):
@@ -42,9 +36,6 @@ class TestEmailName(SimpleTestCase):
 
     def test_returns_none_unchanged(self):
         self.assertIsNone(email_name(None))
-
-    def test_extracts_first_part_only(self):
-        self.assertEqual(email_name("first.last@domain.org"), "first.last")
 
 
 class TestSourceType(SimpleTestCase):

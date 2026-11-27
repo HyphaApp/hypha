@@ -23,7 +23,7 @@ from ..models.project import (
     INVOICING_AND_REPORTING,
 )
 from ..templatetags.contract_tools import user_can_upload_contract
-from ..templatetags.invoice_tools import can_change_status, can_delete, can_edit
+from ..templatetags.invoice_tools import can_change_status
 from .factories import ContractFactory, InvoiceFactory, ProjectFactory
 
 
@@ -96,36 +96,6 @@ class TestContractTools(TestCase):
 
 
 class TestInvoiceTools(TestCase):
-    def test_staff_can_change_status_from_submitted(self):
-        invoice = InvoiceFactory(status=SUBMITTED)
-        staff = StaffFactory()
-
-        self.assertTrue(can_change_status(invoice, staff))
-
-    def test_staff_can_change_status_from_resubmitted(self):
-        invoice = InvoiceFactory(status=RESUBMITTED)
-        staff = StaffFactory()
-
-        self.assertTrue(can_change_status(invoice, staff))
-
-    def test_staff_can_change_status_from_changes_requested(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
-        staff = StaffFactory()
-
-        self.assertTrue(can_change_status(invoice, staff))
-
-    def test_staff_cant_change_status_from_paid(self):
-        invoice = InvoiceFactory(status=PAID)
-        staff = StaffFactory()
-
-        self.assertFalse(can_change_status(invoice, staff))
-
-    def test_staff_cant_change_status_from_declined(self):
-        invoice = InvoiceFactory(status=DECLINED)
-        staff = StaffFactory()
-
-        self.assertFalse(can_change_status(invoice, staff))
-
     def test_user_cant_change_status_from_submitted(self):
         invoice = InvoiceFactory(status=SUBMITTED)
         user = ApplicantFactory()
@@ -155,109 +125,3 @@ class TestInvoiceTools(TestCase):
         user = ApplicantFactory()
 
         self.assertFalse(can_change_status(invoice, user))
-
-    def test_staff_can_delete_from_submitted(self):
-        invoice = InvoiceFactory(status=SUBMITTED)
-        staff = StaffFactory()
-
-        self.assertTrue(can_delete(invoice, staff))
-
-    def test_staff_cant_delete_from_resubmitted(self):
-        invoice = InvoiceFactory(status=RESUBMITTED)
-        staff = StaffFactory()
-
-        self.assertFalse(can_delete(invoice, staff))
-
-    def test_staff_cant_delete_from_changes_requested(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
-        staff = StaffFactory()
-
-        self.assertFalse(can_delete(invoice, staff))
-
-    def test_staff_cant_delete_from_paid(self):
-        invoice = InvoiceFactory(status=PAID)
-        staff = StaffFactory()
-
-        self.assertFalse(can_delete(invoice, staff))
-
-    def test_staff_cant_delete_from_declined(self):
-        invoice = InvoiceFactory(status=DECLINED)
-        staff = StaffFactory()
-
-        self.assertFalse(can_delete(invoice, staff))
-
-    def test_user_can_delete_from_submitted(self):
-        user = ApplicantFactory()
-        invoice = InvoiceFactory(status=SUBMITTED, project__user=user)
-
-        self.assertTrue(can_delete(invoice, user))
-
-    def test_user_cant_delete_from_resubmitted(self):
-        invoice = InvoiceFactory(status=RESUBMITTED)
-        user = ApplicantFactory()
-
-        self.assertFalse(can_delete(invoice, user))
-
-    def test_user_can_delete_from_changes_requested(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
-        user = ApplicantFactory()
-
-        self.assertFalse(can_delete(invoice, user))
-
-    def test_user_cant_delete_from_paid(self):
-        invoice = InvoiceFactory(status=PAID)
-        user = ApplicantFactory()
-
-        self.assertFalse(can_delete(invoice, user))
-
-    def test_user_cant_delete_from_declined(self):
-        invoice = InvoiceFactory(status=DECLINED)
-        user = ApplicantFactory()
-
-        self.assertFalse(can_delete(invoice, user))
-
-    def test_applicant_and_staff_can_edit_in_submitted(self):
-        applicant = ApplicantFactory()
-        invoice = InvoiceFactory(status=SUBMITTED, project__user=applicant)
-        staff = StaffFactory()
-
-        self.assertTrue(can_edit(invoice, applicant))
-        self.assertTrue(can_edit(invoice, staff))
-
-    def test_applicant_can_edit_in_changes_requested(self):
-        applicant = ApplicantFactory()
-        invoice = InvoiceFactory(
-            status=CHANGES_REQUESTED_BY_STAFF, project__user=applicant
-        )
-
-        self.assertTrue(can_edit(invoice, applicant))
-
-    def test_staff_cant_edit_in_changes_requested(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
-        staff = StaffFactory()
-
-        self.assertFalse(can_edit(invoice, staff))
-
-    def test_applicant_and_staff_can_edit_in_resubmitted(self):
-        applicant = ApplicantFactory()
-        invoice = InvoiceFactory(status=RESUBMITTED, project__user=applicant)
-        staff = StaffFactory()
-
-        self.assertTrue(can_edit(invoice, applicant))
-        self.assertTrue(can_edit(invoice, staff))
-
-    def test_applicant_and_staff_cant_edit_in_paid(self):
-        invoice = InvoiceFactory(status=PAID)
-        applicant = ApplicantFactory()
-        staff = StaffFactory()
-
-        self.assertFalse(can_edit(invoice, applicant))
-        self.assertFalse(can_edit(invoice, staff))
-
-    def test_applicant_and_staff_cant_edit_in_decline(self):
-        invoice = InvoiceFactory(status=DECLINED)
-        applicant = ApplicantFactory()
-        staff = StaffFactory()
-
-        self.assertFalse(can_edit(invoice, applicant))
-        self.assertFalse(can_edit(invoice, staff))

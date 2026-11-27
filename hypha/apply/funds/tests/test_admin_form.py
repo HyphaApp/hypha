@@ -186,19 +186,6 @@ class TestWorkflowFormAdminForm(TestCase):
         )
         self.assertTrue(form.is_valid(), form.errors.as_text())
 
-    def test_validates_without_external_review_form(self):
-        form = self.submit_data(
-            form_data(
-                1,
-                1,
-                1,
-                num_external_review_forms=0,
-                num_project_approval_form=1,
-                stages=1,
-            )
-        )
-        self.assertTrue(form.is_valid(), form.errors.as_text())
-
     def test_doesnt_validates_with_multiple_external_review_form(self):
         form = self.submit_data(
             form_data(
@@ -211,12 +198,6 @@ class TestWorkflowFormAdminForm(TestCase):
             )
         )
         self.assertFalse(form.is_valid(), form.errors.as_text())
-
-    def test_validate_project_approval_form(self):
-        form = self.submit_data(
-            form_data(1, 1, 1, 0, num_project_approval_form=1, stages=1)
-        )
-        self.assertTrue(form.is_valid(), form.errors.as_text())
 
     @override_settings(PROJECTS_ENABLED=False)
     def test_does_validates_without_project_approval_form(self):

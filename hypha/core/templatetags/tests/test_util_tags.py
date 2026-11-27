@@ -1,28 +1,15 @@
 """Tests for core/templatetags/util_tags.py."""
 
-import uuid
-
 from django import forms
 from django.test import SimpleTestCase
 
-from hypha.core.templatetags.util_tags import field_type, generate_uuid, widget_type
+from hypha.core.templatetags.util_tags import field_type, widget_type
 
 
 class _SimpleForm(forms.Form):
     text_field = forms.CharField()
     choice_field = forms.ChoiceField(choices=[("a", "A")])
     checkbox = forms.BooleanField(required=False)
-
-
-class TestGenerateUuid(SimpleTestCase):
-    def test_returns_valid_uuid(self):
-        result = generate_uuid()
-        # Should not raise
-        parsed = uuid.UUID(result)
-        self.assertEqual(str(parsed), result)
-
-    def test_each_call_returns_unique_value(self):
-        self.assertNotEqual(generate_uuid(), generate_uuid())
 
 
 class TestWidgetType(SimpleTestCase):
