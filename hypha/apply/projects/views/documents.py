@@ -27,7 +27,6 @@ from ..forms import (
 from ..models.project import (
     ContractDocumentCategory,
     DocumentCategory,
-    PacketFile,
     Project,
 )
 from ..permissions import has_permission
@@ -107,7 +106,9 @@ class RemoveDocumentView(ProjectByIdMixin, View):
 
     def delete(self, *args, **kwargs):
         self.project = self.get_object()
-        self.object = self.project.packet_files.get(pk=kwargs.get("document_pk"))
+        self.object = get_object_or_404(
+            self.project.packet_files, pk=kwargs.get("document_pk")
+        )
         self.object.delete()
 
         return HttpResponse(
@@ -137,9 +138,9 @@ class ProjectPrivateMediaView(ProjectByIdMixin, UserPassesTestMixin, PrivateMedi
 
     def get_media(self, *args, **kwargs):
         if "file_pk" in kwargs:
-            document = PacketFile.objects.get(pk=kwargs["file_pk"])
-            if document.project != self.project:
-                raise Http404
+            document = get_object_or_404(
+                self.project.packet_files, pk=kwargs["file_pk"]
+            )
             return document.document
         else:
             field_id = kwargs["field_id"]
@@ -187,9 +188,11 @@ class CategoryTemplatePrivateMediaView(ProjectByIdMixin, PrivateMediaView):
 
     def get_media(self, *args, **kwargs):
         if self.category_type == "project_document":
-            category = DocumentCategory.objects.get(pk=kwargs["category_pk"])
+            category = get_object_or_404(DocumentCategory, pk=kwargs["category_pk"])
         elif self.category_type == "contract_document":
-            category = ContractDocumentCategory.objects.get(pk=kwargs["category_pk"])
+            category = get_object_or_404(
+                ContractDocumentCategory, pk=kwargs["category_pk"]
+            )
         else:
             raise Http404
         if not category.template:
