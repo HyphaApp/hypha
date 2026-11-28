@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -50,7 +50,6 @@ from ..models.project import (
     INVOICING_AND_REPORTING,
     Contract,
     ContractDocumentCategory,
-    ContractPacketFile,
     Project,
 )
 from ..permissions import has_permission
@@ -72,7 +71,9 @@ class RemoveContractDocumentView(ProjectByIdMixin, View):
         return super().dispatch(request, *args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        document = self.project.contract_packet_files.get(pk=kwargs.get("document_pk"))
+        document = get_object_or_404(
+            self.project.contract_packet_files, pk=kwargs.get("document_pk")
+        )
         document.delete()
 
         return HttpResponse(
@@ -490,9 +491,7 @@ class ContractPrivateMediaView(ProjectByIdMixin, UserPassesTestMixin, PrivateMed
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
-        document = Contract.objects.get(pk=kwargs["file_pk"])
-        if document.project != self.project:
-            raise Http404
+        document = get_object_or_404(self.project.contracts, pk=kwargs["file_pk"])
         return document.file
 
     def test_func(self):
@@ -522,7 +521,9 @@ class ContractDocumentPrivateMediaView(ProjectByIdMixin, PrivateMediaView):
 
     def dispatch(self, *args, **kwargs):
         self.project = self.get_object()
-        self.document = ContractPacketFile.objects.get(pk=kwargs["file_pk"])
+        self.document = get_object_or_404(
+            self.project.contract_packet_files, pk=kwargs["file_pk"]
+        )
         has_permission(
             "view_contract_documents",
             self.request.user,
@@ -533,8 +534,6 @@ class ContractDocumentPrivateMediaView(ProjectByIdMixin, PrivateMediaView):
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
-        if self.document.project != self.project:
-            raise Http404
         return self.document.document
 
 
